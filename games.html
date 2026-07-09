@@ -139,8 +139,16 @@
 
     var pw=el("div","pdfs");
     if(g.game_id){ var dd=el("a",null,"deep dive →"); dd.href="./game.html?id="+encodeURIComponent(g.game_id); pw.appendChild(dd); }
-    var pd=(pdfByDate[g.date]||[]);
-    pd.forEach(function(p){ var a=el("a",null,"Game report PDF"); a.href=p.href; a.rel="noopener"; pw.appendChild(a); });
+    // match THIS game's gameday PDF by matchup (away@home), not just the date, so a card
+    // links its OWN report — and only once that report exists in the folder.
+    var want=(g.away+"@"+g.home).replace(/\s/g,"");
+    (pdfByDate[g.date]||[]).forEach(function(p){
+      var key=((p.href||"").split("/").pop()||"").replace(/\.pdf$/i,"").replace(/\s/g,"");
+      var lab=(p.label||"").replace(/\s/g,"");
+      if(key===want || lab===want){
+        var a=el("a",null,"Game report (PDF)"); a.href=p.href; a.rel="noopener"; pw.appendChild(a);
+      }
+    });
     if(pw.childNodes.length){ c.appendChild(pw); }
     return c;
   }
