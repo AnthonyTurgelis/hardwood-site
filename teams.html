@@ -40,6 +40,7 @@
   .strong{font-weight:680}
   .empty{color:var(--dim);font-style:italic}
   .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
+  .filt{width:100%;max-width:280px;margin:0 0 8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:12.5px}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
 </head>
@@ -64,7 +65,7 @@
 <script>
 (function(){
   "use strict";
-  var URL="./teams.json";
+  var URL="./teams.json", curData=null, teamFilter="";
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function td(c,x){ return el("td",c,x); }
 
@@ -82,17 +83,23 @@
   }
 
   function render(d){
+    curData=d;
     var main=document.getElementById("main"); main.innerHTML="";
     document.getElementById("foot").textContent="Baked "+(d.generated_utc||"")+". Strength ranks the roster on our season-long model. Momentum is recent form, not the ranking basis. Title odds come from simulating the rest of the season.";
     if(!d.available){ main.appendChild(el("p","empty", d.note||"Power board being built.")); return; }
     main.appendChild(el("p","lede", d.source||""));
+    var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter teams…"; fbox.value=teamFilter;
+    fbox.oninput=function(){ teamFilter=fbox.value; render(curData);
+      var nf=document.querySelector(".filt"); if(nf){ nf.focus(); nf.setSelectionRange(nf.value.length,nf.value.length); } };
+    main.appendChild(fbox);
     var card=el("div","card"); var sc=el("div","scroll");
     var t=el("table");
     var thead=el("thead"); var hr=el("tr");
     ["#","Team","Strength","Momentum","Title %","Δ 1d","Playoffs %"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
-    d.teams.forEach(function(r){
+    var q=teamFilter.trim().toLowerCase();
+    d.teams.filter(function(r){ return !q || (r.team||"").toLowerCase().indexOf(q)>=0 || (r.team_full||"").toLowerCase().indexOf(q)>=0; }).forEach(function(r){
       var tr=el("tr"); tr.setAttribute("data-k", r.team);
       tr.appendChild(td("rk", r.rank));
       var name=el("td","tm"); name.appendChild(document.createTextNode(r.team+" "));

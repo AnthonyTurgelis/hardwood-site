@@ -47,6 +47,10 @@
   .rbar .p{position:absolute;top:1px;width:3px;height:13px;background:var(--pt);transform:translateX(-1px)}
   .empty{color:var(--dim);font-style:italic}
   .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
+  .filt{width:100%;max-width:320px;margin:0 0 8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:12.5px}
+  .plink{color:var(--acc);text-decoration:none}
+  .plink:hover{text-decoration:underline}
+  td:last-child{font-size:11px}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
 </head>
@@ -72,7 +76,7 @@
 (function(){
   "use strict";
   var URL="./players.json";
-  var curStat=null, curData=null;
+  var curStat=null, curData=null, ratFilter="";
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function td(c,x){ return el("td",c,x); }
 
@@ -80,20 +84,29 @@
     var s=el("section");
     var h=el("h2"); h.appendChild(document.createTextNode("Player impact ratings")); s.appendChild(h);
     if(!rt.available){ s.appendChild(el("p","empty", rt.note||"Ratings coming soon.")); return s; }
-    s.appendChild(el("p","lede","On-court impact per possession (higher = the team plays better with her on the floor). Because it's a plus-minus style rating, lineup-glue players can rank above pure scorers. Minutes are our newest projection."));
+    s.appendChild(el("p","lede","On-court impact per possession (higher = the team plays better with her on the floor). Because it's a plus-minus style rating, lineup-glue players can rank above pure scorers. Minutes are our newest projection. Tap a name for her full deep-dive card."));
+    var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter players by name or team…"; fbox.value=ratFilter;
+    fbox.oninput=function(){ ratFilter=fbox.value; var ns=ratingsSection(rt); s.parentNode.replaceChild(ns, s);
+      var nf=ns.querySelector(".filt"); if(nf){ nf.focus(); nf.setSelectionRange(nf.value.length,nf.value.length); } };
+    s.appendChild(fbox);
     var card=el("div","card"); var sc=el("div","scroll"); var t=el("table");
     var thead=el("thead"), hr=el("tr");
-    ["#","Player","Team","Impact","Proj. minutes"].forEach(function(x){ hr.appendChild(el("th",null,x)); });
+    ["#","Player","Team","Impact","Proj. minutes",""].forEach(function(x){ hr.appendChild(el("th",null,x)); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
-    rt.players.forEach(function(r){
+    var q=ratFilter.trim().toLowerCase();
+    rt.players.filter(function(r){ return !q || (r.name||"").toLowerCase().indexOf(q)>=0 || (r.team||"").toLowerCase().indexOf(q)>=0; }).forEach(function(r){
       var tr=el("tr"); tr.setAttribute("data-k","rt|"+r.name);
       tr.appendChild(td("rk", r.rank));
-      var nm=el("td","nm"); nm.textContent=r.name; if(r.thin){ nm.appendChild(el("span","tag"," · thin sample")); } tr.appendChild(nm);
+      var nm=el("td","nm");
+      if(r.id!=null){ var a=el("a",null,r.name); a.href="./player.html?id="+r.id; a.className="plink"; nm.appendChild(a); }
+      else { nm.appendChild(document.createTextNode(r.name)); }
+      if(r.thin){ nm.appendChild(el("span","tag"," · thin sample")); } tr.appendChild(nm);
       tr.appendChild(td(null, r.team||"—"));
       tr.appendChild(td("strong", r.rating==null?"—":(r.rating>0?"+":"")+r.rating.toFixed(1)));
       var m=el("td", null); m.textContent = r.minutes==null? "—" : (r.minutes.toFixed(1)+" min");
       tr.appendChild(m);
+      var dd=el("td",null); if(r.id!=null){ var da=el("a",null,"deep dive →"); da.href="./player.html?id="+r.id; da.className="plink"; dd.appendChild(da); } tr.appendChild(dd);
       tb.appendChild(tr);
     });
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); s.appendChild(card);

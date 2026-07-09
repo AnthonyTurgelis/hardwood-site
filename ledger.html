@@ -33,6 +33,7 @@
   th{position:sticky;top:0;background:var(--card);cursor:pointer;user-select:none;font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
   th:hover{color:var(--ink)}
   tbody tr:hover{background:rgba(43,108,176,.06)}
+  .filt{width:100%;max-width:300px;margin:0 0 8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:12.5px}
   .empty{color:var(--muted);font-style:italic}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--muted);font-size:11px}
 </style>
@@ -67,7 +68,11 @@
     if(!data || !data.columns || !data.rows || !data.rows.length){
       s.appendChild(el("p","empty","No rows yet.")); return s;
     }
-    var cols=data.columns, rows=data.rows.slice();
+    var cols=data.columns, rows=data.rows.slice(); var filterStr="";
+    var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter rows…";
+    fbox.oninput=function(){ filterStr=fbox.value.trim().toLowerCase(); fill();
+      fbox.focus(); fbox.setSelectionRange(fbox.value.length,fbox.value.length); };
+    s.appendChild(fbox);
     var scroll=el("div","scroll"); scroll.setAttribute("data-k", title);
     var table=el("table");
     var thead=el("thead"), htr=el("tr");
@@ -96,7 +101,10 @@
     });
     function fill(){
       tbody.innerHTML="";
-      rows.forEach(function(r){
+      rows.filter(function(r){
+        if(!filterStr) return true;
+        return cols.some(function(c){ var v=r[c]; return v!=null && String(v).toLowerCase().indexOf(filterStr)>=0; });
+      }).forEach(function(r){
         var tr=el("tr");
         cols.forEach(function(c){
           var v=r[c]; var td=el("td", null, v==null? "—" : String(v));

@@ -128,12 +128,11 @@
     c.appendChild(el("div","note","Margin range (how much the result could swing):"));
     c.appendChild(marginBar(g));
 
+    var pw=el("div","pdfs");
+    if(g.game_id){ var dd=el("a",null,"deep dive →"); dd.href="./game.html?id="+encodeURIComponent(g.game_id); pw.appendChild(dd); }
     var pd=(pdfByDate[g.date]||[]);
-    if(pd.length){
-      var pw=el("div","pdfs");
-      pd.forEach(function(p){ var a=el("a",null,"Game report PDF"); a.href=p.href; a.rel="noopener"; pw.appendChild(a); });
-      c.appendChild(pw);
-    }
+    pd.forEach(function(p){ var a=el("a",null,"Game report PDF"); a.href=p.href; a.rel="noopener"; pw.appendChild(a); });
+    if(pw.childNodes.length){ c.appendChild(pw); }
     return c;
   }
 
