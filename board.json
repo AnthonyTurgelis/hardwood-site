@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-07-09T20:20:08+00:00",
+ "generated_utc": "2026-07-09T20:51:46+00:00",
  "date": "2026-07-09",
  "counts": {
   "running": 4,
@@ -77,8 +77,17 @@
     "reply": "",
     "answers": [
      {
-      "label": "Reply",
-      "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=DECISION%3A%201%3A%20Reply&body=SCOUT%20bring-up%20%E2%80%94%20register%20the%20watcher%20task%20%2B%20confirm%20claude%20-p%20sign-in%2C%20the%20one%20human%20step%20that%20makes%20the%2024%2F7%20relay%20self-driving.%20%5Bscout%3A%20do-it%2Fhold%5D%20%28%E2%80%A6190301Z%20OPS%20scout%E2%80%A6%0A%0A%E2%80%94%20tapped%20on%20The%20Hardwood%20board%20%282026-07-09%29&labels=decision"
+      "label": "Yes",
+      "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=DECISION%3A%201%3A%20Yes&body=1%3A%20Yes%0A%0A%28what%20you%27re%20answering%3A%20SCOUT%20bring-up%20%E2%80%94%20register%20the%20watcher%20task%20%2B%20confirm%20claude%20-p%20sign-in%2C%20the%20one%20human%20step%20that%20makes%20the%2024%2F7%20relay%20self-driving.%20%5Bscout%3A%20do-it%2Fhold%5D%20%28%E2%80%A6190301Z%20OPS%20scout%E2%80%A6%29%0A%E2%80%94%20tapped%20on%20The%20Hardwood%20board%20%282026-07-09%29&labels=decision"
+     },
+     {
+      "label": "No",
+      "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=DECISION%3A%201%3A%20No&body=1%3A%20No%0A%0A%28what%20you%27re%20answering%3A%20SCOUT%20bring-up%20%E2%80%94%20register%20the%20watcher%20task%20%2B%20confirm%20claude%20-p%20sign-in%2C%20the%20one%20human%20step%20that%20makes%20the%2024%2F7%20relay%20self-driving.%20%5Bscout%3A%20do-it%2Fhold%5D%20%28%E2%80%A6190301Z%20OPS%20scout%E2%80%A6%29%0A%E2%80%94%20tapped%20on%20The%20Hardwood%20board%20%282026-07-09%29&labels=decision"
+     },
+     {
+      "label": "Other…",
+      "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=DECISION%3A%201%3A%20Other&body=what%20you%27re%20answering%3A%20SCOUT%20bring-up%20%E2%80%94%20register%20the%20watcher%20task%20%2B%20confirm%20claude%20-p%20sign-in%2C%20the%20one%20human%20step%20that%20makes%20the%2024%2F7%20relay%20self-driving.%20%5Bscout%3A%20do-it%2Fhold%5D%20%28%E2%80%A6190301Z%20OPS%20scout%E2%80%A6%0A%0A1%3A%20%3Cyour%20call%3E%0Abecause%3A%20%3Cone%20line%3E%0A%0A%E2%80%94%20fill%20the%20two%20lines%20above%2C%20then%20Submit%20%28The%20Hardwood%20board%2C%202026-07-09%29&labels=decision",
+      "kind": "other"
      }
     ]
    }
@@ -514,6 +523,14 @@
    "source": "backlog queue",
    "note": "These are the next things the system will work on — what each will be and why it matters. Tap to bump, push down, or shelf an item."
   },
+  "coming_soon": [
+   {
+    "header": "Reply to alerts right in Discord",
+    "why": "your Discord message becomes the decision — no tapping through to a form",
+    "state": "coming soon",
+    "note": "needs a ~5-min one-time bot setup when it reaches the front of the queue."
+   }
+  ],
   "watch_list": [
    "The live public website still carries a database key inside its page code — that's a real public exposure regardless of the repo, and it's the one security item still worth acting on (moving it behind a server).",
    "Publishing the fresh ratings makes those numbers public the moment it ships.",
@@ -521,10 +538,19 @@
    "We're missing several data feeds — timestamped lineup news, reliable travel data, and backfilled depth charts — that block the next accuracy gains. The acquisition list has started."
   ]
  },
- "setup": {
-  "header": "Turn on phone alerts",
-  "body": "Install the ntfy app, then subscribe to your private Hardwood topic to get a push when something needs you. The topic is kept out of the public board on purpose — find it in ops/ntfy_topic.txt on your own machine."
- },
+ "answer_all": null,
+ "setup": [
+  {
+   "kind": "ntfy",
+   "header": "Turn on phone alerts",
+   "body": "Install the ntfy app, then subscribe to your private Hardwood topic to get a push when something needs you. The topic is kept out of the public board on purpose — find it in ops/ntfy_topic.txt on your own machine."
+  },
+  {
+   "kind": "discord",
+   "header": "Turn on Discord alerts",
+   "body": "Get the same pings in Discord: open your server → Channel settings → Integrations → Webhooks → New Webhook → Copy URL, then paste one line into the terminal on your machine — DISCORD_WEBHOOK=<the copied url>. It is stored locally (never on the public board) and this card clears itself once it's live."
+  }
+ ],
  "pdfs": [
   {
    "label": "CHI @ PHO",
@@ -549,13 +575,13 @@
  ],
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-09T20:19:10Z",
-  "age_s": 60,
-  "cycles": 27,
-  "label": "scout: alive, last poll 60s ago"
+  "last_poll_utc": "2026-07-09T20:51:42Z",
+  "age_s": 5,
+  "cycles": 59,
+  "label": "scout: alive, last poll 5s ago"
  },
  "pipe_health": {
-  "directives_pending": 5,
+  "directives_pending": 8,
   "last_processed_clock": "01:00",
   "last_processed_iso": "2026-07-10T01:00:00Z"
  },

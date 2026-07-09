@@ -124,11 +124,12 @@
   function chip(status){ var c=el("span","chip c-"+status, status); return c; }
 
   function setupCard(su){
-    // one-time ntfy setup (directive #5): install app -> subscribe to topic
-    var c=el("div","setup"); c.setAttribute("data-k","setup|ntfy");
-    c.appendChild(el("div","st", su.header||"Turn on phone alerts"));
+    // one-time setup card (ntfy #224500 or Discord #014500). No secret is ever baked — the
+    // ntfy topic / Discord webhook live only in local gitignored files; the card shows HOW.
+    var c=el("div","setup"); c.setAttribute("data-k","setup|"+(su.kind||"ntfy"));
+    c.appendChild(el("div","st", su.header||"Setup"));
     if(su.body){ c.appendChild(el("div","sb", su.body)); }
-    if(su.topic){
+    if(su.topic){  // legacy: only ever set on a private/local render, never the public board
       var t=el("span","topic", su.topic); c.appendChild(t);
       var row=el("div","btnrow");
       var a=el("a","taybtn","Open in ntfy →"); a.href=su.url||("https://ntfy.sh/"+su.topic);
@@ -138,29 +139,44 @@
     return c;
   }
   function ansButtons(it){
-    // each reply word becomes a tap that opens a pre-filled GitHub issue (the tap IS the reply)
+    // each option becomes a tap that opens a pre-filled GitHub issue (the tap IS the reply);
+    // [Other…] opens a fill-in template. Three-tap UX.
     if(!it.answers || !it.answers.length) return null;
     var row=el("div","btnrow");
-    it.answers.forEach(function(a,i){
-      var b=el("a", "taybtn"+(i>0?" ghost":""), a.label); b.href=a.url;
+    it.answers.forEach(function(a){
+      var b=el("a", "taybtn"+(a.kind==="other"?" ghost":""), a.label); b.href=a.url;
       b.target="_blank"; b.rel="noopener"; row.appendChild(b);
     });
     return row;
   }
-  function renderDecisions(items, setup){
+  function answerAllCard(aa){
+    // batch card: one pre-filled issue lists every open item inline
+    if(!aa || !aa.url) return null;
+    var d=el("div","decision"); d.setAttribute("data-k","dec|all");
+    d.style.borderLeftColor="var(--promote)";
+    d.appendChild(el("div","q", "Answer everything in one go"));
+    d.appendChild(el("div","one","One screen lists every open decision with its options — fill the blanks, hit submit once."));
+    var row=el("div","btnrow");
+    var b=el("a","taybtn", aa.label||"Answer all"); b.href=aa.url; b.target="_blank"; b.rel="noopener";
+    row.appendChild(b); d.appendChild(row);
+    return d;
+  }
+  function renderDecisions(items, setup, answerAll){
     var s=el("section"); s.appendChild(el("h2",null,"Needs Anthony — the decision inbox"));
-    if(setup){ s.appendChild(setupCard(setup)); }  // topic is NOT baked (public board); card is presence-only
+    // setup is a LIST of one-time cards (ntfy + Discord); no secret is baked (public board).
+    (setup||[]).forEach(function(su){ s.appendChild(setupCard(su)); });
     if(!items || !items.length){
       var e=el("div","decision"); e.style.borderLeftColor="var(--live)";
       e.appendChild(el("div","q","Nothing needs you right now."));
       e.appendChild(el("div","one","The board is caught up — no decisions are waiting on you."));
       s.appendChild(e); return s;
     }
+    var aac=answerAllCard(answerAll); if(aac){ s.appendChild(aac); }  // batch card first when >=2 open
     items.forEach(function(it){
       var d=el("div","decision"); d.setAttribute("data-k","dec|"+it.n);
       d.appendChild(el("div","q", it.n + ". " + it.text));
       var ab=ansButtons(it);
-      if(ab){ d.appendChild(ab); d.appendChild(el("div","btnhint","Tap an answer — it opens a pre-filled note on GitHub; hit submit to send it back.")); }
+      if(ab){ d.appendChild(ab); d.appendChild(el("div","btnhint","Tap Yes/No to send a ready-made reply, or Other… to type one line. Opens a pre-filled note on GitHub; hit submit.")); }
       else if(it.reply){ d.appendChild(el("div","reply","reply: " + it.reply)); }
       s.appendChild(d);
     });
@@ -182,12 +198,26 @@
     }
     return card;
   }
-  function renderUpcoming(up){
+  function comingCard(c){
+    var card=el("div","upc"); card.setAttribute("data-k","soon|"+(c.header||""));
+    card.style.borderLeftColor="var(--muted)";
+    var ut=el("div","ut");
+    ut.appendChild(el("span","uh", c.header||""));
+    ut.appendChild(el("span","fam", c.state||"coming soon"));
+    card.appendChild(ut);
+    if(c.why){ card.appendChild(el("div","uw","A win: "+c.why)); }
+    if(c.note){ card.appendChild(el("div","one", c.note)); }
+    return card;
+  }
+  function renderUpcoming(up, comingSoon){
     var s=el("section"); s.appendChild(el("h2",null,"Upcoming — what's next"));
-    if(!up || !up.available){ s.appendChild(el("p","empty","The queue is clear.")); return s; }
-    if(up.note){ s.appendChild(el("p","one", up.note)); }
+    if((!up || !up.available) && (!comingSoon || !comingSoon.length)){
+      s.appendChild(el("p","empty","The queue is clear.")); return s; }
+    if(up && up.note){ s.appendChild(el("p","one", up.note)); }
     var g=el("div","grid");
-    (up.items||[]).forEach(function(c){ g.appendChild(upcCard(c)); });
+    ((up&&up.items)||[]).forEach(function(c){ g.appendChild(upcCard(c)); });
+    // future-state goal cards — roadmap, not the live queue
+    (comingSoon||[]).forEach(function(c){ g.appendChild(comingCard(c)); });
     s.appendChild(g);
     var more=up.more_by_family||{}; var fams=Object.keys(more);
     if(fams.length){
@@ -283,14 +313,14 @@
       (b.date||"") + " · " + (b.counts? (b.counts.running+" running · "+b.counts.done_today+
       " done today · "+b.counts.needs_anthony+" awaiting you") : "");
     var main=document.getElementById("main"); main.innerHTML="";
-    main.appendChild(renderDecisions(sec.needs_anthony, b.setup));
-    // Running-Now shows ALL live lanes (directive #9): the coordinator's authoritative
+    main.appendChild(renderDecisions(sec.needs_anthony, b.setup, b.answer_all));
+    // Running-Now shows ALL live lanes: the coordinator's authoritative
     // running_live list wins when present; else the delta-derived IN-FLIGHT cards.
     var live=(sec.running_live && sec.running_live.length)? sec.running_live : sec.running_now;
     main.appendChild(renderCards("Running Now", live, sec.running_plain));
     var pdfs=renderPdfs(b.pdfs); if(pdfs) main.appendChild(pdfs);
     main.appendChild(renderDone(sec.done_today));
-    main.appendChild(renderUpcoming(sec.upcoming));
+    main.appendChild(renderUpcoming(sec.upcoming, sec.coming_soon));
     main.appendChild(renderWatch(sec.watch_list));
     document.getElementById("foot").textContent =
       "Auto-generated from the working record. Last refreshed " + (b.generated_utc||"") +
