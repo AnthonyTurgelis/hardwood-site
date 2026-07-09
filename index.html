@@ -61,6 +61,12 @@
   .empty{color:var(--muted);font-size:12.5px;font-style:italic}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--muted);font-size:11px}
   .team{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:0 5px}
+  .meta{display:flex;align-items:center;gap:5px}
+  .donelist{list-style:none;padding:0;margin:7px 0 0}
+  .donelist li{display:flex;align-items:center;gap:6px;padding:3px 2px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+  .donelist li .name{color:var(--ink);font-weight:550}
+  .donelist li .hw-stamp{margin-left:auto}
+  .morelbl{font-size:11px;color:var(--muted);margin:8px 0 2px}
 </style>
 </head>
 <body>
@@ -90,7 +96,12 @@
 
   function renderDecisions(items){
     var s=el("section"); s.appendChild(el("h2",null,"Needs Anthony — the decision inbox"));
-    if(!items || !items.length){ s.appendChild(el("p","empty","Nothing waiting on you right now.")); return s; }
+    if(!items || !items.length){
+      var e=el("div","decision"); e.style.borderLeftColor="var(--live)";
+      e.appendChild(el("div","q","Nothing needs you right now."));
+      e.appendChild(el("div","one","The board is caught up — no decisions are waiting on you."));
+      s.appendChild(e); return s;
+    }
     items.forEach(function(it){
       var d=el("div","decision"); d.setAttribute("data-k","dec|"+it.n);
       d.appendChild(el("div","q", it.n + ". " + it.text));
@@ -99,23 +110,32 @@
     });
     return s;
   }
+  function stampSpan(c){
+    // per-card timestamp "17:42 · 8m ago" (hardwood.js ticks .hw-stamp[data-utc]); fixed in meta
+    var st=el("span","hw-stamp");
+    if(c.at_iso){ st.setAttribute("data-utc", c.at_iso); }
+    st.setAttribute("data-fallback", c.time||"");
+    st.textContent = c.time||"";
+    return st;
+  }
+  function laneCard(title, c){
+    var card=el("div","card"); card.setAttribute("data-k", title+"|"+c.name+"|"+(c.time||""));
+    var top=el("div","top");
+    top.appendChild(el("span","name", c.name));
+    top.appendChild(chip(c.chip));
+    var meta=el("span","meta");
+    if(c.team){ meta.appendChild(el("span","team",c.team)); }
+    if(c.kind){ meta.appendChild(el("span","team",c.kind)); }
+    meta.appendChild(stampSpan(c));
+    top.appendChild(meta);
+    card.appendChild(top);
+    if(c.one_liner){ card.appendChild(el("div","one", c.one_liner)); }
+    return card;
+  }
   function renderCards(title, cards, plainLines){
     var s=el("section"); s.appendChild(el("h2",null,title));
     var g=el("div","grid"); var any=false;
-    (cards||[]).forEach(function(c){
-      any=true;
-      var card=el("div","card"); card.setAttribute("data-k", title+"|"+c.name+"|"+(c.time||""));
-      var top=el("div","top");
-      top.appendChild(el("span","name", c.name));
-      top.appendChild(chip(c.chip));
-      var meta=el("span","meta");
-      if(c.team){ var t=el("span","team",c.team); meta.appendChild(t); }
-      if(c.time){ meta.appendChild(document.createTextNode(" " + c.time)); }
-      top.appendChild(meta);
-      card.appendChild(top);
-      if(c.one_liner){ card.appendChild(el("div","one", c.one_liner)); }
-      g.appendChild(card);
-    });
+    (cards||[]).forEach(function(c){ any=true; g.appendChild(laneCard(title,c)); });
     if(!any && plainLines && plainLines.length){
       plainLines.forEach(function(t,i){
         var card=el("div","card"); card.setAttribute("data-k",title+"|plain|"+i);
@@ -124,6 +144,28 @@
     }
     if(!any){ s.appendChild(el("p","empty","Nothing here right now.")); return s; }
     s.appendChild(g); return s;
+  }
+  function renderDone(cards){
+    // topline density: top 5 as full cards, the rest collapsed to one-line rows
+    var s=el("section"); s.appendChild(el("h2",null,"Done Today"));
+    if(!cards || !cards.length){ s.appendChild(el("p","empty","Nothing finished yet today.")); return s; }
+    var topN=cards.slice(0,5), rest=cards.slice(5);
+    var g=el("div","grid");
+    topN.forEach(function(c){ g.appendChild(laneCard("Done Today",c)); });
+    s.appendChild(g);
+    if(rest.length){
+      s.appendChild(el("div","morelbl", rest.length + " more finished earlier"));
+      var ul=el("ul","donelist");
+      rest.forEach(function(c){
+        var li=el("li"); li.setAttribute("data-k","done|"+c.name+"|"+(c.time||""));
+        li.appendChild(chip(c.chip));
+        li.appendChild(el("span","name", c.name));
+        li.appendChild(stampSpan(c));
+        ul.appendChild(li);
+      });
+      s.appendChild(ul);
+    }
+    return s;
   }
   function renderWatch(lines){
     var s=el("section"); s.appendChild(el("h2",null,"Watch List"));
@@ -148,9 +190,12 @@
       " done today · "+b.counts.needs_anthony+" awaiting you") : "");
     var main=document.getElementById("main"); main.innerHTML="";
     main.appendChild(renderDecisions(sec.needs_anthony));
-    main.appendChild(renderCards("Running Now", sec.running_now, sec.running_plain));
+    // Running-Now shows ALL live lanes (directive #9): the coordinator's authoritative
+    // running_live list wins when present; else the delta-derived IN-FLIGHT cards.
+    var live=(sec.running_live && sec.running_live.length)? sec.running_live : sec.running_now;
+    main.appendChild(renderCards("Running Now", live, sec.running_plain));
     var pdfs=renderPdfs(b.pdfs); if(pdfs) main.appendChild(pdfs);
-    main.appendChild(renderCards("Done Today", sec.done_today, null));
+    main.appendChild(renderDone(sec.done_today));
     main.appendChild(renderWatch(sec.watch_list));
     document.getElementById("foot").textContent =
       "Auto-generated from the working record. Last refreshed " + (b.generated_utc||"") +

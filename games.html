@@ -96,11 +96,16 @@
     return wrap;
   }
 
-  function card(g, pdfByDate){
+  function card(g, pdfByDate, genUtc){
     var c=el("div","g"); c.setAttribute("data-k", g.date+"|"+g.away+"@"+g.home);
     var h=el("div","gh");
     h.appendChild(el("b", null, g.away+" @ "+g.home));
-    h.appendChild(el("span","pill", g.date.slice(5)));
+    var rt=el("span"); rt.style.textAlign="right";
+    rt.appendChild(el("span","pill", g.date.slice(5)));
+    var st=el("span","hw-stamp"); st.style.display="block";
+    if(genUtc){ st.setAttribute("data-utc", genUtc); } st.setAttribute("data-fallback","");
+    rt.appendChild(st);
+    h.appendChild(rt);
     c.appendChild(h);
     c.appendChild(el("div","call","Our call: "+(g.call||"—")));
 
@@ -160,7 +165,7 @@
     order.forEach(function(day){
       main.appendChild(el("div","daylbl", day));
       var grid=el("div","grid");
-      byDay[day].forEach(function(g){ grid.appendChild(card(g, pdfByDate)); });
+      byDay[day].forEach(function(g){ grid.appendChild(card(g, pdfByDate, d.generated_utc)); });
       main.appendChild(grid);
     });
     flash();
