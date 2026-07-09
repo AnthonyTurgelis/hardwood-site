@@ -152,6 +152,7 @@
     document.getElementById("foot").textContent="Baked "+(d.generated_utc||"")+". Ranges are calibrated from our own past accuracy — a single game's margin swings a lot. Win chance is recalibrated. Updates within ~2 min of a refresh.";
     if(!d.available){ main.appendChild(el("p","empty", d.note||"No upcoming games on the board yet.")); flash(); return; }
     main.appendChild(el("p","lede", d.source||""));
+    if(d.basis){ main.appendChild(el("p","note", d.basis)); }
     var pdfByDate={}; (d.pdfs||[]).forEach(function(p){ (pdfByDate[p.date]=pdfByDate[p.date]||[]).push(p); });
     var byDay={}, order=[];
     d.games.forEach(function(g){ if(!byDay[g.date]){ byDay[g.date]=[]; order.push(g.date); } byDay[g.date].push(g); });
