@@ -96,6 +96,25 @@
   .donelist li .name{color:var(--ink);font-weight:550}
   .donelist li .hw-stamp{margin-left:auto}
   .morelbl{font-size:11px;color:var(--muted);margin:8px 0 2px}
+  /* queue reorder — local edits + sticky unsaved-changes bar (batch mode) */
+  #qbar{position:fixed;top:0;left:0;right:0;z-index:60;display:none;align-items:center;gap:10px;
+    padding:8px 14px;background:var(--card);border-bottom:1px solid var(--line);
+    box-shadow:0 2px 8px rgba(20,24,35,.14);flex-wrap:wrap}
+  .qbar-msg{font-size:12.5px;font-weight:660;color:var(--blocked);margin-right:auto}
+  .qbar-msg.sent{color:var(--live)}
+  #qbar button{font:inherit;font-size:11.5px;font-weight:640;border-radius:6px;padding:3px 12px;cursor:pointer}
+  .qbar-send{color:#fff;background:var(--accent);border:1px solid var(--accent)}
+  .qbar-send:disabled{opacity:.55;cursor:default}
+  .qbar-disc{color:var(--accent);background:transparent;border:1px solid var(--line)}
+  body.hasbar{padding-top:42px}
+  .qbtn{cursor:pointer;font-family:inherit}
+  /* optional 4th card layer — collapsed extra context */
+  details.cardmore{margin-top:6px}
+  details.cardmore>summary{cursor:pointer;font-size:11.5px;color:var(--accent);list-style:none}
+  details.cardmore>summary::-webkit-details-marker{display:none}
+  .cardmore-body{font-size:12px;color:var(--muted);margin-top:4px}
+  .cardmore-list{margin:4px 0 0;padding-left:18px;font-size:12px;color:var(--muted)}
+  .cardmore-list li{margin-bottom:2px}
 </style>
 </head>
 <body>
@@ -122,6 +141,86 @@
   function el(tag, cls, txt){ var e=document.createElement(tag); if(cls)e.className=cls;
     if(txt!=null)e.textContent=txt; return e; }
   function chip(status){ var c=el("span","chip c-"+status, status); return c; }
+  function moreToggle(more){
+    // optional 4th card layer: a "more ▾" toggle, collapsed by default, holding extra
+    // context or steps. Renders only when the card carries a `more` field (string or list),
+    // so nothing above the fold ever gets longer.
+    if(more==null || (Array.isArray(more) && !more.length) || (typeof more==="string" && !more.trim())) return null;
+    var det=el("details","cardmore");
+    det.appendChild(el("summary",null,"more ▾"));
+    if(Array.isArray(more)){
+      var ul=el("ul","cardmore-list");
+      more.forEach(function(step){ ul.appendChild(el("li",null,String(step))); });
+      det.appendChild(ul);
+    } else {
+      det.appendChild(el("div","cardmore-body", String(more)));
+    }
+    return det;
+  }
+
+  /* ---------- queue reorder: local page state + batch send (no network per change) ---------- */
+  var QKEY="hw_queue_ops_v1";
+  var QVERB={bump:"Move this to the front of the queue", demote:"Push this one spot lower",
+             shelve:"Set this one aside for now"};
+  function loadOps(){ try{ var v=JSON.parse(localStorage.getItem(QKEY)); return Array.isArray(v)?v:[]; }
+    catch(e){ return []; } }
+  function saveOps(ops){ try{ localStorage.setItem(QKEY, JSON.stringify(ops)); }catch(e){} }
+  function applyOps(base, ops){
+    // replay the pending edits on top of the fresh server list, so local reorders survive a poll
+    var order=base.slice();
+    (ops||[]).forEach(function(op){
+      var i=-1;
+      for(var k=0;k<order.length;k++){ if((order[k].task_id||order[k].header)===op.id){ i=k; break; } }
+      if(i<0) return;
+      var c=order.splice(i,1)[0];
+      if(op.action==="bump"){ order.unshift(c); }
+      else if(op.action==="demote"){ order.splice(Math.min(i+1,order.length),0,c); }
+      // shelve: leave removed
+    });
+    return order;
+  }
+  function addOp(id, action){ var ops=loadOps(); ops.push({id:id, action:action}); saveOps(ops);
+    if(lastB) render(lastB); updateBar(); }
+  function discardOps(){ saveOps([]); if(lastB) render(lastB); updateBar(); }
+  function sendAll(){
+    var ops=loadOps(); if(!ops.length) return;
+    var n=ops.length;
+    var title="QUEUE: batch reorder ("+n+" change"+(n>1?"s":"")+")";
+    var lines=ops.map(function(o){ return "QUEUE: "+o.id+": "+o.action; });
+    var body=lines.join("\n")+"\n\n— batch queue changes from The Hardwood board";
+    var url="https://github.com/AnthonyTurgelis/hardwood-site/issues/new"
+      +"?title="+encodeURIComponent(title)+"&body="+encodeURIComponent(body)+"&labels=queue";
+    window.open(url,"_blank","noopener");
+    saveOps([]); if(lastB) render(lastB); updateBar(true);   // handed off to GitHub — clear local edits
+  }
+  function buildBar(){
+    var bar=el("div"); bar.id="qbar";
+    var msg=el("span","qbar-msg"); msg.id="qbar-msg";
+    var send=el("button","qbar-send","Send all to GitHub"); send.type="button"; send.onclick=sendAll;
+    var disc=el("button","qbar-disc","Discard"); disc.type="button"; disc.onclick=discardOps;
+    bar.appendChild(msg); bar.appendChild(send); bar.appendChild(disc);
+    document.body.appendChild(bar);
+  }
+  function updateBar(sent){
+    var bar=document.getElementById("qbar"); if(!bar) return;
+    var msg=document.getElementById("qbar-msg");
+    var send=bar.querySelector(".qbar-send"), disc=bar.querySelector(".qbar-disc");
+    var n=loadOps().length;
+    if(n>0){
+      msg.className="qbar-msg";
+      msg.textContent="● Unsaved changes — "+n+" queue change"+(n>1?"s":"")+" not sent yet";
+      send.disabled=false; disc.style.display="";
+      bar.style.display="flex"; document.body.classList.add("hasbar");
+    } else if(sent){
+      msg.className="qbar-msg sent";
+      msg.textContent="Sent. The queue updates within a minute.";
+      send.disabled=true; disc.style.display="none";
+      bar.style.display="flex"; document.body.classList.add("hasbar");
+      setTimeout(function(){ if(!loadOps().length){ bar.style.display="none"; document.body.classList.remove("hasbar"); } }, 4000);
+    } else {
+      bar.style.display="none"; document.body.classList.remove("hasbar");
+    }
+  }
 
   function setupCard(su){
     // one-time setup card (ntfy #224500 or Discord #014500). No secret is ever baked — the
@@ -136,6 +235,7 @@
       a.target="_blank"; a.rel="noopener"; row.appendChild(a);
       c.appendChild(row);
     }
+    var m=moreToggle(su.more); if(m) c.appendChild(m);
     return c;
   }
   function ansButtons(it){
@@ -178,6 +278,7 @@
       var ab=ansButtons(it);
       if(ab){ d.appendChild(ab); d.appendChild(el("div","btnhint","Tap Yes/No to send a ready-made reply, or Other… to type one line. Opens a pre-filled note on GitHub; hit submit.")); }
       else if(it.reply){ d.appendChild(el("div","reply","reply: " + it.reply)); }
+      var dm=moreToggle(it.more); if(dm) d.appendChild(dm);
       s.appendChild(d);
     });
     return s;
@@ -191,11 +292,19 @@
     card.appendChild(ut);
     if(c.why){ card.appendChild(el("div","uw","A win: "+c.why)); }
     if(c.actions && c.actions.length){
+      // reorder applies LOCALLY in the page — instant, no network per change; the sticky bar
+      // gathers every edit into ONE send. (Per-change instant/network mode removed.)
       var row=el("div","btnrow");
-      c.actions.forEach(function(a){ var b=el("a","qbtn", a.icon); b.title="Tap to "+a.verb+" this on the queue";
-        b.href=a.url; b.target="_blank"; b.rel="noopener"; row.appendChild(b); });
+      var tid=c.task_id||c.header;
+      c.actions.forEach(function(a){
+        var b=el("button","qbtn", a.icon); b.type="button";
+        b.title=QVERB[a.verb]||a.verb;
+        b.onclick=(function(verb){ return function(){ addOp(tid, verb); }; })(a.verb);
+        row.appendChild(b);
+      });
       card.appendChild(row);
     }
+    var um=moreToggle(c.more); if(um) card.appendChild(um);
     return card;
   }
   function comingCard(c){
@@ -209,25 +318,41 @@
     if(c.note){ card.appendChild(el("div","one", c.note)); }
     return card;
   }
+  function flattenUpcoming(up){
+    // one global ordered list = top cards + the by-family "more" pool, sorted by server rank,
+    // so a local reorder can move an item across the top/more boundary
+    var base=[];
+    ((up&&up.items)||[]).forEach(function(c){ base.push(c); });
+    var more=(up&&up.more_by_family)||{};
+    Object.keys(more).forEach(function(f){ (more[f]||[]).forEach(function(c){ base.push(c); }); });
+    base.sort(function(a,b){ return (a.rank||999)-(b.rank||999); });
+    return base;
+  }
   function renderUpcoming(up, comingSoon){
     var s=el("section"); s.appendChild(el("h2",null,"Upcoming — what's next"));
-    if((!up || !up.available) && (!comingSoon || !comingSoon.length)){
+    var base=flattenUpcoming(up);
+    var hasSoon=comingSoon && comingSoon.length;
+    if(!base.length && !hasSoon){
       s.appendChild(el("p","empty","The queue is clear.")); return s; }
     if(up && up.note){ s.appendChild(el("p","one", up.note)); }
+    // replay pending local edits (bump / demote / shelve) on top of the fresh server order
+    var order=applyOps(base, loadOps());
+    var top=order.slice(0,10), rest=order.slice(10);
     var g=el("div","grid");
-    ((up&&up.items)||[]).forEach(function(c){ g.appendChild(upcCard(c)); });
+    top.forEach(function(c){ g.appendChild(upcCard(c)); });
     // future-state goal cards — roadmap, not the live queue
     (comingSoon||[]).forEach(function(c){ g.appendChild(comingCard(c)); });
     s.appendChild(g);
-    var more=up.more_by_family||{}; var fams=Object.keys(more);
-    if(fams.length){
+    if(rest.length){
+      var byFam={};
+      rest.forEach(function(c){ (byFam[c.family]=byFam[c.family]||[]).push(c); });
+      var fams=Object.keys(byFam);
       var det=el("details","more");
-      var sum=el("summary", null, "▸ show all "+(up.more_count||0)+" more queued");
-      det.appendChild(sum);
+      det.appendChild(el("summary", null, "▸ show all "+rest.length+" more queued"));
       fams.sort().forEach(function(f){
         det.appendChild(el("div","famgrp", f));
         var gg=el("div","grid");
-        more[f].forEach(function(c){ gg.appendChild(upcCard(c)); });
+        byFam[f].forEach(function(c){ gg.appendChild(upcCard(c)); });
         det.appendChild(gg);
       });
       s.appendChild(det);
@@ -254,6 +379,7 @@
     top.appendChild(meta);
     card.appendChild(top);
     if(c.one_liner){ card.appendChild(el("div","one", c.one_liner)); }
+    var lm=moreToggle(c.more); if(lm) card.appendChild(lm);
     return card;
   }
   function renderCards(title, cards, plainLines){
@@ -307,7 +433,9 @@
     s.appendChild(wrap); return s;
   }
 
+  var lastB=null;
   function render(b){
+    lastB=b;
     var sec=b.sections||{};
     document.getElementById("sub").textContent =
       (b.date||"") + " · " + (b.counts? (b.counts.running+" running · "+b.counts.done_today+
@@ -351,6 +479,15 @@
     });
   }
   poll(); setInterval(poll,60000); setInterval(updAgo,1000);
+
+  /* ---------- queue-edit bar: build, sync across tabs, warn on leave ---------- */
+  buildBar(); updateBar();
+  // another tab may add/clear edits — mirror its state here (persists across tabs)
+  window.addEventListener("storage", function(e){ if(e.key===QKEY){ if(lastB) render(lastB); updateBar(); } });
+  // block an accidental page-leave while edits are still un-sent
+  window.addEventListener("beforeunload", function(e){
+    if(loadOps().length){ e.preventDefault(); e.returnValue=""; return ""; }
+  });
 })();
 </script>
 </body>
