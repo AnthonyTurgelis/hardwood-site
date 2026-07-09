@@ -149,7 +149,7 @@
   }
   function renderDecisions(items, setup){
     var s=el("section"); s.appendChild(el("h2",null,"Needs Anthony — the decision inbox"));
-    if(setup && setup.topic){ s.appendChild(setupCard(setup)); }
+    if(setup){ s.appendChild(setupCard(setup)); }  // topic is NOT baked (public board); card is presence-only
     if(!items || !items.length){
       var e=el("div","decision"); e.style.borderLeftColor="var(--live)";
       e.appendChild(el("div","q","Nothing needs you right now."));
