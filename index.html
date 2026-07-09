@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Status Board</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#16181d; --muted:#5b6472; --line:#e5e8ee;
+    --accent:#2b6cb0; --shadow:0 1px 3px rgba(20,24,35,.08);
+    --live:#1f883d; --verified:#0969da; --inflight:#9a6700; --shelved:#6e7781;
+    --null:#6e7781; --promote:#8250df; --blocked:#cf222e; --done:#57606a;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#0d1117; --card:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#222a35;
+      --accent:#58a6ff; --shadow:none; --live:#3fb950; --verified:#58a6ff; --inflight:#d29922;
+      --shelved:#8b949e; --null:#8b949e; --promote:#a371f7; --blocked:#f85149; --done:#8b949e; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-text-size-adjust:100%}
+  header{padding:20px 16px 8px;max-width:900px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:13px}
+  nav{display:flex;gap:6px;flex-wrap:wrap;max-width:900px;margin:12px auto 0;padding:0 16px}
+  nav a{font-size:13px;text-decoration:none;color:var(--accent);border:1px solid var(--line);
+    background:var(--card);padding:6px 12px;border-radius:999px}
+  nav a.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  main{max-width:900px;margin:0 auto;padding:8px 16px 60px}
+  section{margin-top:22px}
+  h2{font-size:15px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);
+    margin:0 0 10px;font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px;
+    margin-bottom:9px;box-shadow:var(--shadow)}
+  .card .top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .card .name{font-weight:650;font-size:15px}
+  .card .one{color:var(--muted);font-size:14px;margin-top:3px}
+  .meta{font-size:12px;color:var(--muted);margin-left:auto;white-space:nowrap}
+  .chip{font-size:11px;font-weight:700;letter-spacing:.03em;padding:2px 8px;border-radius:999px;
+    color:#fff;text-transform:uppercase}
+  .c-LIVE{background:var(--live)} .c-VERIFIED{background:var(--verified)}
+  .c-IN-FLIGHT{background:var(--inflight)} .c-SHELVED{background:var(--shelved)}
+  .c-NULL{background:var(--null)} .c-PROMOTE{background:var(--promote)}
+  .c-BLOCKED{background:var(--blocked)} .c-DONE{background:var(--done)}
+  .decision{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:10px;padding:12px 14px;margin-bottom:9px}
+  .decision .q{font-weight:600}
+  .decision .reply{display:inline-block;margin-top:6px;font-size:12px;font-family:ui-monospace,monospace;
+    background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--ink)}
+  .watch li{margin-bottom:6px;color:var(--muted)}
+  .pdfs a{display:inline-block;margin:0 8px 8px 0;font-size:13px;text-decoration:none;color:var(--accent);
+    border:1px solid var(--line);background:var(--card);padding:6px 11px;border-radius:8px}
+  .empty{color:var(--muted);font-size:14px;font-style:italic}
+  footer{max-width:900px;margin:0 auto;padding:24px 16px;color:var(--muted);font-size:12px}
+  .team{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+</style>
+</head>
+<body>
+<header>
+  <h1>The Hardwood — Status Board</h1>
+  <div class="sub" id="sub">Loading…</div>
+</header>
+<nav>
+  <a class="active" href="./index.html">Board</a>
+  <a href="./review.html">Daily Review</a>
+  <a href="./accuracy.html">Our Accuracy</a>
+  <a href="./ledger.html">Error Map</a>
+</nav>
+<main id="main"><p class="empty">Loading the board…</p></main>
+<footer id="foot"></footer>
+<script>
+(function(){
+  "use strict";
+  function el(tag, cls, txt){ var e=document.createElement(tag); if(cls)e.className=cls;
+    if(txt!=null)e.textContent=txt; return e; }
+  function chip(status){ var c=el("span","chip c-"+status, status); return c; }
+
+  function renderDecisions(items){
+    var s=el("section"); s.appendChild(el("h2",null,"Needs Anthony — the decision inbox"));
+    if(!items || !items.length){ s.appendChild(el("p","empty","Nothing waiting on you right now.")); return s; }
+    items.forEach(function(it){
+      var d=el("div","decision");
+      d.appendChild(el("div","q", it.n + ". " + it.text));
+      if(it.reply){ d.appendChild(el("div","reply","reply: " + it.reply)); }
+      s.appendChild(d);
+    });
+    return s;
+  }
+  function renderCards(title, cards, plainLines){
+    var s=el("section"); s.appendChild(el("h2",null,title));
+    var any=false;
+    (cards||[]).forEach(function(c){
+      any=true;
+      var card=el("div","card");
+      var top=el("div","top");
+      top.appendChild(el("span","name", c.name));
+      top.appendChild(chip(c.chip));
+      var meta=el("span","meta");
+      if(c.team){ var t=el("span","team",c.team); meta.appendChild(t); }
+      if(c.time){ meta.appendChild(document.createTextNode(" " + c.time)); }
+      top.appendChild(meta);
+      card.appendChild(top);
+      if(c.one_liner){ card.appendChild(el("div","one", c.one_liner)); }
+      s.appendChild(card);
+    });
+    if(!any && plainLines && plainLines.length){
+      plainLines.forEach(function(t){
+        var card=el("div","card"); card.appendChild(el("div","one", t)); s.appendChild(card); any=true;
+      });
+    }
+    if(!any){ s.appendChild(el("p","empty","Nothing here right now.")); }
+    return s;
+  }
+  function renderWatch(lines){
+    var s=el("section"); s.appendChild(el("h2",null,"Watch List"));
+    if(!lines || !lines.length){ s.appendChild(el("p","empty","Clear.")); return s; }
+    var ul=el("ul","watch");
+    lines.forEach(function(t){ ul.appendChild(el("li",null,t)); });
+    s.appendChild(ul); return s;
+  }
+  function renderPdfs(pdfs){
+    if(!pdfs || !pdfs.length) return null;
+    var s=el("section"); s.appendChild(el("h2",null,"Gameday Reports — " + (pdfs[0].date||"")));
+    var wrap=el("div","pdfs");
+    pdfs.forEach(function(p){ var a=el("a",null,p.label); a.href=p.href; a.target="_blank";
+      a.rel="noopener"; wrap.appendChild(a); });
+    s.appendChild(wrap); return s;
+  }
+
+  fetch("./board.json").then(function(r){ return r.json(); }).then(function(b){
+    var sec=b.sections||{};
+    document.getElementById("sub").textContent =
+      (b.date||"") + " · " + (b.counts? (b.counts.running+" running · "+b.counts.done_today+
+      " done today · "+b.counts.needs_anthony+" awaiting you") : "");
+    var main=document.getElementById("main"); main.innerHTML="";
+    main.appendChild(renderDecisions(sec.needs_anthony));
+    main.appendChild(renderCards("Running Now", sec.running_now, sec.running_plain));
+    var pdfs=renderPdfs(b.pdfs); if(pdfs) main.appendChild(pdfs);
+    main.appendChild(renderCards("Done Today", sec.done_today, null));
+    main.appendChild(renderWatch(sec.watch_list));
+    document.getElementById("foot").textContent =
+      "Auto-generated from the working record. Last refreshed " + (b.generated_utc||"") +
+      ". Every number a stranger sees is baked here — no live database is ever contacted from your browser.";
+  }).catch(function(e){
+    document.getElementById("main").innerHTML =
+      '<p class="empty">Could not load the board (board.json). '+ (e&&e.message?e.message:"") +'</p>';
+  });
+})();
+</script>
+</body>
+</html>

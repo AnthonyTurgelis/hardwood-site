@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Our Accuracy</title>
+<style>
+  :root{ --bg:#f6f7f9; --card:#ffffff; --ink:#16181d; --muted:#5b6472; --line:#e5e8ee; --accent:#2b6cb0; --shadow:0 1px 3px rgba(20,24,35,.08); --good:#1f883d; --warn:#9a6700; }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#222a35; --accent:#58a6ff; --shadow:none; --good:#3fb950; --warn:#d29922; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:20px 16px 8px;max-width:860px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:13px}
+  nav{display:flex;gap:6px;flex-wrap:wrap;max-width:860px;margin:12px auto 0;padding:0 16px}
+  nav a{font-size:13px;text-decoration:none;color:var(--accent);border:1px solid var(--line);background:var(--card);padding:6px 12px;border-radius:999px}
+  nav a.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  main{max-width:860px;margin:0 auto;padding:8px 16px 60px}
+  .lede{color:var(--muted);font-size:14px;margin:10px 0 4px}
+  section{margin-top:22px}
+  h2{font-size:15px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:0 0 10px;font-weight:700}
+  .metric{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px}
+  .metric .val{font-size:30px;font-weight:750;line-height:1;min-width:96px;text-align:center}
+  .metric .val small{font-size:14px;font-weight:600;color:var(--muted)}
+  .metric .body{flex:1}
+  .metric .lbl{font-weight:650;font-size:15px}
+  .metric .note{color:var(--muted);font-size:13px;margin-top:2px}
+  .metric .tag{font-size:11px;color:var(--muted);margin-top:4px}
+  .nodata .val{color:var(--muted);font-size:16px;font-weight:600}
+  .cal{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:10px;box-shadow:var(--shadow)}
+  .cal .lbl{font-weight:620;font-size:14px}
+  .bar{height:9px;background:var(--line);border-radius:999px;margin-top:8px;position:relative;overflow:hidden}
+  .bar > i{position:absolute;top:0;left:0;bottom:0;background:var(--good);border-radius:999px}
+  .bar > b{position:absolute;top:-3px;width:2px;height:15px;background:var(--ink);opacity:.55}
+  .cal .row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+  .spark{display:flex;gap:6px;align-items:flex-end;height:70px;margin-top:6px}
+  .spark .b{flex:1;background:var(--accent);border-radius:4px 4px 0 0;min-height:4px;opacity:.85;position:relative}
+  .spark .b span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px;color:var(--muted)}
+  .empty{color:var(--muted);font-style:italic}
+  footer{max-width:860px;margin:0 auto;padding:24px 16px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>The Hardwood — Our Accuracy</h1>
+  <div class="sub" id="sub">Loading…</div>
+</header>
+<nav>
+  <a href="./index.html">Board</a>
+  <a href="./review.html">Daily Review</a>
+  <a class="active" href="./accuracy.html">Our Accuracy</a>
+  <a href="./ledger.html">Error Map</a>
+</nav>
+<main id="main"><p class="empty">Loading the scorecard…</p></main>
+<footer id="foot"></footer>
+<script>
+(function(){
+  "use strict";
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+
+  function metricCard(m){
+    var c=el("div","metric" + (m.no_data?" nodata":""));
+    var v=el("div","val");
+    if(m.no_data || m.value==null){ v.textContent="not yet tracked"; }
+    else{ v.textContent = m.value; if(m.unit && m.unit!=="%"){ var s=el("small"); s.textContent=" "+m.unit; v.appendChild(s);} else if(m.unit==="%"){ v.textContent = m.value + "%"; } }
+    var body=el("div","body");
+    body.appendChild(el("div","lbl", m.surface));
+    if(m.note) body.appendChild(el("div","note", m.note));
+    var tag = (m.n?("based on " + m.n + " graded cases"):"") + (m.kind?(m.n?" · ":"") + m.kind:"");
+    if(tag) body.appendChild(el("div","tag", tag));
+    c.appendChild(v); c.appendChild(body); return c;
+  }
+
+  function calCard(k){
+    var c=el("div","cal");
+    c.appendChild(el("div","lbl", k.surface));
+    var pct=Math.max(0,Math.min(100,k.actual));
+    var bar=el("div","bar");
+    var fill=el("i"); fill.style.width=pct+"%";
+    if(Math.abs(k.actual-k.target)>5) fill.style.background="var(--warn)";
+    var tgt=el("b"); tgt.style.left=Math.max(0,Math.min(100,k.target))+"%";
+    bar.appendChild(fill); bar.appendChild(tgt);
+    c.appendChild(bar);
+    var row=el("div","row");
+    row.appendChild(el("span",null,"actual: " + k.actual + "%"));
+    row.appendChild(el("span",null,"target: " + k.target + "%" + (k.n?(" · "+k.n+" games"):"")));
+    c.appendChild(row);
+    return c;
+  }
+
+  function sparkline(monthly){
+    var s=el("section"); s.appendChild(el("h2",null,"Game-margin error by month"));
+    var vals=monthly.filter(function(m){return m.value!=null;});
+    if(!vals.length){ s.appendChild(el("p","empty","No monthly history yet.")); return s; }
+    var max=Math.max.apply(null, vals.map(function(m){return m.value;}));
+    var wrap=el("div","spark");
+    vals.forEach(function(m){
+      var b=el("div","b"); b.style.height=Math.round((m.value/max)*100)+"%";
+      b.title=m.month+": "+m.value+" pts";
+      var lab=el("span"); lab.textContent=(m.month||"").slice(5)+" · "+m.value; b.appendChild(lab);
+      wrap.appendChild(b);
+    });
+    var box=el("div"); box.style.paddingBottom="22px"; box.appendChild(wrap);
+    s.appendChild(box); return s;
+  }
+
+  fetch("./accuracy.json").then(function(r){ return r.json(); }).then(function(a){
+    document.getElementById("sub").textContent = (a.date||"") + " · a prediction platform that publishes its own scorecard";
+    var main=document.getElementById("main"); main.innerHTML="";
+    main.appendChild(el("p","lede","Honest, self-graded accuracy. Every figure comes from grading our own past predictions against what actually happened — " + (a.source||"") + "."));
+    if(!a.available){ main.appendChild(el("p","empty", a.note || "No graded accuracy available yet.")); return; }
+
+    if(a.surfaces && a.surfaces.length){
+      var s1=el("section"); s1.appendChild(el("h2",null,"How accurate we are, per surface"));
+      a.surfaces.forEach(function(m){ s1.appendChild(metricCard(m)); });
+      main.appendChild(s1);
+    }
+    if(a.calibration && a.calibration.length){
+      var s2=el("section"); s2.appendChild(el("h2",null,"Are our prediction ranges honest?"));
+      s2.appendChild(el("p","lede","When we give a range, it should contain the real result about as often as it claims."));
+      a.calibration.forEach(function(k){ s2.appendChild(calCard(k)); });
+      main.appendChild(s2);
+    }
+    if(a.monthly && a.monthly.length){ main.appendChild(sparkline(a.monthly)); }
+    document.getElementById("foot").textContent = "Baked " + (a.generated_utc||"") + ". Lower error is better; a single WNBA game's margin is mostly luck, for us and for the market alike.";
+  }).catch(function(e){
+    document.getElementById("main").innerHTML='<p class="empty">Could not load the scorecard. '+(e&&e.message?e.message:"")+'</p>';
+  });
+})();
+</script>
+</body>
+</html>

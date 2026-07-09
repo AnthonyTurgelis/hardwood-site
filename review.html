@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Daily Review</title>
+<style>
+  :root{ --bg:#f6f7f9; --card:#ffffff; --ink:#16181d; --muted:#5b6472; --line:#e5e8ee; --accent:#2b6cb0; --shadow:0 1px 3px rgba(20,24,35,.08); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#222a35; --accent:#58a6ff; --shadow:none; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:20px 16px 8px;max-width:760px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 2px}
+  .sub{color:var(--muted);font-size:13px}
+  nav{display:flex;gap:6px;flex-wrap:wrap;max-width:760px;margin:12px auto 0;padding:0 16px}
+  nav a{font-size:13px;text-decoration:none;color:var(--accent);border:1px solid var(--line);background:var(--card);padding:6px 12px;border-radius:999px}
+  nav a.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  main{max-width:760px;margin:0 auto;padding:8px 16px 60px}
+  .doc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 20px 20px;box-shadow:var(--shadow)}
+  .doc h1{font-size:20px;margin:18px 0 6px}
+  .doc h2{font-size:17px;margin:22px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+  .doc h3{font-size:15px;margin:16px 0 4px}
+  .doc p{margin:8px 0}
+  .doc ul{margin:8px 0;padding-left:22px}
+  .doc li{margin:4px 0}
+  .doc hr{border:none;border-top:1px solid var(--line);margin:18px 0}
+  .doc code{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:.9em}
+  .doc a{color:var(--accent)}
+  .doc strong{color:var(--ink)}
+  .empty{color:var(--muted);font-style:italic}
+  footer{max-width:760px;margin:0 auto;padding:24px 16px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<header><h1>The Hardwood — Daily Review</h1><div class="sub" id="sub">Loading…</div></header>
+<nav>
+  <a href="./index.html">Board</a>
+  <a class="active" href="./review.html">Daily Review</a>
+  <a href="./accuracy.html">Our Accuracy</a>
+  <a href="./ledger.html">Error Map</a>
+</nav>
+<main id="main"><p class="empty">Loading today's review…</p></main>
+<footer id="foot"></footer>
+<script>
+(function(){
+  "use strict";
+  fetch("./review.json").then(function(r){ return r.json(); }).then(function(d){
+    document.getElementById("sub").textContent = d.date || "";
+    var main=document.getElementById("main");
+    if(!d.available || !d.html){ main.innerHTML='<p class="empty">No review published for today yet.</p>'; return; }
+    var wrap=document.createElement("div"); wrap.className="doc"; wrap.innerHTML=d.html;
+    main.innerHTML=""; main.appendChild(wrap);
+    document.getElementById("foot").textContent = "Written for you as the plain-English daily. Baked " + (d.generated_utc||"") + ".";
+  }).catch(function(e){
+    document.getElementById("main").innerHTML='<p class="empty">Could not load the review. '+(e&&e.message?e.message:"")+'</p>';
+  });
+})();
+</script>
+</body>
+</html>
