@@ -45,6 +45,15 @@
   .mbar .zero{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.7}
   .mcap{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:1px}
   .note{font-size:10.5px;color:var(--dim);margin-top:6px}
+  .todaynote{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--warn);
+    border-radius:8px;padding:8px 11px;color:var(--muted);font-size:12.5px;margin:4px 0}
+  .res{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:9px 11px;box-shadow:var(--shadow)}
+  .res .rh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .res .rteam{font-size:13.5px;font-weight:640}
+  .res .rscore{font-size:15px;font-weight:720;font-variant-numeric:tabular-nums}
+  .res .fin{font-size:12px;color:var(--muted);margin-top:3px}
+  .res .grade{font-size:12px;margin-top:5px;font-weight:620}
+  .grade.good{color:var(--good)} .grade.bad{color:var(--bad)} .grade.na{color:var(--dim);font-weight:500}
   .pdfs{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
   .pdfs a{font-size:11px;color:var(--acc);border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card);text-decoration:none}
   .empty{color:var(--dim);font-style:italic}
@@ -152,21 +161,69 @@
     });
     cardHTML=nm; first=false;
   }
+  function fmtDay(iso){
+    if(!iso) return "";
+    var dt=new Date(iso+"T12:00:00Z"); if(isNaN(dt.getTime())) return iso;
+    return dt.toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric"});
+  }
+  function resultCard(r){
+    var c=el("div","res"); c.setAttribute("data-k","res|"+r.away+"@"+r.home);
+    var rh=el("div","rh");
+    rh.appendChild(el("span","rteam", r.away+" @ "+r.home));
+    if(r.home_score!=null){ rh.appendChild(el("span","rscore", r.away_score+"–"+r.home_score)); }
+    c.appendChild(rh);
+    if(r.winner_full){ c.appendChild(el("div","fin", "Final: "+r.winner_full+" by "+r.final_margin)); }
+    if(r.our_call){
+      var g=el("div","grade "+(r.correct===true?"good":(r.correct===false?"bad":"na")));
+      var mark=r.correct===true?"✓":(r.correct===false?"✗":"");
+      var msg="We called "+r.our_call+" "+mark;
+      if(r.miss!=null){ msg+=" — margin off by "+r.miss; }
+      g.textContent=msg;
+      c.appendChild(g);
+    } else {
+      c.appendChild(el("div","grade na","No pre-game call stored for this game."));
+    }
+    return c;
+  }
+  function slateGrid(games, pdfByDate, genUtc){
+    var grid=el("div","grid");
+    games.forEach(function(g){ grid.appendChild(card(g, pdfByDate, genUtc)); });
+    return grid;
+  }
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
     document.getElementById("foot").textContent="Baked "+(d.generated_utc||"")+". Ranges are calibrated from our own past accuracy — a single game's margin swings a lot. Win chance is recalibrated. Updates within ~2 min of a refresh.";
-    if(!d.available){ main.appendChild(el("p","empty", d.note||"No upcoming games on the board yet.")); flash(); return; }
+    if(!d.available){ main.appendChild(el("p","empty", d.note||"No games on the board yet.")); flash(); return; }
     main.appendChild(el("p","lede", d.source||""));
     if(d.basis){ main.appendChild(el("p","note", d.basis)); }
     var pdfByDate={}; (d.pdfs||[]).forEach(function(p){ (pdfByDate[p.date]=pdfByDate[p.date]||[]).push(p); });
-    var byDay={}, order=[];
-    d.games.forEach(function(g){ if(!byDay[g.date]){ byDay[g.date]=[]; order.push(g.date); } byDay[g.date].push(g); });
-    order.forEach(function(day){
-      main.appendChild(el("div","daylbl", day));
-      var grid=el("div","grid");
-      byDay[day].forEach(function(g){ grid.appendChild(card(g, pdfByDate, d.generated_utc)); });
-      main.appendChild(grid);
-    });
+
+    // TODAY (always first) — honest empty label if today's slate isn't regenerated
+    main.appendChild(el("div","daylbl", "Tonight · "+fmtDay(d.slate_date)));
+    if(d.today && d.today.length){
+      main.appendChild(slateGrid(d.today, pdfByDate, d.generated_utc));
+    } else {
+      main.appendChild(el("div","todaynote", d.note||"No games scheduled for today, or today's projections haven't been regenerated yet."));
+    }
+
+    // YESTERDAY'S RESULTS — finals + how our call graded
+    if(d.yesterday && d.yesterday.length){
+      main.appendChild(el("div","daylbl", "Yesterday's results · "+fmtDay(d.yesterday_date)));
+      var rgrid=el("div","grid");
+      d.yesterday.forEach(function(r){ rgrid.appendChild(resultCard(r)); });
+      main.appendChild(rgrid);
+    }
+
+    // UPCOMING — the forward slate, grouped by day
+    if(d.upcoming && d.upcoming.length){
+      main.appendChild(el("div","daylbl","Upcoming"));
+      var byDay={}, order=[];
+      d.upcoming.forEach(function(g){ if(!byDay[g.date]){ byDay[g.date]=[]; order.push(g.date); } byDay[g.date].push(g); });
+      order.forEach(function(day){
+        main.appendChild(el("div","note", fmtDay(day)));
+        main.appendChild(slateGrid(byDay[day], pdfByDate, d.generated_utc));
+      });
+    }
     flash();
   }
   function poll(){

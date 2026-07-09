@@ -55,6 +55,35 @@
   .decision .q{font-weight:600;font-size:12.5px}
   .decision .reply{display:inline-block;margin-top:4px;font-size:11px;font-family:ui-monospace,monospace;
     background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:2px 7px;color:var(--ink)}
+  .btnrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+  .taybtn{font-size:11.5px;font-weight:640;text-decoration:none;color:#fff;background:var(--accent);
+    border:1px solid var(--accent);border-radius:6px;padding:3px 11px}
+  .taybtn:hover{filter:brightness(1.06)}
+  .taybtn.ghost{background:transparent;color:var(--accent)}
+  .btnhint{font-size:10px;color:var(--muted);margin-top:4px}
+  /* ntfy one-time setup card */
+  .setup{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--promote);
+    border-radius:8px;padding:9px 11px;margin-bottom:8px}
+  .setup .st{font-weight:650;font-size:12.5px}
+  .setup .sb{color:var(--muted);font-size:12px;margin-top:2px}
+  .setup .topic{display:inline-block;margin-top:6px;font-family:ui-monospace,monospace;font-size:11.5px;
+    background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:2px 8px;color:var(--ink)}
+  /* upcoming — goal-level next-up cards */
+  .upc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;box-shadow:var(--shadow)}
+  .upc .ut{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+  .upc .rk{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:700}
+  .upc .uh{font-weight:640;font-size:13px}
+  .fam{font-size:9.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:1px 6px;
+    border-radius:999px;color:#fff}
+  .fam-modeling{background:var(--promote)} .fam-data{background:var(--verified)}
+  .fam-site{background:var(--live)} .fam-infra{background:var(--done)} .fam-research{background:var(--inflight)}
+  .upc .uw{color:var(--muted);font-size:12px;margin-top:2px}
+  .qbtn{font-size:12px;text-decoration:none;color:var(--muted);border:1px solid var(--line);
+    background:var(--bg);border-radius:6px;padding:1px 8px}
+  .qbtn:hover{color:var(--ink)}
+  .famgrp{font-size:11px;color:var(--muted);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+  details.more>summary{cursor:pointer;font-size:12px;color:var(--accent);margin-top:8px;list-style:none}
+  details.more>summary::-webkit-details-marker{display:none}
   .watch li{margin-bottom:3px;color:var(--muted);font-size:12px}
   .pdfs a{display:inline-block;margin:0 6px 6px 0;font-size:12px;text-decoration:none;color:var(--accent);
     border:1px solid var(--line);background:var(--card);padding:4px 9px;border-radius:7px}
@@ -94,8 +123,33 @@
     if(txt!=null)e.textContent=txt; return e; }
   function chip(status){ var c=el("span","chip c-"+status, status); return c; }
 
-  function renderDecisions(items){
+  function setupCard(su){
+    // one-time ntfy setup (directive #5): install app -> subscribe to topic
+    var c=el("div","setup"); c.setAttribute("data-k","setup|ntfy");
+    c.appendChild(el("div","st", su.header||"Turn on phone alerts"));
+    if(su.body){ c.appendChild(el("div","sb", su.body)); }
+    if(su.topic){
+      var t=el("span","topic", su.topic); c.appendChild(t);
+      var row=el("div","btnrow");
+      var a=el("a","taybtn","Open in ntfy →"); a.href=su.url||("https://ntfy.sh/"+su.topic);
+      a.target="_blank"; a.rel="noopener"; row.appendChild(a);
+      c.appendChild(row);
+    }
+    return c;
+  }
+  function ansButtons(it){
+    // each reply word becomes a tap that opens a pre-filled GitHub issue (the tap IS the reply)
+    if(!it.answers || !it.answers.length) return null;
+    var row=el("div","btnrow");
+    it.answers.forEach(function(a,i){
+      var b=el("a", "taybtn"+(i>0?" ghost":""), a.label); b.href=a.url;
+      b.target="_blank"; b.rel="noopener"; row.appendChild(b);
+    });
+    return row;
+  }
+  function renderDecisions(items, setup){
     var s=el("section"); s.appendChild(el("h2",null,"Needs Anthony — the decision inbox"));
+    if(setup && setup.topic){ s.appendChild(setupCard(setup)); }
     if(!items || !items.length){
       var e=el("div","decision"); e.style.borderLeftColor="var(--live)";
       e.appendChild(el("div","q","Nothing needs you right now."));
@@ -105,9 +159,49 @@
     items.forEach(function(it){
       var d=el("div","decision"); d.setAttribute("data-k","dec|"+it.n);
       d.appendChild(el("div","q", it.n + ". " + it.text));
-      if(it.reply){ d.appendChild(el("div","reply","reply: " + it.reply)); }
+      var ab=ansButtons(it);
+      if(ab){ d.appendChild(ab); d.appendChild(el("div","btnhint","Tap an answer — it opens a pre-filled note on GitHub; hit submit to send it back.")); }
+      else if(it.reply){ d.appendChild(el("div","reply","reply: " + it.reply)); }
       s.appendChild(d);
     });
+    return s;
+  }
+  function upcCard(c){
+    var card=el("div","upc"); card.setAttribute("data-k","upc|"+(c.task_id||c.header));
+    var ut=el("div","ut");
+    if(c.rank!=null){ ut.appendChild(el("span","rk","#"+c.rank)); }
+    ut.appendChild(el("span","uh", c.header||""));
+    if(c.family){ ut.appendChild(el("span","fam fam-"+c.family, c.family)); }
+    card.appendChild(ut);
+    if(c.why){ card.appendChild(el("div","uw","A win: "+c.why)); }
+    if(c.actions && c.actions.length){
+      var row=el("div","btnrow");
+      c.actions.forEach(function(a){ var b=el("a","qbtn", a.icon); b.title="Tap to "+a.verb+" this on the queue";
+        b.href=a.url; b.target="_blank"; b.rel="noopener"; row.appendChild(b); });
+      card.appendChild(row);
+    }
+    return card;
+  }
+  function renderUpcoming(up){
+    var s=el("section"); s.appendChild(el("h2",null,"Upcoming — what's next"));
+    if(!up || !up.available){ s.appendChild(el("p","empty","The queue is clear.")); return s; }
+    if(up.note){ s.appendChild(el("p","one", up.note)); }
+    var g=el("div","grid");
+    (up.items||[]).forEach(function(c){ g.appendChild(upcCard(c)); });
+    s.appendChild(g);
+    var more=up.more_by_family||{}; var fams=Object.keys(more);
+    if(fams.length){
+      var det=el("details","more");
+      var sum=el("summary", null, "▸ show all "+(up.more_count||0)+" more queued");
+      det.appendChild(sum);
+      fams.sort().forEach(function(f){
+        det.appendChild(el("div","famgrp", f));
+        var gg=el("div","grid");
+        more[f].forEach(function(c){ gg.appendChild(upcCard(c)); });
+        det.appendChild(gg);
+      });
+      s.appendChild(det);
+    }
     return s;
   }
   function stampSpan(c){
@@ -189,13 +283,14 @@
       (b.date||"") + " · " + (b.counts? (b.counts.running+" running · "+b.counts.done_today+
       " done today · "+b.counts.needs_anthony+" awaiting you") : "");
     var main=document.getElementById("main"); main.innerHTML="";
-    main.appendChild(renderDecisions(sec.needs_anthony));
+    main.appendChild(renderDecisions(sec.needs_anthony, b.setup));
     // Running-Now shows ALL live lanes (directive #9): the coordinator's authoritative
     // running_live list wins when present; else the delta-derived IN-FLIGHT cards.
     var live=(sec.running_live && sec.running_live.length)? sec.running_live : sec.running_now;
     main.appendChild(renderCards("Running Now", live, sec.running_plain));
     var pdfs=renderPdfs(b.pdfs); if(pdfs) main.appendChild(pdfs);
     main.appendChild(renderDone(sec.done_today));
+    main.appendChild(renderUpcoming(sec.upcoming));
     main.appendChild(renderWatch(sec.watch_list));
     document.getElementById("foot").textContent =
       "Auto-generated from the working record. Last refreshed " + (b.generated_utc||"") +
