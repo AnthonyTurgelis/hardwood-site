@@ -1,11 +1,11 @@
 {
- "generated_utc": "2026-07-09T17:41:04+00:00",
+ "generated_utc": "2026-07-09T18:15:30+00:00",
  "date": "2026-07-09",
  "counts": {
   "running": 1,
   "done_today": 40,
-  "needs_anthony": 5,
-  "lanes_today": 102
+  "needs_anthony": 3,
+  "lanes_today": 104
  },
  "sections": {
   "running_now": [
@@ -24,11 +24,6 @@
   ],
   "needs_anthony": [
    {
-    "n": 1,
-    "text": "Rotate the odds-data key at the-odds-api.com — it's in the (private) code repo's history, so not publicly readable; hygiene, not urgent. The real persisting exposure is the website's own database key — see S2.",
-    "reply": "rotate"
-   },
-   {
     "n": 2,
     "text": "Approve publishing the fresh player ratings to the live public site (one-click undo in hand).",
     "reply": "deploy: y/n"
@@ -42,14 +37,23 @@
     "n": 4,
     "text": "Decide the minutes-projection model flip — still gated on the role-change hard-slice check; hold unless you want it pushed.",
     "reply": "minutes: hold/push"
-   },
-   {
-    "n": 5,
-    "text": "Everything else below stays PENDING until you reply — skipped items do not move.",
-    "reply": ""
    }
   ],
   "done_today": [
+   {
+    "name": "Site extension tabs",
+    "one_liner": "SITE EXTENSION (Games / Teams / Players + density + live refresh",
+    "chip": "DONE",
+    "team": "Site",
+    "time": "18:12Z"
+   },
+   {
+    "name": "Cc directive ack selftest",
+    "one_liner": "CC-COORDINATOR — DIRECTOR INBOX ACK (self-test",
+    "chip": "DONE",
+    "team": "",
+    "time": "17:59Z"
+   },
    {
     "name": "Forward accrual collectors",
     "one_liner": "FORWARD-ACCRUAL COLLECTORS",
@@ -315,25 +319,10 @@
     "chip": "SHELVED",
     "team": "Data",
     "time": "06:27Z"
-   },
-   {
-    "name": "orphaned asset census",
-    "one_liner": "ORPHANED-ASSET CENSUS",
-    "chip": "DONE",
-    "team": "Data",
-    "time": "06:19Z"
-   },
-   {
-    "name": "movelo pi ratings",
-    "one_liner": "SOCCER-FAMILY RATING FRONTIER (Task 200 MOV-Elo · Task 201 pi-ratings",
-    "chip": "VERIFIED",
-    "team": "Modeling",
-    "time": "06:15Z"
    }
   ],
   "watch_list": [
-   "The odds-data key stays in old code history until you rotate it — the repository is private, so it isn't publicly readable; rotating is hygiene, not urgent.",
-   "The live public website still carries a database key inside its page code — that's a real public exposure regardless of the repo, and it's the one still worth swapping (see Need-From-You, coming as a follow-up).",
+   "The live public website still carries a database key inside its page code — that's a real public exposure regardless of the repo, and it's the one security item still worth acting on (moving it behind a server).",
    "Publishing the fresh ratings makes those numbers public the moment it ships.",
    "The automatic nightly ratings-refresh isn't switched on yet — it needs one more build step. The freshness alarm will catch any drift until then.",
    "We're missing several data feeds — timestamped lineup news, reliable travel data, and backfilled depth charts — that block the next accuracy gains. The acquisition list has started."

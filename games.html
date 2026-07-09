@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Games</title>
+<style>
+  :root{ --bg:#f4f6f8; --card:#fff; --card2:#f7f9fc; --ink:#161a21; --muted:#5a6675; --dim:#8a93a3;
+    --line:#e3e7ee; --line2:#d3d9e3; --acc:#2b6cb0; --good:#1f883d; --bad:#c62828; --warn:#9a6700;
+    --chip:#eef2f8; --home:#2b6cb0; --away:#9a6700; --flash:rgba(43,108,176,.20); --shadow:0 1px 2px rgba(20,24,35,.06); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --card2:#1c2330; --ink:#e6edf3;
+    --muted:#9aa7b4; --dim:#6b7684; --line:#242c38; --line2:#39424f; --acc:#58a6ff; --good:#3fb950; --bad:#ff7b72;
+    --warn:#d29922; --chip:#21324a; --home:#58a6ff; --away:#e3b341; --flash:rgba(88,166,255,.26); --shadow:none; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0}
+  .sub{color:var(--muted);font-size:12px}
+  .ago{font-size:11px;color:var(--dim);white-space:nowrap}
+  .ago b{color:var(--good);font-variant-numeric:tabular-nums}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--acc);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 48px}
+  .lede{color:var(--muted);font-size:12.5px;margin:6px 0 2px}
+  .daylbl{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;margin:16px 0 8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+  .g{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:10px 11px;box-shadow:var(--shadow)}
+  .g.flash{animation:fl 1.1s ease}
+  @keyframes fl{0%{background:var(--flash)}100%{background:var(--card)}}
+  .gh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:2px}
+  .gh b{font-size:14.5px}
+  .call{font-size:13px;font-weight:650;margin:5px 0 6px;color:var(--acc)}
+  .kv{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+  .k{background:var(--card2);border:1px solid var(--line);border-radius:7px;padding:5px 8px}
+  .k .kl{font-size:9.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px}
+  .k .kvv{font-size:13.5px;font-weight:640;margin-top:1px}
+  .wp{display:flex;height:16px;border-radius:5px;overflow:hidden;border:1px solid var(--line);margin-top:2px;font-size:10px}
+  .wp .h{background:var(--home);color:#fff;display:flex;align-items:center;padding:0 5px}
+  .wp .a{background:var(--card2);color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding:0 5px;flex:1}
+  .mbar{position:relative;height:20px;margin:7px 0 2px;background:var(--card2);border:1px solid var(--line);border-radius:5px}
+  .mbar .b90{position:absolute;top:6px;height:8px;background:var(--line2);border-radius:3px}
+  .mbar .b80{position:absolute;top:5px;height:10px;background:var(--acc);opacity:.55;border-radius:3px}
+  .mbar .pt{position:absolute;top:2px;width:3px;height:16px;background:var(--good);transform:translateX(-1px)}
+  .mbar .zero{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.7}
+  .mcap{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:1px}
+  .note{font-size:10.5px;color:var(--dim);margin-top:6px}
+  .pdfs{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+  .pdfs a{font-size:11px;color:var(--acc);border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card);text-decoration:none}
+  .empty{color:var(--dim);font-style:italic}
+  footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
+</style>
+</head>
+<body>
+<header>
+  <h1>The Hardwood — Games</h1>
+  <span class="ago" id="ago"></span>
+</header>
+<div class="sub" style="max-width:1080px;margin:0 auto;padding:0 14px">Today's slate: our margin call, the honest range around it, and the win chance.</div>
+<nav>
+  <a href="./index.html">Board</a>
+  <a class="active" href="./games.html">Games</a>
+  <a href="./teams.html">Teams</a>
+  <a href="./players.html">Players</a>
+  <a href="./review.html">Daily Review</a>
+  <a href="./accuracy.html">Our Accuracy</a>
+  <a href="./ledger.html">Error Map</a>
+</nav>
+<main id="main"><p class="empty">Loading the slate…</p></main>
+<footer id="foot"></footer>
+<script>
+(function(){
+  "use strict";
+  var URL="./games.json";
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  function num(v,u){ return v==null?"—":(v + (u||"")); }
+
+  function marginBar(g){
+    var lo=g.range90_lo, hi=g.range90_hi, l80=g.range80_lo, h80=g.range80_hi, pt=g.pred_margin;
+    if(lo==null||hi==null) return el("div","note","range not available");
+    var span=Math.max(Math.abs(lo),Math.abs(hi),1);
+    var sc=function(v){ return ((v+span)/(2*span))*100; };
+    var bar=el("div","mbar");
+    var z=el("div","zero"); z.style.left=sc(0).toFixed(1)+"%"; bar.appendChild(z);
+    var b90=el("div","b90"); b90.style.left=sc(lo).toFixed(1)+"%"; b90.style.width=(sc(hi)-sc(lo)).toFixed(1)+"%"; bar.appendChild(b90);
+    if(l80!=null&&h80!=null){ var b80=el("div","b80"); b80.style.left=sc(l80).toFixed(1)+"%"; b80.style.width=(sc(h80)-sc(l80)).toFixed(1)+"%"; bar.appendChild(b80); }
+    if(pt!=null){ var p=el("div","pt"); p.style.left=sc(pt).toFixed(1)+"%"; bar.appendChild(p); }
+    var wrap=el("div");
+    wrap.appendChild(bar);
+    var cap=el("div","mcap");
+    cap.appendChild(el("span",null, g.away+" +"+Math.abs(lo).toFixed(0)));
+    cap.appendChild(el("span",null,"pick'em"));
+    cap.appendChild(el("span",null, g.home+" +"+Math.abs(hi).toFixed(0)));
+    wrap.appendChild(cap);
+    return wrap;
+  }
+
+  function card(g, pdfByDate){
+    var c=el("div","g"); c.setAttribute("data-k", g.date+"|"+g.away+"@"+g.home);
+    var h=el("div","gh");
+    h.appendChild(el("b", null, g.away+" @ "+g.home));
+    h.appendChild(el("span","pill", g.date.slice(5)));
+    c.appendChild(h);
+    c.appendChild(el("div","call","Our call: "+(g.call||"—")));
+
+    var kv=el("div","kv");
+    var k1=el("div","k"); k1.appendChild(el("div","kl","Combined total"));
+    k1.appendChild(el("div","kvv", g.total==null?"—":(g.total+" pts")));
+    if(g.total_lo!=null) k1.appendChild(el("div","note","range "+g.total_lo+"–"+g.total_hi));
+    kv.appendChild(k1);
+    var k2=el("div","k"); k2.appendChild(el("div","kl","Win chance"));
+    if(g.p_home_win!=null){
+      var wpbox=el("div"); var wp=el("div","wp");
+      var hp=Math.max(0,Math.min(100,g.p_home_win)), ap=100-hp;
+      var hh=el("div","h"); hh.style.width=hp+"%"; hh.textContent=g.home+" "+Math.round(hp)+"%";
+      var aa=el("div","a"); aa.textContent=Math.round(ap)+"% "+g.away;
+      wp.appendChild(hh); wp.appendChild(aa); wpbox.appendChild(wp); k2.appendChild(wpbox);
+    } else { k2.appendChild(el("div","kvv","—")); }
+    kv.appendChild(k2);
+    c.appendChild(kv);
+
+    c.appendChild(el("div","note","Margin range (how much the result could swing):"));
+    c.appendChild(marginBar(g));
+
+    var pd=(pdfByDate[g.date]||[]);
+    if(pd.length){
+      var pw=el("div","pdfs");
+      pd.forEach(function(p){ var a=el("a",null,"Game report PDF"); a.href=p.href; a.rel="noopener"; pw.appendChild(a); });
+      c.appendChild(pw);
+    }
+    return c;
+  }
+
+  /* ---------- shared live runtime (poll own JSON, ETag, ago-chip, flash) ---------- */
+  var etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
+  function updAgo(){
+    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
+    var t = s<60 ? (s+"s ago") : (Math.floor(s/60)+"m "+(s%60)+"s ago");
+    var a=document.getElementById("ago");
+    if(a) a.innerHTML = lastFetch? ("live · updated <b>"+t+"</b>") : "";
+  }
+  function flash(){
+    var nodes=document.querySelectorAll("#main [data-k]"), nm={};
+    nodes.forEach(function(n){
+      var k=n.getAttribute("data-k"), h=n.innerHTML; nm[k]=h;
+      if(!first && cardHTML[k]!==undefined && cardHTML[k]!==h){ n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); }
+    });
+    cardHTML=nm; first=false;
+  }
+  function render(d){
+    var main=document.getElementById("main"); main.innerHTML="";
+    document.getElementById("foot").textContent="Baked "+(d.generated_utc||"")+". Ranges are calibrated from our own past accuracy — a single game's margin swings a lot. Win chance is recalibrated. Updates within ~2 min of a refresh.";
+    if(!d.available){ main.appendChild(el("p","empty", d.note||"No upcoming games on the board yet.")); flash(); return; }
+    main.appendChild(el("p","lede", d.source||""));
+    var pdfByDate={}; (d.pdfs||[]).forEach(function(p){ (pdfByDate[p.date]=pdfByDate[p.date]||[]).push(p); });
+    var byDay={}, order=[];
+    d.games.forEach(function(g){ if(!byDay[g.date]){ byDay[g.date]=[]; order.push(g.date); } byDay[g.date].push(g); });
+    order.forEach(function(day){
+      main.appendChild(el("div","daylbl", day));
+      var grid=el("div","grid");
+      byDay[day].forEach(function(g){ grid.appendChild(card(g, pdfByDate)); });
+      main.appendChild(grid);
+    });
+    flash();
+  }
+  function poll(){
+    var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
+    fetch(URL,{headers:h,cache:"no-cache"}).then(function(r){
+      if(r.status===304){ return null; }
+      etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod;
+      return r.json();
+    }).then(function(d){ lastFetch=Date.now(); if(d){ render(d); } updAgo(); }).catch(function(e){
+      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load games. '+(e&&e.message?e.message:"")+'</p>'; }
+    });
+  }
+  poll(); setInterval(poll,60000); setInterval(updAgo,1000);
+})();
+</script>
+</body>
+</html>
