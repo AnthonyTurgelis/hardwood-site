@@ -186,11 +186,41 @@
   .qbar-send:disabled{opacity:.55;cursor:default}
   .qbar-disc{color:var(--accent);background:transparent;border:1px solid var(--line)}
   body.hasbar{padding-top:42px}
+  /* ---------- HERO: tonight's games + our pick (redesign v2: the biggest thing, top) ---------- */
+  .hero{margin-top:12px}
+  .hero .eyebrow{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+    font-weight:800;display:flex;align-items:baseline;gap:8px;margin:0 0 6px}
+  .hero .eyebrow .prov{font-weight:600;letter-spacing:0}
+  .gcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:9px}
+  .gcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;
+    box-shadow:var(--shadow);display:flex;flex-direction:column;gap:5px;position:relative;overflow:hidden}
+  .gcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+  .gcard .gtop{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .gcard .team{font-size:17px;font-weight:800;letter-spacing:-.01em;line-height:1.15}
+  .gcard .tip{font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .gcard .pick{display:flex;align-items:baseline;gap:7px;margin-top:2px}
+  .gcard .pick .lab{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
+    color:#fff;background:var(--accent);border-radius:5px;padding:1px 6px;flex:0 0 auto}
+  .gcard .pick .val{font-size:14px;font-weight:750}
+  .gcard .win{font-size:12px;color:var(--muted);font-weight:600}
+  .gcard .win b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .gcard .venue{font-size:11px;color:var(--warn);line-height:1.4;margin-top:1px}
+  /* ---------- EDGE hero (data-gated: only renders if the board carries a tonight_edge block) ---------- */
+  .edge{margin-top:12px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--promote);
+    border-radius:12px;padding:11px 14px;box-shadow:var(--shadow)}
+  .edge .et{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:800;color:var(--promote)}
+  .edge .eh{font-size:15px;font-weight:780;margin-top:3px}
+  .edge .ew{font-size:12.5px;color:var(--muted);margin-top:2px}
+  /* freshness / stale */
+  .prov b{color:var(--live);font-variant-numeric:tabular-nums;font-weight:700}
+  .banner.stale{border-left:3px solid var(--warn)}
   @media (max-width:520px){
     .row{flex-wrap:wrap}
     .row .oneln{flex-basis:100%;order:3;white-space:normal}
     .qrow .why{margin-left:0}
     .qrow .acts{margin-left:0}
+    .gcards{grid-template-columns:1fr}
+    .gcard .team{font-size:16px}
   }
 </style>
 </head>
@@ -239,7 +269,7 @@
   function chip(status){ var c=el("span","chip c-"+status, status);
     if(CHIPMEAN[status]) c.title=CHIPMEAN[status]; return c; }
 
-  var SRC={};
+  var SRC={}, FRESH={};
   function clock(iso){ var m=/T(\d{2}):(\d{2})/.exec(iso||""); return m ? (m[1]+":"+m[2]) : ""; }
   /* Eastern-time clock from any ISO/UTC stamp — the board never shows a raw UTC clock to a human
      (kills the 'as of 06:23' UTC leak beside a live 'checked 29s ago' chip; directive 230000Z section 3). */
@@ -248,16 +278,31 @@
               .replace(/\s+/g,'').toLowerCase(); }catch(e){ return ""; } }
   var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   function monthDay(iso){ var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(iso||""); return m ? (MON[(+m[2])-1]+" "+(+m[3])) : (iso||""); }
+  /* Section provenance shows a LIVE "checked Xago" (never a frozen "as of" clock): the bake
+     re-validates every section against the record, so the honest freshness anchor for each
+     section is the board's revalidated_utc, ticking every second (board-refresh doctrine). */
+  function provFor(key){
+    var m=(SRC && SRC[key])||null;
+    var reval=(FRESH && FRESH.revalidated_utc) || (lastB && lastB.generated_utc) || null;
+    var prov=el("span","prov");
+    var src=(m && m.source) ? ("from "+m.source+" · ") : "";
+    prov.innerHTML = src + "checked <b>…</b>";
+    if(reval){ prov.setAttribute("data-reval", reval); }
+    return {prov:prov, stale:(m && m.stale)};
+  }
   function sectionHead(title, key){
     var wrap=el("div","sechead"); wrap.appendChild(el("h2",null,title));
-    var m=SRC && SRC[key];
-    if(m){
-      if(m.stale){ wrap.appendChild(el("span","stalebadge","stale")); }
-      var t="from "+(m.source||"the record");
-      if(m.as_of){ t+=" · as of "+etClock(m.as_of); }
-      wrap.appendChild(el("span","prov", t));
-    }
+    var p=provFor(key);
+    if(p.stale){ wrap.appendChild(el("span","stalebadge","stale")); }
+    wrap.appendChild(p.prov);
     return wrap;
+  }
+  function tickProv(){
+    var pv=document.querySelectorAll(".prov[data-reval]");
+    for(var p=0;p<pv.length;p++){
+      var ps=sinceIso(pv[p].getAttribute("data-reval"));
+      var bb=pv[p].querySelector("b"); if(bb) bb.textContent=(ps==null)?"just now":(agoSecs(ps)+" ago");
+    }
   }
   function agoSecs(s){ s=Math.max(0,s);
     if(s<60) return s+"s"; if(s<3600) return Math.floor(s/60)+"m";
@@ -308,6 +353,14 @@
     } else if(bc.state==="paused"){
       w.appendChild(el("div","banner paused","⏳ On a scheduled pause"+
         (bc.usage_resets_clock?(" — back around "+bc.usage_resets_clock):"")+"."));
+    }
+    // BOARD-LEVEL STALENESS (board-refresh doctrine): a board older than its own honest threshold
+    // shows a warning instead of pretending "live". Kills the frozen-numbers-look-live class.
+    var f=b.freshness||{};
+    var age=sinceIso(f.revalidated_utc||b.generated_utc);
+    if(age!=null && f.stale_after_secs && age>f.stale_after_secs){
+      w.appendChild(el("div","banner stale","⚠ This board hasn't refreshed in "+agoSecs(age)+
+        " — the numbers may be behind. It usually updates every few minutes."));
     }
   }
 
@@ -587,25 +640,47 @@
     lines.forEach(function(t){ ul.appendChild(el("li",null,t)); });
     s.appendChild(ul); return s;
   }
-  /* today's slate — matchup, ET tip, our winning-margin call, win chance (Task 1) */
+  /* HERO — tonight's slate is the biggest thing on the board: matchup, ET tip, OUR PICK
+     (winning-margin call) prominent, win chance, venue note (redesign impact-hierarchy). */
   function renderTodayGames(tg){
-    var s=el("section"); s.appendChild(sectionHead("Today's games","today_games"));
+    var s=el("section","hero"); s.setAttribute("data-k","today");
+    var eb=el("div","eyebrow");
+    eb.appendChild(el("span",null,"Tonight — our picks"));
+    var p=provFor("today_games"); eb.appendChild(p.prov);
+    s.appendChild(eb);
     if(!tg || !tg.games || !tg.games.length){
       s.appendChild(el("p","empty",(tg&&tg.note)||"No games on today's slate.")); return s;
     }
-    var list=el("div","list");
+    var grid=el("div","gcards");
     tg.games.forEach(function(g){
-      var r=el("div","row game"); r.setAttribute("data-k","tg|"+(g.abbr||g.matchup||""));
-      var t=el("div","t");
-      t.appendChild(el("span","nm", g.matchup||g.abbr||""));
-      if(g.tip){ t.appendChild(el("span","tag", g.tip)); }
-      r.appendChild(t);
-      if(g.call){ r.appendChild(el("div","why","Our call: "+g.call)); }
-      if(g.win_line){ r.appendChild(el("div","why", g.win_line)); }
-      if(g.venue_note){ r.appendChild(el("div","why venue", g.venue_note)); }
-      list.appendChild(r);
+      var c=el("div","gcard"); c.setAttribute("data-k","tg|"+(g.abbr||g.matchup||""));
+      var top=el("div","gtop");
+      top.appendChild(el("span","team", g.matchup||g.abbr||""));
+      if(g.tip){ top.appendChild(el("span","tip", g.tip)); }
+      c.appendChild(top);
+      if(g.call){
+        var pk=el("div","pick");
+        pk.appendChild(el("span","lab","Our pick"));
+        pk.appendChild(el("span","val", g.call));
+        c.appendChild(pk);
+      }
+      if(g.win_line){ c.appendChild(el("div","win", g.win_line)); }
+      if(g.venue_note){ c.appendChild(el("div","venue", g.venue_note)); }
+      grid.appendChild(c);
     });
-    s.appendChild(list);
+    s.appendChild(grid);
+    return s;
+  }
+  /* TONIGHT'S EDGE — data-gated hero (renders ONLY if the board carries a `tonight_edge` block).
+     Reserved for a Director-adopted, plain-English betting/monetization edge; renders nothing
+     until the emitter surfaces one, so the board is redesign-ready without disclosing an
+     un-adopted recommendation (render-from-core; adoption stays a Director call). */
+  function renderTonightEdge(e){
+    if(!e || !e.headline) return null;
+    var s=el("div","edge"); s.setAttribute("data-k","edge");
+    s.appendChild(el("div","et", e.label||"Tonight's edge"));
+    s.appendChild(el("div","eh", e.headline));
+    if(e.detail){ s.appendChild(el("div","ew", e.detail)); }
     return s;
   }
   function pdfWrap(items){
@@ -772,6 +847,7 @@
   function render(b){
     lastB=b;
     SRC=b.section_sources||{};
+    FRESH=b.freshness||{};
     var sec=b.sections||{};
     healthChips(b); banner(b);
     document.getElementById("summary").innerHTML="";
@@ -782,6 +858,7 @@
     var main=document.getElementById("main"); main.innerHTML="";
     if(activeTab==="today"){
       main.appendChild(renderTodayGames(sec.today_games));
+      var edge=renderTonightEdge(sec.tonight_edge); if(edge) main.appendChild(edge);
       main.appendChild(renderDecisions(sec.needs_anthony, b.setup, b.answer_all));
       var reps=renderReports(b.reports, b.rollover); if(reps) main.appendChild(reps);
       // running_live is the LIVE-gated list (empty means nothing is running — never fall back to
@@ -798,7 +875,7 @@
     document.getElementById("foot").textContent =
       "Auto-generated from the working record. Last refreshed " + (b.generated_et||"") +
       ". Every number on this page is baked in advance — your browser never touches a database.";
-    tickElapsed();
+    tickElapsed(); tickProv();
     flash();
   }
   function rerender(){ render(viewDate && snapB ? snapB : (lastLive||lastB)); }
@@ -826,7 +903,7 @@
     });
   }
   poll(); setInterval(poll,60000);
-  setInterval(function(){ updAgo(); tickChips(); }, 1000);
+  setInterval(function(){ updAgo(); tickChips(); tickProv(); }, 1000);
   setInterval(tickElapsed, 15000);
 
   /* ---------- queue-edit bar: build, sync across tabs, warn on leave ---------- */
