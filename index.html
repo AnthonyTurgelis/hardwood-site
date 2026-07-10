@@ -296,7 +296,7 @@
     return d;
   }
   function renderDecisions(items, setup, answerAll){
-    var s=el("section"); s.appendChild(el("h2",null,"Needs Anthony — the decision inbox"));
+    var s=el("section"); s.appendChild(sectionHead("Needs Anthony — the decision inbox","needs_anthony"));
     // setup is a LIST of one-time cards (ntfy + Discord); no secret is baked (public board).
     (setup||[]).forEach(function(su){ s.appendChild(setupCard(su)); });
     if(!items || !items.length){
@@ -323,6 +323,9 @@
     if(c.rank!=null){ ut.appendChild(el("span","rk","#"+c.rank)); }
     ut.appendChild(el("span","uh", c.header||""));
     if(c.family){ ut.appendChild(el("span","fam fam-"+c.family, c.family)); }
+    if(c.seat){ ut.appendChild(el("span","seat", c.seat)); }
+    if(c.status){ ut.appendChild(el("span","qstatus qs-"+String(c.status).replace(/\s+/g,"-"), c.status)); }
+    if(c.pm_authored){ ut.appendChild(el("span","pmflag","PM")); }
     card.appendChild(ut);
     if(c.why){ card.appendChild(el("div","uw","A win: "+c.why)); }
     if(c.actions && c.actions.length){
@@ -363,7 +366,7 @@
     return base;
   }
   function renderUpcoming(up, comingSoon){
-    var s=el("section"); s.appendChild(el("h2",null,"Upcoming — what's next"));
+    var s=el("section"); s.appendChild(sectionHead("Upcoming — what's next","upcoming"));
     var base=flattenUpcoming(up);
     var hasSoon=comingSoon && comingSoon.length;
     if(!base.length && !hasSoon){
@@ -401,8 +404,9 @@
     st.textContent = c.time||"";
     return st;
   }
-  function laneCard(title, c){
+  function laneCard(title, c, impact){
     var card=el("div","card"); card.setAttribute("data-k", title+"|"+c.name+"|"+(c.time||""));
+    if(impact){ card.classList.add("impact-"+(impact>=5?5:impact>=4?4:3)); }
     var top=el("div","top");
     top.appendChild(el("span","name", c.name));
     top.appendChild(chip(c.chip));
@@ -416,8 +420,8 @@
     var lm=moreToggle(c.more); if(lm) card.appendChild(lm);
     return card;
   }
-  function renderCards(title, cards, plainLines){
-    var s=el("section"); s.appendChild(el("h2",null,title));
+  function renderCards(title, cards, plainLines, srcKey){
+    var s=el("section"); s.appendChild(srcKey ? sectionHead(title, srcKey) : el("h2",null,title));
     var g=el("div","grid"); var any=false;
     (cards||[]).forEach(function(c){ any=true; g.appendChild(laneCard(title,c)); });
     if(!any && plainLines && plainLines.length){
@@ -430,29 +434,38 @@
     s.appendChild(g); return s;
   }
   function renderDone(cards){
-    // topline density: top 5 as full cards, the rest collapsed to one-line rows
-    var s=el("section"); s.appendChild(el("h2",null,"Done Today"));
+    // IMPACT HIERARCHY: 5s/4s = full bold cards with their
+    // one-line why; 3s = normal cards; 2s/1s = small, GROUPED by team into one row per family,
+    // tucked behind a "show N minor items" toggle so the default view stays glanceable.
+    var s=el("section"); s.appendChild(sectionHead("Done Today","done_today"));
     if(!cards || !cards.length){ s.appendChild(el("p","empty","Nothing finished yet today.")); return s; }
-    var topN=cards.slice(0,5), rest=cards.slice(5);
+    var major=[], normal=[], minor=[];
+    cards.forEach(function(c){ var im=c.impact||2;
+      if(im>=4){ major.push(c); } else if(im===3){ normal.push(c); } else { minor.push(c); } });
+    // sort visible by impact desc then time (server order is time-desc already)
+    major.sort(function(a,b){ return (b.impact||0)-(a.impact||0); });
+    var vis=major.concat(normal);
     var g=el("div","grid");
-    topN.forEach(function(c){ g.appendChild(laneCard("Done Today",c)); });
+    vis.forEach(function(c){ g.appendChild(laneCard("Done Today", c, c.impact)); });
     s.appendChild(g);
-    if(rest.length){
-      s.appendChild(el("div","morelbl", rest.length + " more finished earlier"));
-      var ul=el("ul","donelist");
-      rest.forEach(function(c){
-        var li=el("li"); li.setAttribute("data-k","done|"+c.name+"|"+(c.time||""));
-        li.appendChild(chip(c.chip));
-        li.appendChild(el("span","name", c.name));
-        li.appendChild(stampSpan(c));
-        ul.appendChild(li);
+    if(minor.length){
+      var det=el("details","more");
+      det.appendChild(el("summary", null, "▸ show "+minor.length+" minor item"+(minor.length>1?"s":"")+" (fixes, verifications, housekeeping)"));
+      var byFam={};
+      minor.forEach(function(c){ var f=c.team||"Other"; (byFam[f]=byFam[f]||[]).push(c); });
+      Object.keys(byFam).sort().forEach(function(f){
+        var arr=byFam[f];
+        var row=el("div","minorrow"); row.setAttribute("data-k","doneminor|"+f);
+        row.appendChild(el("span","minorfam", f+": "+arr.length+" item"+(arr.length>1?"s":"")));
+        row.appendChild(el("span","minoritems", arr.map(function(c){ return c.name; }).join(" · ")));
+        det.appendChild(row);
       });
-      s.appendChild(ul);
+      s.appendChild(det);
     }
     return s;
   }
   function renderWatch(lines){
-    var s=el("section"); s.appendChild(el("h2",null,"Watch List"));
+    var s=el("section"); s.appendChild(sectionHead("Watch List","watch_list"));
     if(!lines || !lines.length){ s.appendChild(el("p","empty","Clear.")); return s; }
     var ul=el("ul","watch");
     lines.forEach(function(t){ ul.appendChild(el("li",null,t)); });
@@ -480,7 +493,7 @@
     // Running-Now shows ALL live lanes: the coordinator's authoritative
     // running_live list wins when present; else the delta-derived IN-FLIGHT cards.
     var live=(sec.running_live && sec.running_live.length)? sec.running_live : sec.running_now;
-    main.appendChild(renderCards("Running Now", live, sec.running_plain));
+    main.appendChild(renderCards("Running Now", live, sec.running_plain, "running_now"));
     var pdfs=renderPdfs(b.pdfs); if(pdfs) main.appendChild(pdfs);
     main.appendChild(renderDone(sec.done_today));
     main.appendChild(renderUpcoming(sec.upcoming, sec.coming_soon));
