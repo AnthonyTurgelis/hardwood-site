@@ -59,7 +59,7 @@
   <h1>The Hardwood — Players</h1>
   <span class="ago" id="ago"></span>
 </header>
-<div class="sub">Impact ratings, projected minutes, and the range of plausible box-score outcomes.</div>
+<div class="sub">Current-season per-game averages, our on-court impact rating, and the range of plausible box-score outcomes.</div>
 <nav>
   <a href="./index.html">Board</a>
   <a href="./games.html">Games</a>
@@ -68,6 +68,8 @@
   <a href="./review.html">Daily Review</a>
   <a href="./accuracy.html">Our Accuracy</a>
   <a href="./ledger.html">Error Map</a>
+  <a href="./org.html">The Team</a>
+  <a href="./deepdive.html">Deep Dives</a>
 </nav>
 <main id="main"><p class="empty">Loading player boards…</p></main>
 <footer id="foot"></footer>
@@ -80,18 +82,19 @@
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function td(c,x){ return el("td",c,x); }
 
+  function num(v,u){ return v==null? "—" : (v.toFixed(1)+(u?u:"")); }
   function ratingsSection(rt){
     var s=el("section");
-    var h=el("h2"); h.appendChild(document.createTextNode("Player impact ratings")); s.appendChild(h);
-    if(!rt.available){ s.appendChild(el("p","empty", rt.note||"Ratings coming soon.")); return s; }
-    s.appendChild(el("p","lede","On-court impact per possession (higher = the team plays better with her on the floor). Because it's a plus-minus style rating, lineup-glue players can rank above pure scorers. Minutes are our newest projection. Tap a name for her full deep-dive card."));
+    var h=el("h2"); h.appendChild(document.createTextNode("Players — this season")); s.appendChild(h);
+    if(!rt.available){ s.appendChild(el("p","empty", rt.note||"Season stats coming soon.")); return s; }
+    s.appendChild(el("p","lede","Every player's current-season per-game averages — points, rebounds, assists, minutes — read straight from the official box scores, ordered by scoring. Impact is our plus-minus style on-court rating (how much better the team plays with her on the floor); because it rewards all-around play, some role players rate above pure scorers. Tap a name for her full card."));
     var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter players by name or team…"; fbox.value=ratFilter;
     fbox.oninput=function(){ ratFilter=fbox.value; var ns=ratingsSection(rt); s.parentNode.replaceChild(ns, s);
       var nf=ns.querySelector(".filt"); if(nf){ nf.focus(); nf.setSelectionRange(nf.value.length,nf.value.length); } };
     s.appendChild(fbox);
     var card=el("div","card"); var sc=el("div","scroll"); var t=el("table");
     var thead=el("thead"), hr=el("tr");
-    ["#","Player","Team","Impact","Proj. minutes",""].forEach(function(x){ hr.appendChild(el("th",null,x)); });
+    ["#","Player","Team","GP","PTS","REB","AST","MIN","Impact",""].forEach(function(x){ hr.appendChild(el("th",null,x)); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
     var q=ratFilter.trim().toLowerCase();
@@ -103,16 +106,17 @@
       else { nm.appendChild(document.createTextNode(r.name)); }
       if(r.thin){ nm.appendChild(el("span","tag"," · thin sample")); } tr.appendChild(nm);
       tr.appendChild(td(null, r.team||"—"));
-      tr.appendChild(td("strong", r.rating==null?"—":(r.rating>0?"+":"")+r.rating.toFixed(1)));
-      var m=el("td", null); m.textContent = r.minutes==null? "—" : (r.minutes.toFixed(1)+" min");
-      tr.appendChild(m);
+      tr.appendChild(td("thin", r.gp==null?"—":String(r.gp)));
+      tr.appendChild(td("strong", num(r.pts)));
+      tr.appendChild(td(null, num(r.reb)));
+      tr.appendChild(td(null, num(r.ast)));
+      tr.appendChild(td(null, num(r.min_avg)));
+      tr.appendChild(td("thin", r.rating==null?"—":(r.rating>0?"+":"")+r.rating.toFixed(1)));
       var dd=el("td",null); if(r.id!=null){ var da=el("a",null,"deep dive →"); da.href="./player.html?id="+r.id; da.className="plink"; dd.appendChild(da); } tr.appendChild(dd);
       tb.appendChild(tr);
     });
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); s.appendChild(card);
-    var note=el("div","note"); note.appendChild(document.createTextNode("Ratings are our live production chain. "));
-    var sl=el("span","shadowlbl","shadow champion"); note.appendChild(document.createTextNode("Projected minutes are our newest minutes model ")); note.appendChild(sl);
-    note.appendChild(document.createTextNode(" — the best in testing, not yet the one that feeds the live product. Shown for the player's next scheduled game where available."));
+    var note=el("div","note"); note.appendChild(document.createTextNode("Per-game averages are this season's official box scores. Impact is our on-court rating — a supporting read, not a scoring rank. Tap a name for projected minutes and outcome ranges."));
     s.appendChild(note);
     return s;
   }

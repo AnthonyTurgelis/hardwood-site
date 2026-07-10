@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Deep Dives</title>
+<style>
+  :root{ --bg:#f4f6f8; --card:#fff; --card2:#f7f9fc; --ink:#161a21; --muted:#5a6675; --dim:#8a93a3;
+    --line:#e3e7ee; --line2:#d3d9e3; --acc:#2b6cb0; --shadow:0 1px 2px rgba(20,24,35,.06); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --card2:#1c2330; --ink:#e6edf3;
+    --muted:#9aa7b4; --dim:#6b7684; --line:#242c38; --line2:#39424f; --acc:#58a6ff; --shadow:none; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0}
+  .ago{font-size:11px;color:var(--dim);white-space:nowrap}
+  .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto;padding:0 14px}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--acc);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 48px}
+  .lede{color:var(--muted);font-size:12.5px;margin:8px 0 14px;max-width:760px}
+  .item{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);padding:11px 13px;margin:8px 0}
+  .item .ti{font-weight:680;font-size:13.5px}
+  .item .as{color:var(--dim);font-size:11px;margin-top:3px}
+  .soon{background:var(--card);border:1px dashed var(--line2);border-radius:11px;padding:22px 16px;text-align:center;color:var(--muted);font-size:13px;max-width:620px;margin:10px 0}
+  .empty{color:var(--dim);font-style:italic}
+  footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
+</style>
+</head>
+<body>
+<header>
+  <h1>The Hardwood — Deep Dives</h1>
+  <span class="ago" id="ago"></span>
+</header>
+<div class="sub">Long-form written breakdowns — one matchup or one trend at a time.</div>
+<nav>
+  <a href="./index.html">Board</a>
+  <a href="./games.html">Games</a>
+  <a href="./teams.html">Teams</a>
+  <a href="./players.html">Players</a>
+  <a href="./review.html">Daily Review</a>
+  <a href="./accuracy.html">Our Accuracy</a>
+  <a href="./ledger.html">Error Map</a>
+  <a href="./org.html">The Team</a>
+  <a class="active" href="./deepdive.html">Deep Dives</a>
+</nav>
+<main id="main"><p class="empty">Loading…</p></main>
+<footer id="foot"></footer>
+<script src="./hardwood.js"></script>
+<script>
+(function(){
+  "use strict";
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  function render(d){
+    var main=document.getElementById("main"); main.innerHTML="";
+    if(d.available && (d.items||[]).length){
+      (d.items||[]).forEach(function(it){
+        var c=el("div","item");
+        c.appendChild(el("div","ti",it.title||"Deep dive"));
+        if(it.as_of){ c.appendChild(el("div","as","Published "+it.as_of)); }
+        main.appendChild(c);
+      });
+    } else {
+      main.appendChild(el("div","soon", d.placeholder||"Deep dives are coming soon."));
+    }
+    document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+".";
+  }
+  var lastFetch=0;
+  function updAgo(){ var a=document.getElementById("ago"); if(!a)return;
+    if(!lastFetch){ a.innerHTML=""; return; }
+    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
+    a.innerHTML="live · updated <b>"+(s<60?(s+"s ago"):(Math.floor(s/60)+"m ago"))+"</b>"; }
+  function poll(){ fetch("./deepdive.json",{cache:"no-cache"}).then(function(r){ return r.json(); })
+    .then(function(d){ lastFetch=Date.now(); render(d); updAgo(); })
+    .catch(function(e){ if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load. '+(e&&e.message?e.message:"")+'</p>'; } }); }
+  poll(); setInterval(poll,300000); setInterval(updAgo,1000);
+})();
+</script>
+</body>
+</html>
