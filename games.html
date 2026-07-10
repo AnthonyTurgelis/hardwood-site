@@ -200,7 +200,7 @@
   }
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
-    document.getElementById("foot").textContent="Baked "+(d.generated_utc||"")+". Ranges are calibrated from our own past accuracy — a single game's margin swings a lot. Win chance is recalibrated. Updates within ~2 min of a refresh.";
+    document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Ranges are calibrated from our own past accuracy — a single game's margin swings a lot. Win chance is recalibrated. Updates within ~2 min of a refresh.";
     if(!d.available){ main.appendChild(el("p","empty", d.note||"No games on the board yet.")); flash(); return; }
     main.appendChild(el("p","lede", d.source||""));
     if(d.basis){ main.appendChild(el("p","note", d.basis)); }

@@ -535,7 +535,7 @@
     var sa=renderScoutActivity(b.scout_activity); if(sa) main.appendChild(sa);
     main.appendChild(renderWatch(sec.watch_list));
     document.getElementById("foot").textContent =
-      "Auto-generated from the working record. Last refreshed " + (b.generated_utc||"") +
+      "Auto-generated from the working record. Last refreshed " + (b.generated_et||b.generated_utc||"") +
       ". Every number a stranger sees is baked here — no live database is ever contacted from your browser.";
     flash();
   }

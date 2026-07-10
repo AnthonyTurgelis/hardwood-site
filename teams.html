@@ -85,7 +85,7 @@
   function render(d){
     curData=d;
     var main=document.getElementById("main"); main.innerHTML="";
-    document.getElementById("foot").textContent="Baked "+(d.generated_utc||"")+". Strength ranks the roster on our season-long model. Momentum is recent form, not the ranking basis. Title odds come from simulating the rest of the season.";
+    document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Strength ranks the roster on our season-long model. Momentum is recent form, not the ranking basis. Title odds come from simulating the rest of the season.";
     if(!d.available){ main.appendChild(el("p","empty", d.note||"Power board being built.")); return; }
     main.appendChild(el("p","lede", d.source||""));
     var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter teams…"; fbox.value=teamFilter;

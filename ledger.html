@@ -128,12 +128,12 @@
       ph.appendChild(el("div","big", d.message || "Map being built — first version landing today."));
       ph.appendChild(el("div",null,"This page will fill in automatically the moment the error and market-relative tables are baked. Nothing to do."));
       main.appendChild(ph);
-      document.getElementById("foot").textContent = "Baked " + (d.generated_utc||"") + ".";
+      document.getElementById("foot").textContent = "Baked " + (d.generated_et||d.generated_utc||"") + ".";
       flash(); return;
     }
     if(d.error_ledger) main.appendChild(makeTable("Where we miss most (error ledger)", d.error_ledger));
     if(d.market_relative) main.appendChild(makeTable("Where we beat the market", d.market_relative));
-    document.getElementById("foot").textContent = "Tap a column header to sort. Baked " + (d.generated_utc||"") + ".";
+    document.getElementById("foot").textContent = "Tap a column header to sort. Baked " + (d.generated_et||d.generated_utc||"") + ".";
     flash();
   }
   /* ---------- shared live runtime ---------- */

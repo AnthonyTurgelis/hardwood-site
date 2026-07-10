@@ -61,7 +61,7 @@
     if(!d.available || !d.html){ main.innerHTML='<p class="empty">No review published for today yet.</p>'; return; }
     var wrap=document.createElement("div"); wrap.className="doc"; wrap.setAttribute("data-k","doc"); wrap.innerHTML=d.html;
     main.innerHTML=""; main.appendChild(wrap);
-    document.getElementById("foot").textContent = "Written for you as the plain-English daily. Baked " + (d.generated_utc||"") + ".";
+    document.getElementById("foot").textContent = "Written for you as the plain-English daily. Baked " + (d.generated_et||d.generated_utc||"") + ".";
     flash();
   }
   /* ---------- shared live runtime ---------- */

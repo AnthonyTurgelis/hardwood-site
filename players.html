@@ -163,7 +163,7 @@
   function render(d){
     curData=d;
     var main=document.getElementById("main"); main.innerHTML="";
-    document.getElementById("foot").textContent="Baked "+(d.generated_utc||"")+". Ratings are live production. Minutes are our shadow-champion model. Outcome ranges come from grading our own past projections.";
+    document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Ratings are live production. Minutes are our shadow-champion model. Outcome ranges come from grading our own past projections.";
     main.appendChild(ratingsSection(d.ratings||{available:false}));
     main.appendChild(realmSection(d.realm||{available:false, order:[], stats:{}}));
     flash();
