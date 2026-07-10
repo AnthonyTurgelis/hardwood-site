@@ -137,6 +137,10 @@
   .upc .qstatus{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
     padding:1px 6px;border-radius:999px;color:#fff;background:var(--done)}
   .upc .qstatus.qs-ready-now{background:var(--live)} .upc .qstatus.qs-ready{background:var(--verified)}
+  /* AWAITING_ANTHONY shelf: parked (amber, waiting on you) + answered (green, executing) */
+  .upc .qstatus.qs-parked{background:var(--inflight);text-transform:none;letter-spacing:0}
+  .upc .qstatus.qs-answered{background:var(--live);text-transform:none;letter-spacing:0}
+  .upc.parked{border-left:3px solid var(--inflight)}
   .upc .pmflag{font-size:9px;font-weight:700;color:#fff;background:var(--promote);border-radius:999px;padding:1px 6px}
 </style>
 </head>
@@ -198,8 +202,8 @@
 
   /* ---------- queue reorder: local page state + batch send (no network per change) ---------- */
   var QKEY="hw_queue_ops_v1";
-  var QVERB={bump:"Move this to the front of the queue", demote:"Push this one spot lower",
-             shelve:"Set this one aside for now"};
+  var QVERB={top:"Move this to the very top of the queue", bump:"Move this to the front of the queue",
+             demote:"Push this one spot lower", shelve:"Set this one aside for now"};
   function loadOps(){ try{ var v=JSON.parse(localStorage.getItem(QKEY)); return Array.isArray(v)?v:[]; }
     catch(e){ return []; } }
   function saveOps(ops){ try{ localStorage.setItem(QKEY, JSON.stringify(ops)); }catch(e){} }
@@ -211,7 +215,10 @@
       for(var k=0;k<order.length;k++){ if((order[k].task_id||order[k].header)===op.id){ i=k; break; } }
       if(i<0) return;
       var c=order.splice(i,1)[0];
-      if(op.action==="bump"){ order.unshift(c); }
+      // "top" (⤒ move-to-top) and "bump" both land the item at #1 locally; the emitted
+      // QUEUE: line keeps them distinct so the scout applies each atomically. The
+      // AWAITING_ANTHONY answer→top conversion reuses the SAME "top" op (one code path).
+      if(op.action==="top"||op.action==="bump"){ order.unshift(c); }
       else if(op.action==="demote"){ order.splice(Math.min(i+1,order.length),0,c); }
       // shelve: leave removed
     });
@@ -322,13 +329,22 @@
     return s;
   }
   function upcCard(c){
-    var card=el("div","upc"); card.setAttribute("data-k","upc|"+(c.task_id||c.header));
+    var card=el("div","upc"+(c.parked?" parked":"")); card.setAttribute("data-k","upc|"+(c.task_id||c.header));
     var ut=el("div","ut");
     if(c.rank!=null){ ut.appendChild(el("span","rk","#"+c.rank)); }
     ut.appendChild(el("span","uh", c.name||c.header||""));
     if(c.family){ ut.appendChild(el("span","fam fam-"+c.family, c.family)); }
     if(c.seat){ ut.appendChild(el("span","seat", c.seat)); }
-    if(c.status){ ut.appendChild(el("span","qstatus qs-"+String(c.status).replace(/\s+/g,"-"), c.status)); }
+    // AWAITING_ANTHONY shelf chips: parked items show "waiting on you · N days"; a freshly
+    // answered item briefly shows "answered — now executing" before it jumps to the top.
+    if(c.parked){
+      var dt=(c.days_waiting!=null)?(" · "+c.days_waiting+" day"+(c.days_waiting===1?"":"s")):"";
+      ut.appendChild(el("span","qstatus qs-parked", "waiting on you"+dt));
+    } else if(c.answered){
+      ut.appendChild(el("span","qstatus qs-answered", "answered — now executing"));
+    } else if(c.status){
+      ut.appendChild(el("span","qstatus qs-"+String(c.status).replace(/\s+/g,"-"), c.status));
+    }
     if(c.pm_authored){ ut.appendChild(el("span","pmflag","PM")); }
     card.appendChild(ut);
     if(c.why){ card.appendChild(el("div","uw","A win: "+c.why)); }
