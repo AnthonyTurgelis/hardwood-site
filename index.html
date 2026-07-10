@@ -115,6 +115,25 @@
   .cardmore-body{font-size:12px;color:var(--muted);margin-top:4px}
   .cardmore-list{margin:4px 0 0;padding-left:18px;font-size:12px;color:var(--muted)}
   .cardmore-list li{margin-bottom:2px}
+  /* per-section provenance (source + as-of) + STALE flag */
+  .sechead{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:0 0 7px}
+  .sechead h2{margin:0}
+  .prov{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .stalebadge{font-size:9px;font-weight:700;letter-spacing:.04em;color:#fff;background:var(--blocked);
+    border-radius:999px;padding:1px 6px;text-transform:uppercase}
+  /* done-today impact hierarchy (5/4 stand out; minor items grouped) */
+  .card.impact-5{border-left:3px solid var(--live)}
+  .card.impact-4{border-left:3px solid var(--verified)}
+  .card.impact-5 .name,.card.impact-4 .name{font-size:14px;font-weight:750}
+  .minorrow{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;padding:3px 2px;border-bottom:1px solid var(--line)}
+  .minorfam{font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap}
+  .minoritems{font-size:11px;color:var(--muted)}
+  /* upcoming queue: seat / status / pm-authored tags */
+  .upc .seat{font-size:9.5px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:0 5px}
+  .upc .qstatus{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
+    padding:1px 6px;border-radius:999px;color:#fff;background:var(--done)}
+  .upc .qstatus.qs-ready-now{background:var(--live)} .upc .qstatus.qs-ready{background:var(--verified)}
+  .upc .pmflag{font-size:9px;font-weight:700;color:#fff;background:var(--promote);border-radius:999px;padding:1px 6px}
 </style>
 </head>
 <body>
@@ -141,6 +160,21 @@
   function el(tag, cls, txt){ var e=document.createElement(tag); if(cls)e.className=cls;
     if(txt!=null)e.textContent=txt; return e; }
   function chip(status){ var c=el("span","chip c-"+status, status); return c; }
+  var SRC={};   // board.section_sources — per-section provenance (source + as_of + stale)
+  function clock(iso){ var m=/T(\d{2}):(\d{2})/.exec(iso||""); return m ? (m[1]+":"+m[2]) : ""; }
+  function sectionHead(title, key){
+    // section heading + its provenance line (which record it was baked from + as-of), and a
+    // visible STALE flag when the source is newer than the bake (directive: staleness per section).
+    var wrap=el("div","sechead"); wrap.appendChild(el("h2",null,title));
+    var m=SRC && SRC[key];
+    if(m){
+      if(m.stale){ wrap.appendChild(el("span","stalebadge","stale")); }
+      var t="from "+(m.source||"the record");
+      if(m.as_of){ t+=" · as of "+clock(m.as_of); }
+      wrap.appendChild(el("span","prov", t));
+    }
+    return wrap;
+  }
   function moreToggle(more){
     // optional 4th card layer: a "more ▾" toggle, collapsed by default, holding extra
     // context or steps. Renders only when the card carries a `more` field (string or list),
@@ -436,6 +470,7 @@
   var lastB=null;
   function render(b){
     lastB=b;
+    SRC=b.section_sources||{};
     var sec=b.sections||{};
     document.getElementById("sub").textContent =
       (b.date||"") + " · " + (b.counts? (b.counts.running+" running · "+b.counts.done_today+
