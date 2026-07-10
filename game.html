@@ -126,17 +126,19 @@
     var cap=el("caption",null,title); t.appendChild(cap);
     var head=el("tr");
     var h0=el("th","pl","Player"); head.appendChild(h0);
-    ["Min","Pts","Reb","Ast"].forEach(function(h){ head.appendChild(el("th",null,h)); });
+    ["Impact","Min","Pts","Reb","Ast"].forEach(function(h){ head.appendChild(el("th",null,h)); });
     t.appendChild(head);
     (rows||[]).forEach(function(r){
       var tr=el("tr"); if(r.grouped) tr.className="grp";
       var nm=el("td","pl"); nm.textContent=r.name;
       if(r.gtd){ var g=el("span","gtd","GTD"); nm.appendChild(g); }
       tr.appendChild(nm);
+      // impact column first — matches the printed report's box row order
+      tr.appendChild(el("td",null, r.impact==null?"—":((r.impact>0?"+":"")+r.impact.toFixed(1))));
       ["min","pts","reb","ast"].forEach(function(k){ tr.appendChild(el("td",null, r[k]==null?"—":r[k])); });
       t.appendChild(tr);
     });
-    if(!(rows||[]).length) { var tr=el("tr"); var td=el("td","pl","No projected box available."); td.colSpan=5; tr.appendChild(td); t.appendChild(tr); }
+    if(!(rows||[]).length) { var tr=el("tr"); var td=el("td","pl","No projected box available."); td.colSpan=6; tr.appendChild(td); t.appendChild(tr); }
     wrap.appendChild(t);
     return wrap;
   }

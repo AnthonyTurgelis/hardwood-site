@@ -132,17 +132,20 @@
     var hero=el("div","hero");
     hero.appendChild(el("div","nm", d.name||"Player"));
     hero.appendChild(el("div","sub", (d.team||"—") + " · " + (d.gp!=null?d.gp:"—") + " games this season" +
+      (d.min_share_pct!=null?("  · "+d.min_share_pct+"% of team minutes"):"") +
       (d.thin?"  · thin sample":"")));
     var kpis=el("div","kpis");
     function kpi(l,v,u){ var k=el("div","kpi"); k.appendChild(el("div","kl",l));
       var kv=el("div","kv"); kv.textContent=(v==null?"—":v); if(u){ var s=el("small"); s.textContent=" "+u; kv.appendChild(s);} k.appendChild(kv); return k; }
     var pg=function(v){ return v==null?null:v.toFixed(1); };
+    // impact-first hero: our on-court rating is the lead number, counting stats after
+    kpis.appendChild(kpi("Impact rating", d.rating==null?null:((d.rating>0?"+":"")+d.rating.toFixed(1)),
+      d.min_share_pct!=null?("· "+d.min_share_pct+"% of min"):null));
+    kpis.appendChild(kpi("Proj. next game", d.minutes==null?null:d.minutes.toFixed(1), "min"));
     kpis.appendChild(kpi("Points", pg(d.pts), "per game"));
     kpis.appendChild(kpi("Rebounds", pg(d.reb), "per game"));
     kpis.appendChild(kpi("Assists", pg(d.ast), "per game"));
     kpis.appendChild(kpi("Minutes", pg(d.min_avg), "per game"));
-    kpis.appendChild(kpi("Impact rating", d.rating==null?null:((d.rating>0?"+":"")+d.rating.toFixed(1))));
-    kpis.appendChild(kpi("Proj. next game", d.minutes==null?null:d.minutes.toFixed(1), "min"));
     hero.appendChild(kpis);
     main.appendChild(hero);
 
