@@ -321,7 +321,7 @@
     var card=el("div","upc"); card.setAttribute("data-k","upc|"+(c.task_id||c.header));
     var ut=el("div","ut");
     if(c.rank!=null){ ut.appendChild(el("span","rk","#"+c.rank)); }
-    ut.appendChild(el("span","uh", c.header||""));
+    ut.appendChild(el("span","uh", c.name||c.header||""));
     if(c.family){ ut.appendChild(el("span","fam fam-"+c.family, c.family)); }
     if(c.seat){ ut.appendChild(el("span","seat", c.seat)); }
     if(c.status){ ut.appendChild(el("span","qstatus qs-"+String(c.status).replace(/\s+/g,"-"), c.status)); }
