@@ -10,97 +10,172 @@
     --accent:#2b6cb0; --shadow:0 1px 3px rgba(20,24,35,.08);
     --live:#1f883d; --verified:#0969da; --inflight:#9a6700; --shelved:#6e7781;
     --null:#6e7781; --promote:#8250df; --blocked:#cf222e; --done:#57606a;
+    --ok:#1f883d; --warn:#9a6700; --bad:#cf222e;
+    --flash:rgba(43,108,176,.14);
   }
   @media (prefers-color-scheme:dark){
     :root{ --bg:#0d1117; --card:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#222a35;
       --accent:#58a6ff; --shadow:none; --live:#3fb950; --verified:#58a6ff; --inflight:#d29922;
-      --shelved:#8b949e; --null:#8b949e; --promote:#a371f7; --blocked:#f85149; --done:#8b949e; }
+      --shelved:#8b949e; --null:#8b949e; --promote:#a371f7; --blocked:#f85149; --done:#8b949e;
+      --ok:#3fb950; --warn:#d29922; --bad:#f85149; --flash:rgba(88,166,255,.20); }
   }
-  :root{ --flash:rgba(43,108,176,.18); }
-  @media (prefers-color-scheme:dark){ :root{ --flash:rgba(88,166,255,.24); } }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
     font:13.5px/1.42 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-text-size-adjust:100%}
-  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
-  h1{font-size:17px;margin:0}
-  .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto;padding:0 14px}
+  a{color:var(--accent)}
+  .wrap{max-width:860px;margin:0 auto;padding:0 12px}
+  header{padding:10px 0 2px}
+  .hrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:16px;margin:0}
   .ago{font-size:11px;color:var(--muted);white-space:nowrap}
   .ago b{color:var(--live);font-variant-numeric:tabular-nums}
-  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
-  nav a{font-size:12px;text-decoration:none;color:var(--accent);border:1px solid var(--line);
-    background:var(--card);padding:4px 10px;border-radius:999px}
+  /* health chips — true anchors, ticking every second */
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0 0}
+  .hchip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted);
+    border:1px solid var(--line);background:var(--card);border-radius:999px;padding:2px 9px;
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hchip .dot{width:7px;height:7px;border-radius:50%;background:var(--done);flex:0 0 auto}
+  .hchip.ok .dot{background:var(--ok)} .hchip.warn .dot{background:var(--warn)}
+  .hchip.bad .dot{background:var(--bad)}
+  .banner{margin:8px 0 0;padding:7px 11px;border-radius:8px;font-size:12.5px;font-weight:600;
+    border:1px solid var(--line);background:var(--card)}
+  .banner.idle{border-left:3px solid var(--bad)} .banner.paused{border-left:3px solid var(--warn)}
+  /* the one day-summary sentence */
+  .summary{margin:9px 0 0;font-size:14.5px;line-height:1.45;font-weight:600}
+  .summary .dim{color:var(--muted);font-weight:500}
+  nav{display:flex;gap:5px;flex-wrap:wrap;margin:9px 0 0}
+  nav a{font-size:11.5px;text-decoration:none;color:var(--accent);border:1px solid var(--line);
+    background:var(--card);padding:3px 9px;border-radius:999px}
   nav a.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-  main{max-width:1080px;margin:0 auto;padding:8px 14px 48px}
+  /* sub-tabs: Today | Queue */
+  .subtabs{display:flex;gap:0;margin:10px 0 0;border-bottom:1px solid var(--line)}
+  .subtab{font:inherit;font-size:13px;font-weight:650;color:var(--muted);background:none;border:none;
+    padding:6px 14px;cursor:pointer;border-bottom:2px solid transparent}
+  .subtab.active{color:var(--ink);border-bottom-color:var(--accent)}
+  .subtab .n{font-size:10.5px;color:var(--muted);font-weight:600}
+  /* filters row */
+  .filters{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:9px 0 0}
+  .pill{font:inherit;font-size:11px;font-weight:640;color:var(--muted);background:var(--card);
+    border:1px solid var(--line);border-radius:999px;padding:2px 10px;cursor:pointer}
+  .pill.active{color:#fff;background:var(--accent);border-color:var(--accent)}
+  .filters select{font:inherit;font-size:11px;color:var(--ink);background:var(--card);
+    border:1px solid var(--line);border-radius:6px;padding:2px 6px}
+  .snapnote{font-size:11.5px;color:var(--warn);font-weight:650}
+  main{padding:2px 0 48px}
   section{margin-top:14px}
-  h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
-    margin:0 0 7px;font-weight:700}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:7px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;
+  .sechead{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:0 0 5px}
+  .sechead h2{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
+    margin:0;font-weight:700}
+  .prov{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .stalebadge{font-size:9px;font-weight:700;letter-spacing:.04em;color:#fff;background:var(--blocked);
+    border-radius:999px;padding:1px 6px;text-transform:uppercase}
+  .empty{color:var(--muted);font-size:12.5px;font-style:italic;margin:4px 0}
+  /* ---------- dense rows ---------- */
+  .list{background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;
     box-shadow:var(--shadow)}
-  .card.flash{animation:fl 1.1s ease}
-  @keyframes fl{0%{background:var(--flash)}100%{background:var(--card)}}
-  .card .top{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
-  .card .name{font-weight:650;font-size:13px}
-  .card .one{color:var(--muted);font-size:12px;margin-top:2px}
-  .meta{font-size:10.5px;color:var(--muted);margin-left:auto;white-space:nowrap}
-  .chip{font-size:9.5px;font-weight:700;letter-spacing:.03em;padding:1px 6px;border-radius:999px;
-    color:#fff;text-transform:uppercase}
+  .row{display:flex;gap:8px;align-items:baseline;padding:6px 10px;border-bottom:1px solid var(--line);
+    font-size:13px;min-width:0}
+  .row:last-child{border-bottom:none}
+  .row.flash{animation:fl 1.1s ease}
+  @keyframes fl{0%{background:var(--flash)}100%{background:transparent}}
+  .row .nm{font-weight:620;flex:0 1 auto;min-width:0}
+  .row .oneln{color:var(--muted);font-size:12px;flex:1 1 40%;min-width:0;overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap}
+  .row .right{margin-left:auto;display:inline-flex;gap:6px;align-items:baseline;white-space:nowrap;flex:0 0 auto}
+  .tm{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .chip{font-size:9px;font-weight:700;letter-spacing:.03em;padding:1px 6px;border-radius:999px;
+    color:#fff;text-transform:uppercase;flex:0 0 auto;cursor:default}
   .c-LIVE{background:var(--live)} .c-VERIFIED{background:var(--verified)}
   .c-IN-FLIGHT{background:var(--inflight)} .c-SHELVED{background:var(--shelved)}
   .c-NULL{background:var(--null)} .c-PROMOTE{background:var(--promote)}
   .c-BLOCKED{background:var(--blocked)} .c-DONE{background:var(--done)}
+  .tag{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:0 5px;
+    white-space:nowrap;flex:0 0 auto}
+  .passes{font-size:10px;color:var(--muted);white-space:nowrap}
+  .rlink{font-size:10.5px;text-decoration:none;white-space:nowrap}
+  /* headline rows — the ~6 wins of the day */
+  .hl{display:block;padding:8px 10px 8px 12px;border-bottom:1px solid var(--line);position:relative}
+  .hl:last-child{border-bottom:none}
+  .hl::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--verified)}
+  .hl.i5::before{background:var(--live)}
+  .hl .t{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+  .hl .nm{font-size:14.5px;font-weight:740}
+  .hl .why{color:var(--muted);font-size:12.5px;margin-top:1px}
+  .minorrow{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;padding:4px 10px;
+    border-bottom:1px solid var(--line);font-size:12px}
+  .minorrow:last-child{border-bottom:none}
+  .minorfam{font-weight:700;color:var(--ink);white-space:nowrap}
+  .minoritems{color:var(--muted)}
+  details.more>summary{cursor:pointer;font-size:12px;color:var(--accent);margin-top:7px;list-style:none}
+  details.more>summary::-webkit-details-marker{display:none}
+  details.inline{display:inline}
+  details.inline>summary{cursor:pointer;font-size:10.5px;color:var(--accent);list-style:none;display:inline}
+  details.inline>summary::-webkit-details-marker{display:none}
+  details.inline .raw{display:block;font:10.5px/1.5 ui-monospace,monospace;color:var(--muted);
+    margin:3px 0 2px;word-break:break-word}
+  /* running rows */
+  .run .nm{font-weight:640}
+  .elapsed{font-size:10.5px;color:var(--inflight);font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* decisions */
   .decision{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
     border-radius:8px;padding:8px 10px;margin-bottom:6px}
   .decision .q{font-weight:600;font-size:12.5px}
+  .decision .one{color:var(--muted);font-size:12px;margin-top:2px}
   .decision .reply{display:inline-block;margin-top:4px;font-size:11px;font-family:ui-monospace,monospace;
     background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:2px 7px;color:var(--ink)}
   .btnrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
   .taybtn{font-size:11.5px;font-weight:640;text-decoration:none;color:#fff;background:var(--accent);
     border:1px solid var(--accent);border-radius:6px;padding:3px 11px}
-  .taybtn:hover{filter:brightness(1.06)}
   .taybtn.ghost{background:transparent;color:var(--accent)}
   .btnhint{font-size:10px;color:var(--muted);margin-top:4px}
-  /* ntfy one-time setup card */
   .setup{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--promote);
     border-radius:8px;padding:9px 11px;margin-bottom:8px}
   .setup .st{font-weight:650;font-size:12.5px}
   .setup .sb{color:var(--muted);font-size:12px;margin-top:2px}
-  .setup .topic{display:inline-block;margin-top:6px;font-family:ui-monospace,monospace;font-size:11.5px;
-    background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:2px 8px;color:var(--ink)}
-  /* upcoming — goal-level next-up cards */
-  .upc{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;box-shadow:var(--shadow)}
-  .upc .ut{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
-  .upc .rk{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:700}
-  .upc .uh{font-weight:640;font-size:13px}
-  .fam{font-size:9.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:1px 6px;
-    border-radius:999px;color:#fff}
+  /* queue tab */
+  .floorline{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin:9px 0 7px;font-size:12.5px}
+  .floorline .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 auto;position:relative;top:1px}
+  .qrow{display:block;padding:7px 10px;border-bottom:1px solid var(--line)}
+  .qrow:last-child{border-bottom:none}
+  .qrow.parked{border-left:3px solid var(--inflight)}
+  .qrow .t{display:flex;gap:7px;align-items:baseline;flex-wrap:wrap}
+  .qrow .rk{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:700;
+    min-width:26px;flex:0 0 auto}
+  .qrow .nm{font-weight:640;font-size:13px}
+  .qrow .why{color:var(--muted);font-size:12px;margin:2px 0 0 33px}
+  .qrow .acts{margin-left:auto;display:inline-flex;gap:4px;flex:0 0 auto}
+  .fam{font-size:9px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:1px 6px;
+    border-radius:999px;color:#fff;flex:0 0 auto}
   .fam-modeling{background:var(--promote)} .fam-data{background:var(--verified)}
   .fam-site{background:var(--live)} .fam-infra{background:var(--done)} .fam-research{background:var(--inflight)}
-  .upc .uw{color:var(--muted);font-size:12px;margin-top:2px}
-  .qbtn{font-size:12px;text-decoration:none;color:var(--muted);border:1px solid var(--line);
-    background:var(--bg);border-radius:6px;padding:1px 8px}
+  .qstatus{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
+    padding:1px 6px;border-radius:999px;color:#fff;background:var(--done);flex:0 0 auto}
+  .qstatus.qs-ready-now{background:var(--live)} .qstatus.qs-ready{background:var(--verified)}
+  .qstatus.qs-waiting-on-you{background:var(--inflight);text-transform:none;letter-spacing:0}
+  .qstatus.qs-answered{background:var(--live);text-transform:none;letter-spacing:0}
+  .pmflag{font-size:9px;font-weight:700;color:#fff;background:var(--promote);border-radius:999px;padding:1px 6px}
+  .qbtn{cursor:pointer;font:inherit;font-size:12px;text-decoration:none;color:var(--muted);
+    border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:0 7px}
   .qbtn:hover{color:var(--ink)}
-  .famgrp{font-size:11px;color:var(--muted);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em;font-weight:700}
-  details.more>summary{cursor:pointer;font-size:12px;color:var(--accent);margin-top:8px;list-style:none}
-  details.more>summary::-webkit-details-marker{display:none}
-  .watch li{margin-bottom:3px;color:var(--muted);font-size:12px}
-  .scoutlog{list-style:none;padding:0;margin:7px 0 0;font-variant-numeric:tabular-nums}
-  .scoutrow{display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:12px;line-height:1.45}
-  .scoutrow .stime{color:var(--accent);font-size:11px;min-width:58px;flex:0 0 auto}
+  .comingrow{padding:7px 10px;border-bottom:1px solid var(--line)}
+  .comingrow:last-child{border-bottom:none}
+  .comingrow .nm{font-weight:640}
+  .comingrow .why{color:var(--muted);font-size:12px;margin-top:1px}
+  /* scout activity strip */
+  .scoutlog{list-style:none;padding:0;margin:0;font-variant-numeric:tabular-nums}
+  .scoutrow{display:block;padding:4px 10px;border-bottom:1px solid var(--line);font-size:12px;line-height:1.45}
+  .scoutrow:last-child{border-bottom:none}
+  .scoutrow .stime{color:var(--accent);font-size:10.5px;display:inline-block;min-width:56px}
   .scoutrow .stext{color:var(--muted)}
-  .pdfs a{display:inline-block;margin:0 6px 6px 0;font-size:12px;text-decoration:none;color:var(--accent);
-    border:1px solid var(--line);background:var(--card);padding:4px 9px;border-radius:7px}
-  .empty{color:var(--muted);font-size:12.5px;font-style:italic}
-  footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--muted);font-size:11px}
-  .team{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:0 5px}
-  .meta{display:flex;align-items:center;gap:5px}
-  .donelist{list-style:none;padding:0;margin:7px 0 0}
-  .donelist li{display:flex;align-items:center;gap:6px;padding:3px 2px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
-  .donelist li .name{color:var(--ink);font-weight:550}
-  .donelist li .hw-stamp{margin-left:auto}
-  .morelbl{font-size:11px;color:var(--muted);margin:8px 0 2px}
-  /* queue reorder — local edits + sticky unsaved-changes bar (batch mode) */
+  .pdfs{display:flex;gap:6px;flex-wrap:wrap}
+  .pdfs a{display:inline-block;font-size:12px;text-decoration:none;color:var(--accent);
+    border:1px solid var(--line);background:var(--card);padding:3px 9px;border-radius:7px}
+  .watch{margin:0;padding-left:18px}
+  .watch li{margin-bottom:3px;color:var(--muted);font-size:12px}
+  .legend{font-size:11px;color:var(--muted);margin-top:6px}
+  footer{padding:16px 0;color:var(--muted);font-size:11px}
+  /* sticky unsaved-queue-changes bar */
   #qbar{position:fixed;top:0;left:0;right:0;z-index:60;display:none;align-items:center;gap:10px;
     padding:8px 14px;background:var(--card);border-bottom:1px solid var(--line);
     box-shadow:0 2px 8px rgba(20,24,35,.14);flex-wrap:wrap}
@@ -111,68 +186,62 @@
   .qbar-send:disabled{opacity:.55;cursor:default}
   .qbar-disc{color:var(--accent);background:transparent;border:1px solid var(--line)}
   body.hasbar{padding-top:42px}
-  .qbtn{cursor:pointer;font-family:inherit}
-  /* optional 4th card layer — collapsed extra context */
-  details.cardmore{margin-top:6px}
-  details.cardmore>summary{cursor:pointer;font-size:11.5px;color:var(--accent);list-style:none}
-  details.cardmore>summary::-webkit-details-marker{display:none}
-  .cardmore-body{font-size:12px;color:var(--muted);margin-top:4px}
-  .cardmore-list{margin:4px 0 0;padding-left:18px;font-size:12px;color:var(--muted)}
-  .cardmore-list li{margin-bottom:2px}
-  /* per-section provenance (source + as-of) + STALE flag */
-  .sechead{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:0 0 7px}
-  .sechead h2{margin:0}
-  .prov{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
-  .stalebadge{font-size:9px;font-weight:700;letter-spacing:.04em;color:#fff;background:var(--blocked);
-    border-radius:999px;padding:1px 6px;text-transform:uppercase}
-  /* done-today impact hierarchy (5/4 stand out; minor items grouped) */
-  .card.impact-5{border-left:3px solid var(--live)}
-  .card.impact-4{border-left:3px solid var(--verified)}
-  .card.impact-5 .name,.card.impact-4 .name{font-size:14px;font-weight:750}
-  .minorrow{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;padding:3px 2px;border-bottom:1px solid var(--line)}
-  .minorfam{font-size:11px;font-weight:700;color:var(--ink);white-space:nowrap}
-  .minoritems{font-size:11px;color:var(--muted)}
-  /* upcoming queue: seat / status / pm-authored tags */
-  .upc .seat{font-size:9.5px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:0 5px}
-  .upc .qstatus{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
-    padding:1px 6px;border-radius:999px;color:#fff;background:var(--done)}
-  .upc .qstatus.qs-ready-now{background:var(--live)} .upc .qstatus.qs-ready{background:var(--verified)}
-  /* AWAITING_ANTHONY shelf: parked (amber, waiting on you) + answered (green, executing) */
-  .upc .qstatus.qs-parked{background:var(--inflight);text-transform:none;letter-spacing:0}
-  .upc .qstatus.qs-answered{background:var(--live);text-transform:none;letter-spacing:0}
-  .upc.parked{border-left:3px solid var(--inflight)}
-  .upc .pmflag{font-size:9px;font-weight:700;color:#fff;background:var(--promote);border-radius:999px;padding:1px 6px}
+  @media (max-width:520px){
+    .row{flex-wrap:wrap}
+    .row .oneln{flex-basis:100%;order:3;white-space:normal}
+    .qrow .why{margin-left:0}
+    .qrow .acts{margin-left:0}
+  }
 </style>
 </head>
 <body>
+<div class="wrap">
 <header>
-  <h1>The Hardwood — Status Board</h1>
-  <span class="ago" id="ago"></span>
+  <div class="hrow">
+    <h1>The Hardwood — Status Board</h1>
+    <span class="ago" id="ago"></span>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div id="banner"></div>
+  <div class="summary" id="summary"></div>
+  <nav>
+    <a class="active" href="./index.html">Board</a>
+    <a href="./games.html">Games</a>
+    <a href="./teams.html">Teams</a>
+    <a href="./players.html">Players</a>
+    <a href="./review.html">Daily Review</a>
+    <a href="./accuracy.html">Our Accuracy</a>
+    <a href="./ledger.html">Error Map</a>
+  </nav>
+  <div class="subtabs" id="subtabs"></div>
+  <div class="filters" id="filters"></div>
 </header>
-<div class="sub" id="sub">Loading…</div>
-<nav>
-  <a class="active" href="./index.html">Board</a>
-  <a href="./games.html">Games</a>
-  <a href="./teams.html">Teams</a>
-  <a href="./players.html">Players</a>
-  <a href="./review.html">Daily Review</a>
-  <a href="./accuracy.html">Our Accuracy</a>
-  <a href="./ledger.html">Error Map</a>
-</nav>
 <main id="main"><p class="empty">Loading the board…</p></main>
 <footer id="foot"></footer>
-<script src="./hardwood.js"></script>
+</div>
 <script>
 (function(){
   "use strict";
   function el(tag, cls, txt){ var e=document.createElement(tag); if(cls)e.className=cls;
     if(txt!=null)e.textContent=txt; return e; }
-  function chip(status){ var c=el("span","chip c-"+status, status); return c; }
-  var SRC={};   // board.section_sources — per-section provenance (source + as_of + stale)
+
+  /* plain meanings for every status word — hover/legend (no robotic log-speak) */
+  var CHIPMEAN={
+    "LIVE":"Shipped to the live product.",
+    "VERIFIED":"Finished and independently double-checked.",
+    "IN-FLIGHT":"Running right now.",
+    "SHELVED":"Parked, with its numbers written down.",
+    "NULL":"Tested honestly — no improvement found.",
+    "PROMOTE":"A candidate improvement, awaiting sign-off.",
+    "BLOCKED":"Waiting on an input or a decision.",
+    "DONE":"Completed and recorded."
+  };
+  function chip(status){ var c=el("span","chip c-"+status, status);
+    if(CHIPMEAN[status]) c.title=CHIPMEAN[status]; return c; }
+
+  var SRC={};
   function clock(iso){ var m=/T(\d{2}):(\d{2})/.exec(iso||""); return m ? (m[1]+":"+m[2]) : ""; }
   function sectionHead(title, key){
-    // section heading + its provenance line (which record it was baked from + as-of), and a
-    // visible STALE flag when the source is newer than the bake (directive: staleness per section).
     var wrap=el("div","sechead"); wrap.appendChild(el("h2",null,title));
     var m=SRC && SRC[key];
     if(m){
@@ -183,50 +252,80 @@
     }
     return wrap;
   }
-  function moreToggle(more){
-    // optional 4th card layer: a "more ▾" toggle, collapsed by default, holding extra
-    // context or steps. Renders only when the card carries a `more` field (string or list),
-    // so nothing above the fold ever gets longer.
-    if(more==null || (Array.isArray(more) && !more.length) || (typeof more==="string" && !more.trim())) return null;
-    var det=el("details","cardmore");
-    det.appendChild(el("summary",null,"more ▾"));
-    if(Array.isArray(more)){
-      var ul=el("ul","cardmore-list");
-      more.forEach(function(step){ ul.appendChild(el("li",null,String(step))); });
-      det.appendChild(ul);
-    } else {
-      det.appendChild(el("div","cardmore-body", String(more)));
+  function agoSecs(s){ s=Math.max(0,s);
+    if(s<60) return s+"s"; if(s<3600) return Math.floor(s/60)+"m";
+    if(s<86400) return Math.floor(s/3600)+"h "+Math.floor((s%3600)/60)+"m";
+    return Math.floor(s/86400)+"d"; }
+  function sinceIso(iso){ if(!iso) return null; var d=new Date(iso);
+    if(isNaN(d.getTime())) return null; return Math.round((Date.now()-d.getTime())/1000); }
+
+  /* ---------- header health chips — TRUE anchors, ticking every second ---------- */
+  function healthChips(b){
+    var wrap=document.getElementById("chips"); wrap.innerHTML="";
+    function mk(id, label, title){ var c=el("span","hchip"); c.id=id; c.title=title||"";
+      c.appendChild(el("span","dot")); c.appendChild(el("span",null,label)); wrap.appendChild(c); return c; }
+    mk("ch-data","", "How fresh the numbers on this page are (time since the last refresh of the page data).");
+    mk("ch-scout","", "The always-on monitor that watches for anything needing attention, around the clock.");
+    mk("ch-team","", "Whether the work desk is active right now (time since it last checked in).");
+    mk("ch-inbox","", "Instructions waiting to be picked up, and when the last one was handled.");
+    tickChips();
+  }
+  function setChip(id, cls, text){ var c=document.getElementById(id); if(!c) return;
+    c.className="hchip "+cls; c.lastChild.textContent=text; }
+  function tickChips(){
+    if(!lastB) return;
+    var b=lastB;
+    var s=sinceIso(b.generated_utc);
+    if(s!=null) setChip("ch-data", s<1200?"ok":(s<3600?"warn":"bad"), "data · updated "+agoSecs(s)+" ago");
+    var sh=b.scout_heartbeat||{};
+    var ss=sinceIso(sh.last_poll_utc);
+    if(ss!=null) setChip("ch-scout", (ss<=240)?"ok":"bad",
+      "monitor · "+((ss<=240)?"on":"quiet")+" · "+agoSecs(ss)+" ago");
+    else setChip("ch-scout","bad","monitor · no signal");
+    var ch=b.coordinator_heartbeat||{};
+    var cs=sinceIso(ch.last_heartbeat_utc);
+    if(cs!=null) setChip("ch-team", (cs<=1200)?"ok":"warn",
+      "work desk · "+((cs<=1200)?"active":"quiet")+" · "+agoSecs(cs)+" ago");
+    else setChip("ch-team","warn","work desk · not running");
+    var p=b.pipe_health||{};
+    var n=p.directives_pending||0;
+    setChip("ch-inbox", n?"warn":"ok",
+      "inbox · "+(n? (n+" waiting"):"clear")+(p.last_processed_clock?(" · handled "+p.last_processed_clock):""));
+  }
+  function banner(b){
+    var w=document.getElementById("banner"); w.innerHTML="";
+    var bc=b.beacon||{};
+    if(bc.state==="idle"){
+      w.appendChild(el("div","banner idle","⏸ Work is paused and needs attention"+
+        (bc.idle_since_clock?(" — quiet since "+bc.idle_since_clock):"")+"."));
+    } else if(bc.state==="paused"){
+      w.appendChild(el("div","banner paused","⏳ On a scheduled pause"+
+        (bc.usage_resets_clock?(" — back around "+bc.usage_resets_clock):"")+"."));
     }
-    return det;
   }
 
-  /* ---------- queue reorder: local page state + batch send (no network per change) ---------- */
+  /* ---------- queue reorder: local edits + one batched send ---------- */
   var QKEY="hw_queue_ops_v1";
-  var QVERB={top:"Move this to the very top of the queue", bump:"Move this to the front of the queue",
+  var QVERB={top:"Move this to the very top of the queue", bump:"Move this toward the front",
              demote:"Push this one spot lower", shelve:"Set this one aside for now"};
   function loadOps(){ try{ var v=JSON.parse(localStorage.getItem(QKEY)); return Array.isArray(v)?v:[]; }
     catch(e){ return []; } }
   function saveOps(ops){ try{ localStorage.setItem(QKEY, JSON.stringify(ops)); }catch(e){} }
   function applyOps(base, ops){
-    // replay the pending edits on top of the fresh server list, so local reorders survive a poll
     var order=base.slice();
     (ops||[]).forEach(function(op){
       var i=-1;
       for(var k=0;k<order.length;k++){ if((order[k].task_id||order[k].header)===op.id){ i=k; break; } }
       if(i<0) return;
       var c=order.splice(i,1)[0];
-      // "top" (⤒ move-to-top) and "bump" both land the item at #1 locally; the emitted
-      // QUEUE: line keeps them distinct so the scout applies each atomically. The
-      // AWAITING_ANTHONY answer→top conversion reuses the SAME "top" op (one code path).
       if(op.action==="top"||op.action==="bump"){ order.unshift(c); }
       else if(op.action==="demote"){ order.splice(Math.min(i+1,order.length),0,c); }
-      // shelve: leave removed
     });
     return order;
   }
   function addOp(id, action){ var ops=loadOps(); ops.push({id:id, action:action}); saveOps(ops);
-    if(lastB) render(lastB); updateBar(); }
-  function discardOps(){ saveOps([]); if(lastB) render(lastB); updateBar(); }
+    rerender(); updateBar(); }
+  function discardOps(){ saveOps([]); rerender(); updateBar(); }
   function sendAll(){
     var ops=loadOps(); if(!ops.length) return;
     var n=ops.length;
@@ -236,7 +335,7 @@
     var url="https://github.com/AnthonyTurgelis/hardwood-site/issues/new"
       +"?title="+encodeURIComponent(title)+"&body="+encodeURIComponent(body)+"&labels=queue";
     window.open(url,"_blank","noopener");
-    saveOps([]); if(lastB) render(lastB); updateBar(true);   // handed off to GitHub — clear local edits
+    saveOps([]); rerender(); updateBar(true);
   }
   function buildBar(){
     var bar=el("div"); bar.id="qbar";
@@ -267,25 +366,37 @@
     }
   }
 
+  /* ---------- shared row helpers ---------- */
+  function stampSpan(c){
+    var st=el("span","tm hw-tm");
+    if(c.at_iso){ st.setAttribute("data-utc", c.at_iso); }
+    st.textContent = c.time||"";
+    return st;
+  }
+  function recordLink(c){
+    if(!c.link) return null;
+    var a=el("a","rlink","record ↗"); a.href=c.link; a.target="_blank"; a.rel="noopener";
+    a.title="Open the full write-up of this item (private — only you can open it).";
+    return a;
+  }
+  function moreToggle(more){
+    if(more==null || (Array.isArray(more) && !more.length) || (typeof more==="string" && !more.trim())) return null;
+    var det=el("details","inline");
+    det.appendChild(el("summary",null,"more ▾"));
+    var body=el("span","raw", Array.isArray(more)? more.join(" · ") : String(more));
+    det.appendChild(body);
+    return det;
+  }
+
+  /* ---------- decisions ---------- */
   function setupCard(su){
-    // one-time setup card (ntfy #224500 or Discord #014500). No secret is ever baked — the
-    // ntfy topic / Discord webhook live only in local gitignored files; the card shows HOW.
     var c=el("div","setup"); c.setAttribute("data-k","setup|"+(su.kind||"ntfy"));
     c.appendChild(el("div","st", su.header||"Setup"));
     if(su.body){ c.appendChild(el("div","sb", su.body)); }
-    if(su.topic){  // legacy: only ever set on a private/local render, never the public board
-      var t=el("span","topic", su.topic); c.appendChild(t);
-      var row=el("div","btnrow");
-      var a=el("a","taybtn","Open in ntfy →"); a.href=su.url||("https://ntfy.sh/"+su.topic);
-      a.target="_blank"; a.rel="noopener"; row.appendChild(a);
-      c.appendChild(row);
-    }
     var m=moreToggle(su.more); if(m) c.appendChild(m);
     return c;
   }
   function ansButtons(it){
-    // each option becomes a tap that opens a pre-filled GitHub issue (the tap IS the reply);
-    // [Other…] opens a fill-in template. Three-tap UX.
     if(!it.answers || !it.answers.length) return null;
     var row=el("div","btnrow");
     it.answers.forEach(function(a){
@@ -294,219 +405,176 @@
     });
     return row;
   }
-  function answerAllCard(aa){
-    // batch card: one pre-filled issue lists every open item inline
-    if(!aa || !aa.url) return null;
-    var d=el("div","decision"); d.setAttribute("data-k","dec|all");
-    d.style.borderLeftColor="var(--promote)";
-    d.appendChild(el("div","q", "Answer everything in one go"));
-    d.appendChild(el("div","one","One screen lists every open decision with its options — fill the blanks, hit submit once."));
-    var row=el("div","btnrow");
-    var b=el("a","taybtn", aa.label||"Answer all"); b.href=aa.url; b.target="_blank"; b.rel="noopener";
-    row.appendChild(b); d.appendChild(row);
-    return d;
-  }
   function renderDecisions(items, setup, answerAll){
-    var s=el("section"); s.appendChild(sectionHead("Needs Anthony — the decision inbox","needs_anthony"));
-    // setup is a LIST of one-time cards (ntfy + Discord); no secret is baked (public board).
+    var s=el("section"); s.appendChild(sectionHead("Needs you","needs_anthony"));
     (setup||[]).forEach(function(su){ s.appendChild(setupCard(su)); });
     if(!items || !items.length){
       var e=el("div","decision"); e.style.borderLeftColor="var(--live)";
       e.appendChild(el("div","q","Nothing needs you right now."));
-      e.appendChild(el("div","one","The board is caught up — no decisions are waiting on you."));
       s.appendChild(e); return s;
     }
-    var aac=answerAllCard(answerAll); if(aac){ s.appendChild(aac); }  // batch card first when >=2 open
+    if(answerAll && answerAll.url){
+      var d=el("div","decision"); d.setAttribute("data-k","dec|all");
+      d.style.borderLeftColor="var(--promote)";
+      d.appendChild(el("div","q","Answer everything in one go"));
+      d.appendChild(el("div","one","One screen lists every open decision — fill the blanks, submit once."));
+      var row=el("div","btnrow");
+      var b=el("a","taybtn", answerAll.label||"Answer all"); b.href=answerAll.url; b.target="_blank"; b.rel="noopener";
+      row.appendChild(b); d.appendChild(row);
+      s.appendChild(d);
+    }
     items.forEach(function(it){
       var d=el("div","decision"); d.setAttribute("data-k","dec|"+it.n);
       d.appendChild(el("div","q", it.n + ". " + it.text));
       var ab=ansButtons(it);
-      if(ab){ d.appendChild(ab); d.appendChild(el("div","btnhint","Tap Yes/No to send a ready-made reply, or Other… to type one line. Opens a pre-filled note on GitHub; hit submit.")); }
+      if(ab){ d.appendChild(ab); d.appendChild(el("div","btnhint","Tap an answer to send a ready-made reply — it opens a pre-filled note; hit submit.")); }
       else if(it.reply){ d.appendChild(el("div","reply","reply: " + it.reply)); }
       var dm=moreToggle(it.more); if(dm) d.appendChild(dm);
       s.appendChild(d);
     });
     return s;
   }
-  function upcCard(c){
-    var card=el("div","upc"+(c.parked?" parked":"")); card.setAttribute("data-k","upc|"+(c.task_id||c.header));
-    var ut=el("div","ut");
-    if(c.rank!=null){ ut.appendChild(el("span","rk","#"+c.rank)); }
-    ut.appendChild(el("span","uh", c.name||c.header||""));
-    if(c.family){ ut.appendChild(el("span","fam fam-"+c.family, c.family)); }
-    if(c.seat){ ut.appendChild(el("span","seat", c.seat)); }
-    // AWAITING_ANTHONY shelf chips: parked items show "waiting on you · N days"; a freshly
-    // answered item briefly shows "answered — now executing" before it jumps to the top.
-    if(c.parked){
-      var dt=(c.days_waiting!=null)?(" · "+c.days_waiting+" day"+(c.days_waiting===1?"":"s")):"";
-      ut.appendChild(el("span","qstatus qs-parked", "waiting on you"+dt));
-    } else if(c.answered){
-      ut.appendChild(el("span","qstatus qs-answered", "answered — now executing"));
-    } else if(c.status){
-      ut.appendChild(el("span","qstatus qs-"+String(c.status).replace(/\s+/g,"-"), c.status));
-    }
-    if(c.pm_authored){ ut.appendChild(el("span","pmflag","PM")); }
-    card.appendChild(ut);
-    if(c.why){ card.appendChild(el("div","uw","A win: "+c.why)); }
-    if(c.actions && c.actions.length){
-      // reorder applies LOCALLY in the page — instant, no network per change; the sticky bar
-      // gathers every edit into ONE send. (Per-change instant/network mode removed.)
-      var row=el("div","btnrow");
-      var tid=c.task_id||c.header;
-      c.actions.forEach(function(a){
-        var b=el("button","qbtn", a.icon); b.type="button";
-        b.title=QVERB[a.verb]||a.verb;
-        b.onclick=(function(verb){ return function(){ addOp(tid, verb); }; })(a.verb);
-        row.appendChild(b);
-      });
-      card.appendChild(row);
-    }
-    var um=moreToggle(c.more); if(um) card.appendChild(um);
-    return card;
-  }
-  function comingCard(c){
-    var card=el("div","upc"); card.setAttribute("data-k","soon|"+(c.header||""));
-    card.style.borderLeftColor="var(--muted)";
-    var ut=el("div","ut");
-    ut.appendChild(el("span","uh", c.header||""));
-    ut.appendChild(el("span","fam", c.state||"coming soon"));
-    card.appendChild(ut);
-    if(c.why){ card.appendChild(el("div","uw","A win: "+c.why)); }
-    if(c.note){ card.appendChild(el("div","one", c.note)); }
-    return card;
-  }
-  function flattenUpcoming(up){
-    // one global ordered list = top cards + the by-family "more" pool, sorted by server rank,
-    // so a local reorder can move an item across the top/more boundary
-    var base=[];
-    ((up&&up.items)||[]).forEach(function(c){ base.push(c); });
-    var more=(up&&up.more_by_family)||{};
-    Object.keys(more).forEach(function(f){ (more[f]||[]).forEach(function(c){ base.push(c); }); });
-    base.sort(function(a,b){ return (a.rank||999)-(b.rank||999); });
-    return base;
-  }
-  function renderUpcoming(up, comingSoon){
-    var s=el("section"); s.appendChild(sectionHead("Upcoming — what's next","upcoming"));
-    var base=flattenUpcoming(up);
-    var hasSoon=comingSoon && comingSoon.length;
-    if(!base.length && !hasSoon){
-      s.appendChild(el("p","empty","The queue is clear.")); return s; }
-    if(up && up.note){ s.appendChild(el("p","one", up.note)); }
-    // replay pending local edits (bump / demote / shelve) on top of the fresh server order
-    var order=applyOps(base, loadOps());
-    var top=order.slice(0,10), rest=order.slice(10);
-    var g=el("div","grid");
-    top.forEach(function(c){ g.appendChild(upcCard(c)); });
-    // future-state goal cards — roadmap, not the live queue
-    (comingSoon||[]).forEach(function(c){ g.appendChild(comingCard(c)); });
-    s.appendChild(g);
-    if(rest.length){
-      var byFam={};
-      rest.forEach(function(c){ (byFam[c.family]=byFam[c.family]||[]).push(c); });
-      var fams=Object.keys(byFam);
-      var det=el("details","more");
-      det.appendChild(el("summary", null, "▸ show all "+rest.length+" more queued"));
-      fams.sort().forEach(function(f){
-        det.appendChild(el("div","famgrp", f));
-        var gg=el("div","grid");
-        byFam[f].forEach(function(c){ gg.appendChild(upcCard(c)); });
-        det.appendChild(gg);
-      });
-      s.appendChild(det);
-    }
+
+  /* ---------- running now: every live lane, with a ticking elapsed timer ---------- */
+  function renderRunning(live){
+    var s=el("section"); s.appendChild(sectionHead("Running now","running_now"));
+    if(!live || !live.length){ s.appendChild(el("p","empty","Nothing is running this minute.")); return s; }
+    var list=el("div","list");
+    live.forEach(function(c){
+      var r=el("div","row run"); r.setAttribute("data-k","run|"+c.name);
+      r.appendChild(chip("IN-FLIGHT"));
+      r.appendChild(el("span","nm", c.name));
+      if(c.one_liner){ r.appendChild(el("span","oneln", c.one_liner)); }
+      var right=el("span","right");
+      if(c.team){ right.appendChild(el("span","tag", c.team)); }
+      if(c.kind && c.kind!=="lane"){ right.appendChild(el("span","tag", c.kind)); }
+      var elp=el("span","elapsed"); if(c.at_iso){ elp.setAttribute("data-since", c.at_iso); }
+      right.appendChild(elp);
+      r.appendChild(right);
+      list.appendChild(r);
+    });
+    s.appendChild(list);
     return s;
   }
-  function stampSpan(c){
-    // per-card timestamp "17:42 · 8m ago" (hardwood.js ticks .hw-stamp[data-utc]); fixed in meta
-    var st=el("span","hw-stamp");
-    if(c.at_iso){ st.setAttribute("data-utc", c.at_iso); }
-    st.setAttribute("data-fallback", c.time||"");
-    st.textContent = c.time||"";
-    return st;
-  }
-  function laneCard(title, c, impact){
-    var card=el("div","card"); card.setAttribute("data-k", title+"|"+c.name+"|"+(c.time||""));
-    if(impact){ card.classList.add("impact-"+(impact>=5?5:impact>=4?4:3)); }
-    var top=el("div","top");
-    top.appendChild(el("span","name", c.name));
-    top.appendChild(chip(c.chip));
-    var meta=el("span","meta");
-    if(c.team){ meta.appendChild(el("span","team",c.team)); }
-    if(c.kind){ meta.appendChild(el("span","team",c.kind)); }
-    meta.appendChild(stampSpan(c));
-    top.appendChild(meta);
-    card.appendChild(top);
-    if(c.one_liner){ card.appendChild(el("div","one", c.one_liner)); }
-    var lm=moreToggle(c.more); if(lm) card.appendChild(lm);
-    return card;
-  }
-  function renderCards(title, cards, plainLines, srcKey){
-    var s=el("section"); s.appendChild(srcKey ? sectionHead(title, srcKey) : el("h2",null,title));
-    var g=el("div","grid"); var any=false;
-    (cards||[]).forEach(function(c){ any=true; g.appendChild(laneCard(title,c)); });
-    if(!any && plainLines && plainLines.length){
-      plainLines.forEach(function(t,i){
-        var card=el("div","card"); card.setAttribute("data-k",title+"|plain|"+i);
-        card.appendChild(el("div","one", t)); g.appendChild(card); any=true;
-      });
+  function tickElapsed(){
+    var nodes=document.querySelectorAll(".elapsed[data-since]");
+    for(var i=0;i<nodes.length;i++){
+      var s=sinceIso(nodes[i].getAttribute("data-since"));
+      nodes[i].textContent = (s==null)? "" : ("for "+agoSecs(s));
     }
-    if(!any){ s.appendChild(el("p","empty","Nothing here right now.")); return s; }
-    s.appendChild(g); return s;
+    var tms=document.querySelectorAll(".hw-tm[data-utc]");
+    for(var j=0;j<tms.length;j++){
+      var t=sinceIso(tms[j].getAttribute("data-utc"));
+      if(t!=null && t>=0){ /* keep the baked ET clock; append relative time */
+        var base=tms[j].getAttribute("data-base")||tms[j].textContent.split(" · ")[0];
+        tms[j].setAttribute("data-base", base);
+        tms[j].textContent = base+" · "+agoSecs(t)+" ago";
+      }
+    }
+  }
+
+  /* ---------- done today: ~6 bold headlines, dense rows, minors collapsed ---------- */
+  var impactFilter="all";   // all | headlines
+  function doneRow(c){
+    var r=el("div","row"); r.setAttribute("data-k","done|"+c.name);
+    r.appendChild(chip(c.chip));
+    r.appendChild(el("span","nm", c.name));
+    if(c.passes && c.passes>1){ r.appendChild(el("span","passes","· "+c.passes+" passes")); }
+    if(c.one_liner){ r.appendChild(el("span","oneln", c.one_liner)); }
+    var right=el("span","right");
+    if(c.team){ right.appendChild(el("span","tag",c.team)); }
+    var rl=recordLink(c); if(rl) right.appendChild(rl);
+    right.appendChild(stampSpan(c));
+    r.appendChild(right);
+    return r;
+  }
+  function headlineRow(c){
+    var r=el("div","hl"+((c.impact||0)>=5?" i5":"")); r.setAttribute("data-k","hl|"+c.name);
+    var t=el("div","t");
+    t.appendChild(el("span","nm", c.name));
+    t.appendChild(chip(c.chip));
+    if(c.passes && c.passes>1){ t.appendChild(el("span","passes", c.passes+" passes")); }
+    var right=el("span","right");
+    if(c.team){ right.appendChild(el("span","tag",c.team)); }
+    var rl=recordLink(c); if(rl) right.appendChild(rl);
+    right.appendChild(stampSpan(c));
+    t.appendChild(right);
+    r.appendChild(t);
+    if(c.one_liner){ r.appendChild(el("div","why", c.one_liner)); }
+    return r;
   }
   function renderDone(cards){
-    // IMPACT HIERARCHY: 5s/4s = full bold cards with their
-    // one-line why; 3s = normal cards; 2s/1s = small, GROUPED by team into one row per family,
-    // tucked behind a "show N minor items" toggle so the default view stays glanceable.
-    var s=el("section"); s.appendChild(sectionHead("Done Today","done_today"));
+    var s=el("section"); s.appendChild(sectionHead("Done today","done_today"));
     if(!cards || !cards.length){ s.appendChild(el("p","empty","Nothing finished yet today.")); return s; }
-    var major=[], normal=[], minor=[];
-    cards.forEach(function(c){ var im=c.impact||2;
-      if(im>=4){ major.push(c); } else if(im===3){ normal.push(c); } else { minor.push(c); } });
-    // sort visible by impact desc then time (server order is time-desc already)
-    major.sort(function(a,b){ return (b.impact||0)-(a.impact||0); });
-    var vis=major.concat(normal);
-    var g=el("div","grid");
-    vis.forEach(function(c){ g.appendChild(laneCard("Done Today", c, c.impact)); });
-    s.appendChild(g);
-    if(minor.length){
-      var det=el("details","more");
-      det.appendChild(el("summary", null, "▸ show "+minor.length+" minor item"+(minor.length>1?"s":"")+" (fixes, verifications, housekeeping)"));
-      var byFam={};
-      minor.forEach(function(c){ var f=c.team||"Other"; (byFam[f]=byFam[f]||[]).push(c); });
-      Object.keys(byFam).sort().forEach(function(f){
-        var arr=byFam[f];
-        var row=el("div","minorrow"); row.setAttribute("data-k","doneminor|"+f);
-        row.appendChild(el("span","minorfam", f+": "+arr.length+" item"+(arr.length>1?"s":"")));
-        row.appendChild(el("span","minoritems", arr.map(function(c){ return c.name; }).join(" · ")));
-        det.appendChild(row);
-      });
-      s.appendChild(det);
+    var heads=[], normal=[], minor=[];
+    cards.forEach(function(c){
+      if(c.headline){ heads.push(c); }
+      else if((c.impact||2)>=3){ normal.push(c); }
+      else { minor.push(c); }
+    });
+    heads.sort(function(a,b){ return (b.impact||0)-(a.impact||0); });
+    if(heads.length){
+      var hlist=el("div","list");
+      heads.forEach(function(c){ hlist.appendChild(headlineRow(c)); });
+      s.appendChild(hlist);
     }
+    if(impactFilter!=="headlines"){
+      if(normal.length){
+        var list=el("div","list"); list.style.marginTop="7px";
+        normal.forEach(function(c){ list.appendChild(doneRow(c)); });
+        s.appendChild(list);
+      }
+      if(minor.length){
+        var det=el("details","more");
+        det.appendChild(el("summary", null, "▸ show "+minor.length+" smaller item"+(minor.length>1?"s":"")+" (fixes, checks, housekeeping)"));
+        var byFam={};
+        minor.forEach(function(c){ var f=c.team||"Other"; (byFam[f]=byFam[f]||[]).push(c); });
+        var mlist=el("div","list"); mlist.style.marginTop="6px";
+        Object.keys(byFam).sort().forEach(function(f){
+          var arr=byFam[f];
+          var row=el("div","minorrow"); row.setAttribute("data-k","doneminor|"+f);
+          row.appendChild(el("span","minorfam", f+": "+arr.length));
+          row.appendChild(el("span","minoritems", arr.map(function(c){
+            return c.name+(c.passes>1?(" ("+c.passes+" passes)"):""); }).join(" · ")));
+          mlist.appendChild(row);
+        });
+        det.appendChild(mlist);
+        s.appendChild(det);
+      }
+    } else if(normal.length || minor.length){
+      s.appendChild(el("p","empty",(normal.length+minor.length)+" more finished items hidden by the Headlines filter."));
+    }
+    var lg=el("details","more");
+    lg.appendChild(el("summary",null,"what the labels mean"));
+    var ltxt=Object.keys(CHIPMEAN).map(function(k){ return k+" — "+CHIPMEAN[k]; }).join("  ·  ");
+    lg.appendChild(el("div","legend", ltxt));
+    s.appendChild(lg);
     return s;
   }
+
+  /* ---------- scout activity strip ---------- */
   function renderScoutActivity(items){
-    // THE SCOUT ACTIVITY strip — a wall-clock ticker of the always-on monitor's last actions so a
-    // stalled restart is visible, never inferred from a dead terminal. Compact, telemetry-styled;
-    // hidden when the log has no readable actions.
     if(!items || !items.length) return null;
-    var s=el("section"); s.appendChild(sectionHead("Scout Activity","scout_activity"));
-    var ul=el("ul","scoutlog");
-    items.slice().reverse().forEach(function(a){   // newest first
+    var s=el("section"); s.appendChild(sectionHead("Monitor activity — the last few minutes it acted","scout_activity"));
+    var list=el("ul","scoutlog list");
+    items.slice().reverse().forEach(function(a){
       var li=el("li","scoutrow");
       li.appendChild(el("span","stime", a.time||""));
       li.appendChild(el("span","stext", a.text||""));
-      if(a.detail){                                 // raw internal log behind a 'details' toggle
-        var d=el("details","sdetail");
-        d.appendChild(el("summary",null,"details"));
-        d.appendChild(el("span","sraw", a.detail));
+      if(a.detail){
+        li.appendChild(document.createTextNode(" "));
+        var d=el("details","inline");
+        d.appendChild(el("summary",null,"log ▾"));
+        d.appendChild(el("span","raw", a.detail));
         li.appendChild(d);
       }
-      ul.appendChild(li);
+      list.appendChild(li);
     });
-    s.appendChild(ul); return s;
+    s.appendChild(list); return s;
   }
+
   function renderWatch(lines){
-    var s=el("section"); s.appendChild(sectionHead("Watch List","watch_list"));
+    var s=el("section"); s.appendChild(sectionHead("Watch list","watch_list"));
     if(!lines || !lines.length){ s.appendChild(el("p","empty","Clear.")); return s; }
     var ul=el("ul","watch");
     lines.forEach(function(t){ ul.appendChild(el("li",null,t)); });
@@ -514,49 +582,184 @@
   }
   function renderPdfs(pdfs){
     if(!pdfs || !pdfs.length) return null;
-    var s=el("section"); s.appendChild(el("h2",null,"Gameday Reports — " + (pdfs[0].date||"")));
+    var s=el("section"); s.appendChild(sectionHead("Game reports — "+(pdfs[0].date||""),""));
     var wrap=el("div","pdfs");
     pdfs.forEach(function(p){ var a=el("a",null,p.label); a.href=p.href; a.target="_blank";
       a.rel="noopener"; wrap.appendChild(a); });
     s.appendChild(wrap); return s;
   }
 
-  var lastB=null;
+  /* ---------- queue tab: the FULL list, floor status, one-tap reorder ---------- */
+  function flattenUpcoming(up){
+    var base=[];
+    ((up&&up.items)||[]).forEach(function(c){ base.push(c); });
+    var more=(up&&up.more_by_family)||{};
+    Object.keys(more).forEach(function(f){ (more[f]||[]).forEach(function(c){ base.push(c); }); });
+    base.sort(function(a,b){ return (a.rank||999)-(b.rank||999); });
+    return base;
+  }
+  function queueRow(c, i, snapshot){
+    var r=el("div","qrow"+(c.parked?" parked":"")); r.setAttribute("data-k","upc|"+(c.task_id||c.header));
+    var t=el("div","t");
+    t.appendChild(el("span","rk","#"+(i+1)));
+    t.appendChild(el("span","nm", c.name||c.header||""));
+    if(c.family){ t.appendChild(el("span","fam fam-"+c.family, c.family)); }
+    if(c.seat){ t.appendChild(el("span","tag", c.seat)); }
+    if(c.parked){
+      var dt=(c.days_waiting!=null)?(" · "+c.days_waiting+" day"+(c.days_waiting===1?"":"s")):"";
+      t.appendChild(el("span","qstatus qs-waiting-on-you", "waiting on you"+dt));
+    } else if(c.answered){
+      t.appendChild(el("span","qstatus qs-answered", "answered — now executing"));
+    } else if(c.status){
+      t.appendChild(el("span","qstatus qs-"+String(c.status).replace(/\s+/g,"-"), c.status));
+    }
+    if(c.pm_authored){ t.appendChild(el("span","pmflag","auto-planned")); }
+    if(!snapshot && c.actions && c.actions.length){
+      var acts=el("span","acts");
+      var tid=c.task_id||c.header;
+      c.actions.forEach(function(a){
+        var b=el("button","qbtn", a.icon); b.type="button";
+        b.title=QVERB[a.verb]||a.verb;
+        b.onclick=(function(verb){ return function(){ addOp(tid, verb); }; })(a.verb);
+        acts.appendChild(b);
+      });
+      t.appendChild(acts);
+    }
+    r.appendChild(t);
+    if(c.why){ r.appendChild(el("div","why","Why: "+c.why)); }
+    return r;
+  }
+  function renderQueue(up, comingSoon, snapshot){
+    var s=el("section"); s.appendChild(sectionHead("The full queue — everything lined up, in order","upcoming"));
+    var base=flattenUpcoming(up);
+    var fl=(up&&up.floor)||null;
+    if(fl){
+      var fline=el("div","floorline");
+      var dot=el("span","dot"); dot.style.background = fl.ok ? "var(--ok)" : "var(--warn)";
+      fline.appendChild(dot);
+      fline.appendChild(el("span",null, fl.label||""));
+      s.appendChild(fline);
+    }
+    if(!base.length){ s.appendChild(el("p","empty","The queue is clear.")); return s; }
+    if(up && up.note){ var n=el("p","empty"); n.style.fontStyle="normal"; n.textContent=up.note; s.appendChild(n); }
+    var order=snapshot? base : applyOps(base, loadOps());
+    var list=el("div","list");
+    order.forEach(function(c,i){ list.appendChild(queueRow(c,i,snapshot)); });
+    s.appendChild(list);
+    if(comingSoon && comingSoon.length){
+      var s2=el("div"); s2.appendChild(sectionHead("Coming soon",""));
+      var cl=el("div","list");
+      comingSoon.forEach(function(c){
+        var r=el("div","comingrow");
+        var t=el("div","t"); t.appendChild(el("span","nm", c.header||""));
+        t.appendChild(el("span","tag", c.state||"coming soon"));
+        r.appendChild(t);
+        if(c.why){ r.appendChild(el("div","why","A win: "+c.why)); }
+        if(c.note){ r.appendChild(el("div","why", c.note)); }
+        cl.appendChild(r);
+      });
+      s2.appendChild(cl);
+      s.appendChild(s2);
+    }
+    return s;
+  }
+
+  /* ---------- sub-tabs + filters ---------- */
+  var activeTab="today";
+  function renderSubtabs(b){
+    var w=document.getElementById("subtabs"); w.innerHTML="";
+    var c=b.counts||{};
+    var qn=(c.upcoming!=null)? c.upcoming : "";
+    [["today","Today"+(c.done_today?(" ("+c.done_today+")"):"")],
+     ["queue","Queue"+(qn!==""?(" ("+qn+")"):"")]].forEach(function(t){
+      var btn=el("button","subtab"+(activeTab===t[0]?" active":""), t[1]); btn.type="button";
+      btn.onclick=function(){ activeTab=t[0]; rerender(); };
+      w.appendChild(btn);
+    });
+  }
+  var viewDate=null;    // null = live; else "YYYY-MM-DD" snapshot
+  var snapB=null;
+  function renderFilters(b){
+    var w=document.getElementById("filters"); w.innerHTML="";
+    if(activeTab!=="today"){ return; }
+    [["all","All"],["headlines","Headlines only"]].forEach(function(p){
+      var btn=el("button","pill"+(impactFilter===p[0]?" active":""), p[1]); btn.type="button";
+      btn.onclick=function(){ impactFilter=p[0]; rerender(); };
+      w.appendChild(btn);
+    });
+    var sel=el("select"); sel.title="Look back at an earlier day's board";
+    var today=(lastLive && lastLive.date) || b.date;
+    var d0=new Date(today+"T12:00:00");
+    for(var i=0;i<8;i++){
+      var d=new Date(d0.getTime()-i*86400000);
+      var iso=d.toISOString().slice(0,10);
+      var o=el("option",null, i===0? "Today" : iso);
+      o.value=iso; sel.appendChild(o);
+    }
+    sel.value=viewDate||today;
+    sel.onchange=function(){
+      var v=sel.value;
+      if(v===today){ viewDate=null; snapB=null; rerender(); return; }
+      fetch("./history/board_"+v+".json",{cache:"no-cache"}).then(function(r){
+        if(!r.ok){ throw new Error("no snapshot"); } return r.json();
+      }).then(function(j){ viewDate=v; snapB=j; rerender(); })
+      .catch(function(){ viewDate=null; snapB=null; rerender();
+        var f=document.getElementById("filters");
+        if(f){ f.appendChild(el("span","snapnote","No saved board for "+v+".")); } });
+    };
+    w.appendChild(sel);
+    if(viewDate){
+      var back=el("button","pill active","← back to live"); back.type="button";
+      back.onclick=function(){ viewDate=null; snapB=null; rerender(); };
+      w.appendChild(back);
+      w.appendChild(el("span","snapnote","Viewing "+viewDate+" — a saved copy, not live."));
+    }
+  }
+
+  /* ---------- render ---------- */
+  var lastLive=null;   // newest live payload
+  var lastB=null;      // what is currently displayed (live or snapshot)
   function render(b){
     lastB=b;
     SRC=b.section_sources||{};
     var sec=b.sections||{};
-    document.getElementById("sub").textContent =
-      (b.date||"") + " · " + (b.counts? (b.counts.running+" running · "+b.counts.done_today+
-      " done today · "+b.counts.needs_anthony+" awaiting you") : "");
+    healthChips(b); banner(b);
+    document.getElementById("summary").innerHTML="";
+    var sm=document.getElementById("summary");
+    if(b.day_summary){ sm.appendChild(document.createTextNode(b.day_summary)); }
+    sm.appendChild(el("span","dim","  ·  "+(b.date||"")));
+    renderSubtabs(b); renderFilters(b);
     var main=document.getElementById("main"); main.innerHTML="";
-    main.appendChild(renderDecisions(sec.needs_anthony, b.setup, b.answer_all));
-    // Running-Now shows ALL live lanes: the coordinator's authoritative
-    // running_live list wins when present; else the delta-derived IN-FLIGHT cards.
-    var live=(sec.running_live && sec.running_live.length)? sec.running_live : sec.running_now;
-    main.appendChild(renderCards("Running Now", live, sec.running_plain, "running_now"));
-    var pdfs=renderPdfs(b.pdfs); if(pdfs) main.appendChild(pdfs);
-    main.appendChild(renderDone(sec.done_today));
-    main.appendChild(renderUpcoming(sec.upcoming, sec.coming_soon));
-    var sa=renderScoutActivity(b.scout_activity); if(sa) main.appendChild(sa);
-    main.appendChild(renderWatch(sec.watch_list));
+    if(activeTab==="today"){
+      main.appendChild(renderDecisions(sec.needs_anthony, b.setup, b.answer_all));
+      var live=(sec.running_live && sec.running_live.length)? sec.running_live : sec.running_now;
+      main.appendChild(renderRunning(live));
+      main.appendChild(renderDone(sec.done_today));
+      var pdfs=renderPdfs(b.pdfs); if(pdfs) main.appendChild(pdfs);
+      var sa=renderScoutActivity(b.scout_activity); if(sa) main.appendChild(sa);
+      main.appendChild(renderWatch(sec.watch_list));
+    } else {
+      main.appendChild(renderQueue(sec.upcoming, sec.coming_soon, !!viewDate));
+    }
     document.getElementById("foot").textContent =
-      "Auto-generated from the working record. Last refreshed " + (b.generated_et||b.generated_utc||"") +
-      ". Every number a stranger sees is baked here — no live database is ever contacted from your browser.";
+      "Auto-generated from the working record. Last refreshed " + (b.generated_et||"") +
+      ". Every number on this page is baked in advance — your browser never touches a database.";
+    tickElapsed();
     flash();
   }
+  function rerender(){ render(viewDate && snapB ? snapB : (lastLive||lastB)); }
 
-  /* ---------- shared live runtime (poll own JSON, ETag, ago-chip, flash) ---------- */
+  /* ---------- live runtime: poll own JSON, ETag, ago-chip, flash ---------- */
   var URL="./board.json", etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
   function updAgo(){
     var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
     var t = s<60 ? (s+"s ago") : (Math.floor(s/60)+"m "+(s%60)+"s ago");
-    var a=document.getElementById("ago"); if(a) a.innerHTML = lastFetch? ("live · updated <b>"+t+"</b>") : "";
+    var a=document.getElementById("ago"); if(a) a.innerHTML = lastFetch? ("live · checked <b>"+t+"</b>") : "";
   }
   function flash(){
     var nodes=document.querySelectorAll("#main [data-k]"), nm={};
-    nodes.forEach(function(n){ var k=n.getAttribute("data-k"), h=n.innerHTML; nm[k]=h;
-      if(!first && cardHTML[k]!==undefined && cardHTML[k]!==h){ n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); } });
+    for(var i=0;i<nodes.length;i++){ var n=nodes[i]; var k=n.getAttribute("data-k"), h=n.innerHTML; nm[k]=h;
+      if(!first && cardHTML[k]!==undefined && cardHTML[k]!==h){ n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); } }
     cardHTML=nm; first=false;
   }
   function poll(){
@@ -564,17 +767,17 @@
     fetch(URL,{headers:h,cache:"no-cache"}).then(function(r){
       if(r.status===304) return null;
       etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
-    }).then(function(b){ lastFetch=Date.now(); if(b){ render(b); } updAgo(); }).catch(function(e){
+    }).then(function(b){ lastFetch=Date.now(); if(b){ lastLive=b; if(!viewDate){ render(b); } else { healthChips(b); } } updAgo(); }).catch(function(e){
       if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the board (board.json). '+(e&&e.message?e.message:"")+'</p>'; }
     });
   }
-  poll(); setInterval(poll,60000); setInterval(updAgo,1000);
+  poll(); setInterval(poll,60000);
+  setInterval(function(){ updAgo(); tickChips(); }, 1000);
+  setInterval(tickElapsed, 15000);
 
   /* ---------- queue-edit bar: build, sync across tabs, warn on leave ---------- */
   buildBar(); updateBar();
-  // another tab may add/clear edits — mirror its state here (persists across tabs)
-  window.addEventListener("storage", function(e){ if(e.key===QKEY){ if(lastB) render(lastB); updateBar(); } });
-  // block an accidental page-leave while edits are still un-sent
+  window.addEventListener("storage", function(e){ if(e.key===QKEY){ rerender(); updateBar(); } });
   window.addEventListener("beforeunload", function(e){
     if(loadOps().length){ e.preventDefault(); e.returnValue=""; return ""; }
   });
