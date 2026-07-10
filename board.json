@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-07-10T05:31:57+00:00",
+ "generated_utc": "2026-07-10T05:36:44+00:00",
  "date": "2026-07-10",
  "counts": {
   "running": 3,
@@ -1778,33 +1778,13 @@
  ],
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-10T05:31:24Z",
-  "age_s": 34,
-  "cycles": 12,
-  "label": "scout: alive, last poll 34s ago",
+  "last_poll_utc": "2026-07-10T05:36:37Z",
+  "age_s": 8,
+  "cycles": 17,
+  "label": "scout: alive, last poll 8s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
-  {
-   "time": "1:24am",
-   "text": "held — a coordinator is already live; instruction queued",
-   "detail": "no spawn — live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session"
-  },
-  {
-   "time": "1:24am",
-   "text": "received 1 new instruction(s)",
-   "detail": "poll #5 · 1 new · spawn-check: HELD (coordinator heartbeat fresh, pid 1792) · watch #5 · progress:fresh(167s,commit) · sla:none"
-  },
-  {
-   "time": "1:26am",
-   "text": "checked for new instructions — nothing new",
-   "detail": "poll #7 · 0 new · spawn-check: HELD (coordinator heartbeat fresh, pid 1792) · watch #7 · progress:fresh(119s,commit) · sla:none"
-  },
-  {
-   "time": "1:27am",
-   "text": "new instruction received into the inbox",
-   "detail": "HIT: delivered DIRECTOR_DIRECTIVE__board_redesign_executes_now.md -> inbox/ (ts=)"
-  },
   {
    "time": "1:27am",
    "text": "held — a coordinator is already live; instruction queued",
@@ -1834,13 +1814,33 @@
    "time": "1:31am",
    "text": "checked for new instructions — nothing new",
    "detail": "poll #12 · 0 new · spawn-check: HELD (coordinator heartbeat fresh, pid 1792) · watch #12 · progress:fresh(35s,commit) · sla:none"
+  },
+  {
+   "time": "1:32am",
+   "text": "unfinished work found — resuming a coordinator",
+   "detail": "ORPHAN-WAKE inbox: no live coordinator + unfinished work — attempting resume spawn"
+  },
+  {
+   "time": "1:32am",
+   "text": "started a fresh coordinator (window ready)",
+   "detail": "WAKE spawned pid=12416 mode=visible-window"
+  },
+  {
+   "time": "1:32am",
+   "text": "starting a fresh coordinator — resuming work",
+   "detail": "spawn: FIRED reason=inbox — awaiting coordinator confirmation (<= 300s), one attempt only"
+  },
+  {
+   "time": "1:36am",
+   "text": "checked for new instructions — nothing new",
+   "detail": "poll #17 · 0 new · spawn-check: HELD (awaiting coordinator confirmation) · watch #17 · progress:fresh(5s,delta) · sla:none"
   }
  ],
  "coordinator_heartbeat": {
-  "alive": false,
-  "last_heartbeat_utc": null,
-  "age_s": null,
-  "label": "coordinator: none running",
+  "alive": true,
+  "last_heartbeat_utc": "2026-07-10T05:33:24Z",
+  "age_s": 201,
+  "label": "coordinator: active, last check 201s ago",
   "anchor": "coordinator.lock"
  },
  "pipe_health": {
@@ -1862,12 +1862,12 @@
  "section_sources": {
   "running_now": {
    "source": "work record",
-   "as_of": "2026-07-10T05:28:26Z",
+   "as_of": "2026-07-10T05:36:34Z",
    "stale": false
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-10T05:28:26Z",
+   "as_of": "2026-07-10T05:36:34Z",
    "stale": false
   },
   "needs_anthony": {
@@ -1891,5 +1891,5 @@
    "stale": false
   }
  },
- "generated_et": "Jul 10, 1:31am ET"
+ "generated_et": "Jul 10, 1:36am ET"
 }
