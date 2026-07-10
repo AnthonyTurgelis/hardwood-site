@@ -495,6 +495,12 @@
       var li=el("li","scoutrow");
       li.appendChild(el("span","stime", a.time||""));
       li.appendChild(el("span","stext", a.text||""));
+      if(a.detail){                                 // raw internal log behind a 'details' toggle
+        var d=el("details","sdetail");
+        d.appendChild(el("summary",null,"details"));
+        d.appendChild(el("span","sraw", a.detail));
+        li.appendChild(d);
+      }
       ul.appendChild(li);
     });
     s.appendChild(ul); return s;
