@@ -241,13 +241,20 @@
 
   var SRC={};
   function clock(iso){ var m=/T(\d{2}):(\d{2})/.exec(iso||""); return m ? (m[1]+":"+m[2]) : ""; }
+  /* Eastern-time clock from any ISO/UTC stamp — the board never shows a raw UTC clock to a human
+     (kills the 'as of 06:23' UTC leak beside a live 'checked 29s ago' chip; directive 230000Z section 3). */
+  function etClock(iso){ if(!iso) return ""; try{ var d=new Date(iso); if(isNaN(d.getTime())) return "";
+      return d.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'})
+              .replace(/\s+/g,'').toLowerCase(); }catch(e){ return ""; } }
+  var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function monthDay(iso){ var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(iso||""); return m ? (MON[(+m[2])-1]+" "+(+m[3])) : (iso||""); }
   function sectionHead(title, key){
     var wrap=el("div","sechead"); wrap.appendChild(el("h2",null,title));
     var m=SRC && SRC[key];
     if(m){
       if(m.stale){ wrap.appendChild(el("span","stalebadge","stale")); }
       var t="from "+(m.source||"the record");
-      if(m.as_of){ t+=" · as of "+clock(m.as_of); }
+      if(m.as_of){ t+=" · as of "+etClock(m.as_of); }
       wrap.appendChild(el("span","prov", t));
     }
     return wrap;
@@ -580,13 +587,56 @@
     lines.forEach(function(t){ ul.appendChild(el("li",null,t)); });
     s.appendChild(ul); return s;
   }
-  function renderPdfs(pdfs){
-    if(!pdfs || !pdfs.length) return null;
-    var s=el("section"); s.appendChild(sectionHead("Game reports — "+(pdfs[0].date||""),""));
+  /* today's slate — matchup, ET tip, our winning-margin call, win chance (Task 1) */
+  function renderTodayGames(tg){
+    var s=el("section"); s.appendChild(sectionHead("Today's games","today_games"));
+    if(!tg || !tg.games || !tg.games.length){
+      s.appendChild(el("p","empty",(tg&&tg.note)||"No games on today's slate.")); return s;
+    }
+    var list=el("div","list");
+    tg.games.forEach(function(g){
+      var r=el("div","row game"); r.setAttribute("data-k","tg|"+(g.abbr||g.matchup||""));
+      var t=el("div","t");
+      t.appendChild(el("span","nm", g.matchup||g.abbr||""));
+      if(g.tip){ t.appendChild(el("span","tag", g.tip)); }
+      r.appendChild(t);
+      if(g.call){ r.appendChild(el("div","why","Our call: "+g.call)); }
+      if(g.win_line){ r.appendChild(el("div","why", g.win_line)); }
+      if(g.venue_note){ r.appendChild(el("div","why venue", g.venue_note)); }
+      list.appendChild(r);
+    });
+    s.appendChild(list);
+    return s;
+  }
+  function pdfWrap(items){
     var wrap=el("div","pdfs");
-    pdfs.forEach(function(p){ var a=el("a",null,p.label); a.href=p.href; a.target="_blank";
+    (items||[]).forEach(function(p){ var a=el("a",null,p.label); a.href=p.href; a.target="_blank";
       a.rel="noopener"; wrap.appendChild(a); });
-    s.appendChild(wrap); return s;
+    return wrap;
+  }
+  /* game reports — TONIGHT's product up top, yesterday's under a dated archive header,
+     a placeholder until tonight's land, plus the night-readiness confirmation (Task 1) */
+  function renderReports(rep, rollover){
+    if(!rep) return null;
+    var s=el("section"); s.appendChild(sectionHead("Game reports","reports"));
+    if(rep.today && rep.today.length){
+      s.appendChild(el("div","subhead","Tonight — "+monthDay(rep.today_date)));
+      s.appendChild(pdfWrap(rep.today));
+    } else {
+      s.appendChild(el("p","empty", rep.placeholder||"Tonight's reports land later today."));
+    }
+    if(rep.archive && rep.archive.length){
+      var det=el("details","more");
+      det.appendChild(el("summary",null, monthDay(rep.archive_date)+" reports"));
+      det.appendChild(pdfWrap(rep.archive));
+      s.appendChild(det);
+    }
+    if(rollover && rollover.label){
+      var rl=el("div","rollover"); rl.title=rollover.note||"";
+      rl.appendChild(el("span",null, rollover.label));
+      s.appendChild(rl);
+    }
+    return s;
   }
 
   /* ---------- queue tab: the FULL list, floor status, one-tap reorder ---------- */
@@ -731,11 +781,15 @@
     renderSubtabs(b); renderFilters(b);
     var main=document.getElementById("main"); main.innerHTML="";
     if(activeTab==="today"){
+      main.appendChild(renderTodayGames(sec.today_games));
       main.appendChild(renderDecisions(sec.needs_anthony, b.setup, b.answer_all));
-      var live=(sec.running_live && sec.running_live.length)? sec.running_live : sec.running_now;
+      var reps=renderReports(b.reports, b.rollover); if(reps) main.appendChild(reps);
+      // running_live is the LIVE-gated list (empty means nothing is running — never fall back to
+      // the delta-derived cards, which can hold corpses; directive 230000Z section 3). Only a legacy
+      // snapshot with no running_live at all falls back to running_now.
+      var live=(sec.running_live!=null)? sec.running_live : sec.running_now;
       main.appendChild(renderRunning(live));
       main.appendChild(renderDone(sec.done_today));
-      var pdfs=renderPdfs(b.pdfs); if(pdfs) main.appendChild(pdfs);
       var sa=renderScoutActivity(b.scout_activity); if(sa) main.appendChild(sa);
       main.appendChild(renderWatch(sec.watch_list));
     } else {
