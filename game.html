@@ -84,6 +84,90 @@
   function qid(){ var m=/[?&]id=([^&]+)/.exec(location.search); return m?decodeURIComponent(m[1]):null; }
   function safeId(s){ return (s||"").replace(/[^A-Za-z0-9_-]/g,""); }
 
+  function num(x){ return x==null ? "—" : x; }
+
+  function ctxCard(d){
+    var c=d.context||{}; if(!c.home && !c.away) return null;
+    var box=el("div","ctx");
+    [c.away, c.home].forEach(function(line){
+      if(line){ var p=el("div"); p.innerHTML="<b>"+esc(line.split(" — ")[0])+"</b> — "+esc(line.split(" — ").slice(1).join(" — ")); box.appendChild(p); }
+    });
+    return box;
+  }
+  function esc(s){ var e=el("span"); e.textContent=s==null?"":s; return e.innerHTML; }
+
+  function fairCard(d){
+    var f=d.fair_value; if(!f || (f.our_spread==null && f.our_total==null)) return null;
+    var wrap=el("div","fv");
+    var t=el("table");
+    var head=el("tr"); ["","Our fair number","Market","Gap"].forEach(function(h){ head.appendChild(el("th",null,h)); });
+    t.appendChild(head);
+    function row(label, ours, mkt, gap){
+      var tr=el("tr");
+      tr.appendChild(el("td",null,label));
+      tr.appendChild(el("td","ours", ours==null?"—":String(ours)));
+      tr.appendChild(el("td",null, f.market_pending ? "pending" : (mkt==null?"—":String(mkt))));
+      var g=el("td","gap"); g.textContent = (f.market_pending||gap==null) ? "" : (gap>0?"+"+gap:String(gap)); tr.appendChild(g);
+      t.appendChild(tr);
+    }
+    row("Spread", f.our_spread, f.market_spread, f.spread_delta);
+    row("Total",  f.our_total,  f.market_total,  f.total_delta);
+    wrap.appendChild(t);
+    if(f.market_pending) wrap.appendChild(el("div","pend","Market line not yet captured for this game — our fair number shown alone."));
+    return wrap;
+  }
+
+  function boxTable(title, rows){
+    var wrap=el("div","boxwrap");
+    var t=el("table","box");
+    var cap=el("caption",null,title); t.appendChild(cap);
+    var head=el("tr");
+    var h0=el("th","pl","Player"); head.appendChild(h0);
+    ["Min","Pts","Reb","Ast"].forEach(function(h){ head.appendChild(el("th",null,h)); });
+    t.appendChild(head);
+    (rows||[]).forEach(function(r){
+      var tr=el("tr"); if(r.grouped) tr.className="grp";
+      var nm=el("td","pl"); nm.textContent=r.name;
+      if(r.gtd){ var g=el("span","gtd","GTD"); nm.appendChild(g); }
+      tr.appendChild(nm);
+      ["min","pts","reb","ast"].forEach(function(k){ tr.appendChild(el("td",null, r[k]==null?"—":r[k])); });
+      t.appendChild(tr);
+    });
+    if(!(rows||[]).length) { var tr=el("tr"); var td=el("td","pl","No projected box available."); td.colSpan=5; tr.appendChild(td); t.appendChild(tr); }
+    wrap.appendChild(t);
+    return wrap;
+  }
+
+  function availLine(label, badges){
+    if(!badges || !badges.length) return null;
+    var d=el("div","av");
+    d.appendChild(el("span",null,label+": "));
+    badges.forEach(function(b,i){
+      var cls=(b.status==="Out")?"out":"dtd";
+      var s=el("span",cls, b.name+" ("+b.status+(b["return"]?", back "+b["return"]:"")+")");
+      d.appendChild(s);
+      if(i<badges.length-1) d.appendChild(el("span",null,", "));
+    });
+    return d;
+  }
+
+  function styleTags(d){
+    var st=d.style; if(!st) return null;
+    var any=(st.home&&st.home.length)||(st.away&&st.away.length)||st.hook;
+    if(!any) return null;
+    var box=el("div");
+    if(st.hook) box.appendChild(el("div","sub2", st.hook));
+    [[d.away,st.away],[d.home,st.home]].forEach(function(pair){
+      if(pair[1]&&pair[1].length){
+        var row=el("div"); row.appendChild(el("span","fn",pair[0]+" "));
+        pair[1].forEach(function(tg){ row.appendChild(el("span","tag",tg)); });
+        box.appendChild(row);
+      }
+    });
+    box.appendChild(el("div","note", st.note||"style, not prediction"));
+    return box;
+  }
+
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
     var back=el("a","back","← Back to all games"); back.href="./games.html"; main.appendChild(back);
@@ -93,6 +177,11 @@
     hero.appendChild(el("div","sub", d.date||""));
     main.appendChild(hero);
 
+    // CONTEXT + FAIR VALUE (front-office layer)
+    var cx=ctxCard(d); if(cx){ var cs=el("section"); cs.appendChild(el("h2",null,"Setup")); cs.appendChild(cx); main.appendChild(cs); }
+    var fv=fairCard(d); if(fv){ var fs=el("section"); fs.appendChild(el("h2",null,"Our fair number vs the market")); fs.appendChild(fv); main.appendChild(fs); }
+
+    // MODEL BREAKDOWN
     var s=el("section"); s.appendChild(el("h2",null,"Full model breakdown"));
     (d.factors||[]).forEach(function(f){
       var c=el("div","fac"); var l=el("div","fl");
@@ -103,8 +192,28 @@
       s.appendChild(c);
     });
     if(!(d.factors||[]).length) s.appendChild(el("p","empty","No breakdown available for this game yet."));
-    main.appendChild(s);
     s.appendChild(el("div","note", d.note||""));
+    main.appendChild(s);
+
+    // PROJECTED BOX SCORES (both rosters)
+    if(d.box && (d.box.home || d.box.away)){
+      var bs=el("section"); bs.appendChild(el("h2",null,"Projected box score"));
+      bs.appendChild(boxTable((d.away_full||d.away)+" (away)", d.box.away));
+      bs.appendChild(boxTable((d.home_full||d.home)+" (home)", d.box.home));
+      // availability
+      var av=d.availability||{};
+      var a1=availLine(d.away, av.away), a2=availLine(d.home, av.home);
+      if(a1||a2){ bs.appendChild(el("h2",null,"Availability")); if(a1)bs.appendChild(a1); if(a2)bs.appendChild(a2); }
+      if(d.box_note) bs.appendChild(el("div","note", d.box_note));
+      main.appendChild(bs);
+    }
+
+    // STYLE
+    var stg=styleTags(d); if(stg){ var sts=el("section"); sts.appendChild(el("h2",null,"Team style")); sts.appendChild(stg); main.appendChild(sts); }
+
+    // PDF REPORT LINK
+    if(d.pdf){ var ps=el("section"); var a=el("a","pdf","Full game report (PDF) →"); a.href=d.pdf; ps.appendChild(a); main.appendChild(ps); }
+
     document.getElementById("foot").textContent="Baked "+(d.generated_utc||"")+". Ranges are calibrated from our own past accuracy; a single game's margin swings a lot.";
   }
 
