@@ -85,6 +85,10 @@
   details.more>summary{cursor:pointer;font-size:12px;color:var(--accent);margin-top:8px;list-style:none}
   details.more>summary::-webkit-details-marker{display:none}
   .watch li{margin-bottom:3px;color:var(--muted);font-size:12px}
+  .scoutlog{list-style:none;padding:0;margin:7px 0 0;font-variant-numeric:tabular-nums}
+  .scoutrow{display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:12px;line-height:1.45}
+  .scoutrow .stime{color:var(--accent);font-size:11px;min-width:58px;flex:0 0 auto}
+  .scoutrow .stext{color:var(--muted)}
   .pdfs a{display:inline-block;margin:0 6px 6px 0;font-size:12px;text-decoration:none;color:var(--accent);
     border:1px solid var(--line);background:var(--card);padding:4px 9px;border-radius:7px}
   .empty{color:var(--muted);font-size:12.5px;font-style:italic}
@@ -464,6 +468,21 @@
     }
     return s;
   }
+  function renderScoutActivity(items){
+    // THE SCOUT ACTIVITY strip — a wall-clock ticker of the always-on monitor's last actions so a
+    // stalled restart is visible, never inferred from a dead terminal. Compact, telemetry-styled;
+    // hidden when the log has no readable actions.
+    if(!items || !items.length) return null;
+    var s=el("section"); s.appendChild(sectionHead("Scout Activity","scout_activity"));
+    var ul=el("ul","scoutlog");
+    items.slice().reverse().forEach(function(a){   // newest first
+      var li=el("li","scoutrow");
+      li.appendChild(el("span","stime", a.time||""));
+      li.appendChild(el("span","stext", a.text||""));
+      ul.appendChild(li);
+    });
+    s.appendChild(ul); return s;
+  }
   function renderWatch(lines){
     var s=el("section"); s.appendChild(sectionHead("Watch List","watch_list"));
     if(!lines || !lines.length){ s.appendChild(el("p","empty","Clear.")); return s; }
@@ -497,6 +516,7 @@
     var pdfs=renderPdfs(b.pdfs); if(pdfs) main.appendChild(pdfs);
     main.appendChild(renderDone(sec.done_today));
     main.appendChild(renderUpcoming(sec.upcoming, sec.coming_soon));
+    var sa=renderScoutActivity(b.scout_activity); if(sa) main.appendChild(sa);
     main.appendChild(renderWatch(sec.watch_list));
     document.getElementById("foot").textContent =
       "Auto-generated from the working record. Last refreshed " + (b.generated_utc||"") +
