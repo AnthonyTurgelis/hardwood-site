@@ -58,11 +58,43 @@
 <script>
 (function(){
   "use strict";
+  /* The daily review is baked HTML from the collector pipeline (external-sourced content).
+     Render it through an allow-list sanitizer so any injected <script>, event handler, or
+     javascript:/data: URL is stripped before it reaches the DOM. No CDN, no dependency. */
+  var ALLOWED_TAGS={H1:1,H2:1,H3:1,H4:1,H5:1,H6:1,P:1,UL:1,OL:1,LI:1,HR:1,BR:1,CODE:1,PRE:1,A:1,STRONG:1,EM:1,B:1,I:1,U:1,BLOCKQUOTE:1,SPAN:1,DIV:1,TABLE:1,THEAD:1,TBODY:1,TR:1,TD:1,TH:1,SMALL:1,IMG:1};
+  var ALLOWED_ATTR={href:1,title:1,"class":1,src:1,alt:1,colspan:1,rowspan:1};
+  var DROP_TAGS={SCRIPT:1,STYLE:1,IFRAME:1,OBJECT:1,EMBED:1,LINK:1,META:1,BASE:1,FORM:1,SVG:1,MATH:1};
+  function sanitizeInto(target, html){
+    var doc=new DOMParser().parseFromString(html||"", "text/html");
+    (function clean(node){
+      var child=node.firstChild;
+      while(child){
+        var next=child.nextSibling;
+        if(child.nodeType===1){
+          var tag=child.tagName;
+          if(DROP_TAGS[tag]){ node.removeChild(child); }
+          else if(!ALLOWED_TAGS[tag]){ clean(child); while(child.firstChild){ node.insertBefore(child.firstChild, child); } node.removeChild(child); }
+          else {
+            var attrs=child.attributes;
+            for(var i=attrs.length-1;i>=0;i--){
+              var an=attrs[i].name, av=attrs[i].value, lan=an.toLowerCase();
+              if(/^on/i.test(an) || !ALLOWED_ATTR[lan]){ child.removeAttribute(an); }
+              else if((lan==="href"||lan==="src") && /^\s*(javascript|data|vbscript):/i.test(av)){ child.removeAttribute(an); }
+            }
+            clean(child);
+          }
+        } else if(child.nodeType===8){ node.removeChild(child); }
+        child=next;
+      }
+    })(doc.body);
+    target.innerHTML="";
+    while(doc.body.firstChild){ target.appendChild(doc.body.firstChild); }
+  }
   function render(d){
     document.getElementById("sub").textContent = d.date || "";
     var main=document.getElementById("main");
     if(!d.available || !d.html){ main.innerHTML='<p class="empty">No review published for today yet.</p>'; return; }
-    var wrap=document.createElement("div"); wrap.className="doc"; wrap.setAttribute("data-k","doc"); wrap.innerHTML=d.html;
+    var wrap=document.createElement("div"); wrap.className="doc"; wrap.setAttribute("data-k","doc"); sanitizeInto(wrap, d.html);
     main.innerHTML=""; main.appendChild(wrap);
     document.getElementById("foot").textContent = "Written for you as the plain-English daily. Baked " + (d.generated_et||d.generated_utc||"") + ".";
     flash();
@@ -86,7 +118,7 @@
       if(r.status===304) return null;
       etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
     }).then(function(d){ lastFetch=Date.now(); if(d){ render(d); } updAgo(); }).catch(function(e){
-      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the review. '+(e&&e.message?e.message:"")+'</p>'; }
+      if(!lastFetch){ var _m=document.getElementById("main"); _m.innerHTML=""; var _p=document.createElement("p"); _p.className="empty"; _p.textContent='Could not load the review. '+(e&&e.message?e.message:""); _m.appendChild(_p); }
     });
   }
   poll(); setInterval(poll,60000); setInterval(updAgo,1000);

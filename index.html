@@ -303,8 +303,9 @@
     var m=(SRC && SRC[key])||null;
     var reval=(FRESH && FRESH.revalidated_utc) || (lastB && lastB.generated_utc) || null;
     var prov=el("span","prov");
-    var src=(m && m.source) ? ("from "+m.source+" · ") : "";
-    prov.innerHTML = src + "checked <b>…</b>";
+    if(m && m.source){ prov.appendChild(document.createTextNode("from "+m.source+" · ")); }
+    prov.appendChild(document.createTextNode("checked "));
+    var provB=el("b",null,"…"); prov.appendChild(provB);
     if(reval){ prov.setAttribute("data-reval", reval); }
     return {prov:prov, stale:(m && m.stale)};
   }
@@ -953,7 +954,7 @@
       if(r.status===304) return null;
       etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
     }).then(function(b){ lastFetch=Date.now(); if(b){ lastLive=b; if(!viewDate){ render(b); } else { healthChips(b); } } updAgo(); }).catch(function(e){
-      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the board (board.json). '+(e&&e.message?e.message:"")+'</p>'; }
+      if(!lastFetch){ var _m=document.getElementById("main"); _m.innerHTML=""; var _p=document.createElement("p"); _p.className="empty"; _p.textContent='Could not load the board (board.json). '+(e&&e.message?e.message:""); _m.appendChild(_p); }
     });
   }
   poll(); setInterval(poll,60000);
