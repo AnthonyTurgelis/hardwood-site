@@ -79,7 +79,8 @@
 (function(){
   "use strict";
   var URL="./players.json";
-  var curStat=null, curData=null, ratFilter="";
+  var curStat=null, curData=null, ratFilter="", ratShowAll=false;
+  var RAT_PAGE=50;   // default view = top 50; "show all" reveals the full uncapped board
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function td(c,x){ return el("td",c,x); }
 
@@ -88,18 +89,20 @@
     var s=el("section");
     var h=el("h2"); h.appendChild(document.createTextNode("Players — this season")); s.appendChild(h);
     if(!rt.available){ s.appendChild(el("p","empty", rt.note||"Season stats coming soon.")); return s; }
-    s.appendChild(el("p","lede","Ranked by our on-court impact rating — how much better a team plays with her on the floor. Because it rewards all-around play, some role players rate above pure scorers. Her share of team minutes rides alongside, so a big number on tiny minutes is easy to spot. Per-game points, rebounds and assists are shown as support. Tap a name for her full card."));
+    s.appendChild(el("p","lede","Ranked by our on-court impact rating — how much better a team plays with her on the floor. It rewards all-around, two-way play rather than scoring, so some role players rate above pure scorers, and a modest number is not a weak player. This early in the season it rests on only a handful of games and can swing, so a low-game player can sit high. Her share of team minutes rides alongside, so a big number on tiny minutes is easy to spot. Per-game points, rebounds and assists are shown as support. Tap a name for her full card."));
     var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter players by name or team…"; fbox.value=ratFilter;
     fbox.oninput=function(){ ratFilter=fbox.value; var ns=ratingsSection(rt); s.parentNode.replaceChild(ns, s);
       var nf=ns.querySelector(".filt"); if(nf){ nf.focus(); nf.setSelectionRange(nf.value.length,nf.value.length); } };
     s.appendChild(fbox);
     var card=el("div","card"); var sc=el("div","scroll"); var t=el("table");
     var thead=el("thead"), hr=el("tr");
-    ["#","Player","Team","Impact","Min%","GP","PTS","REB","AST","MIN",""].forEach(function(x){ hr.appendChild(el("th",null,x)); });
+    ["#","Player","Team","Impact","% of minutes","GP","PTS","REB","AST","MIN",""].forEach(function(x){ hr.appendChild(el("th",null,x)); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
     var q=ratFilter.trim().toLowerCase();
-    rt.players.filter(function(r){ return !q || (r.name||"").toLowerCase().indexOf(q)>=0 || (r.team||"").toLowerCase().indexOf(q)>=0; }).forEach(function(r){
+    var matched=rt.players.filter(function(r){ return !q || (r.name||"").toLowerCase().indexOf(q)>=0 || (r.team||"").toLowerCase().indexOf(q)>=0; });
+    var shown = ratShowAll ? matched : matched.slice(0, RAT_PAGE);
+    shown.forEach(function(r){
       var tr=el("tr"); tr.setAttribute("data-k","rt|"+r.name);
       tr.appendChild(td("rk", r.rank));
       var nm=el("td","nm");
@@ -118,7 +121,12 @@
       tb.appendChild(tr);
     });
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); s.appendChild(card);
-    var note=el("div","note"); note.appendChild(document.createTextNode("Impact is our on-court rating (plus-minus style); Min% is her share of a full game's minutes. Per-game averages are this season's official box scores, shown as support. Tap a name for projected minutes and outcome ranges."));
+    if(matched.length > RAT_PAGE){
+      var tog=el("button","showall", ratShowAll ? ("Show top "+RAT_PAGE) : ("Show all "+matched.length+" players"));
+      tog.onclick=function(){ ratShowAll=!ratShowAll; s.parentNode.replaceChild(ratingsSection(rt), s); };
+      s.appendChild(tog);
+    }
+    var note=el("div","note"); note.appendChild(document.createTextNode("Impact is our on-court rating (plus-minus style); % of minutes is her share of a full game's minutes. Per-game averages are this season's official box scores, shown as support. Tap a name for projected minutes and outcome ranges."));
     s.appendChild(note);
     return s;
   }
