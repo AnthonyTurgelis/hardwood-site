@@ -168,6 +168,21 @@
   .scoutrow:last-child{border-bottom:none}
   .scoutrow .stime{color:var(--accent);font-size:10.5px;display:inline-block;min-width:56px}
   .scoutrow .stext{color:var(--muted)}
+  /* helpers panel: process rows + work-slot width line */
+  .hbstale{font-size:11.5px;color:var(--bad);margin:2px 0 6px;display:flex;align-items:center;gap:6px}
+  .hwidth{font-size:12.5px;margin:2px 0 8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .hwline{font-weight:650}
+  .hwreason{color:var(--muted);font-size:11.5px}
+  .helperlist{list-style:none;padding:0;margin:0}
+  .helperrow{display:flex;align-items:center;gap:8px;padding:5px 10px;border-bottom:1px solid var(--line);font-size:12px}
+  .helperrow:last-child{border-bottom:none}
+  .hdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;background:var(--muted)}
+  .hdot.on{background:var(--ok)} .hdot.off{background:var(--bad)}
+  .hbody{display:flex;flex-direction:column;gap:1px;flex:1 1 auto;min-width:0}
+  .hname{font-weight:600}
+  .hdoes{color:var(--muted);font-size:10.5px;line-height:1.35}
+  .hstate{color:var(--muted);font-size:11px;white-space:nowrap;flex:0 0 auto}
+  .hstate.stale{color:var(--bad);font-weight:650}
   .pdfs{display:flex;gap:6px;flex-wrap:wrap}
   .pdfs a{display:inline-block;font-size:12px;text-decoration:none;color:var(--accent);
     border:1px solid var(--line);background:var(--card);padding:3px 9px;border-radius:7px}
@@ -636,6 +651,41 @@
     s.appendChild(list); return s;
   }
 
+  /* HELPERS — the always-on helper processes + the work-slot width, mirrored from the desktop
+     console (board.helpers, sourced verbatim from the emitter). Fresh-or-loud: a quiet process
+     or a stale whole-block reads LOUDLY (a red 'quiet'/'stale' badge), never a silent old value. */
+  function renderHelpers(h){
+    if(!h || (!(h.agents&&h.agents.length) && !h.width)) return null;
+    var s=el("section"); s.appendChild(sectionHead("Helpers running","helpers"));
+    if(h.stale && h.status){
+      var w=el("div","hbstale"); w.appendChild(el("span","stalebadge","stale"));
+      w.appendChild(el("span",null," "+h.status)); s.appendChild(w);
+    }
+    if(h.width){
+      var wd=el("div","hwidth");
+      wd.appendChild(el("span","hwline", h.width.line||""));
+      if(h.width.reason){ wd.appendChild(el("span","hwreason", " "+h.width.reason)); }
+      if(h.width.stale){ wd.appendChild(el("span","stalebadge","stale")); }
+      s.appendChild(wd);
+    }
+    if(h.agents && h.agents.length){
+      var list=el("ul","helperlist list");
+      h.agents.forEach(function(a){
+        var li=el("li","helperrow");
+        var dot=el("span","hdot "+(a.active?"on":"off")); li.appendChild(dot);
+        var body=el("span","hbody");
+        body.appendChild(el("span","hname", a.name||""));
+        if(a.does){ body.appendChild(el("span","hdoes", a.does)); }
+        li.appendChild(body);
+        var st=el("span","hstate"+(a.stale?" stale":""), a.state_text||"");
+        li.appendChild(st);
+        list.appendChild(li);
+      });
+      s.appendChild(list);
+    }
+    return s;
+  }
+
   function renderWatch(lines){
     var s=el("section"); s.appendChild(sectionHead("Watch list","watch_list"));
     if(!lines || !lines.length){ s.appendChild(el("p","empty","Clear.")); return s; }
@@ -870,6 +920,7 @@
       var live=(sec.running_live!=null)? sec.running_live : sec.running_now;
       main.appendChild(renderRunning(live));
       main.appendChild(renderDone(sec.done_today));
+      var hp=renderHelpers(b.helpers); if(hp) main.appendChild(hp);
       var sa=renderScoutActivity(b.scout_activity); if(sa) main.appendChild(sa);
       main.appendChild(renderWatch(sec.watch_list));
     } else {
