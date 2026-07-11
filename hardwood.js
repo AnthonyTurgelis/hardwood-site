@@ -155,13 +155,20 @@
   // ---- non-disruptive poll of status.json (strip only; never touches #main) ----
   function poll() {
     fetch(STATUS_URL, { cache: "no-cache" })
-      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status + " fetching " + STATUS_URL);
+        return r.json();
+      })
       .then(function (s) {
         lastFetch = Date.now();
         if (s) { status = s; genIso = s.generated_utc || genIso; }
         renderStrip();
       })
-      .catch(function () { /* keep last-known strip; the per-page board still polls its own JSON */ });
+      .catch(function (e) {
+        // keep last-known strip; the per-page board still polls its own JSON.
+        // surface the failure to the console so a broken status pipe isn't invisible.
+        console.warn("hardwood status poll failed:", e);
+      });
   }
 
   function tick() { renderStrip(); tickStamps(); }
