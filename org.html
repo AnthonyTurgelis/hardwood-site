@@ -27,6 +27,17 @@
   .seat{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);padding:10px 12px}
   .seat .role{font-weight:680;font-size:13px}
   .seat .does{color:var(--muted);font-size:12px;margin-top:3px;line-height:1.45}
+  .strip{margin:6px 0 20px}
+  .striphead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 8px}
+  .striphead h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0;font-weight:700}
+  .striphead .sum{color:var(--dim);font-size:12px}
+  .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:7px}
+  .achip{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+  .achip.working{border-color:var(--acc);background:var(--card)}
+  .arole{display:flex;align-items:center;gap:6px;font-weight:680;font-size:12.5px}
+  .aact{color:var(--muted);font-size:11.5px;margin-top:2px;line-height:1.4}
+  .adot{width:7px;height:7px;border-radius:50%;background:var(--line2);flex:none}
+  .achip.working .adot{background:var(--acc)}
   .empty{color:var(--dim);font-style:italic}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
@@ -59,6 +70,24 @@
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
     if(d.intro){ main.appendChild(el("p","lede",d.intro)); }
+    if(d.strip && (d.strip.seats||[]).length){
+      var strip=el("div","strip");
+      var head=el("div","striphead");
+      head.appendChild(el("h2",null,"Working right now"));
+      if(d.strip.summary){ head.appendChild(el("span","sum",d.strip.summary)); }
+      strip.appendChild(head);
+      var ag=el("div","agrid");
+      (d.strip.seats||[]).forEach(function(st){
+        var c=el("div","achip"+(st.state==="working"?" working":""));
+        var r=el("div","arole");
+        r.appendChild(el("span","adot"));
+        r.appendChild(el("span",null,st.role));
+        c.appendChild(r);
+        c.appendChild(el("div","aact",st.activity));
+        ag.appendChild(c);
+      });
+      strip.appendChild(ag); main.appendChild(strip);
+    }
     (d.groups||[]).forEach(function(g){
       var s=el("div","grp");
       s.appendChild(el("h2",null,g.name));
