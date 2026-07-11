@@ -158,7 +158,7 @@
       if(r.status===304) return null;
       etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
     }).then(function(d){ lastFetch=Date.now(); if(d){ render(d); } updAgo(); }).catch(function(e){
-      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the error map. '+(e&&e.message?e.message:"")+'</p>'; }
+      if(!lastFetch){ var _m=document.getElementById("main"); _m.innerHTML=""; var _p=document.createElement("p"); _p.className="empty"; _p.textContent='Could not load the error map. '+(e&&e.message?e.message:""); _m.appendChild(_p); }
     });
   }
   poll(); setInterval(poll,60000); setInterval(updAgo,1000);
