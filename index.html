@@ -270,8 +270,7 @@
 <script>
 (function(){
   "use strict";
-  function el(tag, cls, txt){ var e=document.createElement(tag); if(cls)e.className=cls;
-    if(txt!=null)e.textContent=txt; return e; }
+  var el=Hardwood.el;
 
   /* plain meanings for every status word — hover/legend (no robotic log-speak) */
   var CHIPMEAN={
@@ -935,17 +934,12 @@
   function rerender(){ render(viewDate && snapB ? snapB : (lastLive||lastB)); }
 
   /* ---------- live runtime: poll own JSON, ETag, ago-chip, flash ---------- */
-  var URL="./board.json", etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
+  var URL="./board.json", etag=null,lastMod=null,lastFetch=0;
+  var flash=Hardwood.flash;
   function updAgo(){
     var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
     var t = s<60 ? (s+"s ago") : (Math.floor(s/60)+"m "+(s%60)+"s ago");
     var a=document.getElementById("ago"); if(a) a.innerHTML = lastFetch? ("live · checked <b>"+t+"</b>") : "";
-  }
-  function flash(){
-    var nodes=document.querySelectorAll("#main [data-k]"), nm={};
-    for(var i=0;i<nodes.length;i++){ var n=nodes[i]; var k=n.getAttribute("data-k"), h=n.innerHTML; nm[k]=h;
-      if(!first && cardHTML[k]!==undefined && cardHTML[k]!==h){ n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); } }
-    cardHTML=nm; first=false;
   }
   function poll(){
     var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
