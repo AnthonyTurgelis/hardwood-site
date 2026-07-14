@@ -69,7 +69,7 @@
 <script>
 (function(){
   "use strict";
-  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  var el=Hardwood.el, flash=Hardwood.flash;
 
   function metricCard(m){
     var c=el("div","metric" + (m.no_data?" nodata":"")); c.setAttribute("data-k","m|"+m.surface);
@@ -139,29 +139,7 @@
     document.getElementById("foot").textContent = "Baked " + (a.generated_et||a.generated_utc||"") + ". Lower error is better; a single WNBA game's margin is mostly luck, for us and for the market alike.";
     flash();
   }
-  /* ---------- shared live runtime ---------- */
-  var URL="./accuracy.json", etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
-  function updAgo(){
-    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
-    var t = s<60 ? (s+"s ago") : (Math.floor(s/60)+"m "+(s%60)+"s ago");
-    var a=document.getElementById("ago"); if(a) a.innerHTML = lastFetch? ("live · updated <b>"+t+"</b>") : "";
-  }
-  function flash(){
-    var nodes=document.querySelectorAll("#main [data-k]"), nm={};
-    nodes.forEach(function(n){ var k=n.getAttribute("data-k"), h=n.innerHTML; nm[k]=h;
-      if(!first && cardHTML[k]!==undefined && cardHTML[k]!==h){ n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); } });
-    cardHTML=nm; first=false;
-  }
-  function poll(){
-    var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
-    fetch(URL,{headers:h,cache:"no-cache"}).then(function(r){
-      if(r.status===304) return null;
-      etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
-    }).then(function(a){ lastFetch=Date.now(); if(a){ render(a); } updAgo(); }).catch(function(e){
-      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the scorecard. '+(e&&e.message?e.message:"")+'</p>'; }
-    });
-  }
-  poll(); setInterval(poll,60000); setInterval(updAgo,1000);
+  Hardwood.live({ url:"./accuracy.json", render:render, error:"Could not load the scorecard." });
 })();
 </script>
 </body>

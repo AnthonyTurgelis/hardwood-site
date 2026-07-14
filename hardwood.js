@@ -166,6 +166,92 @@
 
   function tick() { renderStrip(); tickStamps(); }
 
+  // ---- shared page helpers (deduped from every tab's inline script) ----
+  // el("div","cls","text") -> element; the one-liner every page had copy-pasted.
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+
+  // ?id= reader for the game/player detail pages.
+  function qid() {
+    var m = /[?&]id=([^&]+)/.exec(location.search);
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  // flash(): pulse any "#main [data-k]" node whose innerHTML changed since the
+  // last render. Self-contained per page (module-level state below).
+  var flashPrev = {}, flashFirst = true;
+  function flash() {
+    var nodes = document.querySelectorAll("#main [data-k]"), nm = {};
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i], k = n.getAttribute("data-k"), h = n.innerHTML;
+      nm[k] = h;
+      if (!flashFirst && flashPrev[k] !== undefined && flashPrev[k] !== h) {
+        n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash");
+      }
+    }
+    flashPrev = nm; flashFirst = false;
+  }
+
+  // live(opts): the "shared live runtime" every tab reimplemented — an #ago chip
+  // plus a self-polling fetch that re-renders on change. Options:
+  //   url        (required) JSON to poll
+  //   render     (required) fn(data) called with the parsed payload
+  //   interval   poll period ms (default 60000)
+  //   conditional  send If-None-Match/If-Modified-Since and honour 304 (default true)
+  //   seconds    show seconds in the "Xm Ys ago" chip (default true)
+  //   verb       chip verb, "updated" (default) or "checked"
+  //   error      leading text of the load-failure message
+  function live(opts) {
+    var url = opts.url, render = opts.render;
+    var interval = opts.interval || 60000;
+    var conditional = opts.conditional !== false;
+    var seconds = opts.seconds !== false;
+    var verb = opts.verb || "updated";
+    var errText = opts.error || "Could not load.";
+    var etag = null, lastMod = null, lastFetch = 0;
+
+    function updAgo() {
+      var s = Math.max(0, Math.round((Date.now() - lastFetch) / 1000));
+      var t = seconds
+        ? (s < 60 ? (s + "s ago") : (Math.floor(s / 60) + "m " + (s % 60) + "s ago"))
+        : (s < 60 ? (s + "s ago") : (Math.floor(s / 60) + "m ago"));
+      var a = document.getElementById("ago");
+      if (a) a.innerHTML = lastFetch ? ("live · " + verb + " <b>" + t + "</b>") : "";
+    }
+    function poll() {
+      var h = {};
+      if (conditional) {
+        if (etag) h["If-None-Match"] = etag;
+        if (lastMod) h["If-Modified-Since"] = lastMod;
+      }
+      fetch(url, { headers: h, cache: "no-cache" }).then(function (r) {
+        if (conditional && r.status === 304) return null;
+        if (conditional) {
+          etag = r.headers.get("ETag") || etag;
+          lastMod = r.headers.get("Last-Modified") || lastMod;
+        }
+        return r.json();
+      }).then(function (d) {
+        lastFetch = Date.now();
+        if (d) { render(d); }
+        updAgo();
+      }).catch(function (e) {
+        if (!lastFetch) {
+          document.getElementById("main").innerHTML =
+            '<p class="empty">' + errText + ' ' + (e && e.message ? e.message : "") + '</p>';
+        }
+      });
+    }
+    poll();
+    setInterval(poll, interval);
+    setInterval(updAgo, 1000);
+    return { updAgo: updAgo, poll: poll };
+  }
+
   function start() {
     mount();
     poll();
@@ -191,6 +277,10 @@
       return s;
     },
     clockOf: clockOf,
-    agoOf: agoOf
+    agoOf: agoOf,
+    el: el,
+    qid: qid,
+    flash: flash,
+    live: live
   };
 })();

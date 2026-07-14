@@ -66,7 +66,7 @@
 <script>
 (function(){
   "use strict";
-  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  var el=Hardwood.el;
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
     if(d.intro){ main.appendChild(el("p","lede",d.intro)); }
@@ -104,15 +104,7 @@
     if(!(d.groups||[]).length){ main.appendChild(el("p","empty","Team structure coming soon.")); }
     document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+".";
   }
-  var lastFetch=0;
-  function updAgo(){ var a=document.getElementById("ago"); if(!a)return;
-    if(!lastFetch){ a.innerHTML=""; return; }
-    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
-    a.innerHTML="live · updated <b>"+(s<60?(s+"s ago"):(Math.floor(s/60)+"m ago"))+"</b>"; }
-  function poll(){ fetch("./org.json",{cache:"no-cache"}).then(function(r){ return r.json(); })
-    .then(function(d){ lastFetch=Date.now(); render(d); updAgo(); })
-    .catch(function(e){ if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load. '+(e&&e.message?e.message:"")+'</p>'; } }); }
-  poll(); setInterval(poll,300000); setInterval(updAgo,1000);
+  Hardwood.live({ url:"./org.json", render:render, interval:300000, conditional:false, seconds:false, error:"Could not load." });
 })();
 </script>
 </body>

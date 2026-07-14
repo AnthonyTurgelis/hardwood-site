@@ -78,10 +78,9 @@
 <script>
 (function(){
   "use strict";
-  var URL="./players.json";
   var curStat=null, curData=null, ratFilter="", ratShowAll=false;
   var RAT_PAGE=50;   // default view = top 50; "show all" reveals the full uncapped board
-  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  var el=Hardwood.el, flash=Hardwood.flash;
   function td(c,x){ return el("td",c,x); }
 
   function num(v,u){ return v==null? "—" : (v.toFixed(1)+(u?u:"")); }
@@ -183,29 +182,7 @@
     flash();
   }
 
-  /* ---------- shared live runtime ---------- */
-  var etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
-  function updAgo(){
-    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
-    var t = s<60 ? (s+"s ago") : (Math.floor(s/60)+"m "+(s%60)+"s ago");
-    var a=document.getElementById("ago"); if(a) a.innerHTML = lastFetch? ("live · updated <b>"+t+"</b>") : "";
-  }
-  function flash(){
-    var nodes=document.querySelectorAll("#main [data-k]"), nm={};
-    nodes.forEach(function(n){ var k=n.getAttribute("data-k"), h=n.innerHTML; nm[k]=h;
-      if(!first && cardHTML[k]!==undefined && cardHTML[k]!==h){ n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); } });
-    cardHTML=nm; first=false;
-  }
-  function poll(){
-    var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
-    fetch(URL,{headers:h,cache:"no-cache"}).then(function(r){
-      if(r.status===304) return null;
-      etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
-    }).then(function(d){ lastFetch=Date.now(); if(d){ render(d); } updAgo(); }).catch(function(e){
-      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load player boards. '+(e&&e.message?e.message:"")+'</p>'; }
-    });
-  }
-  poll(); setInterval(poll,60000); setInterval(updAgo,1000);
+  Hardwood.live({ url:"./players.json", render:render, error:"Could not load player boards." });
 })();
 </script>
 </body>

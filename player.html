@@ -74,8 +74,7 @@
 <script>
 (function(){
   "use strict";
-  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
-  function qid(){ var m=/[?&]id=([^&]+)/.exec(location.search); return m?decodeURIComponent(m[1]):null; }
+  var el=Hardwood.el, qid=Hardwood.qid;
   function safeId(s){ return (s||"").replace(/[^0-9]/g,""); }   // player ids are numeric; hard allow-list
 
   function trajSvg(pts){
