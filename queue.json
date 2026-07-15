@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-07-15T16:21:19+00:00",
+ "generated_utc": "2026-07-15T16:23:12+00:00",
  "date": "2026-07-15",
  "available": true,
  "intro": "This is what the team is working on next, in priority order. Each item shows a priority score — higher means more worth doing now for the effort it takes. Betting work sits at the bottom and is tagged research-only: it is an experiment we measure, never the main product and never the top of the list.",
@@ -254,6 +254,14 @@
   },
   {
    "rank": 32,
+   "title": "Make the independent-check habit mechanical, not memory-based",
+   "one_liner": "Right now a lane's independent double-check only happens if a live coordinator remembers; while nobody's watching it can quietly lapse. Have the floor-monitor flag any finished data-writing lane that has no recorded verification.",
+   "score": 1.0,
+   "family": "Infra - ops monitor",
+   "exploratory": false
+  },
+  {
+   "rank": 33,
    "title": "Make prediction ranges widen for genuinely wild games",
    "one_liner": "Our misses pile up in blowout-prone games; let the range grow where the game is truly unpredictable and tighten where it's clear, instead of one fixed width everywhere.",
    "score": 1.0,
@@ -261,7 +269,7 @@
    "exploratory": false
   },
   {
-   "rank": 33,
+   "rank": 34,
    "title": "Add a recent-form margin signal to the game model",
    "one_liner": "A parked feature that conditions on how teams have been winning or losing lately; enough games are now graded to build and test it honestly.",
    "score": 1.0,
@@ -269,7 +277,7 @@
    "exploratory": false
   },
   {
-   "rank": 34,
+   "rank": 35,
    "title": "Add a check that no seat is silently switched off",
    "one_liner": "One malformed line once disabled an entire role without warning; a start-up check that every seat's tool list is valid stops that from ever happening quietly again.",
    "score": 1.0,
@@ -277,7 +285,7 @@
    "exploratory": false
   },
   {
-   "rank": 35,
+   "rank": 36,
    "title": "Grade the possession-value engine on the full season for the first time",
    "one_liner": "We built a way to value each possession but never scored it against a whole season; run that first real evaluation so we know if it earns a place in the simulation.",
    "score": 1.0,
@@ -285,7 +293,7 @@
    "exploratory": false
   },
   {
-   "rank": 36,
+   "rank": 37,
    "title": "Value every game situation by expected points",
    "one_liner": "Learn how much each on-court situation is worth in points from this season's play-by-play, a foundation piece for smarter possession-level modeling.",
    "score": 1.0,
@@ -293,7 +301,7 @@
    "exploratory": false
   },
   {
-   "rank": 37,
+   "rank": 38,
    "title": "Line the prediction range up with the displayed margin",
    "one_liner": "The range is currently centered slightly off from the number we show; shift it to match so a card never appears to contradict itself.",
    "score": 1.0,
@@ -301,7 +309,7 @@
    "exploratory": false
   },
   {
-   "rank": 38,
+   "rank": 39,
    "title": "Test a multi-year, recency-weighted player baseline",
    "one_liner": "Blend a player's last few seasons with more weight on recent ones and see if it beats a single-season baseline for player props.",
    "score": 1.0,
@@ -309,7 +317,7 @@
    "exploratory": false
   },
   {
-   "rank": 39,
+   "rank": 40,
    "title": "Turn the ratings build into a hands-off nightly job",
    "one_liner": "The core player-ratings build still needs a manual step; port it to run automatically each night so ratings never quietly go stale.",
    "score": 1.0,
@@ -317,7 +325,7 @@
    "exploratory": false
   },
   {
-   "rank": 40,
+   "rank": 41,
    "title": "Give the background monitor a clean, flicker-free display",
    "one_liner": "A steady status panel with a live usage meter instead of a scrolling log, so the health of the operation is readable at a glance.",
    "score": 1.0,
@@ -325,7 +333,7 @@
    "exploratory": false
   },
   {
-   "rank": 41,
+   "rank": 42,
    "title": "Research how to feed real substitution patterns into projections",
    "one_liner": "Study how teams actually rotate players so minutes and lineups reflect real bench behavior rather than a smooth average.",
    "score": 1.0,
@@ -333,7 +341,7 @@
    "exploratory": false
   },
   {
-   "rank": 42,
+   "rank": 43,
    "title": "Apply the college data to this year's draft prospects",
    "one_liner": "We ingested college shot data; now use it to produce first real projections for incoming rookies we otherwise can't forecast.",
    "score": 1.0,
@@ -341,7 +349,7 @@
    "exploratory": false
   },
   {
-   "rank": 43,
+   "rank": 44,
    "title": "How to pull European league stats for winter coverage",
    "one_liner": "Draft the plan to collect Spanish and French league box scores so we have signal on overseas players during the off-season.",
    "score": 1.0,
@@ -349,7 +357,7 @@
    "exploratory": false
   },
   {
-   "rank": 44,
+   "rank": 45,
    "title": "Acquire college play-by-play for a college-to-pro bridge",
    "one_liner": "Event-level college data would let us translate college performance into pro expectations — a genuinely new source, not a rebuild of anything we own.",
    "score": 1.0,
@@ -357,7 +365,7 @@
    "exploratory": false
   },
   {
-   "rank": 45,
+   "rank": 46,
    "title": "Bring the technical write-up back in sync with recent work",
    "one_liner": "Several sections of the internal technical report lag behind what actually shipped this week; refresh them so the record stays trustworthy.",
    "score": 1.0,
@@ -365,7 +373,15 @@
    "exploratory": false
   },
   {
-   "rank": 46,
+   "rank": 47,
+   "title": "Alert on a persistently thin workload — but not for known-idle lanes",
+   "one_liner": "A workload that stays thin for many cycles should raise a heads-up when the shortfall is just a lane that is intentionally offline (so it never pages about an expected gap).",
+   "score": 1.0,
+   "family": "Infra - ops monitor",
+   "exploratory": false
+  },
+  {
+   "rank": 48,
    "title": "Re-run the lost instruction after a mid-work crash",
    "one_liner": "If a session dies while handling a message, that message is currently lost; save it and have the next session pick it back up so a crash never drops your request.",
    "score": 1.0,
@@ -373,7 +389,7 @@
    "exploratory": false
   },
   {
-   "rank": 47,
+   "rank": 49,
    "title": "Clean up the old background process after a hand-off",
    "one_liner": "When one session hands off to a fresh one, make sure the old background window closes so duplicates can't pile up and double-work.",
    "score": 1.0,
@@ -381,7 +397,7 @@
    "exploratory": false
   },
   {
-   "rank": 48,
+   "rank": 50,
    "title": "Study whether coaching can be separated from player value",
    "one_liner": "A feasibility look at telling apart how much of a team's results come from the coach's system versus the players — interesting if it works, and worth knowing early if it can't.",
    "score": 1.0,
@@ -389,7 +405,7 @@
    "exploratory": false
   },
   {
-   "rank": 49,
+   "rank": 51,
    "title": "Estimate how overseas leagues translate to the",
    "one_liner": "Use players who moved between leagues to learn a difficulty adjustment so an overseas stat line can be read in terms with an honest 'not enough movers yet' verdict if the data is too thin.",
    "score": 1.0,
@@ -397,13 +413,13 @@
    "exploratory": false
   }
  ],
- "shown": 49,
+ "shown": 51,
  "floor": {
   "target": 40,
-  "count": 49,
+  "count": 51,
   "ok": true,
-  "label": "49 things are lined up — a healthy runway (we keep at least 40 ready)."
+  "label": "51 things are lined up — a healthy runway (we keep at least 40 ready)."
  },
  "source": "the team's ranked work queue",
- "generated_et": "Jul 15, 12:21pm ET"
+ "generated_et": "Jul 15, 12:23pm ET"
 }
