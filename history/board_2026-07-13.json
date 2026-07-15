@@ -1,0 +1,1590 @@
+{
+ "generated_utc": "2026-07-13T04:27:31+00:00",
+ "freshness": {
+  "baked_utc": "2026-07-13T04:27:31+00:00",
+  "baked_et": "Jul 13, 12:27am ET",
+  "revalidated_utc": "2026-07-13T04:27:31+00:00",
+  "stale_after_secs": 300
+ },
+ "date": "2026-07-13",
+ "day_summary": "Tonight's game reports are ready - 2 games. Nothing needs you right now.",
+ "counts": {
+  "running": 0,
+  "done_today": 0,
+  "maintenance": 0,
+  "needs_anthony": 0,
+  "lanes_today": 0,
+  "upcoming": 13
+ },
+ "sections": {
+  "agent_updates": [
+   {
+    "timestamp": "2026-07-13T00:39:56Z",
+    "title": "Blowout Error Pocket Investigated (Unfixable Ex-Ante)",
+    "description": "Explored fixes for the blowout_12+ error pocket (our biggest MAE drag at 17.6 points). Tested inflating extreme spread predictions and variances ex-ante. Conclusion: Unfixable. Blowout status is a realized post-hoc slice. Applying asymmetric adjustments beforehand degraded the overall MAE and CRPS by over-correcting close games. Walked forward the hypothesis in fr2_blowout_adjustment.py and marked the task as investigated/unfixable."
+   },
+   {
+    "id": "rebound-matchup-model",
+    "timestamp": "2026-07-13T00:26:52Z",
+    "title": "Rebound Matchup Adjustments Implemented",
+    "body_markdown": "> **The Finding:** We were missing the mark on rebounds because we were completely ignoring head-to-head size differences and who is actually boxing out who.\n\n**The Fix:** I built the **Rebound Matchup Model**. It uses the new matchups feed feed to dynamically fetch the expected defender for every player on the slate. It scales each player's proj_reb based on two things: 1) the defender's historical rebound rate, and 2) the height advantage/disadvantage (in inches).\n\n**Impact:** This dynamically shifts rebounds from players guarded by elite rebounders (like A'ja Wilson) to players guarded by weak rebounders, and rewards size mismatches, making our prop lines way sharper!"
+   },
+   {
+    "id": "minutes-v8-wins-role-change",
+    "timestamp": "2026-07-12T23:50:00Z",
+    "title": "Minutes Model Finalized: v8 beats v9 on Role-Change",
+    "body_markdown": "> **The finding:** We judged the v9 (role-conditional) vs v8 (rolling) minutes models on the games that matter most: players stepping into bigger or different roles (the \"tail slice\").\n\n**Result:** v8 is **BETTER by 0.86 MAE** on these role-change games. The v9 slot-delta adjustment systematically over-corrected on promoted/demoted players.\n\n**Action:** We have permanently shelved the v9 slot-delta approach (Branch 2: Honest Null) and promoted v8 as the official minutes model."
+   },
+   {
+    "id": "era-shift-2026",
+    "timestamp": "2026-07-12T23:37:23Z",
+    "title": "Historical Era Adjustments (2024-2026)",
+    "body_markdown": "> **2026 season** represents a distinct era in WNBA officiating. Free Throw Rate skyrocketed from ~0.267 to **0.315**, adding over 3 free throw attempts per team per game.\n\n**Impact on Backtesting:** When backtesting player stat projections (especially PTS) on 2024/2025 data, we must apply a downward era-adjustment for free throw volume to avoid artificially grading our 2026-calibrated models too harshly on historical undershoots."
+   }
+  ],
+  "today_games": {
+   "date": "2026-07-13",
+   "games": [
+    {
+     "matchup": "Los Angeles Sparks at Atlanta Dream",
+     "abbr": "LAS @ ATL",
+     "tip": "7:00pm ET",
+     "call": "Atlanta Dream by 7.3",
+     "win_line": "Atlanta Dream to win — 60% chance",
+     "venue_note": "",
+     "home_depth": [
+      {
+       "player": "Madina Okot",
+       "group": "B",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Rhyne Howard",
+       "group": "G",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Allisha Gray",
+       "group": "G",
+       "base": 2,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Jordin Canada",
+       "group": "G",
+       "base": 3,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Isobel Borlase",
+       "group": "G",
+       "base": 4,
+       "effective": 4,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Te-Hina Paopao",
+       "group": "G",
+       "base": 5,
+       "effective": 5,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Shatori Walker-Kimbrough",
+       "group": "G",
+       "base": 6,
+       "effective": 6,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Indya Nivar",
+       "group": "G",
+       "base": 7,
+       "effective": 7,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Aaliyah Nye",
+       "group": "G",
+       "base": 8,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Jaylyn Sherrod",
+       "group": "G",
+       "base": 9,
+       "effective": 8,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Angel Reese",
+       "group": "W",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Naz Hillmon",
+       "group": "W",
+       "base": 2,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Sika Kone",
+       "group": "W",
+       "base": 3,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Amy Okonkwo",
+       "group": "W",
+       "base": 4,
+       "effective": 4,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Brionna Jones",
+       "group": "W",
+       "base": 5,
+       "effective": null,
+       "out": true,
+       "susp": false
+      }
+     ],
+     "away_depth": [
+      {
+       "player": "Kelsey Plum",
+       "group": "G",
+       "base": 1,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Erica Wheeler",
+       "group": "G",
+       "base": 2,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Rae Burrell",
+       "group": "G",
+       "base": 3,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Ariel Atkins",
+       "group": "G",
+       "base": 4,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Kiana Williams",
+       "group": "G",
+       "base": 5,
+       "effective": 4,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Chance Gray",
+       "group": "G",
+       "base": 6,
+       "effective": 5,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Kate Martin",
+       "group": "G",
+       "base": 7,
+       "effective": 6,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Ta'Niya Latson",
+       "group": "G",
+       "base": 8,
+       "effective": 7,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Nneka Ogwumike",
+       "group": "W",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Dearica Hamby",
+       "group": "W",
+       "base": 2,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Cameron Brink",
+       "group": "W",
+       "base": 3,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Jihyun Park",
+       "group": "W",
+       "base": 4,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Laura Ziegler",
+       "group": "W",
+       "base": 5,
+       "effective": 4,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Emma Cannon",
+       "group": "W",
+       "base": 6,
+       "effective": 5,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Alissa Pili",
+       "group": "W",
+       "base": 7,
+       "effective": 6,
+       "out": false,
+       "susp": false
+      }
+     ]
+    },
+    {
+     "matchup": "Phoenix Mercury at Minnesota Lynx",
+     "abbr": "PHO @ MIN",
+     "tip": "9:00pm ET",
+     "call": "Minnesota Lynx by 12.9",
+     "win_line": "Minnesota Lynx to win — 69% chance",
+     "venue_note": "",
+     "home_depth": [
+      {
+       "player": "Emese Hof",
+       "group": "B",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Emese Hof",
+       "group": "B",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Teaira McCowan",
+       "group": "B",
+       "base": 2,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Teaira McCowan",
+       "group": "B",
+       "base": 2,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Kayla McBride",
+       "group": "G",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Kayla McBride",
+       "group": "G",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Olivia Miles",
+       "group": "G",
+       "base": 2,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Olivia Miles",
+       "group": "G",
+       "base": 2,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Courtney Williams",
+       "group": "G",
+       "base": 3,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Courtney Williams",
+       "group": "G",
+       "base": 3,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Maya Caldwell",
+       "group": "G",
+       "base": 4,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Maya Caldwell",
+       "group": "G",
+       "base": 4,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Eliska Hamzova",
+       "group": "G",
+       "base": 5,
+       "effective": 4,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Eliska Hamzova",
+       "group": "G",
+       "base": 5,
+       "effective": 4,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Natasha Howard",
+       "group": "W",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Natasha Howard",
+       "group": "W",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Nia Coffey",
+       "group": "W",
+       "base": 2,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Nia Coffey",
+       "group": "W",
+       "base": 2,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Dorka Juhasz",
+       "group": "W",
+       "base": 3,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Dorka Juhasz",
+       "group": "W",
+       "base": 3,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Emma Cechova",
+       "group": "W",
+       "base": 4,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Emma Cechova",
+       "group": "W",
+       "base": 4,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Antonia Delaere",
+       "group": "W",
+       "base": 5,
+       "effective": 4,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Antonia Delaere",
+       "group": "W",
+       "base": 5,
+       "effective": 4,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Anastasiia Olairi Kosu",
+       "group": "W",
+       "base": 6,
+       "effective": 5,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Anastasiia Olairi Kosu",
+       "group": "W",
+       "base": 6,
+       "effective": 5,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Liatu King",
+       "group": "W",
+       "base": 7,
+       "effective": 6,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Liatu King",
+       "group": "W",
+       "base": 7,
+       "effective": 6,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Napheesa Collier",
+       "group": "W",
+       "base": 8,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Napheesa Collier",
+       "group": "W",
+       "base": 8,
+       "effective": null,
+       "out": true,
+       "susp": false
+      }
+     ],
+     "away_depth": [
+      {
+       "player": "Kyara Linskens",
+       "group": "B",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Kyara Linskens",
+       "group": "B",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Kahleah Copper",
+       "group": "G",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Kahleah Copper",
+       "group": "G",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Lexi Held",
+       "group": "G",
+       "base": 2,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Lexi Held",
+       "group": "G",
+       "base": 2,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Monique Akoa Makani",
+       "group": "G",
+       "base": 3,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Monique Akoa Makani",
+       "group": "G",
+       "base": 3,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Jovana Nogic",
+       "group": "G",
+       "base": 4,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Jovana Nogic",
+       "group": "G",
+       "base": 4,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Shay Ciezki",
+       "group": "G",
+       "base": 5,
+       "effective": 4,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Shay Ciezki",
+       "group": "G",
+       "base": 5,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Sami Whitcomb",
+       "group": "G",
+       "base": 6,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Sami Whitcomb",
+       "group": "G",
+       "base": 6,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Sha Carter",
+       "group": "U",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Sha Carter",
+       "group": "U",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Alyssa Thomas",
+       "group": "W",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Alyssa Thomas",
+       "group": "W",
+       "base": 1,
+       "effective": 1,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "DeWanna Bonner",
+       "group": "W",
+       "base": 2,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "DeWanna Bonner",
+       "group": "W",
+       "base": 2,
+       "effective": 2,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Noemie Brochant",
+       "group": "W",
+       "base": 3,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Noemie Brochant",
+       "group": "W",
+       "base": 3,
+       "effective": 3,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Natasha Mack",
+       "group": "W",
+       "base": 4,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Natasha Mack",
+       "group": "W",
+       "base": 4,
+       "effective": null,
+       "out": true,
+       "susp": false
+      },
+      {
+       "player": "Valeriane Ayayi",
+       "group": "W",
+       "base": 5,
+       "effective": 4,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Valeriane Ayayi",
+       "group": "W",
+       "base": 5,
+       "effective": 4,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Marta Suarez",
+       "group": "W",
+       "base": 6,
+       "effective": 5,
+       "out": false,
+       "susp": false
+      },
+      {
+       "player": "Marta Suarez",
+       "group": "W",
+       "base": 6,
+       "effective": 5,
+       "out": false,
+       "susp": false
+      }
+     ]
+    }
+   ],
+   "note": ""
+  },
+  "running_now": [],
+  "running_live": [],
+  "running_plain": [],
+  "needs_anthony": [],
+  "done_today": [],
+  "upcoming": {
+   "available": true,
+   "items": [
+    {
+     "task_id": "build-fixes-for-error-pockets",
+     "family": "modeling",
+     "name": "Build a fix for each of our biggest error pockets",
+     "header": "Build a fix for each of our biggest error pockets",
+     "why": "For the ten weakest game types, build the one missing factor that would sharpen each.",
+     "priority": 3,
+     "seat": "Modeling",
+     "status": "done (investigated/unfixable ex-ante)",
+     "pm_authored": false,
+     "impact": "High Impact",
+     "rank": 1,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20build-fixes-for-error-pockets%3A%20top&body=Build%20a%20fix%20for%20each%20of%20our%20biggest%20error%20pockets%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20build-fixes-for-error-pockets%3A%20bump&body=Build%20a%20fix%20for%20each%20of%20our%20biggest%20error%20pockets%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20build-fixes-for-error-pockets%3A%20demote&body=Build%20a%20fix%20for%20each%20of%20our%20biggest%20error%20pockets%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20build-fixes-for-error-pockets%3A%20shelve&body=Build%20a%20fix%20for%20each%20of%20our%20biggest%20error%20pockets%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      }
+     ]
+    },
+    {
+     "task_id": "sharper-closing-line-benchmark",
+     "family": "data",
+     "name": "Get a sharper closing-line benchmark",
+     "header": "Get a sharper closing-line benchmark",
+     "why": "Probe a free source for a professional-grade closing line to upgrade every market comparison.",
+     "priority": 4,
+     "seat": "Data",
+     "status": "queued (paid tier is your call)",
+     "pm_authored": false,
+     "impact": "",
+     "rank": 2,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20sharper-closing-line-benchmark%3A%20top&body=Get%20a%20sharper%20closing-line%20benchmark%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20sharper-closing-line-benchmark%3A%20bump&body=Get%20a%20sharper%20closing-line%20benchmark%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20sharper-closing-line-benchmark%3A%20demote&body=Get%20a%20sharper%20closing-line%20benchmark%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20sharper-closing-line-benchmark%3A%20shelve&body=Get%20a%20sharper%20closing-line%20benchmark%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      }
+     ]
+    },
+    {
+     "task_id": "ranges-that-vary-by-game",
+     "family": "modeling",
+     "name": "Match each prediction range to the game's uncertainty",
+     "header": "Match each prediction range to the game's uncertainty",
+     "why": "Make the range wider for genuinely uncertain games and tighter for the clear ones.",
+     "priority": 4,
+     "seat": "Modeling",
+     "status": "queued (needs the miss-map first)",
+     "pm_authored": false,
+     "impact": "",
+     "rank": 3,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20ranges-that-vary-by-game%3A%20top&body=Match%20each%20prediction%20range%20to%20the%20game%27s%20uncertainty%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20ranges-that-vary-by-game%3A%20bump&body=Match%20each%20prediction%20range%20to%20the%20game%27s%20uncertainty%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20ranges-that-vary-by-game%3A%20demote&body=Match%20each%20prediction%20range%20to%20the%20game%27s%20uncertainty%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20ranges-that-vary-by-game%3A%20shelve&body=Match%20each%20prediction%20range%20to%20the%20game%27s%20uncertainty%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      }
+     ]
+    },
+    {
+     "task_id": "depth-chart-role-change-cards",
+     "family": "site",
+     "name": "Show depth charts and role changes on game cards",
+     "header": "Show depth charts and role changes on game cards",
+     "why": "Render who is starting and who is stepping up, right on each game card.",
+     "priority": 4,
+     "seat": "Viz",
+     "status": "queued (needs a freshness check)",
+     "pm_authored": false,
+     "impact": "",
+     "rank": 4,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20depth-chart-role-change-cards%3A%20top&body=Show%20depth%20charts%20and%20role%20changes%20on%20game%20cards%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20depth-chart-role-change-cards%3A%20bump&body=Show%20depth%20charts%20and%20role%20changes%20on%20game%20cards%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20depth-chart-role-change-cards%3A%20demote&body=Show%20depth%20charts%20and%20role%20changes%20on%20game%20cards%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20depth-chart-role-change-cards%3A%20shelve&body=Show%20depth%20charts%20and%20role%20changes%20on%20game%20cards%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      }
+     ]
+    },
+    {
+     "task_id": "possession-value-this-season",
+     "family": "modeling",
+     "name": "Value every possession on this season's games",
+     "header": "Value every possession on this season's games",
+     "why": "Extend the possession-value engine to this year's games and grade it for the first time.",
+     "priority": 4,
+     "seat": "Modeling",
+     "status": "queued (needs heavy off-peak compute)",
+     "pm_authored": false,
+     "impact": "",
+     "rank": 5,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20possession-value-this-season%3A%20top&body=Value%20every%20possession%20on%20this%20season%27s%20games%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20possession-value-this-season%3A%20bump&body=Value%20every%20possession%20on%20this%20season%27s%20games%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20possession-value-this-season%3A%20demote&body=Value%20every%20possession%20on%20this%20season%27s%20games%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20possession-value-this-season%3A%20shelve&body=Value%20every%20possession%20on%20this%20season%27s%20games%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      }
+     ]
+    },
+    {
+     "task_id": "season-outlook-and-futures-page",
+     "family": "site",
+     "name": "Add a season-outlook page",
+     "header": "Add a season-outlook page",
+     "why": "Simulate each team's title odds",
+     "priority": 5,
+     "seat": "Viz",
+     "status": "blocked (a new public page is your call)",
+     "pm_authored": false,
+     "impact": "",
+     "rank": 6,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20season-outlook-and-futures-page%3A%20top&body=Add%20a%20season-outlook%20page%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20season-outlook-and-futures-page%3A%20bump&body=Add%20a%20season-outlook%20page%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20season-outlook-and-futures-page%3A%20demote&body=Add%20a%20season-outlook%20page%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20season-outlook-and-futures-page%3A%20shelve&body=Add%20a%20season-outlook%20page%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      }
+     ]
+    },
+    {
+     "task_id": "add-referee-data",
+     "family": "data",
+     "name": "Add referee assignments and whistle tendencies",
+     "header": "Add referee assignments and whistle tendencies",
+     "why": "Bring in who officiates each game to study how crews affect foul rates and totals.",
+     "priority": 5,
+     "seat": "Data",
+     "status": "blocked (needs go-ahead to bring it in)",
+     "pm_authored": false,
+     "impact": "",
+     "rank": 7,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20add-referee-data%3A%20top&body=Add%20referee%20assignments%20and%20whistle%20tendencies%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20add-referee-data%3A%20bump&body=Add%20referee%20assignments%20and%20whistle%20tendencies%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20add-referee-data%3A%20demote&body=Add%20referee%20assignments%20and%20whistle%20tendencies%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20add-referee-data%3A%20shelve&body=Add%20referee%20assignments%20and%20whistle%20tendencies%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      }
+     ]
+    },
+    {
+     "task_id": "restart-background-watcher",
+     "family": "infra",
+     "name": "Restart the background once silences it and turns on the stall alarm",
+     "header": "Restart the background once silences it and turns on the stall alarm",
+     "why": "One elevated command clears a leftover duplicate that was double-working all night switches on the new alarm t",
+     "priority": 5,
+     "seat": "Infra",
+     "status": "blocked (needs your one-time elevated step)",
+     "pm_authored": false,
+     "impact": "",
+     "rank": 8,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20restart-background-watcher%3A%20top&body=Restart%20the%20background%20once%20silences%20it%20and%20turns%20on%20the%20stall%20alarm%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20restart-background-watcher%3A%20bump&body=Restart%20the%20background%20once%20silences%20it%20and%20turns%20on%20the%20stall%20alarm%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20restart-background-watcher%3A%20demote&body=Restart%20the%20background%20once%20silences%20it%20and%20turns%20on%20the%20stall%20alarm%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20restart-background-watcher%3A%20shelve&body=Restart%20the%20background%20once%20silences%20it%20and%20turns%20on%20the%20stall%20alarm%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      }
+     ]
+    },
+    {
+     "task_id": "win-probability-on-game-cards",
+     "family": "site",
+     "name": "Show win probability on each game card",
+     "header": "Show win probability on each game card",
+     "why": "Turn our margin call into a clear percent chance that each team wins.",
+     "priority": 5,
+     "seat": "Viz",
+     "status": "blocked (needs sign-off)",
+     "pm_authored": false,
+     "impact": "",
+     "rank": 9,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20win-probability-on-game-cards%3A%20top&body=Show%20win%20probability%20on%20each%20game%20card%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20win-probability-on-game-cards%3A%20bump&body=Show%20win%20probability%20on%20each%20game%20card%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20win-probability-on-game-cards%3A%20demote&body=Show%20win%20probability%20on%20each%20game%20card%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20win-probability-on-game-cards%3A%20shelve&body=Show%20win%20probability%20on%20each%20game%20card%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      }
+     ]
+    },
+    {
+     "task_id": "turn-on-defender-matchup-feed",
+     "family": "data",
+     "name": "Turn on the defender-matchup data feed",
+     "header": "Turn on the defender-matchup data feed",
+     "why": "The only source we own for who guards whom near the rim; the collector is built and waiting.",
+     "priority": 5,
+     "seat": "Data",
+     "status": "blocked (needs an enable ruling)",
+     "pm_authored": false,
+     "impact": "",
+     "rank": 10,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20turn-on-defender-matchup-feed%3A%20top&body=Turn%20on%20the%20defender-matchup%20data%20feed%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20turn-on-defender-matchup-feed%3A%20bump&body=Turn%20on%20the%20defender-matchup%20data%20feed%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20turn-on-defender-matchup-feed%3A%20demote&body=Turn%20on%20the%20defender-matchup%20data%20feed%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20turn-on-defender-matchup-feed%3A%20shelve&body=Turn%20on%20the%20defender-matchup%20data%20feed%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+      }
+     ]
+    }
+   ],
+   "more_by_family": {
+    "site": [
+     {
+      "task_id": "weekly-market-scorecard-strip",
+      "family": "site",
+      "name": "Add a weekly market scorecard",
+      "header": "Add a weekly market scorecard",
+      "why": "A short weekly line showing where we beat the market that week.",
+      "priority": 8,
+      "seat": "Viz",
+      "status": "queued (needs the market map first)",
+      "pm_authored": false,
+      "impact": "",
+      "rank": 11,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20weekly-market-scorecard-strip%3A%20top&body=Add%20a%20weekly%20market%20scorecard%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20weekly-market-scorecard-strip%3A%20bump&body=Add%20a%20weekly%20market%20scorecard%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20weekly-market-scorecard-strip%3A%20demote&body=Add%20a%20weekly%20market%20scorecard%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20weekly-market-scorecard-strip%3A%20shelve&body=Add%20a%20weekly%20market%20scorecard%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       }
+      ]
+     }
+    ],
+    "modeling": [
+     {
+      "task_id": "era-adjustment-deep-dive",
+      "family": "modeling",
+      "name": "Extend era adjustment across all years of data",
+      "header": "Extend era adjustment across all years of data",
+      "why": "Upgrade the public status board",
+      "priority": 8,
+      "seat": "Modeling",
+      "status": "queued",
+      "pm_authored": false,
+      "impact": "",
+      "rank": 12,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20era-adjustment-deep-dive%3A%20top&body=Extend%20era%20adjustment%20across%20all%20years%20of%20data%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20era-adjustment-deep-dive%3A%20bump&body=Extend%20era%20adjustment%20across%20all%20years%20of%20data%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20era-adjustment-deep-dive%3A%20demote&body=Extend%20era%20adjustment%20across%20all%20years%20of%20data%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20era-adjustment-deep-dive%3A%20shelve&body=Extend%20era%20adjustment%20across%20all%20years%20of%20data%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       }
+      ]
+     },
+     {
+      "task_id": "confidence-ranked-picks",
+      "family": "modeling",
+      "name": "Rank each night's best bets by confidence",
+      "header": "Rank each night's best bets by confidence",
+      "why": "Combine where we disagree with the market and our track record per game type into a tiered pick list.",
+      "priority": 8,
+      "seat": "Modeling",
+      "status": "queued (needs the two maps first)",
+      "pm_authored": false,
+      "impact": "",
+      "rank": 13,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20confidence-ranked-picks%3A%20top&body=Rank%20each%20night%27s%20best%20bets%20by%20confidence%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20confidence-ranked-picks%3A%20bump&body=Rank%20each%20night%27s%20best%20bets%20by%20confidence%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20confidence-ranked-picks%3A%20demote&body=Rank%20each%20night%27s%20best%20bets%20by%20confidence%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20confidence-ranked-picks%3A%20shelve&body=Rank%20each%20night%27s%20best%20bets%20by%20confidence%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-13%29&labels=queue"
+       }
+      ]
+     }
+    ]
+   },
+   "more_count": 3,
+   "floor": {
+    "target": 40,
+    "count": 13,
+    "ok": false,
+    "label": "13 lined up — running short (we aim to keep at least 40 ready)"
+   },
+   "source": "dispatch queue",
+   "note": "These are the next things the system will work on — what each will be and why it matters. Tap to move an item to the top, bump it up, push it down, or shelf it. Items waiting on your call are parked until you answer — then they jump to the top."
+  },
+  "coming_soon": [
+   {
+    "header": "Reply to alerts right in Discord",
+    "why": "your Discord message becomes the decision — no tapping through to a form",
+    "state": "coming soon",
+    "note": "needs a ~5-min one-time bot setup when it reaches the front of the queue."
+   }
+  ],
+  "watch_list": []
+ },
+ "answer_all": null,
+ "setup": [],
+ "pdfs": [
+  {
+   "label": "CHI @ PHO",
+   "game_key": "CHI@PHO",
+   "date": "2026-07-08",
+   "href": "./pdfs/2026-07-08/CHI@PHO.pdf"
+  },
+  {
+   "label": "DAL @ NYL",
+   "game_key": "DAL@NYL",
+   "date": "2026-07-08",
+   "href": "./pdfs/2026-07-08/DAL@NYL.pdf"
+  },
+  {
+   "label": "GSV @ TOR",
+   "game_key": "GSV@TOR",
+   "date": "2026-07-08",
+   "href": "./pdfs/2026-07-08/GSV@TOR.pdf"
+  },
+  {
+   "label": "IND @ LAS",
+   "game_key": "IND@LAS",
+   "date": "2026-07-08",
+   "href": "./pdfs/2026-07-08/IND@LAS.pdf"
+  },
+  {
+   "label": "MIN @ CON",
+   "game_key": "MIN@CON",
+   "date": "2026-07-08",
+   "href": "./pdfs/2026-07-08/MIN@CON.pdf"
+  },
+  {
+   "label": "IND @ PHO",
+   "game_key": "IND@PHO",
+   "date": "2026-07-09",
+   "href": "./pdfs/2026-07-09/IND@PHO.pdf"
+  },
+  {
+   "label": "LVA @ POR",
+   "game_key": "LVA@POR",
+   "date": "2026-07-09",
+   "href": "./pdfs/2026-07-09/LVA@POR.pdf"
+  },
+  {
+   "label": "SEA @ ATL",
+   "game_key": "SEA@ATL",
+   "date": "2026-07-09",
+   "href": "./pdfs/2026-07-09/SEA@ATL.pdf"
+  },
+  {
+   "label": "CHI @ LAS",
+   "game_key": "CHI@LAS",
+   "date": "2026-07-10",
+   "href": "./pdfs/2026-07-10/CHI@LAS.pdf"
+  },
+  {
+   "label": "DAL @ TOR",
+   "game_key": "DAL@TOR",
+   "date": "2026-07-10",
+   "href": "./pdfs/2026-07-10/DAL@TOR.pdf"
+  },
+  {
+   "label": "GSV @ CON",
+   "game_key": "GSV@CON",
+   "date": "2026-07-10",
+   "href": "./pdfs/2026-07-10/GSV@CON.pdf"
+  },
+  {
+   "label": "NYL @ MIN",
+   "game_key": "NYL@MIN",
+   "date": "2026-07-11",
+   "href": "./pdfs/2026-07-11/NYL@MIN.pdf"
+  },
+  {
+   "label": "PHO @ LVA",
+   "game_key": "PHO@LVA",
+   "date": "2026-07-11",
+   "href": "./pdfs/2026-07-11/PHO@LVA.pdf"
+  },
+  {
+   "label": "POR @ ATL",
+   "game_key": "POR@ATL",
+   "date": "2026-07-11",
+   "href": "./pdfs/2026-07-11/POR@ATL.pdf"
+  },
+  {
+   "label": "CHI @ DAL",
+   "game_key": "CHI@DAL",
+   "date": "2026-07-12",
+   "href": "./pdfs/2026-07-12/CHI@DAL.pdf"
+  },
+  {
+   "label": "IND @ LVA",
+   "game_key": "IND@LVA",
+   "date": "2026-07-12",
+   "href": "./pdfs/2026-07-12/IND@LVA.pdf"
+  },
+  {
+   "label": "NYL @ TOR",
+   "game_key": "NYL@TOR",
+   "date": "2026-07-12",
+   "href": "./pdfs/2026-07-12/NYL@TOR.pdf"
+  },
+  {
+   "label": "SEA @ WAS",
+   "game_key": "SEA@WAS",
+   "date": "2026-07-12",
+   "href": "./pdfs/2026-07-12/SEA@WAS.pdf"
+  },
+  {
+   "label": "LAS @ ATL",
+   "game_key": "LAS@ATL",
+   "date": "2026-07-13",
+   "href": "./pdfs/2026-07-13/LAS@ATL.pdf"
+  },
+  {
+   "label": "PHO @ MIN",
+   "game_key": "PHO@MIN",
+   "date": "2026-07-13",
+   "href": "./pdfs/2026-07-13/PHO@MIN.pdf"
+  }
+ ],
+ "reports": {
+  "today_date": "2026-07-13",
+  "today": [
+   {
+    "label": "LAS @ ATL",
+    "game_key": "LAS@ATL",
+    "date": "2026-07-13",
+    "href": "./pdfs/2026-07-13/LAS@ATL.pdf"
+   },
+   {
+    "label": "PHO @ MIN",
+    "game_key": "PHO@MIN",
+    "date": "2026-07-13",
+    "href": "./pdfs/2026-07-13/PHO@MIN.pdf"
+   }
+  ],
+  "today_ready": true,
+  "placeholder": "Tonight's game reports land at 5:15pm ET.",
+  "archive_date": "2026-07-12",
+  "archive": [
+   {
+    "label": "CHI @ DAL",
+    "game_key": "CHI@DAL",
+    "date": "2026-07-12",
+    "href": "./pdfs/2026-07-12/CHI@DAL.pdf"
+   },
+   {
+    "label": "IND @ LVA",
+    "game_key": "IND@LVA",
+    "date": "2026-07-12",
+    "href": "./pdfs/2026-07-12/IND@LVA.pdf"
+   },
+   {
+    "label": "NYL @ TOR",
+    "game_key": "NYL@TOR",
+    "date": "2026-07-12",
+    "href": "./pdfs/2026-07-12/NYL@TOR.pdf"
+   },
+   {
+    "label": "SEA @ WAS",
+    "game_key": "SEA@WAS",
+    "date": "2026-07-12",
+    "href": "./pdfs/2026-07-12/SEA@WAS.pdf"
+   }
+  ]
+ },
+ "rollover": {
+  "armed": true,
+  "label": "rollover armed for tomorrow ✓",
+  "note": "After 4am ET the board flips to the new day, files yesterday's reports under a dated header, and shows tonight's placeholder until the reports land at 5:15pm ET."
+ },
+ "scout_heartbeat": {
+  "alive": true,
+  "last_poll_utc": "2026-07-13T04:27:32Z",
+  "age_s": 0,
+  "cycles": 2758,
+  "label": "scout: alive, last poll 0s ago",
+  "anchor": "heartbeat.json+scout.log"
+ },
+ "scout_activity": [
+  {
+   "time": "12:19am",
+   "text": "poll #2750 · nothing new",
+   "detail": "poll cycle=2750 ok directives_new=0"
+  },
+  {
+   "time": "12:20am",
+   "text": "poll #2751 · nothing new",
+   "detail": "poll cycle=2751 ok directives_new=0"
+  },
+  {
+   "time": "12:21am",
+   "text": "poll #2752 · nothing new",
+   "detail": "poll cycle=2752 ok directives_new=0"
+  },
+  {
+   "time": "12:22am",
+   "text": "poll #2753 · nothing new",
+   "detail": "poll cycle=2753 ok directives_new=0"
+  },
+  {
+   "time": "12:23am",
+   "text": "publish-health: PUBLIC BOARD STALE (#61): staleness=24602s threshold=900s live=2026-07-12T21:32:57+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 24564s newer than live",
+   "detail": "publish-health: PUBLIC BOARD STALE (#61): staleness=24602s threshold=900s live=2026-07-12T21:32:57+00:00 | deploy stuck (guard/push failure)"
+  },
+  {
+   "time": "12:23am",
+   "text": "poll #2754 · nothing new",
+   "detail": "poll cycle=2754 ok directives_new=0"
+  },
+  {
+   "time": "12:24am",
+   "text": "poll #2755 · nothing new",
+   "detail": "poll cycle=2755 ok directives_new=0"
+  },
+  {
+   "time": "12:25am",
+   "text": "poll #2756 · nothing new",
+   "detail": "poll cycle=2756 ok directives_new=0"
+  },
+  {
+   "time": "12:26am",
+   "text": "poll #2757 · nothing new",
+   "detail": "poll cycle=2757 ok directives_new=0"
+  },
+  {
+   "time": "12:27am",
+   "text": "poll #2758 · nothing new",
+   "detail": "poll cycle=2758 ok directives_new=0"
+  }
+ ],
+ "helpers": {
+  "as_of": "2026-07-10T15:23:32Z",
+  "stale": true,
+  "status": "These readings may be out of date — last updated 61h ago.",
+  "agents": [],
+  "width": null
+ },
+ "coordinator_heartbeat": {
+  "alive": true,
+  "last_heartbeat_utc": "2026-07-13T04:04:23Z"
+ },
+ "pipe_health": {
+  "directives_pending": 5,
+  "last_processed_clock": "9:37pm",
+  "last_processed_iso": "2026-07-11T01:37:51Z",
+  "newest_directive_clock": "12:09am",
+  "newest_directive_iso": "2026-07-13T04:09:08Z",
+  "source": "director inbox",
+  "anchor": "inbox files + delivered/processed trail",
+  "as_of": "2026-07-13T04:09:08Z"
+ },
+ "beacon": {
+  "state": "active",
+  "idle_since_clock": "",
+  "usage_resets_clock": "",
+  "note": ""
+ },
+ "section_sources": {
+  "running_now": {
+   "source": "work record",
+   "as_of": "2026-07-13T04:27:31+00:00",
+   "stale": false,
+   "revalidated": "2026-07-13T04:27:31+00:00",
+   "stale_reason": "",
+   "age_label": "0s"
+  },
+  "done_today": {
+   "source": "work record",
+   "as_of": "2026-07-13T04:27:31+00:00",
+   "stale": false,
+   "revalidated": "2026-07-13T04:27:31+00:00",
+   "stale_reason": "",
+   "age_label": "0s"
+  },
+  "today_games": {
+   "source": "today's slate",
+   "as_of": "2026-07-13T04:27:31+00:00",
+   "stale": false,
+   "revalidated": "2026-07-13T04:27:31+00:00",
+   "stale_reason": "",
+   "age_label": "0s"
+  },
+  "needs_anthony": {
+   "source": "decision brief",
+   "as_of": null,
+   "stale": false,
+   "revalidated": "2026-07-13T04:27:31+00:00",
+   "stale_reason": "",
+   "age_label": null
+  },
+  "upcoming": {
+   "source": "dispatch queue",
+   "as_of": "2026-07-13T04:14:21Z",
+   "stale": true,
+   "revalidated": "2026-07-13T04:27:31+00:00",
+   "stale_reason": "These readings may be out of date — last updated 13m ago.",
+   "age_label": "13m"
+  },
+  "watch_list": {
+   "source": "daily review",
+   "as_of": null,
+   "stale": false,
+   "revalidated": "2026-07-13T04:27:31+00:00",
+   "stale_reason": "",
+   "age_label": null
+  },
+  "pipe_health": {
+   "source": "director inbox",
+   "as_of": "2026-07-13T04:09:08Z",
+   "stale": false,
+   "revalidated": "2026-07-13T04:27:31+00:00",
+   "stale_reason": "",
+   "age_label": "18m"
+  }
+ },
+ "generated_et": "Jul 13, 12:27am ET"
+}

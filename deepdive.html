@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Hardwood — Deep Dives</title>
+<title>The Hardwood — We Tested It</title>
 <style>
   :root{ --bg:#f4f6f8; --card:#fff; --card2:#f7f9fc; --ink:#161a21; --muted:#5a6675; --dim:#8a93a3;
     --line:#e3e7ee; --line2:#d3d9e3; --acc:#2b6cb0; --shadow:0 1px 2px rgba(20,24,35,.06); }
@@ -30,10 +30,10 @@
 </head>
 <body>
 <header>
-  <h1>The Hardwood — Deep Dives</h1>
+  <h1>The Hardwood — We Tested It</h1>
   <span class="ago" id="ago"></span>
 </header>
-<div class="sub">Long-form written breakdowns — one matchup or one trend at a time.</div>
+<div class="sub">Ideas we've investigated and proven to be noise.</div>
 <nav>
   <a href="./index.html">Board</a>
   <a href="./queue.html">What's Next</a>
@@ -44,7 +44,8 @@
   <a href="./accuracy.html">Our Accuracy</a>
   <a href="./ledger.html">Error Map</a>
   <a href="./org.html">The Team</a>
-  <a class="active" href="./deepdive.html">Deep Dives</a>
+  <a href="./scouting.html">Scouting</a>
+  <a class="active" href="./deepdive.html">We Tested It</a>
 </nav>
 <main id="main"><p class="empty">Loading…</p></main>
 <footer id="foot"></footer>
@@ -58,12 +59,23 @@
     if(d.available && (d.items||[]).length){
       (d.items||[]).forEach(function(it){
         var c=el("div","item");
-        c.appendChild(el("div","ti",it.title||"Deep dive"));
+        c.appendChild(el("div","ti",it.title||"We Tested It"));
         if(it.as_of){ c.appendChild(el("div","as","Published "+it.as_of)); }
+        if (it.content) {
+            var body = el("div", "body");
+            body.style.marginTop = "10px";
+            body.style.fontSize = "13px";
+            it.content.forEach(function(para) {
+                var p = el("p", "", para);
+                p.style.margin = "8px 0";
+                body.appendChild(p);
+            });
+            c.appendChild(body);
+        }
         main.appendChild(c);
       });
     } else {
-      main.appendChild(el("div","soon", d.placeholder||"Deep dives are coming soon."));
+      main.appendChild(el("div","soon", d.placeholder||"We are currently testing new ideas."));
     }
     document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+".";
   }

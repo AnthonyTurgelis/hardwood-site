@@ -66,6 +66,7 @@
   <a href="./accuracy.html">Our Accuracy</a>
   <a href="./ledger.html">Error Map</a>
   <a href="./org.html">The Team</a>
+  <a href="./scouting.html">Scouting</a>
   <a href="./deepdive.html">Deep Dives</a>
 </nav>
 <main id="main"><p class="empty">Loading player…</p></main>
@@ -148,6 +149,23 @@
     kpis.appendChild(kpi("Minutes", pg(d.min_avg), "per game"));
     hero.appendChild(kpis);
     main.appendChild(hero);
+
+    if(d.rookie_prior){
+      var rp = el("section"); rp.appendChild(el("h2",null,"Rookie starting projection"));
+      var rc = el("div","card pad");
+      rc.appendChild(el("div","note","Starting prior mapped from "+(d.rookie_prior.source||"college")+" profile ("+(d.rookie_prior.model||"N1")+")."));
+      var rkpis = el("div","kpis");
+      rkpis.style.marginTop = "8px";
+      function rkpi(l,v){ var k=el("div","kpi"); k.appendChild(el("div","kl",l)); k.appendChild(el("div","kv",v==null?"—":v)); return k; }
+      rkpis.appendChild(rkpi("Proj WAR", d.rookie_prior.war==null?null:d.rookie_prior.war.toFixed(1)));
+      rkpis.appendChild(rkpi("Proj PTS", d.rookie_prior.pts==null?null:d.rookie_prior.pts.toFixed(1)));
+      rkpis.appendChild(rkpi("Proj REB", d.rookie_prior.reb==null?null:d.rookie_prior.reb.toFixed(1)));
+      rkpis.appendChild(rkpi("Proj AST", d.rookie_prior.ast==null?null:d.rookie_prior.ast.toFixed(1)));
+      if(d.rookie_prior.min!=null) rkpis.appendChild(rkpi("Proj MIN", d.rookie_prior.min.toFixed(1)));
+      rc.appendChild(rkpis);
+      rp.appendChild(rc);
+      main.appendChild(rp);
+    }
 
     var s1=el("section"); s1.appendChild(el("h2",null,"Rating trajectory"));
     var c1=el("div","card"), p1=el("div","pad"); p1.appendChild(trajSvg(d.trajectory)); c1.appendChild(p1); s1.appendChild(c1);

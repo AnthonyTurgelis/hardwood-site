@@ -1,9 +1,34 @@
 {
- "generated_utc": "2026-07-12T21:32:57+00:00",
- "date": "2026-07-12",
- "available": false,
- "items": [],
- "placeholder": "Deep dives are long-form written breakdowns — a single matchup, a season trend, a what-changed study. The first ones land here soon.",
- "source": "our published long-form breakdowns",
- "generated_et": "Jul 12, 5:32pm ET"
+ "generated_utc": "2026-07-15T14:36:01+00:00",
+ "date": "2026-07-15",
+ "available": true,
+ "items": [
+  {
+   "title": "Era Adjustment Across Years",
+   "as_of": "2026-07-13T04:27:23Z",
+   "content": [
+    "# Era Adjustment Across Years",
+    "In 2026, we observed a massive officiating shift (FT rate surged from ~0.267 to 0.315), adding over 3 free throw attempts per team per game. This deep dive extends that analysis across all available years in our database to build a complete era-adjustment map.",
+    "### Findings",
+    "When backtesting our models on historical data, we need to adjust player stat projections based on the era they played in.",
+    "```text\nseason  games  ft_rate  fta_per_team_game  pts_per_team_game  fga_per_team_game\n  2015    204 0.283691          18.553922          75.142157          65.401961\n  2016    204 0.313946          21.181373          81.884804          67.468137\n  2017    204 0.288837          19.627451          81.450980          67.953431\n  2018    203 0.270993          18.647783          82.800493          68.812808\n  2019    204 0.251626          17.254902          78.700980          68.573529\n  2020    132 0.270465          18.446970          83.060606          68.204545\n  2021    192 0.252313          17.260417          80.661458          68.408854\n  2022    216 0.267209          18.168981          82.268519          67.995370\n  2023    240 0.271206          18.537500          82.735417          68.352083\n  2024    240 0.264141          18.027083          81.666667          68.247917\n  2025    286 0.269981          18.389860          82.680070          68.115385\n  2026    170 0.314860          21.438235          86.164706          68.088235\n```",
+    "### Recommendation",
+    "We should incorporate a `season_ft_rate_modifier` into the core modeling pipeline to normalize all historical scoring to the current 2026 environment. Without this, our models will systematically over-project points for historical games, appearing \"wrong\" when they are actually just calibrated to a higher-scoring era."
+   ]
+  },
+  {
+   "title": "Role-Conditional Minutes (Slot-Delta)",
+   "as_of": "2026-07-13T00:04:08Z",
+   "content": [
+    "# Role-Conditional Minutes (Slot-Delta)",
+    "We tested whether replacing a player's raw rolling average of minutes with a \"slot-delta\" approach would yield a more accurate minutes-played projection. The hypothesis was that when a starter is out, the bench player inheriting their slot should receive a minutes bump proportional to that role.",
+    "However, after running a full backtest on the 2024 and 2025 seasons, we proved this to be **noise**.",
+    "The slot-delta model consistently performed worse than a simple exponentially weighted moving average (EWMA). By attempting to precisely map out who takes whose minutes when injuries occur, the model overfit to noisy rotation data and introduced more variance than the naive baseline.",
+    "The baseline v8 (EWMA) model remains our core, providing a more stable and accurate foundation for player projections. Sometimes, trying to be too clever with the data just introduces noise."
+   ]
+  }
+ ],
+ "placeholder": "We are currently investigating new ideas.",
+ "source": "our noise investigations",
+ "generated_et": "Jul 15, 10:36am ET"
 }

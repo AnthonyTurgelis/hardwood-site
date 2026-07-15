@@ -33,6 +33,7 @@
   .body .why{color:var(--muted);font-size:12.5px;margin-top:3px;line-height:1.45}
   .body .fam{color:var(--dim);font-size:11px;margin-top:5px;text-transform:uppercase;letter-spacing:.04em}
   .body .expchip{display:inline-block;margin-top:6px;font-size:11px;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:1px 8px}
+  .body .impactchip{display:inline-block;margin-top:6px;margin-right:6px;font-size:11px;color:var(--ok);border:1px solid var(--ok);border-radius:999px;padding:1px 8px;font-weight:700;}
   .score{text-align:right;white-space:nowrap}
   .score .n{font-weight:800;font-size:15px}
   .score .l{display:block;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
@@ -56,6 +57,7 @@
   <a href="./accuracy.html">Our Accuracy</a>
   <a href="./ledger.html">Error Map</a>
   <a href="./org.html">The Team</a>
+  <a href="./scouting.html">Scouting</a>
   <a href="./deepdive.html">Deep Dives</a>
 </nav>
 <main id="main"><p class="empty">Loading…</p></main>
@@ -87,6 +89,7 @@
         b.appendChild(el("div","title",it.title||""));
         if(it.one_liner){ b.appendChild(el("div","why",it.one_liner)); }
         if(it.family){ b.appendChild(el("div","fam",it.family)); }
+        if(it.impact){ b.appendChild(el("span","impactchip",it.impact)); }
         if(it.exploratory && it.tag){ b.appendChild(el("span","expchip",it.tag)); }
         li.appendChild(b);
         if(it.score!=null){

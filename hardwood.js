@@ -126,17 +126,32 @@
   function renderBanner(b) {
     var banner = document.getElementById("hwbanner");
     if (!banner) return;
+    
+    // Global Staleness Check
+    var age = genIso ? Math.round((Date.now() - new Date(genIso).getTime()) / 1000) : null;
+    var staleSecs = status.stale_after_secs || 86400; // 24 hours
+    var isStale = (age != null && age > staleSecs);
+
     var state = (b.state || "active").toLowerCase();
-    if (state === "idle") {
+    
+    if (isStale) {
       banner.className = "needs";
+      banner.style.borderLeft = "3px solid #d29922";
+      banner.textContent = "⚠ The site data hasn't refreshed in " + agoSecs(age) +
+        " (expected < " + Math.round(staleSecs/60) + "m). The data shown is STALE.";
+    } else if (state === "idle") {
+      banner.className = "needs";
+      banner.style.borderLeft = "";
       banner.textContent = "⏸ NEEDS DIRECTOR — idle since " + (b.idle_since_clock || "recently") +
         (b.note ? " · " + b.note : "");
     } else if (state === "paused") {
       banner.className = "paused";
+      banner.style.borderLeft = "";
       banner.textContent = "⏳ paused — usage resets " + (b.usage_resets_clock || "soon") +
         (b.note ? " · " + b.note : "");
     } else {
       banner.className = "";
+      banner.style.borderLeft = "";
       banner.textContent = "";
     }
   }

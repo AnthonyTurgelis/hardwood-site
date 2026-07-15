@@ -14,7 +14,7 @@
     --flash:rgba(43,108,176,.14);
   }
   @media (prefers-color-scheme:dark){
-    :root{ --bg:#0d1117; --card:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#222a35;
+    :root{ --bg:#050505; --card:#131518; --ink:#ffffff; --muted:#aebac9; --line:#262d36;
       --accent:#58a6ff; --shadow:none; --live:#3fb950; --verified:#58a6ff; --inflight:#d29922;
       --shelved:#8b949e; --null:#8b949e; --promote:#a371f7; --blocked:#f85149; --done:#8b949e;
       --ok:#3fb950; --warn:#d29922; --bad:#f85149; --flash:rgba(88,166,255,.20); }
@@ -24,14 +24,26 @@
     font:13.5px/1.42 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-text-size-adjust:100%}
   a{color:var(--accent)}
+  
+  /* Depth Chart Styles */
+  .dc-box { display: flex; gap: 16px; margin-top: 12px; font-size: 11px; padding: 12px; background: var(--bg); border-radius: 6px; border: 1px solid var(--line); }
+  .dc-wrap { flex: 1; }
+  .dc-title { font-weight: 600; margin-bottom: 6px; color: var(--muted); text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
+  .dc-grid { display: flex; flex-direction: column; gap: 4px; }
+  .dc-player { display: flex; justify-content: space-between; align-items: baseline; }
+  .dc-name { font-weight: 500; }
+  .dc-out { text-decoration: line-through; color: var(--muted); }
+  .dc-promoted { color: var(--live); font-weight: 600; }
+  .dc-pos { color: var(--muted); font-size: 10px; }
+
   .wrap{max-width:860px;margin:0 auto;padding:0 12px}
-  header{padding:10px 0 2px}
+  header{padding:6px 0 2px}
   .hrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
   h1{font-size:16px;margin:0}
   .ago{font-size:11px;color:var(--muted);white-space:nowrap}
   .ago b{color:var(--live);font-variant-numeric:tabular-nums}
   /* health chips — true anchors, ticking every second */
-  .chips{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0 0}
+  .chips{display:flex;gap:4px;flex-wrap:wrap;margin:4px 0 0}
   .hchip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted);
     border:1px solid var(--line);background:var(--card);border-radius:999px;padding:2px 9px;
     font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -186,8 +198,9 @@
   .pdfs{display:flex;gap:6px;flex-wrap:wrap}
   .pdfs a{display:inline-block;font-size:12px;text-decoration:none;color:var(--accent);
     border:1px solid var(--line);background:var(--card);padding:3px 9px;border-radius:7px}
-  .watch{margin:0;padding-left:18px}
-  .watch li{margin-bottom:3px;color:var(--muted);font-size:12px}
+  .watch{margin:0;padding:12px;background:var(--warn-bg,#fff3cd);border:1px solid var(--warn,#ffeeba);border-radius:4px;list-style-type:none}
+  .watch li{margin-bottom:6px;color:var(--text);font-size:14px;font-weight:bold}
+  .watch li:before{content:"⚠️ ";}
   .legend{font-size:11px;color:var(--muted);margin-top:6px}
   footer{padding:16px 0;color:var(--muted);font-size:11px}
   /* sticky unsaved-queue-changes bar */
@@ -202,12 +215,12 @@
   .qbar-disc{color:var(--accent);background:transparent;border:1px solid var(--line)}
   body.hasbar{padding-top:42px}
   /* ---------- HERO: tonight's games + our pick (redesign v2: the biggest thing, top) ---------- */
-  .hero{margin-top:12px}
+  .hero{margin-top:6px}
   .hero .eyebrow{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
     font-weight:800;display:flex;align-items:baseline;gap:8px;margin:0 0 6px}
   .hero .eyebrow .prov{font-weight:600;letter-spacing:0}
-  .gcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:9px}
-  .gcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;
+  .gcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px}
+  .gcard{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;
     box-shadow:var(--shadow);display:flex;flex-direction:column;gap:5px;position:relative;overflow:hidden}
   .gcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
   .gcard .gtop{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
@@ -237,7 +250,15 @@
     .gcards{grid-template-columns:1fr}
     .gcard .team{font-size:16px}
   }
-</style>
+
+  /* Logos for matchups */
+  .matchup-row{display:flex;align-items:center;gap:12px;}
+  .team-grp{display:flex;align-items:center;gap:6px;}
+  .team-logo{width:22px;height:22px;object-fit:contain;}
+  .team-abbr{font-size:16px;font-weight:800;letter-spacing:-.01em;}
+  .vs{font-size:12px;color:var(--muted);font-weight:600;}
+
+  </style>
 </head>
 <body>
 <div class="wrap">
@@ -259,6 +280,7 @@
     <a href="./accuracy.html">Our Accuracy</a>
     <a href="./ledger.html">Error Map</a>
   <a href="./org.html">The Team</a>
+  <a href="./scouting.html">Scouting</a>
   <a href="./deepdive.html">Deep Dives</a>
   </nav>
   <div class="subtabs" id="subtabs"></div>
@@ -335,8 +357,8 @@
     function mk(id, label, title){ var c=el("span","hchip"); c.id=id; c.title=title||"";
       c.appendChild(el("span","dot")); c.appendChild(el("span",null,label)); wrap.appendChild(c); return c; }
     mk("ch-data","", "How fresh the numbers on this page are (time since the last refresh of the page data).");
-    mk("ch-scout","", "The always-on monitor that watches for anything needing attention, around the clock.");
-    mk("ch-team","", "Whether the work desk is active right now (time since it last checked in).");
+    mk("ch-scout","", "Claude (Scout) - watches for instructions and triages the queue");
+    mk("ch-team","", "Gemini (Coordinator) - executes product, modeling, and data tasks");
     mk("ch-inbox","", "Instructions waiting to be picked up, and when the last one was handled.");
     tickChips();
   }
@@ -350,13 +372,13 @@
     var sh=b.scout_heartbeat||{};
     var ss=sinceIso(sh.last_poll_utc);
     if(ss!=null) setChip("ch-scout", (ss<=240)?"ok":"bad",
-      "monitor · "+((ss<=240)?"on":"quiet")+" · "+agoSecs(ss)+" ago");
-    else setChip("ch-scout","bad","monitor · no signal");
+      "Claude - "+((ss<=240)?"active":"quiet")+" - "+agoSecs(ss)+" ago");
+    else setChip("ch-scout","bad","Claude - no signal");
     var ch=b.coordinator_heartbeat||{};
     var cs=sinceIso(ch.last_heartbeat_utc);
     if(cs!=null) setChip("ch-team", (cs<=1200)?"ok":"warn",
-      "work desk · "+((cs<=1200)?"active":"quiet")+" · "+agoSecs(cs)+" ago");
-    else setChip("ch-team","warn","work desk · not running");
+      "Gemini - "+((cs<=1200)?"active":"quiet")+" - "+agoSecs(cs)+" ago");
+    else setChip("ch-team","warn","Gemini - not running");
     var p=b.pipe_health||{};
     var n=p.directives_pending||0;
     setChip("ch-inbox", n?"warn":"ok",
@@ -372,17 +394,9 @@
       w.appendChild(el("div","banner paused","⏳ On a scheduled pause"+
         (bc.usage_resets_clock?(" — back around "+bc.usage_resets_clock):"")+"."));
     }
-    // BOARD-LEVEL STALENESS (board-refresh doctrine): a board older than its own honest threshold
-    // shows a warning instead of pretending "live". Kills the frozen-numbers-look-live class.
-    var f=b.freshness||{};
-    var age=sinceIso(f.revalidated_utc||b.generated_utc);
-    if(age!=null && f.stale_after_secs && age>f.stale_after_secs){
-      w.appendChild(el("div","banner stale","⚠ This board hasn't refreshed in "+agoSecs(age)+
-        " — the numbers may be behind. It usually updates every few minutes."));
-    }
   }
-
-  /* ---------- queue reorder: local edits + one batched send ---------- */
+    
+    /* ---------- queue reorder: local edits + one batched send ---------- */
   var QKEY="hw_queue_ops_v1";
   var QVERB={top:"Move this to the very top of the queue", bump:"Move this toward the front",
              demote:"Push this one spot lower", shelve:"Set this one aside for now"};
@@ -719,6 +733,34 @@
       }
       if(g.win_line){ c.appendChild(el("div","win", g.win_line)); }
       if(g.venue_note){ c.appendChild(el("div","venue", g.venue_note)); }
+      
+      // Depth Chart Rendering
+      function renderDc(title, dc) {
+        if (!dc || !dc.length) return null;
+        var wrap = el("div", "dc-wrap");
+        wrap.appendChild(el("div", "dc-title", title + " Depth"));
+        var grid = el("div", "dc-grid");
+        dc.forEach(function(p) {
+          var pEl = el("div", "dc-player");
+          var cls = ["dc-name"];
+          if (p.out || p.susp) { cls.push("dc-out"); }
+          if (p.effective && p.base && p.effective < p.base) { cls.push("dc-promoted"); }
+          var nm = el("span", cls.join(" "), p.player);
+          var pos = el("span", "dc-pos", p.group + (p.effective ? p.effective : ""));
+          pEl.appendChild(nm);
+          pEl.appendChild(pos);
+          grid.appendChild(pEl);
+        });
+        wrap.appendChild(grid);
+        return wrap;
+      }
+      var dcBox = el("div", "dc-box");
+      var awayDc = renderDc(g.abbr.split(" @ ")[0], g.away_depth);
+      if (awayDc) dcBox.appendChild(awayDc);
+      var homeDc = renderDc(g.abbr.split(" @ ")[1], g.home_depth);
+      if (homeDc) dcBox.appendChild(homeDc);
+      if (awayDc || homeDc) c.appendChild(dcBox);
+
       grid.appendChild(c);
     });
     s.appendChild(grid);
@@ -766,6 +808,43 @@
     }
     return s;
   }
+
+  /* ---------- agent updates ---------- */
+  function renderAgentUpdates(updates){
+    if(!updates || !updates.length) return null;
+    var s=el("section"); s.appendChild(sectionHead("Agent Updates","agent_updates"));
+    var list=el("div","list");
+    updates.forEach(function(u){
+      var d=el("div","decision"); d.setAttribute("id", "msg-"+u.id);
+      d.style.borderLeftColor="var(--promote)";
+      d.appendChild(el("div","q", u.title));
+      var time = el("div","oneln", u.timestamp);
+      time.style.color="var(--tx-dim)";
+      time.style.fontSize="0.85em";
+      d.appendChild(time);
+      var body = el("div","oneln");
+      body.style.whiteSpace="pre-wrap";
+      body.style.marginTop="8px";
+      body.style.lineHeight="1.5";
+      
+      var html = u.body_markdown || "";
+      html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      html = html.replace(/^### (.*$)/gm, '<strong style="font-size:1.05em;color:var(--tx-norm)">$1</strong>');
+      html = html.replace(/^## (.*$)/gm, '<strong style="font-size:1.1em;color:var(--tx-norm);margin-top:8px;display:block">$1</strong>');
+      html = html.replace(/^# (.*$)/gm, '<strong style="font-size:1.2em;color:var(--tx-norm);margin-top:8px;display:block">$1</strong>');
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--tx-norm)">$1</strong>');
+      html = html.replace(/^\* (.*$)/gm, '• $1');
+      html = html.replace(/^&gt; \[!IMPORTANT\]/gm, '<strong style="color:var(--warn)">IMPORTANT:</strong>');
+      html = html.replace(/^&gt; ?(.*)/gm, '<div style="border-left:2px solid var(--promote); padding-left:8px; margin:4px 0; color:var(--tx-dim)">$1</div>');
+      
+      body.innerHTML = html;
+      d.appendChild(body);
+      list.appendChild(d);
+    });
+    s.appendChild(list);
+    return s;
+  }
+
 
   /* ---------- queue tab: the FULL list, floor status, one-tap reorder ---------- */
   function flattenUpcoming(up){
@@ -912,8 +991,10 @@
     if(activeTab==="today"){
       main.appendChild(renderTodayGames(sec.today_games));
       var edge=renderTonightEdge(sec.tonight_edge); if(edge) main.appendChild(edge);
+      main.appendChild(renderWatch(sec.watch_list));
       main.appendChild(renderDecisions(sec.needs_anthony, b.setup, b.answer_all));
       var reps=renderReports(b.reports, b.rollover); if(reps) main.appendChild(reps);
+      var au=renderAgentUpdates(sec.agent_updates); if(au) main.appendChild(au);
       // running_live is the LIVE-gated list (empty means nothing is running — never fall back to
       // the delta-derived cards, which can hold corpses; directive 230000Z section 3). Only a legacy
       // snapshot with no running_live at all falls back to running_now.
@@ -922,7 +1003,6 @@
       main.appendChild(renderDone(sec.done_today));
       var hp=renderHelpers(b.helpers); if(hp) main.appendChild(hp);
       var sa=renderScoutActivity(b.scout_activity); if(sa) main.appendChild(sa);
-      main.appendChild(renderWatch(sec.watch_list));
     } else {
       main.appendChild(renderQueue(sec.upcoming, sec.coming_soon, !!viewDate));
     }
