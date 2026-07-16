@@ -23,6 +23,16 @@
   .item{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);padding:11px 13px;margin:8px 0}
   .item .ti{font-weight:680;font-size:13.5px}
   .item .as{color:var(--dim);font-size:11px;margin-top:3px}
+  /* deep-dive body: the .md article is rendered as formatted prose (headings / bold / code
+     tables), never raw markdown syntax leaking to the reader. */
+  .item .body{margin-top:10px;font-size:13px;line-height:1.55}
+  .item .body h3{font-size:14px;margin:15px 0 4px;font-weight:700}
+  .item .body h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:13px 0 3px;font-weight:700}
+  .item .body p{margin:8px 0}
+  .item .body strong{font-weight:680;color:var(--ink)}
+  .item .body code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:.9em;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  .item .body pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 13px;overflow-x:auto;margin:9px 0}
+  .item .body pre code{background:none;border:none;padding:0;white-space:pre;display:block;font-size:11.5px;line-height:1.5}
   .soon{background:var(--card);border:1px dashed var(--line2);border-radius:11px;padding:22px 16px;text-align:center;color:var(--muted);font-size:13px;max-width:620px;margin:10px 0}
   .empty{color:var(--dim);font-style:italic}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
@@ -54,6 +64,52 @@
 (function(){
   "use strict";
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+
+  // Inline markdown: **bold** and `code`. Built entirely from text nodes + el() (textContent),
+  // so no author markup is ever injected as HTML - safe by construction.
+  function inlineMd(node, text){
+    var i=0, n=text.length;
+    while(i<n){
+      var b=text.indexOf("**", i), c=text.indexOf("`", i), next=-1, kind=null;
+      if(b>=0 && (c<0 || b<c)){ next=b; kind="b"; }
+      else if(c>=0){ next=c; kind="c"; }
+      if(next<0){ node.appendChild(document.createTextNode(text.slice(i))); break; }
+      if(next>i){ node.appendChild(document.createTextNode(text.slice(i,next))); }
+      if(kind==="b"){
+        var end=text.indexOf("**", next+2);
+        if(end<0){ node.appendChild(document.createTextNode(text.slice(next))); break; }
+        node.appendChild(el("strong",null,text.slice(next+2,end))); i=end+2;
+      } else {
+        var e2=text.indexOf("`", next+1);
+        if(e2<0){ node.appendChild(document.createTextNode(text.slice(next))); break; }
+        node.appendChild(el("code",null,text.slice(next+1,e2))); i=e2+1;
+      }
+    }
+  }
+
+  // Render the baked markdown blocks (each array element is a paragraph split on a blank line) as
+  // formatted prose: fenced code -> <pre>, #/## -> section head, ###+ -> sub-head, else paragraph.
+  // A leading H1 that just repeats the card title is dropped (it was printed twice before).
+  function renderContent(body, paras, title){
+    (paras||[]).forEach(function(raw){
+      var t=(raw==null?"":String(raw)).replace(/^\s+/,"");
+      if(t.indexOf("```")===0){
+        var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
+        var pre=el("pre"); pre.appendChild(el("code",null,inner)); body.appendChild(pre); return;
+      }
+      var hm=/^(#{1,6})\s+([^\n]*)([\s\S]*)$/.exec(t);
+      if(hm){
+        var level=hm[1].length, txt=hm[2].trim(), rest=hm[3].replace(/^\n+/,"");
+        if(!(level===1 && title && txt.toLowerCase()===String(title).toLowerCase())){
+          var h=el(level<=2?"h3":"h4"); inlineMd(h, txt); body.appendChild(h);
+        }
+        if(rest){ var rp=el("p"); inlineMd(rp, rest); body.appendChild(rp); }
+        return;
+      }
+      var p=el("p"); inlineMd(p, t); body.appendChild(p);
+    });
+  }
+
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
     if(d.available && (d.items||[]).length){
@@ -61,16 +117,10 @@
         var c=el("div","item");
         c.appendChild(el("div","ti",it.title||"We Tested It"));
         if(it.as_of){ c.appendChild(el("div","as","Published "+it.as_of)); }
-        if (it.content) {
-            var body = el("div", "body");
-            body.style.marginTop = "10px";
-            body.style.fontSize = "13px";
-            it.content.forEach(function(para) {
-                var p = el("p", "", para);
-                p.style.margin = "8px 0";
-                body.appendChild(p);
-            });
-            c.appendChild(body);
+        if(it.content && it.content.length){
+          var body=el("div","body");
+          renderContent(body, it.content, it.title);
+          c.appendChild(body);
         }
         main.appendChild(c);
       });
