@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-07-16T03:04:02+00:00",
+ "generated_utc": "2026-07-16T03:05:49+00:00",
  "freshness": {
-  "baked_utc": "2026-07-16T03:04:02+00:00",
-  "baked_et": "Jul 15, 11:04pm ET",
-  "revalidated_utc": "2026-07-16T03:04:02+00:00",
+  "baked_utc": "2026-07-16T03:05:49+00:00",
+  "baked_et": "Jul 15, 11:05pm ET",
+  "revalidated_utc": "2026-07-16T03:05:49+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-15",
@@ -45,10 +45,10 @@
   "running_now": [],
   "running_live": [
    {
-    "name": "Item 1 gameday report redesign",
+    "name": "Matrix rows + (lane claim reconcile+purge / 2 min inbox hook) — closes the consolidator to /",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
-    "team": "Site",
+    "team": "",
     "kind": "lane",
     "time": "",
     "at_iso": null
@@ -2557,33 +2557,13 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-16T03:03:23Z",
-  "age_s": 40,
-  "cycles": 6,
-  "label": "scout: alive, last poll 40s ago",
+  "last_poll_utc": "2026-07-16T03:05:29Z",
+  "age_s": 20,
+  "cycles": 8,
+  "label": "scout: alive, last poll 20s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
-  {
-   "time": "11:00pm",
-   "text": "poll #3 · nothing new",
-   "detail": "poll cycle=3 ok directives_new=0"
-  },
-  {
-   "time": "11:01pm",
-   "text": "recovery-eval: coordinator present=True inbox pending=True work pending=True suppressed=False queue marker=True",
-   "detail": "recovery-eval: coordinator_present=True inbox_pending=True work_pending=True suppressed=False queue_marker=True"
-  },
-  {
-   "time": "11:01pm",
-   "text": "poll #4 · nothing new",
-   "detail": "poll cycle=4 ok directives_new=0"
-  },
-  {
-   "time": "11:02pm",
-   "text": "recovery-eval: coordinator present=True inbox pending=True work pending=True suppressed=False queue marker=True",
-   "detail": "recovery-eval: coordinator_present=True inbox_pending=True work_pending=True suppressed=False queue_marker=True"
-  },
   {
    "time": "11:02pm",
    "text": "poll #5 · nothing new",
@@ -2613,10 +2593,30 @@
    "time": "11:03pm",
    "text": "poll #6 · 1 new instruction(s)",
    "detail": "poll cycle=6 ok directives_new=1"
+  },
+  {
+   "time": "11:04pm",
+   "text": "recovery-eval: coordinator present=True inbox pending=True work pending=True suppressed=False queue marker=True",
+   "detail": "recovery-eval: coordinator_present=True inbox_pending=True work_pending=True suppressed=False queue_marker=True"
+  },
+  {
+   "time": "11:04pm",
+   "text": "poll #7 · nothing new",
+   "detail": "poll cycle=7 ok directives_new=0"
+  },
+  {
+   "time": "11:05pm",
+   "text": "recovery-eval: coordinator present=True inbox pending=True work pending=True suppressed=False queue marker=True",
+   "detail": "recovery-eval: coordinator_present=True inbox_pending=True work_pending=True suppressed=False queue_marker=True"
+  },
+  {
+   "time": "11:05pm",
+   "text": "poll #8 · nothing new",
+   "detail": "poll cycle=8 ok directives_new=0"
   }
  ],
  "helpers": {
-  "as_of": "2026-07-16T03:04:00.246948+00:00",
+  "as_of": "2026-07-16T03:05:46.797577+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -2625,8 +2625,8 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "40s",
-    "state_text": "on · seen 40s ago"
+    "age_label": "20s",
+    "state_text": "on · seen 20s ago"
    },
    {
     "name": "Floor manager",
@@ -2641,24 +2641,24 @@
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "67s",
-    "state_text": "on · seen 67s ago"
+    "age_label": "2m",
+    "state_text": "on · seen 2m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "40s",
-    "state_text": "on · seen 40s ago"
+    "age_label": "21s",
+    "state_text": "on · seen 21s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "67s",
-    "state_text": "on · seen 67s ago"
+    "age_label": "2m",
+    "state_text": "on · seen 2m ago"
    }
   ],
   "width": {
@@ -2728,8 +2728,8 @@
   "scheduled_stale": false
  },
  "coordinator_heartbeat": {
-  "alive": false,
-  "last_heartbeat_utc": "2026-07-16T03:01:45Z"
+  "alive": true,
+  "last_heartbeat_utc": "2026-07-16T03:04:27Z"
  },
  "pipe_health": {
   "directives_pending": 1,
@@ -2750,25 +2750,25 @@
  "section_sources": {
   "running_now": {
    "source": "work record",
-   "as_of": "2026-07-16T03:04:02+00:00",
+   "as_of": "2026-07-16T03:05:49+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T03:04:02+00:00",
+   "revalidated": "2026-07-16T03:05:49+00:00",
    "stale_reason": "",
    "age_label": "0s"
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-16T03:04:02+00:00",
+   "as_of": "2026-07-16T03:05:49+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T03:04:02+00:00",
+   "revalidated": "2026-07-16T03:05:49+00:00",
    "stale_reason": "",
    "age_label": "0s"
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-16T03:04:02+00:00",
+   "as_of": "2026-07-16T03:05:49+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T03:04:02+00:00",
+   "revalidated": "2026-07-16T03:05:49+00:00",
    "stale_reason": "",
    "age_label": "0s"
   },
@@ -2776,7 +2776,7 @@
    "source": "decision brief",
    "as_of": "2026-07-15T14:50:47Z",
    "stale": false,
-   "revalidated": "2026-07-16T03:04:02+00:00",
+   "revalidated": "2026-07-16T03:05:49+00:00",
    "stale_reason": "",
    "age_label": "12h"
   },
@@ -2784,7 +2784,7 @@
    "source": "dispatch queue",
    "as_of": "2026-07-15T16:22:14Z",
    "stale": true,
-   "revalidated": "2026-07-16T03:04:02+00:00",
+   "revalidated": "2026-07-16T03:05:49+00:00",
    "stale_reason": "These readings may be out of date — last updated 10h ago.",
    "age_label": "10h"
   },
@@ -2792,7 +2792,7 @@
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-16T03:04:02+00:00",
+   "revalidated": "2026-07-16T03:05:49+00:00",
    "stale_reason": "",
    "age_label": null
   },
@@ -2800,34 +2800,34 @@
    "source": "director inbox",
    "as_of": "2026-07-16T03:03:21Z",
    "stale": false,
-   "revalidated": "2026-07-16T03:04:02+00:00",
+   "revalidated": "2026-07-16T03:05:49+00:00",
    "stale_reason": "",
-   "age_label": "41s"
+   "age_label": "2m"
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-07-13T00:26:52Z",
    "stale": true,
-   "revalidated": "2026-07-16T03:04:02+00:00",
+   "revalidated": "2026-07-16T03:05:49+00:00",
    "stale_reason": "These readings may be out of date — last updated 74h ago.",
    "age_label": "74h"
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-16T03:02:14+00:00",
+   "as_of": "2026-07-16T03:04:02+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T03:04:02+00:00",
+   "revalidated": "2026-07-16T03:05:49+00:00",
    "stale_reason": "",
    "age_label": "1m"
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-16T03:04:00.246948+00:00",
+   "as_of": "2026-07-16T03:05:46.797577+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T03:04:02+00:00",
+   "revalidated": "2026-07-16T03:05:49+00:00",
    "stale_reason": "",
    "age_label": "3s"
   }
  },
- "generated_et": "Jul 15, 11:04pm ET"
+ "generated_et": "Jul 15, 11:05pm ET"
 }
