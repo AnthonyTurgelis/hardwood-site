@@ -1,19 +1,19 @@
 {
- "generated_utc": "2026-07-16T23:01:35Z",
- "as_of": "2026-07-16T23:01:35Z",
+ "generated_utc": "2026-07-16T16:18:28Z",
+ "as_of": "2026-07-16T16:18:28Z",
  "driver": "scout",
  "scout_state": {
   "state": "live",
-  "label": "scout: alive, last check 13s ago (check #29)",
+  "label": "scout: alive, last check 35s ago (check #192)",
   "reason": "The background monitor is running and checking every minute.",
-  "last_poll_utc": "2026-07-16T23:01:22Z",
-  "age_s": 13,
-  "cycles": 29
+  "last_poll_utc": "2026-07-16T16:17:53Z",
+  "age_s": 35,
+  "cycles": 192
  },
  "why_quiet": "",
  "quiet": false,
  "cycle": {
-  "as_of": "2026-07-16T23:01:35Z",
+  "as_of": "2026-07-16T16:18:28Z",
   "checked": [
    {
     "checked": "new final games",
@@ -36,43 +36,41 @@
   "face": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running"
  },
  "usage": {
-  "as_of": "2026-07-16T23:01:35Z",
+  "as_of": "2026-07-16T16:18:28Z",
   "reading_utc": null,
   "age_s": null,
   "stale": true,
-  "fresh_label": "NO LIVE READING",
+  "fresh_label": "NO SIGNAL",
   "pct": null,
-  "band": "red",
-  "label": "Plan usage: NO LIVE READING — the plan meter is unwired on this box (not a fabricated number). Wind-down is enforced by the session time budget, which hands off well before exhaustion (~15% buffer). Treating as RED to stay safe.",
-  "meter": "!!!!!!!!!!",
+  "band": "unknown",
+  "label": "Plan usage: unavailable (not machine-readable) — not a fabricated number.",
+  "meter": "··········",
   "source": "unavailable",
-  "no_live_reading": true,
-  "governing_axis": "wall_clock_session_budget",
   "plan_pct_source": "UNAVAILABLE — no machine-readable live plan-usage signal on this box with zero burn. Only static labels exist (subscriptionType / rateLimitTier); the real source is the OAuth account-usage endpoint / anthropic-ratelimit-* headers, which are not persisted to disk. Wind-down MUST NOT fire on a fabricated number — pass a real reading via write_usage_state(plan_pct=...) to populate this, or wire the endpoint. Today the mechanical wind-down runs on the wall-clock session budget in ops/scout/session_budget.py, not on this %.",
   "context_pct": 67.6,
   "context_label": "Context window 68% full (auto-compacts; does not stop work).",
   "amber_at": 70.0,
   "red_at": 85.0,
-  "winddown_at": 85.0
+  "winddown_at": 90.0
  },
  "coordinator": {
   "state": "working",
   "working": true,
-  "label": "Coordinator: working, last progress 2s ago.",
-  "age_s": 2,
+  "label": "Coordinator: working, last progress 1s ago.",
+  "age_s": 1,
   "stale": false,
-  "age_label": "2s",
-  "fresh_label": "2s"
+  "age_label": "1s",
+  "fresh_label": "1s"
  },
  "task_state": {
   "running": 4,
   "names": [
-   "bottom foulrisk consumer data",
-   "data margin sig propagation",
-   "viz realm overlay jargon scrub",
-   "qa live board verify"
+   "top",
+   "bottom",
+   "viz",
+   "data"
   ],
-  "line": "4 tasks running: bottom foulrisk consumer data, data margin sig propagation, viz realm overlay jargon scrub, qa live board verify."
+  "line": "4 tasks running: top, bottom, viz, data."
  },
  "agents": [
   {
@@ -81,11 +79,11 @@
    "state": "active",
    "active": true,
    "does": "watches for your instructions",
-   "label": "Scout: active, last beat 13s ago",
-   "age_s": 13,
+   "label": "Scout: active, last beat 35s ago",
+   "age_s": 35,
    "stale": false,
-   "age_label": "13s",
-   "fresh_label": "13s"
+   "age_label": "35s",
+   "fresh_label": "35s"
   },
   {
    "key": "floor_manager",
@@ -93,11 +91,11 @@
    "state": "active",
    "active": true,
    "does": "counts running jobs and refills empty slots",
-   "label": "Floor manager: active, last beat 76s ago",
-   "age_s": 76,
+   "label": "Floor manager: active, last beat 31s ago",
+   "age_s": 31,
    "stale": false,
-   "age_label": "76s",
-   "fresh_label": "76s"
+   "age_label": "31s",
+   "fresh_label": "31s"
   },
   {
    "key": "board_baker",
@@ -105,11 +103,11 @@
    "state": "active",
    "active": true,
    "does": "rebuilds the live status page",
-   "label": "Status-page baker: active, last beat 5s ago",
-   "age_s": 5,
+   "label": "Status-page baker: active, last beat 4s ago",
+   "age_s": 4,
    "stale": false,
-   "age_label": "5s",
-   "fresh_label": "5s"
+   "age_label": "4s",
+   "fresh_label": "4s"
   },
   {
    "key": "discord_replies",
@@ -117,11 +115,11 @@
    "state": "active",
    "active": true,
    "does": "routes your chat replies back in",
-   "label": "Two-way replies: active, last beat 15s ago",
-   "age_s": 15,
+   "label": "Two-way replies: active, last beat 36s ago",
+   "age_s": 36,
    "stale": false,
-   "age_label": "15s",
-   "fresh_label": "15s"
+   "age_label": "36s",
+   "fresh_label": "36s"
   },
   {
    "key": "inbox_triage",
@@ -129,89 +127,89 @@
    "state": "active",
    "active": true,
    "does": "reads new instructions the instant they land",
-   "label": "Inbox triage: active, last beat 5m ago",
-   "age_s": 315,
+   "label": "Inbox triage: active, last beat 4m ago",
+   "age_s": 280,
    "stale": false,
-   "age_label": "5m",
-   "fresh_label": "5m"
+   "age_label": "4m",
+   "fresh_label": "4m"
   }
  ],
  "width": {
-  "running": 1,
+  "running": 4,
   "target": 6,
-  "empty": 5,
-  "line": "1 of 6 jobs running.",
-  "reason": "Only 1 of 6 jobs are running — 2 more flagged for the coordinator to start from the priority list.",
-  "age_s": 76,
+  "empty": 2,
+  "line": "4 of 6 jobs running.",
+  "reason": "Only 4 of 6 jobs are running — 2 more flagged for the coordinator to start from the priority list.",
+  "age_s": 31,
   "stale": false,
-  "fresh_label": "76s"
+  "fresh_label": "31s"
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-16T23:01:22Z",
-  "age_s": 13,
-  "cycles": 29,
-  "label": "scout: alive, last check 13s ago (check #29)",
+  "last_poll_utc": "2026-07-16T16:17:53Z",
+  "age_s": 35,
+  "cycles": 192,
+  "label": "scout: alive, last check 35s ago (check #192)",
   "anchor": "scout_activity.py"
  },
  "scout_activity": [
   {
-   "time": "6:05pm",
+   "time": "11:24am",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "6:12pm",
+   "time": "11:29am",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "6:16pm",
+   "time": "11:33am",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "6:21pm",
+   "time": "11:38am",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "6:26pm",
+   "time": "11:43am",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "6:31pm",
+   "time": "11:48am",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "6:36pm",
+   "time": "11:53am",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "6:41pm",
+   "time": "11:58am",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "6:45pm",
+   "time": "12:03pm",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "6:51pm",
+   "time": "12:08pm",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "6:55pm",
+   "time": "12:13pm",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "7:01pm",
+   "time": "12:18pm",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   }
