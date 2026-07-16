@@ -53,6 +53,9 @@
   .banner{margin:8px 0 0;padding:7px 11px;border-radius:8px;font-size:12.5px;font-weight:600;
     border:1px solid var(--line);background:var(--card)}
   .banner.idle{border-left:3px solid var(--bad)} .banner.paused{border-left:3px solid var(--warn)}
+  /* UNDER-WIDTH ALARM (item B) — the LOUDest banner: full bad-color wash, not just a left rule */
+  .banner.width-defect{border:1px solid var(--bad);border-left:4px solid var(--bad);
+    background:var(--bad);color:#fff}
   /* the one day-summary sentence */
   .summary{margin:9px 0 0;font-size:14.5px;line-height:1.45;font-weight:600}
   .summary .dim{color:var(--muted);font-weight:500}
@@ -412,6 +415,12 @@
   }
   function banner(b){
     var w=document.getElementById("banner"); w.innerHTML="";
+    // UNDER-WIDTH ALARM (item B) — a LOUD top banner when too few work lanes have been running.
+    // Present only when the server-side alarm is active AND fresh; absent otherwise (self-clearing).
+    var wd=b.width_defect||{};
+    if(wd.active && wd.text){
+      w.appendChild(el("div","banner width-defect","⚠ "+wd.text));
+    }
     var bc=b.beacon||{};
     if(bc.state==="idle"){
       w.appendChild(el("div","banner idle","⏸ Work is paused and needs attention"+
