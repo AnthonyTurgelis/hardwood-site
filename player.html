@@ -132,23 +132,50 @@
 
     var hero=el("div","hero");
     hero.appendChild(el("div","nm", d.name||"Player"));
+    var prov = (d.impact_provisional !== false);   // default provisional if the flag is absent
     hero.appendChild(el("div","sub", (d.team||"—") + " · " + (d.gp!=null?d.gp:"—") + " games this season" +
       (d.min_share_pct!=null?("  · "+d.min_share_pct+"% of team minutes"):"") +
       (d.thin?"  · thin sample":"")));
     var kpis=el("div","kpis");
-    function kpi(l,v,u){ var k=el("div","kpi"); k.appendChild(el("div","kl",l));
-      var kv=el("div","kv"); kv.textContent=(v==null?"—":v); if(u){ var s=el("small"); s.textContent=" "+u; kv.appendChild(s);} k.appendChild(kv); return k; }
+    function kpi(l,v,u,uc){ var k=el("div","kpi"); k.appendChild(el("div","kl",l));
+      var kv=el("div","kv"); kv.textContent=(v==null?"—":v); if(u){ var s=el("small",uc||null); s.textContent=" "+u; kv.appendChild(s);} k.appendChild(kv); return k; }
     var pg=function(v){ return v==null?null:v.toFixed(1); };
-    // impact-first hero: our on-court rating is the lead number, counting stats after
-    kpis.appendChild(kpi("Impact rating", d.rating==null?null:((d.rating>0?"+":"")+d.rating.toFixed(1)),
-      d.min_share_pct!=null?("· "+d.min_share_pct+"% of min"):null));
+    // IMPACT-FIRST hero: our on-court rating leads, shown UNCAPPED (the real shrunk value) but
+    // labeled honestly — provisional + its on-court basis (n travels with the estimate).
+    var nb = d.n_basis;
+    var impSub = (prov ? "provisional" : "on-court")
+      + (nb!=null ? (" · "+nb+" stretch"+(nb===1?"":"es")) : "");
+    kpis.appendChild(kpi("Impact rating (on-court)",
+      d.rating==null?null:((d.rating>0?"+":"")+d.rating.toFixed(1)),
+      impSub, prov?"thin":null));
+    // Minutes lead as a SHARE-OF-TEAM-MINUTES flag, not a misleading raw MPG (raw mpg kept small as support).
+    kpis.appendChild(kpi("% of team minutes", d.min_share_pct==null?null:(d.min_share_pct+"%"),
+      d.min_avg==null?"of team floor time":("of team floor time · "+d.min_avg.toFixed(0)+" mpg")));
     kpis.appendChild(kpi("Proj. next game", d.minutes==null?null:d.minutes.toFixed(1), "min"));
     kpis.appendChild(kpi("Points", pg(d.pts), "per game"));
     kpis.appendChild(kpi("Rebounds", pg(d.reb), "per game"));
     kpis.appendChild(kpi("Assists", pg(d.ast), "per game"));
-    kpis.appendChild(kpi("Minutes", pg(d.min_avg), "per game"));
     hero.appendChild(kpis);
     main.appendChild(hero);
+
+    // IMPACT READ — the honest framing so the near-zero rating is never mistaken for precise (B7).
+    var impCard=el("div","card pad"); impCard.style.marginBottom="12px";
+    var impH=el("div"); impH.style.fontWeight="680"; impH.style.marginBottom="3px";
+    impH.textContent="Impact read"; impCard.appendChild(impH);
+    var impTxt;
+    if(prov){
+      impTxt="Our on-court impact rating measures how much better the team plays with her on the floor. "
+        + "This early in the season it rests on only " + (nb!=null?nb:"a few") + " on-court stretch"
+        + (nb===1?"":"es") + " — far short of a full-season sample — so it is heavily regressed toward "
+        + "league average and reads near zero for almost everyone. It does not yet separate players; treat "
+        + "this number as provisional. For a reliable read right now, use her season scoring and share of minutes above.";
+    } else {
+      impTxt="Our on-court impact rating measures how much better the team plays with her on the floor "
+        + "(plus-minus style), now built on " + (nb!=null?nb:"enough") + " on-court stretch" + (nb===1?"":"es")
+        + " this season — enough to start separating her from league average.";
+    }
+    impCard.appendChild(el("div","note",impTxt));
+    main.appendChild(impCard);
 
     if(d.rookie_prior){
       var rp = el("section"); rp.appendChild(el("h2",null,"Rookie starting projection"));
@@ -169,7 +196,7 @@
 
     var s1=el("section"); s1.appendChild(el("h2",null,"Rating trajectory"));
     var c1=el("div","card"), p1=el("div","pad"); p1.appendChild(trajSvg(d.trajectory)); c1.appendChild(p1); s1.appendChild(c1);
-    s1.appendChild(el("div","note","How her on-court impact rating has moved across the season (higher is better). The dot marks the latest value."));
+    s1.appendChild(el("div","note","How her on-court impact rating has moved across the season (higher is better). The dot marks the latest value. Early-season values rest on a small on-court sample and are provisional."));
     main.appendChild(s1);
 
     var s2=el("section"); s2.appendChild(el("h2",null,"Realm of outcomes"));

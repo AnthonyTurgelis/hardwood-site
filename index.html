@@ -669,7 +669,7 @@
      console (board.helpers, sourced verbatim from the emitter). Fresh-or-loud: a quiet process
      or a stale whole-block reads LOUDLY (a red 'quiet'/'stale' badge), never a silent old value. */
   function renderHelpers(h){
-    if(!h || (!(h.agents&&h.agents.length) && !h.width)) return null;
+    if(!h || (!(h.agents&&h.agents.length) && !h.width && !(h.scheduled_jobs&&h.scheduled_jobs.length))) return null;
     var s=el("section"); s.appendChild(sectionHead("Helpers running","helpers"));
     if(h.stale && h.status){
       var w=el("div","hbstale"); w.appendChild(el("span","stalebadge","stale"));
@@ -696,6 +696,27 @@
         list.appendChild(li);
       });
       s.appendChild(list);
+    }
+    /* SCHEDULED-JOB TRUTH (brief #6): last-ran / next-run / result for the timed jobs, ET-only,
+       sourced from the single status.json. A stale marker reads LOUDLY. */
+    if(h.scheduled_jobs && h.scheduled_jobs.length){
+      var jh=el("div","subhead","Scheduled jobs");
+      if(h.scheduled_stale){ jh.appendChild(el("span","stalebadge","stale")); }
+      s.appendChild(jh);
+      var jl=el("ul","helperlist list");
+      h.scheduled_jobs.forEach(function(j){
+        var li=el("li","helperrow");
+        var ok=(j.result==="done");
+        li.appendChild(el("span","hdot "+(ok?"on":"off")));
+        var body=el("span","hbody");
+        body.appendChild(el("span","hname", j.label||""));
+        var when = (j.ran_et?("ran "+j.ran_et):(j.next_et?("next "+j.next_et):""));
+        if(when){ body.appendChild(el("span","hdoes", when)); }
+        li.appendChild(body);
+        li.appendChild(el("span","hstate"+(ok?"":" stale"), j.result||""));
+        jl.appendChild(li);
+      });
+      s.appendChild(jl);
     }
     return s;
   }

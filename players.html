@@ -90,14 +90,14 @@
     var s=el("section");
     var h=el("h2"); h.appendChild(document.createTextNode("Players — this season")); s.appendChild(h);
     if(!rt.available){ s.appendChild(el("p","empty", rt.note||"Season stats coming soon.")); return s; }
-    s.appendChild(el("p","lede","Ranked by season scoring — points per game. Our on-court impact rating (how much better a team plays with her on the floor) is shown alongside as a second measure; it rewards all-around, two-way play rather than scoring, so a role player can rate high on impact even if she scores less, and a modest number is not a weak player. This early in the season the impact rating rests on only a handful of games and can swing. Her share of team minutes rides alongside, so a big number on tiny minutes is easy to spot. Points, rebounds and assists per game are shown too. Tap a name for her full card."));
+    s.appendChild(el("p","lede","Ranked by season scoring — points per game from the official box scores. Our on-court impact rating (how much better a team plays with her on the floor) is shown alongside, but this early in the season it rests on only a handful of on-court stretches, so it's regressed toward league average and reads near zero for almost everyone — it does not yet separate players. Her share of team minutes rides alongside too, so a big scoring line on limited minutes is easy to spot. Tap a name for her full card."));
     var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter players by name or team…"; fbox.value=ratFilter;
     fbox.oninput=function(){ ratFilter=fbox.value; var ns=ratingsSection(rt); s.parentNode.replaceChild(ns, s);
       var nf=ns.querySelector(".filt"); if(nf){ nf.focus(); nf.setSelectionRange(nf.value.length,nf.value.length); } };
     s.appendChild(fbox);
     var card=el("div","card"); var sc=el("div","scroll"); var t=el("table");
     var thead=el("thead"), hr=el("tr");
-    ["#","Player","Team","Impact","% of minutes","GP","PTS","REB","AST","MIN",""].forEach(function(x){ hr.appendChild(el("th",null,x)); });
+    ["#","Player","Team","Impact","% of team min","GP","PTS","REB","AST","MIN",""].forEach(function(x){ hr.appendChild(el("th",null,x)); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
     var q=ratFilter.trim().toLowerCase();
@@ -127,7 +127,7 @@
       tog.onclick=function(){ ratShowAll=!ratShowAll; s.parentNode.replaceChild(ratingsSection(rt), s); };
       s.appendChild(tog);
     }
-    var note=el("div","note"); note.appendChild(document.createTextNode("Impact is our on-court rating (plus-minus style); % of minutes is her share of a full game's minutes. Per-game averages are this season's official box scores, shown as support. Tap a name for projected minutes and outcome ranges."));
+    var note=el("div","note"); note.appendChild(document.createTextNode("Impact is our on-court rating (plus-minus style); it is provisional this early and reads near zero for almost everyone, so the board ranks by season scoring instead. % of team min is her share of the team's floor time. Per-game averages are this season's official box scores. Tap a name for projected minutes and outcome ranges."));
     s.appendChild(note);
     return s;
   }
