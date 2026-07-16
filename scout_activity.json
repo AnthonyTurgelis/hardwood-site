@@ -1,19 +1,19 @@
 {
- "generated_utc": "2026-07-10T15:23:32Z",
- "as_of": "2026-07-10T15:23:32Z",
- "driver": "coordinator",
+ "generated_utc": "2026-07-16T03:58:12Z",
+ "as_of": "2026-07-16T03:58:12Z",
+ "driver": "scout",
  "scout_state": {
-  "state": "disabled",
-  "label": "scout: DISABLED by human — guard rebuild in progress",
-  "reason": "The background monitor is switched off by you — guard rebuild in progress.",
-  "last_poll_utc": "2026-07-09T19:01:00Z",
-  "age_s": 73352,
-  "cycles": 1
+  "state": "live",
+  "label": "scout: alive, last check 25s ago (check #20)",
+  "reason": "The background monitor is running and checking every minute.",
+  "last_poll_utc": "2026-07-16T03:57:47Z",
+  "age_s": 25,
+  "cycles": 20
  },
- "why_quiet": "The background monitor is switched off by you — guard rebuild in progress. The coordinator is checking by hand each cycle, so nothing is missed.",
- "quiet": true,
+ "why_quiet": "",
+ "quiet": false,
  "cycle": {
-  "as_of": "2026-07-10T15:23:32Z",
+  "as_of": "2026-07-16T03:58:12Z",
   "checked": [
    {
     "checked": "new final games",
@@ -35,17 +35,129 @@
   "found_any": true,
   "face": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running"
  },
+ "usage": {
+  "as_of": "2026-07-16T03:58:12Z",
+  "reading_utc": null,
+  "age_s": null,
+  "stale": true,
+  "fresh_label": "NO SIGNAL",
+  "pct": null,
+  "band": "unknown",
+  "label": "Plan usage: unavailable (not machine-readable) — not a fabricated number.",
+  "meter": "··········",
+  "source": "unavailable",
+  "plan_pct_source": "UNAVAILABLE — no machine-readable live plan-usage signal on this box with zero burn. Only static labels exist (subscriptionType / rateLimitTier); the real source is the OAuth account-usage endpoint / anthropic-ratelimit-* headers, which are not persisted to disk. Wind-down MUST NOT fire on a fabricated number — pass a real reading via write_usage_state(plan_pct=...) to populate this, or wire the endpoint. Today the mechanical wind-down runs on the wall-clock session budget in ops/scout/session_budget.py, not on this %.",
+  "context_pct": 67.6,
+  "context_label": "Context window 68% full (auto-compacts; does not stop work).",
+  "amber_at": 70.0,
+  "red_at": 85.0,
+  "winddown_at": 90.0
+ },
+ "coordinator": {
+  "state": "working",
+  "working": true,
+  "label": "Coordinator: working, last progress 10s ago.",
+  "age_s": 10,
+  "stale": false,
+  "age_label": "10s",
+  "fresh_label": "10s"
+ },
+ "task_state": {
+  "running": 2,
+  "names": [
+   "agent updates feed repoint (0720 item2)",
+   "retire floor manager + dead crew pager (0645 item2)"
+  ],
+  "line": "2 tasks running: agent updates feed repoint (0720 item2), retire floor manager + dead crew pager (0645 item2)."
+ },
+ "agents": [
+  {
+   "key": "scout",
+   "name": "Scout",
+   "state": "active",
+   "active": true,
+   "does": "watches for your instructions",
+   "label": "Scout: active, last beat 25s ago",
+   "age_s": 25,
+   "stale": false,
+   "age_label": "25s",
+   "fresh_label": "25s"
+  },
+  {
+   "key": "floor_manager",
+   "name": "Floor manager",
+   "state": "active",
+   "active": true,
+   "does": "counts running jobs and refills empty slots",
+   "label": "Floor manager: active, last beat 19s ago",
+   "age_s": 19,
+   "stale": false,
+   "age_label": "19s",
+   "fresh_label": "19s"
+  },
+  {
+   "key": "board_baker",
+   "name": "Status-page baker",
+   "state": "active",
+   "active": true,
+   "does": "rebuilds the live status page",
+   "label": "Status-page baker: active, last beat 0s ago",
+   "age_s": 0,
+   "stale": false,
+   "age_label": "0s",
+   "fresh_label": "0s"
+  },
+  {
+   "key": "discord_replies",
+   "name": "Two-way replies",
+   "state": "active",
+   "active": true,
+   "does": "routes your chat replies back in",
+   "label": "Two-way replies: active, last beat 27s ago",
+   "age_s": 27,
+   "stale": false,
+   "age_label": "27s",
+   "fresh_label": "27s"
+  },
+  {
+   "key": "inbox_triage",
+   "name": "Inbox triage",
+   "state": "active",
+   "active": true,
+   "does": "reads new instructions the instant they land",
+   "label": "Inbox triage: active, last beat 4m ago",
+   "age_s": 287,
+   "stale": false,
+   "age_label": "4m",
+   "fresh_label": "4m"
+  }
+ ],
+ "width": {
+  "running": 2,
+  "target": 6,
+  "empty": 4,
+  "line": "2 of 6 jobs running.",
+  "reason": "Only 2 of 6 jobs are running — 4 more flagged for the coordinator to start from the priority list.",
+  "age_s": 19,
+  "stale": false,
+  "fresh_label": "19s"
+ },
  "scout_heartbeat": {
-  "alive": false,
-  "last_poll_utc": "2026-07-09T19:01:00Z",
-  "age_s": 73352,
-  "cycles": 1,
-  "label": "scout: DISABLED by human — guard rebuild in progress",
+  "alive": true,
+  "last_poll_utc": "2026-07-16T03:57:47Z",
+  "age_s": 25,
+  "cycles": 20,
+  "label": "scout: alive, last check 25s ago (check #20)",
   "anchor": "scout_activity.py"
  },
  "scout_activity": [
   {
    "time": "11:23am",
+   "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
+   "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
+  },
+  {
+   "time": "11:58pm",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   }
