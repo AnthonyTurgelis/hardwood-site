@@ -41,6 +41,11 @@
   .spark{display:flex;gap:6px;align-items:flex-end;height:70px;margin-top:6px}
   .spark .b{flex:1;background:var(--accent);border-radius:4px 4px 0 0;min-height:4px;opacity:.85;position:relative}
   .spark .b span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px;color:var(--muted)}
+  .spark .b.cur{opacity:1;outline:2px solid var(--ink);outline-offset:1px}
+  .subh{font-size:12.5px;font-weight:700;color:var(--ink);margin:12px 0 5px}
+  .subh small{font-weight:500;color:var(--muted);font-size:11.5px}
+  .readline{font-size:12.5px;color:var(--muted);margin:26px 0 0}
+  .readline b{color:var(--ink)}
   .empty{color:var(--muted);font-style:italic}
   .hero{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:14px 15px;box-shadow:var(--shadow);margin-top:10px}
   .hero .big{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
@@ -115,17 +120,27 @@
     var s=el("section"); s.appendChild(el("h2",null,"Recent form — game-margin error by month"));
     var vals=monthly.filter(function(m){return m.value!=null;});
     if(!vals.length){ s.appendChild(el("p","empty","No monthly history yet.")); return s; }
-    s.appendChild(el("p","lede","Shorter bars mean tighter calls. " + (seasonAvg!=null?("Our season average is about "+seasonAvg+" points — read the newest month against it to see if we're sharpening or slipping."):"Read the newest month against the earlier ones.")));
+    s.appendChild(el("p","lede","Shorter bars mean tighter calls; the outlined bar is the latest month."));
     var max=Math.max.apply(null, vals.map(function(m){return m.value;}));
     var wrap=el("div","spark");
-    vals.forEach(function(m){
-      var b=el("div","b"); b.style.height=Math.round((m.value/max)*100)+"%";
+    vals.forEach(function(m,i){
+      var b=el("div","b" + (i===vals.length-1?" cur":"")); b.style.height=Math.round((m.value/max)*100)+"%";
       b.title=m.month+": "+m.value+" pts";
       var lab=el("span"); lab.textContent=(m.month||"").slice(5)+" · "+m.value; b.appendChild(lab);
       wrap.appendChild(b);
     });
     var box=el("div"); box.style.paddingBottom="22px"; box.appendChild(wrap);
-    s.appendChild(box); return s;
+    s.appendChild(box);
+    var last=vals[vals.length-1];
+    if(last && seasonAvg!=null){
+      var diff=last.value-seasonAvg;
+      var word=Math.abs(diff)<0.5 ? "right in line with" : (diff<0 ? "tighter than" : "a touch looser than");
+      var r=el("p","readline");
+      r.innerHTML="Latest month: <b>"+last.value+" pts</b> — "+word+" our season average of "+seasonAvg+" pts"
+        + (last.n?(", on a small "+last.n+"-game sample (read it lightly)"):"") + ".";
+      s.appendChild(r);
+    }
+    return s;
   }
 
   function headlineSection(h){
@@ -189,9 +204,25 @@
 
     if(a.surfaces && a.surfaces.length){
       var s1=el("section"); s1.appendChild(el("h2",null,"How accurate we are, per surface"));
-      var g=el("div","mgrid");
-      a.surfaces.forEach(function(m){ g.appendChild(metricCard(m)); });
-      s1.appendChild(g); main.appendChild(s1);
+      var groups=[
+        {kind:"live games", title:"This season, live",
+         desc:"Graded on the games we've actually predicted and played this year."},
+        {kind:"season reconstruction", title:"Across our full game history",
+         desc:"Our current method re-scored on every past game we have — a larger, steadier read."}
+      ];
+      var used={};
+      groups.forEach(function(gr){
+        var items=a.surfaces.filter(function(m){ return m.kind===gr.kind; });
+        if(!items.length) return;
+        items.forEach(function(m){ used[m.surface]=1; });
+        var sh=el("div","subh"); sh.appendChild(document.createTextNode(gr.title+" "));
+        sh.appendChild(el("small",null,"— "+gr.desc)); s1.appendChild(sh);
+        var g=el("div","mgrid"); items.forEach(function(m){ g.appendChild(metricCard(m)); });
+        s1.appendChild(g);
+      });
+      var rest=a.surfaces.filter(function(m){ return !used[m.surface]; });
+      if(rest.length){ var g2=el("div","mgrid"); rest.forEach(function(m){ g2.appendChild(metricCard(m)); }); s1.appendChild(g2); }
+      main.appendChild(s1);
     }
     if(a.calibration && a.calibration.length){
       var s2=el("section"); s2.appendChild(el("h2",null,"Are our prediction ranges honest?"));
