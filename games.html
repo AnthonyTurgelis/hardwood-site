@@ -65,6 +65,17 @@
   .grade.good{color:var(--good)} .grade.bad{color:var(--bad)} .grade.na{color:var(--dim);font-weight:500}
   .pdfs{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
   .pdfs a{font-size:11px;color:var(--acc);border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card);text-decoration:none}
+  /* forward-availability preview — who's in/out/limited + what we assumed */
+  .avail{margin:7px 0 2px;border-top:1px solid var(--line);padding-top:6px}
+  .avlbl{font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--dim);font-weight:700;margin-bottom:4px}
+  .avteam{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px;margin:3px 0}
+  .avtm{font-size:11px;font-weight:700;color:var(--muted);min-width:2.4em}
+  .avdesc{font-size:11px;flex:1 1 60%}
+  .avout{color:var(--bad);font-weight:600}
+  .avlim{color:var(--warn);font-weight:600}
+  .avfull{color:var(--good)}
+  .avroster{font-size:10px;color:var(--dim);white-space:nowrap}
+  .avnote{font-size:10px;color:var(--dim);margin-top:5px;line-height:1.4}
   .empty{color:var(--dim);font-style:italic}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
@@ -151,6 +162,40 @@
     return wrap;
   }
 
+  // FORWARD-AVAILABILITY preview: per side, who's OUT (minutes redistributed), who's limited
+  // (partial play chance), and the active roster we assumed. Read-only from g.avail; renders
+  // nothing when the projection has no availability rows for this game (graceful).
+  function availBlock(g){
+    var av=g.avail; if(!av || (!av.home && !av.away)) return null;
+    var wrap=el("div","avail");
+    wrap.appendChild(el("div","avlbl","Availability we assumed"));
+    [["away", g.away], ["home", g.home]].forEach(function(pair){
+      var side=av[pair[0]]; if(!side) return;
+      var row=el("div","avteam");
+      row.appendChild(el("span","avtm", side.team||pair[1]||""));
+      var desc=el("span","avdesc");
+      if(side.out && side.out.length){
+        desc.appendChild(el("span","avout","Out: "));
+        desc.appendChild(document.createTextNode(side.out.join(", ")));
+      }
+      if(side.limited && side.limited.length){
+        if(desc.childNodes.length) desc.appendChild(document.createTextNode(" · "));
+        desc.appendChild(el("span","avlim","Limited: "));
+        desc.appendChild(document.createTextNode(side.limited.map(function(p){
+          return p.name + (p.play_pct!=null ? (" ("+p.play_pct+"% to play)") : "");
+        }).join(", ")));
+      }
+      if(!desc.childNodes.length){ desc.appendChild(el("span","avfull","Full roster assumed available")); }
+      row.appendChild(desc);
+      var rtxt = (side.roster!=null) ? (side.roster+" active") : (side.in_count+" available");
+      row.appendChild(el("span","avroster", rtxt));
+      wrap.appendChild(row);
+    });
+    wrap.appendChild(el("div","avnote",
+      "Out players' minutes are redistributed to the rest of the rotation; limited players carry a reduced play chance. This is the availability the projection assumed, not injury news."));
+    return wrap;
+  }
+
   function card(g, pdfByDate, genUtc){
     var c=el("div","g"); c.setAttribute("data-k", g.date+"|"+g.away+"@"+g.home);
     var h=el("div","gh");
@@ -185,6 +230,8 @@
       ? "How the final margin could land — taller bars are more likely, and each shaded side is that team's win chance:"
       : "Margin range (how much the result could swing):"));
     c.appendChild(densityStrip(g));
+
+    var ab=availBlock(g); if(ab){ c.appendChild(ab); }
 
     var pw=el("div","pdfs");
     if(g.game_id){ var dd=el("a",null,"deep dive →"); dd.href="./game.html?id="+encodeURIComponent(g.game_id); pw.appendChild(dd); }
