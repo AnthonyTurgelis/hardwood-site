@@ -56,6 +56,10 @@
   /* UNDER-WIDTH ALARM (item B) — the LOUDest banner: full bad-color wash, not just a left rule */
   .banner.width-defect{border:1px solid var(--bad);border-left:4px solid var(--bad);
     background:var(--bad);color:#fff}
+  /* REFILLING (bookkeeping-window smoothing) — a CALM, reassuring beat, never the red wash: a soft
+     left rule only, so a normal finishing/backfill window never reads as an outage. */
+  .banner.refilling{border:1px solid var(--line);border-left:3px solid var(--accent);
+    background:var(--card);color:var(--muted)}
   /* the one day-summary sentence */
   .summary{margin:9px 0 0;font-size:14.5px;line-height:1.45;font-weight:600}
   .summary .dim{color:var(--muted);font-weight:500}
@@ -236,7 +240,13 @@
     color:#fff;background:var(--accent);border-radius:5px;padding:1px 6px;flex:0 0 auto}
   .gcard .pick .val{font-size:14px;font-weight:750}
   .gcard .win{font-size:12px;color:var(--muted);font-weight:600}
-  .gcard .win b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .gcard .win b{color:var(--ink);font-variant-numeric:tabular-nums;font-size:13px}
+  .gcard .win .wt{font-weight:600}
+  .gcard .win .conf{font-weight:700;color:var(--accent)}
+  .gcard .range{font-size:11px;color:var(--muted);display:flex;align-items:baseline;gap:6px;margin-top:1px}
+  .gcard .range .rlab{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 4px;flex:0 0 auto}
+  .gcard .range .rval{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
   .gcard .venue{font-size:11px;color:var(--warn);line-height:1.4;margin-top:1px}
   /* ---------- EDGE hero (data-gated: only renders if the board carries a tonight_edge block) ---------- */
   .edge{margin-top:12px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--promote);
@@ -420,6 +430,9 @@
     var wd=b.width_defect||{};
     if(wd.active && wd.text){
       w.appendChild(el("div","banner width-defect","⚠ "+wd.text));
+    } else if(wd.refilling && wd.text){
+      // CALM finishing/refill beat — a soft, reassuring line, NOT the red outage wash.
+      w.appendChild(el("div","banner refilling","↻ "+wd.text));
     }
     var bc=b.beacon||{};
     if(bc.state==="idle"){
@@ -802,9 +815,33 @@
         pk.appendChild(el("span","val", g.call));
         c.appendChild(pk);
       }
-      if(g.win_line){ c.appendChild(el("div","win", g.win_line)); }
+      // win chance + one-glance confidence read on a single scannable line (the coach question:
+      // is this a strong call or a coin-flip?). Falls back to the legacy win_line if win_pct absent.
+      if(g.win_pct!=null){
+        var w=el("div","win");
+        w.appendChild(el("b",null, g.win_pct+"%"));
+        w.appendChild(el("span","wt"," to win"));
+        if(g.confidence){ w.appendChild(el("span","conf"," · "+g.confidence)); }
+        c.appendChild(w);
+      } else if(g.win_line){ c.appendChild(el("div","win", g.win_line)); }
+      // honest 80% margin band — the pick is an estimate, so show how wide the likely result is.
+      if(g.range80){
+        var rg=el("div","range");
+        rg.appendChild(el("span","rlab","80% range"));
+        rg.appendChild(el("span","rval", g.range80));
+        c.appendChild(rg);
+      }
+      // one-line HONEST "why we favor them" — the driver behind the pick (our full-roster rating
+      // edge, plus an availability or pace note when the row carries one). Reuses the range row's
+      // classes (no new CSS); wraps on a phone; graceful-null — rendered only when a driver is baked.
+      if(g.driver){
+        var wy=el("div","range"); wy.style.flexWrap="wrap"; wy.style.color="var(--ink)";
+        wy.appendChild(el("span","rlab","Why"));
+        wy.appendChild(el("span","rval", g.driver));
+        c.appendChild(wy);
+      }
       if(g.venue_note){ c.appendChild(el("div","venue", g.venue_note)); }
-      
+
       // Depth Chart Rendering
       function renderDc(title, dc) {
         if (!dc || !dc.length) return null;
