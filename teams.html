@@ -46,6 +46,11 @@
   .summary{background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:8px 0 4px;font-size:12.5px;line-height:1.55}
   .summary b{color:var(--ink)}
   .summary .k{color:var(--muted);font-weight:600}
+  .summary .recon{margin-top:7px;padding-top:7px;border-top:1px solid var(--line);color:var(--muted);font-weight:400;font-size:11.5px;line-height:1.5}
+  .tier td{background:var(--card2);border-top:2px solid var(--line2);text-align:left;padding:7px 9px}
+  .tlabel{font-weight:700;color:var(--ink);font-size:12px}
+  .tmeaning{color:var(--muted);font-weight:400;font-size:11px;margin-left:6px}
+  .tcount{color:var(--dim);font-weight:600;font-size:11px;float:right}
   .empty{color:var(--dim);font-style:italic}
   .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
   .filt{width:100%;max-width:280px;margin:0 0 8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:12.5px}
@@ -57,7 +62,7 @@
   <h1>The Hardwood — Teams</h1>
   <span class="ago" id="ago"></span>
 </header>
-<div class="sub">Power board: who's strongest now, who's heating up, and title odds.</div>
+<div class="sub">Power board: who can win it all, who's strongest right now, and who's heating up.</div>
 <nav>
   <a href="./index.html">Board</a>
   <a href="./queue.html">What's Next</a>
@@ -109,15 +114,39 @@
     if(v<=10) return td("out", v.toFixed(0)+"%");
     return td(null, v.toFixed(0)+"%");
   }
+  // coach tiers, derived (display-only) from the sim's title + playoff odds already in the feed
+  function tierOf(r){
+    var t=r.title_pct, p=r.playoff_pct;
+    if(t!=null && t>=10) return "contender";
+    if(p!=null && p>=85) return "mix";
+    if(p!=null && p>=15) return "bubble";
+    return "string";
+  }
+  var TIERS=[
+    ["contender","Title contenders","a real shot at the championship"],
+    ["mix","In the mix","playoff-bound, but longer title odds"],
+    ["bubble","On the bubble","fighting for a playoff spot"],
+    ["string","Playing out the string","out of the playoff race"]
+  ];
+
   function summaryLine(teams){
     if(!teams||!teams.length) return null;
     var box=el("div","summary");
     function nm(r){ return r?(r.team_full||r.team):"—"; }
-    var parts=[];
-    var top=teams[0];  // ranked #1 by strength
-    parts.push('<span class="k">Strongest now</span> <b>'+nm(top)+'</b>');
-    var fav=null; teams.forEach(function(r){ if(r.title_pct!=null && (!fav||r.title_pct>fav.title_pct)) fav=r; });
-    if(fav && fav.title_pct!=null) parts.push('<span class="k">Title-sim favorite</span> <b>'+nm(fav)+'</b> '+fav.title_pct.toFixed(1)+'%');
+    // Impact-first: the coach's first question is who wins it all.
+    var byTitle=teams.filter(function(r){ return r.title_pct!=null; }).slice()
+      .sort(function(a,b){ return b.title_pct-a.title_pct; });
+    var fav=byTitle[0]||null;
+    var chasers=byTitle.slice(1).filter(function(r){ return r.title_pct>=10; }).slice(0,4);
+    var lines=[];
+    if(fav){
+      var t='<span class="k">Title favorite</span> <b>'+nm(fav)+'</b> '+fav.title_pct.toFixed(1)+'%';
+      if(chasers.length) t+=' <span class="k">— right behind:</span> '+chasers.map(function(r){
+        return '<b>'+r.team+'</b> '+r.title_pct.toFixed(1)+'%'; }).join(', ');
+      lines.push(t);
+    }
+    var top=teams[0]; // #1 by strength (feed is strength-ranked)
+    lines.push('<span class="k">Strongest roster right now</span> <b>'+nm(top)+'</b>');
     var hot=null,cold=null;
     teams.forEach(function(r){
       if(r.churn==null) return;
@@ -127,7 +156,16 @@
     var mo=[];
     if(hot) mo.push('<span class="up">▲</span> <b>'+nm(hot)+'</b> heating up');
     if(cold) mo.push('<span class="down">▼</span> <b>'+nm(cold)+'</b> cooling');
-    box.innerHTML = parts.join(' &nbsp;·&nbsp; ') + (mo.length? ('<br><span class="k">Form</span> '+mo.join(' &nbsp;·&nbsp; ')+' <span class="k">(last ~5)</span>'):'');
+    if(mo.length) lines.push('<span class="k">Form</span> '+mo.join(' &nbsp;·&nbsp; ')+' <span class="k">(last ~5 games)</span>');
+    box.innerHTML=lines.join('<br>');
+    // Reconcile the two rankings when the strongest roster isn't the title favorite.
+    if(fav && top && fav.team!==top.team){
+      var recon=el("div","recon");
+      recon.textContent="Why the strongest roster ("+nm(top)+") isn't the title favorite ("+nm(fav)+"): "+
+        "strength rates each roster on the court right now, while title odds come from playing out the rest of the season — "+
+        "so playoff seeding and a team's remaining schedule can hand a slightly weaker roster a clearer path to the trophy.";
+      box.appendChild(recon);
+    }
     return box;
   }
 
@@ -152,8 +190,7 @@
     ["#","Team","Strength","Momentum","Title %","Δ 1d","Playoffs %"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
-    var q=teamFilter.trim().toLowerCase();
-    d.teams.filter(function(r){ return !q || (r.team||"").toLowerCase().indexOf(q)>=0 || (r.team_full||"").toLowerCase().indexOf(q)>=0; }).forEach(function(r){
+    function buildRow(r){
       var tr=el("tr"); tr.setAttribute("data-k", r.team);
       tr.appendChild(td("rk", r.rank));
       var name=el("td","tm"); name.appendChild(document.createTextNode(r.team+" "));
@@ -163,10 +200,23 @@
       tr.appendChild(td(r.title_pct!=null&&r.title_pct>=10?"strong":null, r.title_pct==null?"—":r.title_pct.toFixed(1)+"%"));
       tr.appendChild(deltaCell(r.title_delta));
       tr.appendChild(playoffCell(r.playoff_pct));
-      tb.appendChild(tr);
+      return tr;
+    }
+    var q=teamFilter.trim().toLowerCase();
+    var rows=d.teams.filter(function(r){ return !q || (r.team||"").toLowerCase().indexOf(q)>=0 || (r.team_full||"").toLowerCase().indexOf(q)>=0; });
+    // Group the field into coach tiers (impact-first), keeping strength order within each tier.
+    TIERS.forEach(function(tier){
+      var group=rows.filter(function(r){ return tierOf(r)===tier[0]; });
+      if(!group.length) return;
+      var hrow=el("tr","tier"); var hc=el("td"); hc.colSpan=7;
+      hc.innerHTML='<span class="tlabel">'+tier[1]+'</span><span class="tmeaning">'+tier[2]+'</span>'+
+        '<span class="tcount">'+group.length+(group.length===1?' team':' teams')+'</span>';
+      hrow.appendChild(hc); tb.appendChild(hrow);
+      group.forEach(function(r){ tb.appendChild(buildRow(r)); });
     });
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); main.appendChild(card);
     main.appendChild(el("div","note",
+      "Teams are grouped by how the end-of-season simulation sees them — title contenders, in the mix, on the bubble, and out of the race — then ordered by roster strength within each group. "+
       "Strength = our on-court team-strength index (higher is better), carried to today; the bar shows each team's spot on the field from weakest to strongest. "+
       "Momentum = how the team's recent-form rating has moved over its last few games (▲ heating up, ▼ cooling) — a form read, not the ranking. "+
       "Title % and Playoffs % are from our end-of-season simulation" + (d.title_as_of?(" (as of "+d.title_as_of+")"):"") + "; Δ 1d is the one-day change in title odds."));
