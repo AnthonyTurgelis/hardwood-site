@@ -394,9 +394,11 @@
     var wrap=document.getElementById("chips"); wrap.innerHTML="";
     function mk(id, label, title){ var c=el("span","hchip"); c.id=id; c.title=title||"";
       c.appendChild(el("span","dot")); c.appendChild(el("span",null,label)); wrap.appendChild(c); return c; }
-    mk("ch-data","", "How fresh the numbers on this page are (time since the last refresh of the page data).");
-    mk("ch-scout","", "Claude (Scout) - watches for instructions and triages the queue");
-    mk("ch-inbox","", "Instructions waiting to be picked up, and when the last one was handled.");
+    // ONE small freshness dot — the only reader-facing health signal (how fresh the numbers are,
+    // and a loud tick to bad if the data goes stale). The old crew-status chips (the monitor
+    // heartbeat + the inbox backlog) were internal plumbing that told a reader nothing about
+    // tonight's picks, so they were pulled out of the top per the CEO.
+    mk("ch-data","", "How fresh the numbers on this page are (time since the page data last refreshed).");
     tickChips();
   }
   function setChip(id, cls, text){ var c=document.getElementById(id); if(!c) return;
@@ -405,16 +407,8 @@
     if(!lastB) return;
     var b=lastB;
     var s=sinceIso(b.generated_utc);
+    // single freshness dot: green when fresh, amber then red as the numbers age (stale-data guard).
     if(s!=null) setChip("ch-data", s<1200?"ok":(s<3600?"warn":"bad"), "data · updated "+agoSecs(s)+" ago");
-    var sh=b.scout_heartbeat||{};
-    var ss=sinceIso(sh.last_poll_utc);
-    if(ss!=null) setChip("ch-scout", (ss<=240)?"ok":"bad",
-      "Claude - "+((ss<=240)?"active":"quiet")+" - "+agoSecs(ss)+" ago");
-    else setChip("ch-scout","bad","Claude - no signal");
-    var p=b.pipe_health||{};
-    var n=p.directives_pending||0;
-    setChip("ch-inbox", n?"warn":"ok",
-      "inbox · "+(n? (n+" waiting"):"clear")+(p.last_processed_clock?(" · handled "+p.last_processed_clock):""));
   }
   function banner(b){
     var w=document.getElementById("banner"); w.innerHTML="";
@@ -686,8 +680,13 @@
   /* ---------- scout activity strip ---------- */
   function renderScoutActivity(items){
     if(!items || !items.length) return null;
-    var s=el("section"); s.appendChild(sectionHead("Monitor activity — the last few minutes it acted","scout_activity"));
-    var list=el("ul","scoutlog list");
+    // DEMOTED (CEO): the internal monitor ticker carries no reader value — kept only for occasional
+    // debugging. It is collapsed behind a closed disclosure and, having no section stamp, sorts to
+    // the very bottom of the board, so it never occupies prime top space.
+    var s=el("section");
+    var det=el("details","more"); det.setAttribute("data-k","scoutactivity");
+    det.appendChild(el("summary",null,"▸ monitor activity"));
+    var list=el("ul","scoutlog list"); list.style.marginTop="6px";
     items.slice().reverse().forEach(function(a){
       var li=el("li","scoutrow");
       li.appendChild(el("span","stime", a.time||""));
@@ -701,7 +700,7 @@
       }
       list.appendChild(li);
     });
-    s.appendChild(list); return s;
+    det.appendChild(list); s.appendChild(det); return s;
   }
 
   /* HELPERS — the always-on helper processes + the work-slot width, mirrored from the desktop
@@ -1075,7 +1074,10 @@
       addPanel(renderRunning(live), "running_now");
       addPanel(renderDone(sec.done_today), "done_today");
       addPanel(renderWatch(sec.watch_list), "watch_list");
-      addPanel(renderHelpers(b.helpers), "helpers");
+      // Crew plumbing (helper processes / scheduled jobs) is NOT reader product — pass a null sort
+      // key so it sinks to the bottom cluster with the monitor ticker instead of floating up on its
+      // fresh stamp. The panel and its loud stale guards are kept; they just no longer lead (CEO).
+      addPanel(renderHelpers(b.helpers), null);
       addPanel(renderScoutActivity(b.scout_activity), "scout_activity");
       panels.sort(function(a,c){
         if(a.pin!==c.pin) return a.pin?-1:1;      // pinned actionable "Needs you" stays on top
