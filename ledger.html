@@ -97,9 +97,15 @@
     thead.appendChild(htr); table.appendChild(thead);
     var tbody=el("tbody"); table.appendChild(tbody);
 
-    // color scale bounds per numeric column
+    // Heat-tint ONLY error-magnitude columns (header contains "error"): there redder = more error =
+    // worse, one consistent meaning. Signed columns (edge/bias), counts (Games) and rates (hit-rate)
+    // are left untinted — coloring them by magnitude would read as "redder = worse" on values where
+    // higher is neutral or GOOD (e.g. "Our edge", "Side hit-rate"), a misleading dual meaning. A color
+    // scale must encode exactly one thing (standard conditional-formatting rule, cf. Tufte / Few). (VZ-1)
+    function heatCol(c){ return /error/i.test(c); }
     var bounds={};
     cols.forEach(function(c){
+      if(!heatCol(c)) return;
       var vals=rows.map(function(r){return r[c];}).filter(num);
       if(vals.length){ bounds[c]=[Math.min.apply(null,vals),Math.max.apply(null,vals)]; }
     });
