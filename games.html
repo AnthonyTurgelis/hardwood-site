@@ -30,7 +30,13 @@
   @keyframes fl{0%{background:var(--flash)}100%{background:var(--card)}}
   .gh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:2px}
   .gh b{font-size:14.5px}
+  .pill{font-size:10.5px;color:var(--muted);background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:1px 7px;font-variant-numeric:tabular-nums}
+  .gtip{display:block;font-size:10.5px;color:var(--dim);margin-top:3px;white-space:nowrap;font-variant-numeric:tabular-nums}
   .call{font-size:13px;font-weight:650;margin:5px 0 6px;color:var(--acc)}
+  .conf{display:inline-block;font-size:10.5px;font-weight:700;margin-left:7px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);vertical-align:1px;letter-spacing:.2px}
+  .conf.toss{color:var(--warn);background:var(--chip)}
+  .conf.lean{color:var(--acc);background:var(--chip)}
+  .conf.fav{color:var(--good);background:var(--chip)}
   .kv{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
   .k{background:var(--card2);border:1px solid var(--line);border-radius:7px;padding:5px 8px}
   .k .kl{font-size:9.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px}
@@ -196,18 +202,38 @@
     return wrap;
   }
 
+  // Plain-language read of HOW SURE the call is — a coach glances for "coin flip vs lock",
+  // not a raw percentage. Derived from the SAME win probability the bar shows; it introduces
+  // NO new margin number (single canonical margin preserved). Graceful: renders nothing if
+  // win chance isn't available for this game.
+  function confChip(g){
+    if(g.p_home_win==null) return null;
+    var fav=Math.max(g.p_home_win, 100-g.p_home_win);
+    var label, cls;
+    if(fav<55){ label="Coin flip"; cls="toss"; }
+    else if(fav<62){ label="Slight edge"; cls="lean"; }
+    else if(fav<70){ label="Clear favorite"; cls="lean"; }
+    else if(fav<80){ label="Strong favorite"; cls="fav"; }
+    else { label="Heavy favorite"; cls="fav"; }
+    return el("span","conf "+cls, label);
+  }
+
   function card(g, pdfByDate, genUtc){
     var c=el("div","g"); c.setAttribute("data-k", g.date+"|"+g.away+"@"+g.home);
     var h=el("div","gh");
     h.appendChild(el("b", null, g.away+" @ "+g.home));
     var rt=el("span"); rt.style.textAlign="right";
     rt.appendChild(el("span","pill", g.date.slice(5)));
+    if(g.tip_et){ rt.appendChild(el("span","gtip", g.tip_et)); }
     var st=el("span","hw-stamp"); st.style.display="block";
     if(genUtc){ st.setAttribute("data-utc", genUtc); } st.setAttribute("data-fallback","");
     rt.appendChild(st);
     h.appendChild(rt);
     c.appendChild(h);
-    c.appendChild(el("div","call","Our call: "+(g.call||"—")));
+    var callLine=el("div","call");
+    callLine.appendChild(document.createTextNode("Our call: "+(g.call||"—")));
+    var cf=confChip(g); if(cf){ callLine.appendChild(cf); }
+    c.appendChild(callLine);
 
     var kv=el("div","kv");
     var k1=el("div","k"); k1.appendChild(el("div","kl","Combined total"));
