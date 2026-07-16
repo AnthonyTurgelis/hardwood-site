@@ -41,6 +41,10 @@
   .shadowlbl{display:inline-block;font-size:9.5px;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:0 6px;margin-left:4px;vertical-align:middle}
   td.prov{color:var(--muted)}
   .provtag{display:inline-block;font-size:8.5px;font-weight:700;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:0 5px;margin-left:5px;vertical-align:middle;text-transform:uppercase;letter-spacing:.02em}
+  /* as_of freshness badge (BR-V2): every board section names the slate its data reflects; a data date
+     two+ days behind the board date reads LOUD (red), never a silent stale board passed off as fresh. */
+  .asof{display:inline-block;font-size:9.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;margin-left:9px;vertical-align:middle;font-variant-numeric:tabular-nums}
+  .asof.stale{color:#fff;background:var(--bad);border-color:var(--bad)}
   .segbtns{display:flex;gap:5px;flex-wrap:wrap;margin:2px 0 8px}
   .segbtns button{background:var(--card);color:var(--muted);border:1px solid var(--line);border-radius:7px;padding:4px 11px;font-size:12px;cursor:pointer}
   .segbtns button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
@@ -89,9 +93,27 @@
   function td(c,x){ return el("td",c,x); }
 
   function num(v,u){ return v==null? "—" : (v.toFixed(1)+(u?u:"")); }
+  var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function monthDay(iso){ var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(iso||""); return m ? (MON[(+m[2])-1]+" "+(+m[3])) : (iso||""); }
+  // as_of FRESHNESS badge (BR-V2): show the slate the section's data reflects, and badge it STALE (red)
+  // when that date is 2+ days behind the board's own date — a genuine freeze, past the normal
+  // overnight gap where "no games played yet today" legitimately leaves stats a day back.
+  function asofBadge(asOf, boardDate){
+    if(!asOf) return null;
+    var b=el("span","asof","as of "+monthDay(asOf));
+    var a=/^(\d{4})-(\d{2})-(\d{2})/.exec(asOf), d=/^(\d{4})-(\d{2})-(\d{2})/.exec(boardDate||"");
+    if(a && d){
+      var da=Date.UTC(+a[1],+a[2]-1,+a[3]), dd=Date.UTC(+d[1],+d[2]-1,+d[3]);
+      var days=Math.round((dd-da)/86400000);
+      if(days>=2){ b.className="asof stale"; b.title="These stats have not refreshed in "+days+" days."; }
+    }
+    return b;
+  }
   function ratingsSection(rt){
     var s=el("section");
-    var h=el("h2"); h.appendChild(document.createTextNode("Players — this season")); s.appendChild(h);
+    var h=el("h2"); h.appendChild(document.createTextNode("Players — this season"));
+    var rb=asofBadge(rt.as_of, curData && curData.date); if(rb) h.appendChild(rb);
+    s.appendChild(h);
     if(!rt.available){ s.appendChild(el("p","empty", rt.note||"Season stats coming soon.")); return s; }
     s.appendChild(el("p","lede","Ranked by season scoring — points per game from the official box scores. Our on-court impact rating (how much better a team plays with her on the floor) is shown alongside, but this early in the season it rests on only a handful of on-court stretches, so it's regressed toward league average and reads near zero for almost everyone — it does not yet separate players. Her share of team minutes rides alongside too, so a big scoring line on limited minutes is easy to spot. Tap a name for her full card."));
     var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter players by name or team…"; fbox.value=ratFilter;
@@ -156,7 +178,9 @@
 
   function realmSection(rm){
     var s=el("section");
-    var h=el("h2"); h.appendChild(document.createTextNode("Realm of outcomes")); s.appendChild(h);
+    var h=el("h2"); h.appendChild(document.createTextNode("Realm of outcomes"));
+    var mb=asofBadge(rm.as_of, curData && curData.date); if(mb) h.appendChild(mb);
+    s.appendChild(h);
     if(!rm.available){ s.appendChild(el("p","empty", rm.note||"Coming soon.")); return s; }
     s.appendChild(el("p","lede","Every projection carries a range built from how far our past projections actually missed. The dot is the projection; the solid bar is the likely range; the light bar is the wider 90% range. This is a spread of plausible outcomes, not the odds she hits the dot."+(rm.as_of?(" As of the "+rm.as_of+" slate."):"")));
     var stats=rm.order.filter(function(x){ return rm.stats[x]; });
