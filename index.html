@@ -274,6 +274,7 @@
   .vs{font-size:12px;color:var(--muted);font-weight:600;}
 
   </style>
+<link rel="stylesheet" href="./hardwood.css">
 </head>
 <body>
 <div class="wrap">
@@ -889,6 +890,53 @@
     if(e.detail){ s.appendChild(el("div","ew", e.detail)); }
     return s;
   }
+  /* FOUL-TROUBLE WATCH — mount point for tonight's foul-risk readout. Renders ONLY when
+     ./foul_risk.json is present with entries (a separate data feed produces it); until then
+     nothing shows (graceful degradation). Descriptive readout of who is at risk of foul
+     trouble tonight and why — never a betting call. Accepts a flexible entry shape so it
+     works whatever exact fields the feed lands with. */
+  function foulLevel(p){
+    var v=(p.level!=null)?p.level:(p.score!=null?p.score:null);
+    if(v!=null){ v=+v; if(v>1){ v=v/100; } return Math.max(0,Math.min(1,v)); }
+    var w=String(p.risk||p.tier||"").toLowerCase();
+    if(/high|severe|red/.test(w)) return .9;
+    if(/elevat|medium|amber|watch/.test(w)) return .6;
+    if(/low|mild|green/.test(w)) return .3;
+    return .5;
+  }
+  function foulColor(lv){ return lv>=0.75?"var(--bad)":(lv>=0.45?"var(--warn)":"var(--muted)"); }
+  function renderFoulWatch(f){
+    if(!f) return null;
+    var rows=f.players||f.watch||f.items||[];
+    if(!rows.length) return null;   // no entries -> render nothing (never an empty card)
+    var s=el("section"); s.setAttribute("data-k","foulwatch");
+    var head=el("div","sechead"); head.appendChild(el("h2",null,"Foul-Trouble Watch"));
+    var p=provFor("foul_risk");
+    if(p.stale){ head.appendChild(el("span","stalebadge","stale")); }
+    head.appendChild(p.prov);
+    s.appendChild(head);
+    if(f.note){ s.appendChild(el("p","empty", f.note)); }
+    var list=el("div","list");
+    rows.forEach(function(r){
+      var row=el("div","row"); row.setAttribute("data-k","foul|"+(r.name||r.player||""));
+      row.appendChild(el("span","nm", r.name||r.player||""));
+      if(r.team){ row.appendChild(el("span","tag", r.team)); }
+      if(r.matchup){ row.appendChild(el("span","tag", r.matchup)); }
+      if(r.detail||r.why){ row.appendChild(el("span","oneln", r.detail||r.why)); }
+      var right=el("span","right");
+      var lv=foulLevel(r);
+      // severity meter: colored fill PLUS an always-present text label (identity never color-alone)
+      var meter=el("span"); meter.style.cssText="display:inline-block;width:46px;height:6px;border-radius:999px;background:var(--line);overflow:hidden;position:relative;top:-1px";
+      var fill=el("span"); fill.style.cssText="display:block;height:100%;width:"+Math.round(lv*100)+"%;background:"+foulColor(lv);
+      meter.appendChild(fill);
+      right.appendChild(meter);
+      right.appendChild(el("span","tm", r.risk||r.tier||(lv>=.75?"High":lv>=.45?"Elevated":"Low")));
+      row.appendChild(right);
+      list.appendChild(row);
+    });
+    s.appendChild(list);
+    return s;
+  }
   function pdfWrap(items){
     var wrap=el("div","pdfs");
     (items||[]).forEach(function(p){ var a=el("a",null,p.label); a.href=p.href; a.target="_blank";
@@ -1087,9 +1135,15 @@
   /* ---------- render ---------- */
   var lastLive=null;   // newest live payload
   var lastB=null;      // what is currently displayed (live or snapshot)
+  var FOUL=null;       // tonight's foul-risk feed (./foul_risk.json), null until it lands
   function render(b){
     lastB=b;
     SRC=b.section_sources||{};
+    // Register the foul-watch feed's freshness so its panel stamps + sorts like any other section.
+    if(FOUL && (FOUL.as_of||FOUL.generated_utc)){
+      SRC.foul_risk={ as_of:(FOUL.as_of||FOUL.generated_utc), source:(FOUL.source||"tonight's foul-risk read"),
+        stale_after:(FOUL.stale_after||43200) };
+    }
     FRESH=b.freshness||{};
     var sec=b.sections||{};
     healthChips(b); banner(b);
@@ -1117,9 +1171,12 @@
       var live=(sec.running_live!=null)? sec.running_live : sec.running_now;
       var decActionable=!!((sec.needs_anthony && sec.needs_anthony.length) || (b.setup && b.setup.length));
       var panels=[];
+      // Keep the BR-V2 tier ordering (product leads, crew chrome sinks) AND graft in the
+      // look-upgrade's Foul-Trouble Watch panel (tier 1, beside tonight's games).
       function addPanel(node, key, tier){ if(node){ panels.push({node:node, asOf:secAsOf(key), tier:tier, i:panels.length}); } }
       addPanel(renderDecisions(sec.needs_anthony, b.setup, b.answer_all), "needs_anthony", decActionable?0:3);
       addPanel(renderTodayGames(sec.today_games), "today_games", 1);
+      addPanel(renderFoulWatch(FOUL), "foul_risk", 1);
       addPanel(renderTonightEdge(sec.tonight_edge), null, 1);
       addPanel(renderReports(b.reports, b.rollover), "reports", 1);
       addPanel(renderAgentUpdates(sec.agent_updates), "agent_updates", 2);
@@ -1169,6 +1226,14 @@
     });
   }
   poll(); setInterval(poll,60000);
+  /* foul-risk feed — polled independently of the board; graceful-null on 404/absent so the
+     panel simply does not appear until the feed lands. */
+  function pollFoul(){
+    fetch("./foul_risk.json",{cache:"no-cache"}).then(function(r){ return r.ok? r.json() : null; })
+      .then(function(j){ if(j){ var changed=JSON.stringify(j)!==JSON.stringify(FOUL); FOUL=j;
+        if(changed && !viewDate && lastLive){ render(lastLive); } } }).catch(function(){});
+  }
+  pollFoul(); setInterval(pollFoul,60000);
   setInterval(function(){ updAgo(); tickChips(); tickProv(); }, 1000);
   setInterval(tickElapsed, 15000);
 
