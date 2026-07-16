@@ -124,20 +124,79 @@
     fill(); scroll.appendChild(table); s.appendChild(scroll); return s;
   }
 
+  function stat(node,css){ node.style.cssText=css; return node; }
+
+  function errorMapSection(em){
+    var s=el("section"); s.setAttribute("data-k","errormap");
+    s.appendChild(el("h2",null, em.heading || "Where our game calls miss"));
+    if(em.window){
+      s.appendChild(el("p","lede","Last "+em.window.n_games+" graded games ("+(em.window.from||"")+" to "+(em.window.to||"")+"). Updates automatically after every game."));
+    }
+    if(em.split){
+      var card=stat(el("div"),"background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 13px;box-shadow:var(--shadow)");
+      card.appendChild(stat(el("div",null,em.split.line),"font-size:13px"));
+      var bar=stat(el("div"),"display:flex;height:12px;border-radius:999px;overflow:hidden;margin:9px 0 4px;background:var(--line)");
+      bar.appendChild(stat(el("div"),"background:var(--accent);width:"+em.split.process_pct+"%"));
+      card.appendChild(bar);
+      var leg=stat(el("div"),"display:flex;justify-content:space-between;font-size:11px;color:var(--muted)");
+      leg.appendChild(el("span",null,"model process "+em.split.process_pct+"% (fixable)"));
+      leg.appendChild(el("span",null,"shooting luck "+em.split.variance_pct+"% (not)"));
+      card.appendChild(leg);
+      if(em.split.bias_line) card.appendChild(stat(el("div",null,em.split.bias_line),"font-size:11.5px;color:var(--muted);margin-top:7px"));
+      if(em.side && em.side.line) card.appendChild(stat(el("div",null,em.side.line),"font-size:11.5px;color:var(--muted);margin-top:3px"));
+      s.appendChild(card);
+    }
+    if(em.team_leads && em.team_leads.length){
+      var t=el("section"); t.appendChild(el("h2",null,"Which teams we systematically over- or under-rate"));
+      var scroll=el("div","scroll"), tb=el("table"), thd=el("thead"), htr=el("tr");
+      ["Team","Which way","Avg gap (pts)","Games"].forEach(function(h){ htr.appendChild(el("th",null,h)); });
+      thd.appendChild(htr); tb.appendChild(thd);
+      var body=el("tbody");
+      em.team_leads.forEach(function(r){
+        var tr=el("tr");
+        tr.appendChild(el("td",null,r.team));
+        tr.appendChild(el("td",null,r.direction));
+        tr.appendChild(el("td",null,r.avg_gap==null?"—":String(r.avg_gap)));
+        tr.appendChild(el("td",null,String(r.games)));
+        body.appendChild(tr);
+      });
+      tb.appendChild(body); scroll.appendChild(tb); t.appendChild(scroll); s.appendChild(t);
+    }
+    if(em.per_game && em.per_game.length){
+      var pg=el("section"); pg.appendChild(el("h2",null,"Every game, graded"));
+      em.per_game.forEach(function(g){
+        var row=stat(el("div"),"background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 11px;margin-bottom:6px;box-shadow:var(--shadow)");
+        var top=stat(el("div"),"display:flex;justify-content:space-between;gap:8px;align-items:baseline");
+        top.appendChild(el("strong",null,(g.matchup||"")+" · "+(g.date||"")));
+        if(g.slug){
+          var a=el("a",null,"full breakdown →");
+          a.href="./games/retro/"+String(g.slug).replace(/^g/,"")+".html";
+          stat(a,"font-size:11.5px;color:var(--accent);text-decoration:none;white-space:nowrap");
+          top.appendChild(a);
+        }
+        row.appendChild(top);
+        if(g.headline) row.appendChild(stat(el("div",null,g.headline),"font-size:12px;color:var(--muted);margin-top:3px"));
+        pg.appendChild(row);
+      });
+      s.appendChild(pg);
+    }
+    return s;
+  }
+
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
     main.appendChild(el("p","lede", d.source || "Our own error map."));
-    if(!d.available){
+    var shown=false;
+    if(d.error_map && d.error_map.available){ main.appendChild(errorMapSection(d.error_map)); shown=true; }
+    if(d.error_ledger && d.error_ledger.rows && d.error_ledger.rows.length){ main.appendChild(makeTable("Where we miss most (error ledger)", d.error_ledger)); shown=true; }
+    if(d.market_relative && d.market_relative.rows && d.market_relative.rows.length){ main.appendChild(makeTable("Where we beat the market", d.market_relative)); shown=true; }
+    if(!shown){
       var ph=el("div","placeholder");
       ph.appendChild(el("div","big", d.message || "Map being built — first version landing today."));
-      ph.appendChild(el("div",null,"This page will fill in automatically the moment the error and market-relative tables are baked. Nothing to do."));
+      ph.appendChild(el("div",null,"This page will fill in automatically the moment the error map is baked. Nothing to do."));
       main.appendChild(ph);
-      document.getElementById("foot").textContent = "Baked " + (d.generated_et||d.generated_utc||"") + ".";
-      flash(); return;
     }
-    if(d.error_ledger) main.appendChild(makeTable("Where we miss most (error ledger)", d.error_ledger));
-    if(d.market_relative) main.appendChild(makeTable("Where we beat the market", d.market_relative));
-    document.getElementById("foot").textContent = "Tap a column header to sort. Baked " + (d.generated_et||d.generated_utc||"") + ".";
+    document.getElementById("foot").textContent = "Baked " + (d.generated_et||d.generated_utc||"") + ".";
     flash();
   }
   /* ---------- shared live runtime ---------- */

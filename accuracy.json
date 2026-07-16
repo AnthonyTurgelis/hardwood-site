@@ -114,7 +114,44 @@
  ],
  "note": "",
  "source": "graded from our own game-by-game scorecard",
- "generated_utc": "2026-07-16T06:04:56+00:00",
+ "backtest": {
+  "available": true,
+  "heading": "Does re-running today's framework change what we shipped?",
+  "metrics": [
+   {
+    "label": "Average margin miss, as we published it",
+    "value": 10.87,
+    "unit": "points",
+    "note": "Across 163 graded games this season."
+   },
+   {
+    "label": "Same games, re-scored with today's framework",
+    "value": 10.65,
+    "unit": "points",
+    "note": "Essentially identical — no hidden drift between what we shipped and what we'd ship now."
+   },
+   {
+    "label": "How often we call the right winner",
+    "value": 64.4,
+    "unit": "%",
+    "note": "Share of games where our favored side actually won."
+   }
+  ],
+  "calibration": [
+   {
+    "label": "Our 80% margin range contained the result",
+    "target": 80.0,
+    "actual": 79.1
+   },
+   {
+    "label": "Our 90% margin range contained the result",
+    "target": 90.0,
+    "actual": 88.3
+   }
+  ],
+  "takeaway": "Re-running our current method on every past game reproduces almost exactly the accuracy we already published — the framework is stable, not stale. The average miss sits near eleven points, which is close to the practical floor for a single WNBA game: at this level the result is mostly shooting luck that no model — or betting market — can predict."
+ },
+ "generated_utc": "2026-07-16T06:06:49+00:00",
  "date": "2026-07-16",
- "generated_et": "Jul 16, 2:04am ET"
+ "generated_et": "Jul 16, 2:06am ET"
 }

@@ -118,11 +118,41 @@
     s.appendChild(box); return s;
   }
 
+  function backtestSection(bt){
+    var s=el("section"); s.setAttribute("data-k","backtest");
+    s.appendChild(el("h2",null, bt.heading || "Re-checking our framework against the past"));
+    if(bt.metrics && bt.metrics.length){
+      var g=el("div","mgrid");
+      bt.metrics.forEach(function(m){
+        var c=el("div","metric"); c.setAttribute("data-k","bt|"+m.label);
+        var v=el("div","val");
+        if(m.value==null){ v.textContent="—"; }
+        else if(m.unit==="%"){ v.textContent=m.value+"%"; }
+        else { v.textContent=m.value; if(m.unit){ var sm=el("small"); sm.textContent=" "+m.unit; v.appendChild(sm); } }
+        var body=el("div","body");
+        body.appendChild(el("div","lbl", m.label));
+        if(m.note) body.appendChild(el("div","note", m.note));
+        c.appendChild(v); c.appendChild(body); g.appendChild(c);
+      });
+      s.appendChild(g);
+    }
+    if(bt.calibration && bt.calibration.length){
+      bt.calibration.forEach(function(k){ s.appendChild(calCard({surface:k.label, actual:k.actual, target:k.target})); });
+    }
+    if(bt.takeaway) s.appendChild(el("p","lede", bt.takeaway));
+    return s;
+  }
+
   function render(a){
     document.getElementById("sub").textContent = (a.date||"") + " · a prediction platform that publishes its own scorecard";
     var main=document.getElementById("main"); main.innerHTML="";
     main.appendChild(el("p","lede","Honest, self-graded accuracy. Every figure comes from grading our own past predictions against what actually happened — " + (a.source||"") + "."));
-    if(!a.available){ main.appendChild(el("p","empty", a.note || "No graded accuracy available yet.")); flash(); return; }
+    if(a.backtest && a.backtest.available){ main.appendChild(backtestSection(a.backtest)); }
+    if(!a.available){
+      if(!(a.backtest && a.backtest.available)) main.appendChild(el("p","empty", a.note || "No graded accuracy available yet."));
+      document.getElementById("foot").textContent = "Baked " + (a.generated_et||a.generated_utc||"") + ".";
+      flash(); return;
+    }
 
     if(a.surfaces && a.surfaces.length){
       var s1=el("section"); s1.appendChild(el("h2",null,"How accurate we are, per surface"));
