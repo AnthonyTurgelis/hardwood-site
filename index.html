@@ -63,6 +63,18 @@
   /* the one day-summary sentence */
   .summary{margin:9px 0 0;font-size:14.5px;line-height:1.45;font-weight:600}
   .summary .dim{color:var(--muted);font-weight:500}
+  /* ACCURACY SCORECARD TILE — one-line, always visible on the Today tab so the reader sees how
+     accurate our margin calls are without opening the Accuracy tab. Numbers come from board.json
+     (derived from the live backtest); the tile self-hides when the block is absent. */
+  .accbar{display:flex;align-items:baseline;gap:6px 10px;flex-wrap:wrap;margin:10px 0 0;
+    padding:8px 12px;background:var(--card);border:1px solid var(--line);
+    border-left:3px solid var(--verified);border-radius:9px;box-shadow:var(--shadow);
+    font-size:12.5px;color:var(--muted)}
+  .accbar .lab{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--muted);flex:0 0 auto}
+  .accbar .txt b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:700}
+  .accbar a{margin-left:auto;font-size:11.5px;white-space:nowrap;text-decoration:none;flex:0 0 auto}
+  .accbar a:hover{text-decoration:underline}
   nav{display:flex;gap:5px;flex-wrap:wrap;margin:9px 0 0}
   nav a{font-size:11.5px;text-decoration:none;color:var(--accent);border:1px solid var(--line);
     background:var(--card);padding:3px 9px;border-radius:999px}
@@ -788,6 +800,34 @@
     lines.forEach(function(t){ ul.appendChild(el("li",null,t)); });
     s.appendChild(ul); return s;
   }
+  /* ACCURACY SCORECARD TILE — a compact one-line honest scorecard pinned to the top of the Today
+     tab. Betting-free framing (an audit of our own calls, not a directional signal). All numbers
+     are baked in board.accuracy (derived from the live backtest); returns null when absent so the
+     tile never ships a blank/garbled stat. */
+  function renderAccuracyTile(a){
+    if(!a || a.avg_miss==null || !a.n_games) return null;
+    var s=el("div","accbar"); s.setAttribute("data-k","acctile");
+    s.appendChild(el("span","lab","Our accuracy"));
+    var txt=el("span","txt");
+    txt.appendChild(document.createTextNode("Our winning-margin calls miss by ~"));
+    txt.appendChild(el("b",null, String(a.avg_miss)));
+    txt.appendChild(document.createTextNode(" points on average"));
+    if(a.win_pct!=null){
+      txt.appendChild(document.createTextNode(", and we call the right winner "));
+      txt.appendChild(el("b",null, a.win_pct+"%"));
+      txt.appendChild(document.createTextNode(" of the time"));
+    }
+    txt.appendChild(document.createTextNode(" — across "));
+    txt.appendChild(el("b",null, String(a.n_games)));
+    txt.appendChild(document.createTextNode(" graded games this season."));
+    s.appendChild(txt);
+    var link=el("a",null,"See the full scorecard →");
+    link.href="./accuracy.html";
+    link.title="Open the Accuracy tab — how we score our own past predictions.";
+    s.appendChild(link);
+    return s;
+  }
+
   /* HERO — tonight's slate is the biggest thing on the board: matchup, ET tip, OUR PICK
      (winning-margin call) prominent, win chance, venue note (redesign impact-hierarchy). */
   function renderTodayGames(tg){
@@ -1097,6 +1137,10 @@
     renderSubtabs(b); renderFilters(b);
     var main=document.getElementById("main"); main.innerHTML="";
     if(activeTab==="today"){
+      // ACCURACY SCORECARD TILE — pinned above the recency-sorted panels so the honest scorecard is
+      // the first thing visible on the Today tab (grade-up B→A). Self-hides when board.accuracy is absent.
+      var accNode=renderAccuracyTile(b.accuracy);
+      if(accNode){ main.appendChild(accNode); }
       // ORDER-1 (Director v6 0740Z): panels self-order by their own section as_of, MOST-RECENT AT
       // THE TOP — "I stop scrolling at the one I've seen last." Each panel's stamp comes from
       // section_sources[key].as_of (one-status-truth). PIN EXCEPTION (documented): an ACTIONABLE

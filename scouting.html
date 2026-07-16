@@ -98,7 +98,15 @@
 
     var card=el("div","card"), sc=el("div","scroll"), t=el("table");
     var thead=el("thead"), hr=el("tr");
-    ["#","Player","Rim Opp","SAE","SAE per 100","Saves bar"].forEach(function(x){ hr.appendChild(el("th",null,x)); });
+    // Column tooltips (hover) — the plain definition of each header, so no column is unlabeled.
+    // The visible caption below the table carries the same definitions for phones / no-hover.
+    [["#",""],
+     ["Player",""],
+     ["Rim Opp","Rim shots faced — the season's at-rim attempts this player was the closest defender on, counted fractionally (split when more than one defender was near the shot). It is the sample size behind SAE per 100; bigger = a steadier read. These are allocated shares, not camera-tracking counts."],
+     ["SAE","Saves Above Expected — makes prevented at the rim over the season, beyond what an average defender would have allowed given each shot's spot and difficulty."],
+     ["SAE per 100","Saves Above Expected per 100 rim shots faced — the efficiency rate the board ranks by."],
+     ["Saves bar","A visual of SAE per 100 — a longer bar means more shots saved above expectation per 100 faced."]
+    ].forEach(function(x){ var th=el("th",null,x[0]); if(x[1]){ th.title=x[1]; } hr.appendChild(th); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
     rows.forEach(function(r,i){
@@ -114,7 +122,7 @@
       tb.appendChild(tr);
     });
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); s.appendChild(card);
-    s.appendChild(el("div","note","Ranked by SAE per 100 — a longer bar means more shots saved above expectation for every 100 the player faced. “Rim Opp” is the paired opponent-attempt figure from the tracking data. This is a descriptive look back at last season, not a prediction, and players with no tracked rim attempts are left off."));
+    s.appendChild(el("div","note","Ranked by SAE per 100 — a longer bar means more shots saved above expectation for every 100 the player faced. “Rim Opp” is rim shots faced: the season count of at-rim attempts this player was the closest defender on, split fractionally when more than one defender was near the shot (so it reads as a fractional total, e.g. 61.4, not a whole number). It is the sample size behind SAE per 100 — a bigger number means a steadier read. These are allocated defender shares, not camera-tracking counts, so this is a descriptive look back at last season, not a prediction; players with no tracked rim attempts are left off."));
     return s;
   }
 
