@@ -1,19 +1,19 @@
 {
- "generated_utc": "2026-07-16T19:32:21+00:00",
+ "generated_utc": "2026-07-16T19:36:10+00:00",
  "freshness": {
-  "baked_utc": "2026-07-16T19:32:21+00:00",
-  "baked_et": "Jul 16, 3:32pm ET",
-  "revalidated_utc": "2026-07-16T19:32:21+00:00",
+  "baked_utc": "2026-07-16T19:36:10+00:00",
+  "baked_et": "Jul 16, 3:36pm ET",
+  "revalidated_utc": "2026-07-16T19:36:10+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-16",
  "day_summary": "Tonight's game reports are ready - 2 games. Nothing needs you right now.",
  "counts": {
-  "running": 6,
-  "done_today": 31,
+  "running": 5,
+  "done_today": 32,
   "maintenance": 6,
   "needs_anthony": 0,
-  "lanes_today": 33,
+  "lanes_today": 34,
   "upcoming": 48
  },
  "sections": {
@@ -29,6 +29,12 @@
     "title": "Verifier seasonimpact winprob",
     "timestamp": "Jul 16, 2026",
     "body_markdown": "Season Impact fitted-decay + win-prob recal"
+   },
+   {
+    "id": "name-map-cs1-variant-enrich",
+    "title": "Name map variant enrich",
+    "timestamp": "Jul 16, 2026",
+    "body_markdown": "Name-string variant + update-rookie enrichment"
    },
    {
     "id": "phw-coherence-donoharm-gate",
@@ -83,12 +89,6 @@
     "title": "Rebound Matchup Adjustments Implemented",
     "timestamp": "Jul 13, 2026",
     "body_markdown": "> **The Finding:** We were missing the mark on rebounds because we were completely ignoring head-to-head size differences and who is actually boxing out who.\n\n**The Fix:** I built the **Rebound Matchup Model**. It uses the new matchups feed feed to dynamically fetch the expected defender for every player on the slate. It scales each player's proj_reb based on two things: 1) the defender's historical rebound rate, and 2) the height advantage/disadvantage (in inches).\n\n**Impact:** This dynamically shifts rebounds from players guarded by elite rebounders (like A'ja Wilson) to players guarded by weak rebounders, and rewards size mismatches, making our prop lines way sharper!"
-   },
-   {
-    "id": "minutes-v8-wins-role-change",
-    "title": "Minutes Model Finalized: v8 beats v9 on Role-Change",
-    "timestamp": "Jul 12, 2026",
-    "body_markdown": "> **The finding:** We judged the v9 (role-conditional) vs v8 (rolling) minutes models on the games that matter most: players stepping into bigger or different roles (the \"tail slice\").\n\n**Result:** v8 is **BETTER by 0.86 MAE** on these role-change games. The v9 slot-delta adjustment systematically over-corrected on promoted/demoted players.\n\n**Action:** We have permanently shelved the v9 slot-delta approach (Branch 2: Honest Null) and promoted v8 as the official minutes model."
    }
   ],
   "today_games": {
@@ -349,16 +349,6 @@
   "running_now": [],
   "running_live": [
    {
-    "name": "Data namemap enrichment",
-    "one_liner": "Running now.",
-    "chip": "IN-FLIGHT",
-    "team": "Data",
-    "kind": "lane",
-    "time": "",
-    "at_iso": "2026-07-16T15:30:13-04:00",
-    "start_unknown": true
-   },
-   {
     "name": "Infra width band",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
@@ -412,6 +402,16 @@
   "running_plain": [],
   "needs_anthony": [],
   "done_today": [
+   {
+    "name": "Name map variant enrich",
+    "one_liner": "Name-string variant + update-rookie enrichment",
+    "chip": "VERIFIED",
+    "team": "",
+    "time": "3:30pm",
+    "at_iso": "2026-07-16T15:30:41-04:00",
+    "impact": 3,
+    "headline": true
+   },
    {
     "name": "Infra comms fyi line de-duplication",
     "one_liner": "CEO-bound line-level at the single send chokepoint",
@@ -516,8 +516,7 @@
     "team": "Site",
     "time": "",
     "at_iso": null,
-    "impact": 3,
-    "headline": true
+    "impact": 3
    },
    {
     "name": "Postponed game slate leak",
@@ -2644,66 +2643,66 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-16T19:31:26Z",
-  "age_s": 56,
-  "cycles": 60,
-  "label": "scout: alive, last poll 56s ago",
+  "last_poll_utc": "2026-07-16T19:35:43Z",
+  "age_s": 29,
+  "cycles": 64,
+  "label": "scout: alive, last poll 29s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "3:30pm",
-   "text": "poll #59 · nothing new",
-   "detail": "poll cycle=59 ok directives_new=0"
-  },
-  {
-   "time": "3:31pm",
-   "text": "new instruction received into the inbox",
-   "detail": "HIT: delivered DIRECTOR_DIRECTIVE__duplicable_agents_label_by_seat_force_demo_still_number_one.md -> inbox/ (ts=)"
-  },
-  {
-   "time": "3:31pm",
-   "text": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session",
-   "detail": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session"
-  },
-  {
-   "time": "3:31pm",
-   "text": "poll #60 · 1 new instruction(s)",
-   "detail": "poll cycle=60 ok directives_new=1"
-  },
-  {
-   "time": "3:31pm",
-   "text": "divergence alarm: clean (build code matches the shared branch",
-   "detail": "divergence_alarm: clean (build code matches the shared branch)"
-  },
-  {
-   "time": "3:31pm",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
-  },
-  {
-   "time": "3:31pm",
-   "text": "chain-health: clean (all four legs healthy",
-   "detail": "chain-health: clean (all four legs healthy)"
-  },
-  {
-   "time": "3:31pm",
-   "text": "slate-refresh: slate ok (today populated",
-   "detail": "slate-refresh: slate ok (today populated)"
+   "time": "3:32pm",
+   "text": "recovery-eval: coordinator present=True inbox pending=True work pending=True suppressed=False queue marker=True",
+   "detail": "recovery-eval: coordinator_present=True inbox_pending=True work_pending=True suppressed=False queue_marker=True"
   },
   {
    "time": "3:32pm",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
+   "text": "poll #61 · nothing new",
+   "detail": "poll cycle=61 ok directives_new=0"
   },
   {
-   "time": "3:32pm",
-   "text": "REAP-STRAGGLER: released session pid 5144 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confirmed dead); taskkill rc=0 SUCCESS: The process with PID 9680 (child process of PID 5144) has been terminat [Part 2 hard-exit backstop]",
-   "detail": "REAP-STRAGGLER: released session_pid 5144 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confirm"
+   "time": "3:33pm",
+   "text": "recovery-eval: coordinator present=True inbox pending=True work pending=True suppressed=False queue marker=True",
+   "detail": "recovery-eval: coordinator_present=True inbox_pending=True work_pending=True suppressed=False queue_marker=True"
+  },
+  {
+   "time": "3:33pm",
+   "text": "poll #62 · nothing new",
+   "detail": "poll cycle=62 ok directives_new=0"
+  },
+  {
+   "time": "3:34pm",
+   "text": "recovery-eval: coordinator present=True inbox pending=True work pending=True suppressed=False queue marker=True",
+   "detail": "recovery-eval: coordinator_present=True inbox_pending=True work_pending=True suppressed=False queue_marker=True"
+  },
+  {
+   "time": "3:34pm",
+   "text": "poll #63 · nothing new",
+   "detail": "poll cycle=63 ok directives_new=0"
+  },
+  {
+   "time": "3:35pm",
+   "text": "width-fill: UNDER-WIDTH 5/6 persisted 3 cycles (> 2) with 4 claimable (1 rank3, 3 ladder, 0 READY) - injected fill DIRECTOR DIRECTIVE SCOUT FILL 1.md",
+   "detail": "width-fill: UNDER-WIDTH 5/6 persisted 3 cycles (> 2) with 4 claimable (1 rank3, 3 ladder, 0 READY) - injected fill DIRECTOR_DIRECTIVE__SCOUT"
+  },
+  {
+   "time": "3:35pm",
+   "text": "width-fill: injected DIRECTOR DIRECTIVE SCOUT FILL 1.md (running 5/6, 1 claimable) - head will pick it up",
+   "detail": "width-fill: injected DIRECTOR_DIRECTIVE__SCOUT_FILL_1.md (running 5/6, 1 claimable) - head will pick it up"
+  },
+  {
+   "time": "3:35pm",
+   "text": "recovery-eval: coordinator present=True inbox pending=True work pending=True suppressed=False queue marker=True",
+   "detail": "recovery-eval: coordinator_present=True inbox_pending=True work_pending=True suppressed=False queue_marker=True"
+  },
+  {
+   "time": "3:35pm",
+   "text": "poll #64 · nothing new",
+   "detail": "poll cycle=64 ok directives_new=0"
   }
  ],
  "helpers": {
-  "as_of": "2026-07-16T19:32:02.858921+00:00",
+  "as_of": "2026-07-16T19:35:46.066010+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -2712,48 +2711,48 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "56s",
-    "state_text": "on · seen 56s ago"
+    "age_label": "29s",
+    "state_text": "on · seen 29s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, reports width truth",
     "active": true,
     "stale": false,
-    "age_label": "19s",
-    "state_text": "on · seen 19s ago"
+    "age_label": "26s",
+    "state_text": "on · seen 26s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "21s",
-    "state_text": "on · seen 21s ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "40s",
-    "state_text": "on · seen 40s ago"
+    "age_label": "29s",
+    "state_text": "on · seen 29s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "28s",
-    "state_text": "on · seen 28s ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    }
   ],
   "width": {
-   "running": 6,
+   "running": 5,
    "target": 6,
-   "empty": 0,
-   "line": "6 of 6 jobs running.",
-   "reason": "Enough jobs are running for the work waiting.",
+   "empty": 1,
+   "line": "5 of 6 jobs running.",
+   "reason": "Only 5 of 6 jobs are running — 1 more flagged for the coordinator to start from the priority list.",
    "stale": false
   },
   "scheduled_jobs": [
@@ -2828,17 +2827,17 @@
  },
  "coordinator_heartbeat": {
   "alive": true,
-  "last_heartbeat_utc": "2026-07-16T19:30:26Z"
+  "last_heartbeat_utc": "2026-07-16T19:35:37Z"
  },
  "pipe_health": {
-  "directives_pending": 0,
+  "directives_pending": 2,
   "last_processed_clock": "3:31pm",
   "last_processed_iso": "2026-07-16T19:31:24Z",
-  "newest_directive_clock": "",
-  "newest_directive_iso": null,
+  "newest_directive_clock": "3:35pm",
+  "newest_directive_iso": "2026-07-16T19:35:39Z",
   "source": "director inbox",
   "anchor": "inbox files + delivered/processed trail",
-  "as_of": "2026-07-16T19:31:24Z"
+  "as_of": "2026-07-16T19:35:39Z"
  },
  "beacon": {
   "state": "active",
@@ -2846,31 +2845,38 @@
   "usage_resets_clock": "",
   "note": ""
  },
- "width_defect": {},
+ "width_defect": {
+  "active": false,
+  "refilling": true,
+  "state": "refilling",
+  "text": "Wrapping up a batch of jobs and refilling the work lanes — back to full shortly.",
+  "running": 5,
+  "target": 6
+ },
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
    "as_of": "2026-07-16T19:30:13Z",
    "stale": false,
-   "revalidated": "2026-07-16T19:32:21+00:00",
+   "revalidated": "2026-07-16T19:36:10+00:00",
    "stale_reason": "",
-   "age_label": "2m",
+   "age_label": "5m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-16T19:32:21+00:00",
+   "as_of": "2026-07-16T19:36:10+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T19:32:21+00:00",
+   "revalidated": "2026-07-16T19:36:10+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-16T19:32:21+00:00",
+   "as_of": "2026-07-16T19:36:10+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T19:32:21+00:00",
+   "revalidated": "2026-07-16T19:36:10+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
@@ -2879,7 +2885,7 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-16T19:32:21+00:00",
+   "revalidated": "2026-07-16T19:36:10+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -2888,7 +2894,7 @@
    "source": "dispatch queue",
    "as_of": "2026-07-16T15:47:29Z",
    "stale": true,
-   "revalidated": "2026-07-16T19:32:21+00:00",
+   "revalidated": "2026-07-16T19:36:10+00:00",
    "stale_reason": "These readings may be out of date — last updated 3h ago.",
    "age_label": "3h",
    "stale_after": 300
@@ -2897,47 +2903,47 @@
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-16T19:32:21+00:00",
+   "revalidated": "2026-07-16T19:36:10+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-07-16T19:31:24Z",
+   "as_of": "2026-07-16T19:35:39Z",
    "stale": false,
-   "revalidated": "2026-07-16T19:32:21+00:00",
+   "revalidated": "2026-07-16T19:36:10+00:00",
    "stale_reason": "",
-   "age_label": "57s",
+   "age_label": "31s",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
-   "as_of": "2026-07-16T19:32:21+00:00",
+   "as_of": "2026-07-16T19:36:10+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T19:32:21+00:00",
+   "revalidated": "2026-07-16T19:36:10+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 172800
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-16T19:31:29+00:00",
+   "as_of": "2026-07-16T19:32:21+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T19:32:21+00:00",
+   "revalidated": "2026-07-16T19:36:10+00:00",
    "stale_reason": "",
-   "age_label": "53s",
+   "age_label": "3m",
    "stale_after": null
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-16T19:32:02.858921+00:00",
+   "as_of": "2026-07-16T19:35:46.066010+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T19:32:21+00:00",
+   "revalidated": "2026-07-16T19:36:10+00:00",
    "stale_reason": "",
-   "age_label": "19s",
+   "age_label": "26s",
    "stale_after": null
   }
  },
- "generated_et": "Jul 16, 3:32pm ET"
+ "generated_et": "Jul 16, 3:36pm ET"
 }
