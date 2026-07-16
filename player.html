@@ -140,6 +140,16 @@
     function kpi(l,v,u,uc){ var k=el("div","kpi"); k.appendChild(el("div","kl",l));
       var kv=el("div","kv"); kv.textContent=(v==null?"—":v); if(u){ var s=el("small",uc||null); s.textContent=" "+u; kv.appendChild(s);} k.appendChild(kv); return k; }
     var pg=function(v){ return v==null?null:v.toFixed(1); };
+    // IMPACT-FIRST: the descriptive Season Impact leads the hero when the feed has landed — a
+    // results measure (what happened), weighted by floor time, with its %-of-minutes + provisional
+    // flags riding alongside so a near-zero early-season value never reads as precise.
+    var si=d.season_impact;
+    if(si && si.rate!=null){
+      var siUnit=[];
+      if(si.min_share_pct!=null) siUnit.push(si.min_share_pct+"% of min");
+      if(si.thin) siUnit.push("provisional");
+      kpis.appendChild(kpi("Season Impact", si.rate.toFixed(3), siUnit.length?("· "+siUnit.join(" · ")):null));
+    }
     // impact-first hero: our on-court rating is the lead number, counting stats after. It carries
     // its %-of-team-minutes flag AND an honest "provisional" note when the on-court basis is thin,
     // so a regressed near-zero rating never reads as a firm 0.0 (Order 2, Director v6 0740Z).
@@ -154,6 +164,39 @@
     kpis.appendChild(kpi("Assists", pg(d.ast), "per game"));
     hero.appendChild(kpis);
     main.appendChild(hero);
+
+    // SEASON IMPACT — descriptive, results-WAR style (what happened, not a projection). Impact-first:
+    // this is the leading card on the tab when the feed has landed. Numbers only — the feed's model
+    // signature is never shown (it is a data field, not human-facing copy).
+    if(si && (si.rate!=null || si.volume!=null)){
+      var siCard=el("div","card pad"); siCard.style.marginBottom="12px";
+      var siH=el("div"); siH.style.fontWeight="680"; siH.style.marginBottom="3px";
+      siH.textContent="Season Impact";
+      siCard.appendChild(siH);
+      siCard.appendChild(el("div","note",
+        "How much better her team has played with her on the floor this season, weighted by how much "
+        + "of the game she is on it — shown per game and as a season total. This is a descriptive "
+        + "measure of what has happened so far, not a projection."));
+      var siK=el("div","kpis"); siK.style.marginTop="9px";
+      function sikpi(l,v,u){ var k=el("div","kpi"); k.appendChild(el("div","kl",l));
+        var kv=el("div","kv"); kv.textContent=(v==null?"—":v); if(u){ var s=el("small",null); s.textContent=" "+u; kv.appendChild(s);} k.appendChild(kv); return k; }
+      siK.appendChild(sikpi("Per game", si.rate==null?null:si.rate.toFixed(3)));
+      siK.appendChild(sikpi("Season total", si.volume==null?null:si.volume.toFixed(2)));
+      siK.appendChild(sikpi("Share of minutes", si.min_share_pct==null?null:si.min_share_pct, "%"));
+      siK.appendChild(sikpi("Games", si.gp==null?null:si.gp));
+      siCard.appendChild(siK);
+      if(si.thin){
+        siCard.appendChild(el("div","note thin",
+          "Provisional — this early in the season it rests on a small on-court sample, so it is "
+          + "regressed toward league average and reads near zero for almost everyone. Treat it as a "
+          + "rough, descriptive read rather than a firm separation between players."));
+      }
+      var avail=null;
+      if(si.currently_out){ avail="Currently listed as out — her latest Season Impact reflects the season so far."; }
+      else if(si.play_prob!=null){ avail="Expected to play (chance "+Math.round(si.play_prob*100)+"%)."; }
+      if(avail){ siCard.appendChild(el("div","note",avail)); }
+      main.appendChild(siCard);
+    }
 
     // IMPACT READ — the honest framing so the near-zero rating is never mistaken for precise (B7).
     var impCard=el("div","card pad"); impCard.style.marginBottom="12px";

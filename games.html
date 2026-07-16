@@ -44,6 +44,15 @@
   .mbar .pt{position:absolute;top:2px;width:3px;height:16px;background:var(--good);transform:translateX(-1px)}
   .mbar .zero{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.7}
   .mcap{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:1px}
+  /* margin-DISTRIBUTION strip (the density component ported from the gameday report) */
+  .dwrap{position:relative;height:40px;margin:7px 0 2px}
+  .dbars{display:flex;align-items:flex-end;height:100%}
+  .dbars .dcol{flex:1 1 0;height:100%;display:flex;align-items:flex-end}
+  .dbars .dcol i{display:block;width:100%;border-radius:1px 1px 0 0}
+  .dbars .dcol i.home{background:var(--home)}
+  .dbars .dcol i.away{background:var(--away)}
+  .dzero{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.75}
+  .dmed{position:absolute;top:-3px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid var(--good)}
   .note{font-size:10.5px;color:var(--dim);margin-top:6px}
   .todaynote{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--warn);
     border-radius:8px;padding:8px 11px;color:var(--muted);font-size:12.5px;margin:4px 0}
@@ -109,6 +118,39 @@
     return wrap;
   }
 
+  // MARGIN-DISTRIBUTION strip — the CEO-loved density component, rendered from the SAME calibrated
+  // predictive distribution the gameday report reconstructs (baked into g.density by the site build,
+  // which imports the report's core rather than forking it). Columns LEFT of the pick'em line are
+  // the away accent, RIGHT the home accent, so each shaded AREA reads as that team's win chance;
+  // a pick'em tick + a median caret sit on the axis. Graceful: if the calibrated distribution isn't
+  // available for this game, fall back to the plain range bar and note nothing false.
+  function densityStrip(g){
+    var d=g.density;
+    if(!d || !d.dens || !d.dens.length){ return marginBar(g); }
+    var dens=d.dens, n=dens.length, zi=d.zero_i, mi=d.med_i;
+    var wrap=el("div");
+    var box=el("div","dwrap");
+    var bars=el("div","dbars");
+    for(var i=0;i<n;i++){
+      var col=el("div","dcol");
+      var b=el("i", i<zi?"away":"home");
+      b.style.height=Math.max(2,Math.round(dens[i]*100))+"%";
+      col.appendChild(b); bars.appendChild(col);
+    }
+    box.appendChild(bars);
+    var zpos=(zi+0.5)/n*100, mpos=(mi+0.5)/n*100;
+    var z=el("div","dzero"); z.style.left=zpos.toFixed(1)+"%"; box.appendChild(z);
+    var m=el("div","dmed"); m.style.left="calc("+mpos.toFixed(1)+"% - 4px)"; box.appendChild(m);
+    wrap.appendChild(box);
+    var cap=el("div","mcap");
+    var hp=(d.p_home!=null)?Math.round(d.p_home*100):null;
+    cap.appendChild(el("span",null, g.away + (hp!=null?(" "+(100-hp)+"%"):"")));
+    cap.appendChild(el("span",null,"pick'em"));
+    cap.appendChild(el("span",null, g.home + (hp!=null?(" "+hp+"%"):"")));
+    wrap.appendChild(cap);
+    return wrap;
+  }
+
   function card(g, pdfByDate, genUtc){
     var c=el("div","g"); c.setAttribute("data-k", g.date+"|"+g.away+"@"+g.home);
     var h=el("div","gh");
@@ -138,8 +180,11 @@
     kv.appendChild(k2);
     c.appendChild(kv);
 
-    c.appendChild(el("div","note","Margin range (how much the result could swing):"));
-    c.appendChild(marginBar(g));
+    var hasDist=!!(g.density && g.density.dens && g.density.dens.length);
+    c.appendChild(el("div","note", hasDist
+      ? "How the final margin could land — taller bars are more likely, and each shaded side is that team's win chance:"
+      : "Margin range (how much the result could swing):"));
+    c.appendChild(densityStrip(g));
 
     var pw=el("div","pdfs");
     if(g.game_id){ var dd=el("a",null,"deep dive →"); dd.href="./game.html?id="+encodeURIComponent(g.game_id); pw.appendChild(dd); }
