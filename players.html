@@ -38,6 +38,8 @@
   .strong{font-weight:680}
   .thin{color:var(--dim)}
   .shadowlbl{display:inline-block;font-size:9.5px;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:0 6px;margin-left:4px;vertical-align:middle}
+  td.prov{color:var(--muted)}
+  .provtag{display:inline-block;font-size:8.5px;font-weight:700;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:0 5px;margin-left:5px;vertical-align:middle;text-transform:uppercase;letter-spacing:.02em}
   .segbtns{display:flex;gap:5px;flex-wrap:wrap;margin:2px 0 8px}
   .segbtns button{background:var(--card);color:var(--muted);border:1px solid var(--line);border-radius:7px;padding:4px 11px;font-size:12px;cursor:pointer}
   .segbtns button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
@@ -111,7 +113,15 @@
       else { nm.appendChild(document.createTextNode(r.name)); }
       if(r.thin){ nm.appendChild(el("span","tag"," · thin sample")); } tr.appendChild(nm);
       tr.appendChild(td(null, r.team||"—"));
-      tr.appendChild(td("strong", r.rating==null?"—":(r.rating>0?"+":"")+r.rating.toFixed(1)));
+      // Impact leads the stat columns. A thin-basis rating is muted + tagged "prov" so a regressed
+      // near-zero value never reads as a firm number (Order 2); its %-of-team-min sits right beside it.
+      var impCell=el("td","strong");
+      if(r.rating==null){ impCell.textContent="—"; }
+      else {
+        impCell.appendChild(document.createTextNode((r.rating>0?"+":"")+r.rating.toFixed(1)));
+        if(r.impact_provisional){ impCell.className="strong prov"; var ptg=el("span","provtag","prov"); ptg.title="Provisional — rests on a thin on-court sample this early in the season."; impCell.appendChild(ptg); }
+      }
+      tr.appendChild(impCell);
       tr.appendChild(td("thin", r.min_share_pct==null?"—":(r.min_share_pct+"%")));
       tr.appendChild(td("thin", r.gp==null?"—":String(r.gp)));
       tr.appendChild(td(null, num(r.pts)));
@@ -127,7 +137,7 @@
       tog.onclick=function(){ ratShowAll=!ratShowAll; s.parentNode.replaceChild(ratingsSection(rt), s); };
       s.appendChild(tog);
     }
-    var note=el("div","note"); note.appendChild(document.createTextNode("Impact is our on-court rating (plus-minus style); it is provisional this early and reads near zero for almost everyone, so the board ranks by season scoring instead. % of team min is her share of the team's floor time. Per-game averages are this season's official box scores. Tap a name for projected minutes and outcome ranges."));
+    var note=el("div","note"); note.appendChild(document.createTextNode("Impact is our on-court rating (plus-minus style). A “prov” tag beside it means the rating still rests on a thin on-court sample, so it is regressed toward league average and reads near zero — provisional, not a firm read; the board ranks by season scoring instead. % of team min is her share of the team's floor time, so thin-minutes vs full-time reads at a glance. Per-game averages are this season's official box scores. Tap a name for projected minutes and outcome ranges."));
     s.appendChild(note);
     return s;
   }

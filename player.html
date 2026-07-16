@@ -140,6 +140,7 @@
     function kpi(l,v,u,uc){ var k=el("div","kpi"); k.appendChild(el("div","kl",l));
       var kv=el("div","kv"); kv.textContent=(v==null?"—":v); if(u){ var s=el("small",uc||null); s.textContent=" "+u; kv.appendChild(s);} k.appendChild(kv); return k; }
     var pg=function(v){ return v==null?null:v.toFixed(1); };
+<<<<<<< HEAD
     // IMPACT-FIRST hero: our on-court rating leads, shown UNCAPPED (the real shrunk value) but
     // labeled honestly — provisional + its on-court basis (n travels with the estimate).
     var nb = d.n_basis;
@@ -151,6 +152,16 @@
     // Minutes lead as a SHARE-OF-TEAM-MINUTES flag, not a misleading raw MPG (raw mpg kept small as support).
     kpis.appendChild(kpi("% of team minutes", d.min_share_pct==null?null:(d.min_share_pct+"%"),
       d.min_avg==null?"of team floor time":("of team floor time · "+d.min_avg.toFixed(0)+" mpg")));
+=======
+    // impact-first hero: our on-court rating is the lead number, counting stats after. It carries
+    // its %-of-team-minutes flag AND an honest "provisional" note when the on-court basis is thin,
+    // so a regressed near-zero rating never reads as a firm 0.0 (Order 2, Director v6 0740Z).
+    var impUnit=[];
+    if(d.min_share_pct!=null) impUnit.push(d.min_share_pct+"% of min");
+    if(d.impact_provisional) impUnit.push("provisional — thin basis");
+    kpis.appendChild(kpi("Impact rating", d.rating==null?null:((d.rating>0?"+":"")+d.rating.toFixed(1)),
+      impUnit.length?("· "+impUnit.join(" · ")):null));
+>>>>>>> 7dc6fe6 (feat(board+impact): recency-sort panels (Order 1) + honest impact on every player surface (Order 2))
     kpis.appendChild(kpi("Proj. next game", d.minutes==null?null:d.minutes.toFixed(1), "min"));
     kpis.appendChild(kpi("Points", pg(d.pts), "per game"));
     kpis.appendChild(kpi("Rebounds", pg(d.reb), "per game"));

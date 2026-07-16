@@ -321,6 +321,8 @@
   /* Section provenance shows a LIVE "checked Xago" (never a frozen "as of" clock): the bake
      re-validates every section against the record, so the honest freshness anchor for each
      section is the board's revalidated_utc, ticking every second (board-refresh doctrine). */
+  // ORDER-1 helper: a panel's own freshness stamp = its section_sources[key].as_of (one-status-truth).
+  function secAsOf(key){ var m=(SRC && key && SRC[key])||null; return (m && m.as_of) ? m.as_of : null; }
   function provFor(key){
     var m=(SRC && SRC[key])||null;
     var reval=(FRESH && FRESH.revalidated_utc) || (lastB && lastB.generated_utc) || null;
@@ -1007,20 +1009,38 @@
     renderSubtabs(b); renderFilters(b);
     var main=document.getElementById("main"); main.innerHTML="";
     if(activeTab==="today"){
-      main.appendChild(renderTodayGames(sec.today_games));
-      var edge=renderTonightEdge(sec.tonight_edge); if(edge) main.appendChild(edge);
-      main.appendChild(renderWatch(sec.watch_list));
-      main.appendChild(renderDecisions(sec.needs_anthony, b.setup, b.answer_all));
-      var reps=renderReports(b.reports, b.rollover); if(reps) main.appendChild(reps);
-      var au=renderAgentUpdates(sec.agent_updates); if(au) main.appendChild(au);
-      // running_live is the LIVE-gated list (empty means nothing is running — never fall back to
-      // the delta-derived cards, which can hold corpses; directive 230000Z section 3). Only a legacy
+      // ORDER-1 (Director v6 0740Z): panels self-order by their own section as_of, MOST-RECENT AT
+      // THE TOP — "I stop scrolling at the one I've seen last." Each panel's stamp comes from
+      // section_sources[key].as_of (one-status-truth). PIN EXCEPTION (documented): an ACTIONABLE
+      // "Needs you" panel pins ABOVE the recency sort — a decision the CEO must action outranks
+      // recency; when it is empty ("Nothing needs you") it is NOT pinned and sorts by its own as_of
+      // like every other panel. The live-recomputed panels (running/done/today_games) carry the
+      // bake-instant as_of so they cluster at the top; a stable sort preserves their declared order
+      // on that tie, and panels with no section as_of (tonight's edge, monitor activity) sink last.
+      // running_live is the LIVE-gated list (empty means nothing is running — never fall back to the
+      // delta-derived cards, which can hold corpses; directive 230000Z section 3). Only a legacy
       // snapshot with no running_live at all falls back to running_now.
       var live=(sec.running_live!=null)? sec.running_live : sec.running_now;
-      main.appendChild(renderRunning(live));
-      main.appendChild(renderDone(sec.done_today));
-      var hp=renderHelpers(b.helpers); if(hp) main.appendChild(hp);
-      var sa=renderScoutActivity(b.scout_activity); if(sa) main.appendChild(sa);
+      var decActionable=!!((sec.needs_anthony && sec.needs_anthony.length) || (b.setup && b.setup.length));
+      var panels=[];
+      function addPanel(node, key, pin){ if(node){ panels.push({node:node, asOf:secAsOf(key), pin:!!pin, i:panels.length}); } }
+      addPanel(renderDecisions(sec.needs_anthony, b.setup, b.answer_all), "needs_anthony", decActionable);
+      addPanel(renderTodayGames(sec.today_games), "today_games");
+      addPanel(renderTonightEdge(sec.tonight_edge), null);
+      addPanel(renderReports(b.reports, b.rollover), "reports");
+      addPanel(renderAgentUpdates(sec.agent_updates), "agent_updates");
+      addPanel(renderRunning(live), "running_now");
+      addPanel(renderDone(sec.done_today), "done_today");
+      addPanel(renderWatch(sec.watch_list), "watch_list");
+      addPanel(renderHelpers(b.helpers), "helpers");
+      addPanel(renderScoutActivity(b.scout_activity), "scout_activity");
+      panels.sort(function(a,c){
+        if(a.pin!==c.pin) return a.pin?-1:1;      // pinned actionable "Needs you" stays on top
+        var av=a.asOf||"", cv=c.asOf||"";         // ISO stamps sort lexically; missing as_of sinks
+        if(av!==cv) return av<cv?1:-1;            // as_of DESC — most recent panel first
+        return a.i-c.i;                            // stable: preserve declared order on ties
+      });
+      panels.forEach(function(p){ main.appendChild(p.node); });
     } else {
       main.appendChild(renderQueue(sec.upcoming, sec.coming_soon, !!viewDate));
     }

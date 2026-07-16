@@ -51,6 +51,9 @@
   table.box td{padding:4px 9px;text-align:right;border-top:1px solid var(--line)}
   table.box td.pl{text-align:left}
   table.box tr.grp td{color:var(--dim);font-style:italic}
+  table.box td.prov{color:var(--muted)}
+  .provtag{display:inline-block;font-size:8.5px;font-weight:700;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:0 5px;margin-left:5px;vertical-align:middle;text-transform:uppercase;letter-spacing:.02em}
+  .minpct{color:var(--dim);font-size:11px}
   .tag{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:999px;border:1px solid var(--line2);color:var(--muted);margin:2px 4px 0 0}
   .gtd{color:var(--warn);font-size:10px;font-weight:700;margin-left:4px}
   .av{font-size:12px;margin-bottom:3px}
@@ -134,9 +137,21 @@
       var nm=el("td","pl"); nm.textContent=r.name;
       if(r.gtd){ var g=el("span","gtd","GTD"); nm.appendChild(g); }
       tr.appendChild(nm);
-      // impact column first — matches the printed report's box row order
-      tr.appendChild(el("td",null, r.impact==null?"—":((r.impact>0?"+":"")+r.impact.toFixed(1))));
-      ["min","pts","reb","ast"].forEach(function(k){ tr.appendChild(el("td",null, r[k]==null?"—":r[k])); });
+      // impact column first — matches the printed report's box row order. A thin-basis rating is
+      // muted + tagged "prov" (provisional) so a firm-looking number never masks a thin basis (Order 2).
+      var impTd=el("td",null);
+      if(r.impact==null){ impTd.textContent="—"; }
+      else {
+        impTd.textContent=(r.impact>0?"+":"")+r.impact.toFixed(1);
+        if(r.impact_provisional){ impTd.className="prov"; var pt=el("span","provtag","prov"); pt.title="Provisional — rests on a thin on-court sample."; impTd.appendChild(pt); }
+      }
+      tr.appendChild(impTd);
+      // Min carries the %-of-a-40-minute-game flag so thin-vs-real minutes read at a glance by impact.
+      var minTd=el("td",null);
+      if(r.min==null){ minTd.textContent="—"; }
+      else { minTd.appendChild(document.createTextNode(r.min)); if(r.min_pct!=null){ minTd.appendChild(el("span","minpct"," ("+r.min_pct+"%)")); } }
+      tr.appendChild(minTd);
+      ["pts","reb","ast"].forEach(function(k){ tr.appendChild(el("td",null, r[k]==null?"—":r[k])); });
       t.appendChild(tr);
     });
     if(!(rows||[]).length) { var tr=el("tr"); var td=el("td","pl","No projected box available."); td.colSpan=6; tr.appendChild(td); t.appendChild(tr); }
@@ -204,6 +219,7 @@
     // PROJECTED BOX SCORES (both rosters)
     if(d.box && (d.box.home || d.box.away)){
       var bs=el("section"); bs.appendChild(el("h2",null,"Projected box score"));
+      bs.appendChild(el("div","note","Impact is our on-court rating (how much better the team plays with her on the floor). A “prov” tag means it rests on a thin on-court sample this early, so treat it as provisional. Min shows projected minutes with her share of a 40-minute game."));
       bs.appendChild(boxTable((d.away_full||d.away)+" (away)", d.box.away));
       bs.appendChild(boxTable((d.home_full||d.home)+" (home)", d.box.home));
       // availability
