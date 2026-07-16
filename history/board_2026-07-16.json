@@ -1,19 +1,19 @@
 {
- "generated_utc": "2026-07-16T19:06:37+00:00",
+ "generated_utc": "2026-07-16T19:09:34+00:00",
  "freshness": {
-  "baked_utc": "2026-07-16T19:06:37+00:00",
-  "baked_et": "Jul 16, 3:06pm ET",
-  "revalidated_utc": "2026-07-16T19:06:37+00:00",
+  "baked_utc": "2026-07-16T19:09:34+00:00",
+  "baked_et": "Jul 16, 3:09pm ET",
+  "revalidated_utc": "2026-07-16T19:09:34+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-16",
  "day_summary": "Tonight's game reports are ready - 2 games. Nothing needs you right now.",
  "counts": {
-  "running": 2,
-  "done_today": 29,
-  "maintenance": 4,
+  "running": 1,
+  "done_today": 30,
+  "maintenance": 5,
   "needs_anthony": 0,
-  "lanes_today": 30,
+  "lanes_today": 31,
   "upcoming": 48
  },
  "sections": {
@@ -349,17 +349,7 @@
   "running_now": [],
   "running_live": [
    {
-    "name": "Infra dispatch lane helper",
-    "one_liner": "Running now.",
-    "chip": "IN-FLIGHT",
-    "team": "",
-    "kind": "lane",
-    "time": "",
-    "at_iso": "2026-07-16T13:47:00-04:00",
-    "start_unknown": true
-   },
-   {
-    "name": "Infra comms gate naming",
+    "name": "Comms webhook retire",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
     "team": "",
@@ -382,13 +372,22 @@
     "impact": 1
    },
    {
+    "name": "Infra dispatch lane atomic claim",
+    "one_liner": "Dispatch lane atomic claim + isolation + reconcile-identity",
+    "chip": "DONE",
+    "team": "",
+    "time": "3:04pm",
+    "at_iso": "2026-07-16T15:04:18-04:00",
+    "impact": 2,
+    "maint": true
+   },
+   {
     "name": "Infra ascii lint",
     "one_liner": "Only . + pre-commit lint",
     "chip": "DONE",
     "team": "",
     "time": "3:03pm",
     "at_iso": "2026-07-16T15:03:48-04:00",
-    "link": "https://drive.google.com/file/d/15_x_fdOVZiN1tG4GrWHzXkbDZl2OF4hu/view?usp=drivesdk",
     "impact": 1
    },
    {
@@ -2585,66 +2584,66 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-16T19:05:40Z",
-  "age_s": 59,
-  "cycles": 36,
-  "label": "scout: alive, last poll 59s ago",
+  "last_poll_utc": "2026-07-16T19:08:52Z",
+  "age_s": 44,
+  "cycles": 39,
+  "label": "scout: alive, last poll 44s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "3:02pm",
-   "text": "REAP-STRAGGLER: released session pid 1020 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confirmed dead); taskkill rc=0 SUCCESS: The process with PID 6480 (child process of PID 1020) has been terminat [Part 2 hard-exit backstop]",
-   "detail": "REAP-STRAGGLER: released session_pid 1020 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confirm"
+   "time": "3:06pm",
+   "text": "divergence alarm: clean (build code matches the shared branch",
+   "detail": "divergence_alarm: clean (build code matches the shared branch)"
   },
   {
-   "time": "3:03pm",
-   "text": "width-fill: UNDER-WIDTH 5/6 persisted 3 cycles (> 2) with 4 claimable (1 rank3, 3 ladder, 0 READY) - injected fill DIRECTOR DIRECTIVE SCOUT FILL 1.md",
-   "detail": "width-fill: UNDER-WIDTH 5/6 persisted 3 cycles (> 2) with 4 claimable (1 rank3, 3 ladder, 0 READY) - injected fill DIRECTOR_DIRECTIVE__SCOUT"
+   "time": "3:06pm",
+   "text": "publish-health: PUBLIC BOARD STALE (#1): staleness=9839s threshold=900s live=2026-07-16T16:22:58+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 9819s newer than live",
+   "detail": "publish-health: PUBLIC BOARD STALE (#1): staleness=9839s threshold=900s live=2026-07-16T16:22:58+00:00 | deploy stuck (guard/push failure): "
   },
   {
-   "time": "3:03pm",
-   "text": "width-fill: injected DIRECTOR DIRECTIVE SCOUT FILL 1.md (running 5/6, 1 claimable) - head will pick it up",
-   "detail": "width-fill: injected DIRECTOR_DIRECTIVE__SCOUT_FILL_1.md (running 5/6, 1 claimable) - head will pick it up"
+   "time": "3:06pm",
+   "text": "chain-health: CHAIN DOWN (#1): broken=board paged=False",
+   "detail": "chain-health: CHAIN DOWN (#1): broken=board paged=False"
   },
   {
-   "time": "3:03pm",
+   "time": "3:06pm",
+   "text": "slate-refresh: slate ok (today populated",
+   "detail": "slate-refresh: slate ok (today populated)"
+  },
+  {
+   "time": "3:07pm",
+   "text": "SINGLETON DEFECT: 3 claude.exe against ONE lock owner session pid=11136 - non-owner duplicate(s) [2152, 2300] (kill enabled=False) [ ?2]",
+   "detail": "SINGLETON DEFECT: 3 claude.exe against ONE lock owner session_pid=11136 - non-owner duplicate(s) [2152, 2300] (kill_enabled=False) [1700Z ?2"
+  },
+  {
+   "time": "3:07pm",
    "text": "recovery-eval: coordinator present=True inbox pending=True work pending=True suppressed=False queue marker=True",
    "detail": "recovery-eval: coordinator_present=True inbox_pending=True work_pending=True suppressed=False queue_marker=True"
   },
   {
-   "time": "3:03pm",
-   "text": "poll #34 · nothing new",
-   "detail": "poll cycle=34 ok directives_new=0"
+   "time": "3:07pm",
+   "text": "poll #38 · nothing new",
+   "detail": "poll cycle=38 ok directives_new=0"
   },
   {
-   "time": "3:04pm",
-   "text": "recovery-eval: coordinator present=True inbox pending=True work pending=True suppressed=False queue marker=True",
-   "detail": "recovery-eval: coordinator_present=True inbox_pending=True work_pending=True suppressed=False queue_marker=True"
+   "time": "3:08pm",
+   "text": "dead-crew: PAGED ['Floor manager', 'Inbox triage', 'Status-page baker'] - missed cadence, CEO paged via the gate",
+   "detail": "dead-crew: PAGED ['Floor manager', 'Inbox triage', 'Status-page baker'] - missed cadence, CEO paged via the gate"
   },
   {
-   "time": "3:04pm",
-   "text": "poll #35 · nothing new",
-   "detail": "poll cycle=35 ok directives_new=0"
+   "time": "3:08pm",
+   "text": "recovery-eval: coordinator present=True inbox pending=False work pending=True suppressed=False queue marker=True",
+   "detail": "recovery-eval: coordinator_present=True inbox_pending=False work_pending=True suppressed=False queue_marker=True"
   },
   {
-   "time": "3:05pm",
-   "text": "new instruction received into the inbox",
-   "detail": "HIT: delivered DIRECTOR_DIRECTIVE__second_sender_the_hardwood_webhook_gate_monopoly_stop_terminal_relaunch.md -> inbox/ (ts=)"
-  },
-  {
-   "time": "3:05pm",
-   "text": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session",
-   "detail": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session"
-  },
-  {
-   "time": "3:05pm",
-   "text": "poll #36 · 1 new instruction(s)",
-   "detail": "poll cycle=36 ok directives_new=1"
+   "time": "3:08pm",
+   "text": "poll #39 · nothing new",
+   "detail": "poll cycle=39 ok directives_new=0"
   }
  ],
  "helpers": {
-  "as_of": "2026-07-16T19:06:35Z",
+  "as_of": "2026-07-16T19:09:20.135846+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -2653,57 +2652,51 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "59s",
-    "state_text": "on · seen 59s ago"
+    "age_label": "44s",
+    "state_text": "on · seen 44s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, reports width truth",
     "active": true,
     "stale": false,
-    "age_label": "7s",
-    "state_text": "on · seen 7s ago"
+    "age_label": "16s",
+    "state_text": "on · seen 16s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
-    "active": true,
-    "stale": false,
-    "age_label": "4m",
-    "state_text": "on · seen 4m ago"
+    "active": false,
+    "stale": true,
+    "age_label": "2h",
+    "state_text": "quiet · last seen 2h ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "4s",
-    "state_text": "on · seen 4s ago"
+    "age_label": "45s",
+    "state_text": "on · seen 45s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
-    "active": true,
-    "stale": false,
-    "age_label": "4m",
-    "state_text": "on · seen 4m ago"
+    "active": false,
+    "stale": true,
+    "age_label": "2h",
+    "state_text": "quiet · last seen 2h ago"
    }
   ],
   "width": {
-   "running": 2,
+   "running": 1,
    "target": 6,
-   "empty": 4,
-   "line": "2 of 6 jobs running.",
-   "reason": "Only 2 of 6 jobs are running — 4 more flagged for the coordinator to start from the priority list.",
+   "empty": 5,
+   "line": "1 of 6 jobs running.",
+   "reason": "Only 1 of 6 jobs are running — 5 more flagged for the coordinator to start from the priority list.",
    "stale": false
   },
   "scheduled_jobs": [
-   {
-    "label": "Game status capture",
-    "ran_et": "",
-    "next_et": "",
-    "result": "scheduled"
-   },
    {
     "label": "News latency capture",
     "ran_et": "",
@@ -2769,17 +2762,17 @@
  },
  "coordinator_heartbeat": {
   "alive": true,
-  "last_heartbeat_utc": "2026-07-16T19:06:16Z"
+  "last_heartbeat_utc": "2026-07-16T19:08:43Z"
  },
  "pipe_health": {
-  "directives_pending": 1,
-  "last_processed_clock": "3:05pm",
-  "last_processed_iso": "2026-07-16T19:05:38Z",
-  "newest_directive_clock": "3:03pm",
-  "newest_directive_iso": "2026-07-16T19:03:23Z",
+  "directives_pending": 0,
+  "last_processed_clock": "12:22pm",
+  "last_processed_iso": "2026-07-16T16:22:06Z",
+  "newest_directive_clock": "",
+  "newest_directive_iso": null,
   "source": "director inbox",
   "anchor": "inbox files + delivered/processed trail",
-  "as_of": "2026-07-16T19:05:38Z"
+  "as_of": "2026-07-16T16:22:06Z"
  },
  "beacon": {
   "state": "active",
@@ -2790,8 +2783,8 @@
  "width_defect": {
   "active": true,
   "state": "defect",
-  "text": "Only 3 of 6 work lanes have been running for 183 min while jobs wait to start — being looked into.",
-  "running": 3,
+  "text": "Only 1 of 6 work lanes have been running for 187 min while jobs wait to start — being looked into.",
+  "running": 1,
   "target": 6
  },
  "section_sources": {
@@ -2799,25 +2792,25 @@
    "source": "live lane ledger",
    "as_of": "2026-07-16T17:47:00Z",
    "stale": true,
-   "revalidated": "2026-07-16T19:06:37+00:00",
-   "stale_reason": "These readings may be out of date — last updated 79m ago.",
-   "age_label": "79m",
+   "revalidated": "2026-07-16T19:09:34+00:00",
+   "stale_reason": "These readings may be out of date — last updated 82m ago.",
+   "age_label": "82m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-16T19:06:37+00:00",
+   "as_of": "2026-07-16T19:09:34+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T19:06:37+00:00",
+   "revalidated": "2026-07-16T19:09:34+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-16T19:06:37+00:00",
+   "as_of": "2026-07-16T19:09:34+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T19:06:37+00:00",
+   "revalidated": "2026-07-16T19:09:34+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
@@ -2826,7 +2819,7 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-16T19:06:37+00:00",
+   "revalidated": "2026-07-16T19:09:34+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -2835,7 +2828,7 @@
    "source": "dispatch queue",
    "as_of": "2026-07-16T15:47:29Z",
    "stale": true,
-   "revalidated": "2026-07-16T19:06:37+00:00",
+   "revalidated": "2026-07-16T19:09:34+00:00",
    "stale_reason": "These readings may be out of date — last updated 3h ago.",
    "age_label": "3h",
    "stale_after": 300
@@ -2844,47 +2837,47 @@
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-16T19:06:37+00:00",
+   "revalidated": "2026-07-16T19:09:34+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-07-16T19:05:38Z",
+   "as_of": "2026-07-16T16:22:06Z",
    "stale": false,
-   "revalidated": "2026-07-16T19:06:37+00:00",
+   "revalidated": "2026-07-16T19:09:34+00:00",
    "stale_reason": "",
-   "age_label": "59s",
+   "age_label": "2h",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
-   "as_of": "2026-07-16T19:06:37+00:00",
+   "as_of": "2026-07-16T19:09:34+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T19:06:37+00:00",
+   "revalidated": "2026-07-16T19:09:34+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 172800
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-16T19:03:35+00:00",
+   "as_of": "2026-07-16T16:22:58+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T19:06:37+00:00",
+   "revalidated": "2026-07-16T19:09:34+00:00",
    "stale_reason": "",
-   "age_label": "3m",
+   "age_label": "2h",
    "stale_after": null
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-16T19:06:35Z",
+   "as_of": "2026-07-16T19:09:20.135846+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T19:06:37+00:00",
+   "revalidated": "2026-07-16T19:09:34+00:00",
    "stale_reason": "",
-   "age_label": "4s",
+   "age_label": "16s",
    "stale_after": null
   }
  },
- "generated_et": "Jul 16, 3:06pm ET"
+ "generated_et": "Jul 16, 3:09pm ET"
 }
