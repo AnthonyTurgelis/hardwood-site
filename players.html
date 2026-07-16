@@ -59,7 +59,7 @@
   <h1>The Hardwood — Players</h1>
   <span class="ago" id="ago"></span>
 </header>
-<div class="sub">Ranked by our on-court impact rating, with each player's share of team minutes, projected minutes, and the range of plausible box-score outcomes. Per-game averages are shown as support.</div>
+<div class="sub">Ranked by season scoring (points per game), with our on-court impact rating shown alongside, plus each player's share of team minutes, projected minutes, and the range of plausible box-score outcomes.</div>
 <nav>
   <a href="./index.html">Board</a>
   <a href="./queue.html">What's Next</a>
@@ -90,7 +90,7 @@
     var s=el("section");
     var h=el("h2"); h.appendChild(document.createTextNode("Players — this season")); s.appendChild(h);
     if(!rt.available){ s.appendChild(el("p","empty", rt.note||"Season stats coming soon.")); return s; }
-    s.appendChild(el("p","lede","Ranked by our on-court impact rating — how much better a team plays with her on the floor. It rewards all-around, two-way play rather than scoring, so some role players rate above pure scorers, and a modest number is not a weak player. This early in the season it rests on only a handful of games and can swing, so a low-game player can sit high. Her share of team minutes rides alongside, so a big number on tiny minutes is easy to spot. Per-game points, rebounds and assists are shown as support. Tap a name for her full card."));
+    s.appendChild(el("p","lede","Ranked by season scoring — points per game. Our on-court impact rating (how much better a team plays with her on the floor) is shown alongside as a second measure; it rewards all-around, two-way play rather than scoring, so a role player can rate high on impact even if she scores less, and a modest number is not a weak player. This early in the season the impact rating rests on only a handful of games and can swing. Her share of team minutes rides alongside, so a big number on tiny minutes is easy to spot. Points, rebounds and assists per game are shown too. Tap a name for her full card."));
     var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter players by name or team…"; fbox.value=ratFilter;
     fbox.oninput=function(){ ratFilter=fbox.value; var ns=ratingsSection(rt); s.parentNode.replaceChild(ns, s);
       var nf=ns.querySelector(".filt"); if(nf){ nf.focus(); nf.setSelectionRange(nf.value.length,nf.value.length); } };
