@@ -133,6 +133,7 @@
     var hero=el("div","hero");
     hero.appendChild(el("div","nm", d.name||"Player"));
     var prov = (d.impact_provisional !== false);   // default provisional if the flag is absent
+    var nb = d.n_basis;   // on-court stint count backing the impact rating (the "basis" the read cites) — was undefined -> ReferenceError crashed every profile (VZ-1 live-outage fix)
     hero.appendChild(el("div","sub", (d.team||"—") + " · " + (d.gp!=null?d.gp:"—") + " games this season" +
       (d.min_share_pct!=null?("  · "+d.min_share_pct+"% of team minutes"):"") +
       (d.thin?"  · thin sample":"")));
