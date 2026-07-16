@@ -358,7 +358,6 @@
       c.appendChild(el("span","dot")); c.appendChild(el("span",null,label)); wrap.appendChild(c); return c; }
     mk("ch-data","", "How fresh the numbers on this page are (time since the last refresh of the page data).");
     mk("ch-scout","", "Claude (Scout) - watches for instructions and triages the queue");
-    mk("ch-team","", "Gemini (Coordinator) - executes product, modeling, and data tasks");
     mk("ch-inbox","", "Instructions waiting to be picked up, and when the last one was handled.");
     tickChips();
   }
@@ -374,11 +373,6 @@
     if(ss!=null) setChip("ch-scout", (ss<=240)?"ok":"bad",
       "Claude - "+((ss<=240)?"active":"quiet")+" - "+agoSecs(ss)+" ago");
     else setChip("ch-scout","bad","Claude - no signal");
-    var ch=b.coordinator_heartbeat||{};
-    var cs=sinceIso(ch.last_heartbeat_utc);
-    if(cs!=null) setChip("ch-team", (cs<=1200)?"ok":"warn",
-      "Gemini - "+((cs<=1200)?"active":"quiet")+" - "+agoSecs(cs)+" ago");
-    else setChip("ch-team","warn","Gemini - not running");
     var p=b.pipe_health||{};
     var n=p.directives_pending||0;
     setChip("ch-inbox", n?"warn":"ok",
@@ -734,7 +728,9 @@
     var s=el("section","hero"); s.setAttribute("data-k","today");
     var eb=el("div","eyebrow");
     eb.appendChild(el("span",null,"Tonight — our picks"));
-    var p=provFor("today_games"); eb.appendChild(p.prov);
+    var p=provFor("today_games");
+    if(p.stale){ eb.appendChild(el("span","stalebadge","stale")); }
+    eb.appendChild(p.prov);
     s.appendChild(eb);
     if(!tg || !tg.games || !tg.games.length){
       s.appendChild(el("p","empty",(tg&&tg.note)||"No games on today's slate.")); return s;
@@ -744,7 +740,8 @@
       var c=el("div","gcard"); c.setAttribute("data-k","tg|"+(g.abbr||g.matchup||""));
       var top=el("div","gtop");
       top.appendChild(el("span","team", g.matchup||g.abbr||""));
-      if(g.tip){ top.appendChild(el("span","tip", g.tip)); }
+      if(g.awaiting_final){ top.appendChild(el("span","tip","Final pending")); }
+      else if(g.tip){ top.appendChild(el("span","tip", g.tip)); }
       c.appendChild(top);
       if(g.call){
         var pk=el("div","pick");
