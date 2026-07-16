@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Hardwood — Status Board</title>
+<title>The Hardwood — WNBA predictions & simulation</title>
 <style>
   :root{
     --bg:#f6f7f9; --card:#ffffff; --ink:#16181d; --muted:#5b6472; --line:#e5e8ee;
@@ -63,18 +63,6 @@
   /* the one day-summary sentence */
   .summary{margin:9px 0 0;font-size:14.5px;line-height:1.45;font-weight:600}
   .summary .dim{color:var(--muted);font-weight:500}
-  /* ACCURACY SCORECARD TILE — one-line, always visible on the Today tab so the reader sees how
-     accurate our margin calls are without opening the Accuracy tab. Numbers come from board.json
-     (derived from the live backtest); the tile self-hides when the block is absent. */
-  .accbar{display:flex;align-items:baseline;gap:6px 10px;flex-wrap:wrap;margin:10px 0 0;
-    padding:8px 12px;background:var(--card);border:1px solid var(--line);
-    border-left:3px solid var(--verified);border-radius:9px;box-shadow:var(--shadow);
-    font-size:12.5px;color:var(--muted)}
-  .accbar .lab{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
-    color:var(--muted);flex:0 0 auto}
-  .accbar .txt b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:700}
-  .accbar a{margin-left:auto;font-size:11.5px;white-space:nowrap;text-decoration:none;flex:0 0 auto}
-  .accbar a:hover{text-decoration:underline}
   nav{display:flex;gap:5px;flex-wrap:wrap;margin:9px 0 0}
   nav a{font-size:11.5px;text-decoration:none;color:var(--accent);border:1px solid var(--line);
     background:var(--card);padding:3px 9px;border-radius:999px}
@@ -291,7 +279,7 @@
 <div class="wrap">
 <header>
   <div class="hrow">
-    <h1>The Hardwood — Status Board</h1>
+    <h1>The Hardwood</h1>
     <span class="ago" id="ago"></span>
   </div>
   <div class="chips" id="chips"></div>
@@ -589,8 +577,11 @@
 
   /* ---------- running now: every live lane, with a ticking elapsed timer ---------- */
   function renderRunning(live){
+    // Nothing running -> render NO panel at all (return null). An empty "Running now — nothing is
+    // running this minute" is pure ops noise on a coach's front page; it only appears when crew work
+    // is actually in flight, and even then it sits in the bottom (Tier 3) chrome cluster.
+    if(!live || !live.length){ return null; }
     var s=el("section"); s.appendChild(sectionHead("Running now","running_now"));
-    if(!live || !live.length){ s.appendChild(el("p","empty","Nothing is running this minute.")); return s; }
     var list=el("div","list");
     live.forEach(function(c){
       var r=el("div","row run"); r.setAttribute("data-k","run|"+c.name);
@@ -800,34 +791,6 @@
     lines.forEach(function(t){ ul.appendChild(el("li",null,t)); });
     s.appendChild(ul); return s;
   }
-  /* ACCURACY SCORECARD TILE — a compact one-line honest scorecard pinned to the top of the Today
-     tab. Betting-free framing (an audit of our own calls, not a directional signal). All numbers
-     are baked in board.accuracy (derived from the live backtest); returns null when absent so the
-     tile never ships a blank/garbled stat. */
-  function renderAccuracyTile(a){
-    if(!a || a.avg_miss==null || !a.n_games) return null;
-    var s=el("div","accbar"); s.setAttribute("data-k","acctile");
-    s.appendChild(el("span","lab","Our accuracy"));
-    var txt=el("span","txt");
-    txt.appendChild(document.createTextNode("Our winning-margin calls miss by ~"));
-    txt.appendChild(el("b",null, String(a.avg_miss)));
-    txt.appendChild(document.createTextNode(" points on average"));
-    if(a.win_pct!=null){
-      txt.appendChild(document.createTextNode(", and we call the right winner "));
-      txt.appendChild(el("b",null, a.win_pct+"%"));
-      txt.appendChild(document.createTextNode(" of the time"));
-    }
-    txt.appendChild(document.createTextNode(" — across "));
-    txt.appendChild(el("b",null, String(a.n_games)));
-    txt.appendChild(document.createTextNode(" graded games this season."));
-    s.appendChild(txt);
-    var link=el("a",null,"See the full scorecard →");
-    link.href="./accuracy.html";
-    link.title="Open the Accuracy tab — how we score our own past predictions.";
-    s.appendChild(link);
-    return s;
-  }
-
   /* HERO — tonight's slate is the biggest thing on the board: matchup, ET tip, OUR PICK
      (winning-margin call) prominent, win chance, venue note (redesign impact-hierarchy). */
   function renderTodayGames(tg){
@@ -960,7 +923,7 @@
   /* ---------- agent updates ---------- */
   function renderAgentUpdates(updates){
     if(!updates || !updates.length) return null;
-    var s=el("section"); s.appendChild(sectionHead("Agent Updates","agent_updates"));
+    var s=el("section"); s.appendChild(sectionHead("What we've learned","agent_updates"));
     var list=el("div","list");
     updates.forEach(function(u){
       var d=el("div","decision"); d.setAttribute("id", "msg-"+u.id);
@@ -1137,43 +1100,39 @@
     renderSubtabs(b); renderFilters(b);
     var main=document.getElementById("main"); main.innerHTML="";
     if(activeTab==="today"){
-      // ACCURACY SCORECARD TILE — pinned above the recency-sorted panels so the honest scorecard is
-      // the first thing visible on the Today tab (grade-up B→A). Self-hides when board.accuracy is absent.
-      var accNode=renderAccuracyTile(b.accuracy);
-      if(accNode){ main.appendChild(accNode); }
-      // ORDER-1 (Director v6 0740Z): panels self-order by their own section as_of, MOST-RECENT AT
-      // THE TOP — "I stop scrolling at the one I've seen last." Each panel's stamp comes from
-      // section_sources[key].as_of (one-status-truth). PIN EXCEPTION (documented): an ACTIONABLE
-      // "Needs you" panel pins ABOVE the recency sort — a decision the CEO must action outranks
-      // recency; when it is empty ("Nothing needs you") it is NOT pinned and sorts by its own as_of
-      // like every other panel. The live-recomputed panels (running/done/today_games) carry the
-      // bake-instant as_of so they cluster at the top; a stable sort preserves their declared order
-      // on that tie, and panels with no section as_of (tonight's edge, monitor activity) sink last.
-      // running_live is the LIVE-gated list (empty means nothing is running — never fall back to the
-      // delta-derived cards, which can hold corpses; directive 230000Z section 3). Only a legacy
-      // snapshot with no running_live at all falls back to running_now.
+      // TIERED HIERARCHY (BR-V2 product-triage): the front page leads with the PRODUCT and sinks the
+      // crew/monitor plumbing — instead of ordering purely by which panel was re-baked most recently,
+      // which floated an empty "Running now" and the internal ticker ABOVE tonight's picks and the game
+      // reports (the ops-dashboard feel). The tiers, top to bottom:
+      //   Tier 0  an ACTIONABLE "Needs you" — a real decision the CEO must make outranks everything.
+      //   Tier 1  PRODUCT — tonight's picks, tonight's edge, game reports.
+      //   Tier 2  secondary reader value — what we learned, the daily-review watch list.
+      //   Tier 3  crew / ops chrome — running now, done today, helper jobs, the monitor ticker; these
+      //           carry no reader value up front, so they always land at the bottom, never in prime space.
+      // Within a tier we still sort MOST-RECENT first (section as_of DESC), then by declared order, so
+      // picks lead reports and a stale panel sinks inside its own tier. An empty "Needs you" is not a
+      // decision, so it drops to Tier 3. running_live is the LIVE-gated list (empty means nothing is
+      // running — never fall back to the delta cards, which can hold stale/finished entries);
+      // only a legacy snapshot with no running_live at all falls back to running_now.
       var live=(sec.running_live!=null)? sec.running_live : sec.running_now;
       var decActionable=!!((sec.needs_anthony && sec.needs_anthony.length) || (b.setup && b.setup.length));
       var panels=[];
-      function addPanel(node, key, pin){ if(node){ panels.push({node:node, asOf:secAsOf(key), pin:!!pin, i:panels.length}); } }
-      addPanel(renderDecisions(sec.needs_anthony, b.setup, b.answer_all), "needs_anthony", decActionable);
-      addPanel(renderTodayGames(sec.today_games), "today_games");
-      addPanel(renderTonightEdge(sec.tonight_edge), null);
-      addPanel(renderReports(b.reports, b.rollover), "reports");
-      addPanel(renderAgentUpdates(sec.agent_updates), "agent_updates");
-      addPanel(renderRunning(live), "running_now");
-      addPanel(renderDone(sec.done_today), "done_today");
-      addPanel(renderWatch(sec.watch_list), "watch_list");
-      // Crew plumbing (helper processes / scheduled jobs) is NOT reader product — pass a null sort
-      // key so it sinks to the bottom cluster with the monitor ticker instead of floating up on its
-      // fresh stamp. The panel and its loud stale guards are kept; they just no longer lead (CEO).
-      addPanel(renderHelpers(b.helpers), null);
-      addPanel(renderScoutActivity(b.scout_activity), "scout_activity");
+      function addPanel(node, key, tier){ if(node){ panels.push({node:node, asOf:secAsOf(key), tier:tier, i:panels.length}); } }
+      addPanel(renderDecisions(sec.needs_anthony, b.setup, b.answer_all), "needs_anthony", decActionable?0:3);
+      addPanel(renderTodayGames(sec.today_games), "today_games", 1);
+      addPanel(renderTonightEdge(sec.tonight_edge), null, 1);
+      addPanel(renderReports(b.reports, b.rollover), "reports", 1);
+      addPanel(renderAgentUpdates(sec.agent_updates), "agent_updates", 2);
+      addPanel(renderWatch(sec.watch_list), "watch_list", 2);
+      addPanel(renderRunning(live), "running_now", 3);
+      addPanel(renderDone(sec.done_today), "done_today", 3);
+      addPanel(renderHelpers(b.helpers), null, 3);
+      addPanel(renderScoutActivity(b.scout_activity), "scout_activity", 3);
       panels.sort(function(a,c){
-        if(a.pin!==c.pin) return a.pin?-1:1;      // pinned actionable "Needs you" stays on top
-        var av=a.asOf||"", cv=c.asOf||"";         // ISO stamps sort lexically; missing as_of sinks
-        if(av!==cv) return av<cv?1:-1;            // as_of DESC — most recent panel first
-        return a.i-c.i;                            // stable: preserve declared order on ties
+        if(a.tier!==c.tier) return a.tier-c.tier;  // product tiers first, crew/ops chrome last
+        var av=a.asOf||"", cv=c.asOf||"";          // within a tier: most-recent panel first
+        if(av!==cv) return av<cv?1:-1;             // as_of DESC
+        return a.i-c.i;                             // stable: declared order on ties (picks before reports)
       });
       panels.forEach(function(p){ main.appendChild(p.node); });
     } else {
