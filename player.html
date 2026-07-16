@@ -46,6 +46,17 @@
   .comp{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px}
   .comp b{font-weight:640}.comp span{color:var(--dim);font-size:11px}
   .thin{color:var(--warn)}
+  .nmrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .rankchip{font-size:11px;font-weight:640;color:var(--acc);background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;white-space:nowrap}
+  .avail{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border-radius:999px;padding:2px 9px;white-space:nowrap}
+  .avail.ok{color:var(--good);background:rgba(31,136,61,.10);border:1px solid var(--good)}
+  .avail.warn{color:var(--warn);background:rgba(154,103,0,.12);border:1px solid var(--warn)}
+  .avail.out{color:var(--bad);background:rgba(198,40,40,.10);border:1px solid var(--bad)}
+  .why{color:var(--ink);font-size:13px;margin-top:9px;line-height:1.5}
+  .asof{font-size:11px;color:var(--dim);margin-top:5px}
+  .asof.stale{color:var(--warn);font-weight:600}
+  .statline{margin-top:10px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .statline b{color:var(--ink);font-weight:640}
   .empty{color:var(--dim);font-style:italic}
   .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
   footer{max-width:1000px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
@@ -131,12 +142,68 @@
     var back=el("a","back","← Back to all players"); back.href="./players.html"; main.appendChild(back);
 
     var hero=el("div","hero");
-    hero.appendChild(el("div","nm", d.name||"Player"));
     var prov = (d.impact_provisional !== false);   // default provisional if the flag is absent
     var nb = d.n_basis;   // on-court stint count backing the impact rating (the "basis" the read cites) — was undefined -> ReferenceError crashed every profile (VZ-1 live-outage fix)
+    var si0=d.season_impact;   // availability + minutes context live here
+
+    // NAME ROW — the scan line: who + impact rank + is she available for the next game.
+    var nmrow=el("div","nmrow");
+    nmrow.appendChild(el("div","nm", d.name||"Player"));
+    if(d.rank!=null){ var rc=el("span","rankchip","#"+d.rank+" by impact"); rc.title="Rank among rated players by on-court impact"; nmrow.appendChild(rc); }
+    // availability pill — a coach's first question is "can I use her next game?"
+    (function(){
+      if(!si0) return;
+      var p=null;
+      if(si0.currently_out){ p=el("span","avail out","Out"); p.title="Currently listed as out"; }
+      else if(si0.play_prob!=null){
+        var pct=Math.round(si0.play_prob*100);
+        if(pct>=85){ p=el("span","avail ok","Expected to play"); }
+        else if(pct>=40){ p=el("span","avail warn","Questionable "+pct+"%"); }
+        else { p=el("span","avail out","Doubtful "+pct+"%"); }
+        p.title="Estimated chance of playing the next game: "+pct+"%";
+      }
+      if(p) nmrow.appendChild(p);
+    })();
+    hero.appendChild(nmrow);
+
     hero.appendChild(el("div","sub", (d.team||"—") + " · " + (d.gp!=null?d.gp:"—") + " games this season" +
       (d.min_share_pct!=null?("  · "+d.min_share_pct+"% of team minutes"):"") +
       (d.thin?"  · thin sample":"")));
+
+    // WHY-LINE — one scannable, jargon-free sentence: who is she + why she matters.
+    (function(){
+      var bits=[];
+      if(d.rank!=null) bits.push("Ranked #"+d.rank+" by on-court impact");
+      var box=[];
+      if(d.pts!=null) box.push(d.pts.toFixed(1)+" pts");
+      if(d.reb!=null) box.push(d.reb.toFixed(1)+" reb");
+      if(d.ast!=null) box.push(d.ast.toFixed(1)+" ast");
+      var line="";
+      if(bits.length) line+=bits.join(", ")+". ";
+      if(box.length){
+        line+="Averaging "+box.join(" / ");
+        if(d.gp!=null) line+=" over "+d.gp+" game"+(d.gp===1?"":"s");
+        if(d.min_avg!=null) line+=" at "+d.min_avg.toFixed(1)+" mpg";
+        if(d.min_share_pct!=null) line+=", on "+d.min_share_pct+"% of team minutes";
+        line+=".";
+      }
+      if(prov) line+=" Impact is still provisional on a thin sample — lean on the scoring and minutes for now.";
+      if(line){ hero.appendChild(el("div","why", line)); }
+    })();
+
+    // AS-OF — honest per-card recency. This card's own bake can lag the site-wide strip; flag it stale.
+    (function(){
+      if(!d.generated_et && !d.generated_utc) return;
+      var a=el("div","asof","Impact data as of "+(d.generated_et||d.generated_utc));
+      if(d.generated_utc){
+        var t=new Date(d.generated_utc).getTime();
+        if(!isNaN(t)){
+          if(window.Hardwood && window.Hardwood.agoOf){ var ago=window.Hardwood.agoOf(d.generated_utc); if(ago) a.textContent+=" · "+ago; }
+          if(Date.now()-t > 2*86400000){ a.className="asof stale"; a.textContent+=" — this player's card may be stale"; }
+        }
+      }
+      hero.appendChild(a);
+    })();
     var kpis=el("div","kpis");
     function kpi(l,v,u,uc){ var k=el("div","kpi"); k.appendChild(el("div","kl",l));
       var kv=el("div","kv"); kv.textContent=(v==null?"—":v); if(u){ var s=el("small",uc||null); s.textContent=" "+u; kv.appendChild(s);} k.appendChild(kv); return k; }
@@ -159,11 +226,22 @@
     if(d.impact_provisional) impUnit.push("provisional — thin basis");
     kpis.appendChild(kpi("Impact rating", d.rating==null?null:((d.rating>0?"+":"")+d.rating.toFixed(1)),
       impUnit.length?("· "+impUnit.join(" · ")):null));
-    kpis.appendChild(kpi("Proj. next game", d.minutes==null?null:d.minutes.toFixed(1), "min"));
+    // Minutes tile: a live next-game projection when we have one; otherwise fall back to the honest
+    // season average (clearly labelled) so this tile is never a dead "—" when we do know her workload.
+    if(d.minutes!=null){ kpis.appendChild(kpi("Proj. next game", d.minutes.toFixed(1), "min")); }
+    else if(d.min_avg!=null){ kpis.appendChild(kpi("Minutes", d.min_avg.toFixed(1), "mpg · season avg")); }
+    else { kpis.appendChild(kpi("Proj. next game", null, "min")); }
     kpis.appendChild(kpi("Points", pg(d.pts), "per game"));
     kpis.appendChild(kpi("Rebounds", pg(d.reb), "per game"));
     kpis.appendChild(kpi("Assists", pg(d.ast), "per game"));
     hero.appendChild(kpis);
+    // secondary box — completes the counting-stat read (defensive line) without crowding the KPI tiles.
+    (function(){
+      var extra=[];
+      if(d.stl!=null) extra.push("Steals "+d.stl.toFixed(1));
+      if(d.blk!=null) extra.push("Blocks "+d.blk.toFixed(1));
+      if(extra.length){ var sl=el("div","statline", extra.join("   ·   ")+"   per game"); hero.appendChild(sl); }
+    })();
     main.appendChild(hero);
 
     // SEASON IMPACT — descriptive, results-WAR style (what happened, not a projection). Impact-first:

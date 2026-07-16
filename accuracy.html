@@ -42,6 +42,15 @@
   .spark .b{flex:1;background:var(--accent);border-radius:4px 4px 0 0;min-height:4px;opacity:.85;position:relative}
   .spark .b span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px;color:var(--muted)}
   .empty{color:var(--muted);font-style:italic}
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:14px 15px;box-shadow:var(--shadow);margin-top:10px}
+  .hero .big{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .hero .num{font-size:40px;font-weight:800;line-height:1;letter-spacing:-.5px}
+  .hero .num small{font-size:15px;font-weight:600;color:var(--muted);letter-spacing:0}
+  .hero .win{font-size:13px;color:var(--muted)}
+  .hero .win b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:700}
+  .hero .line{font-size:13.5px;margin:9px 0 0}
+  .hero .lean{font-size:12.5px;color:var(--muted);margin:7px 0 0;padding-left:9px;border-left:3px solid var(--good)}
+  .hero .caveat{font-size:12px;color:var(--muted);margin:9px 0 0}
   footer{max-width:860px;margin:0 auto;padding:24px 16px;color:var(--muted);font-size:12px}
 </style>
 </head>
@@ -102,10 +111,11 @@
     return c;
   }
 
-  function sparkline(monthly){
-    var s=el("section"); s.appendChild(el("h2",null,"Game-margin error by month"));
+  function sparkline(monthly, seasonAvg){
+    var s=el("section"); s.appendChild(el("h2",null,"Recent form — game-margin error by month"));
     var vals=monthly.filter(function(m){return m.value!=null;});
     if(!vals.length){ s.appendChild(el("p","empty","No monthly history yet.")); return s; }
+    s.appendChild(el("p","lede","Shorter bars mean tighter calls. " + (seasonAvg!=null?("Our season average is about "+seasonAvg+" points — read the newest month against it to see if we're sharpening or slipping."):"Read the newest month against the earlier ones.")));
     var max=Math.max.apply(null, vals.map(function(m){return m.value;}));
     var wrap=el("div","spark");
     vals.forEach(function(m){
@@ -116,6 +126,28 @@
     });
     var box=el("div"); box.style.paddingBottom="22px"; box.appendChild(wrap);
     s.appendChild(box); return s;
+  }
+
+  function headlineSection(h){
+    var s=el("section"); s.setAttribute("data-k","headline");
+    s.appendChild(el("h2",null,"How accurate are we?"));
+    var box=el("div","hero");
+    var big=el("div","big");
+    var num=el("div","num");
+    num.textContent = (h.avg_miss==null?"—":h.avg_miss);
+    var u=el("small"); u.textContent=" pts avg miss"; num.appendChild(u);
+    big.appendChild(num);
+    if(h.win_pct!=null){
+      var w=el("div","win"); w.innerHTML="right winner <b>"+h.win_pct+"%</b> of the time"
+        + (h.n_games?(" · <b>"+h.n_games+"</b> games this season"):"");
+      big.appendChild(w);
+    }
+    box.appendChild(big);
+    if(h.line) box.appendChild(el("p","line", h.line));
+    if(h.bias_line) box.appendChild(el("p","lean", h.bias_line));
+    if(h.caveat) box.appendChild(el("p","caveat", h.caveat));
+    s.appendChild(box);
+    return s;
   }
 
   function backtestSection(bt){
@@ -147,6 +179,7 @@
     document.getElementById("sub").textContent = (a.date||"") + " · a prediction platform that publishes its own scorecard";
     var main=document.getElementById("main"); main.innerHTML="";
     main.appendChild(el("p","lede","Honest, self-graded accuracy. Every figure comes from grading our own past predictions against what actually happened — " + (a.source||"") + "."));
+    if(a.backtest && a.backtest.available && a.backtest.headline){ main.appendChild(headlineSection(a.backtest.headline)); }
     if(a.backtest && a.backtest.available){ main.appendChild(backtestSection(a.backtest)); }
     if(!a.available){
       if(!(a.backtest && a.backtest.available)) main.appendChild(el("p","empty", a.note || "No graded accuracy available yet."));
@@ -166,7 +199,7 @@
       a.calibration.forEach(function(k){ s2.appendChild(calCard(k)); });
       main.appendChild(s2);
     }
-    if(a.monthly && a.monthly.length){ main.appendChild(sparkline(a.monthly)); }
+    if(a.monthly && a.monthly.length){ main.appendChild(sparkline(a.monthly, (a.backtest&&a.backtest.headline)?a.backtest.headline.avg_miss:null)); }
     document.getElementById("foot").textContent = "Baked " + (a.generated_et||a.generated_utc||"") + ". Lower error is better; a single WNBA game's margin is mostly luck, for us and for the market alike.";
     flash();
   }

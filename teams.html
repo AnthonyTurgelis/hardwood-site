@@ -38,6 +38,14 @@
   .full{color:var(--muted);font-weight:400;font-size:11px}
   .up{color:var(--good);font-weight:600}.down{color:var(--bad);font-weight:600}.flat{color:var(--dim)}
   .strong{font-weight:680}
+  .scell{display:flex;align-items:center;justify-content:flex-end;gap:7px}
+  .sbar{position:relative;width:54px;height:6px;border-radius:3px;background:var(--line2);overflow:hidden;flex:none}
+  .sbar>i{position:absolute;left:0;top:0;bottom:0;background:var(--acc);border-radius:3px}
+  .sval{font-weight:680;font-variant-numeric:tabular-nums;min-width:2.8em}
+  .lock{color:var(--good);font-weight:640}.out{color:var(--dim)}
+  .summary{background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:8px 0 4px;font-size:12.5px;line-height:1.55}
+  .summary b{color:var(--ink)}
+  .summary .k{color:var(--muted);font-weight:600}
   .empty{color:var(--dim);font-style:italic}
   .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
   .filt{width:100%;max-width:280px;margin:0 0 8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:12.5px}
@@ -85,6 +93,43 @@
     if(v<-0.05) return td("down",v.toFixed(1));
     return td("flat","0");
   }
+  function strengthCell(s,frac){
+    var cell=el("td");
+    if(s==null){ cell.appendChild(el("span","flat","—")); return cell; }
+    var wrap=el("div","scell");
+    var bar=el("span","sbar"); var fill=el("i"); fill.style.width=Math.round(frac*100)+"%";
+    bar.appendChild(fill);
+    wrap.appendChild(bar);
+    wrap.appendChild(el("span","sval", s.toFixed(1)));
+    cell.appendChild(wrap); return cell;
+  }
+  function playoffCell(v){
+    if(v==null) return td("flat","—");
+    if(v>=90) return td("lock", v.toFixed(0)+"%");
+    if(v<=10) return td("out", v.toFixed(0)+"%");
+    return td(null, v.toFixed(0)+"%");
+  }
+  function summaryLine(teams){
+    if(!teams||!teams.length) return null;
+    var box=el("div","summary");
+    function nm(r){ return r?(r.team_full||r.team):"—"; }
+    var parts=[];
+    var top=teams[0];  // ranked #1 by strength
+    parts.push('<span class="k">Strongest now</span> <b>'+nm(top)+'</b>');
+    var fav=null; teams.forEach(function(r){ if(r.title_pct!=null && (!fav||r.title_pct>fav.title_pct)) fav=r; });
+    if(fav && fav.title_pct!=null) parts.push('<span class="k">Title-sim favorite</span> <b>'+nm(fav)+'</b> '+fav.title_pct.toFixed(1)+'%');
+    var hot=null,cold=null;
+    teams.forEach(function(r){
+      if(r.churn==null) return;
+      if(r.churn>0.3 && (!hot||r.churn>hot.churn)) hot=r;
+      if(r.churn<-0.3 && (!cold||r.churn<cold.churn)) cold=r;
+    });
+    var mo=[];
+    if(hot) mo.push('<span class="up">▲</span> <b>'+nm(hot)+'</b> heating up');
+    if(cold) mo.push('<span class="down">▼</span> <b>'+nm(cold)+'</b> cooling');
+    box.innerHTML = parts.join(' &nbsp;·&nbsp; ') + (mo.length? ('<br><span class="k">Form</span> '+mo.join(' &nbsp;·&nbsp; ')+' <span class="k">(last ~5)</span>'):'');
+    return box;
+  }
 
   function render(d){
     curData=d;
@@ -92,6 +137,11 @@
     document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Strength ranks the roster on our season-long model. Momentum is recent form, not the ranking basis. Title odds come from simulating the rest of the season.";
     if(!d.available){ main.appendChild(el("p","empty", d.note||"Power board being built.")); return; }
     main.appendChild(el("p","lede", d.source||""));
+    var sm=summaryLine(d.teams); if(sm) main.appendChild(sm);
+    // relative strength-bar scale across the field (min→max, with a visible floor)
+    var sv=d.teams.map(function(r){ return r.strength; }).filter(function(x){ return x!=null; });
+    var smin=sv.length?Math.min.apply(null,sv):0, smax=sv.length?Math.max.apply(null,sv):1;
+    function sfrac(s){ if(s==null) return 0; return smax>smin ? 0.10+0.90*((s-smin)/(smax-smin)) : 1; }
     var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter teams…"; fbox.value=teamFilter;
     fbox.oninput=function(){ teamFilter=fbox.value; render(curData);
       var nf=document.querySelector(".filt"); if(nf){ nf.focus(); nf.setSelectionRange(nf.value.length,nf.value.length); } };
@@ -108,16 +158,16 @@
       tr.appendChild(td("rk", r.rank));
       var name=el("td","tm"); name.appendChild(document.createTextNode(r.team+" "));
       name.appendChild(el("span","full", r.team_full)); tr.appendChild(name);
-      tr.appendChild(td("strong", r.strength==null?"—":r.strength.toFixed(1)));
+      tr.appendChild(strengthCell(r.strength, sfrac(r.strength)));
       tr.appendChild(churnCell(r.churn));
       tr.appendChild(td(r.title_pct!=null&&r.title_pct>=10?"strong":null, r.title_pct==null?"—":r.title_pct.toFixed(1)+"%"));
       tr.appendChild(deltaCell(r.title_delta));
-      tr.appendChild(td(null, r.playoff_pct==null?"—":r.playoff_pct.toFixed(0)+"%"));
+      tr.appendChild(playoffCell(r.playoff_pct));
       tb.appendChild(tr);
     });
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); main.appendChild(card);
     main.appendChild(el("div","note",
-      "Strength = our on-court team-strength index (higher is better), carried to today. "+
+      "Strength = our on-court team-strength index (higher is better), carried to today; the bar shows each team's spot on the field from weakest to strongest. "+
       "Momentum = how the team's recent-form rating has moved over its last few games (▲ heating up, ▼ cooling) — a form read, not the ranking. "+
       "Title % and Playoffs % are from our end-of-season simulation" + (d.title_as_of?(" (as of "+d.title_as_of+")"):"") + "; Δ 1d is the one-day change in title odds."));
     flash();
