@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-07-16T20:46:37+00:00",
+ "generated_utc": "2026-07-16T20:51:27+00:00",
  "freshness": {
-  "baked_utc": "2026-07-16T20:46:37+00:00",
-  "baked_et": "Jul 16, 4:46pm ET",
-  "revalidated_utc": "2026-07-16T20:46:37+00:00",
+  "baked_utc": "2026-07-16T20:51:27+00:00",
+  "baked_et": "Jul 16, 4:51pm ET",
+  "revalidated_utc": "2026-07-16T20:51:27+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-16",
@@ -11,9 +11,9 @@
  "counts": {
   "running": 5,
   "done_today": 40,
-  "maintenance": 5,
+  "maintenance": 6,
   "needs_anthony": 0,
-  "lanes_today": 43,
+  "lanes_today": 44,
   "upcoming": 69
  },
  "sections": {
@@ -41,12 +41,6 @@
     "title": "Verifier seasonimpact winprob",
     "timestamp": "Jul 16, 2026",
     "body_markdown": "Season Impact fitted-decay + win-prob recal"
-   },
-   {
-    "id": "20260716t-scouting-rimprotect-leaderboard",
-    "title": "20260716t scouting rimprotect leaderboard",
-    "timestamp": "Jul 16, 2026",
-    "body_markdown": "Scouting: fix page identity + rebuild rim-protection leaderboard to coach-grade"
    },
    {
     "id": "bluesky-early-warning-flag",
@@ -89,6 +83,12 @@
     "title": "Winprob sigma recal eval",
     "timestamp": "Jul 16, 2026",
     "body_markdown": "Improve how we express win-probability confidence"
+   },
+   {
+    "id": "hetero-conformal-tailcal-null",
+    "title": "Prediction-range calibration",
+    "timestamp": "Jul 16, 2026",
+    "body_markdown": "Finished and independently double-checked."
    }
   ],
   "today_games": {
@@ -355,7 +355,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-07-16T16:46:40-04:00",
+    "at_iso": "2026-07-16T16:51:08-04:00",
     "start_unknown": true
    },
    {
@@ -365,7 +365,7 @@
     "team": "Site",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-07-16T16:46:40-04:00",
+    "at_iso": "2026-07-16T16:51:08-04:00",
     "start_unknown": true
    },
    {
@@ -375,17 +375,7 @@
     "team": "Reporting",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-07-16T16:46:40-04:00",
-    "start_unknown": true
-   },
-   {
-    "name": "Data official injury 2ndfeed",
-    "one_liner": "Running now.",
-    "chip": "IN-FLIGHT",
-    "team": "Data",
-    "kind": "lane",
-    "time": "",
-    "at_iso": "2026-07-16T16:46:40-04:00",
+    "at_iso": "2026-07-16T16:51:08-04:00",
     "start_unknown": true
    },
    {
@@ -395,7 +385,17 @@
     "team": "Data",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-07-16T16:46:40-04:00",
+    "at_iso": "2026-07-16T16:51:08-04:00",
+    "start_unknown": true
+   },
+   {
+    "name": "Infra selfdeploy depclosure",
+    "one_liner": "Running now.",
+    "chip": "IN-FLIGHT",
+    "team": "Coordination",
+    "kind": "lane",
+    "time": "",
+    "at_iso": "2026-07-16T16:51:08-04:00",
     "start_unknown": true
    }
   ],
@@ -420,6 +420,16 @@
     "time": "",
     "at_iso": null,
     "impact": 1
+   },
+   {
+    "name": "Report gameday b verify",
+    "one_liner": "Gameday PDF B-grade verify + 2 render fixes + guard test repair",
+    "chip": "VERIFIED",
+    "team": "",
+    "time": "4:50pm",
+    "at_iso": "2026-07-16T16:50:20-04:00",
+    "impact": 2,
+    "maint": true
    },
    {
     "name": "Librarian law a propagation law b rebuild plus dependency map and rebuild",
@@ -777,15 +787,6 @@
     "team": "",
     "time": "8:42pm",
     "at_iso": "2026-07-15T20:42:01-04:00",
-    "impact": 3
-   },
-   {
-    "name": "20260716t scouting rimprotect leaderboard",
-    "one_liner": "Scouting: fix page identity + rebuild rim-protection leaderboard to coach-grade",
-    "chip": "NULL",
-    "team": "Site",
-    "time": "",
-    "at_iso": null,
     "impact": 3
    }
   ],
@@ -3451,66 +3452,66 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-16T20:45:57Z",
-  "age_s": 43,
-  "cycles": 9,
-  "label": "scout: alive, last poll 43s ago",
+  "last_poll_utc": "2026-07-16T20:51:22Z",
+  "age_s": 6,
+  "cycles": 14,
+  "label": "scout: alive, last poll 6s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "4:41pm",
-   "text": "poll #5 · nothing new",
-   "detail": "poll cycle=5 ok directives_new=0"
+   "time": "4:47pm",
+   "text": "slate-refresh: slate ok (today populated",
+   "detail": "slate-refresh: slate ok (today populated)"
   },
   {
-   "time": "4:42pm",
-   "text": "recovery-eval: coordinator present=True inbox pending=True work pending=True suppressed=False queue marker=True",
-   "detail": "recovery-eval: coordinator_present=True inbox_pending=True work_pending=True suppressed=False queue_marker=True"
-  },
-  {
-   "time": "4:42pm",
-   "text": "poll #6 · nothing new",
-   "detail": "poll cycle=6 ok directives_new=0"
-  },
-  {
-   "time": "4:43pm",
+   "time": "4:48pm",
    "text": "recovery-eval: coordinator present=True inbox pending=False work pending=True suppressed=False queue marker=True",
    "detail": "recovery-eval: coordinator_present=True inbox_pending=False work_pending=True suppressed=False queue_marker=True"
   },
   {
-   "time": "4:43pm",
-   "text": "poll #7 · nothing new",
-   "detail": "poll cycle=7 ok directives_new=0"
+   "time": "4:48pm",
+   "text": "poll #11 · nothing new",
+   "detail": "poll cycle=11 ok directives_new=0"
   },
   {
-   "time": "4:44pm",
+   "time": "4:49pm",
    "text": "width-tripwire: RECOVERED - under-width defect/refill cleared (running 5/6",
    "detail": "width-tripwire: RECOVERED - under-width defect/refill cleared (running 5/6)"
   },
   {
-   "time": "4:44pm",
+   "time": "4:49pm",
    "text": "recovery-eval: coordinator present=True inbox pending=False work pending=True suppressed=False queue marker=True",
    "detail": "recovery-eval: coordinator_present=True inbox_pending=False work_pending=True suppressed=False queue_marker=True"
   },
   {
-   "time": "4:44pm",
-   "text": "poll #8 · nothing new",
-   "detail": "poll cycle=8 ok directives_new=0"
+   "time": "4:49pm",
+   "text": "poll #12 · nothing new",
+   "detail": "poll cycle=12 ok directives_new=0"
   },
   {
-   "time": "4:45pm",
+   "time": "4:50pm",
    "text": "recovery-eval: coordinator present=True inbox pending=False work pending=True suppressed=False queue marker=True",
    "detail": "recovery-eval: coordinator_present=True inbox_pending=False work_pending=True suppressed=False queue_marker=True"
   },
   {
-   "time": "4:45pm",
-   "text": "poll #9 · nothing new",
-   "detail": "poll cycle=9 ok directives_new=0"
+   "time": "4:50pm",
+   "text": "poll #13 · nothing new",
+   "detail": "poll cycle=13 ok directives_new=0"
+  },
+  {
+   "time": "4:51pm",
+   "text": "recovery-eval: coordinator present=True inbox pending=False work pending=True suppressed=False queue marker=True",
+   "detail": "recovery-eval: coordinator_present=True inbox_pending=False work_pending=True suppressed=False queue_marker=True"
+  },
+  {
+   "time": "4:51pm",
+   "text": "poll #14 · nothing new",
+   "detail": "poll cycle=14 ok directives_new=0"
   }
  ],
  "helpers": {
-  "as_of": "2026-07-16T20:45:57Z",
+  "as_of": "2026-07-16T20:51:22Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -3519,48 +3520,48 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "43s",
-    "state_text": "on · seen 43s ago"
+    "age_label": "6s",
+    "state_text": "on · seen 6s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, reports width truth",
     "active": true,
     "stale": false,
-    "age_label": "51s",
-    "state_text": "on · seen 51s ago"
+    "age_label": "44s",
+    "state_text": "on · seen 44s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "5m",
-    "state_text": "on · seen 5m ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "45s",
-    "state_text": "on · seen 45s ago"
+    "age_label": "8s",
+    "state_text": "on · seen 8s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "5m",
-    "state_text": "on · seen 5m ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    }
   ],
   "width": {
-   "running": 4,
+   "running": 5,
    "target": 6,
-   "empty": 2,
-   "line": "4 of 6 jobs running.",
-   "reason": "Only 4 of 6 jobs are running — 2 more flagged for the coordinator to start from the priority list.",
+   "empty": 1,
+   "line": "5 of 6 jobs running.",
+   "reason": "Only 5 of 6 jobs are running — 1 more flagged for the coordinator to start from the priority list.",
    "stale": false
   },
   "scheduled_jobs": [
@@ -3635,7 +3636,7 @@
  },
  "coordinator_heartbeat": {
   "alive": true,
-  "last_heartbeat_utc": "2026-07-16T20:46:40Z"
+  "last_heartbeat_utc": "2026-07-16T20:51:23Z"
  },
  "pipe_health": {
   "directives_pending": 0,
@@ -3653,38 +3654,31 @@
   "usage_resets_clock": "",
   "note": ""
  },
- "width_defect": {
-  "active": false,
-  "refilling": true,
-  "state": "refilling",
-  "text": "Wrapping up a batch of jobs and refilling the work lanes — back to full shortly.",
-  "running": 4,
-  "target": 6
- },
+ "width_defect": {},
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-07-16T20:46:37+00:00",
+   "as_of": "2026-07-16T20:51:08Z",
    "stale": false,
-   "revalidated": "2026-07-16T20:46:37+00:00",
+   "revalidated": "2026-07-16T20:51:27+00:00",
    "stale_reason": "",
-   "age_label": "0s",
+   "age_label": "19s",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-16T20:46:37+00:00",
+   "as_of": "2026-07-16T20:51:27+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T20:46:37+00:00",
+   "revalidated": "2026-07-16T20:51:27+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-16T20:46:37+00:00",
+   "as_of": "2026-07-16T20:51:27+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T20:46:37+00:00",
+   "revalidated": "2026-07-16T20:51:27+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
@@ -3693,7 +3687,7 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-16T20:46:37+00:00",
+   "revalidated": "2026-07-16T20:51:27+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -3702,16 +3696,16 @@
    "source": "dispatch queue",
    "as_of": "2026-07-16T20:30:36Z",
    "stale": true,
-   "revalidated": "2026-07-16T20:46:37+00:00",
-   "stale_reason": "These readings may be out of date — last updated 16m ago.",
-   "age_label": "16m",
+   "revalidated": "2026-07-16T20:51:27+00:00",
+   "stale_reason": "These readings may be out of date — last updated 20m ago.",
+   "age_label": "20m",
    "stale_after": 300
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-16T20:46:37+00:00",
+   "revalidated": "2026-07-16T20:51:27+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -3720,38 +3714,38 @@
    "source": "director inbox",
    "as_of": "2026-07-16T16:22:06Z",
    "stale": false,
-   "revalidated": "2026-07-16T20:46:37+00:00",
+   "revalidated": "2026-07-16T20:51:27+00:00",
    "stale_reason": "",
    "age_label": "4h",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
-   "as_of": "2026-07-16T20:46:37+00:00",
+   "as_of": "2026-07-16T20:51:27+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T20:46:37+00:00",
+   "revalidated": "2026-07-16T20:51:27+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 172800
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-16T20:41:13+00:00",
+   "as_of": "2026-07-16T20:46:37+00:00",
    "stale": false,
-   "revalidated": "2026-07-16T20:46:37+00:00",
+   "revalidated": "2026-07-16T20:51:27+00:00",
    "stale_reason": "",
-   "age_label": "5m",
+   "age_label": "4m",
    "stale_after": null
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-16T20:45:57Z",
+   "as_of": "2026-07-16T20:51:22Z",
    "stale": false,
-   "revalidated": "2026-07-16T20:46:37+00:00",
+   "revalidated": "2026-07-16T20:51:27+00:00",
    "stale_reason": "",
-   "age_label": "43s",
+   "age_label": "6s",
    "stale_after": null
   }
  },
- "generated_et": "Jul 16, 4:46pm ET"
+ "generated_et": "Jul 16, 4:51pm ET"
 }
