@@ -1,19 +1,19 @@
 {
- "generated_utc": "2026-07-17T18:11:31Z",
- "as_of": "2026-07-17T18:11:31Z",
- "driver": "scout",
+ "generated_utc": "2026-07-17T18:17:07Z",
+ "as_of": "2026-07-17T18:17:07Z",
+ "driver": "coordinator",
  "scout_state": {
-  "state": "live",
-  "label": "scout: alive, last check 39s ago (check #120)",
-  "reason": "The background monitor is running and checking every minute.",
+  "state": "down",
+  "label": "scout: not reporting in — needs a restart",
+  "reason": "The background monitor has not reported in for a while and likely needs a restart.",
   "last_poll_utc": "2026-07-17T18:10:52Z",
-  "age_s": 39,
+  "age_s": 375,
   "cycles": 120
  },
- "why_quiet": "",
- "quiet": false,
+ "why_quiet": "The background monitor has not reported in for a while and likely needs a restart.",
+ "quiet": true,
  "cycle": {
-  "as_of": "2026-07-17T18:11:31Z",
+  "as_of": "2026-07-17T18:17:07Z",
   "checked": [
    {
     "checked": "new final games",
@@ -36,7 +36,7 @@
   "face": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running"
  },
  "usage": {
-  "as_of": "2026-07-17T18:11:31Z",
+  "as_of": "2026-07-17T18:17:07Z",
   "reading_utc": null,
   "age_s": null,
   "stale": true,
@@ -58,11 +58,11 @@
  "coordinator": {
   "state": "idle",
   "working": false,
-  "label": "Coordinator: IDLE — no progress for 8m.",
-  "age_s": 487,
+  "label": "Coordinator: IDLE — no progress for 13m.",
+  "age_s": 823,
   "stale": true,
-  "age_label": "8m",
-  "fresh_label": "STALE 8m"
+  "age_label": "13m",
+  "fresh_label": "STALE 13m"
  },
  "task_state": {
   "running": 2,
@@ -76,14 +76,14 @@
   {
    "key": "scout",
    "name": "Scout",
-   "state": "active",
-   "active": true,
+   "state": "idle",
+   "active": false,
    "does": "watches for your instructions",
-   "label": "Scout: active, last beat 39s ago",
-   "age_s": 39,
-   "stale": false,
-   "age_label": "39s",
-   "fresh_label": "39s"
+   "label": "Scout: STALE — last beat 6m ago",
+   "age_s": 375,
+   "stale": true,
+   "age_label": "6m",
+   "fresh_label": "STALE 6m"
   },
   {
    "key": "floor_manager",
@@ -91,11 +91,11 @@
    "state": "active",
    "active": true,
    "does": "counts running jobs and refills empty slots",
-   "label": "Floor manager: active, last beat 79s ago",
-   "age_s": 79,
+   "label": "Floor manager: active, last beat 64s ago",
+   "age_s": 64,
    "stale": false,
-   "age_label": "79s",
-   "fresh_label": "79s"
+   "age_label": "64s",
+   "fresh_label": "64s"
   },
   {
    "key": "board_baker",
@@ -103,11 +103,11 @@
    "state": "active",
    "active": true,
    "does": "rebuilds the live status page",
-   "label": "Status-page baker: active, last beat 26s ago",
-   "age_s": 26,
+   "label": "Status-page baker: active, last beat 15s ago",
+   "age_s": 15,
    "stale": false,
-   "age_label": "26s",
-   "fresh_label": "26s"
+   "age_label": "15s",
+   "fresh_label": "15s"
   },
   {
    "key": "discord_replies",
@@ -115,11 +115,11 @@
    "state": "active",
    "active": true,
    "does": "routes your chat replies back in",
-   "label": "Two-way replies: active, last beat 77s ago",
-   "age_s": 77,
+   "label": "Two-way replies: active, last beat 53s ago",
+   "age_s": 53,
    "stale": false,
-   "age_label": "77s",
-   "fresh_label": "77s"
+   "age_label": "53s",
+   "fresh_label": "53s"
   },
   {
    "key": "inbox_triage",
@@ -127,11 +127,11 @@
    "state": "active",
    "active": true,
    "does": "reads new instructions the instant they land",
-   "label": "Inbox triage: active, last beat 3m ago",
-   "age_s": 183,
+   "label": "Inbox triage: active, last beat 4m ago",
+   "age_s": 294,
    "stale": false,
-   "age_label": "3m",
-   "fresh_label": "3m"
+   "age_label": "4m",
+   "fresh_label": "4m"
   }
  ],
  "width": {
@@ -140,24 +140,19 @@
   "empty": 4,
   "line": "2 of 6 jobs running.",
   "reason": "Only 2 of 6 jobs are running — 4 more flagged for the coordinator to start from the priority list.",
-  "age_s": 79,
+  "age_s": 64,
   "stale": false,
-  "fresh_label": "79s"
+  "fresh_label": "64s"
  },
  "scout_heartbeat": {
-  "alive": true,
+  "alive": false,
   "last_poll_utc": "2026-07-17T18:10:52Z",
-  "age_s": 39,
+  "age_s": 375,
   "cycles": 120,
-  "label": "scout: alive, last check 39s ago (check #120)",
+  "label": "scout: not reporting in — needs a restart",
   "anchor": "scout_activity.py"
  },
  "scout_activity": [
-  {
-   "time": "1:15pm",
-   "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
-   "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
-  },
   {
    "time": "1:21pm",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
@@ -210,6 +205,11 @@
   },
   {
    "time": "2:11pm",
+   "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
+   "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
+  },
+  {
+   "time": "2:17pm",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   }
