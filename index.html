@@ -292,6 +292,7 @@
     <a href="./games.html">Games</a>
     <a href="./availability.html">Injuries</a>
     <a href="./teams.html">Teams</a>
+    <a href="./coach.html">Coach</a>
     <a href="./players.html">Players</a>
     <a href="./review.html">Daily Review</a>
     <a href="./accuracy.html">Our Accuracy</a>
@@ -365,6 +366,15 @@
     var ageSecs = asOf ? sinceIso(asOf) : null;
     var clientStale = (ageSecs!=null) && (ageSecs > win);
     var stale = !!(m && m.stale) || clientStale;
+    // HONEST reason for the red flag (A-rung: the STALE badge must explain ITSELF, not just sit red).
+    // Prefer the assembler's own copy-gated stale_reason; else compose one from the LIVE client-side age
+    // so a frozen board (a 304 that never re-bakes, so no server reason was written) still says why.
+    var reason = (m && m.stale_reason) || "";
+    if(stale && !reason){
+      reason = (ageSecs!=null)
+        ? ("These readings may be out of date — last updated "+agoSecs(ageSecs)+" ago.")
+        : "These readings may be out of date.";
+    }
     if(asOf){
       prov.innerHTML = src + "as of <b>…</b>";
       prov.setAttribute("data-asof", asOf);
@@ -373,13 +383,16 @@
       // No source stamp at all — say so plainly; never fabricate a fresh tick for data of unknown age.
       prov.innerHTML = src + "freshness unknown";
     }
-    if(m && m.stale_reason){ prov.title=m.stale_reason; }
-    return {prov:prov, stale:stale};
+    if(reason){ prov.title=reason; }
+    return {prov:prov, stale:stale, reason:reason};
   }
+  // The loud STALE flag, carrying its own hover-explanation (the section's stale_reason) so a coach
+  // who sees red on a panel learns WHY without opening anything. One builder for every panel's badge.
+  function staleBadge(reason){ var b=el("span","stalebadge","stale"); if(reason){ b.title=reason; } return b; }
   function sectionHead(title, key){
     var wrap=el("div","sechead"); wrap.appendChild(el("h2",null,title));
     var p=provFor(key);
-    if(p.stale){ wrap.appendChild(el("span","stalebadge","stale")); }
+    if(p.stale){ wrap.appendChild(staleBadge(p.reason)); }
     wrap.appendChild(p.prov);
     return wrap;
   }
@@ -398,7 +411,10 @@
       var win=(+node.getAttribute("data-staleafter")) || staleAfterSecs();
       var want=(ps!=null) && (ps > win);
       var existing=head.querySelector(".stalebadge");
-      if(want && !existing){ head.insertBefore(el("span","stalebadge age","stale"), node); }
+      if(want && !existing){
+        var ab=staleBadge("These readings may be out of date — last updated "+agoSecs(ps)+" ago.");
+        ab.className="stalebadge age"; head.insertBefore(ab, node);
+      }
       else if(!want && existing && existing.className.indexOf("age")>=0){ head.removeChild(existing); }
     }
   }
@@ -805,7 +821,7 @@
     var eb=el("div","eyebrow");
     eb.appendChild(el("span",null,"Tonight — our picks"));
     var p=provFor("today_games");
-    if(p.stale){ eb.appendChild(el("span","stalebadge","stale")); }
+    if(p.stale){ eb.appendChild(staleBadge(p.reason)); }
     eb.appendChild(p.prov);
     s.appendChild(eb);
     if(!tg || !tg.games || !tg.games.length){
@@ -918,7 +934,7 @@
     var s=el("section"); s.setAttribute("data-k","foulwatch");
     var head=el("div","sechead"); head.appendChild(el("h2",null,"Foul-Trouble Watch"));
     var p=provFor("foul_risk");
-    if(p.stale){ head.appendChild(el("span","stalebadge","stale")); }
+    if(p.stale){ head.appendChild(staleBadge(p.reason)); }
     head.appendChild(p.prov);
     s.appendChild(head);
     if(f.note){ s.appendChild(el("p","empty", f.note)); }
