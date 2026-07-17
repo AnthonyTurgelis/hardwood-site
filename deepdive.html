@@ -33,6 +33,15 @@
   .item .body code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:.9em;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
   .item .body pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 13px;overflow-x:auto;margin:9px 0}
   .item .body pre code{background:none;border:none;padding:0;white-space:pre;display:block;font-size:11.5px;line-height:1.5}
+  /* Data tables: a whitespace-columned code block that is really a numeric table renders as a
+     scannable HTML table (humanized headers, sensible rounding) instead of a raw ASCII dump. */
+  .item .body .dtwrap{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:8px}
+  .item .body table.dtable{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+  .item .body .dtable th,.item .body .dtable td{padding:5px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  .item .body .dtable th{background:var(--card2);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+  .item .body .dtable th.num,.item .body .dtable td.num{text-align:right}
+  .item .body .dtable tbody tr:last-child td{border-bottom:none}
+  .item .body .dtable tbody tr:hover{background:var(--card2)}
   .soon{background:var(--card);border:1px dashed var(--line2);border-radius:11px;padding:22px 16px;text-align:center;color:var(--muted);font-size:13px;max-width:620px;margin:10px 0}
   .empty{color:var(--dim);font-style:italic}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
@@ -89,14 +98,84 @@
     }
   }
 
+  // Coach-readable column headers for the raw DB slugs our deep-dive tables are keyed on. Display
+  // only; unknown slugs fall back to a mechanical de-underscore + smart suffixes, so a new column
+  // never renders as broken jargon.
+  var HDR={
+    "season":"Season","games":"Games","ft_rate":"FT rate","ftr":"FT rate",
+    "fta_per_team_game":"FTA / team-game","pts_per_team_game":"Points / team-game",
+    "fga_per_team_game":"FGA / team-game","fg3a_per_team_game":"3PA / team-game",
+    "reb_per_team_game":"Rebounds / team-game","ast_per_team_game":"Assists / team-game",
+    "n":"Count","mae":"MAE","rmse":"RMSE"
+  };
+  function humanizeHeader(h){
+    var k=String(h).toLowerCase();
+    if(HDR[k]) return HDR[k];
+    var s=k.replace(/_per_team_game$/," / team-game").replace(/_per_game$/," / game")
+           .replace(/_pct$/," %").replace(/_/g," ").trim();
+    return s ? (s.charAt(0).toUpperCase()+s.slice(1)) : String(h);
+  }
+  function isNum(s){ return s!=="" && s!=null && isFinite(Number(s)); }
+
+  // Try to read a fenced code block as a whitespace-columned NUMERIC data table. Returns a styled
+  // <table> node, or null to fall back to <pre> (real code, prose, or a ragged/non-numeric block).
+  // Built entirely from el()/textContent, so no author text is ever injected as HTML.
+  function dataTable(inner, info){
+    var lang=(info||"").trim().toLowerCase();
+    if(lang!=="" && lang!=="text") return null;                 // only plain / ```text fences
+    var lines=inner.split("\n").map(function(l){ return l.replace(/\s+$/,""); })
+                   .filter(function(l){ return l.trim()!==""; });
+    if(lines.length<3) return null;                             // need header + >=2 data rows
+    var header=lines[0].trim().split(/\s+/);
+    var ncol=header.length;
+    if(ncol<2 || header.some(isNum)) return null;               // header must be non-numeric labels
+    var rows=[];
+    for(var i=1;i<lines.length;i++){
+      var cells=lines[i].trim().split(/\s+/);
+      if(cells.length!==ncol) return null;                      // ragged -> not a clean table
+      rows.push(cells);
+    }
+    // A column is numeric only if EVERY data cell in it parses as a number.
+    var colNum=[], numCount=0;
+    for(var c=0;c<ncol;c++){
+      var allNum=rows.every(function(r){ return isNum(r[c]); });
+      colNum.push(allNum); if(allNum) numCount++;
+    }
+    if(numCount < Math.ceil(ncol/2)) return null;               // <half numeric -> treat as code
+    // Per-column decimals: whole-number columns show integers; sub-unit rates get 3 dp; else 1 dp.
+    var dec=[];
+    for(var c2=0;c2<ncol;c2++){
+      if(!colNum[c2]){ dec.push(null); continue; }
+      var vals=rows.map(function(r){ return Number(r[c2]); });
+      var allInt=vals.every(function(v){ return isFinite(v) && Math.floor(v)===v; });
+      var maxAbs=vals.reduce(function(m,v){ return Math.max(m,Math.abs(v)); },0);
+      dec.push(allInt ? 0 : (maxAbs<1.5 ? 3 : 1));
+    }
+    var wrap=el("div","dtwrap"), t=el("table","dtable"), thead=el("thead"), hr=el("tr");
+    header.forEach(function(h,c){ hr.appendChild(el("th", colNum[c]?"num":null, humanizeHeader(h))); });
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb=el("tbody");
+    rows.forEach(function(r){
+      var tr=el("tr");
+      r.forEach(function(cell,c){
+        tr.appendChild(el("td", colNum[c]?"num":null, colNum[c] ? Number(cell).toFixed(dec[c]) : cell));
+      });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); wrap.appendChild(t); return wrap;
+  }
+
   // Render the baked markdown blocks (each array element is a paragraph split on a blank line) as
-  // formatted prose: fenced code -> <pre>, #/## -> section head, ###+ -> sub-head, else paragraph.
-  // A leading H1 that just repeats the card title is dropped (it was printed twice before).
+  // formatted prose: fenced code -> data table (if numeric) else <pre>, #/## -> section head,
+  // ###+ -> sub-head, else paragraph. A leading H1 that repeats the card title is dropped.
   function renderContent(body, paras, title){
     (paras||[]).forEach(function(raw){
       var t=(raw==null?"":String(raw)).replace(/^\s+/,"");
       if(t.indexOf("```")===0){
+        var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
         var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
+        var tbl=dataTable(inner, info);
+        if(tbl){ body.appendChild(tbl); return; }
         var pre=el("pre"); pre.appendChild(el("code",null,inner)); body.appendChild(pre); return;
       }
       var hm=/^(#{1,6})\s+([^\n]*)([\s\S]*)$/.exec(t);
