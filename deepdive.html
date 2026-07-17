@@ -29,6 +29,19 @@
   .item .fresh{font-size:10.5px;font-weight:600;color:var(--muted);
     background:var(--chip,var(--card2));border:1px solid var(--line);border-radius:999px;
     padding:2px 9px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em}
+  /* right-side chip row: keeps the verdict + freshness pills grouped at the end of the header
+     (title stays left) so a 3rd child doesn't get spread by the space-between. */
+  .item .chips{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;justify-content:flex-end}
+  /* per-dive VERDICT chip (A+): a FIXED-vocabulary pill (NOISE / SIGNAL / ADOPTED) SELECTED from
+     the dive's OWN conclusion prose — never synthesized, omitted entirely when the prose states
+     none. Reuses the .fresh pill shape; a semantic color per verdict (fallbacks inlined so the
+     chip is still legible if hardwood.css fails to load). */
+  .item .verdict{font-size:10.5px;font-weight:700;border-radius:999px;padding:2px 9px;
+    white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;
+    background:var(--chip,var(--card2));border:1px solid var(--line);color:var(--muted)}
+  .item .verdict.v-noise{color:var(--dim);border-color:var(--line2)}          /* investigated, no real effect */
+  .item .verdict.v-signal{color:var(--good,#1f8f3d);border-color:var(--good,#1f8f3d)} /* a real effect found */
+  .item .verdict.v-adopted{color:var(--acc);border-color:var(--acc)}          /* folded into the model */
   /* one-line takeaway tile: the finding in plain language above the table, so a coach gets the
      point without reading the numbers. Text is the dive's OWN lede sentence (never fabricated). */
   .item .takeaway{display:flex;gap:9px;align-items:baseline;margin-top:10px;padding:9px 11px;
@@ -249,6 +262,35 @@
     return false;
   }
 
+  // Per-dive VERDICT chip (A+ rung). The label is a FIXED vocabulary — NOISE / SIGNAL / ADOPTED —
+  // only SELECTED (never synthesized) from the dive's OWN recommendation/conclusion prose. If the
+  // prose states no clear verdict we return null and render NO chip (open), rather than guess a
+  // conclusion (DATA-INTEGRITY: omit, never fabricate). Code/data fences are EXCLUDED so a number
+  // in a table can never be misread as a verdict. Order matters: NOISE is checked FIRST because a
+  // noise dive may still say its baseline "remains our core", which must not read as an adoption.
+  function verdictOf(content){
+    var s="";
+    (content||[]).forEach(function(raw){
+      var t=(raw==null?"":String(raw)).replace(/^\s+/,"");
+      if(t.indexOf("```")===0) return;          // never read a verdict out of a data/code fence
+      s+=" "+t;
+    });
+    s=s.toLowerCase();
+    // NOISE: the dive labels its OWN tested idea noise (a conclusion verb / "just" near "noise").
+    if(/\b(proved|proven|shown to be|turned out to be|is|was|were|it's|just)\b[^.!?]*\bnoise\b/.test(s))
+      return {label:"NOISE", cls:"v-noise"};
+    // ADOPTED: the change is already MADE / live in the pipeline (present-perfect adoption).
+    if(/\b(have|has|we've|now)\b[^.!?]*\b(incorporated|adopted|folded in|added it|shipped|baked in|in production)\b/.test(s)
+       || /\b(adopted|incorporated|shipped)\b[^.!?]*\b(into|in)\b[^.!?]*\b(pipeline|core|model|production)\b/.test(s))
+      return {label:"ADOPTED", cls:"v-adopted"};
+    // SIGNAL: a real effect found + a FORWARD recommendation to act on it. Guard against a negated
+    // recommendation ("we should NOT incorporate") so a negative never reads as a positive signal.
+    var negated=/\b(should not|shouldn't|do not recommend|don't recommend|not a real|no real (signal|effect))\b/.test(s);
+    if(!negated && /\b(we should|we recommend|should incorporate|should adjust|should add|recommend incorporating|real (signal|effect))\b/.test(s))
+      return {label:"SIGNAL", cls:"v-signal"};
+    return null;   // no clear verdict stated -> no chip (open); never guess.
+  }
+
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
     if(d.available && (d.items||[]).length){
@@ -256,8 +298,14 @@
         var c=el("div","item");
         var hd=el("div","dvhd");
         hd.appendChild(el("div","ti",it.title||"We Tested It"));
+        var chips=el("div","chips");
+        // Verdict chip — fixed vocabulary, SELECTED from the dive's own conclusion prose; omitted
+        // (no chip) when the prose states no clear verdict. Never fabricated.
+        var vd=verdictOf(it.content);
+        if(vd){ chips.appendChild(el("span","verdict "+vd.cls, vd.label)); }
         // Freshness badge — sourced ONLY from the dive's own as_of; omitted when absent (never invented).
-        if(it.as_of){ hd.appendChild(el("span","fresh","As of "+fmtDate(it.as_of))); }
+        if(it.as_of){ chips.appendChild(el("span","fresh","As of "+fmtDate(it.as_of))); }
+        if(chips.children.length){ hd.appendChild(chips); }
         c.appendChild(hd);
         if(it.content && it.content.length){
           var body=el("div","body");
