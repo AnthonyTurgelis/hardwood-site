@@ -3,90 +3,120 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Hardwood — We Tested It</title>
+<title>The Hardwood — Deep Dives</title>
 <style>
-  :root{ --bg:#f4f6f8; --card:#fff; --card2:#f7f9fc; --ink:#161a21; --muted:#5a6675; --dim:#8a93a3;
-    --line:#e3e7ee; --line2:#d3d9e3; --acc:#2b6cb0; --shadow:0 1px 2px rgba(20,24,35,.06); }
-  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --card2:#1c2330; --ink:#e6edf3;
-    --muted:#9aa7b4; --dim:#6b7684; --line:#242c38; --line2:#39424f; --acc:#58a6ff; --shadow:none; } }
+  /* Fallback tokens (hardwood.css wins the cascade when it loads; these keep the
+     page legible if it ever fails). */
+  :root{ --bg:#f4f6fa; --card:#fff; --card2:#f5f8fc; --chip:#eef2f8; --ink:#15181f;
+    --muted:#586074; --dim:#8993a6; --line:#e6eaf1; --line2:#d6dce6;
+    --acc:#2f6fed; --accent:#2f6fed; --accent-weak:rgba(47,111,237,.10);
+    --good:#1f8f3d; --bad:#c62828; --home:#2f6fed; --away:#b4530a;
+    --radius:10px; --shadow:0 1px 2px rgba(16,24,40,.06); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0b0e13; --card:#151a21; --card2:#1b212b;
+    --chip:#20293a; --ink:#e8edf4; --muted:#9aa6b4; --dim:#6b7684; --line:#232b37; --line2:#38424f;
+    --acc:#6ea8fe; --accent:#6ea8fe; --accent-weak:rgba(110,168,254,.16);
+    --good:#3fb950; --bad:#ff7b72; --home:#4a8cf0; --away:#c98209; --shadow:none; } }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;overflow-x:hidden}
   header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
-  h1{font-size:17px;margin:0}
+  h1{font-size:18px;margin:0;font-weight:750;letter-spacing:-.01em}
   .ago{font-size:11px;color:var(--dim);white-space:nowrap}
   .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto;padding:0 14px}
   nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
-  nav a{font-size:12px;text-decoration:none;color:var(--acc);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
-  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc)}
-  main{max-width:1080px;margin:0 auto;padding:8px 14px 48px}
-  .lede{color:var(--muted);font-size:12.5px;margin:8px 0 14px;max-width:760px}
-  .item{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);padding:11px 13px;margin:8px 0}
-  .item .ti{font-weight:680;font-size:13.5px}
-  .item .as{color:var(--dim);font-size:11px;margin-top:3px}
-  /* dive header: title on the left, a freshness "as of" badge on the right (reuses the pill/chip
-     look from the board). Badge is sourced ONLY from the dive's own as_of date; omitted if absent. */
-  .item .dvhd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
-  .item .fresh{font-size:10.5px;font-weight:600;color:var(--muted);
-    background:var(--chip,var(--card2));border:1px solid var(--line);border-radius:999px;
-    padding:2px 9px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em}
-  /* right-side chip row: keeps the verdict + freshness pills grouped at the end of the header
-     (title stays left) so a 3rd child doesn't get spread by the space-between. */
-  .item .chips{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;justify-content:flex-end}
-  /* per-dive VERDICT chip (A+): a FIXED-vocabulary pill (NOISE / SIGNAL / ADOPTED) SELECTED from
-     the dive's OWN conclusion prose — never synthesized, omitted entirely when the prose states
-     none. Reuses the .fresh pill shape; a semantic color per verdict (fallbacks inlined so the
-     chip is still legible if hardwood.css fails to load). */
-  .item .verdict{font-size:10.5px;font-weight:700;border-radius:999px;padding:2px 9px;
-    white-space:nowrap;text-transform:uppercase;letter-spacing:.04em;
-    background:var(--chip,var(--card2));border:1px solid var(--line);color:var(--muted)}
-  .item .verdict.v-noise{color:var(--dim);border-color:var(--line2)}          /* investigated, no real effect */
-  .item .verdict.v-signal{color:var(--good,#1f8f3d);border-color:var(--good,#1f8f3d)} /* a real effect found */
-  .item .verdict.v-adopted{color:var(--acc);border-color:var(--acc)}          /* folded into the model */
-  /* one-line takeaway tile: the finding in plain language above the table, so a coach gets the
-     point without reading the numbers. Text is the dive's OWN lede sentence (never fabricated). */
-  .item .takeaway{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin-top:10px;padding:9px 11px;
-    background:var(--accent-weak,rgba(43,108,176,.08));border-left:3px solid var(--acc);border-radius:7px}
-  .item .takeaway-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
-    color:var(--acc);white-space:nowrap}
-  .item .takeaway-t{font-size:13px;font-weight:600;color:var(--ink);line-height:1.4;flex:1 1 200px}
-  /* A++ rung: a mechanically-DERIVED trend delta chip, computed from the dive's OWN table rows
-     (latest vs the baseline/first value of the ONE metric the finding sentence names). Rendered
-     ONLY when the table pins that value unambiguously; omitted entirely otherwise (never guessed).
-     Tabular-nums pill, aligned to the end of the takeaway row like a scoreboard readout. */
-  .item .takeaway-d{font-size:11px;font-weight:700;color:var(--acc);white-space:nowrap;
-    font-variant-numeric:tabular-nums;background:var(--chip,var(--card2));border:1px solid var(--line);
-    border-radius:999px;padding:2px 9px;align-self:center}
-  /* deep-dive body: the .md article is rendered as formatted prose (headings / bold / code
-     tables), never raw markdown syntax leaking to the reader. */
-  .item .body{margin-top:10px;font-size:13px;line-height:1.55}
-  .item .body h3{font-size:14px;margin:15px 0 4px;font-weight:700}
-  .item .body h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:13px 0 3px;font-weight:700}
-  .item .body p{margin:8px 0}
-  .item .body strong{font-weight:680;color:var(--ink)}
-  .item .body code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:.9em;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-  .item .body pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 13px;overflow-x:auto;margin:9px 0}
-  .item .body pre code{background:none;border:none;padding:0;white-space:pre;display:block;font-size:11.5px;line-height:1.5}
-  /* Data tables: a whitespace-columned code block that is really a numeric table renders as a
-     scannable HTML table (humanized headers, sensible rounding) instead of a raw ASCII dump. */
-  .item .body .dtwrap{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:8px}
-  .item .body table.dtable{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
-  .item .body .dtable th,.item .body .dtable td{padding:5px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
-  .item .body .dtable th{background:var(--card2);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.03em;font-weight:700}
-  .item .body .dtable th.num,.item .body .dtable td.num{text-align:right}
-  .item .body .dtable tbody tr:last-child td{border-bottom:none}
-  .item .body .dtable tbody tr:hover{background:var(--card2)}
-  .soon{background:var(--card);border:1px dashed var(--line2);border-radius:11px;padding:22px 16px;text-align:center;color:var(--muted);font-size:13px;max-width:620px;margin:10px 0}
+  nav a{font-size:12px;text-decoration:none;color:var(--muted);border:1px solid var(--line);background:var(--card);padding:6px 11px;border-radius:999px;font-weight:600}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 56px}
   .empty{color:var(--dim);font-style:italic}
+
+  /* --- section headings --- */
+  .sec{margin:18px 0 8px}
+  .sec-h{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 2px}
+  .sec-lede{color:var(--muted);font-size:12.5px;margin:2px 0 12px;max-width:780px}
+
+  /* --- a dive card --- */
+  .dive{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:13px 15px;margin:10px 0}
+  .dive-q{font-size:15px;font-weight:750;letter-spacing:-.01em;line-height:1.25}
+  .dive-src{color:var(--dim);font-size:10.5px;margin-top:3px;text-transform:uppercase;letter-spacing:.03em;font-variant-numeric:tabular-nums}
+  /* the headline number line — the one answer, up top and bold */
+  .dhead{margin:11px 0 4px;padding:10px 12px;background:var(--accent-weak);border-left:3px solid var(--acc);border-radius:8px;font-size:13.5px;font-weight:600;line-height:1.4;color:var(--ink)}
+
+  /* --- stat tiles --- */
+  .tiles{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:flex-end;margin:12px 0 4px}
+  .tile{display:flex;flex-direction:column;line-height:1.05}
+  .tile .tv{font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .tile .tl{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;margin-top:3px}
+  .tile.sm .tv{font-size:16px;font-weight:750}
+
+  /* --- sub-panel label --- */
+  .plab{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800;margin:15px 0 5px}
+
+  /* --- data grid --- */
+  .dtwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0;border:1px solid var(--line);border-radius:9px}
+  table.dt{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+  .dt th,.dt td{padding:5px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  .dt th{background:var(--card2);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+  .dt th.num,.dt td.num{text-align:right}
+  .dt tbody tr:last-child td{border-bottom:none}
+  .dt tbody tr:hover{background:var(--card2)}
+  .dt td.rowh{font-weight:700;color:var(--ink);text-transform:none}
+  .dt .cbig{font-weight:700;font-variant-numeric:tabular-nums}
+  .dt .csmall{font-size:10.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+  .dt td.thin,.dt td.thin .cbig{color:var(--dim);font-weight:500}
+  .dt td.thin .csmall{color:var(--line2)}
+
+  /* --- horizontal magnitude bar rows --- */
+  .barrow{display:flex;align-items:center;gap:9px;margin:5px 0}
+  .barrow .bl{flex:0 0 128px;font-size:11.5px;color:var(--ink);font-weight:600}
+  .barrow .bt{position:relative;flex:1 1 auto;height:11px;border-radius:6px;background:var(--line2);overflow:hidden;min-width:60px}
+  .barrow .bt>i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--acc);display:block}
+  .barrow .bt>i.neg{background:var(--away)}
+  .barrow .bv{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;min-width:52px;text-align:right}
+  .barrow .bn{flex:0 0 auto;font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums;min-width:44px;text-align:right}
+
+  /* --- inline cell bar (reuses the hardwood .cellbar look) --- */
+  .cellbar{position:relative;width:52px;max-width:100%;height:4px;border-radius:2px;background:var(--line2);overflow:hidden;display:inline-block;vertical-align:middle;margin-left:7px}
+  .cellbar>i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:var(--acc)}
+
+  /* --- plain-English read strip --- */
+  .read{margin:13px 0 2px}
+  .read p{margin:7px 0;font-size:12.5px;line-height:1.55;color:var(--ink)}
+  .read p .lead-k{font-weight:800;color:var(--muted);text-transform:uppercase;font-size:9.5px;letter-spacing:.05em;margin-right:6px}
+
+  /* --- collapsible provenance / caveats (long explanations, buried at the bottom) --- */
+  details.method{margin:12px 0 2px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card2);overflow:hidden}
+  details.method>summary{cursor:pointer;list-style:none;padding:8px 12px;font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:7px}
+  details.method>summary::-webkit-details-marker{display:none}
+  details.method>summary::before{content:"\25B8";font-size:10px;color:var(--dim)}
+  details.method[open]>summary::before{content:"\25BE"}
+  details.method>summary:hover{color:var(--ink)}
+  .method-body{padding:0 12px 11px;font-size:11.5px;color:var(--muted);line-height:1.6}
+  .method-body b{color:var(--ink)}
+  .method-body ul{margin:6px 0;padding-left:18px}
+  .method-body li{margin:4px 0}
+
+  /* --- We Tested It (preserved noise-investigation surface) --- */
+  .ti-item{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);padding:11px 13px;margin:8px 0}
+  .ti-item .ti{font-weight:700;font-size:13.5px}
+  .ti-item .fresh{font-size:10px;font-weight:600;color:var(--muted);background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em;margin-left:8px}
+  .ti-item .body{margin-top:9px;font-size:12.5px;line-height:1.55}
+  .ti-item .body h3{font-size:13px;margin:13px 0 4px;font-weight:700}
+  .ti-item .body h4{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:11px 0 3px;font-weight:700}
+  .ti-item .body p{margin:7px 0}
+  .ti-item .body strong{font-weight:700;color:var(--ink)}
+  .ti-item .body code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:.9em;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .ti-item .body pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 13px;overflow-x:auto;margin:9px 0}
+  .ti-item .body pre code{background:none;border:none;padding:0;white-space:pre;display:block;font-size:11px;line-height:1.5}
+  .soon{background:var(--card);border:1px dashed var(--line2);border-radius:11px;padding:18px 16px;text-align:center;color:var(--muted);font-size:12.5px;max-width:620px;margin:10px 0}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
 <link rel="stylesheet" href="./hardwood.css">
 </head>
 <body>
 <header>
-  <h1>The Hardwood — We Tested It</h1>
+  <h1>The Hardwood — Deep Dives</h1>
   <span class="ago" id="ago"></span>
 </header>
-<div class="sub">Ideas we've investigated and proven to be noise.</div>
+<div class="sub">Quantify the game on the fly — empirical answers from thousands of WNBA games.</div>
 <nav>
   <a href="./index.html">Board</a>
   <a href="./queue.html">What's Next</a>
@@ -101,326 +131,407 @@
   <a href="./ledger.html">Error Map</a>
   <a href="./org.html">The Team</a>
   <a href="./scouting.html">Scouting</a>
-  <a class="active" href="./deepdive.html">We Tested It</a>
+  <a class="active" href="./deepdive.html">Deep Dives</a>
 </nav>
-<main id="main"><p class="empty">Loading…</p></main>
+<main>
+  <div class="sec">
+    <div class="sec-h" id="hub-h">Deep Dives</div>
+    <div class="sec-lede" id="hub-lede"></div>
+  </div>
+  <div id="hub"><p class="empty">Loading deep dives…</p></div>
+
+  <div class="sec" style="margin-top:26px">
+    <div class="sec-h">We Tested It</div>
+    <div class="sec-lede">Ideas we investigated — and, honestly, what turned out to be noise.</div>
+  </div>
+  <div id="tested"></div>
+</main>
 <footer id="foot"></footer>
 <script src="./hardwood.js"></script>
 <script>
 (function(){
   "use strict";
+  /* ---------- tiny DOM helpers (built entirely from textContent — no HTML injection) ---------- */
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  function frag(){ return document.createDocumentFragment ? document.createDocumentFragment() : document.createElement("div"); }
 
-  // Inline markdown: **bold** and `code`. Built entirely from text nodes + el() (textContent),
-  // so no author markup is ever injected as HTML - safe by construction.
-  function inlineMd(node, text){
-    var i=0, n=text.length;
-    while(i<n){
-      var b=text.indexOf("**", i), c=text.indexOf("`", i), next=-1, kind=null;
-      if(b>=0 && (c<0 || b<c)){ next=b; kind="b"; }
-      else if(c>=0){ next=c; kind="c"; }
-      if(next<0){ node.appendChild(document.createTextNode(text.slice(i))); break; }
-      if(next>i){ node.appendChild(document.createTextNode(text.slice(i,next))); }
-      if(kind==="b"){
-        var end=text.indexOf("**", next+2);
-        if(end<0){ node.appendChild(document.createTextNode(text.slice(next))); break; }
-        node.appendChild(el("strong",null,text.slice(next+2,end))); i=end+2;
-      } else {
-        var e2=text.indexOf("`", next+1);
-        if(e2<0){ node.appendChild(document.createTextNode(text.slice(next))); break; }
-        node.appendChild(el("code",null,text.slice(next+1,e2))); i=e2+1;
-      }
-    }
+  // Honest number formatting: null / undefined / NaN render as an em-dash (never 0, never blank).
+  function num(v,dp){ if(v==null||(typeof v==="number"&&!isFinite(v))) return "—"; var n=Number(v); if(!isFinite(n)) return "—"; return dp==null?String(n):n.toFixed(dp); }
+  function pct(v,dp){ if(v==null||(typeof v==="number"&&!isFinite(v))) return "—"; return Number(v).toFixed(dp==null?0:dp)+"%"; }
+  function sign(v,dp){ if(v==null||(typeof v==="number"&&!isFinite(v))) return "—"; var n=Number(v); return (n>0?"+":"")+n.toFixed(dp==null?1:dp); }
+
+  function tiles(defs){ // [{v,l,sm}]
+    var w=el("div","tiles");
+    defs.forEach(function(d){ if(!d) return; var t=el("div","tile"+(d.sm?" sm":"")); t.appendChild(el("div","tv",d.v)); t.appendChild(el("div","tl",d.l)); w.appendChild(t); });
+    return w;
+  }
+  function plab(txt){ return el("div","plab",txt); }
+  // horizontal magnitude bar row: label | track(fill scaled to |val|/max) | value | n
+  function barrow(label,val,maxAbs,valText,nText,neg){
+    var r=el("div","barrow"); r.appendChild(el("div","bl",label));
+    var bt=el("div","bt"), i=el("i",neg?"neg":null);
+    var frac=(maxAbs>0)?Math.min(1,Math.abs(val)/maxAbs):0;
+    i.style.width=(frac*100).toFixed(1)+"%"; bt.appendChild(i); r.appendChild(bt);
+    r.appendChild(el("div","bv",valText));
+    if(nText!=null) r.appendChild(el("div","bn",nText));
+    return r;
+  }
+  function methodBlock(title, buildBody){
+    var d=el("details","method"); d.appendChild(el("summary",null,title));
+    var b=el("div","method-body"); buildBody(b); d.appendChild(b); return d;
+  }
+  function provList(b, rows){ // rows: [[k,v]...]
+    rows.forEach(function(kv){ var p=el("p"); p.appendChild(el("b",null,kv[0]+": ")); p.appendChild(document.createTextNode(kv[1])); b.appendChild(p); });
+  }
+  function caveatList(b, arr, heading){
+    if(!arr||!arr.length) return;
+    if(heading) b.appendChild(el("p")).appendChild(el("b",null,heading));
+    var ul=el("ul"); arr.forEach(function(c){ ul.appendChild(el("li",null,c)); }); b.appendChild(ul);
+  }
+  function readStrip(sentences){
+    var w=el("div","read");
+    (sentences||[]).forEach(function(s){ var p=el("p"); p.appendChild(document.createTextNode(s)); w.appendChild(p); });
+    return w;
   }
 
-  // Coach-readable column headers for the raw DB slugs our deep-dive tables are keyed on. Display
-  // only; unknown slugs fall back to a mechanical de-underscore + smart suffixes, so a new column
-  // never renders as broken jargon.
-  var HDR={
-    "season":"Season","games":"Games","ft_rate":"FT rate","ftr":"FT rate",
-    "fta_per_team_game":"FTA / team-game","pts_per_team_game":"Points / team-game",
-    "fga_per_team_game":"FGA / team-game","fg3a_per_team_game":"3PA / team-game",
-    "reb_per_team_game":"Rebounds / team-game","ast_per_team_game":"Assists / team-game",
-    "n":"Count","mae":"MAE","rmse":"RMSE"
-  };
-  function humanizeHeader(h){
-    var k=String(h).toLowerCase();
-    if(HDR[k]) return HDR[k];
-    var s=k.replace(/_per_team_game$/," / team-game").replace(/_per_game$/," / game")
-           .replace(/_pct$/," %").replace(/_/g," ").trim();
-    return s ? (s.charAt(0).toUpperCase()+s.slice(1)) : String(h);
-  }
-  function isNum(s){ return s!=="" && s!=null && isFinite(Number(s)); }
+  /* ============================ per-dive renderers ============================ */
+  // Each returns a DocumentFragment of the dive BODY (headline + grid(s) + read + provenance).
 
-  // Parse a fenced code block as a whitespace-columned NUMERIC data table. Returns a plain
-  // {header, ncol, rows, colNum, dec} model, or null to fall back to <pre> (real code, prose, or a
-  // ragged/non-numeric block). This is the SINGLE source of truth for "what counts as a table":
-  // both the renderer (dataTable) and the A++ delta (tableDelta) read it, so a delta can only ever
-  // be computed for a block that ACTUALLY renders as a table.
-  function parseTable(inner, info){
-    var lang=(info||"").trim().toLowerCase();
-    if(lang!=="" && lang!=="text") return null;                 // only plain / ```text fences
-    var lines=inner.split("\n").map(function(l){ return l.replace(/\s+$/,""); })
-                   .filter(function(l){ return l.trim()!==""; });
-    if(lines.length<3) return null;                             // need header + >=2 data rows
-    var header=lines[0].trim().split(/\s+/);
-    var ncol=header.length;
-    if(ncol<2 || header.some(isNum)) return null;               // header must be non-numeric labels
-    var rows=[];
-    for(var i=1;i<lines.length;i++){
-      var cells=lines[i].trim().split(/\s+/);
-      if(cells.length!==ncol) return null;                      // ragged -> not a clean table
-      rows.push(cells);
-    }
-    // A column is numeric only if EVERY data cell in it parses as a number.
-    var colNum=[], numCount=0;
-    for(var c=0;c<ncol;c++){
-      var allNum=rows.every(function(r){ return isNum(r[c]); });
-      colNum.push(allNum); if(allNum) numCount++;
-    }
-    if(numCount < Math.ceil(ncol/2)) return null;               // <half numeric -> treat as code
-    // Per-column decimals: whole-number columns show integers; sub-unit rates get 3 dp; else 1 dp.
-    var dec=[];
-    for(var c2=0;c2<ncol;c2++){
-      if(!colNum[c2]){ dec.push(null); continue; }
-      var vals=rows.map(function(r){ return Number(r[c2]); });
-      var allInt=vals.every(function(v){ return isFinite(v) && Math.floor(v)===v; });
-      var maxAbs=vals.reduce(function(m,v){ return Math.max(m,Math.abs(v)); },0);
-      dec.push(allInt ? 0 : (maxAbs<1.5 ? 3 : 1));
-    }
-    return {header:header, ncol:ncol, rows:rows, colNum:colNum, dec:dec};
+  // -- quarter_scoreline -----------------------------------------------------
+  function renderQuarterScoreline(d){
+    var f=frag();
+    f.appendChild(el("div","dhead", d.headline||""));
+    // key tiles
+    var g=(d.winprob_grid||{});
+    function wp(bk,lead){ var a=(g[bk]||[]).filter(function(r){return r.lead===lead;})[0]; return a?a.emp:null; }
+    f.appendChild(tiles([
+      {v:"50%", l:"tied at any break"},
+      {v:pct(wp("Q1",6)), l:"up 6 after Q1"},
+      {v:pct(wp("Q3",6)), l:"up 6 after Q3"},
+      {v:num((d.scoring_by_quarter||{}).full_game,1), l:"pts / game"}
+    ]));
+    // Panel 1 — margin bands at each break
+    f.appendChild(plab("Where the game stands at each break (neutral floor)"));
+    var bt=d.band_table||{}, cols=[["tied","Tied"],["l1_3","1–3"],["l4_6","4–6"],["l7_10","7–10"],["l11p","11+"],["within3","Within 3"],["within6","Within 6"]];
+    var w1=el("div","dtwrap"), t1=el("table","dt"), hd1=el("tr"); hd1.appendChild(el("th",null,"Break"));
+    cols.forEach(function(c){ hd1.appendChild(el("th","num",c[1])); });
+    var th1=el("thead"); th1.appendChild(hd1); t1.appendChild(th1);
+    var tb1=el("tbody");
+    (d.breaks||["Q1","Half","Q3","Final"]).forEach(function(bk){
+      var row=bt[bk]||{}; var tr=el("tr"); tr.appendChild(el("td","rowh",bk));
+      cols.forEach(function(c){ tr.appendChild(el("td","num", num(row[c[0]])==="—"?"—":pct(row[c[0]]))); });
+      tb1.appendChild(tr);
+    });
+    t1.appendChild(tb1); w1.appendChild(t1); f.appendChild(w1);
+    // Panel 2 — win prob given lead (empirical primary, model dashed/muted)
+    f.appendChild(plab("Win probability given the lead — empirical (model)"));
+    var breaks2=["Q1","Half","Q3"], leads=[0,3,6,10];
+    var w2=el("div","dtwrap"), t2=el("table","dt"), hd2=el("tr"); hd2.appendChild(el("th",null,"Lead"));
+    breaks2.forEach(function(bk){ hd2.appendChild(el("th","num",bk==="Half"?"At half":("After "+bk))); });
+    var th2=el("thead"); th2.appendChild(hd2); t2.appendChild(th2);
+    var tb2=el("tbody");
+    leads.forEach(function(L){
+      var tr=el("tr"); tr.appendChild(el("td","rowh", L===0?"Tied":("Up "+L)));
+      breaks2.forEach(function(bk){
+        var rec=(g[bk]||[]).filter(function(r){return r.lead===L;})[0]||{};
+        var td=el("td","num"); var thin=(rec.n!=null && rec.n<100);
+        if(thin) td.className="num thin";
+        var big=el("span","cbig", pct(rec.emp)); td.appendChild(big);
+        var sm=el("span","csmall"," ("+ (rec.model==null?"—":pct(rec.model)) +")"); td.appendChild(sm);
+        if(rec.n!=null) td.setAttribute("title","n="+rec.n);
+        tr.appendChild(td);
+      });
+      tb2.appendChild(tr);
+    });
+    t2.appendChild(tb2); w2.appendChild(t2); f.appendChild(w2);
+    // Panel 3 — scoring by quarter bars
+    f.appendChild(plab("Scoring by quarter (both teams, pts)"));
+    var sc=d.scoring_by_quarter||{}, qk=["Q1","Q2","Q3","Q4"];
+    var maxS=Math.max.apply(null, qk.map(function(q){ return sc[q]||0; }))||1;
+    qk.forEach(function(q){ f.appendChild(barrow(q, sc[q]||0, maxS, num(sc[q],1), null)); });
+    // read
+    f.appendChild(readStrip(d.read));
+    // provenance + caveats
+    var pv=d.provenance||{};
+    f.appendChild(methodBlock("How this is computed · caveats", function(b){
+      provList(b, [
+        ["Source", (pv.source||"—")+" ("+(pv.seasons||"")+", n="+(pv.games!=null?pv.games:"—")+" games"+(pv.ot_games!=null?", "+pv.ot_games+" OT":"")+")"],
+        ["Method","Empirical band counts + an even-team Normal(0, s_k) overlay; strength isolated by a between/within margin-variance decomposition."],
+        ["Script", pv.script||"—"]
+      ]);
+      caveatList(b, d.caveats, "Honest limitations");
+      if(pv.note){ var p=el("p"); p.appendChild(el("b",null,"Note: ")); p.appendChild(document.createTextNode(pv.note)); b.appendChild(p); }
+    }));
+    return f;
   }
 
-  // Try to read a fenced code block as a whitespace-columned NUMERIC data table. Returns a styled
-  // <table> node, or null to fall back to <pre> (real code, prose, or a ragged/non-numeric block).
-  // Built entirely from el()/textContent, so no author text is ever injected as HTML.
-  function dataTable(inner, info){
-    var p=parseTable(inner, info);
-    if(!p) return null;
-    var header=p.header, ncol=p.ncol, rows=p.rows, colNum=p.colNum, dec=p.dec;
-    var wrap=el("div","dtwrap"), t=el("table","dtable"), thead=el("thead"), hr=el("tr");
-    header.forEach(function(h,c){ hr.appendChild(el("th", colNum[c]?"num":null, humanizeHeader(h))); });
-    thead.appendChild(hr); t.appendChild(thead);
+  // -- comeback --------------------------------------------------------------
+  function renderComeback(d){
+    var f=frag();
+    f.appendChild(el("div","dhead", d.headline||""));
+    var bc=d.biggest_comeback||{}, hs=d.hca_split_end_q3||{};
+    f.appendChild(tiles([
+      {v:num(bc.max_deficit_overcome)+" pts", l:"biggest comeback won"},
+      {v:num(bc.n_ge15), l:"comebacks of 15+"},
+      {v:pct(hs.home_trailing_winpct,1), l:"home trailing (end Q3)", sm:true},
+      {v:pct(hs.away_trailing_winpct,1), l:"away trailing (end Q3)", sm:true}
+    ]));
+    // grid: checkpoints x bands, comeback win% (empirical, model muted)
+    f.appendChild(plab("Comeback win% by deficit × time left — empirical (model)"));
+    var bands=(d.bands||[]).map(function(b){ return b.key; });
+    var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr"); hd.appendChild(el("th",null,"Trailing at"));
+    bands.forEach(function(k){ hd.appendChild(el("th","num","Down "+k)); });
+    var th=el("thead"); th.appendChild(hd); t.appendChild(th);
     var tb=el("tbody");
-    rows.forEach(function(r){
-      var tr=el("tr");
-      r.forEach(function(cell,c){
-        tr.appendChild(el("td", colNum[c]?"num":null, colNum[c] ? Number(cell).toFixed(dec[c]) : cell));
+    (d.checkpoints||[]).forEach(function(cp){
+      var tr=el("tr"); tr.appendChild(el("td","rowh", cp.label||cp.key));
+      bands.forEach(function(k){
+        var b=(cp.bands||{})[k]||{}; var td=el("td","num"); if(b.thin) td.className="num thin";
+        var big=el("span","cbig", pct(b.winpct,1)); td.appendChild(big);
+        var sm=el("span","csmall"," ("+ (b.model==null?"—":pct(b.model,1)) +")"); td.appendChild(sm);
+        if(b.n!=null) td.setAttribute("title","n="+b.n);
+        tr.appendChild(td);
       });
       tb.appendChild(tr);
     });
-    t.appendChild(tb); wrap.appendChild(t); return wrap;
+    t.appendChild(tb); w.appendChild(t); f.appendChild(w);
+    // point reads
+    if((d.point_reads||[]).length){
+      f.appendChild(plab("Quick reads (comeback win% · n)"));
+      (d.point_reads||[]).slice(0,6).forEach(function(pr){
+        f.appendChild(barrow(pr.tag, pr.comeback_winpct||0, 50, pct(pr.comeback_winpct,1), "n="+(pr.n!=null?pr.n:"—")));
+      });
+    }
+    // read (built from the dive's own fields, not synthesized)
+    var reads=[]; if(d.headline) reads.push(d.headline); if(d.method_note) reads.push(d.method_note);
+    f.appendChild(readStrip(reads));
+    var pv=d.provenance||{};
+    f.appendChild(methodBlock("How this is computed", function(b){
+      provList(b, [
+        ["Source", (pv.source||"—")+" ("+(pv.seasons||"")+", n="+(pv.games!=null?pv.games:"—")+" games)"],
+        ["Method","STATE = score at time T (strictly before the outcome); OUTCOME = final W/L incl. OT — no leakage. Pooled over home+away trailing teams. 'model' = on-paper Normal(0, s_rem) at the band midpoint."],
+        ["Clock cells","Mid-Q4 (6:00/3:00/1:00) use the "+(pv.clock_games!=null?pv.clock_games:"—")+" clock-carrying games (2020–2026); quarter breaks pool all games."],
+        ["Script", pv.script||"—"]
+      ]);
+    }));
+    return f;
   }
 
-  // Render the baked markdown blocks (each array element is a paragraph split on a blank line) as
-  // formatted prose: fenced code -> data table (if numeric) else <pre>, #/## -> section head,
-  // ###+ -> sub-head, else paragraph. A leading H1 that repeats the card title is dropped.
-  function renderContent(body, paras, title){
+  // -- homecourt -------------------------------------------------------------
+  function renderHomecourt(d){
+    var f=frag();
+    var h=d.headline||{};
+    var confMsg = (h.confirmed? "Confirmed" : "Measured")+": home is worth "+sign(h.home_margin,1)+" pts / "+pct((h.home_winpct!=null?h.home_winpct*100:null),1)+" win rate. The board uses "+sign(h.board_value_pts,1)+" pts / "+pct((h.board_value_winpct!=null?h.board_value_winpct*100:null),1)+".";
+    f.appendChild(el("div","dhead", confMsg));
+    f.appendChild(tiles([
+      {v:sign(h.home_margin,1), l:"home margin (pts)"},
+      {v:pct((h.home_winpct!=null?h.home_winpct*100:null),1), l:"home win rate"},
+      {v:num(h.n), l:"games", sm:true}
+    ]));
+    // offense/defense decomposition
+    var od=d.offense_defense||{};
+    if(od.hca_total!=null){
+      f.appendChild(plab("Where the edge comes from (within-team, quality-controlled)"));
+      var mx=Math.max(Math.abs(od.hca_from_offense||0), Math.abs(od.hca_from_defense||0))||1;
+      f.appendChild(barrow("Defense", od.hca_from_defense||0, mx, sign(od.hca_from_defense,2)+" pts", pct((od.defense_share!=null?od.defense_share*100:null),0)));
+      f.appendChild(barrow("Offense", od.hca_from_offense||0, mx, sign(od.hca_from_offense,2)+" pts", pct((od.offense_share!=null?od.offense_share*100:null),0)));
+    }
+    // quarter timing
+    var qt=d.quarter_timing||{};
+    if(qt.q1!=null){
+      f.appendChild(plab("Home edge by quarter (pts)"));
+      var qk=["q1","q2","q3","q4"], mxq=Math.max.apply(null,qk.map(function(q){return Math.abs(qt[q]||0);}))||1;
+      qk.forEach(function(q){ f.appendChild(barrow(q.toUpperCase(), qt[q]||0, mxq, sign(qt[q],2))); });
+    }
+    // trend by season
+    var tr=d.trend||{};
+    if((tr.by_season||[]).length){
+      f.appendChild(plab("Home margin by season (HCA is drifting down)"));
+      var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
+      ["Season","n","Margin","Win%"].forEach(function(x,i){ hd.appendChild(el("th",i?"num":null,x)); });
+      var th=el("thead"); th.appendChild(hd); t.appendChild(th); var tb=el("tbody");
+      var mxm=Math.max.apply(null, tr.by_season.map(function(s){return Math.abs(s.margin||0);}))||1;
+      tr.by_season.forEach(function(s){
+        var row=el("tr"); row.appendChild(el("td","rowh",num(s.season)));
+        row.appendChild(el("td","num",num(s.n)));
+        var mtd=el("td","num"); mtd.appendChild(document.createTextNode(sign(s.margin,2)));
+        var cb=el("span","cellbar"), ci=el("i"); ci.style.width=(Math.min(1,Math.abs(s.margin||0)/mxm)*100).toFixed(0)+"%"; cb.appendChild(ci); mtd.appendChild(cb);
+        row.appendChild(mtd);
+        row.appendChild(el("td","num",pct((s.winpct!=null?s.winpct*100:null),1)));
+        tb.appendChild(row);
+      });
+      t.appendChild(tb); w.appendChild(t); f.appendChild(w);
+    }
+    // read
+    var reads=[]; if(h.one_liner) reads.push(h.one_liner);
+    reads.push("The edge is mostly defensive ("+pct((od.defense_share!=null?od.defense_share*100:null),0)+" of it) and front-loaded into Q1; it has been shrinking over time (the 2020 crowd-less bubble is a natural ~0-HCA control).");
+    f.appendChild(readStrip(reads));
+    var pv=d.provenance||{};
+    f.appendChild(methodBlock("Sources · caveats", function(b){
+      provList(b, [
+        ["Sources", (pv.sources||[]).join("; ")||"—"],
+        ["Method", pv.method||"—"],
+        ["Script", pv.script||"—"]
+      ]);
+      caveatList(b, pv.caveats, "Caveats");
+    }));
+    return f;
+  }
+
+  // -- rest ------------------------------------------------------------------
+  function renderRest(d){
+    var f=frag();
+    var h=d.headline||{};
+    f.appendChild(el("div","dhead", h.one_liner||""));
+    f.appendChild(tiles([
+      {v:sign(h.court_adjusted_cost_points,1)+" pts", l:"B2B cost (court-adj.)"},
+      {v:pct((h.b2b_winpct!=null?h.b2b_winpct*100:null),1), l:"B2B win rate"},
+      {v:num(h.b2b_n), l:"B2B team-games", sm:true}
+    ]));
+    // rest buckets — margin bars (signed)
+    if((d.rest_buckets||[]).length){
+      f.appendChild(plab("Average margin by days of rest"));
+      var mxb=Math.max.apply(null, d.rest_buckets.map(function(r){return Math.abs(r.avg_margin||0);}))||1;
+      var lbl={"0_days_off_b2b":"0 (back-to-back)","1_day_off":"1 day","2_days_off":"2 days","3plus_days_off":"3+ days"};
+      d.rest_buckets.forEach(function(r){
+        f.appendChild(barrow(lbl[r.bucket]||r.bucket, r.avg_margin||0, mxb, sign(r.avg_margin,2), "n="+(r.n!=null?r.n:"—"), (r.avg_margin||0)<0));
+      });
+    }
+    // b2b by court table
+    if((d.b2b_by_court||[]).length){
+      f.appendChild(plab("B2B vs rested, split by home/away"));
+      var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
+      ["Court","B2B?","n","Margin","Win%"].forEach(function(x,i){ hd.appendChild(el("th",i>1?"num":null,x)); });
+      var th=el("thead"); th.appendChild(hd); t.appendChild(th); var tb=el("tbody");
+      d.b2b_by_court.forEach(function(r){
+        var row=el("tr");
+        row.appendChild(el("td","rowh", (r.court||"").charAt(0).toUpperCase()+(r.court||"").slice(1)));
+        row.appendChild(el("td",null, r.is_b2b?"B2B":"rested"));
+        row.appendChild(el("td","num",num(r.n)));
+        row.appendChild(el("td","num",sign(r.avg_margin,2)));
+        row.appendChild(el("td","num",pct((r.winpct!=null?r.winpct*100:null),1)));
+        tb.appendChild(row);
+      });
+      t.appendChild(tb); w.appendChild(t); f.appendChild(w);
+    }
+    // player fatigue
+    var pf=d.player_fatigue||{};
+    if(pf.stars){
+      f.appendChild(plab("Star box line: rested vs on a B2B"));
+      f.appendChild(tiles([
+        {v:num(pf.stars.rested&&pf.stars.rested.avg_min,1), l:"min (rested)", sm:true},
+        {v:num(pf.stars.b2b&&pf.stars.b2b.avg_min,1), l:"min (B2B)", sm:true},
+        {v:num(pf.stars.rested&&pf.stars.rested.avg_pts,1), l:"pts (rested)", sm:true},
+        {v:num(pf.stars.b2b&&pf.stars.b2b.avg_pts,1), l:"pts (B2B)", sm:true}
+      ]));
+    }
+    var reads=[]; if(h.one_liner) reads.push(h.one_liner); if(pf.finding) reads.push(pf.finding);
+    f.appendChild(readStrip(reads));
+    f.appendChild(methodBlock("Definitions · caveats", function(b){
+      var def=d.definitions||{};
+      provList(b, [
+        ["Sources", (d.source_tables||[]).join(", ")||"—"],
+        ["B2B", def.b2b||"—"],
+        ["Rest", def.rest||"—"],
+        ["Script", d.script||"—"]
+      ]);
+      caveatList(b, d.caveats, "Caveats");
+    }));
+    return f;
+  }
+
+  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest };
+
+  function renderDiveCard(row, data){
+    var c=el("div","dive");
+    c.appendChild(el("div","dive-q", (data&&(data.question))||row.question||row.title||row.slug));
+    var srcbits=[]; if(row.source_table) srcbits.push(row.source_table); if(row.n!=null) srcbits.push("n = "+row.n);
+    if(srcbits.length) c.appendChild(el("div","dive-src", srcbits.join("  ·  ")));
+    if(!data){
+      c.appendChild(el("p","empty","This dive's detail could not be loaded right now."));
+      return c;
+    }
+    var fn=DIVE_RENDER[row.slug];
+    if(fn){ c.appendChild(fn(data)); }
+    else {
+      // graceful generic fallback: at least show the headline text
+      var hl=(typeof data.headline==="string")?data.headline:(data.headline&&data.headline.one_liner);
+      c.appendChild(el("div","dhead", hl||"Detail available in the source data."));
+    }
+    return c;
+  }
+
+  /* ============================ hub loader ============================ */
+  function loadHub(){
+    var hub=document.getElementById("hub");
+    fetch("./deepdive_index.json",{cache:"no-cache"}).then(function(r){ return r.json(); }).then(function(idx){
+      var lede=document.getElementById("hub-lede"); if(lede&&idx.lede) lede.textContent=idx.lede;
+      var dives=(idx.dives||[]);
+      if(!dives.length){ hub.innerHTML=""; hub.appendChild(el("div","soon","No deep dives are published yet.")); return; }
+      // fetch each dive's source JSON (graceful: a failed one still renders its card)
+      Promise.all(dives.map(function(row){
+        return fetch("./"+row.source_json,{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; });
+      })).then(function(datas){
+        hub.innerHTML="";
+        dives.forEach(function(row,i){ hub.appendChild(renderDiveCard(row, datas[i])); });
+      });
+    }).catch(function(e){
+      hub.innerHTML=""; hub.appendChild(el("div","soon","Could not load the deep dives. "+(e&&e.message?e.message:"")));
+    });
+  }
+
+  /* ============================ We Tested It (preserved) ============================ */
+  function inlineMd(node,text){
+    var i=0,n=text.length;
+    while(i<n){
+      var b=text.indexOf("**",i), c=text.indexOf("`",i), next=-1, kind=null;
+      if(b>=0&&(c<0||b<c)){ next=b; kind="b"; } else if(c>=0){ next=c; kind="c"; }
+      if(next<0){ node.appendChild(document.createTextNode(text.slice(i))); break; }
+      if(next>i){ node.appendChild(document.createTextNode(text.slice(i,next))); }
+      if(kind==="b"){ var end=text.indexOf("**",next+2); if(end<0){ node.appendChild(document.createTextNode(text.slice(next))); break; } node.appendChild(el("strong",null,text.slice(next+2,end))); i=end+2; }
+      else { var e2=text.indexOf("`",next+1); if(e2<0){ node.appendChild(document.createTextNode(text.slice(next))); break; } node.appendChild(el("code",null,text.slice(next+1,e2))); i=e2+1; }
+    }
+  }
+  function renderContent(body,paras,title){
     (paras||[]).forEach(function(raw){
       var t=(raw==null?"":String(raw)).replace(/^\s+/,"");
       if(t.indexOf("```")===0){
-        var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
         var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
-        var tbl=dataTable(inner, info);
-        if(tbl){ body.appendChild(tbl); return; }
         var pre=el("pre"); pre.appendChild(el("code",null,inner)); body.appendChild(pre); return;
       }
       var hm=/^(#{1,6})\s+([^\n]*)([\s\S]*)$/.exec(t);
       if(hm){
         var level=hm[1].length, txt=hm[2].trim(), rest=hm[3].replace(/^\n+/,"");
-        if(!(level===1 && title && txt.toLowerCase()===String(title).toLowerCase())){
-          var h=el(level<=2?"h3":"h4"); inlineMd(h, txt); body.appendChild(h);
-        }
-        if(rest){ var rp=el("p"); inlineMd(rp, rest); body.appendChild(rp); }
-        return;
+        if(!(level===1&&title&&txt.toLowerCase()===String(title).toLowerCase())){ var h=el(level<=2?"h3":"h4"); inlineMd(h,txt); body.appendChild(h); }
+        if(rest){ var rp=el("p"); inlineMd(rp,rest); body.appendChild(rp); } return;
       }
-      var p=el("p"); inlineMd(p, t); body.appendChild(p);
+      var p=el("p"); inlineMd(p,t); body.appendChild(p);
     });
   }
-
-  // Humanize an ISO timestamp to "Mon D, YYYY" using ONLY its date part (no timezone shift, no
-  // fabrication). Non-parseable / missing input falls back to the raw string, so the badge is
-  // always honest to whatever the data actually carries.
   var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  function fmtDate(s){
-    var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(s||""));
-    if(!m) return String(s||"");
-    var mon=MON[Number(m[2])-1];
-    return mon ? (mon+" "+Number(m[3])+", "+m[1]) : String(s);
+  function fmtDate(s){ var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(s||"")); if(!m) return String(s||""); var mo=MON[Number(m[2])-1]; return mo?(mo+" "+Number(m[3])+", "+m[1]):String(s); }
+  function loadTested(){
+    var box=document.getElementById("tested");
+    fetch("./deepdive.json",{cache:"no-cache"}).then(function(r){ return r.json(); }).then(function(d){
+      box.innerHTML="";
+      if(d.available&&(d.items||[]).length){
+        (d.items||[]).forEach(function(it){
+          var c=el("div","ti-item"); var hd=el("div");
+          hd.appendChild(el("span","ti",it.title||"We Tested It"));
+          if(it.as_of) hd.appendChild(el("span","fresh","As of "+fmtDate(it.as_of)));
+          c.appendChild(hd);
+          if(it.content&&it.content.length){ var body=el("div","body"); renderContent(body,it.content,it.title); c.appendChild(body); }
+          box.appendChild(c);
+        });
+      } else { box.appendChild(el("div","soon", d.placeholder||"We are currently investigating new ideas.")); }
+      if(d.generated_et||d.generated_utc){ document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc)+"."; }
+    }).catch(function(){ /* We Tested It is secondary — a failure here never blocks the hub */ });
   }
 
-  // The dive's lede = its first real prose paragraph (skip the repeated H1 / any heading / any
-  // fence). This is the author's OWN framing of the finding; we never synthesize a claim.
-  function ledeText(content){
-    var items=content||[];
-    for(var i=0;i<items.length;i++){
-      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
-      if(t==="" || t.indexOf("```")===0 || /^#{1,6}\s/.test(t)) continue;
-      return t;
-    }
-    return "";
-  }
-  // First sentence only, so the tile is one line. Split on a terminator FOLLOWED by whitespace/end
-  // so decimals like "0.267" are never mistaken for a sentence break. Verbatim author text.
-  function firstSentence(t){
-    t=String(t||"").trim();
-    var m=/^([\s\S]*?[.!?])(?:\s|$)/.exec(t);
-    return m ? m[1] : t;
-  }
-  // Does this dive contain a block that the sibling's dataTable() actually renders as a table?
-  // The takeaway tile only appears for table dives (prose dives keep their bodies untouched).
-  function hasDataTable(content){
-    var items=content||[];
-    for(var i=0;i<items.length;i++){
-      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
-      if(t.indexOf("```")!==0) continue;
-      var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
-      var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
-      if(dataTable(inner, info)) return true;
-    }
-    return false;
-  }
-
-  // A++ rung: a mechanically-DERIVED trend delta for a table dive, computed ONLY from the table's
-  // OWN rows (never hardcoded, never read out of the prose). Returns {label, latest, baseline, dir}
-  // or null. STRICT data-integrity guard (CEO #1) — a delta is emitted ONLY when the table pins an
-  // UNAMBIGUOUS baseline+latest for a SINGLE clear metric:
-  //   (a) the dive's OWN finding sentence names EXACTLY ONE numeric column (matched by that column's
-  //       humanized label) = THE metric. Zero named => nothing to quantify; >1 named => ambiguous
-  //       which number is "the" delta => null. This is what resolves a multi-metric table (Era has
-  //       ft_rate / fta / pts / fga) down to the single metric the dive itself is about.
-  //   (b) among the OTHER numeric columns, EXACTLY ONE is strictly monotonic across every row = the
-  //       time / order axis (gives an unambiguous first=baseline / last=latest). Detecting the axis
-  //       AFTER the metric is fixed lets a cleanly-rising metric (which is itself monotonic) still
-  //       qualify. Zero or >1 monotonic candidate => no clear ordering => null.
-  //   (c) baseline !== latest — there must be an actual trend to report.
-  // The value is COMPUTED at render time from the parsed rows; the caller sets it via textContent.
-  function tableDelta(content, findingText){
-    var items=content||[], p=null;
-    for(var i=0;i<items.length;i++){
-      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
-      if(t.indexOf("```")!==0) continue;
-      var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
-      var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
-      p=parseTable(inner, info);
-      if(p) break;                                   // first block that actually renders as a table
-    }
-    if(!p || p.rows.length<2) return null;
-    var header=p.header, rows=p.rows, colNum=p.colNum, dec=p.dec, ncol=p.ncol;
-    // (a) THE metric = the single numeric column the finding sentence names (by humanized label)
-    var lede=String(findingText||"").toLowerCase(), metricCol=-1, named=0;
-    for(var c=0;c<ncol;c++){
-      if(!colNum[c]) continue;
-      var label=humanizeHeader(header[c]).toLowerCase();
-      if(label && lede.indexOf(label)>=0){ named++; metricCol=c; }
-    }
-    if(named!==1) return null;                         // 0 or many named metrics => ambiguous => omit
-    // (b) the time / order axis = the UNIQUE strictly-monotonic column among the OTHERS
-    var timeCol=-1, monoCount=0;
-    for(var c2=0;c2<ncol;c2++){
-      if(!colNum[c2] || c2===metricCol) continue;
-      var inc=true, decr=true;
-      for(var r=1;r<rows.length;r++){
-        var prev=Number(rows[r-1][c2]), cur=Number(rows[r][c2]);
-        if(!(cur>prev)) inc=false;
-        if(!(cur<prev)) decr=false;
-      }
-      if(inc||decr){ monoCount++; timeCol=c2; }
-    }
-    if(monoCount!==1) return null;                    // no single clear time ordering => omit
-    // order rows by the time column so first=baseline / last=latest are unambiguous
-    var idx=rows.map(function(_,k){ return k; })
-               .sort(function(a,b){ return Number(rows[a][timeCol])-Number(rows[b][timeCol]); });
-    var baseline=Number(rows[idx[0]][metricCol]), latest=Number(rows[idx[idx.length-1]][metricCol]);
-    if(!isFinite(baseline) || !isFinite(latest) || baseline===latest) return null;  // (c) real trend
-    var d=dec[metricCol]; if(d==null) d=1;
-    return { label:humanizeHeader(header[metricCol]), latest:latest.toFixed(d),
-             baseline:baseline.toFixed(d), dir: latest>baseline ? "up" : "down" };
-  }
-
-  // Per-dive VERDICT chip (A+ rung). The label is a FIXED vocabulary — NOISE / SIGNAL / ADOPTED —
-  // only SELECTED (never synthesized) from the dive's OWN recommendation/conclusion prose. If the
-  // prose states no clear verdict we return null and render NO chip (open), rather than guess a
-  // conclusion (DATA-INTEGRITY: omit, never fabricate). Code/data fences are EXCLUDED so a number
-  // in a table can never be misread as a verdict. Order matters: NOISE is checked FIRST because a
-  // noise dive may still say its baseline "remains our core", which must not read as an adoption.
-  function verdictOf(content){
-    var s="";
-    (content||[]).forEach(function(raw){
-      var t=(raw==null?"":String(raw)).replace(/^\s+/,"");
-      if(t.indexOf("```")===0) return;          // never read a verdict out of a data/code fence
-      s+=" "+t;
-    });
-    s=s.toLowerCase();
-    // NOISE: the dive labels its OWN tested idea noise (a conclusion verb / "just" near "noise").
-    if(/\b(proved|proven|shown to be|turned out to be|is|was|were|it's|just)\b[^.!?]*\bnoise\b/.test(s))
-      return {label:"NOISE", cls:"v-noise"};
-    // ADOPTED: the change is already MADE / live in the pipeline (present-perfect adoption).
-    if(/\b(have|has|we've|now)\b[^.!?]*\b(incorporated|adopted|folded in|added it|shipped|baked in|in production)\b/.test(s)
-       || /\b(adopted|incorporated|shipped)\b[^.!?]*\b(into|in)\b[^.!?]*\b(pipeline|core|model|production)\b/.test(s))
-      return {label:"ADOPTED", cls:"v-adopted"};
-    // SIGNAL: a real effect found + a FORWARD recommendation to act on it. Guard against a negated
-    // recommendation ("we should NOT incorporate") so a negative never reads as a positive signal.
-    var negated=/\b(should not|shouldn't|do not recommend|don't recommend|not a real|no real (signal|effect))\b/.test(s);
-    if(!negated && /\b(we should|we recommend|should incorporate|should adjust|should add|recommend incorporating|real (signal|effect))\b/.test(s))
-      return {label:"SIGNAL", cls:"v-signal"};
-    return null;   // no clear verdict stated -> no chip (open); never guess.
-  }
-
-  function render(d){
-    var main=document.getElementById("main"); main.innerHTML="";
-    if(d.available && (d.items||[]).length){
-      (d.items||[]).forEach(function(it){
-        var c=el("div","item");
-        var hd=el("div","dvhd");
-        hd.appendChild(el("div","ti",it.title||"We Tested It"));
-        var chips=el("div","chips");
-        // Verdict chip — fixed vocabulary, SELECTED from the dive's own conclusion prose; omitted
-        // (no chip) when the prose states no clear verdict. Never fabricated.
-        var vd=verdictOf(it.content);
-        if(vd){ chips.appendChild(el("span","verdict "+vd.cls, vd.label)); }
-        // Freshness badge — sourced ONLY from the dive's own as_of; omitted when absent (never invented).
-        if(it.as_of){ chips.appendChild(el("span","fresh","As of "+fmtDate(it.as_of))); }
-        if(chips.children.length){ hd.appendChild(chips); }
-        c.appendChild(hd);
-        if(it.content && it.content.length){
-          var body=el("div","body");
-          // Takeaway tile: only for table dives, drawn from the dive's OWN lede sentence.
-          if(hasDataTable(it.content)){
-            var lede=firstSentence(ledeText(it.content));
-            if(lede){
-              var tk=el("div","takeaway");
-              tk.appendChild(el("span","takeaway-k","The finding"));
-              var tt=el("span","takeaway-t"); inlineMd(tt, lede); tk.appendChild(tt);
-              // A++: a quantified trend delta computed from the table's OWN rows, disambiguated by
-              // the metric the finding sentence (lede) itself names. Appended ONLY when the table
-              // pins an unambiguous single-metric baseline+latest; omitted otherwise (never guessed).
-              var dl=tableDelta(it.content, lede);
-              if(dl){
-                tk.appendChild(el("span","takeaway-d",
-                  dl.latest+" "+dl.label+", "+(dl.dir==="up"?"up from ":"down from ")+dl.baseline));
-              }
-              body.appendChild(tk);
-            }
-          }
-          renderContent(body, it.content, it.title);
-          c.appendChild(body);
-        }
-        main.appendChild(c);
-      });
-    } else {
-      main.appendChild(el("div","soon", d.placeholder||"We are currently testing new ideas."));
-    }
-    document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+".";
-  }
   var lastFetch=0;
-  function updAgo(){ var a=document.getElementById("ago"); if(!a)return;
-    if(!lastFetch){ a.innerHTML=""; return; }
-    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
-    a.innerHTML="live · updated <b>"+(s<60?(s+"s ago"):(Math.floor(s/60)+"m ago"))+"</b>"; }
-  function poll(){ fetch("./deepdive.json",{cache:"no-cache"}).then(function(r){ return r.json(); })
-    .then(function(d){ lastFetch=Date.now(); render(d); updAgo(); })
-    .catch(function(e){ if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load. '+(e&&e.message?e.message:"")+'</p>'; } }); }
+  function updAgo(){ var a=document.getElementById("ago"); if(!a) return; if(!lastFetch){ a.textContent=""; return; }
+    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000)); a.textContent="live · updated "+(s<60?(s+"s ago"):(Math.floor(s/60)+"m ago")); }
+  function poll(){ lastFetch=Date.now(); loadHub(); loadTested(); updAgo(); }
   poll(); setInterval(poll,300000); setInterval(updAgo,1000);
 })();
 </script>
