@@ -39,10 +39,10 @@
   .row{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 11px;margin-bottom:6px;box-shadow:var(--shadow)}
   .row.flash{animation:fl 1.1s ease}
   @keyframes fl{0%{background:var(--flash)}100%{background:var(--card)}}
-  .rtop{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
-  .rname{font-weight:660;font-size:13px}
+  .rtop{display:flex;justify-content:space-between;gap:4px 10px;align-items:baseline;flex-wrap:wrap}
+  .rname{font-weight:660;font-size:13px;min-width:0}
   .team{display:inline-block;font-size:10.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1px 5px;margin-right:6px;vertical-align:middle;letter-spacing:.02em}
-  .chance{font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .chance{font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;margin-left:auto}
   .chance b{color:var(--ink);font-weight:700}
   .rnote{font-size:12px;color:var(--muted);margin-top:4px}
   .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:5px;align-items:center}
@@ -107,8 +107,10 @@
     var meta=el("div","meta");
     if(p["return"]) meta.appendChild(el("span","pill ret","expected back "+p["return"]));
     if(p.updated) meta.appendChild(el("span","pill","updated "+p.updated));
-    if(p.reconciled_from_feed) meta.appendChild(el("span","pill recon","read from the latest report"));
-    if(p.stale) meta.appendChild(el("span","pill stale","awaiting a fresh update"));
+    if(p.reconciled_from_feed){ var rp=el("span","pill recon","read from the latest report");
+      rp.title="Our read is fresher than the raw feed — the latest official report moved this player to a less-restrictive status."; meta.appendChild(rp); }
+    if(p.stale){ var sp=el("span","pill stale","awaiting a fresh update");
+      sp.title="This row is waiting on a fresher update from the feed."; meta.appendChild(sp); }
     if(meta.childNodes.length) row.appendChild(meta);
     return row;
   }
@@ -131,12 +133,19 @@
     var main=document.getElementById("main"); main.innerHTML="";
     main.appendChild(el("p","lede","Every player currently listed out or questionable across the league, reconciled from the official injury reports and our live feed."));
 
-    if(!d.available || !d.groups || !d.groups.length){
+    if(!d.groups || !d.groups.length){
       var box=el("div","hero");
-      box.appendChild(el("div","line", d.headline || "Everyone available."));
-      main.appendChild(box);
-      main.appendChild(el("p","empty", d.empty_note || "No players are currently listed out or questionable."));
-      document.getElementById("foot").textContent = "Baked " + (d.generated_et||d.generated_utc||"") + ".";
+      if(d.available===false){
+        // Feed miss / no snapshot — this is NOT a clean bill of health, so never show a false all-clear.
+        box.appendChild(el("div","line", "The availability read is refreshing."));
+        main.appendChild(box);
+        main.appendChild(el("p","empty", "We couldn't read the league availability just now — this page updates automatically on the next refresh."));
+      } else {
+        box.appendChild(el("div","line", d.headline || "Everyone available."));
+        main.appendChild(box);
+        main.appendChild(el("p","empty", d.empty_note || "No players are currently listed out or questionable across the league."));
+      }
+      document.getElementById("foot").textContent = "Baked " + (d.generated_et||d.generated_utc||"") + ". A readout of the availability our projections assume — not injury news, and never a betting call.";
       flash(); return;
     }
 
