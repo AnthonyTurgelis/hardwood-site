@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-07-17T18:10:28+00:00",
+ "generated_utc": "2026-07-17T18:16:15+00:00",
  "freshness": {
-  "baked_utc": "2026-07-17T18:10:28+00:00",
-  "baked_et": "Jul 17, 2:10pm ET",
-  "revalidated_utc": "2026-07-17T18:10:28+00:00",
+  "baked_utc": "2026-07-17T18:16:15+00:00",
+  "baked_et": "Jul 17, 2:16pm ET",
+  "revalidated_utc": "2026-07-17T18:16:15+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-17",
@@ -3983,9 +3983,9 @@
     "target": 40,
     "count": 99,
     "ok": true,
-    "label": "99 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 8m ago.)",
+    "label": "99 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 14m ago.)",
     "as_of_utc": "2026-07-17T18:01:43Z",
-    "age_secs": 526,
+    "age_secs": 872,
     "stale": false
    },
    "source": "dispatch queue",
@@ -4243,44 +4243,14 @@
   "note": "After 4am ET the board flips to the new day, files yesterday's reports under a dated header, and shows tonight's placeholder until the reports land at 5:15pm ET."
  },
  "scout_heartbeat": {
-  "alive": true,
-  "last_poll_utc": "2026-07-17T18:06:52Z",
-  "age_s": 217,
-  "cycles": 119,
-  "label": "scout: alive, last poll 217s ago",
+  "alive": false,
+  "last_poll_utc": "2026-07-17T18:10:52Z",
+  "age_s": 323,
+  "cycles": 120,
+  "label": "scout: no poll for 323s",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
-  {
-   "time": "2:02pm",
-   "text": "poll #116 · nothing new",
-   "detail": "poll cycle=116 ok directives_new=0"
-  },
-  {
-   "time": "2:03pm",
-   "text": "poll #117 · nothing new",
-   "detail": "poll cycle=117 ok directives_new=0"
-  },
-  {
-   "time": "2:04pm",
-   "text": "connection hiccup — backing off and retrying",
-   "detail": "poll cycle=118 ERROR ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host (consecutive=1, ba"
-  },
-  {
-   "time": "2:06pm",
-   "text": "divergence alarm: git fetch origin failed () — comparing against cached origin/gemini-dev",
-   "detail": "divergence_alarm: git fetch origin failed () — comparing against cached origin/gemini-dev"
-  },
-  {
-   "time": "2:06pm",
-   "text": "divergence alarm: clean (build code matches the shared branch",
-   "detail": "divergence_alarm: clean (build code matches the shared branch)"
-  },
-  {
-   "time": "2:06pm",
-   "text": "publish-health: live fetch failed (URLError",
-   "detail": "publish-health: live fetch failed (URLError)"
-  },
   {
    "time": "2:06pm",
    "text": "publish-health: live URL unreachable this cycle (no alarm on a single miss",
@@ -4297,55 +4267,85 @@
    "detail": "slate-refresh: fatal (swallowed): OperationalError: (psycopg2.OperationalError) could not translate host name \"aws-1-ca-central-1.pooler.sup"
   },
   {
-   "time": "2:06pm",
+   "time": "2:10pm",
    "text": "connection hiccup — backing off and retrying",
-   "detail": "poll cycle=119 ERROR ServerNotFoundError: Unable to find the server at www.googleapis.com (consecutive=2, backoff=240s)"
+   "detail": "poll cycle=120 ERROR ServerNotFoundError: Unable to find the server at www.googleapis.com (consecutive=3, backoff=480s)"
+  },
+  {
+   "time": "2:11pm",
+   "text": "divergence alarm: git fetch origin failed () — comparing against cached origin/gemini-dev",
+   "detail": "divergence_alarm: git fetch origin failed () — comparing against cached origin/gemini-dev"
+  },
+  {
+   "time": "2:11pm",
+   "text": "divergence alarm: clean (build code matches the shared branch",
+   "detail": "divergence_alarm: clean (build code matches the shared branch)"
+  },
+  {
+   "time": "2:11pm",
+   "text": "publish-health: live fetch failed (URLError",
+   "detail": "publish-health: live fetch failed (URLError)"
+  },
+  {
+   "time": "2:11pm",
+   "text": "publish-health: live URL unreachable this cycle (no alarm on a single miss",
+   "detail": "publish-health: live URL unreachable this cycle (no alarm on a single miss)"
+  },
+  {
+   "time": "2:11pm",
+   "text": "chain-health: CHAIN DOWN (#5): broken=outbound,board paged=True",
+   "detail": "chain-health: CHAIN DOWN (#5): broken=outbound,board paged=True"
+  },
+  {
+   "time": "2:11pm",
+   "text": "slate-refresh: fatal (swallowed): OperationalError: (psycopg2.OperationalError) could not translate host name \"aws-1-ca-central-1.pooler.supabase.com\" to address: Name or service not known",
+   "detail": "slate-refresh: fatal (swallowed): OperationalError: (psycopg2.OperationalError) could not translate host name \"aws-1-ca-central-1.pooler.sup"
   }
  ],
  "helpers": {
-  "as_of": "2026-07-17T18:10:14Z",
+  "as_of": "2026-07-17T18:16:14Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
    {
     "name": "Scout",
     "does": "watches for your instructions",
-    "active": true,
-    "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "active": false,
+    "stale": true,
+    "age_label": "5m",
+    "state_text": "quiet · last seen 5m ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "16s",
-    "state_text": "on · seen 16s ago"
+    "age_label": "13s",
+    "state_text": "on · seen 13s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
-    "active": true,
-    "stale": false,
-    "age_label": "9m",
-    "state_text": "on · seen 9m ago"
+    "active": false,
+    "stale": true,
+    "age_label": "15m",
+    "state_text": "quiet · last seen 15m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "15s",
-    "state_text": "on · seen 15s ago"
+    "age_label": "1s",
+    "state_text": "on · seen 1s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "4m",
-    "state_text": "on · seen 4m ago"
+    "age_label": "5m",
+    "state_text": "on · seen 5m ago"
    }
   ],
   "width": {
@@ -4443,15 +4443,15 @@
    },
    {
     "label": "Early warning refresh",
-    "ran_et": "",
+    "ran_et": "2:15pm",
     "next_et": "2:15pm",
-    "result": "scheduled"
+    "result": "done"
    },
    {
     "label": "Roster meta refresh",
-    "ran_et": "",
+    "ran_et": "2:15pm",
     "next_et": "2:15pm",
-    "result": "scheduled"
+    "result": "needs a look"
    },
    {
     "label": "Playoff odds refresh",
@@ -4488,37 +4488,31 @@
   "usage_resets_clock": "",
   "note": ""
  },
- "width_defect": {
-  "active": true,
-  "state": "defect",
-  "text": "Only 2 of 6 work lanes have been running for 10 min while jobs wait to start — being looked into.",
-  "running": 2,
-  "target": 6
- },
+ "width_defect": {},
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
    "as_of": "2026-07-17T17:59:22Z",
    "stale": false,
-   "revalidated": "2026-07-17T18:10:28+00:00",
+   "revalidated": "2026-07-17T18:16:15+00:00",
    "stale_reason": "",
-   "age_label": "11m",
+   "age_label": "16m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-17T18:10:28+00:00",
+   "as_of": "2026-07-17T18:16:15+00:00",
    "stale": false,
-   "revalidated": "2026-07-17T18:10:28+00:00",
+   "revalidated": "2026-07-17T18:16:15+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-17T18:10:28+00:00",
+   "as_of": "2026-07-17T18:16:15+00:00",
    "stale": false,
-   "revalidated": "2026-07-17T18:10:28+00:00",
+   "revalidated": "2026-07-17T18:16:15+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
@@ -4527,7 +4521,7 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-17T18:10:28+00:00",
+   "revalidated": "2026-07-17T18:16:15+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -4536,16 +4530,16 @@
    "source": "dispatch queue",
    "as_of": "2026-07-17T18:01:43Z",
    "stale": true,
-   "revalidated": "2026-07-17T18:10:28+00:00",
-   "stale_reason": "These readings may be out of date — last updated 8m ago.",
-   "age_label": "8m",
+   "revalidated": "2026-07-17T18:16:15+00:00",
+   "stale_reason": "These readings may be out of date — last updated 14m ago.",
+   "age_label": "14m",
    "stale_after": 300
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-17T18:10:28+00:00",
+   "revalidated": "2026-07-17T18:16:15+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -4554,38 +4548,38 @@
    "source": "director inbox",
    "as_of": "2026-07-17T18:06:02Z",
    "stale": false,
-   "revalidated": "2026-07-17T18:10:28+00:00",
+   "revalidated": "2026-07-17T18:16:15+00:00",
    "stale_reason": "",
-   "age_label": "4m",
+   "age_label": "10m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
-   "as_of": "2026-07-17T18:10:28+00:00",
+   "as_of": "2026-07-17T18:16:15+00:00",
    "stale": false,
-   "revalidated": "2026-07-17T18:10:28+00:00",
+   "revalidated": "2026-07-17T18:16:15+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 172800
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-17T18:05:26+00:00",
+   "as_of": "2026-07-17T18:10:28+00:00",
    "stale": false,
-   "revalidated": "2026-07-17T18:10:28+00:00",
+   "revalidated": "2026-07-17T18:16:15+00:00",
    "stale_reason": "",
    "age_label": "5m",
    "stale_after": null
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-17T18:10:14Z",
+   "as_of": "2026-07-17T18:16:14Z",
    "stale": false,
-   "revalidated": "2026-07-17T18:10:28+00:00",
+   "revalidated": "2026-07-17T18:16:15+00:00",
    "stale_reason": "",
-   "age_label": "15s",
+   "age_label": "1s",
    "stale_after": null
   }
  },
- "generated_et": "Jul 17, 2:10pm ET"
+ "generated_et": "Jul 17, 2:16pm ET"
 }
