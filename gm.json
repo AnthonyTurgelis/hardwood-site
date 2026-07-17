@@ -1,7 +1,7 @@
 {
   "stat": "gm",
   "kind": "gm_frontoffice_read",
-  "generated_utc": "2026-07-17T16:53:28Z",
+  "generated_utc": "2026-07-17T17:01:08Z",
   "season": 2026,
   "about": {
     "title": "GM Dashboard",
@@ -9,12 +9,31 @@
   },
   "provenance": {
     "money_source": "All salary and $/WAR figures are the CANONICAL 2026 base salary from the value spine (base salary known for a subset of ~180 roster spots; the rest show value-only). Full multi-year contract structure (years / guarantees / options / cap holds) is a v2 data acquisition, blocked on a Spotrac 403.",
-    "trade_value_note": "The trade-value ranking is a BATCH/PREVIEW value engine (composite of projected WAR, age, and affordability) -- not yet a versioned production model. Its score orders the board; the money columns next to it are the canonical spine salary, not the engine's internal figure. A productionized, versioned trade-value table (real contract control years, filled salaries) is a follow-up data lane.",
+    "trade_value_note": "The trade-value ranking is a BATCH/PREVIEW value engine (composite of projected WAR, age, and affordability) -- not yet a versioned production model. Its score orders the board; the money columns next to it are the canonical spine salary, not the engine's internal figure. The batch table itself still covers only 13 teams and predates the 2026 expansion; team-of-record is corrected from the live roster and the 2026 expansion clubs (POR/TOR) + unprojected newcomers are appended with an HONEST null trade value (never a fabricated 0). A productionized, versioned trade-value table (real contract control years, filled salaries, expansion scores) is a follow-up data lane.",
     "cap_space_note": "No team cap-space / dead-money number is shown: it would require the full contract structure that is v2 data-gated. Total payroll from base salary alone (partial coverage) would mislead, so it is omitted, not invented."
   },
   "trade_board": {
-    "note": "Players ranked by a batch trade-value engine (projected WAR + youth + affordability). Money columns are joined from the canonical spine, not the engine's internal salary.",
-    "count": 169,
+    "note": "Players ranked by a batch trade-value engine (projected WAR + youth + affordability). Money columns are joined from the canonical spine, not the engine's internal salary. Team-of-record is the LIVE daily roster (all 15 teams incl. the 2026 expansion clubs POR/TOR, and each player's current team -- e.g. Angel Reese on ATL). Rostered players the batch engine has no score for (expansion newcomers, rookies) are listed with an HONEST null trade value -- never a fabricated 0, never silently dropped.",
+    "count": 239,
+    "ranked_n": 169,
+    "insufficient_data_n": 70,
+    "insufficient_data_by_team": {
+      "ATL": 3,
+      "CHI": 3,
+      "CON": 5,
+      "DAL": 3,
+      "GSV": 4,
+      "IND": 3,
+      "LAS": 2,
+      "LVA": 4,
+      "MIN": 5,
+      "NYL": 6,
+      "PHO": 6,
+      "POR": 6,
+      "SEA": 5,
+      "TOR": 7,
+      "WAS": 8
+    },
     "players": [
       {
         "key": "aliyah boston",
@@ -63,7 +82,7 @@
       {
         "key": "angel reese",
         "name": "Angel Reese",
-        "team": "CHI",
+        "team": "ATL",
         "trade_rank": 5,
         "trade_value": 65.0,
         "age": 23,
@@ -151,7 +170,7 @@
       {
         "key": "jessica shepard",
         "name": "Jessica Shepard",
-        "team": "MIN",
+        "team": "DAL",
         "trade_rank": 13,
         "trade_value": 43.2,
         "age": 29,
@@ -195,7 +214,7 @@
       {
         "key": "satou sabally",
         "name": "Satou Sabally",
-        "team": "PHO",
+        "team": "NYL",
         "trade_rank": 17,
         "trade_value": 36.1,
         "age": 27,
@@ -217,7 +236,7 @@
       {
         "key": "rickea jackson",
         "name": "Rickea Jackson",
-        "team": "LAS",
+        "team": "CHI",
         "trade_rank": 18,
         "trade_value": 35.4,
         "age": 25,
@@ -327,7 +346,7 @@
       {
         "key": "alanna smith",
         "name": "Alanna Smith",
-        "team": "MIN",
+        "team": "DAL",
         "trade_rank": 26,
         "trade_value": 31.5,
         "age": 29,
@@ -371,7 +390,7 @@
       {
         "key": "azura stevens",
         "name": "Azura Stevens",
-        "team": "LAS",
+        "team": "CHI",
         "trade_rank": 33,
         "trade_value": 28.7,
         "age": 30,
@@ -415,7 +434,7 @@
       {
         "key": "natisha hiedeman",
         "name": "Natisha Hiedeman",
-        "team": "MIN",
+        "team": "SEA",
         "trade_rank": 36,
         "trade_value": 26.2,
         "age": 29,
@@ -481,7 +500,7 @@
       {
         "key": "gabby williams",
         "name": "Gabby Williams",
-        "team": "SEA",
+        "team": "GSV",
         "trade_rank": 43,
         "trade_value": 22.0,
         "age": 29,
@@ -536,7 +555,7 @@
       {
         "key": "ariel atkins",
         "name": "Ariel Atkins",
-        "team": "CHI",
+        "team": "LAS",
         "trade_rank": 48,
         "trade_value": 20.7,
         "age": 29,
@@ -558,7 +577,7 @@
       {
         "key": "emily engstler",
         "name": "Emily Engstler",
-        "team": "WAS",
+        "team": "POR",
         "trade_rank": 50,
         "trade_value": 19.1,
         "age": 25,
@@ -591,7 +610,7 @@
       {
         "key": "kennedy burke",
         "name": "Kennedy Burke",
-        "team": "NYL",
+        "team": "CON",
         "trade_rank": 53,
         "trade_value": 18.8,
         "age": 29,
@@ -602,7 +621,7 @@
       {
         "key": "carla leite",
         "name": "Carla Leite",
-        "team": "GSV",
+        "team": "POR",
         "trade_rank": 54,
         "trade_value": 18.0,
         "age": 21,
@@ -624,7 +643,7 @@
       {
         "key": "julie allemand",
         "name": "Julie Allemand",
-        "team": "LAS",
+        "team": "TOR",
         "trade_rank": 56,
         "trade_value": 17.6,
         "age": 29,
@@ -635,7 +654,7 @@
       {
         "key": "nneka ogwumike",
         "name": "Nneka Ogwumike",
-        "team": "SEA",
+        "team": "LAS",
         "trade_rank": 57,
         "trade_value": 17.5,
         "age": 35,
@@ -745,7 +764,7 @@
       {
         "key": "bridget carleton",
         "name": "Bridget Carleton",
-        "team": "MIN",
+        "team": "POR",
         "trade_rank": 67,
         "trade_value": 15.1,
         "age": 28,
@@ -767,7 +786,7 @@
       {
         "key": "maya caldwell",
         "name": "Maya Caldwell",
-        "team": "ATL",
+        "team": "MIN",
         "trade_rank": 68,
         "trade_value": 15.0,
         "age": 27,
@@ -778,7 +797,7 @@
       {
         "key": "luisa geiselsoder",
         "name": "Luisa Geiselsoder",
-        "team": "DAL",
+        "team": "POR",
         "trade_rank": 68,
         "trade_value": 15.0,
         "age": 26,
@@ -789,7 +808,7 @@
       {
         "key": "jacy sheldon",
         "name": "Jacy Sheldon",
-        "team": "WAS",
+        "team": "CHI",
         "trade_rank": 71,
         "trade_value": 14.6,
         "age": 25,
@@ -800,7 +819,7 @@
       {
         "key": "marina mabrey",
         "name": "Marina Mabrey",
-        "team": "CON",
+        "team": "TOR",
         "trade_rank": 72,
         "trade_value": 14.5,
         "age": 29,
@@ -822,7 +841,7 @@
       {
         "key": "monique billings",
         "name": "Monique Billings",
-        "team": "GSV",
+        "team": "IND",
         "trade_rank": 73,
         "trade_value": 14.4,
         "age": 29,
@@ -855,7 +874,7 @@
       {
         "key": "dijonai carrington",
         "name": "DiJonai Carrington",
-        "team": "MIN",
+        "team": "CHI",
         "trade_rank": 77,
         "trade_value": 14.0,
         "age": 28,
@@ -888,7 +907,7 @@
       {
         "key": "nyara sabally",
         "name": "Nyara Sabally",
-        "team": "NYL",
+        "team": "TOR",
         "trade_rank": 80,
         "trade_value": 12.8,
         "age": 26,
@@ -910,7 +929,7 @@
       {
         "key": "myisha hinesallen",
         "name": "Myisha Hines-Allen",
-        "team": "DAL",
+        "team": "IND",
         "trade_rank": 82,
         "trade_value": 12.6,
         "age": 30,
@@ -921,7 +940,7 @@
       {
         "key": "brittney sykes",
         "name": "Brittney Sykes",
-        "team": "SEA",
+        "team": "TOR",
         "trade_rank": 83,
         "trade_value": 12.3,
         "age": 32,
@@ -943,7 +962,7 @@
       {
         "key": "natasha howard",
         "name": "Natasha Howard",
-        "team": "IND",
+        "team": "MIN",
         "trade_rank": 85,
         "trade_value": 11.5,
         "age": 34,
@@ -965,7 +984,7 @@
       {
         "key": "skylar diggins",
         "name": "Skylar Diggins",
-        "team": "SEA",
+        "team": "CHI",
         "trade_rank": 87,
         "trade_value": 11.1,
         "age": 35,
@@ -1009,7 +1028,7 @@
       {
         "key": "sug sutton",
         "name": "Sug Sutton",
-        "team": "WAS",
+        "team": "DAL",
         "trade_rank": 91,
         "trade_value": 9.2,
         "age": 27,
@@ -1031,7 +1050,7 @@
       {
         "key": "isabelle harrison",
         "name": "Isabelle Harrison",
-        "team": "NYL",
+        "team": "TOR",
         "trade_rank": 93,
         "trade_value": 8.7,
         "age": 32,
@@ -1042,7 +1061,7 @@
       {
         "key": "erica wheeler",
         "name": "Erica Wheeler",
-        "team": "SEA",
+        "team": "LAS",
         "trade_rank": 94,
         "trade_value": 8.4,
         "age": 34,
@@ -1053,7 +1072,7 @@
       {
         "key": "natasha cloud",
         "name": "Natasha Cloud",
-        "team": "NYL",
+        "team": "CHI",
         "trade_rank": 94,
         "trade_value": 8.4,
         "age": 34,
@@ -1064,7 +1083,7 @@
       {
         "key": "kate martin",
         "name": "Kate Martin",
-        "team": "GSV",
+        "team": "LAS",
         "trade_rank": 96,
         "trade_value": 8.3,
         "age": 25,
@@ -1108,7 +1127,7 @@
       {
         "key": "tyasha harris",
         "name": "Tyasha Harris",
-        "team": "DAL",
+        "team": "IND",
         "trade_rank": 98,
         "trade_value": 7.5,
         "age": 27,
@@ -1119,7 +1138,7 @@
       {
         "key": "odyssey sims",
         "name": "Odyssey Sims",
-        "team": "IND",
+        "team": "DAL",
         "trade_rank": 101,
         "trade_value": 6.9,
         "age": 33,
@@ -1130,7 +1149,7 @@
       {
         "key": "jade melbourne",
         "name": "Jade Melbourne",
-        "team": "WAS",
+        "team": "SEA",
         "trade_rank": 102,
         "trade_value": 6.7,
         "age": 23,
@@ -1152,7 +1171,7 @@
       {
         "key": "diamond miller",
         "name": "Diamond Miller",
-        "team": "DAL",
+        "team": "CON",
         "trade_rank": 103,
         "trade_value": 6.3,
         "age": 25,
@@ -1185,7 +1204,7 @@
       {
         "key": "chloe bibby",
         "name": "Chloe Bibby",
-        "team": "IND",
+        "team": "CHI",
         "trade_rank": 106,
         "trade_value": 6.0,
         "age": 27,
@@ -1196,7 +1215,7 @@
       {
         "key": "taylor thierry",
         "name": "Taylor Thierry",
-        "team": "ATL",
+        "team": "SEA",
         "trade_rank": 106,
         "trade_value": 6.0,
         "age": 23,
@@ -1240,7 +1259,7 @@
       {
         "key": "brittney griner",
         "name": "Brittney Griner",
-        "team": "ATL",
+        "team": "CON",
         "trade_rank": 112,
         "trade_value": 5.6,
         "age": 35,
@@ -1262,7 +1281,7 @@
       {
         "key": "michaela onyenwere",
         "name": "Michaela Onyenwere",
-        "team": "CHI",
+        "team": "WAS",
         "trade_rank": 113,
         "trade_value": 5.5,
         "age": 26,
@@ -1295,7 +1314,7 @@
       {
         "key": "temi fagbenle",
         "name": "Temi Fagbenle",
-        "team": "GSV",
+        "team": "TOR",
         "trade_rank": 117,
         "trade_value": 4.6,
         "age": 33,
@@ -1317,7 +1336,7 @@
       {
         "key": "liatu king",
         "name": "Liatu King",
-        "team": "DAL",
+        "team": "MIN",
         "trade_rank": 118,
         "trade_value": 4.5,
         "age": 24,
@@ -1328,7 +1347,7 @@
       {
         "key": "nia coffey",
         "name": "Nia Coffey",
-        "team": "ATL",
+        "team": "MIN",
         "trade_rank": 120,
         "trade_value": 4.0,
         "age": 30,
@@ -1350,7 +1369,7 @@
       {
         "key": "jaylyn sherrod",
         "name": "Jaylyn Sherrod",
-        "team": "MIN",
+        "team": "ATL",
         "trade_rank": 122,
         "trade_value": 3.8,
         "age": 24,
@@ -1405,7 +1424,7 @@
       {
         "key": "sania feagin",
         "name": "Sania Feagin",
-        "team": "LAS",
+        "team": "POR",
         "trade_rank": 125,
         "trade_value": 3.0,
         "age": 23,
@@ -1416,7 +1435,7 @@
       {
         "key": "megan gustafson",
         "name": "Megan Gustafson",
-        "team": "LVA",
+        "team": "POR",
         "trade_rank": 128,
         "trade_value": 2.7,
         "age": 29,
@@ -1438,7 +1457,7 @@
       {
         "key": "karlie samuelson",
         "name": "Karlie Samuelson",
-        "team": "MIN",
+        "team": "POR",
         "trade_rank": 130,
         "trade_value": 2.3,
         "age": 30,
@@ -1471,7 +1490,7 @@
       {
         "key": "kiana williams",
         "name": "Kiana Williams",
-        "team": "PHO",
+        "team": "LAS",
         "trade_rank": 131,
         "trade_value": 2.0,
         "age": 27,
@@ -1504,7 +1523,7 @@
       {
         "key": "stephanie talbot",
         "name": "Stephanie Talbot",
-        "team": "NYL",
+        "team": "LVA",
         "trade_rank": 135,
         "trade_value": 1.3,
         "age": 31,
@@ -1537,7 +1556,7 @@
       {
         "key": "aaliyah nye",
         "name": "Aaliyah Nye",
-        "team": "LVA",
+        "team": "ATL",
         "trade_rank": 139,
         "trade_value": 0.0,
         "age": 23,
@@ -1570,7 +1589,7 @@
       {
         "key": "stefanie dolson",
         "name": "Stefanie Dolson",
-        "team": "WAS",
+        "team": "SEA",
         "trade_rank": 139,
         "trade_value": 0.0,
         "age": 34,
@@ -1625,7 +1644,7 @@
       {
         "key": "hailey van lith",
         "name": "Hailey Van Lith",
-        "team": "CHI",
+        "team": "CON",
         "trade_rank": 139,
         "trade_value": 0.0,
         "age": 24,
@@ -1680,7 +1699,7 @@
       {
         "key": "brianna turner",
         "name": "Brianna Turner",
-        "team": "IND",
+        "team": "LVA",
         "trade_rank": 139,
         "trade_value": 0.0,
         "age": 29,
@@ -1713,7 +1732,7 @@
       {
         "key": "alysha clark",
         "name": "Alysha Clark",
-        "team": "WAS",
+        "team": "DAL",
         "trade_rank": 155,
         "trade_value": -0.3,
         "age": 38,
@@ -1735,7 +1754,7 @@
       {
         "key": "kia nurse",
         "name": "Kia Nurse",
-        "team": "CHI",
+        "team": "TOR",
         "trade_rank": 157,
         "trade_value": -1.0,
         "age": 30,
@@ -1768,7 +1787,7 @@
       {
         "key": "rebecca allen",
         "name": "Rebecca Allen",
-        "team": "CHI",
+        "team": "NYL",
         "trade_rank": 160,
         "trade_value": -2.4,
         "age": 33,
@@ -1812,7 +1831,7 @@
       {
         "key": "sarah ashlee barker",
         "name": "Sarah Ashlee Barker",
-        "team": "LAS",
+        "team": "POR",
         "trade_rank": 163,
         "trade_value": -4.5,
         "age": 24,
@@ -1834,7 +1853,7 @@
       {
         "key": "kiah stokes",
         "name": "Kiah Stokes",
-        "team": "LVA",
+        "team": "GSV",
         "trade_rank": 166,
         "trade_value": -5.2,
         "age": 33,
@@ -1874,6 +1893,846 @@
         "war_2025": -0.7,
         "proj_war_2026": -0.6,
         "affordability": 1.94
+      },
+      {
+        "key": "indya nivar",
+        "name": "Indya Nivar",
+        "team": "ATL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "madina okot",
+        "name": "Madina Okot",
+        "team": "ATL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 21,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "isobel borlase",
+        "name": "Isobel Borlase",
+        "team": "ATL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 21,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "aicha coulibaly",
+        "name": "Aicha Coulibaly",
+        "team": "CHI",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 24,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "sydney taylor",
+        "name": "Sydney Taylor",
+        "team": "CHI",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 25,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "gabriela jaquez",
+        "name": "Gabriela Jaquez",
+        "team": "CHI",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "charlisse legerwalker",
+        "name": "Charlisse Leger-Walker",
+        "team": "CON",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 24,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "gianna kneepkens",
+        "name": "Gianna Kneepkens",
+        "team": "CON",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 23,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "raegan beers",
+        "name": "Raegan Beers",
+        "team": "CON",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "ashlon jackson",
+        "name": "Ashlon Jackson",
+        "team": "CON",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "nell angloma",
+        "name": "Nell Angloma",
+        "team": "CON",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 20,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "azzi fudd",
+        "name": "Azzi Fudd",
+        "team": "DAL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 23,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "awak kuier",
+        "name": "Awak Kuier",
+        "team": "DAL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 24,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "costanza verona",
+        "name": "Costanza Verona",
+        "team": "DAL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 26,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "nadia fingall",
+        "name": "Nadia Fingall",
+        "team": "GSV",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 27,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "miela sowah",
+        "name": "Miela Sowah",
+        "team": "GSV",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 26,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "ashten prechtel",
+        "name": "Ashten Prechtel",
+        "team": "GSV",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 25,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "juste jocyte",
+        "name": "Juste Jocyte",
+        "team": "GSV",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 20,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "raven johnson",
+        "name": "Raven Johnson",
+        "team": "IND",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 23,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "bree hall",
+        "name": "Bree Hall",
+        "team": "IND",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 23,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "grace vanslooten",
+        "name": "Grace VanSlooten",
+        "team": "IND",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "jihyun park",
+        "name": "Jihyun Park",
+        "team": "LAS",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 26,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "chance gray",
+        "name": "Chance Gray",
+        "team": "LAS",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "cheyenne parkertyus",
+        "name": "Cheyenne Parker-Tyus",
+        "team": "LVA",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 33,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "janiah barker",
+        "name": "Janiah Barker",
+        "team": "LVA",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "taniya latson",
+        "name": "Ta'Niya Latson",
+        "team": "LVA",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "justine pissott",
+        "name": "Justine Pissott",
+        "team": "LVA",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "dorka juhasz",
+        "name": "Dorka Juhasz",
+        "team": "MIN",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 26,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "olivia miles",
+        "name": "Olivia Miles",
+        "team": "MIN",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 23,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "antonia delaere",
+        "name": "Antonia Delaere",
+        "team": "MIN",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 31,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "emma cechova",
+        "name": "Emma Cechova",
+        "team": "MIN",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "eliska hamzova",
+        "name": "Eliska Hamzova",
+        "team": "MIN",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 24,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "betnijah laneyhamilton",
+        "name": "Betnijah Laney-Hamilton",
+        "team": "NYL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 32,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "anneli maley",
+        "name": "Anneli Maley",
+        "team": "NYL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 27,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "han xu",
+        "name": "Han Xu",
+        "team": "NYL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 26,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "raquel carrera",
+        "name": "Raquel Carrera",
+        "team": "NYL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 24,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "marine fauthoux",
+        "name": "Marine Fauthoux",
+        "team": "NYL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 25,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "pauline astier",
+        "name": "Pauline Astier",
+        "team": "NYL",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 24,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "jovana nogic",
+        "name": "Jovana Nogic",
+        "team": "PHO",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 28,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "valeriane ayayi",
+        "name": "Valeriane Ayayi",
+        "team": "PHO",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 32,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "shay ciezki",
+        "name": "Shay Ciezki",
+        "team": "PHO",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "kyara linskens",
+        "name": "Kyara Linskens",
+        "team": "PHO",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 29,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "quionche carter",
+        "name": "Quionche Carter",
+        "team": "PHO",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 25,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "noemie brochant",
+        "name": "Noemie Brochant",
+        "team": "PHO",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 26,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "holly winterburn",
+        "name": "Holly Winterburn",
+        "team": "POR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 25,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "frieda buhner",
+        "name": "Frieda Buhner",
+        "team": "POR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "jordan harrison",
+        "name": "Jordan Harrison",
+        "team": "POR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "serah williams",
+        "name": "Serah Williams",
+        "team": "POR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "nyadiew puoch",
+        "name": "Nyadiew Puoch",
+        "team": "POR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "teja oblak",
+        "name": "Teja Oblak",
+        "team": "POR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 35,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "katie lou samuelson",
+        "name": "Katie Lou Samuelson",
+        "team": "SEA",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 29,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "jordan horston",
+        "name": "Jordan Horston",
+        "team": "SEA",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 25,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "flaujae johnson",
+        "name": "Flau'jae Johnson",
+        "team": "SEA",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "taina mair",
+        "name": "Taina Mair",
+        "team": "SEA",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "awa fam",
+        "name": "Awa Fam",
+        "team": "SEA",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 20,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "kayla alexander",
+        "name": "Kayla Alexander",
+        "team": "TOR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 35,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "maria conde",
+        "name": "Maria Conde",
+        "team": "TOR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 29,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "teonni key",
+        "name": "Teonni Key",
+        "team": "TOR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 23,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "kiki rice",
+        "name": "Kiki Rice",
+        "team": "TOR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "laura juskaite",
+        "name": "Laura Juskaite",
+        "team": "TOR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 28,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "tima pouye",
+        "name": "Tima Pouye",
+        "team": "TOR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 27,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "ornella bankole",
+        "name": "Ornella Bankole",
+        "team": "TOR",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 28,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "angela dugalic",
+        "name": "Angela Dugalic",
+        "team": "WAS",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 24,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "rori harmon",
+        "name": "Rori Harmon",
+        "team": "WAS",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 23,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "cotie mcmahon",
+        "name": "Cotie McMahon",
+        "team": "WAS",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 23,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "georgia amoore",
+        "name": "Georgia Amoore",
+        "team": "WAS",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 25,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "lauren betts",
+        "name": "Lauren Betts",
+        "team": "WAS",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "darianna littlepagebuggs",
+        "name": "Darianna Littlepage-Buggs",
+        "team": "WAS",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "cassandre prosper",
+        "name": "Cassandre Prosper",
+        "team": "WAS",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 21,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
+      },
+      {
+        "key": "alicia florez",
+        "name": "Alicia Florez",
+        "team": "WAS",
+        "trade_rank": null,
+        "trade_value": null,
+        "age": 22,
+        "war_2025": null,
+        "proj_war_2026": null,
+        "affordability": null,
+        "insufficient_trade_value": true
       }
     ]
   },
@@ -2576,223 +3435,223 @@
           "name": "Alanna Smith",
           "status": "day-to-day",
           "note": "Thursday's game between the New York Liberty and Dallas Wings was postponed due to mechanical issues with the Liberty's flight.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "aliyah boston": {
           "name": "Aliyah Boston",
           "status": "day-to-day",
           "note": "Boston (lower leg) is questionable for Friday's game against the Storm.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "aneesah morrow": {
           "name": "Aneesah Morrow",
           "status": "day-to-day",
           "note": "Morrow (reconditioning) is doubtful for Friday's game against the Mercury.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "brionna jones": {
           "name": "Brionna Jones",
           "status": "day-to-day",
           "note": "Jones (knee) is questionable for Friday's game against the Tempo.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "brittney sykes": {
           "name": "Brittney Sykes",
           "status": "out",
           "note": "Head coach Sandy Brondello said Thursday that Sykes (foot) has taken part in individual work at practice recently, Zulfi Sheikh of Sportsnet reports.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "caitlin clark": {
           "name": "Caitlin Clark",
           "status": "healthy",
           "note": "Clark is listed as probable for Friday's game against the Storm due to a back injury.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "darianna littlepagebuggs": {
           "name": "Darianna Littlepage-Buggs",
           "status": "out",
           "note": "Littlepage-Buggs (coach's decision) is listed as out for Thursday's game versus Portland.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "dijonai carrington": {
           "name": "DiJonai Carrington",
           "status": "out",
           "note": "Carrington (foot) will remain on the inactive list for Sunday's game against the Aces.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "dorka juhasz": {
           "name": "Dorka Juhasz",
           "status": "out",
           "note": "Juhasz (knee) has been ruled out for Wednesday's game against the Sparks.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "emma cechova": {
           "name": "Emma Cechova",
           "status": "out",
           "note": "Cechova (knee) was diagnosed with a torn ACL in her right knee and will undergo surgery, Meghan L. Hall of USA Today reports. She will miss the remainder of the season.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "ezi magbegor": {
           "name": "Ezi Magbegor",
           "status": "out",
           "note": "Magbegor (face) was diagnosed with a facial fracture and will be \"reevaluated in the next couple of weeks,\" Percy Allen of the Seattle Times reports.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "iliana rupert": {
           "name": "Iliana Rupert",
           "status": "out",
           "note": "Rupert is pregnant, and the Valkyries have filed for a replacement contract ahead of the 2026 season, Alexa Philippou of ESPN.com reports Thursday.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "janiah barker": {
           "name": "Janiah Barker",
           "status": "out",
           "note": "Barker (leg) will be sidelined for the rest of the 2026 season, Callie Fin of USA Today reports.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "jordan harrison": {
           "name": "Jordan Harrison",
           "status": "out",
           "note": "Harrison (coach's decision) is out for Thursday's game against the Mystics.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "jovana nogic": {
           "name": "Jovana Nogic",
           "status": "out",
           "note": "Nogic (not injury related) intends to play professionally in Russia and won't return to Phoenix this season, Aya Abdeen of TheIXSports.com reports.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "kamilla cardoso": {
           "name": "Kamilla Cardoso",
           "status": "day-to-day",
           "note": "Cardoso (knee) is listed as questionable for Friday's game versus the Sparks.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "kelsey plum": {
           "name": "Kelsey Plum",
           "status": "out",
           "note": "Plum has suffered a lower left leg injury and will be re-evaluated in four weeks, Mitchell Hansen of CanisHoopus.com reports.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "kiana williams": {
           "name": "Kiana Williams",
           "status": "healthy",
           "note": "Williams is probable for Friday's game against the Sky due to a right hand injury.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "kierstan bell": {
           "name": "Kierstan Bell",
           "status": "out",
           "note": "Bell has been ruled out for Sunday's game against the Fever due to a right leg injury.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "kiki rice": {
           "name": "Kiki Rice",
           "status": "out",
           "note": "Head coach Sandy Brondello said Thursday that Rice (ankle) has progressed to doing non-contact work at practice but is doubtful to return before the All-Star break, Zulfi Sheikh of...",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "kyara linskens": {
           "name": "Kyara Linskens",
           "status": "healthy",
           "note": "Linskens (knee) is listed as probable for Friday's game versus the Sun.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "leonie fiebich": {
           "name": "Leonie Fiebich",
           "status": "out",
           "note": "Fiebich (foot) currently doesn't have a timetable to return, Jackie Powell of The IX Sports reports.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "megan gustafson": {
           "name": "Megan Gustafson",
           "status": "out",
           "note": "Gustafson (personal) is out for Thursday's game against Washington.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "napheesa collier": {
           "name": "Napheesa Collier",
           "status": "out",
           "note": "Collier (ankle) has been cleared to resume practices with the Lynx, the team announced Wednesday.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "natasha mack": {
           "name": "Natasha Mack",
           "status": "day-to-day",
           "note": "Mack (foot) is listed as doubtful for Friday's game against Connecticut.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "olivia miles": {
           "name": "Olivia Miles",
           "status": "out",
           "note": "Head coach Cheryl Reeve had no update on Miles' (ankle) status following Wednesday's 96-87 win over the Sparks, per Andrew Dukowitz of ZoneCoverage.com.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "rickea jackson": {
           "name": "Rickea Jackson",
           "status": "out",
           "note": "The Sky announced Tuesday that Jackson will miss the remainder of the season after suffering a torn ACL in her left knee during Sunday's 86-79 win over the Lynx.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "sami whitcomb": {
           "name": "Sami Whitcomb",
           "status": "day-to-day",
           "note": "Whitcomb (knee) is questionable for Friday's game against the Sun.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "sania feagin": {
           "name": "Sania Feagin",
           "status": "out",
           "note": "Feagin (knee) was diagnosed with a torn left ACL on Thursday and will miss the rest of the 2026 campaign, WNBA reporter Kareem Copeland reports.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "saniya rivers": {
           "name": "Saniya Rivers",
           "status": "healthy",
           "note": "Rivers (ankle) is listed as probable for Friday's game against Phoenix.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "satou sabally": {
           "name": "Satou Sabally",
           "status": "out",
           "note": "out",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "skylar diggins": {
           "name": "Skylar Diggins",
           "status": "out",
           "note": "Head coach Tyler Marsh said Tuesday that Diggins (knee) is without a timetable for a return, Alissa Hirsh of the Chicago Sun-Times reports.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "taniya latson": {
           "name": "Ta'Niya Latson",
           "status": "out",
           "note": "Latson (coach's decision) won't play Sunday against the Fever.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "taina mair": {
           "name": "Taina Mair",
           "status": "out",
           "note": "Mair (coach's decision) is listed out for Friday's game against Indiana.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "tehina paopao": {
           "name": "Te-Hina Paopao",
           "status": "day-to-day",
           "note": "Paopao (leg) is questionable for Friday's game against the Tempo.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "temi fagbenle": {
           "name": "Temi Fagbenle",
           "status": "healthy",
           "note": "Jul 16: Fagbenle (concussion) is probable for Friday's game against Atlanta.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         },
         "teonni key": {
           "name": "Teonni Key",
           "status": "day-to-day",
           "note": "Jul 16: Key (illness) is questionable for Friday's game against the Dream.",
-          "as_of": "2026-07-17T16:40:35.950155+00:00"
+          "as_of": "2026-07-17T16:55:29.488356+00:00"
         }
       }
     }
