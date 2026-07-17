@@ -611,8 +611,12 @@
     var fn=DIVE_RENDER[row.slug];
     if(fn){ c.appendChild(fn(data)); }
     else {
-      // graceful generic fallback: at least show the headline text
-      var hl=(typeof data.headline==="string")?data.headline:(data.headline&&data.headline.one_liner);
+      // graceful generic fallback: show the dive's real one-line finding. headline is either a
+      // plain string or an object ({text:...} or {one_liner:...}); fall back to the index row's
+      // one_line so a card is never a bare placeholder.
+      var h=data.headline;
+      var hl=(typeof h==="string")?h:(h&&(h.text||h.one_liner));
+      if(!hl) hl=(typeof data.one_line==="string"?data.one_line:null)||row.one_line;
       c.appendChild(el("div","dhead", hl||"Detail available in the source data."));
     }
     return c;
