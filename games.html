@@ -135,9 +135,20 @@
     var wrap=el("div");
     wrap.appendChild(bar);
     var cap=el("div","mcap");
-    cap.appendChild(el("span",null, g.away+" +"+Math.abs(lo).toFixed(0)));
+    // SIGN-AWARE endpoint labels: lo/hi are HOME-margin values (positive = home wins by that much,
+    // negative = away wins by |that|). Label each endpoint by the SIGN of its value, not by fixed
+    // position. The prior code hardcoded the low end to the away team and the high end to the home
+    // team via Math.abs — correct only when the range straddles zero. For a one-sided range (a
+    // confident favorite), that named the WRONG team as favored at one end; sign-labelling fixes it
+    // and is byte-identical for any range that does straddle zero.
+    function endLabel(v){
+      if(v>0) return g.home+" +"+v.toFixed(0);
+      if(v<0) return g.away+" +"+Math.abs(v).toFixed(0);
+      return "even";
+    }
+    cap.appendChild(el("span",null, endLabel(lo)));
     cap.appendChild(el("span",null,"pick'em"));
-    cap.appendChild(el("span",null, g.home+" +"+Math.abs(hi).toFixed(0)));
+    cap.appendChild(el("span",null, endLabel(hi)));
     wrap.appendChild(cap);
     return wrap;
   }
