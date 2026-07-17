@@ -233,7 +233,7 @@
     sec.appendChild(el("h2",null,"Playoff Picture"));
     var card=el("div","card"); var sc=el("div","scroll");
     var t=el("table"); var thead=el("thead"); var hr=el("tr");
-    ["Team","Proj. wins","80% win band","Playoffs","Top-2 seed"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
+    ["Team","Proj. wins","80% win range","Playoffs","Top-2 seed"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
     teams.forEach(function(r){
@@ -252,6 +252,8 @@
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); sec.appendChild(card);
     sec.appendChild(el("div","note",
       "Projected final wins and playoff odds from simulating the rest of the season. "+
+      "The 80% win range is where a team's final win total lands in about 8 of every 10 simulations "+
+      "(its projected wins sit in the middle) — a spread of likely outcomes, not a win probability. "+
       "Teams are ordered by their chance at a top-two seed (the double-bye tier), then by projected wins. "+
       "This complements the championship number in the board above."));
     main.appendChild(sec);
