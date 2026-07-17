@@ -59,6 +59,12 @@
   .statline b{color:var(--ink);font-weight:640}
   .empty{color:var(--dim);font-style:italic}
   .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
+  .biowrap{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .headshot{width:66px;height:66px;border-radius:50%;object-fit:cover;background:var(--card2);border:1px solid var(--line);flex:none}
+  .biofacts{display:flex;gap:8px;flex-wrap:wrap}
+  .biofact{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:5px 11px;min-width:62px}
+  .biofact .bl{display:block;font-size:9.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px}
+  .biofact .bv{display:block;font-size:13.5px;font-weight:650;margin-top:1px}
   footer{max-width:1000px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
 <link rel="stylesheet" href="./hardwood.css">
@@ -90,6 +96,54 @@
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function qid(){ var m=/[?&]id=([^&]+)/.exec(location.search); return m?decodeURIComponent(m[1]):null; }
   function safeId(s){ return (s||"").replace(/[^0-9]/g,""); }   // player ids are numeric; hard allow-list
+
+  // BIO STRIP — a static bio card read from ./roster_meta.json, keyed on the same numeric
+  // player id the page already uses. Loaded independently of the impact card so a missing
+  // or partial bio never blocks the profile (graceful null: no data -> nothing renders).
+  var ROSTER=null, curId=null;
+  function bioField(label,val){
+    if(val==null) return null;
+    var s=String(val).trim();
+    if(!s || s==="null" || s==="undefined") return null;
+    var f=el("div","biofact");
+    f.appendChild(el("span","bl",label));
+    f.appendChild(el("span","bv",s));
+    return f;
+  }
+  function buildBio(p){
+    var sec=el("section"); sec.id="biostrip";
+    sec.appendChild(el("h2",null,"Player bio"));
+    var card=el("div","card pad");
+    var wrap=el("div","biowrap");
+    if(p.headshot_url){
+      var img=document.createElement("img");
+      img.className="headshot"; img.src=p.headshot_url;
+      img.alt=(p.name||"Player")+" headshot"; img.loading="lazy";
+      img.onerror=function(){ img.style.display="none"; };
+      wrap.appendChild(img);
+    }
+    var facts=el("div","biofacts");
+    var jersey=(p.jersey!=null && String(p.jersey).trim()!=="") ? "#"+String(p.jersey).trim() : null;
+    var order=[["Position",p.position],["Jersey",jersey],["Height",p.height],
+      ["Weight",p.weight],["Experience",p.experience],["College",p.college],
+      ["Nationality",p.nationality]];
+    var any=false;
+    order.forEach(function(o){ var f=bioField(o[0],o[1]); if(f){ facts.appendChild(f); any=true; } });
+    wrap.appendChild(facts);
+    card.appendChild(wrap); sec.appendChild(card);
+    sec._hasContent = any || !!p.headshot_url;
+    return sec;
+  }
+  function tryBio(){
+    if(!ROSTER || !ROSTER.players || !curId) return;
+    var p=ROSTER.players[curId]; if(!p) return;
+    var main=document.getElementById("main"); if(!main) return;
+    var hero=main.querySelector(".hero"); if(!hero) return;
+    if(document.getElementById("biostrip")) return;
+    var sec=buildBio(p);
+    if(!sec._hasContent) return;   // no usable bio fields -> render nothing (never an empty card)
+    hero.parentNode.insertBefore(sec, hero.nextSibling);
+  }
 
   function trajSvg(pts){
     if(!pts || pts.length<2) return el("p","empty","Not enough history yet for a trajectory.");
@@ -335,11 +389,16 @@
     main.appendChild(s3);
 
     document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Every figure is read from a core pipeline table — this page renders, it never computes.";
+    tryBio();
   }
 
   function load(){
     var id=safeId(qid());
+    curId=id;
     if(!id){ document.getElementById("main").innerHTML='<p class="empty">No player selected. <a href="./players.html">Back to players.</a></p>'; return; }
+    fetch("./roster_meta.json?v="+Date.now(),{cache:"no-cache"})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(j){ ROSTER=j; tryBio(); }).catch(function(){});
     fetch("./players/"+id+".json",{cache:"no-cache"}).then(function(r){
       if(!r.ok) throw new Error("not found"); return r.json();
     }).then(render).catch(function(){

@@ -137,6 +137,57 @@
     ["string","Playing out the string","out of the playoff race"]
   ];
 
+  // PLAYOFF PICTURE — per-team seed odds + projected-win band read from ./playoff_odds.json.
+  // Complements (never replaces) the championship number already on the board. Re-inserted at
+  // the end of every render so it survives the 60s poll re-render; graceful null when absent.
+  var PLAYOFF=null;
+  function fmtPct(p){
+    if(p==null) return "—";
+    var v=p*100;
+    if(v>=99.5) return ">99%";
+    if(v>0 && v<0.5) return "<1%";
+    return Math.round(v)+"%";
+  }
+  function insertPlayoff(){
+    if(!PLAYOFF || !PLAYOFF.teams || !PLAYOFF.teams.length) return;
+    var main=document.getElementById("main"); if(!main) return;
+    var old=document.getElementById("playoffpic"); if(old && old.parentNode) old.parentNode.removeChild(old);
+    var full={};
+    if(curData && curData.teams){ curData.teams.forEach(function(r){ if(r.team) full[r.team]=r.team_full; }); }
+    var teams=PLAYOFF.teams.slice().sort(function(a,b){
+      var pa=a.p_top_2==null?-1:a.p_top_2, pb=b.p_top_2==null?-1:b.p_top_2;
+      if(pb!==pa) return pb-pa;
+      var wa=a.mean_wins==null?-1:a.mean_wins, wb=b.mean_wins==null?-1:b.mean_wins;
+      return wb-wa;
+    });
+    var sec=el("section"); sec.id="playoffpic";
+    sec.appendChild(el("h2",null,"Playoff Picture"));
+    var card=el("div","card"); var sc=el("div","scroll");
+    var t=el("table"); var thead=el("thead"); var hr=el("tr");
+    ["Team","Proj. wins","80% win band","Playoffs","Top-2 seed"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb=el("tbody");
+    teams.forEach(function(r){
+      var tr=el("tr");
+      var name=el("td","tm"); name.appendChild(document.createTextNode((r.team||"—")+" "));
+      if(full[r.team]) name.appendChild(el("span","full", full[r.team]));
+      tr.appendChild(name);
+      tr.appendChild(td(null, r.mean_wins==null?"—":r.mean_wins.toFixed(1)));
+      var band="—", wr=r.wins_range_80;
+      if(wr && wr.length===2 && wr[0]!=null && wr[1]!=null){ band=wr[0].toFixed(1)+"-"+wr[1].toFixed(1); }
+      tr.appendChild(td("full", band));
+      tr.appendChild(playoffCell(r.p_playoff==null?null:r.p_playoff*100));
+      tr.appendChild(td(r.p_top_2!=null&&r.p_top_2>=0.10?"strong":null, fmtPct(r.p_top_2)));
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); sec.appendChild(card);
+    sec.appendChild(el("div","note",
+      "Projected final wins and playoff odds from simulating the rest of the season. "+
+      "Teams are ordered by their chance at a top-two seed (the double-bye tier), then by projected wins. "+
+      "This complements the championship number in the board above."));
+    main.appendChild(sec);
+  }
+
   function summaryLine(d){
     var teams=d&&d.teams;
     if(!teams||!teams.length) return null;
@@ -198,7 +249,7 @@
     curData=d;
     var main=document.getElementById("main"); main.innerHTML="";
     document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Strength ranks the roster on our season-long model. Momentum is recent form, not the ranking basis. Title odds come from simulating the rest of the season.";
-    if(!d.available){ main.appendChild(el("p","empty", d.note||"Power board being built.")); return; }
+    if(!d.available){ main.appendChild(el("p","empty", d.note||"Power board being built.")); insertPlayoff(); return; }
     main.appendChild(el("p","lede", d.source||""));
     var sm=summaryLine(d); if(sm) main.appendChild(sm);
     // relative strength-bar scale across the field (min→max, with a visible floor)
@@ -246,6 +297,7 @@
       "Momentum = how the team's recent-form rating has moved over its last few games (▲ heating up, ▼ cooling) — a form read, not the ranking. "+
       "Title % and Playoffs % are from our end-of-season simulation" + (d.title_as_of?(" (current through "+plainDate(d.title_as_of)+")"):"") + "; the last column is the one-day change in title odds."));
     flash();
+    insertPlayoff();
   }
 
   /* ---------- shared live runtime ---------- */
@@ -270,6 +322,9 @@
       if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the power board. '+(e&&e.message?e.message:"")+'</p>'; }
     });
   }
+  fetch("./playoff_odds.json?v="+Date.now(),{cache:"no-cache"})
+    .then(function(r){ return r.ok?r.json():null; })
+    .then(function(j){ PLAYOFF=j; insertPlayoff(); }).catch(function(){});
   poll(); setInterval(poll,60000); setInterval(updAgo,1000);
 })();
 </script>
