@@ -42,6 +42,17 @@
   .shadowlbl{display:inline-block;font-size:9.5px;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:0 6px;margin-left:4px;vertical-align:middle}
   td.prov{color:var(--muted)}
   .provtag{display:inline-block;font-size:8.5px;font-weight:700;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:0 5px;margin-left:5px;vertical-align:middle;text-transform:uppercase;letter-spacing:.02em}
+  /* rank-delta chip (A-rung): a compact pill surfacing the two rank axes at once — "#N impact / #M
+     scoring" — so the divergence between on-court impact and box-score scoring reads at a glance.
+     Firm-impact rows only (a provisional row has no firm impact rank, so no chip). */
+  .divchip{display:inline-block;font-size:9px;font-weight:700;color:var(--acc);border:1px solid var(--acc);border-radius:999px;padding:0 6px;margin-left:6px;vertical-align:middle;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+  /* board headline (A-rung): the accent-bordered takeaway tile (same look as the Teams "biggest
+     mover" callout) naming the biggest impact-over-scoring riser — the "most underrated by points"
+     player. OMITTED entirely when no firm ranking exists or nobody actually rises (never fabricated). */
+  .riser{display:flex;gap:9px;align-items:baseline;margin:8px 0 6px;padding:8px 12px;background:var(--flash);border-left:3px solid var(--acc);border-radius:7px;font-size:12.5px}
+  .riser-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--acc);white-space:nowrap}
+  .riser-t{color:var(--ink);line-height:1.4}
+  .riser-t b{font-weight:700}
   /* as_of freshness badge (BR-V2): every board section names the slate its data reflects; a data date
      two+ days behind the board date reads LOUD (red), never a silent stale board passed off as fresh. */
   .asof{display:inline-block;font-size:9.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;margin-left:9px;vertical-align:middle;font-variant-numeric:tabular-nums}
@@ -115,6 +126,38 @@
     }
     return b;
   }
+  // BOARD HEADLINE (A-rung): the biggest impact-over-scoring riser — the firm player whose on-court
+  // impact rank most EXCEEDS (is better than) her scoring rank ("most underrated by points"). The
+  // server bakes rt.impact_riser as the single source; clientRiser is only a graceful fallback for a
+  // pre-A players.json (recomputes over the SAME firm rows with the SAME comparator). Provisional
+  // players are excluded (no firm impact rank to compare); returns null when nobody actually rises.
+  function clientRiser(rt){
+    var firm=(rt.players||[]).filter(function(r){ return r.rating!=null && !r.impact_provisional && r.rank!=null; });
+    if(!firm.length) return null;
+    var ranked=firm.slice().sort(function(a,b){ return (b.rating-a.rating)||((b.pts||0)-(a.pts||0))||(a.rank-b.rank); });
+    var best=null;
+    ranked.forEach(function(r,i){
+      var ir=i+1, d=r.rank-ir;
+      if(d<=0) return;
+      if(!best || d>best.delta || (d===best.delta && r.rating>best.rating) || (d===best.delta && r.rating===best.rating && r.name<best.name)){
+        best={name:r.name,team:r.team,impact_rank:ir,scoring_rank:r.rank,rating:r.rating,pts:r.pts,delta:d};
+      }
+    });
+    return best;
+  }
+  function riserCallout(rt){
+    var r = (rt.impact_riser!==undefined) ? rt.impact_riser : clientRiser(rt);  // baked single source; fallback pre-A
+    if(!r || r.delta==null || r.delta<=0) return null;                          // omit — never fabricate a riser
+    var box=el("div","riser");
+    box.appendChild(el("span","riser-k","Most underrated by points"));
+    var t=el("span","riser-t");
+    t.appendChild(el("b",null, r.name + (r.team?(" ("+r.team+")"):"")));
+    t.appendChild(document.createTextNode(" ranks "));
+    t.appendChild(el("b",null,"#"+r.impact_rank+" by on-court impact"));
+    t.appendChild(document.createTextNode(" but only #"+r.scoring_rank+" by scoring — a "+r.delta+"-spot jump the box score misses."));
+    box.appendChild(t);
+    return box;
+  }
   function ratingsSection(rt){
     var s=el("section");
     var h=el("h2"); h.appendChild(document.createTextNode("Players — this season"));
@@ -130,6 +173,8 @@
     s.appendChild(el("p","lede", byImpact
       ? "Ranked by ON-COURT IMPACT — our plus-minus rating of how much better a team plays with her on the floor, biggest first. This is a different list from the scoring board: the players near the top move the game without necessarily topping the box score, so each row also shows where she sits by scoring. Only players with a firm on-court sample are ranked; a thin, provisional sample is tagged “prov” and listed after the ranked group (no rank her sample can't support). Tap a name for her full card."
       : "Ranked by season scoring — points per game from the official box scores. Impact leads the stat columns: our on-court rating of how much better a team plays with her on the floor. It now separates players into a real signal; a player still resting on a thin on-court sample is regressed toward league average and tagged “prov.” Her share of team minutes rides alongside too, so a big scoring line on limited minutes is easy to spot. Tap a name for her full card."));
+    // BOARD HEADLINE — biggest impact-over-scoring riser (shown on both axes; omitted when none rises)
+    var riser=riserCallout(rt); if(riser) s.appendChild(riser);
     // rank-axis toggle — reuses the shared .segbtns component (same look as the Realm-of-outcomes tabs)
     var pkey=function(r){ return r.id!=null ? ("i"+r.id) : ("n"+r.name); };
     var rseg=el("div","segbtns");
@@ -141,11 +186,19 @@
     s.appendChild(rseg);
     // impact ranks: computed over FIRM ratings only (rating present AND not provisional), so a thin
     // provisional sample never receives a rank it can't support — it is shown after, marked "—".
+    // SINGLE-SOURCE (A-rung): prefer the SERVER-BAKED r.impact_rank when present, so the rank cell,
+    // the divergence chip, and the board headline all read ONE canonical rank. Fall back to a client
+    // recompute (identical comparator) only for a pre-A bake that hasn't shipped impact_rank yet.
     var impRank={};
     if(byImpact){
-      rt.players.filter(function(r){ return r.rating!=null && !r.impact_provisional; })
-        .slice().sort(function(a,b){ return (b.rating-a.rating) || ((b.pts||0)-(a.pts||0)) || (a.rank-b.rank); })
-        .forEach(function(r,i){ impRank[pkey(r)]=i+1; });
+      var bakedRank = rt.players.some(function(r){ return r.impact_rank!=null; });
+      if(bakedRank){
+        rt.players.forEach(function(r){ if(r.impact_rank!=null) impRank[pkey(r)]=r.impact_rank; });
+      } else {
+        rt.players.filter(function(r){ return r.rating!=null && !r.impact_provisional; })
+          .slice().sort(function(a,b){ return (b.rating-a.rating) || ((b.pts||0)-(a.pts||0)) || (a.rank-b.rank); })
+          .forEach(function(r,i){ impRank[pkey(r)]=i+1; });
+      }
     }
     function impactWhy(r){
       if(r.rating==null) return "no firm on-court rating yet";
@@ -186,11 +239,18 @@
       if(r.id!=null){ var a=el("a",null,r.name); a.href="./player.html?id="+r.id; a.className="plink"; nm.appendChild(a); }
       else { nm.appendChild(document.createTextNode(r.name)); }
       if(r.thin){ nm.appendChild(el("span","tag"," · thin sample")); }
+      // RANK-DELTA CHIP (A-rung): on the impact axis, a firm-impact row carries a compact pill
+      // showing BOTH ranks — "#N impact / #M scoring" — surfacing the divergence between the two
+      // axes at a glance. Reads the same canonical impRank (server-baked) + r.rank; a provisional
+      // row (no firm impact rank) gets no chip (nothing to compare — omit, never fabricate).
+      if(byImpact && impRank[pkey(r)]!=null && r.rank!=null){
+        nm.appendChild(el("span","divchip","#"+impRank[pkey(r)]+" impact / #"+r.rank+" scoring"));
+      }
       // WHY RANKED HERE (per-row cue, BR-V2): prefer a baked one-line decision summary under the
-      // name (server-composed in build_site as the single source). Until that field is baked, fall
-      // back to the light client-side basis line (per-team scoring rank + ranking basis) so behavior
-      // is unchanged today and richer automatically once `why` lands in players.json.
-      var why = byImpact ? impactWhy(r) : r.why;
+      // name (server-composed in build_site as the single source). On the impact axis this is the
+      // SERVER-BAKED r.why_impact (A-rung single-source, no client compose); it falls back to the
+      // client impactWhy() only for a pre-A bake. The scoring axis reads the baked r.why.
+      var why = byImpact ? (r.why_impact || impactWhy(r)) : r.why;
       if(!why){
         var headlineImpact = (rt.headline === "rating");
         var wb = [];

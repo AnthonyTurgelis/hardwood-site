@@ -269,6 +269,13 @@
   .covtile .cthin{color:var(--warn);font-weight:700}
   .covtile .cw{font-size:12px;color:var(--muted);margin-top:8px}
   .covtile .cw a{white-space:nowrap}
+  .covtile .ctrend{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;margin-left:5px;white-space:nowrap}
+  .covtile .ctrend.up{color:var(--live)}
+  .covtile .ctrend.down{color:var(--warn)}
+  .covtile .cpoint{display:flex;gap:20px;flex-wrap:wrap;margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+  .covtile .cpm{display:flex;flex-direction:column;gap:1px;min-width:0}
+  .covtile .cpm b{font-size:19px;font-weight:820;font-variant-numeric:tabular-nums;line-height:1.05}
+  .covtile .cpm span{font-size:11px;color:var(--muted)}
   /* freshness / stale */
   .prov b{color:var(--live);font-variant-numeric:tabular-nums;font-weight:700}
   .banner.stale{border-left:3px solid var(--warn)}
@@ -938,6 +945,20 @@
   var COV_THIN_N=40;   // below this a band's coverage is an early read — flagged, not a firm claim
   function covOff(k){ return !!k.flag || Math.abs((k.actual||0)-(k.target||0))>5; }
   function covThin(k){ return k.n!=null && k.n<COV_THIN_N; }
+  /* Coverage trend vs the PRIOR bake — arrow renders ONLY when the feed actually carries a prior
+     coverage number for the band (k.prev, the empirical coverage from the previous scorecard). The
+     baker keeps only the latest run today, so no prior snapshot exists yet -> no arrow ever fires
+     (omit-not-invent; a faked trend would be a data-integrity defect, CEO #1). When a prior IS
+     present: the arrow = direction of the coverage-% change (▲ rose / ▼ fell), coloured by whether
+     that move went TOWARD nominal (better = up class) or AWAY (worse = down class). */
+  function covTrend(k){
+    if(!k || k.prev==null || k.actual==null || k.target==null) return null;
+    var d=Math.round((k.actual-k.prev)*10)/10;
+    if(d===0) return { arrow:"→", cls:"", text:"flat vs last bake" };
+    var closer=Math.abs(k.actual-k.target)<Math.abs(k.prev-k.target);
+    return { arrow:(d>0?"▲":"▼"), cls:(closer?"up":"down"),
+             text:(d>0?"+":"")+d+" pts vs last bake ("+(closer?"toward":"away from")+" target)" };
+  }
   function renderCoverageTile(acc){
     if(!acc) return null;
     var cal=(acc.calibration||[]).filter(function(k){
@@ -960,7 +981,10 @@
     var row=el("div","cbands");
     bands.forEach(function(k){
       var b=el("div","cband");
-      b.appendChild(el("div","cbig"+(covOff(k)?" off":""), k.actual+"%"));
+      var big=el("div","cbig"+(covOff(k)?" off":""), k.actual+"%");
+      var tr=covTrend(k);   // renders nothing today (no prior snapshot in the feed)
+      if(tr){ var ta=el("span","ctrend "+tr.cls, tr.arrow); ta.title=tr.text; big.appendChild(ta); }
+      b.appendChild(big);
       var sub=el("div","csub");
       sub.appendChild(document.createTextNode("inside our "+k.target+"% range"
         + (k.n!=null?(" · n="+k.n):"")));
@@ -969,6 +993,25 @@
       row.appendChild(b);
     });
     tile.appendChild(row);
+    // Season POINT accuracy — how CLOSE we are, alongside how HONEST the ranges are.
+    // Single-sourced from acc.backtest.headline (read_accuracy_backtest); nothing recomputed here.
+    // Omit-not-invent: no headline / no avg_miss -> no point row; a null win_pct drops only that stat.
+    var h=(acc.backtest && acc.backtest.available!==false) ? acc.backtest.headline : null;
+    if(h && h.avg_miss!=null){
+      var pr=el("div","cpoint");
+      var m1=el("div","cpm");
+      m1.appendChild(el("b",null, h.avg_miss+" pts"));
+      m1.appendChild(el("span",null,"off the final margin, on average"
+        + (h.n_games?(" · "+h.n_games+" games"):"")));
+      pr.appendChild(m1);
+      if(h.win_pct!=null){
+        var m2=el("div","cpm");
+        m2.appendChild(el("b",null, h.win_pct+"%"));
+        m2.appendChild(el("span",null,"of the time we call the right winner"));
+        pr.appendChild(m2);
+      }
+      tile.appendChild(pr);
+    }
     // honest one-liner, DERIVED from the data (never a marketing claim)
     var cw=el("div","cw"), msg;
     if(bands.some(covThin)){ msg="An early read on a thin sample — we publish it now and firm it up as more games grade."; }
