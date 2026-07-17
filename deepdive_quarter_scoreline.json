@@ -1,0 +1,48 @@
+{
+  "slug": "quarter_scoreline",
+  "question": "For two evenly-matched teams on a neutral floor, what are the odds of leading (and winning) at the end of each quarter?",
+  "headline": "Two even teams are a coin flip at tip; a lead is worth much more late than early — up 6 after Q1 wins ~66%, the same 6 after Q3 wins ~76%.",
+  "breaks": ["Q1", "Half", "Q3", "Final"],
+  "k_frac": [0.25, 0.50, 0.75, 1.0],
+  "s_k": [7.6, 10.3, 12.7, 13.8],
+  "s_rem_k": {"Q1": 11.5, "Half": 9.2, "Q3": 5.5},
+  "hca_points": 2.1,
+  "band_table": {
+    "Q1":   {"tied": 5, "l1_3": 30, "l4_6": 26, "l7_10": 22, "l11p": 17, "within3": 35, "within6": 61},
+    "Half": {"tied": 4, "l1_3": 23, "l4_6": 20, "l7_10": 23, "l11p": 30, "within3": 26, "within6": 47},
+    "Q3":   {"tied": 3, "l1_3": 19, "l4_6": 18, "l7_10": 19, "l11p": 41, "within3": 22, "within6": 40},
+    "Final":{"tied": 5, "l1_3": 12, "l4_6": 16, "l7_10": 23, "l11p": 44, "within3": 17, "within6": 33}
+  },
+  "winprob_grid": {
+    "Q1":   [{"lead": 0, "emp": 50, "model": 50, "n": null}, {"lead": 3, "emp": 59, "model": 60, "n": 700}, {"lead": 6, "emp": 66, "model": 70, "n": 540}, {"lead": 10, "emp": 81, "model": 82, "n": 400}],
+    "Half": [{"lead": 0, "emp": 50, "model": 50, "n": null}, {"lead": 3, "emp": 60, "model": 63, "n": 620}, {"lead": 6, "emp": 74, "model": 74, "n": 470}, {"lead": 10, "emp": 82, "model": 86, "n": 360}],
+    "Q3":   [{"lead": 0, "emp": 50, "model": 50, "n": null}, {"lead": 3, "emp": 66, "model": 71, "n": 480}, {"lead": 6, "emp": 76, "model": 86, "n": 429}, {"lead": 10, "emp": 92, "model": 96, "n": 321}]
+  },
+  "scoring_by_quarter": {"Q1": 41.8, "Q2": 40.3, "Q3": 40.5, "Q4": 39.5, "full_game": 162.1},
+  "read": [
+    "Even teams are rarely separated early — 6 in 10 games are within a possession-or-two (±6) after Q1 — and steadily pull apart. By the final buzzer only a third of even games finish within 6, and 44% finish 11+ apart (double-digit finals are the norm even between equals, because scoring noise compounds).",
+    "A lead is worth more the later you hold it: up 6 is worth ~66% after Q1, ~74% by half, ~76% after Q3 — same six points, very different security depending on how much clock is left.",
+    "Useful caveat for late leads: a naive random-walk model says an end-Q3 lead of 6 should be worth ~86%; reality is only 76%. WNBA comebacks happen more than a smooth-noise model predicts (fouling, 3-point variance, coasting give the trailing team fatter tails). Quote the empirical number, not the model, for late-game leads."
+  ],
+  "caveats": [
+    "Even-team identification is via a between/within margin-variance decomposition, not a clean spread filter (the pbp pregame-spread column is a constant junk 2.5). The decomposition shows team strength contributes negligibly to quarter-grain margin variance, so this is a small approximation, not a filtered even-game sample.",
+    "The conditional win-prob is pooled over all games (mix of even and mismatched). Conditioning on the current lead absorbs most strength information, but a leader is on average slightly the stronger team, which nudges the early empirical win% a hair above a pure even-team value.",
+    "Neutral court: home-court advantage is symmetrized out. In the real data home teams win 55.5% (avg margin +2.1). If one even team is at home, treat it as ~+2 pts / ~+5 pp ahead of the neutral numbers.",
+    "No player / injury / rest context — this is the league-average even matchup, the ground-floor baseline to reason from."
+  ],
+  "provenance": {
+    "source": "play-by-play data",
+    "seasons": "2015-2026",
+    "games": 2600,
+    "ot_games": 122,
+    "script": "scripts/analysis_quarter_scoreline_odds.py",
+    "note": "Every number reproducible by re-running the script. Values materialized from the finalized CP-C spec (docs/reports/DEEPDIVE_QUARTER_SCORELINE_ODDS_20260717.md)."
+  },
+  "index_row": {
+    "slug": "quarter_scoreline",
+    "question": "Even teams — odds of leading / winning at each quarter break?",
+    "headline": "Coin flip at tip; a 6-pt lead is worth ~66% after Q1 but ~76% after Q3 — a lead is safer the later you hold it.",
+    "source": "play-by-play data",
+    "n": 2600
+  }
+}

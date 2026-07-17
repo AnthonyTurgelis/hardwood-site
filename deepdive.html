@@ -440,7 +440,72 @@
     return f;
   }
 
-  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest };
+  // -- clutch ----------------------------------------------------------------
+  function renderClutch(d){
+    var f=frag();
+    f.appendChild(el("div","dhead", d.headline||""));
+    var teams=d.team_by_net||[];
+    var best=teams[0]||{};
+    f.appendChild(tiles([
+      {v:num(d.reliability_split_half_ts_r,2), l:"split-half reliability (r)"},
+      {v:num(d.reliability_n_players), l:"players measured", sm:true},
+      {v:best.team||"—", l:"best clutch net", sm:true},
+      {v:sign(best.clutch_net_per_game,2), l:"net pts / clutch game", sm:true}
+    ]));
+    function playerTable(label, arr){
+      if(!arr||!arr.length) return;
+      f.appendChild(plab(label));
+      var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
+      ["Player","Team","Shots","Clutch TS%","Base TS%","Δ TS%"].forEach(function(x,i){ hd.appendChild(el("th",i>1?"num":null,x)); });
+      var th=el("thead"); th.appendChild(hd); t.appendChild(th); var tb=el("tbody");
+      arr.slice(0,8).forEach(function(p){
+        var tr=el("tr");
+        tr.appendChild(el("td","rowh",p.name||"—"));
+        tr.appendChild(el("td",null,p.team||"—"));
+        var std=el("td","num"+(p.thin?" thin":"")); std.appendChild(document.createTextNode(num(p.clutch_shots)));
+        if(p.thin) std.setAttribute("title","thin sample (<60 clutch shots)"); tr.appendChild(std);
+        tr.appendChild(el("td","num",pct(p.clutch_ts,1)));
+        tr.appendChild(el("td","num",pct(p.base_ts,1)));
+        tr.appendChild(el("td","num",sign(p.delta_ts,1)));
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb); w.appendChild(t); f.appendChild(w);
+    }
+    playerTable("Biggest clutch risers (true-shooting % vs their own non-clutch baseline)", d.player_risers);
+    playerTable("Biggest clutch faders", d.player_faders);
+    if(teams.length){
+      f.appendChild(plab("Team clutch record (last 5:00 of Q4/OT, within 5 pts)"));
+      var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
+      ["Team","Clutch G","W","L","Win%","Net / G"].forEach(function(x,i){ hd.appendChild(el("th",i?"num":null,x)); });
+      var th=el("thead"); th.appendChild(hd); t.appendChild(th); var tb=el("tbody");
+      teams.forEach(function(r){
+        var tr=el("tr");
+        tr.appendChild(el("td","rowh",r.team||"—"));
+        tr.appendChild(el("td","num",num(r.clutch_games)));
+        tr.appendChild(el("td","num",num(r.wins)));
+        tr.appendChild(el("td","num",num(r.losses)));
+        tr.appendChild(el("td","num",pct(r.win_pct,1)));
+        tr.appendChild(el("td","num",sign(r.clutch_net_per_game,2)));
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb); w.appendChild(t); f.appendChild(w);
+    }
+    var reads=[]; if(d.headline) reads.push(d.headline);
+    reads.push("Clutch splits are noisy: split-half reliability is r="+num(d.reliability_split_half_ts_r,2)+" (near-zero), so treat these as what happened, not a repeatable skill — history, not destiny.");
+    f.appendChild(readStrip(reads));
+    var pv=d.provenance||{};
+    f.appendChild(methodBlock("How this is computed · caveats", function(b){
+      provList(b, [
+        ["Source", (pv.source||"—")+" ("+(pv.seasons||"")+(pv.clutch_games!=null?", "+pv.clutch_games+" clutch games":"")+")"],
+        ["Clutch", d.clutch_definition||"last 5:00 of Q4/OT within 5 pts"],
+        ["Method", d.method_note||"—"],
+        ["Script", pv.script||"—"]
+      ]);
+    }));
+    return f;
+  }
+
+  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch };
 
   function renderDiveCard(row, data){
     var c=el("div","dive");
@@ -464,7 +529,10 @@
   /* ============================ hub loader ============================ */
   function loadHub(){
     var hub=document.getElementById("hub");
-    fetch("./deepdive_index.json",{cache:"no-cache"}).then(function(r){ return r.json(); }).then(function(idx){
+    fetch("./deepdive_index.json",{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; }).then(function(idx){
+      // Graceful degradation: a missing / gate-excluded / unparseable index degrades to the
+      // friendly empty state, never a raw parse-error line to the CEO.
+      if(!idx){ hub.innerHTML=""; hub.appendChild(el("div","soon","No deep dives are published yet.")); return; }
       var lede=document.getElementById("hub-lede"); if(lede&&idx.lede) lede.textContent=idx.lede;
       var dives=(idx.dives||[]);
       if(!dives.length){ hub.innerHTML=""; hub.appendChild(el("div","soon","No deep dives are published yet.")); return; }

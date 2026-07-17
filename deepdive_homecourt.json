@@ -1,0 +1,160 @@
+{
+  "slug": "homecourt",
+  "question": "The board uses a home-court edge of ~+2.1 pts / 55.5% - is that right, and where does it come from?",
+  "headline": {
+    "home_margin": 2.0,
+    "home_margin_ci95": [
+      1.46,
+      2.54
+    ],
+    "home_margin_se": 0.276,
+    "home_winpct": 0.5521,
+    "home_winpct_ci95": [
+      0.5327,
+      0.5716
+    ],
+    "n": 2512,
+    "board_value_pts": 2.1,
+    "board_value_winpct": 0.555,
+    "confirmed": true
+  },
+  "offense_defense": {
+    "note": "within-team home-minus-road split; nets out team quality (same team both samples)",
+    "offense_swing": 1.54,
+    "defense_swing": 2.81,
+    "total_swing": 4.35,
+    "hca_from_offense": 0.77,
+    "hca_from_defense": 1.41,
+    "hca_total": 2.18,
+    "defense_share": 0.646,
+    "offense_share": 0.354,
+    "n_teams": 17
+  },
+  "quarter_timing": {
+    "note": "per-quarter home-margin increment; front-loaded (Q1 biggest), dips Q3, rebounds Q4",
+    "q1": 0.654,
+    "q2": 0.499,
+    "q3": 0.381,
+    "q4": 0.601,
+    "q_se": [
+      0.149,
+      0.142,
+      0.146,
+      0.139
+    ],
+    "regulation_total": 2.14,
+    "n": 2600
+  },
+  "mechanism": {
+    "note": "home-minus-away rate splits; pbp team-attribution only 2020-2026",
+    "sample_margin": 1.59,
+    "ft_attempts_diff": 1.05,
+    "ft_points_diff": 0.9,
+    "fg_points_diff": 0.68,
+    "home_fg_pct": 0.4436,
+    "away_fg_pct": 0.4399,
+    "fg_pct_diff_pp": 0.37,
+    "fga_diff": 0.1,
+    "turnover_diff": 0.29,
+    "pace_diff": 0.04,
+    "home_poss": 76.0,
+    "away_poss": 75.9,
+    "n": 1594
+  },
+  "trend": {
+    "note": "HCA is drifting down; 2020 COVID bubble (no crowd) is a natural ~0-HCA control",
+    "by_season": [
+      {
+        "season": 2015,
+        "n": 204,
+        "margin": 3.42,
+        "winpct": 0.6176
+      },
+      {
+        "season": 2016,
+        "n": 204,
+        "margin": 2.42,
+        "winpct": 0.5539
+      },
+      {
+        "season": 2017,
+        "n": 204,
+        "margin": 3.26,
+        "winpct": 0.5931
+      },
+      {
+        "season": 2018,
+        "n": 203,
+        "margin": 1.53,
+        "winpct": 0.5419
+      },
+      {
+        "season": 2019,
+        "n": 204,
+        "margin": 3.97,
+        "winpct": 0.6078
+      },
+      {
+        "season": 2020,
+        "n": 132,
+        "margin": 0.83,
+        "winpct": 0.5
+      },
+      {
+        "season": 2021,
+        "n": 192,
+        "margin": 0.45,
+        "winpct": 0.5365
+      },
+      {
+        "season": 2022,
+        "n": 216,
+        "margin": 0.9,
+        "winpct": 0.5463
+      },
+      {
+        "season": 2023,
+        "n": 240,
+        "margin": 1.61,
+        "winpct": 0.5208
+      },
+      {
+        "season": 2024,
+        "n": 240,
+        "margin": 0.79,
+        "winpct": 0.525
+      },
+      {
+        "season": 2025,
+        "n": 286,
+        "margin": 2.63,
+        "winpct": 0.5594
+      },
+      {
+        "season": 2026,
+        "n": 187,
+        "margin": 1.71,
+        "winpct": 0.508
+      }
+    ],
+    "ols_slope_pts_per_yr": -0.143,
+    "era_2015_2019_margin": 2.92,
+    "era_2020_bubble_margin": 0.83,
+    "era_2020_bubble_winpct": 0.5,
+    "era_2021_2026_margin": 1.42,
+    "early_minus_modern": 1.51
+  },
+  "provenance": {
+    "sources": [
+      "game results (n=2512, 2015-2026 non-neutral)",
+      "play-by-play data (n=2600 quarters; n=1594 team-attributable 2020-2026)"
+    ],
+    "script": "scripts/analysis_homecourt_decomp.py",
+    "method": "empirical; offense/defense within-team quality-controlled; per-cell n stated",
+    "caveats": [
+      "neutral_site flag unreliable (0 for all incl. 2020 bubble) - cannot filter neutral by flag",
+      "mechanism split (FT/FG/pace) is 2020-2026 only (pbp team_id coverage), an era with smaller raw HCA",
+      "per-team single-season HCA is thin (~20 home games) - only league/era aggregates shown"
+    ]
+  }
+}
