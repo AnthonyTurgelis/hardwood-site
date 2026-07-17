@@ -135,3 +135,111 @@ button,.pill,.qbtn,.taybtn,.subtab{min-height:32px}
      (minmax(300-320px) card tracks would otherwise overflow a ~320px viewport) */
   .grid,.gcards,.mgrid,.seats,.agrid{grid-template-columns:1fr !important}
 }
+
+/* ================================================================
+   HEADLINE COMPONENTS — coach + gm dashboards (visual-hierarchy pass)
+   The verdict a coach/GM needs pops at the top, large, with weight;
+   methodology drops into a collapsible below. Theme-aware (all colour
+   via tokens above), phone-safe, honest nulls kept (em-dash, never 0).
+   ================================================================ */
+
+/* ---- hero: the lead verdict card, one per view section ---- */
+.hero{
+  background:var(--card); border:1px solid var(--line2);
+  border-left:4px solid var(--accent); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg); padding:14px 16px; margin:4px 0 12px;
+}
+.hero .eyebrow{
+  font-size:10.5px; text-transform:uppercase; letter-spacing:.07em;
+  color:var(--muted); font-weight:800; margin-bottom:5px;
+}
+.hero-top{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:2px}
+.hero-name{font-size:22px; font-weight:800; letter-spacing:-.02em; line-height:1.1}
+
+/* the big verdict line (proportional figures — never tabular at display size) */
+.verdict{
+  font-size:28px; line-height:1.08; font-weight:800; letter-spacing:-.02em;
+  display:flex; align-items:baseline; gap:9px; flex-wrap:wrap; margin:2px 0 3px;
+}
+.verdict .big{font-size:40px}
+.verdict .unit{font-size:14px; color:var(--muted); font-weight:600; letter-spacing:0}
+.verdict-sub{font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums}
+.microcap{font-size:9.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--dim); font-weight:800; margin:9px 0 3px}
+
+/* ---- big KPI strip (lead stat large, the rest quieter) ---- */
+.kstrip{display:flex; flex-wrap:wrap; gap:6px 22px; align-items:flex-end; margin-top:9px}
+.kbig{display:flex; flex-direction:column; line-height:1.02}
+.kbig .kv{font-size:26px; font-weight:800; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.kbig .kl{font-size:10px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); font-weight:700; margin-top:3px}
+.kbig.sm .kv{font-size:17px; font-weight:750}
+
+/* ---- rank badge ---- */
+.rankbadge{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:32px; height:30px; padding:0 9px; border-radius:9px;
+  background:var(--accent); color:var(--accent-ink);
+  font-weight:800; font-size:15px; font-variant-numeric:tabular-nums;
+}
+
+/* ---- win-probability split bar (two teams; colourblind-safe home/away pair) ---- */
+.psplit{margin:4px 0 2px}
+.psplit-row{display:flex; justify-content:space-between; gap:10px; font-size:12px; font-weight:700; margin-bottom:4px}
+.psplit-row .team{color:var(--ink)}
+.psplit-row .pct{color:var(--ink); font-variant-numeric:tabular-nums}
+.psplit-bar{display:flex; height:13px; border-radius:7px; background:var(--line2); overflow:hidden; gap:2px}
+.psplit-bar>i{display:block; height:100%}
+.psplit-bar>i.away{background:var(--away); border-radius:7px 0 0 7px}
+.psplit-bar>i.home{background:var(--home); border-radius:0 7px 7px 0}
+
+/* ---- simulated-margin range bar (shows uncertainty honestly) ---- */
+.rbar{position:relative; height:38px; margin:2px 4px 2px}
+.rbar .track{position:absolute; left:0; right:0; top:19px; height:6px; border-radius:3px; background:var(--line2)}
+.rbar .span{position:absolute; top:19px; height:6px; border-radius:3px; background:var(--accent); opacity:.30}
+.rbar .zero{position:absolute; top:11px; height:22px; width:2px; background:var(--dim); border-radius:1px}
+.rbar .mean{position:absolute; top:15px; width:14px; height:14px; border-radius:50%; background:var(--accent); border:2px solid var(--card); transform:translateX(-50%); box-shadow:var(--shadow)}
+.rbar .mlab{position:absolute; top:-2px; font-size:12px; font-weight:800; color:var(--accent); transform:translateX(-50%); white-space:nowrap; font-variant-numeric:tabular-nums}
+.rbar .end{position:absolute; top:27px; font-size:10px; color:var(--dim); transform:translateX(-50%); white-space:nowrap; font-variant-numeric:tabular-nums}
+.rbar .zlab{position:absolute; top:27px; font-size:10px; color:var(--dim); transform:translateX(-50%)}
+
+/* ---- front-office phase badge (GM) ---- */
+.phase{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 14px; border-radius:var(--radius-pill);
+  font-weight:800; font-size:16px; letter-spacing:-.01em;
+}
+.phase .dot{width:10px; height:10px; border-radius:50%; background:currentColor}
+.phase.contend{color:var(--good); background:rgba(31,143,61,.14)}
+.phase.winnow{color:var(--accent); background:var(--accent-weak)}
+.phase.rebuild{color:var(--promote); background:rgba(123,82,216,.15)}
+.phase.retool{color:var(--warn); background:rgba(154,103,0,.16)}
+.phase.na{color:var(--muted); background:var(--chip)}
+
+/* ---- value tier badges (GM value-for-money) ---- */
+.vbadge{display:inline-block; font-size:10px; font-weight:800; padding:2px 9px; border-radius:var(--radius-pill); white-space:nowrap; letter-spacing:.01em}
+.vbadge.bargain{color:var(--good); background:rgba(31,143,61,.16)}
+.vbadge.fair{color:var(--muted); background:var(--chip)}
+.vbadge.overpay{color:var(--bad); background:rgba(198,40,40,.13)}
+
+/* ---- inline magnitude bar under a table number (WAR) ---- */
+.warwrap{display:flex; flex-direction:column; align-items:flex-end; gap:2px}
+.cellbar{position:relative; width:54px; max-width:100%; height:4px; border-radius:2px; background:var(--line2); overflow:hidden}
+.cellbar>i{position:absolute; left:0; top:0; bottom:0; border-radius:2px; background:var(--accent)}
+
+/* ---- collapsible methodology (long explanations move here, below the signal) ---- */
+.method{margin:9px 0 2px; border:1px solid var(--line); border-radius:var(--radius); background:var(--card2); overflow:hidden}
+.method>summary{
+  cursor:pointer; list-style:none; padding:8px 12px; font-size:11px; font-weight:800;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.04em;
+  display:flex; align-items:center; gap:7px;
+}
+.method>summary::-webkit-details-marker{display:none}
+.method>summary::before{content:"\25B8"; font-size:10px; color:var(--dim); transition:transform .15s ease}
+.method[open]>summary::before{transform:rotate(90deg)}
+.method>summary:hover{color:var(--ink)}
+.method .method-body{padding:0 12px 11px; font-size:11.5px; color:var(--muted); line-height:1.6}
+.method .method-body b{color:var(--ink)}
+
+@media (max-width:560px){
+  .verdict{font-size:23px} .verdict .big{font-size:31px}
+  .hero-name{font-size:19px} .kbig .kv{font-size:23px}
+}

@@ -170,6 +170,32 @@
   // replacement-level rating and misprice the asset (CEO data-integrity rule #1).
   function ppRating(v){ if(v==null) return "—"; var s=v*100; return (s>=0?"+":"")+s.toFixed(1); }
 
+  // ---------- headline / hierarchy helpers ----------
+  function methodBox(sumTxt,htmlOrText,isHtml){
+    var d=el("details","method"); d.appendChild(el("summary",null,sumTxt));
+    var b=el("div","method-body"); if(isHtml){ b.innerHTML=htmlOrText; } else { b.textContent=htmlOrText; }
+    d.appendChild(b); return d;
+  }
+  function methodNote(txt){ return methodBox("How to read this",txt,false); }
+  function kbig(v,l,lead){ var k=el("div","kbig"+(lead?"":" sm")); k.appendChild(el("div","kv",v)); k.appendChild(el("div","kl",l)); return k; }
+  var MAXWAR=1;
+  function computeMaxWar(){ MAXWAR=1; if(SPINE&&SPINE.players) SPINE.players.forEach(function(p){ if(p.proj_war_2026!=null&&p.proj_war_2026>MAXWAR) MAXWAR=p.proj_war_2026; }); }
+  // WAR cell: number + magnitude bar. NULL keeps em-dash, draws NO bar (rule #1).
+  function warCell(v){
+    var td=el("td","war");
+    if(v==null){ td.textContent="—"; return td; }
+    var w=el("div","warwrap"); w.appendChild(el("b",null,v.toFixed(1)));
+    var cb=el("div","cellbar"); var i=el("i"); i.style.width=Math.max(3,Math.round(Math.max(0,v)/MAXWAR*100))+"%"; cb.appendChild(i);
+    w.appendChild(cb); td.appendChild(w); return td;
+  }
+  // GM phase badge (rebuild-vs-contend quadrant, as a big verdict)
+  function phaseBadge(q){
+    if(!q) return null;
+    var map={contend:["Contend","contend"],winnow:["Win-now","winnow"],rebuild:["Rebuild","rebuild"],retool:["Retool / Sell","retool"]};
+    var m=map[q]; if(!m) return null;
+    var b=el("div","phase "+m[1]); b.appendChild(el("span","dot")); b.appendChild(el("span",null,m[0])); return b;
+  }
+
   // ---------- $/WAR value tiers (league-relative, over salaried + positive-WAR players) ----------
   var DPW_SORTED=[];
   function computeDpw(){
@@ -211,12 +237,12 @@
       if(opts.showTeam){ nm.appendChild(el("span","legend"," ("+p.team+")")); }
       tr.appendChild(nm);
       tr.appendChild(el("td",null,num(p.age_2026)));
-      tr.appendChild(el("td","war",num(p.proj_war_2026,1)));
+      tr.appendChild(warCell(p.proj_war_2026));
       tr.appendChild(el("td",null,ppRating(p.pp_rating_active)));
       tr.appendChild(el("td",null,money(p.salary_2026)));
       tr.appendChild(el("td",null,perWar(p.dollar_per_war)));
       var f=valueFlag(p); var vc=el("td");
-      if(f){ vc.appendChild(el("span",f.cls,f.txt)); } else { vc.appendChild(el("span","legend","value only")); }
+      if(f){ var vcls=f.txt==="Bargain"?"bargain":(f.txt==="Overpay"?"overpay":"fair"); vc.appendChild(el("span","vbadge "+vcls,f.txt)); } else { vc.appendChild(el("span","legend","value only")); }
       tr.appendChild(vc);
       tb.appendChild(tr);
     });
@@ -359,7 +385,7 @@
         "guessed fit or a guessed value). ";
     }
     noteTxt+="Showing top "+Math.min(rows.length,60)+" of "+rows.length+".";
-    wrap.appendChild(el("div","note",noteTxt));
+    wrap.appendChild(methodNote(noteTxt));
     return wrap;
   }
 
@@ -387,14 +413,20 @@
       else q="retool";
     }
     var wrap=el("div");
-    var kp=el("div","card pad"); var head=el("div","thead");
-    head.appendChild(el("span","tn",teamName(team)));
-    function kpi(v,lab){ var k=el("div","kpi"); k.appendChild(el("b",null,v)); k.appendChild(el("span",null,lab)); return k; }
-    head.appendChild(kpi(tm.proj_wins==null?"—":tm.proj_wins.toFixed(1),"Proj wins"));
-    head.appendChild(kpi(tm.title_pct==null?"—":tm.title_pct.toFixed(1)+"%","Title"));
-    head.appendChild(kpi(tm.playoff_pct==null?"—":tm.playoff_pct.toFixed(0)+"%","Playoffs"));
-    head.appendChild(kpi(age==null?"—":age.toFixed(1),"Core age (WAR-wtd)"));
-    kp.appendChild(head); wrap.appendChild(kp);
+    var hero=el("div","hero");
+    hero.appendChild(el("div","eyebrow","Front-office phase"));
+    var top=el("div","hero-top");
+    var rb=el("div","rankbadge"); rb.textContent=tm.rank==null?"—":"#"+tm.rank; top.appendChild(rb);
+    top.appendChild(el("div","hero-name",teamName(team)));
+    var pb=phaseBadge(q); if(pb) top.appendChild(pb);
+    hero.appendChild(top);
+    var strip=el("div","kstrip");
+    strip.appendChild(kbig(tm.proj_wins==null?"—":tm.proj_wins.toFixed(1),"Proj wins",true));
+    strip.appendChild(kbig(tm.playoff_pct==null?"—":tm.playoff_pct.toFixed(0)+"%","Playoffs"));
+    strip.appendChild(kbig(tm.title_pct==null?"—":tm.title_pct.toFixed(1)+"%","Title"));
+    strip.appendChild(kbig(age==null?"—":age.toFixed(1),"Core age"));
+    hero.appendChild(strip);
+    wrap.appendChild(hero);
     // 2x2
     var quad=el("div","quad");
     var defs=[
@@ -410,9 +442,9 @@
       quad.appendChild(c);
     });
     wrap.appendChild(quad);
-    wrap.appendChild(el("div","note",
+    wrap.appendChild(methodNote(
       "Phase read: horizontal = are you winning (projected wins vs the league median of "+(med==null?"—":med.toFixed(1))+"); "+
-      "vertical = is your core young (WAR-weighted average age under 28). A guide, not a mandate."));
+      "vertical = is your core young (WAR-weighted average age under 28). The highlighted cell is your current phase. A guide, not a mandate."));
     return wrap;
   }
   function pickCurveCard(){
@@ -528,9 +560,8 @@
   function provenanceBlock(main){
     if(!GM||!GM.provenance) return;
     var p=GM.provenance;
-    var d=el("div","prov");
-    d.innerHTML="<b>How this is sourced.</b> "+p.money_source+" "+p.trade_value_note+" "+p.cap_space_note;
-    main.appendChild(d);
+    main.appendChild(methodBox("How this is sourced",
+      "<b>Money.</b> "+p.money_source+" <b>Trade value.</b> "+p.trade_value_note+" <b>Cap space.</b> "+p.cap_space_note, true));
   }
   function coverageNote(main,team){
     if(!SPINE||!SPINE.coverage) return;
@@ -565,15 +596,13 @@
     main.appendChild(controls());
     var team=state.team;
     if(!team){ main.appendChild(el("p","empty","Pick a team.")); return; }
-    provenanceBlock(main);
-    main.appendChild(el("h2",null,"Rebuild vs. Contend"));
     main.appendChild(rebuildGauge(team));
     var pc=pickCurveCard();
     if(pc){ main.appendChild(el("h2",null,"What a draft pick is worth (league history)")); main.appendChild(pc);
-      main.appendChild(el("div","note","Historical return by draft slot — a reference for valuing your draft capital, not a claim about which picks you own.")); }
+      main.appendChild(methodNote("Historical return by draft slot — a reference for valuing your draft capital, not a claim about which picks you own.")); }
     main.appendChild(el("h2",null,"Value for Money — my roster"));
     main.appendChild(valueTable(roster(team),{}));
-    main.appendChild(el("div","note","Each player's 2026 base salary against projected WAR. On-court is the complementary second value face — the active-only per-possession rating (RAPM-scale, net points per 100 possessions) from real 2026 on-court time; it prices alongside WAR, not instead of it, and shows — for players not yet rated this season (retired / prior-only / no 2026 minutes), never a fabricated 0. Value flag compares $/WAR to the league of salaried players — Bargain (cheapest third), Fair, Overpay (most expensive third). Players with no salary on file show value-only."));
+    main.appendChild(methodNote("Each player's 2026 base salary against projected WAR; the bar under each WAR shows its size against the league's best. On-court is the complementary second value face — the active-only per-possession rating (RAPM-scale, net points per 100 possessions) from real 2026 on-court time; it prices alongside WAR, not instead of it, and shows — for players not yet rated this season (retired / prior-only / no 2026 minutes), never a fabricated 0. Value badge compares $/WAR to the league of salaried players — Bargain (cheapest third), Fair, Overpay (most expensive third). Players with no salary on file show value-only."));
     main.appendChild(el("h2",null,"Trade Targets by Value"));
     main.appendChild(tradeBoard());
     main.appendChild(el("h2",null,"What Just Moved"));
@@ -581,17 +610,17 @@
     var rw=rumorWire(10); if(rw){ main.appendChild(el("h2",null,"Rumor Wire (social, match-scored)")); main.appendChild(rw);
       main.appendChild(el("div","note","Media speculation from social, with a confidence that the report is matched to the right player. Lower confidence = treat as unconfirmed.")); }
     var aw=availWire([team]); if(aw){ main.appendChild(el("h2",null,"Availability — my roster")); main.appendChild(aw); }
+    provenanceBlock(main);
     coverageNote(main,team);
   }
   function renderLeague(){
     var main=document.getElementById("main"); main.innerHTML="";
     main.appendChild(controls());
-    provenanceBlock(main);
     main.appendChild(el("h2",null,"Trade Value Board (top of the league)"));
     main.appendChild(tradeBoard());
     main.appendChild(el("h2",null,"Contract Efficiency — best & worst deals"));
     main.appendChild(efficiencyLeaderboard());
-    main.appendChild(el("div","note","Best and worst value contracts league-wide, by 2026 base salary per projected WAR (min 0.5 projected WAR, salary on file). Top-of-market stars can still be 'bargains' if their WAR is high enough; small deals for low-WAR players can read as 'overpays'."));
+    main.appendChild(methodNote("Best and worst value contracts league-wide, by 2026 base salary per projected WAR (min 0.5 projected WAR, salary on file). Top-of-market stars can still be 'bargains' if their WAR is high enough; small deals for low-WAR players can read as 'overpays'."));
     main.appendChild(el("h2",null,"Value for Money — the whole market"));
     var salaried=SPINE.players.filter(function(p){ return p.salary_2026!=null; })
       .sort(function(a,b){ var av=a.dollar_per_war==null?Infinity:a.dollar_per_war, bv=b.dollar_per_war==null?Infinity:b.dollar_per_war; return av-bv; });
@@ -601,6 +630,7 @@
     main.appendChild(officialWire(24));
     var rw=rumorWire(20); if(rw){ main.appendChild(el("h2",null,"Rumor Wire (social, match-scored)")); main.appendChild(rw); }
     var aw=availWire(null); if(aw){ main.appendChild(el("h2",null,"Availability (league)")); main.appendChild(aw); }
+    provenanceBlock(main);
     coverageNote(main,null);
   }
 
@@ -622,7 +652,7 @@
     ]).then(function(res){
       SPINE=res[0]; GM=res[1];
       if(!SPINE){ document.getElementById("main").innerHTML='<p class="empty">Could not load the value spine.</p>'; return; }
-      indexSpine(); computeDpw(); NEED_CACHE={};
+      indexSpine(); computeDpw(); computeMaxWar(); NEED_CACHE={};
       render();
       var a=document.getElementById("ago"); if(a) a.innerHTML="live";
     });

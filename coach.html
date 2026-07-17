@@ -107,6 +107,62 @@
   // replacement-level rating and misrank the player (CEO data-integrity rule #1).
   function ppRating(v){ if(v==null) return "—"; var s=v*100; return (s>=0?"+":"")+s.toFixed(1); }
 
+  // ---------- headline / hierarchy helpers ----------
+  // Long methodology drops into a collapsed details block BELOW the signal (CEO: bury
+  // the paragraphs so the fold shows the key read).
+  function methodBox(sumTxt,htmlOrText,isHtml){
+    var d=el("details","method"); d.appendChild(el("summary",null,sumTxt));
+    var b=el("div","method-body"); if(isHtml){ b.innerHTML=htmlOrText; } else { b.textContent=htmlOrText; }
+    d.appendChild(b); return d;
+  }
+  function methodNote(txt){ return methodBox("How to read this",txt,false); }
+  function kbig(v,l,lead){ var k=el("div","kbig"+(lead?"":" sm")); k.appendChild(el("div","kv",v)); k.appendChild(el("div","kl",l)); return k; }
+  var MAXWAR=1;
+  function computeMaxWar(){ MAXWAR=1; if(SPINE&&SPINE.players) SPINE.players.forEach(function(p){ if(p.proj_war_2026!=null&&p.proj_war_2026>MAXWAR) MAXWAR=p.proj_war_2026; }); }
+  // A WAR table cell: the number + an inline magnitude bar. NULL keeps the em-dash and
+  // draws NO bar (a fabricated 0-length bar would misread as replacement level — rule #1).
+  function warCell(v){
+    var td=el("td","war");
+    if(v==null){ td.textContent="—"; return td; }
+    var w=el("div","warwrap"); w.appendChild(el("b",null,v.toFixed(1)));
+    var cb=el("div","cellbar"); var i=el("i"); i.style.width=Math.max(3,Math.round(Math.max(0,v)/MAXWAR*100))+"%"; cb.appendChild(i);
+    w.appendChild(cb); td.appendChild(w); return td;
+  }
+  // win-probability split bar: away | home, two colourblind-safe marks + text %.
+  function probSplit(g){
+    var hp=g.home_win_prob; if(hp==null) return null; var ap=1-hp;
+    var wrap=el("div","psplit"); wrap.appendChild(el("div","microcap","Win probability"));
+    var row=el("div","psplit-row");
+    var L=el("span"); var la=el("span","team",g.away+" "); var pa=el("span","pct",Math.round(ap*100)+"%");
+    L.appendChild(la); L.appendChild(pa);
+    var R=el("span"); var ph=el("span","pct",Math.round(hp*100)+"%"); var lh=el("span","team"," "+g.home);
+    R.appendChild(ph); R.appendChild(lh);
+    (hp>=0.5?ph:pa).style.fontWeight="900";
+    row.appendChild(L); row.appendChild(R); wrap.appendChild(row);
+    var bar=el("div","psplit-bar");
+    var ia=el("i","away"); ia.style.width=(ap*100)+"%"; var ih=el("i","home"); ih.style.width=(hp*100)+"%";
+    bar.appendChild(ia); bar.appendChild(ih); wrap.appendChild(bar);
+    return wrap;
+  }
+  // simulated margin range: track + 80/sim band + even tick + mean marker (home perspective).
+  function rangeBar(band,mean,homeCode){
+    var lo=band[0], hi=band[1]; if(lo==null||hi==null) return null;
+    var dmin=Math.min(lo,0,mean), dmax=Math.max(hi,0,mean); var range=(dmax-dmin)||1;
+    var pad=range*0.08; dmin-=pad; dmax+=pad; range=dmax-dmin;
+    function pos(x){ return ((x-dmin)/range)*100; }
+    var box=el("div"); box.appendChild(el("div","microcap","Simulated margin range · "+homeCode+" perspective"));
+    var w=el("div","rbar");
+    w.appendChild(el("div","track"));
+    var sp=el("div","span"); sp.style.left=pos(lo)+"%"; sp.style.width=(pos(hi)-pos(lo))+"%"; w.appendChild(sp);
+    var z=el("div","zero"); z.style.left=pos(0)+"%"; w.appendChild(z);
+    var zl=el("div","zlab","even"); zl.style.left=pos(0)+"%"; w.appendChild(zl);
+    var mk=el("div","mean"); mk.style.left=pos(mean)+"%"; w.appendChild(mk);
+    var ml=el("div","mlab",(mean>0?"+":"")+mean.toFixed(1)); ml.style.left=pos(mean)+"%"; w.appendChild(ml);
+    var e1=el("div","end",lo.toFixed(0)); e1.style.left=pos(lo)+"%"; w.appendChild(e1);
+    var e2=el("div","end",(hi>0?"+":"")+hi.toFixed(0)); e2.style.left=pos(hi)+"%"; w.appendChild(e2);
+    box.appendChild(w); return box;
+  }
+
   var STYLE_METRICS=[
     // key, label, [dir] where dir=+1 higher is "more of it"; ast_rate omitted (0 for all 2025 teams — assist-log gap)
     ["pace","Pace"],["three_rate","3-pt rate"],["ft_rate","FT rate"],["to_rate","Turnovers"]
@@ -202,7 +258,7 @@
       var tr=el("tr");
       var nm=el("td"); nm.appendChild(el("b",null,p.name)); tr.appendChild(nm);
       if(!compact) tr.appendChild(el("td",null,num(p.age_2026)));
-      tr.appendChild(el("td","war",num(p.proj_war_2026,1)));
+      tr.appendChild(warCell(p.proj_war_2026));
       tr.appendChild(el("td",null,ppRating(p.pp_rating_active)));
       if(!compact) tr.appendChild(el("td",null,num(p.war_2025,1)));
       var at=el("td"); if(p.archetype){ var pl=el("span","pill arch",p.archetype); at.appendChild(pl); } else { at.appendChild(el("span","pill","—")); } tr.appendChild(at);
@@ -301,7 +357,7 @@
     });
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc);
     sec.appendChild(card);
-    sec.appendChild(el("div","note",
+    sec.appendChild(methodNote(
       "Each cell = historical win rate when a row archetype meets a column archetype (green ≥ 50%). "+
       "Numbers in parentheses are how many rotation players each team fields of that archetype (from the 2025 "+
       "skillset crosswalk). Shaded cells are matchups both teams actually field. Archetype edges are a historical "+
@@ -320,47 +376,60 @@
   var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   function plainDate(iso){ if(!iso) return ""; var m=iso.match(/^(\d{4})-(\d{2})-(\d{2})/); if(!m) return iso; return (MON[+m[2]-1]||m[2])+" "+(+m[3]); }
   function matchupHeader(a,b){
-    var card=el("div","card pad");
+    var hero=el("div","hero");
+    hero.appendChild(el("div","eyebrow","Matchup verdict"));
     var g=findGame(a,b);
     if(g && g.margin_mean!=null){
       // margin is from the home team's side
       var homeFav = g.margin_mean>=0;
       var favTeam = homeFav? g.home : g.away;
       var mar = Math.abs(g.margin_mean);
-      var wp = g.home_win_prob==null?null:(g.home===favTeam?g.home_win_prob:1-g.home_win_prob);
-      var line=el("div"); line.style.fontSize="14px"; line.style.lineHeight="1.5";
-      line.innerHTML='<b>'+teamName(favTeam)+'</b> favored by <b>'+mar.toFixed(1)+'</b>'+
-        (g.band?' <span class="legend">(sim range '+g.band[0]+' to '+g.band[1]+')</span>':'')+
-        (wp!=null?'<br><span class="legend">win probability '+Math.round(wp*100)+'% · '+g.home+' home vs '+g.away+' · '+plainDate(g.date)+'</span>':'');
-      card.appendChild(line);
-      card.appendChild(el("div","note","From the rest-of-season game simulation for the next scheduled meeting."));
+      var v=el("div","verdict");
+      v.appendChild(el("span",null,teamName(favTeam)));
+      v.appendChild(el("span","unit","by"));
+      v.appendChild(el("span","big",mar.toFixed(1)));
+      hero.appendChild(v);
+      hero.appendChild(el("div","verdict-sub", g.home+" home vs "+g.away+" · "+plainDate(g.date)));
+      var ps=probSplit(g); if(ps) hero.appendChild(ps);
+      if(g.band){ var rb=rangeBar(g.band,g.margin_mean,g.home); if(rb) hero.appendChild(rb); }
+      hero.appendChild(methodNote(
+        "From the rest-of-season game simulation for the next scheduled meeting. The number is the projected point differential (margin); the split bar is each team's simulated win probability, and the range bar is the full spread of simulated margins from the home team's side. A wide range means a high-variance game, not a weak lean."));
     } else {
       // no scheduled game -> honest strength-based framing (labeled as such)
       var ta=SPINE.teams[a], tb=SPINE.teams[b];
       var sa=ta&&ta.strength, sb=tb&&tb.strength;
       if(sa!=null&&sb!=null){
         var diff=sa-sb; var fav=diff>=0?a:b;
-        card.innerHTML='<div style="font-size:14px"><b>'+teamName(fav)+'</b> stronger by <b>'+Math.abs(diff).toFixed(1)+'</b> on the strength index</div>';
-        card.appendChild(el("div","note","No upcoming game between these teams is scheduled, so this is a neutral-court strength comparison (roster strength index), not a game simulation."));
+        var v2=el("div","verdict");
+        v2.appendChild(el("span",null,teamName(fav)));
+        v2.appendChild(el("span","unit","stronger by"));
+        v2.appendChild(el("span","big",Math.abs(diff).toFixed(1)));
+        hero.appendChild(v2);
+        hero.appendChild(el("div","verdict-sub","Neutral-court strength index — no game scheduled between these teams"));
+        hero.appendChild(methodNote("No upcoming game between these teams is scheduled, so this is a neutral-court roster-strength comparison (the strength index), not a game simulation."));
       } else {
-        card.appendChild(el("p","empty","No scheduled game or strength comparison available for this pair."));
+        hero.appendChild(el("p","empty","No scheduled game or strength comparison available for this pair."));
       }
     }
-    return card;
+    return hero;
   }
 
   // ---------- team KPI header ----------
   function teamKpis(team){
-    var tm=SPINE.teams[team]; var wrap=el("div","card pad");
-    var head=el("div","thead");
-    head.appendChild(el("span","tn", teamName(team)));
-    function kpi(v,lab){ var k=el("div","kpi"); k.appendChild(el("b",null,v)); k.appendChild(el("span",null,lab)); return k; }
-    head.appendChild(kpi(num(tm.strength,1),"Strength"));
-    head.appendChild(kpi(tm.proj_wins==null?"—":tm.proj_wins.toFixed(1),"Proj wins"));
-    head.appendChild(kpi(tm.title_pct==null?"—":tm.title_pct.toFixed(1)+"%","Title"));
-    head.appendChild(kpi(tm.playoff_pct==null?"—":tm.playoff_pct.toFixed(0)+"%","Playoffs"));
-    wrap.appendChild(head);
-    return wrap;
+    var tm=SPINE.teams[team];
+    var hero=el("div","hero");
+    hero.appendChild(el("div","eyebrow","Team outlook"));
+    var top=el("div","hero-top");
+    var rb=el("div","rankbadge"); rb.textContent=tm.rank==null?"—":"#"+tm.rank; top.appendChild(rb);
+    top.appendChild(el("div","hero-name",teamName(team)));
+    hero.appendChild(top);
+    var strip=el("div","kstrip");
+    strip.appendChild(kbig(num(tm.strength,1),"Strength",true));
+    strip.appendChild(kbig(tm.proj_wins==null?"—":tm.proj_wins.toFixed(1),"Proj wins"));
+    strip.appendChild(kbig(tm.playoff_pct==null?"—":tm.playoff_pct.toFixed(0)+"%","Playoffs"));
+    strip.appendChild(kbig(tm.title_pct==null?"—":tm.title_pct.toFixed(1)+"%","Title"));
+    hero.appendChild(strip);
+    return hero;
   }
 
   // ---------- renders ----------
@@ -372,11 +441,11 @@
     main.appendChild(teamKpis(team));
     main.appendChild(el("h2",null,"Style & Pace"));
     var sc=el("div","card pad"); sc.appendChild(styleBlock(team,"ba"));
-    sc.appendChild(el("div","note","How this team plays, relative to the league (bar = spot from the league's lowest to highest on each measure). Pace, 3-pt rate and FT rate are stylistic — neither good nor bad, just how they play. Turnovers is the one quality measure here: it's a turnover rate where fewer is better, so a longer bar means a team that gives the ball away more, not a better one. Style profile from the most recent completed season."));
+    sc.appendChild(methodNote("How this team plays, relative to the league (bar = spot from the league's lowest to highest on each measure). Pace, 3-pt rate and FT rate are stylistic — neither good nor bad, just how they play. Turnovers is the one quality measure here: it's a turnover rate where fewer is better, so a longer bar means a team that gives the ball away more, not a better one. Style profile from the most recent completed season."));
     main.appendChild(sc);
     main.appendChild(el("h2",null,"Player Value Board"));
     main.appendChild(playerBoard(team,false));
-    main.appendChild(el("div","note","Roster ranked by projected Wins Above Replacement for 2026 (age-adjusted). On-court is the complementary second value face — the active-only per-possession rating (RAPM-scale, shown as net points per 100 possessions) from real 2026 on-court time; it reads alongside WAR, not instead of it, and shows — for players not yet rated this season (retired / prior-only / no 2026 minutes), never a fabricated 0. Skill bars are league percentiles across five skills — scoring, playmaking, rebounding, defense, ball security — from the 2025 skillset decomposition; players with no 2025 minutes show no bars."));
+    main.appendChild(methodNote("Roster ranked by projected Wins Above Replacement for 2026 (age-adjusted); the bar under each WAR shows its size against the league's best. On-court is the complementary second value face — the active-only per-possession rating (RAPM-scale, shown as net points per 100 possessions) from real 2026 on-court time; it reads alongside WAR, not instead of it, and shows — for players not yet rated this season (retired / prior-only / no 2026 minutes), never a fabricated 0. Skill bars are league percentiles across five skills — scoring, playmaking, rebounding, defense, ball security — from the 2025 skillset decomposition; players with no 2025 minutes show no bars."));
     var av=availStrip([team]);
     if(av){ main.appendChild(el("h2",null,"Availability")); main.appendChild(av);
       main.appendChild(el("div","note","Current injury / availability, dual-feed reconciled. Players not listed have no reported issue.")); }
@@ -388,7 +457,6 @@
     var a=state.a, b=state.b;
     if(!a||!b){ main.appendChild(el("p","empty","Pick two teams.")); return; }
     if(a===b){ main.appendChild(el("p","empty","Pick two different teams.")); return; }
-    main.appendChild(el("h2",null,"Matchup"));
     main.appendChild(matchupHeader(a,b));
     main.appendChild(el("h2",null,"Style & Pace Contrast"));
     var two=el("div","two");
@@ -422,7 +490,7 @@
       if(Math.abs(dt)>=1.0) msgs.push(teamName(dt<0?a:b)+" takes better care of the ball"); }
     var card=el("div","card pad");
     card.appendChild(el("div",null, msgs.length? msgs.join(" · ")+"." : "The two teams play a broadly similar style."));
-    card.appendChild(el("div","note","A plain read of the style contrast above. Assist rate is omitted (the league assist log is incomplete for the profiled season)."));
+    card.appendChild(methodNote("A plain read of the style contrast above. Assist rate is omitted (the league assist log is incomplete for the profiled season)."));
     return card;
   }
   function coverageNote(main,teams){
@@ -468,7 +536,7 @@
     ]).then(function(res){
       SPINE=res[0]; COACH=res[1];
       if(!SPINE){ document.getElementById("main").innerHTML='<p class="empty">Could not load the value spine.</p>'; return; }
-      computeStyleRange();
+      computeStyleRange(); computeMaxWar();
       render();
       var a=document.getElementById("ago"); if(a) a.innerHTML="live";
     });
