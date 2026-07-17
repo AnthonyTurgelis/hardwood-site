@@ -30,6 +30,7 @@
   th,td{padding:5px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
   th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
   th{color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;background:var(--card2)}
+  th.sortcol{color:var(--acc)}
   tr.flash td{animation:fl 1.1s ease}
   @keyframes fl{0%{background:var(--flash)}100%{background:transparent}}
   .rk{color:var(--dim);width:1.6em}
@@ -90,7 +91,7 @@
 (function(){
   "use strict";
   var URL="./players.json";
-  var curStat=null, curData=null, ratFilter="", ratShowAll=false;
+  var curStat=null, curData=null, ratFilter="", ratShowAll=false, curRank="scoring";
   var RAT_PAGE=50;   // default view = top 50; "show all" reveals the full uncapped board
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function td(c,x){ return el("td",c,x); }
@@ -118,22 +119,67 @@
     var rb=asofBadge(rt.as_of, curData && curData.date); if(rb) h.appendChild(rb);
     s.appendChild(h);
     if(!rt.available){ s.appendChild(el("p","empty", rt.note||"Season stats coming soon.")); return s; }
-    s.appendChild(el("p","lede","Ranked by season scoring — points per game from the official box scores. Impact leads the stat columns: our on-court rating of how much better a team plays with her on the floor. It now separates players into a real signal; a player still resting on a thin on-court sample is regressed toward league average and tagged “prov.” Her share of team minutes rides alongside too, so a big scoring line on limited minutes is easy to spot. Tap a name for her full card."));
+    // SEPARATED-IMPACT view (BR-V2, C->B rung): the same board answers two genuinely different coach
+    // questions — "who scores the most" (season scoring, box-score volume) vs "who helps their team
+    // win the most while on the floor" (our plus-minus impact rating). They diverge hard (the top
+    // impact players are often mid-pack scorers), so we let the coach flip the ranking axis instead of
+    // burying impact in one column. Everything is sourced from the SAME baked rows — no re-fetch.
+    var byImpact = (curRank==="impact");
+    s.appendChild(el("p","lede", byImpact
+      ? "Ranked by ON-COURT IMPACT — our plus-minus rating of how much better a team plays with her on the floor, biggest first. This is a different list from the scoring board: the players near the top move the game without necessarily topping the box score, so each row also shows where she sits by scoring. Only players with a firm on-court sample are ranked; a thin, provisional sample is tagged “prov” and listed after the ranked group (no rank her sample can't support). Tap a name for her full card."
+      : "Ranked by season scoring — points per game from the official box scores. Impact leads the stat columns: our on-court rating of how much better a team plays with her on the floor. It now separates players into a real signal; a player still resting on a thin on-court sample is regressed toward league average and tagged “prov.” Her share of team minutes rides alongside too, so a big scoring line on limited minutes is easy to spot. Tap a name for her full card."));
+    // rank-axis toggle — reuses the shared .segbtns component (same look as the Realm-of-outcomes tabs)
+    var pkey=function(r){ return r.id!=null ? ("i"+r.id) : ("n"+r.name); };
+    var rseg=el("div","segbtns");
+    [["scoring","Season scoring"],["impact","On-court impact"]].forEach(function(o){
+      var b=el("button", curRank===o[0]?"on":null, o[1]);
+      b.onclick=function(){ if(curRank!==o[0]){ curRank=o[0]; ratShowAll=false; s.parentNode.replaceChild(ratingsSection(rt), s); } };
+      rseg.appendChild(b);
+    });
+    s.appendChild(rseg);
+    // impact ranks: computed over FIRM ratings only (rating present AND not provisional), so a thin
+    // provisional sample never receives a rank it can't support — it is shown after, marked "—".
+    var impRank={};
+    if(byImpact){
+      rt.players.filter(function(r){ return r.rating!=null && !r.impact_provisional; })
+        .slice().sort(function(a,b){ return (b.rating-a.rating) || ((b.pts||0)-(a.pts||0)) || (a.rank-b.rank); })
+        .forEach(function(r,i){ impRank[pkey(r)]=i+1; });
+    }
+    function impactWhy(r){
+      if(r.rating==null) return "no firm on-court rating yet";
+      if(r.impact_provisional) return "provisional impact — thin on-court sample ("+(r.n_basis!=null?r.n_basis:"few")+" games)";
+      var parts=[(r.rating>0?"+":"")+r.rating.toFixed(1)+" on-court impact"];
+      if(r.pts!=null && r.rank!=null){ parts.push(r.pts.toFixed(1)+" ppg (#"+r.rank+" by scoring)"); }
+      else if(r.pts!=null){ parts.push(r.pts.toFixed(1)+" ppg"); }
+      return parts.join(" · ");
+    }
     var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter players by name or team…"; fbox.value=ratFilter;
     fbox.oninput=function(){ ratFilter=fbox.value; var ns=ratingsSection(rt); s.parentNode.replaceChild(ns, s);
       var nf=ns.querySelector(".filt"); if(nf){ nf.focus(); nf.setSelectionRange(nf.value.length,nf.value.length); } };
     s.appendChild(fbox);
     var card=el("div","card"); var sc=el("div","scroll"); var t=el("table");
     var thead=el("thead"), hr=el("tr");
-    ["#","Player","Team","Impact","% of team min","GP","PTS","REB","AST","MIN"].forEach(function(x){ hr.appendChild(el("th",null,x)); });
+    ["#","Player","Team","Impact","% of team min","GP","PTS","REB","AST","MIN"].forEach(function(x){
+      var active = (byImpact && x==="Impact") || (!byImpact && x==="PTS");
+      hr.appendChild(el("th", active?"sortcol":null, active ? (x+" ▾") : x));
+    });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
     var q=ratFilter.trim().toLowerCase();
     var matched=rt.players.filter(function(r){ return !q || (r.name||"").toLowerCase().indexOf(q)>=0 || (r.team||"").toLowerCase().indexOf(q)>=0; });
+    if(byImpact){
+      matched=matched.slice().sort(function(a,b){
+        var af=(a.rating!=null && !a.impact_provisional), bf=(b.rating!=null && !b.impact_provisional);
+        if(af!==bf) return af?-1:1;                                     // firm-impact players first
+        if(af&&bf) return (b.rating-a.rating)||((b.pts||0)-(a.pts||0))||(a.rank-b.rank);
+        return (a.rank||1e9)-(b.rank||1e9);                            // non-firm keep scoring order
+      });
+    }
     var shown = ratShowAll ? matched : matched.slice(0, RAT_PAGE);
     shown.forEach(function(r){
       var tr=el("tr"); tr.setAttribute("data-k","rt|"+r.name);
-      tr.appendChild(td("rk", r.rank));
+      var rkVal = byImpact ? (impRank[pkey(r)]!=null ? impRank[pkey(r)] : "—") : r.rank;
+      tr.appendChild(td("rk", rkVal));
       var nm=el("td","nm");
       if(r.id!=null){ var a=el("a",null,r.name); a.href="./player.html?id="+r.id; a.className="plink"; nm.appendChild(a); }
       else { nm.appendChild(document.createTextNode(r.name)); }
@@ -142,12 +188,12 @@
       // name (server-composed in build_site as the single source). Until that field is baked, fall
       // back to the light client-side basis line (per-team scoring rank + ranking basis) so behavior
       // is unchanged today and richer automatically once `why` lands in players.json.
-      var why = r.why;
+      var why = byImpact ? impactWhy(r) : r.why;
       if(!why){
-        var byImpact = (rt.headline === "rating");
+        var headlineImpact = (rt.headline === "rating");
         var wb = [];
         if(r.team_scoring_rank!=null && r.team){ wb.push("#"+r.team_scoring_rank+" scorer on "+r.team); }
-        wb.push(byImpact ? "ranked by on-court impact" : "ranked by season scoring");
+        wb.push(headlineImpact ? "ranked by on-court impact" : "ranked by season scoring");
         why = wb.join(" · ");
       }
       nm.appendChild(el("div","why", why));
@@ -178,7 +224,9 @@
       tog.onclick=function(){ ratShowAll=!ratShowAll; s.parentNode.replaceChild(ratingsSection(rt), s); };
       s.appendChild(tog);
     }
-    var note=el("div","note"); note.appendChild(document.createTextNode("Impact is our on-court rating (plus-minus style). A “prov” tag beside it means the rating still rests on a thin on-court sample, so it is regressed toward league average and reads near zero — provisional, not a firm read; the board ranks by season scoring instead. % of team min is her share of the team's floor time, so thin-minutes vs full-time reads at a glance. Per-game averages are this season's official box scores. Tap a name for projected minutes and outcome ranges."));
+    var note=el("div","note"); note.appendChild(document.createTextNode(byImpact
+      ? "This is the on-court-impact ranking: our plus-minus rating of how much better the team plays with her on the floor, biggest first — a different order from season scoring (the “#… by scoring” cue on each row shows the gap). Only firm on-court samples are ranked; a “prov” tag means a thin sample with no firm read yet, listed after the ranked group. Flip back to “Season scoring” for the box-score-volume board. % of team min is her share of the team's floor time. Tap a name for projected minutes and outcome ranges."
+      : "Impact is our on-court rating (plus-minus style). A “prov” tag beside it means the rating still rests on a thin on-court sample, so it is regressed toward league average and reads near zero — provisional, not a firm read; the board ranks by season scoring instead. Use “On-court impact” above to re-rank by who moves the game most (often not the top scorers). % of team min is her share of the team's floor time, so thin-minutes vs full-time reads at a glance. Per-game averages are this season's official box scores. Tap a name for projected minutes and outcome ranges."));
     s.appendChild(note);
     return s;
   }

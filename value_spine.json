@@ -1,0 +1,3679 @@
+{
+  "stat": "value_spine",
+  "kind": "shared_currency_read",
+  "generated_utc": "2026-07-17T03:49:46Z",
+  "season": 2026,
+  "about": {
+    "title": "The Value Spine",
+    "blurb": "One shared currency the Coach and GM dashboards both read. Player value has three convertible faces: on-court rating, Wins Above Replacement (WAR), and $/WAR. Team value is roster strength and projected wins. Coach reads it tactically; GM reads it as an asset ledger."
+  },
+  "archetype_crosswalk": {
+    "note": "A DEFINED basketball mapping (not a statistical derivation). Player skillsets use a 5-archetype taxonomy; the matchup grid uses a 4-archetype taxonomy. This maps each skillset archetype to its closest matchup archetype so the two Coach views join.",
+    "map": {
+      "Scoring Anchor": {
+        "matchup": "Sharpshooter",
+        "why": "primary shot-creator / scorer"
+      },
+      "Two-Way Creator": {
+        "matchup": "Floor general",
+        "why": "on-ball creator who also defends"
+      },
+      "Floor General": {
+        "matchup": "Floor general",
+        "why": "direct match (playmaking hub)"
+      },
+      "Defensive Anchor": {
+        "matchup": "Perimeter defender",
+        "why": "the defensive class (grid's only defender axis is perimeter)"
+      },
+      "Balanced": {
+        "matchup": "Role player",
+        "why": "complementary, no single dominant skill"
+      }
+    },
+    "matchup_archetypes": [
+      "Floor general",
+      "Perimeter defender",
+      "Role player",
+      "Sharpshooter"
+    ]
+  },
+  "coverage": {
+    "players_total": 170,
+    "with_skill_archetype": 149,
+    "with_base_salary_2026": 130,
+    "skill_archetype_season": 2025,
+    "team_style_season": 2025,
+    "teams_with_roster": [
+      "ATL",
+      "CHI",
+      "CON",
+      "DAL",
+      "GSV",
+      "IND",
+      "LAS",
+      "LVA",
+      "MIN",
+      "NYL",
+      "PHO",
+      "SEA",
+      "WAS"
+    ],
+    "teams_without_roster_projection": [
+      "POR",
+      "TOR"
+    ],
+    "notes": [
+      "Player value currency = WAR (Wins Above Replacement). proj_war_2026 is the age-adjusted forecast; war_2025 is realized.",
+      "A per-possession on-court rating is intentionally NOT shown in v1 (its raw scale mis-ranks retired players via as-of carry-forward and needs a clean production-model pin) -- follow-up item.",
+      "Skill archetypes + component bars come from a 2025 skillset decomposition; players with no 2025 minutes (rookies, some newcomers) show no archetype/bars.",
+      "Base salary known for 130 of the ~180 league roster spots; $/WAR shown only where salary and a positive WAR projection both exist. Full multi-year contract structure is a v2 data acquisition.",
+      "Expansion teams without a 2026 WAR projection (POR, TOR) are listed in team blocks but have no player rows yet."
+    ]
+  },
+  "players": [
+    {
+      "key": "aja wilson",
+      "name": "A'ja Wilson",
+      "team": "LVA",
+      "war_2025": 9.7,
+      "proj_war_2026": 9.5,
+      "age_2026": 30,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 1.0,
+        "playmaking": 0.598,
+        "rebounding": 0.946,
+        "defense": 0.98,
+        "ball_security": 0.382
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "napheesa collier",
+      "name": "Napheesa Collier",
+      "team": "MIN",
+      "war_2025": 7.6,
+      "proj_war_2026": 7.0,
+      "age_2026": 30,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.993,
+        "playmaking": 0.574,
+        "rebounding": 0.73,
+        "defense": 0.919,
+        "ball_security": 0.372
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "dearica hamby",
+      "name": "Dearica Hamby",
+      "team": "LAS",
+      "war_2025": 7.6,
+      "proj_war_2026": 6.2,
+      "age_2026": 33,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.966,
+        "playmaking": 0.652,
+        "rebounding": 0.831,
+        "defense": 0.811,
+        "ball_security": 0.149
+      },
+      "salary_2026": 1100000,
+      "dollar_per_war": 177419
+    },
+    {
+      "key": "aliyah boston",
+      "name": "Aliyah Boston",
+      "team": "IND",
+      "war_2025": 6.4,
+      "proj_war_2026": 6.0,
+      "age_2026": 25,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.838,
+        "playmaking": 0.777,
+        "rebounding": 0.899,
+        "defense": 0.649,
+        "ball_security": 0.574
+      },
+      "salary_2026": 574612,
+      "dollar_per_war": 95769
+    },
+    {
+      "key": "alyssa thomas",
+      "name": "Alyssa Thomas",
+      "team": "PHO",
+      "war_2025": 7.3,
+      "proj_war_2026": 5.9,
+      "age_2026": 35,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.851,
+        "playmaking": 1.0,
+        "rebounding": 0.861,
+        "defense": 0.767,
+        "ball_security": 0.007
+      },
+      "salary_2026": 1200000,
+      "dollar_per_war": 203390
+    },
+    {
+      "key": "jackie young",
+      "name": "Jackie Young",
+      "team": "LVA",
+      "war_2025": 6.5,
+      "proj_war_2026": 5.8,
+      "age_2026": 29,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.919,
+        "playmaking": 0.932,
+        "rebounding": 0.463,
+        "defense": 0.601,
+        "ball_security": 0.314
+      },
+      "salary_2026": 1190000,
+      "dollar_per_war": 205172
+    },
+    {
+      "key": "paige bueckers",
+      "name": "Paige Bueckers",
+      "team": "DAL",
+      "war_2025": 6.0,
+      "proj_war_2026": 5.8,
+      "age_2026": 25,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.953,
+        "playmaking": 0.919,
+        "rebounding": 0.341,
+        "defense": 0.743,
+        "ball_security": 0.568
+      },
+      "salary_2026": 500000,
+      "dollar_per_war": 86207
+    },
+    {
+      "key": "nneka ogwumike",
+      "name": "Nneka Ogwumike",
+      "team": "SEA",
+      "war_2025": 6.6,
+      "proj_war_2026": 5.7,
+      "age_2026": 36,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.959,
+        "playmaking": 0.459,
+        "rebounding": 0.757,
+        "defense": 0.419,
+        "ball_security": 0.524
+      },
+      "salary_2026": 950000,
+      "dollar_per_war": 166667
+    },
+    {
+      "key": "breanna stewart",
+      "name": "Breanna Stewart",
+      "team": "NYL",
+      "war_2025": 4.9,
+      "proj_war_2026": 5.4,
+      "age_2026": 32,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.973,
+        "playmaking": 0.703,
+        "rebounding": 0.696,
+        "defense": 0.905,
+        "ball_security": 0.554
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "kelsey mitchell",
+      "name": "Kelsey Mitchell",
+      "team": "IND",
+      "war_2025": 5.8,
+      "proj_war_2026": 5.0,
+      "age_2026": 31,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.986,
+        "playmaking": 0.666,
+        "rebounding": 0.02,
+        "defense": 0.182,
+        "ball_security": 0.598
+      },
+      "salary_2026": 1400000,
+      "dollar_per_war": 280000
+    },
+    {
+      "key": "sabrina ionescu",
+      "name": "Sabrina Ionescu",
+      "team": "NYL",
+      "war_2025": 5.3,
+      "proj_war_2026": 5.0,
+      "age_2026": 29,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.939,
+        "playmaking": 0.959,
+        "rebounding": 0.527,
+        "defense": 0.534,
+        "ball_security": 0.155
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "allisha gray",
+      "name": "Allisha Gray",
+      "team": "ATL",
+      "war_2025": 5.8,
+      "proj_war_2026": 4.8,
+      "age_2026": 32,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.905,
+        "playmaking": 0.628,
+        "rebounding": 0.547,
+        "defense": 0.277,
+        "ball_security": 0.73
+      },
+      "salary_2026": 1190000,
+      "dollar_per_war": 247917
+    },
+    {
+      "key": "kelsey plum",
+      "name": "Kelsey Plum",
+      "team": "LAS",
+      "war_2025": 5.6,
+      "proj_war_2026": 4.8,
+      "age_2026": 32,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.926,
+        "playmaking": 0.926,
+        "rebounding": 0.162,
+        "defense": 0.264,
+        "ball_security": 0.118
+      },
+      "salary_2026": 999999,
+      "dollar_per_war": 208333
+    },
+    {
+      "key": "brionna jones",
+      "name": "Brionna Jones",
+      "team": "ATL",
+      "war_2025": 5.5,
+      "proj_war_2026": 4.6,
+      "age_2026": 31,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.831,
+        "playmaking": 0.507,
+        "rebounding": 0.845,
+        "defense": 0.824,
+        "ball_security": 0.652
+      },
+      "salary_2026": 1000000,
+      "dollar_per_war": 217391
+    },
+    {
+      "key": "sonia citron",
+      "name": "Sonia Citron",
+      "team": "WAS",
+      "war_2025": 4.1,
+      "proj_war_2026": 4.2,
+      "age_2026": 23,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.764,
+        "playmaking": 0.459,
+        "rebounding": 0.358,
+        "defense": 0.507,
+        "ball_security": 0.473
+      },
+      "salary_2026": 436016,
+      "dollar_per_war": 103813
+    },
+    {
+      "key": "kiki iriafen",
+      "name": "Kiki Iriafen",
+      "team": "WAS",
+      "war_2025": 4.0,
+      "proj_war_2026": 4.1,
+      "age_2026": 23,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.861,
+        "playmaking": 0.26,
+        "rebounding": 0.953,
+        "defense": 0.054,
+        "ball_security": 0.216
+      },
+      "salary_2026": 407163,
+      "dollar_per_war": 99308
+    },
+    {
+      "key": "skylar diggins",
+      "name": "Skylar Diggins",
+      "team": "SEA",
+      "war_2025": 4.8,
+      "proj_war_2026": 4.0,
+      "age_2026": 36,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.882,
+        "playmaking": 0.973,
+        "rebounding": 0.132,
+        "defense": 0.716,
+        "ball_security": 0.402
+      },
+      "salary_2026": 920000,
+      "dollar_per_war": 230000
+    },
+    {
+      "key": "angel reese",
+      "name": "Angel Reese",
+      "team": "CHI",
+      "war_2025": 3.8,
+      "proj_war_2026": 4.0,
+      "age_2026": 24,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.774,
+        "playmaking": 0.716,
+        "rebounding": 1.0,
+        "defense": 0.784,
+        "ball_security": 0.0
+      },
+      "salary_2026": 350692,
+      "dollar_per_war": 87673
+    },
+    {
+      "key": "satou sabally",
+      "name": "Satou Sabally",
+      "team": "PHO",
+      "war_2025": 4.4,
+      "proj_war_2026": 3.9,
+      "age_2026": 28,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.98,
+        "playmaking": 0.554,
+        "rebounding": 0.723,
+        "defense": 0.628,
+        "ball_security": 0.328
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "rhyne howard",
+      "name": "Rhyne Howard",
+      "team": "ATL",
+      "war_2025": 3.9,
+      "proj_war_2026": 3.8,
+      "age_2026": 26,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.872,
+        "playmaking": 0.811,
+        "rebounding": 0.385,
+        "defense": 0.777,
+        "ball_security": 0.743
+      },
+      "salary_2026": 1100000,
+      "dollar_per_war": 289474
+    },
+    {
+      "key": "kamilla cardoso",
+      "name": "Kamilla Cardoso",
+      "team": "CHI",
+      "war_2025": 4.1,
+      "proj_war_2026": 3.7,
+      "age_2026": 25,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.861,
+        "playmaking": 0.544,
+        "rebounding": 0.926,
+        "defense": 0.284,
+        "ball_security": 0.105
+      },
+      "salary_2026": 461171,
+      "dollar_per_war": 124641
+    },
+    {
+      "key": "courtney williams",
+      "name": "Courtney Williams",
+      "team": "MIN",
+      "war_2025": 4.5,
+      "proj_war_2026": 3.6,
+      "age_2026": 32,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.818,
+        "playmaking": 0.993,
+        "rebounding": 0.588,
+        "defense": 0.703,
+        "ball_security": 0.189
+      },
+      "salary_2026": 1190000,
+      "dollar_per_war": 330556
+    },
+    {
+      "key": "azura stevens",
+      "name": "Azura Stevens",
+      "team": "LAS",
+      "war_2025": 5.0,
+      "proj_war_2026": 3.5,
+      "age_2026": 31,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.723,
+        "playmaking": 0.476,
+        "rebounding": 0.892,
+        "defense": 0.885,
+        "ball_security": 0.716
+      },
+      "salary_2026": 1000000,
+      "dollar_per_war": 285714
+    },
+    {
+      "key": "veronica burton",
+      "name": "Veronica Burton",
+      "team": "GSV",
+      "war_2025": 4.6,
+      "proj_war_2026": 3.5,
+      "age_2026": 26,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.608,
+        "playmaking": 0.98,
+        "rebounding": 0.5,
+        "defense": 0.723,
+        "ball_security": 0.264
+      },
+      "salary_2026": 925000,
+      "dollar_per_war": 264286
+    },
+    {
+      "key": "jonquel jones",
+      "name": "Jonquel Jones",
+      "team": "NYL",
+      "war_2025": 3.4,
+      "proj_war_2026": 3.4,
+      "age_2026": 33,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.845,
+        "playmaking": 0.635,
+        "rebounding": 0.939,
+        "defense": 0.372,
+        "ball_security": 0.287
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "tina charles",
+      "name": "Tina Charles",
+      "team": "CON",
+      "war_2025": 4.0,
+      "proj_war_2026": 3.4,
+      "age_2026": 38,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.946,
+        "playmaking": 0.301,
+        "rebounding": 0.649,
+        "defense": 0.257,
+        "ball_security": 0.416
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "jessica shepard",
+      "name": "Jessica Shepard",
+      "team": "MIN",
+      "war_2025": 3.8,
+      "proj_war_2026": 3.2,
+      "age_2026": 30,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "rebounding",
+      "skills_pct": {
+        "scoring": 0.493,
+        "playmaking": 0.736,
+        "rebounding": 0.98,
+        "defense": 0.081,
+        "ball_security": 0.392
+      },
+      "salary_2026": 1000000,
+      "dollar_per_war": 312500
+    },
+    {
+      "key": "natasha howard",
+      "name": "Natasha Howard",
+      "team": "IND",
+      "war_2025": 4.0,
+      "proj_war_2026": 3.1,
+      "age_2026": 35,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.736,
+        "playmaking": 0.365,
+        "rebounding": 0.861,
+        "defense": 0.767,
+        "ball_security": 0.182
+      },
+      "salary_2026": 700000,
+      "dollar_per_war": 225806
+    },
+    {
+      "key": "kayla mcbride",
+      "name": "Kayla McBride",
+      "team": "MIN",
+      "war_2025": 3.6,
+      "proj_war_2026": 2.9,
+      "age_2026": 34,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.75,
+        "playmaking": 0.666,
+        "rebounding": 0.108,
+        "defense": 0.399,
+        "ball_security": 0.709
+      },
+      "salary_2026": 1190000,
+      "dollar_per_war": 410345
+    },
+    {
+      "key": "arike ogunbowale",
+      "name": "Arike Ogunbowale",
+      "team": "DAL",
+      "war_2025": 2.0,
+      "proj_war_2026": 2.8,
+      "age_2026": 30,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.787,
+        "playmaking": 0.757,
+        "rebounding": 0.095,
+        "defense": 0.453,
+        "ball_security": 0.524
+      },
+      "salary_2026": 1190000,
+      "dollar_per_war": 425000
+    },
+    {
+      "key": "alanna smith",
+      "name": "Alanna Smith",
+      "team": "MIN",
+      "war_2025": 3.0,
+      "proj_war_2026": 2.8,
+      "age_2026": 30,
+      "archetype": "Defensive Anchor",
+      "archetype_matchup": "Perimeter defender",
+      "primary_style": "defense",
+      "skills_pct": {
+        "scoring": 0.405,
+        "playmaking": 0.652,
+        "rebounding": 0.635,
+        "defense": 0.973,
+        "ball_security": 0.622
+      },
+      "salary_2026": 1190000,
+      "dollar_per_war": 425000
+    },
+    {
+      "key": "gabby williams",
+      "name": "Gabby Williams",
+      "team": "SEA",
+      "war_2025": 3.8,
+      "proj_war_2026": 2.8,
+      "age_2026": 30,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "defense",
+      "skills_pct": {
+        "scoring": 0.459,
+        "playmaking": 0.824,
+        "rebounding": 0.426,
+        "defense": 0.939,
+        "ball_security": 0.561
+      },
+      "salary_2026": 1190000,
+      "dollar_per_war": 425000
+    },
+    {
+      "key": "ezi magbegor",
+      "name": "Ezi Magbegor",
+      "team": "SEA",
+      "war_2025": 2.3,
+      "proj_war_2026": 2.8,
+      "age_2026": 27,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.236,
+        "playmaking": 0.49,
+        "rebounding": 0.736,
+        "defense": 0.912,
+        "ball_security": 0.926
+      },
+      "salary_2026": 1250000,
+      "dollar_per_war": 446429
+    },
+    {
+      "key": "jewell loyd",
+      "name": "Jewell Loyd",
+      "team": "LVA",
+      "war_2025": 2.4,
+      "proj_war_2026": 2.7,
+      "age_2026": 33,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.507,
+        "playmaking": 0.236,
+        "rebounding": 0.341,
+        "defense": 0.554,
+        "ball_security": 0.892
+      },
+      "salary_2026": 800000,
+      "dollar_per_war": 296296
+    },
+    {
+      "key": "dominique malonga",
+      "name": "Dominique Malonga",
+      "team": "SEA",
+      "war_2025": 2.3,
+      "proj_war_2026": 2.6,
+      "age_2026": 21,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.899,
+        "playmaking": 0.284,
+        "rebounding": 0.966,
+        "defense": 0.757,
+        "ball_security": 0.27
+      },
+      "salary_2026": 466913,
+      "dollar_per_war": 179582
+    },
+    {
+      "key": "naz hillmon",
+      "name": "Naz Hillmon",
+      "team": "ATL",
+      "war_2025": 3.0,
+      "proj_war_2026": 2.6,
+      "age_2026": 27,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.328,
+        "playmaking": 0.568,
+        "rebounding": 0.777,
+        "defense": 0.128,
+        "ball_security": 0.804
+      },
+      "salary_2026": 840000,
+      "dollar_per_war": 323077
+    },
+    {
+      "key": "ariel atkins",
+      "name": "Ariel Atkins",
+      "team": "CHI",
+      "war_2025": 2.6,
+      "proj_war_2026": 2.6,
+      "age_2026": 30,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.743,
+        "playmaking": 0.791,
+        "rebounding": 0.331,
+        "defense": 0.899,
+        "ball_security": 0.128
+      },
+      "salary_2026": 1085000,
+      "dollar_per_war": 417308
+    },
+    {
+      "key": "chelsea gray",
+      "name": "Chelsea Gray",
+      "team": "LVA",
+      "war_2025": 3.3,
+      "proj_war_2026": 2.5,
+      "age_2026": 34,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.385,
+        "playmaking": 0.966,
+        "rebounding": 0.351,
+        "defense": 0.865,
+        "ball_security": 0.172
+      },
+      "salary_2026": 1000000,
+      "dollar_per_war": 400000
+    },
+    {
+      "key": "shakira austin",
+      "name": "Shakira Austin",
+      "team": "WAS",
+      "war_2025": 2.8,
+      "proj_war_2026": 2.3,
+      "age_2026": 26,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.912,
+        "playmaking": 0.49,
+        "rebounding": 0.878,
+        "defense": 0.926,
+        "ball_security": 0.014
+      },
+      "salary_2026": 1190000,
+      "dollar_per_war": 517391
+    },
+    {
+      "key": "rickea jackson",
+      "name": "Rickea Jackson",
+      "team": "LAS",
+      "war_2025": 2.0,
+      "proj_war_2026": 2.2,
+      "age_2026": 26,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.824,
+        "playmaking": 0.216,
+        "rebounding": 0.25,
+        "defense": 0.088,
+        "ball_security": 0.432
+      },
+      "salary_2026": 430654,
+      "dollar_per_war": 195752
+    },
+    {
+      "key": "maddy siegrist",
+      "name": "Maddy Siegrist",
+      "team": "DAL",
+      "war_2025": 2.3,
+      "proj_war_2026": 2.2,
+      "age_2026": 26,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.797,
+        "playmaking": 0.041,
+        "rebounding": 0.537,
+        "defense": 0.324,
+        "ball_security": 0.993
+      },
+      "salary_2026": 501080,
+      "dollar_per_war": 227764
+    },
+    {
+      "key": "natisha hiedeman",
+      "name": "Natisha Hiedeman",
+      "team": "MIN",
+      "war_2025": 2.9,
+      "proj_war_2026": 2.2,
+      "age_2026": 30,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.757,
+        "playmaking": 0.899,
+        "rebounding": 0.209,
+        "defense": 0.466,
+        "ball_security": 0.402
+      },
+      "salary_2026": 750000,
+      "dollar_per_war": 340909
+    },
+    {
+      "key": "caitlin clark",
+      "name": "Caitlin Clark",
+      "team": "IND",
+      "war_2025": 1.2,
+      "proj_war_2026": 2.2,
+      "age_2026": 25,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": 528846,
+      "dollar_per_war": 240385
+    },
+    {
+      "key": "natasha cloud",
+      "name": "Natasha Cloud",
+      "team": "NYL",
+      "war_2025": 2.8,
+      "proj_war_2026": 2.1,
+      "age_2026": 35,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.392,
+        "playmaking": 0.939,
+        "rebounding": 0.365,
+        "defense": 0.635,
+        "ball_security": 0.432
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "aneesah morrow",
+      "name": "Aneesah Morrow",
+      "team": "CON",
+      "war_2025": 1.8,
+      "proj_war_2026": 2.1,
+      "age_2026": 24,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "rebounding",
+      "skills_pct": {
+        "scoring": 0.595,
+        "playmaking": 0.02,
+        "rebounding": 0.993,
+        "defense": 0.736,
+        "ball_security": 0.608
+      },
+      "salary_2026": 331563,
+      "dollar_per_war": 157887
+    },
+    {
+      "key": "saniya rivers",
+      "name": "Saniya Rivers",
+      "team": "CON",
+      "war_2025": 1.8,
+      "proj_war_2026": 2.1,
+      "age_2026": 24,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "defense",
+      "skills_pct": {
+        "scoring": 0.328,
+        "playmaking": 0.642,
+        "rebounding": 0.294,
+        "defense": 0.932,
+        "ball_security": 0.639
+      },
+      "salary_2026": 309622,
+      "dollar_per_war": 147439
+    },
+    {
+      "key": "leila lacan",
+      "name": "Leila Lacan",
+      "team": "CON",
+      "war_2025": 1.8,
+      "proj_war_2026": 2.1,
+      "age_2026": 22,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "defense",
+      "skills_pct": {
+        "scoring": 0.554,
+        "playmaking": 0.851,
+        "rebounding": 0.172,
+        "defense": 0.959,
+        "ball_security": 0.358
+      },
+      "salary_2026": 289133,
+      "dollar_per_war": 137682
+    },
+    {
+      "key": "kahleah copper",
+      "name": "Kahleah Copper",
+      "team": "PHO",
+      "war_2025": 1.9,
+      "proj_war_2026": 2.1,
+      "age_2026": 32,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.932,
+        "playmaking": 0.149,
+        "rebounding": 0.277,
+        "defense": 0.209,
+        "ball_security": 0.338
+      },
+      "salary_2026": 1200000,
+      "dollar_per_war": 571429
+    },
+    {
+      "key": "brittney griner",
+      "name": "Brittney Griner",
+      "team": "ATL",
+      "war_2025": 1.8,
+      "proj_war_2026": 2.0,
+      "age_2026": 36,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.807,
+        "playmaking": 0.122,
+        "rebounding": 0.784,
+        "defense": 0.311,
+        "ball_security": 0.328
+      },
+      "salary_2026": 1190000,
+      "dollar_per_war": 595000
+    },
+    {
+      "key": "brittney sykes",
+      "name": "Brittney Sykes",
+      "team": "SEA",
+      "war_2025": 2.4,
+      "proj_war_2026": 2.0,
+      "age_2026": 33,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.882,
+        "playmaking": 0.858,
+        "rebounding": 0.304,
+        "defense": 0.52,
+        "ball_security": 0.105
+      },
+      "salary_2026": 1190000,
+      "dollar_per_war": 595000
+    },
+    {
+      "key": "jordin canada",
+      "name": "Jordin Canada",
+      "team": "ATL",
+      "war_2025": 2.3,
+      "proj_war_2026": 2.0,
+      "age_2026": 31,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.561,
+        "playmaking": 0.986,
+        "rebounding": 0.318,
+        "defense": 0.892,
+        "ball_security": 0.25
+      },
+      "salary_2026": 650000,
+      "dollar_per_war": 325000
+    },
+    {
+      "key": "nalyssa smith",
+      "name": "NaLyssa Smith",
+      "team": "LVA",
+      "war_2025": 1.6,
+      "proj_war_2026": 2.0,
+      "age_2026": 26,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.358,
+        "playmaking": 0.034,
+        "rebounding": 0.743,
+        "defense": 0.547,
+        "ball_security": 0.703
+      },
+      "salary_2026": 450000,
+      "dollar_per_war": 225000
+    },
+    {
+      "key": "dewanna bonner",
+      "name": "DeWanna Bonner",
+      "team": "PHO",
+      "war_2025": 2.0,
+      "proj_war_2026": 2.0,
+      "age_2026": 39,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.642,
+        "playmaking": 0.095,
+        "rebounding": 0.662,
+        "defense": 0.392,
+        "ball_security": 0.963
+      },
+      "salary_2026": 500000,
+      "dollar_per_war": 250000
+    },
+    {
+      "key": "emma meesseman",
+      "name": "Emma Meesseman",
+      "team": "NYL",
+      "war_2025": 2.2,
+      "proj_war_2026": 1.9,
+      "age_2026": 33,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.892,
+        "playmaking": 0.777,
+        "rebounding": 0.709,
+        "defense": 0.818,
+        "ball_security": 0.139
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "elizabeth williams",
+      "name": "Elizabeth Williams",
+      "team": "CHI",
+      "war_2025": 2.5,
+      "proj_war_2026": 1.9,
+      "age_2026": 33,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.588,
+        "playmaking": 0.517,
+        "rebounding": 0.791,
+        "defense": 0.797,
+        "ball_security": 0.524
+      },
+      "salary_2026": 600000,
+      "dollar_per_war": 315789
+    },
+    {
+      "key": "leonie fiebich",
+      "name": "Leonie Fiebich",
+      "team": "NYL",
+      "war_2025": 1.6,
+      "proj_war_2026": 1.8,
+      "age_2026": 27,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.25,
+        "playmaking": 0.291,
+        "rebounding": 0.372,
+        "defense": 0.304,
+        "ball_security": 0.804
+      },
+      "salary_2026": 293510,
+      "dollar_per_war": 163061
+    },
+    {
+      "key": "marina mabrey",
+      "name": "Marina Mabrey",
+      "team": "CON",
+      "war_2025": 1.3,
+      "proj_war_2026": 1.7,
+      "age_2026": 30,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.73,
+        "playmaking": 0.804,
+        "rebounding": 0.412,
+        "defense": 0.101,
+        "ball_security": 0.095
+      },
+      "salary_2026": 1200000,
+      "dollar_per_war": 705882
+    },
+    {
+      "key": "olivia nelsonododa",
+      "name": "Olivia Nelson-Ododa",
+      "team": "CON",
+      "war_2025": 2.0,
+      "proj_war_2026": 1.7,
+      "age_2026": 26,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.52,
+        "playmaking": 0.115,
+        "rebounding": 0.75,
+        "defense": 0.878,
+        "ball_security": 0.736
+      },
+      "salary_2026": 735000,
+      "dollar_per_war": 432353
+    },
+    {
+      "key": "natasha mack",
+      "name": "Natasha Mack",
+      "team": "PHO",
+      "war_2025": 1.9,
+      "proj_war_2026": 1.7,
+      "age_2026": 29,
+      "archetype": "Defensive Anchor",
+      "archetype_matchup": "Perimeter defender",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.149,
+        "playmaking": 0.176,
+        "rebounding": 0.926,
+        "defense": 0.966,
+        "ball_security": 0.986
+      },
+      "salary_2026": 303600,
+      "dollar_per_war": 178588
+    },
+    {
+      "key": "myisha hinesallen",
+      "name": "Myisha Hines-Allen",
+      "team": "DAL",
+      "war_2025": 1.8,
+      "proj_war_2026": 1.6,
+      "age_2026": 31,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.345,
+        "playmaking": 0.831,
+        "rebounding": 0.851,
+        "defense": 0.595,
+        "ball_security": 0.044
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "tehina paopao",
+      "name": "Te-Hina Paopao",
+      "team": "ATL",
+      "war_2025": 1.3,
+      "proj_war_2026": 1.6,
+      "age_2026": 24,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.439,
+        "playmaking": 0.868,
+        "rebounding": 0.23,
+        "defense": 0.25,
+        "ball_security": 0.48
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 173438
+    },
+    {
+      "key": "janelle salaun",
+      "name": "Janelle Salaun",
+      "team": "GSV",
+      "war_2025": 1.5,
+      "proj_war_2026": 1.6,
+      "age_2026": 25,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.649,
+        "playmaking": 0.108,
+        "rebounding": 0.622,
+        "defense": 0.027,
+        "ball_security": 0.689
+      },
+      "salary_2026": 500000,
+      "dollar_per_war": 312500
+    },
+    {
+      "key": "teaira mccowan",
+      "name": "Teaira McCowan",
+      "team": "DAL",
+      "war_2025": 0.8,
+      "proj_war_2026": 1.6,
+      "age_2026": 30,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.689,
+        "playmaking": 0.142,
+        "rebounding": 0.986,
+        "defense": 0.73,
+        "ball_security": 0.314
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "monique akoa makani",
+      "name": "Monique Akoa Makani",
+      "team": "PHO",
+      "war_2025": 1.5,
+      "proj_war_2026": 1.6,
+      "age_2026": 26,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.338,
+        "playmaking": 0.777,
+        "rebounding": 0.236,
+        "defense": 0.23,
+        "ball_security": 0.544
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "aziaha james",
+      "name": "Aziaha James",
+      "team": "DAL",
+      "war_2025": 1.2,
+      "proj_war_2026": 1.5,
+      "age_2026": 24,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.676,
+        "playmaking": 0.534,
+        "rebounding": 0.574,
+        "defense": 0.385,
+        "ball_security": 0.639
+      },
+      "salary_2026": 289133,
+      "dollar_per_war": 192755
+    },
+    {
+      "key": "jj quinerly",
+      "name": "JJ Quinerly",
+      "team": "DAL",
+      "war_2025": 1.0,
+      "proj_war_2026": 1.4,
+      "age_2026": 24,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.615,
+        "playmaking": 0.878,
+        "rebounding": 0.324,
+        "defense": 0.831,
+        "ball_security": 0.068
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 198214
+    },
+    {
+      "key": "dijonai carrington",
+      "name": "DiJonai Carrington",
+      "team": "MIN",
+      "war_2025": 1.2,
+      "proj_war_2026": 1.4,
+      "age_2026": 29,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.669,
+        "playmaking": 0.432,
+        "rebounding": 0.655,
+        "defense": 0.676,
+        "ball_security": 0.044
+      },
+      "salary_2026": 650000,
+      "dollar_per_war": 464286
+    },
+    {
+      "key": "sophie cunningham",
+      "name": "Sophie Cunningham",
+      "team": "IND",
+      "war_2025": 1.4,
+      "proj_war_2026": 1.4,
+      "age_2026": 30,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.365,
+        "playmaking": 0.155,
+        "rebounding": 0.446,
+        "defense": 0.318,
+        "ball_security": 0.851
+      },
+      "salary_2026": 665000,
+      "dollar_per_war": 475000
+    },
+    {
+      "key": "julie allemand",
+      "name": "Julie Allemand",
+      "team": "LAS",
+      "war_2025": 1.4,
+      "proj_war_2026": 1.3,
+      "age_2026": 30,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.041,
+        "playmaking": 0.953,
+        "rebounding": 0.405,
+        "defense": 0.574,
+        "ball_security": 0.666
+      },
+      "salary_2026": 425000,
+      "dollar_per_war": 326923
+    },
+    {
+      "key": "aaliyah edwards",
+      "name": "Aaliyah Edwards",
+      "team": "CON",
+      "war_2025": 0.9,
+      "proj_war_2026": 1.3,
+      "age_2026": 24,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.716,
+        "playmaking": 0.051,
+        "rebounding": 0.801,
+        "defense": 0.608,
+        "ball_security": 0.196
+      },
+      "salary_2026": 375542,
+      "dollar_per_war": 288878
+    },
+    {
+      "key": "tiffany hayes",
+      "name": "Tiffany Hayes",
+      "team": "GSV",
+      "war_2025": 1.5,
+      "proj_war_2026": 1.3,
+      "age_2026": 37,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.696,
+        "playmaking": 0.696,
+        "rebounding": 0.453,
+        "defense": 0.02,
+        "ball_security": 0.365
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "cheyenne parkertyus",
+      "name": "Cheyenne Parker-Tyus",
+      "team": "LVA",
+      "war_2025": 0.0,
+      "proj_war_2026": 1.3,
+      "age_2026": 34,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": 277500,
+      "dollar_per_war": 213462
+    },
+    {
+      "key": "erica wheeler",
+      "name": "Erica Wheeler",
+      "team": "SEA",
+      "war_2025": 2.3,
+      "proj_war_2026": 1.3,
+      "age_2026": 35,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.622,
+        "playmaking": 0.797,
+        "rebounding": 0.243,
+        "defense": 0.689,
+        "ball_security": 0.581
+      },
+      "salary_2026": 625000,
+      "dollar_per_war": 480769
+    },
+    {
+      "key": "kennedy burke",
+      "name": "Kennedy Burke",
+      "team": "NYL",
+      "war_2025": 1.6,
+      "proj_war_2026": 1.3,
+      "age_2026": 30,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.48,
+        "playmaking": 0.223,
+        "rebounding": 0.311,
+        "defense": 0.568,
+        "ball_security": 0.774
+      },
+      "salary_2026": 1000000,
+      "dollar_per_war": 769231
+    },
+    {
+      "key": "kalani brown",
+      "name": "Kalani Brown",
+      "team": "PHO",
+      "war_2025": 1.2,
+      "proj_war_2026": 1.3,
+      "age_2026": 30,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "rebounding",
+      "skills_pct": {
+        "scoring": 0.601,
+        "playmaking": 0.101,
+        "rebounding": 0.926,
+        "defense": 0.655,
+        "ball_security": 0.449
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 213462
+    },
+    {
+      "key": "emily engstler",
+      "name": "Emily Engstler",
+      "team": "WAS",
+      "war_2025": 0.9,
+      "proj_war_2026": 1.2,
+      "age_2026": 26,
+      "archetype": "Defensive Anchor",
+      "archetype_matchup": "Perimeter defender",
+      "primary_style": "defense",
+      "skills_pct": {
+        "scoring": 0.223,
+        "playmaking": 0.709,
+        "rebounding": 0.824,
+        "defense": 0.953,
+        "ball_security": 0.301
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 231250
+    },
+    {
+      "key": "kaila charles",
+      "name": "Kaila Charles",
+      "team": "GSV",
+      "war_2025": 1.3,
+      "proj_war_2026": 1.2,
+      "age_2026": 29,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "defense",
+      "skills_pct": {
+        "scoring": 0.412,
+        "playmaking": 0.209,
+        "rebounding": 0.716,
+        "defense": 0.838,
+        "ball_security": 0.598
+      },
+      "salary_2026": 600000,
+      "dollar_per_war": 500000
+    },
+    {
+      "key": "carla leite",
+      "name": "Carla Leite",
+      "team": "GSV",
+      "war_2025": 0.8,
+      "proj_war_2026": 1.2,
+      "age_2026": 22,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.655,
+        "playmaking": 0.726,
+        "rebounding": 0.122,
+        "defense": 0.412,
+        "ball_security": 0.081
+      },
+      "salary_2026": 289133,
+      "dollar_per_war": 240944
+    },
+    {
+      "key": "lexie hull",
+      "name": "Lexie Hull",
+      "team": "IND",
+      "war_2025": 1.2,
+      "proj_war_2026": 1.1,
+      "age_2026": 27,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.189,
+        "playmaking": 0.341,
+        "rebounding": 0.537,
+        "defense": 0.446,
+        "ball_security": 0.912
+      },
+      "salary_2026": 765000,
+      "dollar_per_war": 695455
+    },
+    {
+      "key": "maria kliundikova",
+      "name": "Maria Kliundikova",
+      "team": "MIN",
+      "war_2025": 1.2,
+      "proj_war_2026": 1.1,
+      "age_2026": 28,
+      "archetype": "Defensive Anchor",
+      "archetype_matchup": "Perimeter defender",
+      "primary_style": "defense",
+      "skills_pct": {
+        "scoring": 0.527,
+        "playmaking": 0.26,
+        "rebounding": 0.885,
+        "defense": 1.0,
+        "ball_security": 0.652
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "bridget carleton",
+      "name": "Bridget Carleton",
+      "team": "MIN",
+      "war_2025": 1.0,
+      "proj_war_2026": 1.1,
+      "age_2026": 29,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.108,
+        "playmaking": 0.412,
+        "rebounding": 0.399,
+        "defense": 0.223,
+        "ball_security": 0.973
+      },
+      "salary_2026": 1190000,
+      "dollar_per_war": 1081818
+    },
+    {
+      "key": "monique billings",
+      "name": "Monique Billings",
+      "team": "GSV",
+      "war_2025": 1.2,
+      "proj_war_2026": 1.1,
+      "age_2026": 30,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.628,
+        "playmaking": 0.027,
+        "rebounding": 0.77,
+        "defense": 0.804,
+        "ball_security": 0.872
+      },
+      "salary_2026": 800000,
+      "dollar_per_war": 727273
+    },
+    {
+      "key": "aari mcdonald",
+      "name": "Aari McDonald",
+      "team": "IND",
+      "war_2025": 1.2,
+      "proj_war_2026": 1.1,
+      "age_2026": 28,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.5,
+        "playmaking": 0.946,
+        "rebounding": 0.189,
+        "defense": 0.669,
+        "ball_security": 0.088
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "iliana rupert",
+      "name": "Iliana Rupert",
+      "team": "GSV",
+      "war_2025": 1.2,
+      "proj_war_2026": 1.1,
+      "age_2026": 25,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.514,
+        "playmaking": 0.446,
+        "rebounding": 0.561,
+        "defense": 0.351,
+        "ball_security": 0.791
+      },
+      "salary_2026": 450000,
+      "dollar_per_war": 409091
+    },
+    {
+      "key": "rae burrell",
+      "name": "Rae Burrell",
+      "team": "LAS",
+      "war_2025": 1.0,
+      "proj_war_2026": 1.1,
+      "age_2026": 26,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.635,
+        "playmaking": 0.358,
+        "rebounding": 0.378,
+        "defense": 0.291,
+        "ball_security": 0.764
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 252273
+    },
+    {
+      "key": "luisa geiselsoder",
+      "name": "Luisa Geiselsoder",
+      "team": "DAL",
+      "war_2025": 0.8,
+      "proj_war_2026": 1.0,
+      "age_2026": 27,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.27,
+        "playmaking": 0.419,
+        "rebounding": 0.703,
+        "defense": 0.682,
+        "ball_security": 0.821
+      },
+      "salary_2026": 325000,
+      "dollar_per_war": 325000
+    },
+    {
+      "key": "li yueru",
+      "name": "Li Yueru",
+      "team": "DAL",
+      "war_2025": 1.0,
+      "proj_war_2026": 1.0,
+      "age_2026": 28,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "rebounding",
+      "skills_pct": {
+        "scoring": 0.486,
+        "playmaking": 0.196,
+        "rebounding": 0.905,
+        "defense": 0.149,
+        "ball_security": 0.696
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 277500
+    },
+    {
+      "key": "makayla timpson",
+      "name": "Makayla Timpson",
+      "team": "IND",
+      "war_2025": 0.7,
+      "proj_war_2026": 1.0,
+      "age_2026": 24,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.432,
+        "playmaking": 0.0,
+        "rebounding": 0.838,
+        "defense": 0.946,
+        "ball_security": 0.899
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 277500
+    },
+    {
+      "key": "laeticia amihere",
+      "name": "Laeticia Amihere",
+      "team": "GSV",
+      "war_2025": 1.2,
+      "proj_war_2026": 1.0,
+      "age_2026": 25,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "rebounding",
+      "skills_pct": {
+        "scoring": 0.574,
+        "playmaking": 0.402,
+        "rebounding": 0.959,
+        "defense": 0.845,
+        "ball_security": 0.206
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "jacy sheldon",
+      "name": "Jacy Sheldon",
+      "team": "WAS",
+      "war_2025": 1.0,
+      "proj_war_2026": 0.9,
+      "age_2026": 26,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.277,
+        "playmaking": 0.5,
+        "rebounding": 0.142,
+        "defense": 0.486,
+        "ball_security": 0.838
+      },
+      "salary_2026": 402155,
+      "dollar_per_war": 446839
+    },
+    {
+      "key": "lucy olsen",
+      "name": "Lucy Olsen",
+      "team": "WAS",
+      "war_2025": 0.5,
+      "proj_war_2026": 0.9,
+      "age_2026": 23,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.304,
+        "playmaking": 0.598,
+        "rebounding": 0.203,
+        "defense": 0.243,
+        "ball_security": 0.882
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 308333
+    },
+    {
+      "key": "isabelle harrison",
+      "name": "Isabelle Harrison",
+      "team": "NYL",
+      "war_2025": 1.3,
+      "proj_war_2026": 0.9,
+      "age_2026": 33,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.774,
+        "playmaking": 0.341,
+        "rebounding": 0.801,
+        "defense": 0.851,
+        "ball_security": 0.5
+      },
+      "salary_2026": 400000,
+      "dollar_per_war": 444444
+    },
+    {
+      "key": "dana evans",
+      "name": "Dana Evans",
+      "team": "LVA",
+      "war_2025": 0.9,
+      "proj_war_2026": 0.9,
+      "age_2026": 28,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.534,
+        "playmaking": 0.818,
+        "rebounding": 0.034,
+        "defense": 0.074,
+        "ball_security": 0.774
+      },
+      "salary_2026": 380000,
+      "dollar_per_war": 422222
+    },
+    {
+      "key": "maya caldwell",
+      "name": "Maya Caldwell",
+      "team": "ATL",
+      "war_2025": 1.3,
+      "proj_war_2026": 0.9,
+      "age_2026": 28,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.23,
+        "playmaking": 0.581,
+        "rebounding": 0.581,
+        "defense": 0.696,
+        "ball_security": 0.666
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 308333
+    },
+    {
+      "key": "kayla thornton",
+      "name": "Kayla Thornton",
+      "team": "GSV",
+      "war_2025": 1.7,
+      "proj_war_2026": 0.8,
+      "age_2026": 34,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.787,
+        "playmaking": 0.189,
+        "rebounding": 0.764,
+        "defense": 0.615,
+        "ball_security": 0.676
+      },
+      "salary_2026": 750000,
+      "dollar_per_war": 937500
+    },
+    {
+      "key": "cecilia zandalasini",
+      "name": "Cecilia Zandalasini",
+      "team": "GSV",
+      "war_2025": 1.2,
+      "proj_war_2026": 0.8,
+      "age_2026": 31,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.709,
+        "playmaking": 0.426,
+        "rebounding": 0.392,
+        "defense": 0.432,
+        "ball_security": 0.588
+      },
+      "salary_2026": 500000,
+      "dollar_per_war": 625000
+    },
+    {
+      "key": "nyara sabally",
+      "name": "Nyara Sabally",
+      "team": "NYL",
+      "war_2025": 0.4,
+      "proj_war_2026": 0.8,
+      "age_2026": 27,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.243,
+        "playmaking": 0.135,
+        "rebounding": 0.811,
+        "defense": 0.858,
+        "ball_security": 0.723
+      },
+      "salary_2026": 436957,
+      "dollar_per_war": 546196
+    },
+    {
+      "key": "sami whitcomb",
+      "name": "Sami Whitcomb",
+      "team": "PHO",
+      "war_2025": 1.5,
+      "proj_war_2026": 0.8,
+      "age_2026": 38,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.419,
+        "playmaking": 0.676,
+        "rebounding": 0.267,
+        "defense": 0.358,
+        "ball_security": 0.524
+      },
+      "salary_2026": 735000,
+      "dollar_per_war": 918750
+    },
+    {
+      "key": "odyssey sims",
+      "name": "Odyssey Sims",
+      "team": "IND",
+      "war_2025": 1.1,
+      "proj_war_2026": 0.7,
+      "age_2026": 34,
+      "archetype": "Two-Way Creator",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.682,
+        "playmaking": 0.909,
+        "rebounding": 0.074,
+        "defense": 0.189,
+        "ball_security": 0.416
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "amy okonkwo",
+      "name": "Amy Okonkwo",
+      "team": "DAL",
+      "war_2025": 0.8,
+      "proj_war_2026": 0.7,
+      "age_2026": 30,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": 270000,
+      "dollar_per_war": 385714
+    },
+    {
+      "key": "sug sutton",
+      "name": "Sug Sutton",
+      "team": "WAS",
+      "war_2025": 0.9,
+      "proj_war_2026": 0.6,
+      "age_2026": 28,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.213,
+        "playmaking": 0.892,
+        "rebounding": 0.057,
+        "defense": 0.176,
+        "ball_security": 0.301
+      },
+      "salary_2026": 425000,
+      "dollar_per_war": 708333
+    },
+    {
+      "key": "temi fagbenle",
+      "name": "Temi Fagbenle",
+      "team": "GSV",
+      "war_2025": 1.4,
+      "proj_war_2026": 0.6,
+      "age_2026": 34,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.294,
+        "playmaking": 0.385,
+        "rebounding": 0.669,
+        "defense": 0.642,
+        "ball_security": 0.5
+      },
+      "salary_2026": 1000000,
+      "dollar_per_war": 1666667
+    },
+    {
+      "key": "marine johannes",
+      "name": "Marine Johannes",
+      "team": "NYL",
+      "war_2025": 0.8,
+      "proj_war_2026": 0.6,
+      "age_2026": 32,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.399,
+        "playmaking": 0.517,
+        "rebounding": 0.284,
+        "defense": 0.334,
+        "ball_security": 0.466
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "rachel banham",
+      "name": "Rachel Banham",
+      "team": "CHI",
+      "war_2025": 1.1,
+      "proj_war_2026": 0.6,
+      "age_2026": 33,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.466,
+        "playmaking": 0.682,
+        "rebounding": 0.057,
+        "defense": 0.142,
+        "ball_security": 0.459
+      },
+      "salary_2026": 425000,
+      "dollar_per_war": 708333
+    },
+    {
+      "key": "lexi held",
+      "name": "Lexi Held",
+      "team": "PHO",
+      "war_2025": 0.4,
+      "proj_war_2026": 0.6,
+      "age_2026": 27,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "defense",
+      "skills_pct": {
+        "scoring": 0.446,
+        "playmaking": 0.439,
+        "rebounding": 0.101,
+        "defense": 0.709,
+        "ball_security": 0.5
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 462500
+    },
+    {
+      "key": "kate martin",
+      "name": "Kate Martin",
+      "team": "GSV",
+      "war_2025": 0.4,
+      "proj_war_2026": 0.5,
+      "age_2026": 26,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.541,
+        "playmaking": 0.274,
+        "rebounding": 0.554,
+        "defense": 0.122,
+        "ball_security": 0.753
+      },
+      "salary_2026": 293510,
+      "dollar_per_war": 587020
+    },
+    {
+      "key": "cameron brink",
+      "name": "Cameron Brink",
+      "team": "LAS",
+      "war_2025": 0.4,
+      "proj_war_2026": 0.5,
+      "age_2026": 25,
+      "archetype": "Defensive Anchor",
+      "archetype_matchup": "Perimeter defender",
+      "primary_style": "defense",
+      "skills_pct": {
+        "scoring": 0.568,
+        "playmaking": 0.081,
+        "rebounding": 0.973,
+        "defense": 0.993,
+        "ball_security": 0.027
+      },
+      "salary_2026": 493851,
+      "dollar_per_war": 987702
+    },
+    {
+      "key": "haley jones",
+      "name": "Haley Jones",
+      "team": "DAL",
+      "war_2025": 0.6,
+      "proj_war_2026": 0.5,
+      "age_2026": 25,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.426,
+        "playmaking": 0.689,
+        "rebounding": 0.568,
+        "defense": 0.791,
+        "ball_security": 0.172
+      },
+      "salary_2026": 300000,
+      "dollar_per_war": 600000
+    },
+    {
+      "key": "maddy westbeld",
+      "name": "Maddy Westbeld",
+      "team": "CHI",
+      "war_2025": 0.3,
+      "proj_war_2026": 0.5,
+      "age_2026": 25,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.264,
+        "playmaking": 0.331,
+        "rebounding": 0.601,
+        "defense": 0.588,
+        "ball_security": 0.804
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 555000
+    },
+    {
+      "key": "tyasha harris",
+      "name": "Tyasha Harris",
+      "team": "DAL",
+      "war_2025": 0.2,
+      "proj_war_2026": 0.5,
+      "age_2026": 28,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": 400000,
+      "dollar_per_war": 800000
+    },
+    {
+      "key": "anastasiia olairi kosu",
+      "name": "Anastasiia Olairi Kosu",
+      "team": "MIN",
+      "war_2025": 0.1,
+      "proj_war_2026": 0.5,
+      "age_2026": 21,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.807,
+        "playmaking": 0.392,
+        "rebounding": 0.615,
+        "defense": 0.297,
+        "ball_security": 0.223
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 555000
+    },
+    {
+      "key": "jade melbourne",
+      "name": "Jade Melbourne",
+      "team": "WAS",
+      "war_2025": -0.1,
+      "proj_war_2026": 0.4,
+      "age_2026": 24,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.169,
+        "playmaking": 0.75,
+        "rebounding": 0.132,
+        "defense": 0.162,
+        "ball_security": 0.345
+      },
+      "salary_2026": 500000,
+      "dollar_per_war": 1250000
+    },
+    {
+      "key": "taylor thierry",
+      "name": "Taylor Thierry",
+      "team": "ATL",
+      "war_2025": 0.0,
+      "proj_war_2026": 0.4,
+      "age_2026": 24,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": 277500,
+      "dollar_per_war": 693750
+    },
+    {
+      "key": "rayah marshall",
+      "name": "Rayah Marshall",
+      "team": "CON",
+      "war_2025": 0.0,
+      "proj_war_2026": 0.4,
+      "age_2026": 23,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "rebounding",
+      "skills_pct": {
+        "scoring": 0.196,
+        "playmaking": 0.128,
+        "rebounding": 0.912,
+        "defense": 0.378,
+        "ball_security": 0.243
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 693750
+    },
+    {
+      "key": "bria hartley",
+      "name": "Bria Hartley",
+      "team": "CON",
+      "war_2025": 0.9,
+      "proj_war_2026": 0.4,
+      "age_2026": 34,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.547,
+        "playmaking": 0.838,
+        "rebounding": 0.155,
+        "defense": 0.196,
+        "ball_security": 0.23
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "sika kone",
+      "name": "Sika Kone",
+      "team": "ATL",
+      "war_2025": 0.0,
+      "proj_war_2026": 0.4,
+      "age_2026": 24,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": 277500,
+      "dollar_per_war": 693750
+    },
+    {
+      "key": "chloe bibby",
+      "name": "Chloe Bibby",
+      "team": "IND",
+      "war_2025": 0.4,
+      "proj_war_2026": 0.4,
+      "age_2026": 28,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": 277500,
+      "dollar_per_war": 693750
+    },
+    {
+      "key": "courtney vandersloot",
+      "name": "Courtney Vandersloot",
+      "team": "CHI",
+      "war_2025": 0.5,
+      "proj_war_2026": 0.4,
+      "age_2026": 38,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": 750000,
+      "dollar_per_war": 1875000
+    },
+    {
+      "key": "michaela onyenwere",
+      "name": "Michaela Onyenwere",
+      "team": "CHI",
+      "war_2025": 0.1,
+      "proj_war_2026": 0.4,
+      "age_2026": 27,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.372,
+        "playmaking": 0.378,
+        "rebounding": 0.22,
+        "defense": 0.061,
+        "ball_security": 0.236
+      },
+      "salary_2026": 700000,
+      "dollar_per_war": 1750000
+    },
+    {
+      "key": "nia coffey",
+      "name": "Nia Coffey",
+      "team": "ATL",
+      "war_2025": 0.8,
+      "proj_war_2026": 0.4,
+      "age_2026": 31,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "rebounding",
+      "skills_pct": {
+        "scoring": 0.473,
+        "playmaking": 0.615,
+        "rebounding": 0.818,
+        "defense": 0.426,
+        "ball_security": 0.486
+      },
+      "salary_2026": 350000,
+      "dollar_per_war": 875000
+    },
+    {
+      "key": "diamond miller",
+      "name": "Diamond Miller",
+      "team": "DAL",
+      "war_2025": 0.1,
+      "proj_war_2026": 0.4,
+      "age_2026": 26,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.662,
+        "playmaking": 0.311,
+        "rebounding": 0.196,
+        "defense": 0.466,
+        "ball_security": 0.206
+      },
+      "salary_2026": 536588,
+      "dollar_per_war": 1341470
+    },
+    {
+      "key": "kierstan bell",
+      "name": "Kierstan Bell",
+      "team": "LVA",
+      "war_2025": 0.3,
+      "proj_war_2026": 0.4,
+      "age_2026": 27,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.294,
+        "playmaking": 0.176,
+        "rebounding": 0.419,
+        "defense": 0.541,
+        "ball_security": 0.919
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 693750
+    },
+    {
+      "key": "murjanatu musa",
+      "name": "Murjanatu Musa",
+      "team": "PHO",
+      "war_2025": 0.2,
+      "proj_war_2026": 0.4,
+      "age_2026": 26,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "kathryn westbeld",
+      "name": "Kathryn Westbeld",
+      "team": "PHO",
+      "war_2025": 0.6,
+      "proj_war_2026": 0.4,
+      "age_2026": 31,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.203,
+        "playmaking": 0.176,
+        "rebounding": 0.48,
+        "defense": 0.872,
+        "ball_security": 0.949
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 693750
+    },
+    {
+      "key": "liatu king",
+      "name": "Liatu King",
+      "team": "DAL",
+      "war_2025": 0.1,
+      "proj_war_2026": 0.3,
+      "age_2026": 25,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "mackenzie holmes",
+      "name": "Mackenzie Holmes",
+      "team": "SEA",
+      "war_2025": 0.1,
+      "proj_war_2026": 0.3,
+      "age_2026": 26,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": 277500,
+      "dollar_per_war": 925000
+    },
+    {
+      "key": "rebekah gardner",
+      "name": "Rebekah Gardner",
+      "team": "NYL",
+      "war_2025": 0.8,
+      "proj_war_2026": 0.3,
+      "age_2026": 36,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.257,
+        "playmaking": 0.162,
+        "rebounding": 0.473,
+        "defense": 0.75,
+        "ball_security": 0.838
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "alissa pili",
+      "name": "Alissa Pili",
+      "team": "LAS",
+      "war_2025": 0.2,
+      "proj_war_2026": 0.3,
+      "age_2026": 25,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.311,
+        "playmaking": 0.074,
+        "rebounding": 0.676,
+        "defense": 0.041,
+        "ball_security": 0.162
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "aerial powers",
+      "name": "Aerial Powers",
+      "team": "IND",
+      "war_2025": 0.5,
+      "proj_war_2026": 0.3,
+      "age_2026": 33,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "rebounding",
+      "skills_pct": {
+        "scoring": 0.453,
+        "playmaking": 0.527,
+        "rebounding": 0.642,
+        "defense": 0.514,
+        "ball_security": 0.449
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "karlie samuelson",
+      "name": "Karlie Samuelson",
+      "team": "MIN",
+      "war_2025": 0.0,
+      "proj_war_2026": 0.2,
+      "age_2026": 31,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.122,
+        "playmaking": 0.476,
+        "rebounding": 0.172,
+        "defense": 0.135,
+        "ball_security": 0.753
+      },
+      "salary_2026": 360000,
+      "dollar_per_war": 1800000
+    },
+    {
+      "key": "megan gustafson",
+      "name": "Megan Gustafson",
+      "team": "LVA",
+      "war_2025": -0.2,
+      "proj_war_2026": 0.2,
+      "age_2026": 30,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.162,
+        "playmaking": 0.014,
+        "rebounding": 0.507,
+        "defense": 0.115,
+        "ball_security": 0.963
+      },
+      "salary_2026": 500000,
+      "dollar_per_war": 2500000
+    },
+    {
+      "key": "sania feagin",
+      "name": "Sania Feagin",
+      "team": "LAS",
+      "war_2025": -0.2,
+      "proj_war_2026": 0.2,
+      "age_2026": 24,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "efficiency",
+      "skills_pct": {
+        "scoring": 0.176,
+        "playmaking": 0.203,
+        "rebounding": 0.463,
+        "defense": 0.493,
+        "ball_security": 0.074
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 1387500
+    },
+    {
+      "key": "madison scott",
+      "name": "Madison Scott",
+      "team": "WAS",
+      "war_2025": 0.0,
+      "proj_war_2026": 0.2,
+      "age_2026": 25,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": 277500,
+      "dollar_per_war": 1387500
+    },
+    {
+      "key": "jaylyn sherrod",
+      "name": "Jaylyn Sherrod",
+      "team": "MIN",
+      "war_2025": -0.1,
+      "proj_war_2026": 0.2,
+      "age_2026": 25,
+      "archetype": "Defensive Anchor",
+      "archetype_matchup": "Perimeter defender",
+      "primary_style": "defense",
+      "skills_pct": {
+        "scoring": 0.088,
+        "playmaking": 0.588,
+        "rebounding": 0.257,
+        "defense": 0.986,
+        "ball_security": 0.02
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 1387500
+    },
+    {
+      "key": "camryn taylor",
+      "name": "Camryn Taylor",
+      "team": "MIN",
+      "war_2025": -0.1,
+      "proj_war_2026": 0.1,
+      "age_2026": 27,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "stephanie talbot",
+      "name": "Stephanie Talbot",
+      "team": "NYL",
+      "war_2025": 0.3,
+      "proj_war_2026": 0.1,
+      "age_2026": 32,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.061,
+        "playmaking": 0.743,
+        "rebounding": 0.595,
+        "defense": 0.527,
+        "ball_security": 0.277
+      },
+      "salary_2026": 392500,
+      "dollar_per_war": 3925000
+    },
+    {
+      "key": "grace berger",
+      "name": "Grace Berger",
+      "team": "DAL",
+      "war_2025": -0.2,
+      "proj_war_2026": 0.1,
+      "age_2026": 27,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.014,
+        "playmaking": 0.868,
+        "rebounding": 0.514,
+        "defense": 0.48,
+        "ball_security": 0.821
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": 2775000
+    },
+    {
+      "key": "marquesha davis",
+      "name": "Marquesha Davis",
+      "team": "CHI",
+      "war_2025": -0.2,
+      "proj_war_2026": 0.1,
+      "age_2026": 25,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "kiana williams",
+      "name": "Kiana Williams",
+      "team": "PHO",
+      "war_2025": 0.2,
+      "proj_war_2026": 0.1,
+      "age_2026": 28,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": 277500,
+      "dollar_per_war": 2775000
+    },
+    {
+      "key": "kia nurse",
+      "name": "Kia Nurse",
+      "team": "CHI",
+      "war_2025": 0.0,
+      "proj_war_2026": -0.1,
+      "age_2026": 31,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.318,
+        "playmaking": 0.25,
+        "rebounding": 0.294,
+        "defense": 0.0,
+        "ball_security": 0.622
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": null
+    },
+    {
+      "key": "emma cannon",
+      "name": "Emma Cannon",
+      "team": "LAS",
+      "war_2025": 0.5,
+      "proj_war_2026": -0.1,
+      "age_2026": 37,
+      "archetype": "Scoring Anchor",
+      "archetype_matchup": "Sharpshooter",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.703,
+        "playmaking": 0.088,
+        "rebounding": 0.608,
+        "defense": 0.622,
+        "ball_security": 0.287
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": null
+    },
+    {
+      "key": "shey peddy",
+      "name": "Shey Peddy",
+      "team": "IND",
+      "war_2025": 0.4,
+      "proj_war_2026": -0.1,
+      "age_2026": 38,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.351,
+        "playmaking": 0.544,
+        "rebounding": 0.081,
+        "defense": 0.27,
+        "ball_security": 0.544
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": null
+    },
+    {
+      "key": "alysha clark",
+      "name": "Alysha Clark",
+      "team": "WAS",
+      "war_2025": 0.0,
+      "proj_war_2026": -0.3,
+      "age_2026": 39,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.068,
+        "playmaking": 0.372,
+        "rebounding": 0.52,
+        "defense": 0.034,
+        "ball_security": 1.0
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "mamignan toure",
+      "name": "Mamignan Toure",
+      "team": "CON",
+      "war_2025": -0.1,
+      "proj_war_2026": -0.3,
+      "age_2026": 32,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.135,
+        "playmaking": 0.301,
+        "rebounding": 0.007,
+        "defense": 0.561,
+        "ball_security": 0.682
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": null
+    },
+    {
+      "key": "kariata diaby",
+      "name": "Kariata Diaby",
+      "team": "CON",
+      "war_2025": -0.1,
+      "proj_war_2026": -0.3,
+      "age_2026": 31,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "sarah ashlee barker",
+      "name": "Sarah Ashlee Barker",
+      "team": "LAS",
+      "war_2025": -0.5,
+      "proj_war_2026": -0.3,
+      "age_2026": 25,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.101,
+        "playmaking": 0.324,
+        "rebounding": 0.436,
+        "defense": 0.108,
+        "ball_security": 0.257
+      },
+      "salary_2026": 289133,
+      "dollar_per_war": null
+    },
+    {
+      "key": "damiris dantas",
+      "name": "Damiris Dantas",
+      "team": "IND",
+      "war_2025": 0.2,
+      "proj_war_2026": -0.3,
+      "age_2026": 34,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "scoring",
+      "skills_pct": {
+        "scoring": 0.581,
+        "playmaking": 0.243,
+        "rebounding": 0.682,
+        "defense": 0.007,
+        "ball_security": 0.432
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": null
+    },
+    {
+      "key": "rebecca allen",
+      "name": "Rebecca Allen",
+      "team": "CHI",
+      "war_2025": -0.1,
+      "proj_war_2026": -0.4,
+      "age_2026": 34,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.182,
+        "playmaking": 0.402,
+        "rebounding": 0.436,
+        "defense": 0.439,
+        "ball_security": 0.784
+      },
+      "salary_2026": 350000,
+      "dollar_per_war": null
+    },
+    {
+      "key": "tiffany mitchell",
+      "name": "Tiffany Mitchell",
+      "team": "SEA",
+      "war_2025": -0.3,
+      "proj_war_2026": -0.4,
+      "age_2026": 32,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.115,
+        "playmaking": 0.007,
+        "rebounding": 0.0,
+        "defense": 0.236,
+        "ball_security": 0.932
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "robyn parks",
+      "name": "Robyn Parks",
+      "team": "CON",
+      "war_2025": -0.1,
+      "proj_war_2026": -0.6,
+      "age_2026": 34,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "sydney colson",
+      "name": "Sydney Colson",
+      "team": "IND",
+      "war_2025": -0.3,
+      "proj_war_2026": -0.6,
+      "age_2026": 37,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.027,
+        "playmaking": 0.909,
+        "rebounding": 0.041,
+        "defense": 0.5,
+        "ball_security": 0.118
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "sevgi uzun",
+      "name": "Sevgi Uzun",
+      "team": "CHI",
+      "war_2025": -0.7,
+      "proj_war_2026": -0.6,
+      "age_2026": 29,
+      "archetype": "Floor General",
+      "archetype_matchup": "Floor general",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.074,
+        "playmaking": 0.885,
+        "rebounding": 0.088,
+        "defense": 0.095,
+        "ball_security": 0.061
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "kiah stokes",
+      "name": "Kiah Stokes",
+      "team": "LVA",
+      "war_2025": -0.2,
+      "proj_war_2026": -0.7,
+      "age_2026": 34,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.0,
+        "playmaking": 0.051,
+        "rebounding": 0.872,
+        "defense": 0.581,
+        "ball_security": 0.949
+      },
+      "salary_2026": 375000,
+      "dollar_per_war": null
+    },
+    {
+      "key": "haley peters",
+      "name": "Haley Peters",
+      "team": "CON",
+      "war_2025": -0.3,
+      "proj_war_2026": -0.8,
+      "age_2026": 34,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.034,
+        "playmaking": 0.351,
+        "rebounding": 0.628,
+        "defense": 0.203,
+        "ball_security": 0.622
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "julie vanloo",
+      "name": "Julie Vanloo",
+      "team": "LAS",
+      "war_2025": -0.6,
+      "proj_war_2026": -0.9,
+      "age_2026": 34,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.095,
+        "playmaking": 0.726,
+        "rebounding": 0.027,
+        "defense": 0.216,
+        "ball_security": 0.054
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": null
+    },
+    {
+      "key": "jaelyn brown",
+      "name": "Jaelyn Brown",
+      "team": "CON",
+      "war_2025": -0.1,
+      "proj_war_2026": 0.0,
+      "age_2026": 28,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "hailey van lith",
+      "name": "Hailey Van Lith",
+      "team": "CHI",
+      "war_2025": -0.2,
+      "proj_war_2026": 0.0,
+      "age_2026": 25,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "playmaking",
+      "skills_pct": {
+        "scoring": 0.213,
+        "playmaking": 0.764,
+        "rebounding": 0.149,
+        "defense": 0.345,
+        "ball_security": 0.034
+      },
+      "salary_2026": 289133,
+      "dollar_per_war": null
+    },
+    {
+      "key": "kaitlyn chen",
+      "name": "Kaitlyn Chen",
+      "team": "GSV",
+      "war_2025": -0.2,
+      "proj_war_2026": 0.0,
+      "age_2026": 25,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.054,
+        "playmaking": 0.622,
+        "rebounding": 0.182,
+        "defense": 0.014,
+        "ball_security": 0.351
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "elizabeth kitley",
+      "name": "Elizabeth Kitley",
+      "team": "LVA",
+      "war_2025": -0.3,
+      "proj_war_2026": 0.0,
+      "age_2026": 25,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "aaliyah nye",
+      "name": "Aaliyah Nye",
+      "team": "LVA",
+      "war_2025": -0.4,
+      "proj_war_2026": 0.0,
+      "age_2026": 24,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.142,
+        "playmaking": 0.068,
+        "rebounding": 0.22,
+        "defense": 0.068,
+        "ball_security": 0.905
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": null
+    },
+    {
+      "key": "joyner holmes",
+      "name": "Joyner Holmes",
+      "team": "LVA",
+      "war_2025": -0.1,
+      "proj_war_2026": 0.0,
+      "age_2026": 29,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "lexie brown",
+      "name": "Lexie Brown",
+      "team": "SEA",
+      "war_2025": 0.1,
+      "proj_war_2026": 0.0,
+      "age_2026": 32,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.128,
+        "playmaking": 0.608,
+        "rebounding": 0.115,
+        "defense": 0.365,
+        "ball_security": 0.98
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": null
+    },
+    {
+      "key": "shatori walkerkimbrough",
+      "name": "Shatori Walker-Kimbrough",
+      "team": "ATL",
+      "war_2025": -0.1,
+      "proj_war_2026": 0.0,
+      "age_2026": 31,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.047,
+        "playmaking": 0.318,
+        "rebounding": 0.267,
+        "defense": 0.662,
+        "ball_security": 0.882
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "mercedes russell",
+      "name": "Mercedes Russell",
+      "team": "LAS",
+      "war_2025": 0.1,
+      "proj_war_2026": 0.0,
+      "age_2026": 31,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.081,
+        "playmaking": 0.459,
+        "rebounding": 0.486,
+        "defense": 0.466,
+        "ball_security": 0.858
+      },
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "moriah jefferson",
+      "name": "Moriah Jefferson",
+      "team": "CHI",
+      "war_2025": 0.0,
+      "proj_war_2026": 0.0,
+      "age_2026": 33,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null
+    },
+    {
+      "key": "stefanie dolson",
+      "name": "Stefanie Dolson",
+      "team": "WAS",
+      "war_2025": 0.1,
+      "proj_war_2026": 0.0,
+      "age_2026": 35,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.155,
+        "playmaking": 0.561,
+        "rebounding": 0.493,
+        "defense": 0.169,
+        "ball_security": 0.838
+      },
+      "salary_2026": 750000,
+      "dollar_per_war": null
+    },
+    {
+      "key": "lindsay allen",
+      "name": "Lindsay Allen",
+      "team": "CON",
+      "war_2025": -0.2,
+      "proj_war_2026": 0.0,
+      "age_2026": 32,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.02,
+        "playmaking": 0.845,
+        "rebounding": 0.068,
+        "defense": 0.155,
+        "ball_security": 0.382
+      },
+      "salary_2026": 410000,
+      "dollar_per_war": null
+    },
+    {
+      "key": "brianna turner",
+      "name": "Brianna Turner",
+      "team": "IND",
+      "war_2025": -0.1,
+      "proj_war_2026": 0.0,
+      "age_2026": 30,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.007,
+        "playmaking": 0.274,
+        "rebounding": 0.689,
+        "defense": 0.405,
+        "ball_security": 0.865
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": null
+    },
+    {
+      "key": "zia cooke",
+      "name": "Zia Cooke",
+      "team": "SEA",
+      "war_2025": -0.1,
+      "proj_war_2026": 0.0,
+      "age_2026": 26,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "efficiency",
+      "skills_pct": {
+        "scoring": 0.378,
+        "playmaking": 0.23,
+        "rebounding": 0.014,
+        "defense": 0.334,
+        "ball_security": 0.139
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": null
+    },
+    {
+      "key": "kitija laksa",
+      "name": "Kitija Laksa",
+      "team": "PHO",
+      "war_2025": 0.0,
+      "proj_war_2026": 0.0,
+      "age_2026": 30,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.284,
+        "playmaking": 0.061,
+        "rebounding": 0.047,
+        "defense": 0.047,
+        "ball_security": 0.939
+      },
+      "salary_2026": 277500,
+      "dollar_per_war": null
+    }
+  ],
+  "teams": {
+    "MIN": {
+      "team_full": "Minnesota Lynx",
+      "rank": 1,
+      "strength": 7.2,
+      "title_pct": 12.8,
+      "playoff_pct": 100.0,
+      "proj_wins": 22.3,
+      "win_band": [
+        1.1,
+        2.4
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 80.8,
+        "three_rate": 0.363,
+        "ft_rate": 0.226,
+        "ast_rate": 0.0,
+        "to_rate": 12.27,
+        "fg_pct": 0.467,
+        "win_pct": 0.773
+      },
+      "roster_rated_n": 13
+    },
+    "IND": {
+      "team_full": "Indiana Fever",
+      "rank": 2,
+      "strength": 5.2,
+      "title_pct": 16.0,
+      "playoff_pct": 97.3,
+      "proj_wins": 22.4,
+      "win_band": [
+        2.1,
+        2.9
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 81.7,
+        "three_rate": 0.323,
+        "ft_rate": 0.27,
+        "ast_rate": 0.0,
+        "to_rate": 13.11,
+        "fg_pct": 0.451,
+        "win_pct": 0.545
+      },
+      "roster_rated_n": 15
+    },
+    "ATL": {
+      "team_full": "Atlanta Dream",
+      "rank": 3,
+      "strength": 4.7,
+      "title_pct": 22.0,
+      "playoff_pct": 98.1,
+      "proj_wins": 22.4,
+      "win_band": [
+        2.5,
+        3.4
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 79.8,
+        "three_rate": 0.404,
+        "ft_rate": 0.27,
+        "ast_rate": 0.0,
+        "to_rate": 11.81,
+        "fg_pct": 0.442,
+        "win_pct": 0.682
+      },
+      "roster_rated_n": 12
+    },
+    "GSV": {
+      "team_full": "Golden State Valkyries",
+      "rank": 4,
+      "strength": 3.7,
+      "title_pct": 3.4,
+      "playoff_pct": 99.5,
+      "proj_wins": 22.2,
+      "win_band": [
+        0.7,
+        1.6
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 78.2,
+        "three_rate": 0.448,
+        "ft_rate": 0.283,
+        "ast_rate": 0.0,
+        "to_rate": 13.17,
+        "fg_pct": 0.406,
+        "win_pct": 0.523
+      },
+      "roster_rated_n": 13
+    },
+    "NYL": {
+      "team_full": "New York Liberty",
+      "rank": 5,
+      "strength": 3.2,
+      "title_pct": 19.7,
+      "playoff_pct": 96.5,
+      "proj_wins": 22.4,
+      "win_band": [
+        2.3,
+        3.6
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 78.7,
+        "three_rate": 0.404,
+        "ft_rate": 0.287,
+        "ast_rate": 0.0,
+        "to_rate": 13.19,
+        "fg_pct": 0.447,
+        "win_pct": 0.614
+      },
+      "roster_rated_n": 12
+    },
+    "LAS": {
+      "team_full": "Los Angeles Sparks",
+      "rank": 6,
+      "strength": 3.0,
+      "title_pct": 10.4,
+      "playoff_pct": 76.5,
+      "proj_wins": 22.2,
+      "win_band": [
+        0.9,
+        1.7
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 81.4,
+        "three_rate": 0.369,
+        "ft_rate": 0.304,
+        "ast_rate": 0.0,
+        "to_rate": 14.32,
+        "fg_pct": 0.457,
+        "win_pct": 0.477
+      },
+      "roster_rated_n": 13
+    },
+    "PHO": {
+      "team_full": "Phoenix Mercury",
+      "rank": 7,
+      "strength": 2.5,
+      "title_pct": 0.6,
+      "playoff_pct": 7.5,
+      "proj_wins": 22.2,
+      "win_band": [
+        0.8,
+        1.9
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 81.8,
+        "three_rate": 0.379,
+        "ft_rate": 0.257,
+        "ast_rate": 0.0,
+        "to_rate": 12.89,
+        "fg_pct": 0.432,
+        "win_pct": 0.614
+      },
+      "roster_rated_n": 13
+    },
+    "LVA": {
+      "team_full": "Las Vegas Aces",
+      "rank": 8,
+      "strength": 2.0,
+      "title_pct": 8.4,
+      "playoff_pct": 99.7,
+      "proj_wins": 22.2,
+      "win_band": [
+        0.9,
+        1.7
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 80.1,
+        "three_rate": 0.35,
+        "ft_rate": 0.278,
+        "ast_rate": 0.0,
+        "to_rate": 12.3,
+        "fg_pct": 0.445,
+        "win_pct": 0.682
+      },
+      "roster_rated_n": 13
+    },
+    "DAL": {
+      "team_full": "Dallas Wings",
+      "rank": 9,
+      "strength": 1.2,
+      "title_pct": 6.5,
+      "playoff_pct": 99.4,
+      "proj_wins": 22.1,
+      "win_band": [
+        0.1,
+        1.1
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 84.7,
+        "three_rate": 0.295,
+        "ft_rate": 0.257,
+        "ast_rate": 0.0,
+        "to_rate": 13.23,
+        "fg_pct": 0.423,
+        "win_pct": 0.227
+      },
+      "roster_rated_n": 15
+    },
+    "POR": {
+      "team_full": "Portland Fire",
+      "rank": 10,
+      "strength": 0.6,
+      "title_pct": 0.0,
+      "playoff_pct": 3.1,
+      "proj_wins": 22.1,
+      "win_band": [
+        -0.1,
+        1.0
+      ],
+      "style": null,
+      "roster_rated_n": 0
+    },
+    "CHI": {
+      "team_full": "Chicago Sky",
+      "rank": 11,
+      "strength": 0.5,
+      "title_pct": 0.0,
+      "playoff_pct": 1.1,
+      "proj_wins": 22.0,
+      "win_band": [
+        -0.6,
+        0.6
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 82.0,
+        "three_rate": 0.298,
+        "ft_rate": 0.259,
+        "ast_rate": 0.0,
+        "to_rate": 15.98,
+        "fg_pct": 0.425,
+        "win_pct": 0.227
+      },
+      "roster_rated_n": 14
+    },
+    "SEA": {
+      "team_full": "Seattle Storm",
+      "rank": 12,
+      "strength": 0.1,
+      "title_pct": 0.0,
+      "playoff_pct": 0.0,
+      "proj_wins": 21.9,
+      "win_band": [
+        -1.3,
+        -0.2
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 80.7,
+        "three_rate": 0.311,
+        "ft_rate": 0.229,
+        "ast_rate": 0.0,
+        "to_rate": 11.49,
+        "fg_pct": 0.449,
+        "win_pct": 0.523
+      },
+      "roster_rated_n": 11
+    },
+    "WAS": {
+      "team_full": "Washington Mystics",
+      "rank": 13,
+      "strength": -0.0,
+      "title_pct": 0.1,
+      "playoff_pct": 21.3,
+      "proj_wins": 22.0,
+      "win_band": [
+        -0.6,
+        0.8
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 78.0,
+        "three_rate": 0.264,
+        "ft_rate": 0.325,
+        "ast_rate": 0.0,
+        "to_rate": 14.32,
+        "fg_pct": 0.439,
+        "win_pct": 0.364
+      },
+      "roster_rated_n": 11
+    },
+    "TOR": {
+      "team_full": "Toronto Tempo",
+      "rank": 14,
+      "strength": -0.3,
+      "title_pct": 0.0,
+      "playoff_pct": 0.1,
+      "proj_wins": 22.0,
+      "win_band": [
+        -0.7,
+        0.4
+      ],
+      "style": null,
+      "roster_rated_n": 0
+    },
+    "CON": {
+      "team_full": "Connecticut Sun",
+      "rank": 15,
+      "strength": -0.7,
+      "title_pct": 0.0,
+      "playoff_pct": 0.0,
+      "proj_wins": 21.9,
+      "win_band": [
+        -1.5,
+        -0.4
+      ],
+      "style": {
+        "style_season": 2025,
+        "pace": 80.2,
+        "three_rate": 0.293,
+        "ft_rate": 0.272,
+        "ast_rate": 0.0,
+        "to_rate": 13.16,
+        "fg_pct": 0.412,
+        "win_pct": 0.25
+      },
+      "roster_rated_n": 15
+    }
+  }
+}
