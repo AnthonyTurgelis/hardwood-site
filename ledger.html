@@ -37,6 +37,11 @@
   .empty{color:var(--muted);font-style:italic}
   .showall{margin:8px 0 0;font-size:12px;color:var(--accent);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit}
   .showall:hover{border-color:var(--accent)}
+  .reading{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 13px;margin:0 0 9px;box-shadow:var(--shadow);font-size:12.5px;line-height:1.55}
+  .reading b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .reading .k{color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:10.5px}
+  .reading .good{color:var(--accent);font-weight:660}
+  .reading .rnote{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.5}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--muted);font-size:11px}
 </style>
 <link rel="stylesheet" href="./hardwood.css">
@@ -103,8 +108,96 @@
     return humanize(v);
   }
 
-  function makeTable(title, data){
+  // ---- Impact-first "readings": a plain-language verdict a coach can read in one glance, so each
+  // section leads with a finding instead of a raw table. EVERY number is pulled straight from the
+  // rows that render below (no invented value); an element is OMITTED, never guessed, when its
+  // source row/column is absent. Built as textContent nodes (no innerHTML), same as the rest of the file.
+  function overallRows(tbl){
+    if(!tbl || !tbl.rows) return [];
+    return tbl.rows.filter(function(r){ return r["Broken down by"]==="Overall" && r["Slice"]==="ALL"; });
+  }
+  function readingCard(dataK){ var c=el("div","reading"); c.setAttribute("data-k",dataK); return c; }
+
+  // Player box-score projection accuracy — the error-ledger's unique content (the game-call miss is
+  // already read at the top of the page). Presents each surface's own average miss in its own unit,
+  // in a conventional stat order — a per-surface fact, never a cross-unit "tightest" ranking.
+  function ledgerReading(tbl){
+    var ov=overallRows(tbl); if(!ov.length) return null;
+    var ORDER=["PTS","REB","AST","3PM","MIN"], byS={};
+    ov.forEach(function(r){ byS[r.Surface]=r; });
+    var box=[];
+    ORDER.forEach(function(s){ var r=byS[s]; if(r && num(r["Avg error (pts)"])) box.push(r); });
+    if(!box.length) return null;
+    var games=Math.min.apply(null, box.map(function(r){ return num(r.Games)?r.Games:Infinity; }));
+    var c=readingCard("ledgerreading");
+    var head=el("div");
+    head.appendChild(el("span","k","Player box score "));
+    head.appendChild(document.createTextNode(" across "));
+    head.appendChild(el("b",null, isFinite(games)? games.toLocaleString()+" player-games" : "our history"));
+    head.appendChild(document.createTextNode(", our projections land within these averages of the real number:"));
+    c.appendChild(head);
+    var list=el("div"); list.style.marginTop="4px";
+    box.forEach(function(r,i){
+      if(i) list.appendChild(document.createTextNode("  ·  "));
+      list.appendChild(el("b",null, r["Avg error (pts)"].toFixed(1)));
+      list.appendChild(document.createTextNode(" "+(SURFACE_LABEL[r.Surface]||humanize(r.Surface)).toLowerCase()));
+    });
+    c.appendChild(list);
+    return c;
+  }
+
+  // Market comparison — honest verdict on the headline calls, plus an anti-cherry-pick note: we
+  // only claim to "beat the market" on a slice with enough games to trust (Thin sample = no). If
+  // every slice where we come out ahead is still thin, we say so plainly rather than imply an edge.
+  function marketReading(tbl){
+    var ov=overallRows(tbl); if(!ov.length) return null;
+    var EDGE="Our edge (pts)", byS={}; ov.forEach(function(r){ byS[r.Surface]=r; });
+    var c=readingCard("marketreading"), any=false;
+    ["margin","total"].forEach(function(surf){
+      var r=byS[surf]; if(!r || !num(r[EDGE])) return;
+      any=true;
+      var line=el("div"); if(c.children.length) line.style.marginTop="3px";
+      var nm=SURFACE_LABEL[surf]||surf, edge=r[EDGE];
+      line.appendChild(el("span","k", nm+" "));
+      line.appendChild(document.createTextNode(" "));
+      if(edge>0){
+        line.appendChild(document.createTextNode("we're "));
+        line.appendChild(el("b","good", edge.toFixed(1)+" pts"));
+        line.appendChild(document.createTextNode(" tighter than the market"));
+      } else if(edge<0){
+        line.appendChild(document.createTextNode("the market is "));
+        line.appendChild(el("b",null, Math.abs(edge).toFixed(1)+" pts"));
+        line.appendChild(document.createTextNode(" tighter than us"));
+      } else {
+        line.appendChild(document.createTextNode("we're dead even with the market"));
+      }
+      if(num(r.Games)) line.appendChild(document.createTextNode(" over "+r.Games+" games"));
+      c.appendChild(line);
+    });
+    if(!any) return null;
+    // Best trustworthy (non-thin) positive edge anywhere in the table, if one exists.
+    var best=null;
+    tbl.rows.forEach(function(r){
+      if(num(r[EDGE]) && r[EDGE]>0 && String(r["Thin sample"]).toLowerCase()==="no"){
+        if(!best || r[EDGE]>best[EDGE]) best=r;
+      }
+    });
+    var note=el("div","rnote");
+    if(best){
+      var where=(SURFACE_LABEL[best.Surface]||best.Surface)+
+        ((best.Slice && best.Slice!=="ALL") ? " ("+label("Slice",best.Slice)+")" : "");
+      note.textContent="Where we do beat it on enough games to trust: "+where+" — "+
+        best[EDGE].toFixed(1)+" pts better over "+best.Games+" games.";
+    } else {
+      note.textContent="No slice yet has enough games to trust an edge over the market — every row where we come out ahead is still thin-sample.";
+    }
+    c.appendChild(note);
+    return c;
+  }
+
+  function makeTable(title, data, readingNode){
     var s=el("section"); s.appendChild(el("h2",null,title));
+    if(readingNode) s.appendChild(readingNode);
     if(!data || !data.columns || !data.rows || !data.rows.length){
       s.appendChild(el("p","empty","No rows yet.")); return s;
     }
@@ -244,8 +337,8 @@
     main.appendChild(el("p","lede", d.source || "Our own error map."));
     var shown=false;
     if(d.error_map && d.error_map.available){ main.appendChild(errorMapSection(d.error_map)); shown=true; }
-    if(d.error_ledger && d.error_ledger.rows && d.error_ledger.rows.length){ main.appendChild(makeTable("Where we miss most (error ledger)", d.error_ledger)); shown=true; }
-    if(d.market_relative && d.market_relative.rows && d.market_relative.rows.length){ main.appendChild(makeTable("Where we beat the market", d.market_relative)); shown=true; }
+    if(d.error_ledger && d.error_ledger.rows && d.error_ledger.rows.length){ main.appendChild(makeTable("Where we miss most (error ledger)", d.error_ledger, ledgerReading(d.error_ledger))); shown=true; }
+    if(d.market_relative && d.market_relative.rows && d.market_relative.rows.length){ main.appendChild(makeTable("Where we beat the market", d.market_relative, marketReading(d.market_relative))); shown=true; }
     if(!shown){
       var ph=el("div","placeholder");
       ph.appendChild(el("div","big", d.message || "Map being built — first version landing today."));
