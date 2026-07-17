@@ -37,6 +37,12 @@
   .score{text-align:right;white-space:nowrap}
   .score .n{font-weight:800;font-size:15px}
   .score .l{display:block;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
+  .fambar{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+  .fchip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:11.5px;color:var(--muted);white-space:nowrap}
+  .fchip b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:700}
+  .qcount{color:var(--dim);font-size:11.5px;margin:0 0 10px}
+  .showall{margin:12px auto 2px;display:block;background:var(--card);color:var(--acc);border:1px solid var(--line);border-radius:8px;padding:7px 14px;font-size:12.5px;cursor:pointer;font-weight:600}
+  .showall:hover{border-color:var(--acc)}
   .empty{color:var(--dim);font-style:italic}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
@@ -68,7 +74,12 @@
 (function(){
   "use strict";
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  // Phone-first cap: the full queue can run to dozens of items. Show the highest-priority
+  // Q_PAGE first (impact-first: the list is already baked in rank order), with a one-tap
+  // expander to reveal the rest. curQ stashes the last payload so the toggle can re-render.
+  var curQ=null, qShowAll=false, Q_PAGE=20;
   function render(d){
+    curQ=d;
     var main=document.getElementById("main"); main.innerHTML="";
     if(d.intro){ main.appendChild(el("p","lede",d.intro)); }
     var f=d.floor;
@@ -80,10 +91,23 @@
       main.appendChild(fl);
     }
     var items=d.items||[];
+    // AT-A-GLANCE: how the work splits by area, so a reader sees the shape before the list.
+    if(items.length){
+      var counts={}, order=[];
+      items.forEach(function(it){ var fam=it.family||"Other"; if(counts[fam]==null){counts[fam]=0;order.push(fam);} counts[fam]++; });
+      order.sort(function(a,b){ return counts[b]-counts[a]; });
+      var fb=el("div","fambar");
+      order.forEach(function(fam){ var c=el("span","fchip"); c.appendChild(el("b",null,String(counts[fam]))); c.appendChild(document.createTextNode(" "+fam)); fb.appendChild(c); });
+      main.appendChild(fb);
+    }
     if(!items.length){ main.appendChild(el("p","empty","The queue is being rebuilt — check back shortly.")); }
     else{
+      var shown = qShowAll ? items : items.slice(0, Q_PAGE);
+      if(items.length > Q_PAGE){
+        main.appendChild(el("p","qcount", qShowAll ? ("Showing all "+items.length+" tasks, top priority first.") : ("Showing the top "+Q_PAGE+" of "+items.length+" tasks, top priority first.")));
+      }
       var ol=el("ol","q");
-      items.forEach(function(it){
+      shown.forEach(function(it){
         var li=el("li","item"+(it.exploratory?" exp":""));
         li.appendChild(el("div","rank","#"+it.rank));
         var b=el("div","body");
@@ -102,6 +126,11 @@
         ol.appendChild(li);
       });
       main.appendChild(ol);
+      if(items.length > Q_PAGE){
+        var tog=el("button","showall", qShowAll ? ("Show top "+Q_PAGE) : ("Show all "+items.length+" tasks"));
+        tog.onclick=function(){ qShowAll=!qShowAll; render(curQ); };
+        main.appendChild(tog);
+      }
     }
     document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+".";
   }

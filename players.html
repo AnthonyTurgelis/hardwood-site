@@ -57,6 +57,8 @@
   .filt{width:100%;max-width:320px;margin:0 0 8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:12.5px}
   .plink{color:var(--acc);text-decoration:none}
   .plink:hover{text-decoration:underline}
+  .showall{margin:12px auto 2px;display:block;background:var(--card);color:var(--acc);border:1px solid var(--line);border-radius:8px;padding:7px 14px;font-size:12.5px;cursor:pointer;font-weight:600}
+  .showall:hover{border-color:var(--acc)}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
 <link rel="stylesheet" href="./hardwood.css">
@@ -186,7 +188,7 @@
     var mb=asofBadge(rm.as_of, curData && curData.date); if(mb) h.appendChild(mb);
     s.appendChild(h);
     if(!rm.available){ s.appendChild(el("p","empty", rm.note||"Coming soon.")); return s; }
-    s.appendChild(el("p","lede","Every projection carries a range built from how far our past projections actually missed. The dot is the projection; the solid bar is the likely range; the light bar is the wider 90% range. This is a spread of plausible outcomes, not the odds she hits the dot."+(rm.as_of?(" As of the "+rm.as_of+" slate."):"")));
+    s.appendChild(el("p","lede","Every projection carries a range built from how far our past projections actually missed. The dot is the projection; the solid bar is the likely range; the light bar is the wider 90% range. This is a spread of plausible outcomes, not the odds she hits the dot."+(rm.as_of?(" As of the "+monthDay(rm.as_of)+" slate."):"")));
     var stats=rm.order.filter(function(x){ return rm.stats[x]; });
     if(!curStat || !rm.stats[curStat]) curStat = stats[0];
     var seg=el("div","segbtns");
