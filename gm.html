@@ -50,6 +50,8 @@
   /* pills / flags */
   .pill{display:inline-block;font-size:10.5px;font-weight:640;padding:1px 8px;border-radius:999px;background:var(--chip);color:var(--muted);white-space:nowrap}
   .pill.arch{background:rgba(47,111,237,.12);color:var(--acc)}
+  .pill.fit{background:rgba(31,136,61,.14);color:var(--good);margin-left:4px}
+  .pill.fit.top{background:rgba(31,136,61,.24);font-weight:720}
   .war{font-weight:720;font-variant-numeric:tabular-nums}
   .tv{font-weight:720;font-variant-numeric:tabular-nums;color:var(--acc)}
   .flag-bargain{color:var(--good);font-weight:680}
@@ -123,6 +125,40 @@
       .sort(function(a,b){ var av=a.proj_war_2026==null?-99:a.proj_war_2026, bv=b.proj_war_2026==null?-99:b.proj_war_2026; return bv-av; });
   }
   function teamName(t){ var tm=SPINE&&SPINE.teams&&SPINE.teams[t]; return (tm&&tm.team_full)||t; }
+
+  // ---------- G2 fit hint: team archetype NEED vs a target's archetype (My-team lens only) ----------
+  // The trade board already surfaces each target's SKILL archetype (sp.archetype, the C4 axis). The fit
+  // hint joins that to the CURRENT team's own roster archetype distribution: a "need" = a skill archetype
+  // the team carries meaningfully FEWER of than a typical rostered team does. Both sides come from REAL
+  // archetype data on the spine — a target with no archetype, or a team whose need can't be determined
+  // (no rostered player carries a skill archetype), yields NO hint (omit, never guess). CEO data rule #1.
+  var SKILL_ARCHES=["Scoring Anchor","Two-Way Creator","Floor General","Defensive Anchor","Balanced"];
+  function archetypeCounts(team){
+    // count a team's rostered players by skill archetype; null when NONE carry one (need indeterminate)
+    var c={}, any=false; SKILL_ARCHES.forEach(function(a){ c[a]=0; });
+    roster(team).forEach(function(p){ if(p.archetype && c.hasOwnProperty(p.archetype)){ c[p.archetype]++; any=true; } });
+    return any? c : null;
+  }
+  var NEED_CACHE={};
+  function archetypeNeed(team){
+    // {needs:{arch:deficit}, top:arch, ranked:[arch...]} or null when the need can't be honestly determined.
+    // A need = league-typical count of that archetype per team MINUS this team's count, when >= 0.5 (the team
+    // is at least half a typical allocation short). Baseline is averaged over rostered teams that HAVE archetypes.
+    if(NEED_CACHE.hasOwnProperty(team)) return NEED_CACHE[team];
+    var res=null, teamC=archetypeCounts(team);
+    if(teamC){
+      var sums={}, denom=0; SKILL_ARCHES.forEach(function(a){ sums[a]=0; });
+      teamsWithRoster().forEach(function(t){ var c=archetypeCounts(t); if(c){ denom++; SKILL_ARCHES.forEach(function(a){ sums[a]+=c[a]; }); } });
+      if(denom){
+        var needs={}, ranked=[], top=null, topDef=0;
+        SKILL_ARCHES.forEach(function(a){ var deficit=(sums[a]/denom)-teamC[a];
+          if(deficit>=0.5){ needs[a]=deficit; ranked.push(a); if(deficit>topDef){ topDef=deficit; top=a; } } });
+        ranked.sort(function(x,y){ return needs[y]-needs[x]; });
+        res={needs:needs, top:top, ranked:ranked};
+      }
+    }
+    NEED_CACHE[team]=res; return res;
+  }
 
   // ---------- money formatting ----------
   function money(v){ if(v==null) return "—"; if(v>=1e6) return "$"+(v/1e6).toFixed(2)+"M"; return "$"+Math.round(v/1000)+"k"; }
@@ -203,6 +239,7 @@
   }
   function tradeBoard(){
     var rows=tradeRows();
+    var need=(state.lens==="team" && state.team)? archetypeNeed(state.team) : null;
     if(state.lens==="team" && state.excludeOwn){ rows=rows.filter(function(r){ return r.team!==state.team; }); }
     var f=state.tvFilt.trim().toLowerCase();
     if(f){ rows=rows.filter(function(r){ return (r.name||"").toLowerCase().indexOf(f)>=0 || (r.team||"").toLowerCase().indexOf(f)>=0; }); }
@@ -230,6 +267,19 @@
       seg.appendChild(b1); seg.appendChild(b2); ctl.appendChild(seg);
     }
     wrap.appendChild(ctl);
+    // fit-hint summary (My-team lens): the team's archetype gaps, honestly sourced or omitted
+    if(state.lens==="team" && state.team){
+      var nl=el("div","note");
+      if(need && need.ranked.length){
+        nl.innerHTML="<b>Fit hint —</b> "+teamName(state.team)+"'s roster is thin at <b>"+
+          need.ranked.map(function(a){ return a+(a===need.top?" (biggest gap)":""); }).join("</b>, <b>")+
+          "</b> versus a typical roster. Targets whose archetype fills a gap are flagged “fills need” below.";
+      } else if(need){
+        nl.textContent="Fit hint — "+teamName(state.team)+"'s roster carries at least a typical share of every skill archetype; no standout gap to flag.";
+      }
+      // need===null (no rostered archetypes) -> no line, no guessed need
+      if(nl.textContent) wrap.appendChild(nl);
+    }
 
     var card=el("div","card"), sc=el("div","scroll"), t=el("table");
     var thead=el("thead"), hr=el("tr");
@@ -252,16 +302,35 @@
       tr.appendChild(el("td","tv",num(r.trade_value,1)));
       tr.appendChild(el("td",null,money(r.salary_2026)));
       tr.appendChild(el("td",null,perWar(r.dollar_per_war)));
-      var at=el("td"); if(r.archetype){ at.appendChild(el("span","pill arch",r.archetype)); } else { at.appendChild(el("span","legend","—")); } tr.appendChild(at);
+      var at=el("td");
+      if(r.archetype){
+        at.appendChild(el("span","pill arch",r.archetype));
+        // fit hint: My-team lens only, real target archetype vs real team need, and only on an actual TARGET
+        // (not the team's own player — a fit is someone you'd ACQUIRE). Omit silently on any missing side.
+        if(state.lens==="team" && state.team && r.team!==state.team && need && need.needs.hasOwnProperty(r.archetype)){
+          var isTop=need.top===r.archetype;
+          var fp=el("span","pill fit"+(isTop?" top":""), isTop?"fills top need":"fills need");
+          fp.title=teamName(state.team)+" is thin at "+r.archetype+" relative to a typical roster"+
+            (isTop?" (its biggest gap)":"")+"; this target fills that gap.";
+          at.appendChild(fp);
+        }
+      } else { at.appendChild(el("span","legend","—")); }
+      tr.appendChild(at);
       tb.appendChild(tr);
     });
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc);
     wrap.appendChild(card);
-    wrap.appendChild(el("div","note",
-      "Ranked by a batch trade-value engine (projected WAR + youth + affordability). The Trade Value score orders "+
+    var noteTxt="Ranked by a batch trade-value engine (projected WAR + youth + affordability). The Trade Value score orders "+
       "the board; Salary and $/WAR are the canonical 2026 base salary from the value spine, not the engine's "+
-      "internal figure. Contract length / control years are NOT shown — they need the v2 structured-contract data. "+
-      "Showing top "+Math.min(rows.length,60)+" of "+rows.length+"."));
+      "internal figure. Contract length / control years are NOT shown — they need the v2 structured-contract data. ";
+    if(state.lens==="team"){
+      noteTxt+="“Fills need” flags a target whose skill archetype fills a gap in your roster — a gap = a skill "+
+        "archetype you carry fewer of than a typical rostered team (“top need” = your biggest gap). Both the "+
+        "target archetype and the team need come from the 2025 skill-archetype decomposition; a target with no "+
+        "archetype, or a team with no archetype data, shows no flag (never a guessed fit). ";
+    }
+    noteTxt+="Showing top "+Math.min(rows.length,60)+" of "+rows.length+".";
+    wrap.appendChild(el("div","note",noteTxt));
     return wrap;
   }
 
@@ -524,7 +593,7 @@
     ]).then(function(res){
       SPINE=res[0]; GM=res[1];
       if(!SPINE){ document.getElementById("main").innerHTML='<p class="empty">Could not load the value spine.</p>'; return; }
-      indexSpine(); computeDpw();
+      indexSpine(); computeDpw(); NEED_CACHE={};
       render();
       var a=document.getElementById("ago"); if(a) a.innerHTML="live";
     });
