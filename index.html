@@ -311,6 +311,11 @@
   function el(tag, cls, txt){ var e=document.createElement(tag); if(cls)e.className=cls;
     if(txt!=null)e.textContent=txt; return e; }
 
+  /* CACHE-BUST: append a CHANGING ?v=<ms> token to every polled JSON fetch so GitHub Pages'
+     CDN can never serve a stale board/games/history copy on reload. A fresh token per fetch
+     (Date.now, not a per-load constant) keeps live polling truly live. */
+  function bust(u){ return u + (u.indexOf("?")<0?"?":"&") + "v=" + Date.now(); }
+
   /* plain meanings for every status word — hover/legend (no robotic log-speak) */
   var CHIPMEAN={
     "LIVE":"Shipped to the live product.",
@@ -1116,7 +1121,7 @@
     sel.onchange=function(){
       var v=sel.value;
       if(v===today){ viewDate=null; snapB=null; rerender(); return; }
-      fetch("./history/board_"+v+".json",{cache:"no-cache"}).then(function(r){
+      fetch(bust("./history/board_"+v+".json"),{cache:"no-cache"}).then(function(r){
         if(!r.ok){ throw new Error("no snapshot"); } return r.json();
       }).then(function(j){ viewDate=v; snapB=j; rerender(); })
       .catch(function(){ viewDate=null; snapB=null; rerender();
@@ -1218,7 +1223,7 @@
   }
   function poll(){
     var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
-    fetch(URL,{headers:h,cache:"no-cache"}).then(function(r){
+    fetch(bust(URL),{headers:h,cache:"no-cache"}).then(function(r){
       if(r.status===304) return null;
       etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
     }).then(function(b){ lastFetch=Date.now(); if(b){ lastLive=b; if(!viewDate){ render(b); } else { healthChips(b); } } updAgo(); }).catch(function(e){
@@ -1229,7 +1234,7 @@
   /* foul-risk feed — polled independently of the board; graceful-null on 404/absent so the
      panel simply does not appear until the feed lands. */
   function pollFoul(){
-    fetch("./foul_risk.json",{cache:"no-cache"}).then(function(r){ return r.ok? r.json() : null; })
+    fetch(bust("./foul_risk.json"),{cache:"no-cache"}).then(function(r){ return r.ok? r.json() : null; })
       .then(function(j){ if(j){ var changed=JSON.stringify(j)!==JSON.stringify(FOUL); FOUL=j;
         if(changed && !viewDate && lastLive){ render(lastLive); } } }).catch(function(){});
   }

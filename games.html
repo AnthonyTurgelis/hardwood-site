@@ -113,6 +113,9 @@
 (function(){
   "use strict";
   var URL="./games.json";
+  /* CACHE-BUST: append a CHANGING ?v=<ms> token per fetch so the CDN never serves a stale
+     games.json on reload; a fresh token per poll keeps live polling live. */
+  function bust(u){ return u + (u.indexOf("?")<0?"?":"&") + "v=" + Date.now(); }
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function num(v,u){ return v==null?"—":(v + (u||"")); }
 
@@ -359,7 +362,7 @@
   }
   function poll(){
     var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
-    fetch(URL,{headers:h,cache:"no-cache"}).then(function(r){
+    fetch(bust(URL),{headers:h,cache:"no-cache"}).then(function(r){
       if(r.status===304){ return null; }
       etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod;
       return r.json();
