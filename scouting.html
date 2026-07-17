@@ -41,6 +41,10 @@
   .bar > i{position:absolute;left:0;top:0;bottom:0;background:var(--acc);opacity:.55;border-radius:3px;display:block}
   .note{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.5;max-width:820px}
   .empty{color:var(--dim);font-style:italic}
+  .scale{background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:8px 0 12px;font-size:12px;color:var(--muted);line-height:1.5;max-width:820px}
+  .scale b{color:var(--ink)}
+  .board2 .bar > i{background:var(--good)}
+  td.thin{color:var(--dim)}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
 <link rel="stylesheet" href="./hardwood.css">
@@ -75,55 +79,99 @@
   function td(c,x){ return el("td",c,x); }
   function signed(v,d){ return (v>0?"+":"")+v.toFixed(d==null?2:d); }
 
-  function rimSection(d){
-    var s=el("section");
-    s.appendChild(el("h2",null,"Rim Protection (2025 season)"));
-    s.appendChild(el("p","lede","Descriptive scouting from last season — not a forecast. SAE means Saves Above Expected: shots stopped at the rim beyond what an average defender would have, given each shot's spot and difficulty. The board ranks by SAE per 100, so it rewards efficiency, not just heavy minutes."));
+  // A player needs at least this many rim shots faced for a stable per-chance read; below it,
+  // a single stop swings the rate wildly, so thin samples are held out of the RATE board.
+  var QUAL_MIN=40;
 
-    // Render only players the feed actually tracked (a per-100 value exists); an all-blank row is
-    // left off rather than shown as an empty "—" line. Sort best-first on the ranking stat.
-    var rows=(d.rim_protection||[]).filter(function(r){ return r && r.sae_per100!=null; })
-                                   .sort(function(a,b){ return b.sae_per100 - a.sae_per100; });
-    if(!rows.length){ s.appendChild(el("p","empty","No rim-protection data yet.")); return s; }
+  function barCell(v,maxAbs){
+    var bcell=el("td",null), bar=el("div","bar"), fill=el("i");
+    fill.style.width=Math.max(2,Math.min(100,(v/maxAbs)*100)).toFixed(1)+"%";
+    bar.appendChild(fill); bcell.appendChild(bar); return bcell;
+  }
 
-    // Impact-first headline: name the league's best rim protector straight from the feed's top row.
-    var top=rows[0];
-    var hd=el("div","headline");
-    hd.appendChild(document.createTextNode("Last season's best rim protector: "));
-    hd.appendChild(el("b",null,top.name));
-    hd.appendChild(document.createTextNode(" — "+signed(top.sae_per100)+" saves above expected per 100 shots faced"
-      + (top.sae!=null ? (", "+signed(top.sae)+" for the full season.") : ".")));
-    s.appendChild(hd);
-
-    var maxAbs=1; rows.forEach(function(r){ var v=Math.abs(r.sae_per100); if(v>maxAbs)maxAbs=v; });
-
-    var card=el("div","card"), sc=el("div","scroll"), t=el("table");
+  // Build one ranked leaderboard card from a column spec. Each column is
+  // {h, title?, cell(row, i, maxAbs)}. rankStat drives the bar scale; board2 toggles a style hook.
+  function boardTable(rows, cols, rankStat, board2){
+    var maxAbs=1; rows.forEach(function(r){ var v=Math.abs(r[rankStat]||0); if(v>maxAbs)maxAbs=v; });
+    var card=el("div","card"+(board2?" board2":"")), sc=el("div","scroll"), t=el("table");
     var thead=el("thead"), hr=el("tr");
-    // Column tooltips (hover) — the plain definition of each header, so no column is unlabeled.
-    // The visible caption below the table carries the same definitions for phones / no-hover.
-    [["#",""],
-     ["Player",""],
-     ["Rim Opp","Rim shots faced — the season's at-rim attempts this player was the closest defender on, counted fractionally (split when more than one defender was near the shot). It is the sample size behind SAE per 100; bigger = a steadier read. These are allocated shares, not camera-tracking counts."],
-     ["SAE","Saves Above Expected — makes prevented at the rim over the season, beyond what an average defender would have allowed given each shot's spot and difficulty."],
-     ["SAE per 100","Saves Above Expected per 100 rim shots faced — the efficiency rate the board ranks by."],
-     ["Saves bar","A visual of SAE per 100 — a longer bar means more shots saved above expectation per 100 faced."]
-    ].forEach(function(x){ var th=el("th",null,x[0]); if(x[1]){ th.title=x[1]; } hr.appendChild(th); });
+    cols.forEach(function(c){ var th=el("th",null,c.h); if(c.title){ th.title=c.title; } hr.appendChild(th); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
     rows.forEach(function(r,i){
-      var tr=el("tr"); tr.setAttribute("data-k","rim|"+r.name);
-      tr.appendChild(td("rk", String(i+1)));
-      tr.appendChild(td("nm", r.name));
-      tr.appendChild(td(null, r.opp==null?"—":r.opp.toFixed(1)));
-      tr.appendChild(td("strong", r.sae==null?"—":signed(r.sae)));
-      tr.appendChild(td(null, signed(r.sae_per100)));
-      var bcell=el("td",null), bar=el("div","bar"), fill=el("i");
-      fill.style.width=Math.max(2,Math.min(100,(r.sae_per100/maxAbs)*100)).toFixed(1)+"%";
-      bar.appendChild(fill); bcell.appendChild(bar); tr.appendChild(bcell);
+      var tr=el("tr"); tr.setAttribute("data-k",(board2?"imp|":"rim|")+r.name);
+      cols.forEach(function(c){ tr.appendChild(c.cell(r,i,maxAbs)); });
       tb.appendChild(tr);
     });
-    t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); s.appendChild(card);
-    s.appendChild(el("div","note","Ranked by SAE per 100 — a longer bar means more shots saved above expectation for every 100 the player faced. “Rim Opp” is rim shots faced: the season count of at-rim attempts this player was the closest defender on, split fractionally when more than one defender was near the shot (so it reads as a fractional total, e.g. 61.4, not a whole number). It is the sample size behind SAE per 100 — a bigger number means a steadier read. These are allocated defender shares, not camera-tracking counts, so this is a descriptive look back at last season, not a prediction; players with no tracked rim attempts are left off."));
+    t.appendChild(tb); sc.appendChild(t); card.appendChild(sc);
+    return card;
+  }
+
+  function rimSection(d){
+    var s=el("section");
+    s.appendChild(el("h2",null,"Rim protection - last season"));
+    s.appendChild(el("p","lede","Descriptive scouting from last season, not a forecast. Saves Above Expected counts the shots a defender stopped at the rim beyond what an average defender would have, given each shot's spot and difficulty. We show it two ways: per chance (efficiency) and per season (total impact)."));
+
+    // Only players the feed actually graded (a per-100 value exists); an all-blank row is left off.
+    var all=(d.rim_protection||[]).filter(function(r){ return r && r.sae_per100!=null; });
+    if(!all.length){ s.appendChild(el("p","empty","No rim-protection data yet.")); return s; }
+
+    // RATE board: only players with a stable sample, ranked best-first on saves per 100.
+    var qualified=all.filter(function(r){ return r.opp!=null && r.opp>=QUAL_MIN; })
+                     .sort(function(a,b){ return b.sae_per100 - a.sae_per100; });
+    var thinCount=all.length-qualified.length;
+    var rateRows=qualified.slice(0,15);
+
+    // Impact-first headline: the best QUALIFIED rim protector by rate (enough sample to trust).
+    var top=(qualified[0]||all.slice().sort(function(a,b){return b.sae_per100-a.sae_per100;})[0]);
+    var hd=el("div","headline");
+    hd.appendChild(document.createTextNode("Last season's most efficient rim protector: "));
+    hd.appendChild(el("b",null,top.name));
+    hd.appendChild(document.createTextNode(" - "+signed(top.sae_per100)+" saves above an average defender per 100 shots faced at the rim"
+      + (top.sae!=null ? (", "+signed(top.sae)+" across the full season.") : ".")));
+    s.appendChild(hd);
+
+    // Scale context: explains why every ranked number is positive (0 = average defender).
+    var scl=el("div","scale");
+    scl.appendChild(el("b",null,"How to read it: "));
+    scl.appendChild(document.createTextNode("0 is an average defender. Every player ranked here graded above average at the rim last season - the feed only grades players with enough at-rim defensive work to measure."));
+    s.appendChild(scl);
+
+    // ---- Board 1: efficiency (saves per 100) ----
+    s.appendChild(el("h2",null,"Most efficient - saves per 100 shots faced"));
+    var rateCols=[
+      {h:"#", cell:function(r,i){ return td("rk", String(i+1)); }},
+      {h:"Player", cell:function(r){ return td("nm", r.name); }},
+      {h:"Rim shots", title:"Rim shots faced last season - the sample behind the rate.",
+       cell:function(r){ return td(null, r.opp==null?"-":r.opp.toFixed(1)); }},
+      {h:"Shots saved", title:"Total saves above an average defender across the season.",
+       cell:function(r){ return td(null, r.sae==null?"-":signed(r.sae)); }},
+      {h:"Per 100", title:"Saves above average per 100 rim shots faced - the rate this board ranks by.",
+       cell:function(r){ return td("strong", signed(r.sae_per100)); }},
+      {h:"", cell:function(r,i,m){ return barCell(r.sae_per100, m); }}
+    ];
+    s.appendChild(boardTable(rateRows, rateCols, "sae_per100", false));
+    var note1="Ranked by saves per 100 rim shots faced, among the "+qualified.length+" players who faced at least "+QUAL_MIN+" shots at the rim - enough for a steady read.";
+    if(thinCount>0){ note1+=" "+thinCount+" players faced fewer than "+QUAL_MIN+" and are held out of this rate board, since one stop would swing a small sample too far."; }
+    s.appendChild(el("div","note", note1));
+
+    // ---- Board 2: season total impact (rewards volume + rate) ----
+    var impRows=all.slice().sort(function(a,b){ return (b.sae||0)-(a.sae||0); }).slice(0,12);
+    s.appendChild(el("h2",null,"Biggest season impact - total shots saved"));
+    s.appendChild(el("p","lede","This board rewards volume as well as rate: the players who saved the most shots at the rim across the whole season, whether by defending a lot of them or defending them well. Interior anchors who face heavy rim traffic tend to lead here even when their per-chance rate is lower."));
+    var impCols=[
+      {h:"#", cell:function(r,i){ return td("rk", String(i+1)); }},
+      {h:"Player", cell:function(r){ return td("nm", r.name); }},
+      {h:"Shots saved", title:"Total saves above an average defender across the season - the impact this board ranks by.",
+       cell:function(r){ return td("strong", r.sae==null?"-":signed(r.sae)); }},
+      {h:"", cell:function(r,i,m){ return barCell(r.sae||0, m); }},
+      {h:"Rim shots", title:"Rim shots faced last season.",
+       cell:function(r){ var c=td(null, r.opp==null?"-":r.opp.toFixed(1)); if(r.opp!=null && r.opp<QUAL_MIN){ c.className="thin"; } return c; }},
+      {h:"Per 100", title:"Saves above average per 100 rim shots faced.",
+       cell:function(r){ return td(null, signed(r.sae_per100)); }}
+    ];
+    s.appendChild(boardTable(impRows, impCols, "sae", true));
+    s.appendChild(el("div","note","\"Shots saved\" is Saves Above Expected: makes prevented at the rim over the season, beyond an average defender. \"Rim shots\" faced is the season count of at-rim attempts this player was the closest defender on, split fractionally when more than one defender was near the shot (so it reads as a fractional total, e.g. 61.4). These are allocated defender shares, not camera-tracking counts - a descriptive look back at last season, not a prediction; players with no graded rim attempts are left off. A dimmed rim-shots number means a small sample."));
     return s;
   }
 

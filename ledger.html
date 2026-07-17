@@ -35,6 +35,8 @@
   tbody tr:hover{background:rgba(43,108,176,.06)}
   .filt{width:100%;max-width:300px;margin:0 0 8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:12.5px}
   .empty{color:var(--muted);font-style:italic}
+  .showall{margin:8px 0 0;font-size:12px;color:var(--accent);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit}
+  .showall:hover{border-color:var(--accent)}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--muted);font-size:11px}
 </style>
 <link rel="stylesheet" href="./hardwood.css">
@@ -68,12 +70,41 @@
 
   function num(v){ return (typeof v==="number") && isFinite(v); }
 
+  // Plain-language labels for the raw tokens the ledger is keyed on, so readers never see an
+  // internal code. Display-only: sorting/filtering still run on the raw value. Unknown tokens
+  // fall back to a mechanical de-underscore, so a new slice never renders as broken jargon.
+  var SURFACE_LABEL={
+    "3PM":"3-pointers made","REB":"Rebounds","PTS":"Points","MIN":"Minutes","AST":"Assists",
+    "margin":"Winning margin","total":"Combined total","win_prob":"Win probability"
+  };
+  var BREAKDOWN_LABEL={
+    "excuse_code":"Known disruptions","pred_magnitude":"Size of our call",
+    "game_competitiveness":"Expected closeness","realized_competitiveness":"Actual closeness",
+    "home_favored":"Which side we favored","season_phase":"Month","rest_days":"Days of rest",
+    "position":"Position"
+  };
+  var SLICE_LABEL={
+    "ALL":"All","toss_0-3":"Toss-up (0-3)","3-7":"Lean (3-7)","7-12":"Clear (7-12)","12+":"Big (12+)",
+    "close_0-5":"Close (0-5)","mid_5-12":"Mid (5-12)","blowout_12+":"Blowout (12+)",
+    "away_fav":"Away favored","home_fav":"Home favored","b2b_0-1":"Back-to-back",
+    "2-3":"2-3 days","4+":"4+ days","in_game_injury_exit":"In-game injury exit","late_scratch":"Late scratch"
+  };
+  function humanize(v){ return String(v).replace(/_/g," "); }
+  function label(col,v){
+    if(v==null) return "-";
+    if(col==="Surface" && SURFACE_LABEL[v]) return SURFACE_LABEL[v];
+    if(col==="Broken down by" && BREAKDOWN_LABEL[v]) return BREAKDOWN_LABEL[v];
+    if(col==="Slice" && SLICE_LABEL[v]) return SLICE_LABEL[v];
+    return humanize(v);
+  }
+
   function makeTable(title, data){
     var s=el("section"); s.appendChild(el("h2",null,title));
     if(!data || !data.columns || !data.rows || !data.rows.length){
       s.appendChild(el("p","empty","No rows yet.")); return s;
     }
     var cols=data.columns, rows=data.rows.slice(); var filterStr="";
+    var CAP=25, expanded=false;   // phone-scannable: cap the default view, expandable on demand
     var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter rows…";
     fbox.oninput=function(){ filterStr=fbox.value.trim().toLowerCase(); fill();
       fbox.focus(); fbox.setSelectionRange(fbox.value.length,fbox.value.length); };
@@ -110,25 +141,38 @@
       var vals=rows.map(function(r){return r[c];}).filter(num);
       if(vals.length){ bounds[c]=[Math.min.apply(null,vals),Math.max.apply(null,vals)]; }
     });
+    var moreBtn=el("button","showall"); moreBtn.type="button";
+    moreBtn.onclick=function(){ expanded=true; fill(); };
+    function matches(r){
+      if(!filterStr) return true;
+      return cols.some(function(c){
+        var v=r[c]; if(v==null) return false;
+        return String(v).toLowerCase().indexOf(filterStr)>=0
+            || label(c,v).toLowerCase().indexOf(filterStr)>=0;
+      });
+    }
     function fill(){
       tbody.innerHTML="";
-      rows.filter(function(r){
-        if(!filterStr) return true;
-        return cols.some(function(c){ var v=r[c]; return v!=null && String(v).toLowerCase().indexOf(filterStr)>=0; });
-      }).forEach(function(r){
+      var matched=rows.filter(matches);
+      var cap=(filterStr||expanded)? matched.length : Math.min(CAP, matched.length);
+      matched.slice(0,cap).forEach(function(r){
         var tr=el("tr");
         cols.forEach(function(c){
-          var v=r[c]; var td=el("td", null, v==null? "—" : String(v));
+          var v=r[c]; var tdd=el("td", null, label(c,v));
           if(num(v) && bounds[c] && bounds[c][1]>bounds[c][0]){
             var f=(v-bounds[c][0])/(bounds[c][1]-bounds[c][0]);
-            td.style.background="rgba(207,34,46,"+(0.05+f*0.28).toFixed(3)+")";
+            tdd.style.background="rgba(207,34,46,"+(0.05+f*0.28).toFixed(3)+")";
           }
-          tr.appendChild(td);
+          tr.appendChild(tdd);
         });
         tbody.appendChild(tr);
       });
+      if(!filterStr && !expanded && matched.length>CAP){
+        moreBtn.textContent="Show all "+matched.length+" rows";
+        moreBtn.style.display="";
+      } else { moreBtn.style.display="none"; }
     }
-    fill(); scroll.appendChild(table); s.appendChild(scroll); return s;
+    fill(); scroll.appendChild(table); s.appendChild(scroll); s.appendChild(moreBtn); return s;
   }
 
   function stat(node,css){ node.style.cssText=css; return node; }
