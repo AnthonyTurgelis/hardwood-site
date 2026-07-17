@@ -23,6 +23,19 @@
   .item{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);padding:11px 13px;margin:8px 0}
   .item .ti{font-weight:680;font-size:13.5px}
   .item .as{color:var(--dim);font-size:11px;margin-top:3px}
+  /* dive header: title on the left, a freshness "as of" badge on the right (reuses the pill/chip
+     look from the board). Badge is sourced ONLY from the dive's own as_of date; omitted if absent. */
+  .item .dvhd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .item .fresh{font-size:10.5px;font-weight:600;color:var(--muted);
+    background:var(--chip,var(--card2));border:1px solid var(--line);border-radius:999px;
+    padding:2px 9px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em}
+  /* one-line takeaway tile: the finding in plain language above the table, so a coach gets the
+     point without reading the numbers. Text is the dive's OWN lede sentence (never fabricated). */
+  .item .takeaway{display:flex;gap:9px;align-items:baseline;margin-top:10px;padding:9px 11px;
+    background:var(--accent-weak,rgba(43,108,176,.08));border-left:3px solid var(--acc);border-radius:7px}
+  .item .takeaway-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--acc);white-space:nowrap}
+  .item .takeaway-t{font-size:13px;font-weight:600;color:var(--ink);line-height:1.4}
   /* deep-dive body: the .md article is rendered as formatted prose (headings / bold / code
      tables), never raw markdown syntax leaking to the reader. */
   .item .body{margin-top:10px;font-size:13px;line-height:1.55}
@@ -191,15 +204,71 @@
     });
   }
 
+  // Humanize an ISO timestamp to "Mon D, YYYY" using ONLY its date part (no timezone shift, no
+  // fabrication). Non-parseable / missing input falls back to the raw string, so the badge is
+  // always honest to whatever the data actually carries.
+  var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function fmtDate(s){
+    var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(s||""));
+    if(!m) return String(s||"");
+    var mon=MON[Number(m[2])-1];
+    return mon ? (mon+" "+Number(m[3])+", "+m[1]) : String(s);
+  }
+
+  // The dive's lede = its first real prose paragraph (skip the repeated H1 / any heading / any
+  // fence). This is the author's OWN framing of the finding; we never synthesize a claim.
+  function ledeText(content){
+    var items=content||[];
+    for(var i=0;i<items.length;i++){
+      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
+      if(t==="" || t.indexOf("```")===0 || /^#{1,6}\s/.test(t)) continue;
+      return t;
+    }
+    return "";
+  }
+  // First sentence only, so the tile is one line. Split on a terminator FOLLOWED by whitespace/end
+  // so decimals like "0.267" are never mistaken for a sentence break. Verbatim author text.
+  function firstSentence(t){
+    t=String(t||"").trim();
+    var m=/^([\s\S]*?[.!?])(?:\s|$)/.exec(t);
+    return m ? m[1] : t;
+  }
+  // Does this dive contain a block that the sibling's dataTable() actually renders as a table?
+  // The takeaway tile only appears for table dives (prose dives keep their bodies untouched).
+  function hasDataTable(content){
+    var items=content||[];
+    for(var i=0;i<items.length;i++){
+      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
+      if(t.indexOf("```")!==0) continue;
+      var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
+      var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
+      if(dataTable(inner, info)) return true;
+    }
+    return false;
+  }
+
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
     if(d.available && (d.items||[]).length){
       (d.items||[]).forEach(function(it){
         var c=el("div","item");
-        c.appendChild(el("div","ti",it.title||"We Tested It"));
-        if(it.as_of){ c.appendChild(el("div","as","Published "+it.as_of)); }
+        var hd=el("div","dvhd");
+        hd.appendChild(el("div","ti",it.title||"We Tested It"));
+        // Freshness badge — sourced ONLY from the dive's own as_of; omitted when absent (never invented).
+        if(it.as_of){ hd.appendChild(el("span","fresh","As of "+fmtDate(it.as_of))); }
+        c.appendChild(hd);
         if(it.content && it.content.length){
           var body=el("div","body");
+          // Takeaway tile: only for table dives, drawn from the dive's OWN lede sentence.
+          if(hasDataTable(it.content)){
+            var lede=firstSentence(ledeText(it.content));
+            if(lede){
+              var tk=el("div","takeaway");
+              tk.appendChild(el("span","takeaway-k","The finding"));
+              var tt=el("span","takeaway-t"); inlineMd(tt, lede); tk.appendChild(tt);
+              body.appendChild(tk);
+            }
+          }
           renderContent(body, it.content, it.title);
           c.appendChild(body);
         }
