@@ -431,7 +431,7 @@
     var div=el("div","cov");
     div.textContent="Coverage: player values cover "+SPINE.coverage.players_total+" rostered players ("+
       SPINE.coverage.with_skill_archetype+" with a skill archetype, "+SPINE.coverage.with_base_salary_2026+" with a 2026 base salary). "+
-      "Expansion teams "+(SPINE.coverage.teams_without_roster_projection||[]).join(", ")+" have no player projections yet.";
+      ((SPINE.coverage.teams_without_roster_projection||[]).length?("Expansion teams "+(SPINE.coverage.teams_without_roster_projection||[]).join(", ")+" have no player projections yet."):"");
     main.appendChild(div);
   }
 
