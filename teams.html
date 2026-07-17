@@ -47,6 +47,19 @@
   .summary b{color:var(--ink)}
   .summary .k{color:var(--muted);font-weight:600}
   .summary .recon{margin-top:7px;padding-top:7px;border-top:1px solid var(--line);color:var(--muted);font-weight:400;font-size:11.5px;line-height:1.5}
+  /* board-level 'as of' freshness badge — the SAME pill used on players / status / deep dives; names
+     the date the title odds were last computed, and goes LOUD red when that date is 2+ days behind the
+     board's own bake date (never a silent stale board passed off as fresh). Sourced ONLY from a real
+     timestamp; omitted entirely when absent (never a fabricated fresh tick). */
+  .asof{display:inline-block;font-size:9.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;margin-left:9px;vertical-align:middle;font-variant-numeric:tabular-nums;text-transform:uppercase;letter-spacing:.03em}
+  .asof.stale{color:#fff;background:var(--bad);border-color:var(--bad)}
+  /* 'biggest mover since yesterday' callout — the accent-bordered takeaway tile (the deep-dive look).
+     Names the team whose title odds moved most day-over-day, straight from the real title_delta; the
+     whole tile is OMITTED when no prior-day snapshot exists (never a fabricated mover). */
+  .mover{display:flex;gap:9px;align-items:baseline;margin:8px 0 4px;padding:8px 12px;background:var(--flash);border-left:3px solid var(--acc);border-radius:7px;font-size:12.5px}
+  .mover-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--acc);white-space:nowrap}
+  .mover-t{color:var(--ink);line-height:1.4}
+  .mover-t b{font-weight:700}
   .tier td{background:var(--card2);border-top:2px solid var(--line2);text-align:left;padding:7px 9px}
   .tlabel{font-weight:700;color:var(--ink);font-size:12px}
   .tmeaning{color:var(--muted);font-weight:400;font-size:11px;margin-left:6px}
@@ -101,6 +114,53 @@
     if(!iso||typeof iso!=="string") return "";
     var m=iso.match(/^(\d{4})-(\d{2})-(\d{2})/); if(!m) return iso;
     return (MON[parseInt(m[2],10)-1]||m[2])+" "+parseInt(m[3],10);
+  }
+
+  // Shared 'as of' freshness badge (same shape/behaviour as players.html / index.html): a pill naming
+  // the date the data was computed, badged STALE (red) when that date is 2+ days behind the board's own
+  // date — a genuine freeze, past the normal overnight "no games played yet" gap. DATA-INTEGRITY:
+  // returns null when there is no real date (never a fabricated fresh tick).
+  function asofBadge(asOf, boardDate){
+    if(!asOf) return null;
+    var b=el("span","asof","as of "+plainDate(asOf));
+    var a=/^(\d{4})-(\d{2})-(\d{2})/.exec(asOf), d=/^(\d{4})-(\d{2})-(\d{2})/.exec(boardDate||"");
+    if(a && d){
+      var da=Date.UTC(+a[1],+a[2]-1,+a[3]), dd=Date.UTC(+d[1],+d[2]-1,+d[3]);
+      var days=Math.round((dd-da)/86400000);
+      if(days>=2){ b.className="asof stale"; b.title="These title odds have not refreshed in "+days+" days."; }
+    }
+    return b;
+  }
+
+  // 'Biggest mover since yesterday' callout — the team whose title odds moved most day-over-day, read
+  // STRICTLY from the real title_delta baked by read_teams (today's p_champion minus the PRIOR daily
+  // snapshot's, in points). DATA-INTEGRITY (CEO #1): if NO team carries a title_delta (no prior-day
+  // snapshot yet — day-over-day tracking hasn't started), the whole callout is OMITTED; a mover is
+  // never invented. When deltas exist but the field is essentially flat, we say so honestly rather
+  // than crown a non-move. Uses the same 0.05-pt "meaningful move" floor as the table's 1-day column.
+  function moverCallout(d){
+    var teams=d&&d.teams;
+    if(!teams||!teams.length) return null;
+    var withDelta=teams.filter(function(r){ return r.title_delta!=null; });
+    if(!withDelta.length) return null;   // no prior-day snapshot -> omit, never fabricate a mover
+    var mover=null;
+    withDelta.forEach(function(r){ if(!mover||Math.abs(r.title_delta)>Math.abs(mover.title_delta)) mover=r; });
+    var box=el("div","mover");
+    box.appendChild(el("span","mover-k","Biggest mover"));
+    var t=el("span","mover-t"), nm=mover.team_full||mover.team;
+    if(mover.title_delta>=0.05 || mover.title_delta<=-0.05){
+      var up=mover.title_delta>0;
+      t.appendChild(el("b",null,nm));
+      t.appendChild(document.createTextNode(" "));
+      t.appendChild(el("span",up?"up":"down",up?"▲":"▼"));
+      t.appendChild(document.createTextNode(" "+(up?"climbed":"slipped")+" "));
+      t.appendChild(el("b",null,Math.abs(mover.title_delta).toFixed(1)));
+      t.appendChild(document.createTextNode(" pts in title odds since yesterday"));
+    } else {
+      t.textContent="Title odds held steady since yesterday (largest move "+Math.abs(mover.title_delta).toFixed(1)+" pts).";
+    }
+    box.appendChild(t);
+    return box;
   }
 
   function churnCell(v){
@@ -259,17 +319,7 @@
     if(hot) mo.push('<span class="up">▲</span> <b>'+nm(hot)+'</b> heating up');
     if(cold) mo.push('<span class="down">▼</span> <b>'+nm(cold)+'</b> cooling');
     if(mo.length) lines.push('<span class="k">Form</span> '+mo.join(' &nbsp;·&nbsp; ')+' <span class="k">(last ~5 games)</span>');
-    // Biggest mover in title odds since yesterday — render-only over the title_delta already in the feed.
-    var mover=null;
-    teams.forEach(function(r){
-      if(r.title_delta==null) return;
-      if(!mover || Math.abs(r.title_delta)>Math.abs(mover.title_delta)) mover=r;
-    });
-    if(mover && Math.abs(mover.title_delta)>=0.05){
-      var dir = mover.title_delta>0 ? '<span class="up">▲</span> climbed' : '<span class="down">▼</span> slipped';
-      lines.push('<span class="k">Biggest mover</span> <b>'+nm(mover)+'</b> '+dir+' '+
-        Math.abs(mover.title_delta).toFixed(1)+' points in title odds since yesterday');
-    }
+    // (Biggest mover is now its own accent callout below the summary — see moverCallout().)
     // Per-surface freshness so a coach knows how current each read is (plain date/time, no jargon).
     var fresh=[];
     if(d.generated_et) fresh.push('strength &amp; momentum updated <b>'+d.generated_et+'</b>');
@@ -292,8 +342,13 @@
     var main=document.getElementById("main"); main.innerHTML="";
     document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Strength ranks the roster on our season-long model. Momentum is recent form, not the ranking basis. Title odds come from simulating the rest of the season.";
     if(!d.available){ main.appendChild(el("p","empty", d.note||"Power board being built.")); insertPlayoff(); insertCoach(); return; }
-    main.appendChild(el("p","lede", d.source||""));
+    var lede=el("p","lede", d.source||"");
+    // Board-level 'as of' freshness badge on the lede (title odds are the dated read); real date only.
+    var ab=asofBadge(d.title_as_of||d.date, d.date); if(ab) lede.appendChild(ab);
+    main.appendChild(lede);
     var sm=summaryLine(d); if(sm) main.appendChild(sm);
+    // Biggest mover since yesterday — its own accent callout; omitted when no prior-day snapshot exists.
+    var mv=moverCallout(d); if(mv) main.appendChild(mv);
     // relative strength-bar scale across the field (min→max, with a visible floor)
     var sv=d.teams.map(function(r){ return r.strength; }).filter(function(x){ return x!=null; });
     var smin=sv.length?Math.min.apply(null,sv):0, smax=sv.length?Math.max.apply(null,sv):1;

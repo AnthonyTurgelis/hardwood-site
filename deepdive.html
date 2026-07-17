@@ -44,11 +44,18 @@
   .item .verdict.v-adopted{color:var(--acc);border-color:var(--acc)}          /* folded into the model */
   /* one-line takeaway tile: the finding in plain language above the table, so a coach gets the
      point without reading the numbers. Text is the dive's OWN lede sentence (never fabricated). */
-  .item .takeaway{display:flex;gap:9px;align-items:baseline;margin-top:10px;padding:9px 11px;
+  .item .takeaway{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin-top:10px;padding:9px 11px;
     background:var(--accent-weak,rgba(43,108,176,.08));border-left:3px solid var(--acc);border-radius:7px}
   .item .takeaway-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
     color:var(--acc);white-space:nowrap}
-  .item .takeaway-t{font-size:13px;font-weight:600;color:var(--ink);line-height:1.4}
+  .item .takeaway-t{font-size:13px;font-weight:600;color:var(--ink);line-height:1.4;flex:1 1 200px}
+  /* A++ rung: a mechanically-DERIVED trend delta chip, computed from the dive's OWN table rows
+     (latest vs the baseline/first value of the ONE metric the finding sentence names). Rendered
+     ONLY when the table pins that value unambiguously; omitted entirely otherwise (never guessed).
+     Tabular-nums pill, aligned to the end of the takeaway row like a scoreboard readout. */
+  .item .takeaway-d{font-size:11px;font-weight:700;color:var(--acc);white-space:nowrap;
+    font-variant-numeric:tabular-nums;background:var(--chip,var(--card2));border:1px solid var(--line);
+    border-radius:999px;padding:2px 9px;align-self:center}
   /* deep-dive body: the .md article is rendered as formatted prose (headings / bold / code
      tables), never raw markdown syntax leaking to the reader. */
   .item .body{margin-top:10px;font-size:13px;line-height:1.55}
@@ -145,10 +152,12 @@
   }
   function isNum(s){ return s!=="" && s!=null && isFinite(Number(s)); }
 
-  // Try to read a fenced code block as a whitespace-columned NUMERIC data table. Returns a styled
-  // <table> node, or null to fall back to <pre> (real code, prose, or a ragged/non-numeric block).
-  // Built entirely from el()/textContent, so no author text is ever injected as HTML.
-  function dataTable(inner, info){
+  // Parse a fenced code block as a whitespace-columned NUMERIC data table. Returns a plain
+  // {header, ncol, rows, colNum, dec} model, or null to fall back to <pre> (real code, prose, or a
+  // ragged/non-numeric block). This is the SINGLE source of truth for "what counts as a table":
+  // both the renderer (dataTable) and the A++ delta (tableDelta) read it, so a delta can only ever
+  // be computed for a block that ACTUALLY renders as a table.
+  function parseTable(inner, info){
     var lang=(info||"").trim().toLowerCase();
     if(lang!=="" && lang!=="text") return null;                 // only plain / ```text fences
     var lines=inner.split("\n").map(function(l){ return l.replace(/\s+$/,""); })
@@ -179,6 +188,16 @@
       var maxAbs=vals.reduce(function(m,v){ return Math.max(m,Math.abs(v)); },0);
       dec.push(allInt ? 0 : (maxAbs<1.5 ? 3 : 1));
     }
+    return {header:header, ncol:ncol, rows:rows, colNum:colNum, dec:dec};
+  }
+
+  // Try to read a fenced code block as a whitespace-columned NUMERIC data table. Returns a styled
+  // <table> node, or null to fall back to <pre> (real code, prose, or a ragged/non-numeric block).
+  // Built entirely from el()/textContent, so no author text is ever injected as HTML.
+  function dataTable(inner, info){
+    var p=parseTable(inner, info);
+    if(!p) return null;
+    var header=p.header, ncol=p.ncol, rows=p.rows, colNum=p.colNum, dec=p.dec;
     var wrap=el("div","dtwrap"), t=el("table","dtable"), thead=el("thead"), hr=el("tr");
     header.forEach(function(h,c){ hr.appendChild(el("th", colNum[c]?"num":null, humanizeHeader(h))); });
     thead.appendChild(hr); t.appendChild(thead);
@@ -262,6 +281,63 @@
     return false;
   }
 
+  // A++ rung: a mechanically-DERIVED trend delta for a table dive, computed ONLY from the table's
+  // OWN rows (never hardcoded, never read out of the prose). Returns {label, latest, baseline, dir}
+  // or null. STRICT data-integrity guard (CEO #1) — a delta is emitted ONLY when the table pins an
+  // UNAMBIGUOUS baseline+latest for a SINGLE clear metric:
+  //   (a) the dive's OWN finding sentence names EXACTLY ONE numeric column (matched by that column's
+  //       humanized label) = THE metric. Zero named => nothing to quantify; >1 named => ambiguous
+  //       which number is "the" delta => null. This is what resolves a multi-metric table (Era has
+  //       ft_rate / fta / pts / fga) down to the single metric the dive itself is about.
+  //   (b) among the OTHER numeric columns, EXACTLY ONE is strictly monotonic across every row = the
+  //       time / order axis (gives an unambiguous first=baseline / last=latest). Detecting the axis
+  //       AFTER the metric is fixed lets a cleanly-rising metric (which is itself monotonic) still
+  //       qualify. Zero or >1 monotonic candidate => no clear ordering => null.
+  //   (c) baseline !== latest — there must be an actual trend to report.
+  // The value is COMPUTED at render time from the parsed rows; the caller sets it via textContent.
+  function tableDelta(content, findingText){
+    var items=content||[], p=null;
+    for(var i=0;i<items.length;i++){
+      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
+      if(t.indexOf("```")!==0) continue;
+      var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
+      var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
+      p=parseTable(inner, info);
+      if(p) break;                                   // first block that actually renders as a table
+    }
+    if(!p || p.rows.length<2) return null;
+    var header=p.header, rows=p.rows, colNum=p.colNum, dec=p.dec, ncol=p.ncol;
+    // (a) THE metric = the single numeric column the finding sentence names (by humanized label)
+    var lede=String(findingText||"").toLowerCase(), metricCol=-1, named=0;
+    for(var c=0;c<ncol;c++){
+      if(!colNum[c]) continue;
+      var label=humanizeHeader(header[c]).toLowerCase();
+      if(label && lede.indexOf(label)>=0){ named++; metricCol=c; }
+    }
+    if(named!==1) return null;                         // 0 or many named metrics => ambiguous => omit
+    // (b) the time / order axis = the UNIQUE strictly-monotonic column among the OTHERS
+    var timeCol=-1, monoCount=0;
+    for(var c2=0;c2<ncol;c2++){
+      if(!colNum[c2] || c2===metricCol) continue;
+      var inc=true, decr=true;
+      for(var r=1;r<rows.length;r++){
+        var prev=Number(rows[r-1][c2]), cur=Number(rows[r][c2]);
+        if(!(cur>prev)) inc=false;
+        if(!(cur<prev)) decr=false;
+      }
+      if(inc||decr){ monoCount++; timeCol=c2; }
+    }
+    if(monoCount!==1) return null;                    // no single clear time ordering => omit
+    // order rows by the time column so first=baseline / last=latest are unambiguous
+    var idx=rows.map(function(_,k){ return k; })
+               .sort(function(a,b){ return Number(rows[a][timeCol])-Number(rows[b][timeCol]); });
+    var baseline=Number(rows[idx[0]][metricCol]), latest=Number(rows[idx[idx.length-1]][metricCol]);
+    if(!isFinite(baseline) || !isFinite(latest) || baseline===latest) return null;  // (c) real trend
+    var d=dec[metricCol]; if(d==null) d=1;
+    return { label:humanizeHeader(header[metricCol]), latest:latest.toFixed(d),
+             baseline:baseline.toFixed(d), dir: latest>baseline ? "up" : "down" };
+  }
+
   // Per-dive VERDICT chip (A+ rung). The label is a FIXED vocabulary — NOISE / SIGNAL / ADOPTED —
   // only SELECTED (never synthesized) from the dive's OWN recommendation/conclusion prose. If the
   // prose states no clear verdict we return null and render NO chip (open), rather than guess a
@@ -316,6 +392,14 @@
               var tk=el("div","takeaway");
               tk.appendChild(el("span","takeaway-k","The finding"));
               var tt=el("span","takeaway-t"); inlineMd(tt, lede); tk.appendChild(tt);
+              // A++: a quantified trend delta computed from the table's OWN rows, disambiguated by
+              // the metric the finding sentence (lede) itself names. Appended ONLY when the table
+              // pins an unambiguous single-metric baseline+latest; omitted otherwise (never guessed).
+              var dl=tableDelta(it.content, lede);
+              if(dl){
+                tk.appendChild(el("span","takeaway-d",
+                  dl.latest+" "+dl.label+", "+(dl.dir==="up"?"up from ":"down from ")+dl.baseline));
+              }
               body.appendChild(tk);
             }
           }
