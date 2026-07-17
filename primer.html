@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Learn</title>
+<style>
+  /* Fallback tokens (hardwood.css wins the cascade when it loads; these keep the
+     page legible if it ever fails). */
+  :root{ --bg:#f4f6fa; --card:#fff; --card2:#f5f8fc; --chip:#eef2f8; --ink:#15181f;
+    --muted:#586074; --dim:#8993a6; --line:#e6eaf1; --line2:#d6dce6;
+    --acc:#2f6fed; --accent:#2f6fed; --accent-weak:rgba(47,111,237,.10);
+    --good:#1f8f3d; --bad:#c62828; --home:#2f6fed; --away:#b4530a;
+    --radius:10px; --shadow:0 1px 2px rgba(16,24,40,.06); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0b0e13; --card:#151a21; --card2:#1b212b;
+    --chip:#20293a; --ink:#e8edf4; --muted:#9aa6b4; --dim:#6b7684; --line:#232b37; --line2:#38424f;
+    --acc:#6ea8fe; --accent:#6ea8fe; --accent-weak:rgba(110,168,254,.16);
+    --good:#3fb950; --bad:#ff7b72; --home:#4a8cf0; --away:#c98209; --shadow:none; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;overflow-x:hidden}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:18px;margin:0;font-weight:750;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto;padding:0 14px}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--muted);border:1px solid var(--line);background:var(--card);padding:6px 11px;border-radius:999px;font-weight:600}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
+  main{max-width:820px;margin:0 auto;padding:8px 14px 72px}
+
+  /* --- intro / lede --- */
+  .lede{font-size:15px;line-height:1.6;color:var(--ink);margin:16px 0 8px;font-weight:500}
+  .lede-sub{font-size:13.5px;line-height:1.6;color:var(--muted);margin:8px 0 4px}
+
+  /* --- one-idea banner --- */
+  .banner{margin:16px 0;padding:14px 16px;background:var(--accent-weak);border-left:3px solid var(--acc);border-radius:8px;font-size:14px;line-height:1.55;color:var(--ink)}
+  .banner b{font-weight:750}
+
+  /* --- table of contents --- */
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:14px 16px;margin:18px 0 26px}
+  .toc-h{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px}
+  .toc ol{margin:0;padding-left:22px}
+  .toc li{margin:5px 0;font-size:13.5px;line-height:1.4}
+  .toc a{color:var(--acc);text-decoration:none;font-weight:600}
+  .toc a:hover{text-decoration:underline}
+
+  /* --- a section --- */
+  section.pr{margin:34px 0;scroll-margin-top:16px}
+  .kicker{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--acc);margin:0 0 4px}
+  h2{font-size:21px;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin:0 0 12px}
+  section.pr p{font-size:14px;line-height:1.65;color:var(--ink);margin:12px 0}
+  section.pr p b{font-weight:700}
+  .concept-lab{font-weight:800;color:var(--muted);text-transform:uppercase;font-size:10px;letter-spacing:.05em;margin-right:6px}
+
+  /* --- figure callout (the headline number of a section) --- */
+  .fig{margin:16px 0;padding:13px 15px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:9px;box-shadow:var(--shadow)}
+  .fig .figv{font-size:15px;line-height:1.55;color:var(--ink)}
+  .fig .figv b{font-weight:750}
+  .fig .figsrc{margin-top:6px;font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.03em;font-variant-numeric:tabular-nums}
+
+  /* --- stat tiles --- */
+  .tiles{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:flex-end;margin:16px 0 6px}
+  .tile{display:flex;flex-direction:column;line-height:1.05}
+  .tile .tv{font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .tile .tl{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;margin-top:4px;max-width:150px}
+
+  /* --- small data table --- */
+  .dtwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 0;border:1px solid var(--line);border-radius:9px}
+  table.dt{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+  .dt th,.dt td{padding:7px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  .dt th{background:var(--card2);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+  .dt th.num,.dt td.num{text-align:right}
+  .dt tbody tr:last-child td{border-bottom:none}
+  .dt td.rowh{font-weight:700;color:var(--ink)}
+
+  /* --- on-the-board pointer strip --- */
+  .board-ptr{margin:16px 0 2px;padding:11px 14px;background:var(--card2);border:1px solid var(--line);border-radius:9px;font-size:12.5px;line-height:1.55;color:var(--muted)}
+  .board-ptr b{color:var(--ink);font-weight:700}
+  .board-ptr .tag{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--acc);margin-right:7px;vertical-align:1px}
+
+  /* --- honest-gaps list --- */
+  .gaps{margin:14px 0;padding:0}
+  .gaps li{list-style:none;margin:12px 0;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:9px;font-size:13.5px;line-height:1.6}
+  .gaps li b{font-weight:750;color:var(--ink)}
+
+  /* --- honest / caveat emphasis --- */
+  .honest{border-left:3px solid var(--away)}
+
+  hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0}
+  .backtop{font-size:11px;color:var(--dim);text-decoration:none;margin-left:10px}
+  .backtop:hover{color:var(--acc)}
+  footer{max-width:820px;margin:0 auto;padding:20px 14px 40px;color:var(--dim);font-size:11px;line-height:1.6}
+</style>
+<link rel="stylesheet" href="./hardwood.css">
+</head>
+<body>
+<header id="top">
+  <h1>The Hardwood — Learn</h1>
+</header>
+<div class="sub">A ground-floor guide to reasoning about WNBA basketball with numbers — and to reading the board.</div>
+<nav>
+  <a href="./index.html">Board</a>
+  <a href="./queue.html">What's Next</a>
+  <a href="./games.html">Games</a>
+  <a href="./availability.html">Injuries</a>
+  <a href="./teams.html">Teams</a>
+  <a href="./coach.html">Coach</a>
+  <a href="./gm.html">GM</a>
+  <a href="./players.html">Players</a>
+  <a href="./review.html">Daily Review</a>
+  <a href="./accuracy.html">Our Accuracy</a>
+  <a href="./ledger.html">Error Map</a>
+  <a href="./org.html">The Team</a>
+  <a href="./scouting.html">Scouting</a>
+  <a href="./deepdive.html">Deep Dives</a>
+  <a class="active" href="./primer.html">Learn</a>
+</nav>
+<main>
+
+  <p class="lede">You know basketball. You don't need to know statistics. This walks you up from "what does the scoreboard usually look like" to "how do we grade our own predictions" — and at every step it shows you a real number the platform computes today and points you at the tab where you can see it live.</p>
+
+  <div class="banner"><b>The whole thing rests on one honest idea:</b> basketball is mostly signal wrapped in a lot of noise. Good analytics isn't about pretending the noise isn't there — it's about measuring how much is signal, how much is noise, and being honest about which is which. That honesty is the last section, and it's the most important one.</div>
+
+  <div class="toc">
+    <div class="toc-h">Eight sections</div>
+    <ol>
+      <li><a href="#s1">The scoreboard, quantified</a> — what a WNBA game actually looks like</li>
+      <li><a href="#s2">What a lead is worth</a> — and why leads aren't safe</li>
+      <li><a href="#s3">Team rating</a> — what "strength" really means</li>
+      <li><a href="#s4">Home court, rest, and the schedule</a></li>
+      <li><a href="#s5">Player value beyond points</a> — impact and minutes</li>
+      <li><a href="#s6">The currency of a roster</a> — wins and dollars</li>
+      <li><a href="#s7">Uncertainty is the point</a> — ranges, not just guesses</li>
+      <li><a href="#s8">How good is the board, honestly?</a></li>
+    </ol>
+  </div>
+
+  <!-- ============ 1 ============ -->
+  <section class="pr" id="s1">
+    <div class="kicker">Section 1</div>
+    <h2>The scoreboard, quantified</h2>
+    <p><span class="concept-lab">The concept</span> Before you can say a team "scored a lot" or "played slow," you need a baseline — the normal shape of a WNBA game. Every number that follows is measured against this baseline.</p>
+
+    <div class="fig">
+      <div class="figv">Across every WNBA game from 2015 through 2026, two teams combine for about <b>162 points a night, roughly 81 each</b>. The game isn't evenly paced: the <b>first quarter is the highest-scoring (about 41.8 combined points), drifting down to about 39.5 by the fourth</b> as legs tire and fouls pile up.</div>
+      <div class="figsrc">Measured across 2,600 games · Quarter Scoreline explorer</div>
+    </div>
+
+    <p><b>Why it matters — the number that runs everything is the noise.</b> In any single quarter, the margin can swing by about <b>7.4 points of pure scoring randomness</b>. That one figure is the hinge of this whole primer. It's why a 4-point lead early means almost nothing, why blowouts happen between evenly-matched teams, and why no model — ours or a Vegas book's — can ever predict a single game precisely. Basketball is a game where the noise is genuinely large relative to the skill gap on any given night.</p>
+
+    <p>You can watch that noise compound as the game goes on. The typical margin between two even teams grows from about <b>±7.6 points after one quarter to ±13.8 by the final buzzer</b> — the scoreboard spreads apart not because one team is "taking over," but because random point-swings accumulate.</p>
+
+    <div class="board-ptr"><span class="tag">On the board</span> This is the front door to the <b>Deep Dives</b> tab (the Quarter Scoreline explorer). It shows the shape of a game before any team names are entered — the league-average matchup you measure everything else against.</div>
+    <a class="backtop" href="#top">↑ contents</a>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ 2 ============ -->
+  <section class="pr" id="s2">
+    <div class="kicker">Section 2</div>
+    <h2>What a lead is worth — and why leads aren't safe</h2>
+    <p><span class="concept-lab">The concept</span> A lead is not a fixed amount of safety. The <i>same</i> lead is worth more the later you hold it, because there's less time left for the noise from Section 1 to erase it.</p>
+
+    <p>Start two evenly-matched teams on a neutral floor — a <b>coin flip, 50/50 at tip</b>. Now give one of them a <b>6-point lead</b>:</p>
+
+    <div class="dtwrap">
+      <table class="dt">
+        <thead><tr><th>Holding a 6-point lead…</th><th class="num">Wins about</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">After the first quarter</td><td class="num">66%</td></tr>
+          <tr><td class="rowh">At halftime</td><td class="num">74%</td></tr>
+          <tr><td class="rowh">After the third quarter</td><td class="num">76%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Same six points, very different security. A smaller edge tells the same story: up 3 barely matters early (<b>59% after the first quarter</b>) but is a real advantage late (<b>66% after the third</b>). Up 10 after the third quarter is close to safe at <b>92%</b> — but notice it is <i>not</i> automatic.</p>
+
+    <div class="fig honest">
+      <div class="figv"><b>The honest twist.</b> A naive "random-walk" model says a 6-point lead entering the fourth <i>should</i> be worth about <b>86%</b>. In reality it's only <b>76%</b>. WNBA teams come back late <b>more</b> often than the clean math predicts — late fouling, three-point variance, and leaders coasting all give the trailing team fatter tails. So the platform's rule is: for late-game leads, trust the counted history, not the tidy formula.</div>
+      <div class="figsrc">Quarter Scoreline explorer</div>
+    </div>
+
+    <p>You can also see the game "decide itself" gradually: the share of games still within 6 points falls from <b>61% after the first quarter to 33% at the final buzzer</b>.</p>
+
+    <div class="board-ptr"><span class="tag">On the board</span> The Quarter Scoreline explorer lets you drop a marker on any lead at any quarter break and read the win probability — with the counted (empirical) line drawn solid and the on-paper model dashed, so the late-game comeback gap is visible, not hidden.</div>
+    <a class="backtop" href="#top">↑ contents</a>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ 3 ============ -->
+  <section class="pr" id="s3">
+    <div class="kicker">Section 3</div>
+    <h2>Team rating — what "strength" really means</h2>
+    <p><span class="concept-lab">The concept</span> Win-loss record is a bad way to rank teams — it hides <i>how</i> they won (by 20 or by 1) and <i>who</i> they played. Our rating instead measures a team in <b>points: how many points better or worse than an average team they are, adjusted for opponent</b>. A rating of +5 means "about five points better than league-average on a neutral floor."</p>
+
+    <div class="tiles">
+      <div class="tile"><div class="tv">+7.2</div><div class="tl">Minnesota</div></div>
+      <div class="tile"><div class="tv">+5.2</div><div class="tl">Indiana</div></div>
+      <div class="tile"><div class="tv">+4.7</div><div class="tl">Atlanta</div></div>
+      <div class="tile"><div class="tv">+3.7</div><div class="tl">Golden State</div></div>
+      <div class="tile"><div class="tv">+3.2</div><div class="tl">New York</div></div>
+    </div>
+    <p>Read that directly: on a neutral floor, Minnesota would be favored over an average team by about seven points, and over New York (+3.2) by roughly the difference, about four.</p>
+
+    <p><b>Why it matters — two numbers, not one.</b> A season-long rating is stable but slow. So the board also carries a <b>recent-form (momentum) number</b> — how a team has been trending lately, apart from its full-season body of work. Portland, for instance, shows a strongly positive momentum swing (about <b>+2.3</b>) even while its season rating is still low — a team playing better than its record. The two together answer "how good are they?" and "how good are they <i>right now</i>?" without letting a hot streak overwrite a whole season.</p>
+
+    <div class="board-ptr"><span class="tag">On the board</span> On the <b>Teams</b> tab, each team shows its strength (the point rating), its recent-form swing, its playoff odds, and its title odds from a season simulation. Strength is the honest talent estimate; the momentum number is the "don't ignore the last two weeks" adjustment; the odds are what those translate to once you simulate the rest of the schedule thousands of times.</div>
+    <a class="backtop" href="#top">↑ contents</a>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ 4 ============ -->
+  <section class="pr" id="s4">
+    <div class="kicker">Section 4</div>
+    <h2>Home court, rest, and the schedule</h2>
+    <p><span class="concept-lab">The concept</span> Fans feel these edges — the home crowd, the tired road team on a back-to-back — but rarely quantify them. Analytics puts a point value on each.</p>
+
+    <div class="fig">
+      <div class="figv"><b>Home court.</b> Across the full history, home teams win <b>55.5% of the time and outscore visitors by about +2.1 points</b> on average — the single most reliable "free" edge in the sport. Our prediction model bakes in a home-court adjustment of about <b>+2.4 points</b>, very close to the raw history, which is a good sign the model isn't inventing an edge the data doesn't support.</div>
+      <div class="figsrc">Quarter Scoreline explorer · home-court measurement</div>
+    </div>
+
+    <p>Practically: if two even teams meet and one is home, don't read them as 50/50 — read the home side as starting roughly <b>two points and five percentage points ahead</b> of the neutral numbers in Section 2.</p>
+
+    <p><b>Rest and back-to-backs.</b> The platform already stores, for every player-game, how many days of rest a team had and whether it was the second night of a back-to-back. The <i>exact</i> point cost of a rest disadvantage is a deep-dive still on the build queue, so this primer does <b>not</b> quote a precise "a back-to-back costs X points" figure yet — that number isn't shipped, and inventing one would violate the honesty rule this whole primer runs on. What we can say today is that the raw material is in hand and the edge is real and measurable; the quantified answer lands when that dive ships.</p>
+
+    <div class="board-ptr"><span class="tag">On the board</span> Home court shows up inside every game prediction (the favorite already has it baked in). The rest/schedule dive will live in the <b>Deep Dives</b> hub alongside the scoreline explorer when built.</div>
+    <a class="backtop" href="#top">↑ contents</a>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ 5 ============ -->
+  <section class="pr" id="s5">
+    <div class="kicker">Section 5</div>
+    <h2>Player value beyond points</h2>
+    <p><span class="concept-lab">The concept</span> The leading scorer is not always the most valuable player. Points are the loudest stat but not the most complete one — a player can help a team win through defense, rebounding, playmaking, and simply the fact that the team is <i>better with them on the floor</i>. Our <b>impact rating</b> measures exactly that: roughly how many points per game a team gains from a player being on the court, beyond what shows up in their scoring line.</p>
+
+    <div class="fig">
+      <div class="figv">A'ja Wilson leads the players board with <b>25.5 points a game and a +1.2 on-court impact rating</b> — she scores the most <i>and</i> moves the needle the most, which is rare. More instructive is the "impact riser": <b>Sika Kone of Atlanta ranks 32nd in the league by impact but only 166th by scoring</b> — a gap of 134 spots. She scores about 2 points a game and would be invisible on a scoring list, yet her team is measurably better with her out there. That gap — <i>valuable but quiet</i> — is the entire reason impact rating exists.</div>
+      <div class="figsrc">Players board</div>
+    </div>
+
+    <p><b>Minutes matter too.</b> Value only counts if a player is on the floor, so the board projects <b>expected minutes</b> for every player (Wilson projects around 31). Those projections are graded: we miss a player's actual minutes by about <b>6 minutes per game</b> and their points by about <b>3.9 points per game</b> on average. That's honest and useful — it tells you how much to trust a single-game projection.</p>
+
+    <div class="board-ptr"><span class="tag">On the board</span> On the <b>Players</b> tab, each player shows scoring, the on-court impact rating <i>alongside</i> it, share of team minutes, projected minutes, and a plausible range of box-score outcomes. Scoring tells you the volume, impact tells you whether the team actually wins more with them out there, and the two disagreeing (like Sika Kone) is a signal, not an error.</div>
+    <a class="backtop" href="#top">↑ contents</a>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ 6 ============ -->
+  <section class="pr" id="s6">
+    <div class="kicker">Section 6</div>
+    <h2>The currency of a roster — wins and dollars</h2>
+    <p><span class="concept-lab">The concept</span> To compare a center to a guard, or a star's salary to her production, you need a <b>common currency</b>. Ours has three convertible faces: on-court rating, <b>Wins Above Replacement (WAR)</b> — how many wins a player adds over a freely-available replacement — and <b>dollars-per-win</b>, the price a team pays per win. The Coach dashboard reads this tactically; the GM dashboard reads it as an asset ledger.</p>
+
+    <div class="tiles">
+      <div class="tile"><div class="tv">9.5</div><div class="tl">A'ja Wilson — projected wins added</div></div>
+      <div class="tile"><div class="tv">7.0</div><div class="tl">Napheesa Collier</div></div>
+      <div class="tile"><div class="tv">~6</div><div class="tl">Dearica Hamby & Aliyah Boston</div></div>
+    </div>
+    <p>Wins, not points — Wilson is worth roughly nine-and-a-half wins more than a replacement-level player.</p>
+
+    <div class="fig">
+      <div class="figv"><b>The dollar layer is where it gets sharp.</b> The league pays a median of about <b>$409,000 per win</b>. Against that, rookie-scale stars are staggering bargains: <b>Paige Bueckers projects to about 5.8 wins at roughly $86,000 per win</b> — a quarter of the going rate — while a veteran like Alyssa Thomas costs about <b>$203,000 per win</b>. Same currency, and it instantly tells a GM who is underpaid and who is a luxury.</div>
+      <div class="figsrc">Value spine · Coach and GM dashboards</div>
+    </div>
+
+    <p><b>Coverage, stated honestly.</b> We carry <b>205 players; 142 have a wins-added projection and 120 have a 2026 salary attached</b> — so the ledger is broad but not complete, and a player with no bar simply isn't projected yet rather than being worth zero. Players are also tagged with one of five skill archetypes (Scoring Anchor, Two-Way Creator, Floor General, Defensive Anchor, Balanced) so the Coach view can reason about roster fit, not just totals.</p>
+
+    <div class="board-ptr"><span class="tag">On the board</span> The <b>Coach</b> and <b>GM</b> tabs both read this one shared spine. Coach uses it to find a matchup's difference-makers; GM uses the dollars-per-win column to spot value and the trade board to move it.</div>
+    <a class="backtop" href="#top">↑ contents</a>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ 7 ============ -->
+  <section class="pr" id="s7">
+    <div class="kicker">Section 7</div>
+    <h2>Uncertainty is the point — ranges, not just guesses</h2>
+    <p><span class="concept-lab">The concept</span> A prediction that says "home team by 7" and nothing else is hiding the most important part: <i>how sure are we?</i> Every honest projection carries a <b>range</b>, and the range is calibrated — meaning when we say "90% likely to land in this band," the result should actually land there about 90% of the time.</p>
+
+    <div class="fig">
+      <div class="figv"><b>The platform's proudest honest number.</b> When our model draws a 90% margin range, the real result falls inside it <b>90.4% of the time</b>; our 80% range catches it <b>80.8%</b>. Those are as close to perfectly-calibrated as it gets — a 90% band that catches 90.4% is telling the truth about its own confidence. A model whose "90% range" only caught 70% of results would be lying to you; ours isn't.</div>
+      <div class="figsrc">Calibration check · 167 graded games</div>
+    </div>
+
+    <p><b>Why it matters.</b> A calibrated range is what lets you <i>use</i> a prediction responsibly. "Home by 7, and 90% confident the margin lands between −4 and +18" is an honest statement you can act on. "Home by 7" alone is false precision. The wide ranges aren't a weakness — they're the model correctly telling you a single WNBA game is genuinely hard to pin down (Section 1's noise, quantified into a band).</p>
+
+    <div class="board-ptr"><span class="tag">On the board</span> The accuracy tile on the home surface shows these coverage numbers live. When you read a game prediction, the band around the margin is the part to respect — the point estimate is the middle of a real distribution, not a promise.</div>
+    <a class="backtop" href="#top">↑ contents</a>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ 8 ============ -->
+  <section class="pr" id="s8">
+    <div class="kicker">Section 8</div>
+    <h2>How good is the board, honestly?</h2>
+    <p><span class="concept-lab">The concept</span> The last and most important habit: grade yourself in public. We keep a game-by-game scorecard and publish the miss instead of hiding it.</p>
+
+    <div class="tiles">
+      <div class="tile"><div class="tv">10.9</div><div class="tl">points — average margin miss (163 graded games)</div></div>
+      <div class="tile"><div class="tv">64.4%</div><div class="tl">right winner called</div></div>
+    </div>
+
+    <p>A longer season-reconstruction read puts the average margin miss at about <b>10.8 points</b>, and among games where we named a clear favorite, that favorite actually won about <b>68% of the time</b>. There is <b>no systematic lean</b> — over the season our calls sit within a point of dead-center, so we don't quietly favor home or road teams.</p>
+
+    <p><b>Is ~11 points good?</b> Yes — it's close to the practical floor. The misses that hurt are blowouts: games that turn into runaways nobody saw coming. Past about eleven points, the result is mostly shooting luck that no model — or betting market — can predict. We're field-standard for a model built on public data, and we say so rather than dressing it up.</p>
+
+    <h2 style="font-size:16px;margin-top:24px">What we honestly cannot do yet</h2>
+    <p>Being a real analytics platform means naming the gaps, not just the wins. Today we <b>cannot</b>:</p>
+    <ul class="gaps">
+      <li><b>Five-player lineup on/off splits</b> — which exact five-woman units outscore opponents. We have team ratings and per-player impact, but not clean stint-level lineup data. A "best lineups" feature is a data-collection project first, not something buildable now.</li>
+      <li><b>Player tracking</b> — speed, distance, drives, contested shots, defensive matchups. The optical-tracking feed is confirmed dead for the WNBA (verified empty across every season and host we probed). Shot <i>location</i> we have (from play-by-play coordinates); shot <i>contest quality</i> and defender matchups we do not.</li>
+      <li><b>Play-type tagging</b> — pick-and-roll, isolation, post-up efficiency. That labeling isn't in our data.</li>
+      <li><b>Referee-level data</b> — no crew-assignment feed, so "which officials call it tighter" is unsupported.</li>
+      <li><b>Deep fatigue / travel load</b> — we have rest-days and back-to-back flags, but not travel miles or rolling minutes-load, so fatigue claims stay caveated.</li>
+    </ul>
+    <p>None of these are hidden behind a vague "coming soon." They're the honest edge of what public WNBA data supports today — and naming them is exactly the discipline that makes the numbers in Sections 1–7 trustworthy.</p>
+
+    <div class="board-ptr"><span class="tag">On the board</span> On the <b>Our Accuracy</b> tab, every number in this section is live: the average miss, the winner-hit rate, the interval coverage from Section 7, and the monthly trend. It is the platform grading itself where you can see it.</div>
+    <a class="backtop" href="#top">↑ contents</a>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ TL;DR ============ -->
+  <section class="pr" id="tldr">
+    <div class="kicker">In one paragraph</div>
+    <h2>The whole primer, distilled</h2>
+    <div class="banner">A WNBA game is about 162 points and roughly 7 points of pure quarter-to-quarter noise, which is why early leads are fragile and even teams produce blowouts. A lead is worth more the later you hold it (up 6 climbs from 66% to 76% across the game), but late leads are <i>less</i> safe than the tidy math says. Teams are rated in points-above-average, not records; home court is worth about +2.1 points; players are measured by on-court impact and wins added, not just scoring, and priced in dollars-per-win. Every projection is a calibrated range — our 90% band really does catch 90% of results — and we grade ourselves in public: about an 11-point average margin miss, right winner ~64% of the time, with the gaps we can't yet fill named out loud.</div>
+  </section>
+
+</main>
+<footer>
+  A ground-floor explainer over the surfaces the platform bakes today. Every quantitative claim is drawn from a live board surface or a published deep dive; where a number isn't shipped yet (the rest / back-to-back point cost), it's flagged rather than invented. Numbers current to the 2026-07-17 bake.
+</footer>
+</body>
+</html>
