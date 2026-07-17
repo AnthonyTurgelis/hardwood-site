@@ -60,10 +60,26 @@
 <script>
 (function(){
   "use strict";
+  function emptyDoc(){
+    // Structured, plain-language empty state so an empty day reads as "not written yet",
+    // not "broken" - and points the reader at the live surfaces in the meantime.
+    return ''
+      + '<div class="doc" data-k="doc">'
+      + '<h1>Daily Review</h1>'
+      + '<p>The Daily Review is a plain-English recap of how our published calls actually did &mdash; written after the night&rsquo;s games are final and graded.</p>'
+      + '<p class="empty">There isn&rsquo;t one for today yet. Either tonight&rsquo;s games haven&rsquo;t been played and graded, or the recap is still being written. It posts here the moment it&rsquo;s ready.</p>'
+      + '<h2>While you wait</h2>'
+      + '<ul>'
+      + '<li><a href="./index.html">The Board</a> &mdash; tonight&rsquo;s live calls and how they&rsquo;re moving.</li>'
+      + '<li><a href="./accuracy.html">Our Accuracy</a> &mdash; the running season scorecard, graded against real results.</li>'
+      + '<li><a href="./games.html">Games</a> &mdash; every matchup with our fair number and projected box.</li>'
+      + '</ul>'
+      + '</div>';
+  }
   function render(d){
     document.getElementById("sub").textContent = d.date || "";
     var main=document.getElementById("main");
-    if(!d.available || !d.html){ main.innerHTML='<p class="empty">No review published for today yet.</p>'; return; }
+    if(!d.available || !d.html){ main.innerHTML=emptyDoc(); document.getElementById("foot").textContent="The plain-English daily posts here once the night is graded."; flash(); return; }
     var wrap=document.createElement("div"); wrap.className="doc"; wrap.setAttribute("data-k","doc"); wrap.innerHTML=d.html;
     main.innerHTML=""; main.appendChild(wrap);
     document.getElementById("foot").textContent = "Written for you as the plain-English daily. Baked " + (d.generated_et||d.generated_utc||"") + ".";

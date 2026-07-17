@@ -224,7 +224,7 @@
         var row=el("div","erow");
         var head=el("div");
         head.appendChild(el("span","ep", (s.player||"")+(s.team?(" ("+s.team+")"):"")));
-        if(s.signal) head.appendChild(el("span","es"," -- "+s.signal));
+        if(s.signal) head.appendChild(el("span","es"," - "+s.signal));
         row.appendChild(head);
         if(s.label) row.appendChild(el("div","elab", s.label));
         if(s.source_url){ var a=el("a","esrc","source"); a.href=s.source_url; a.target="_blank"; a.rel="noopener noreferrer"; row.appendChild(a); }
@@ -261,6 +261,7 @@
 
     // MODEL BREAKDOWN
     var s=el("section"); s.appendChild(el("h2",null,"Full model breakdown"));
+    if((d.factors||[]).length) s.appendChild(el("div","sub2","Each line is one ingredient that goes into our number, with what it contributed and why."));
     (d.factors||[]).forEach(function(f){
       var c=el("div","fac"); var l=el("div","fl");
       l.appendChild(el("span","fn", f.label));

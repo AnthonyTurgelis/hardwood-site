@@ -90,11 +90,15 @@
     "2-3":"2-3 days","4+":"4+ days","in_game_injury_exit":"In-game injury exit","late_scratch":"Late scratch"
   };
   function humanize(v){ return String(v).replace(/_/g," "); }
+  // Humanize a bare YYYY-MM month slice to a readable "Jul 2026" (mirrors the site's monthDay/plainDate treatment).
+  var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function monthLabel(v){ var m=/^(\d{4})-(\d{2})$/.exec(String(v)); return m ? (MON[(+m[2])-1]+" "+m[1]) : null; }
   function label(col,v){
     if(v==null) return "-";
     if(col==="Surface" && SURFACE_LABEL[v]) return SURFACE_LABEL[v];
     if(col==="Broken down by" && BREAKDOWN_LABEL[v]) return BREAKDOWN_LABEL[v];
     if(col==="Slice" && SLICE_LABEL[v]) return SLICE_LABEL[v];
+    if(col==="Slice"){ var ml=monthLabel(v); if(ml) return ml; }
     return humanize(v);
   }
 
