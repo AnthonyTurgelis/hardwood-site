@@ -53,6 +53,12 @@
   .tcount{color:var(--dim);font-weight:600;font-size:11px;float:right}
   .empty{color:var(--dim);font-style:italic}
   .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
+  .coachrow{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:8px 12px;border-bottom:1px solid var(--line)}
+  .coachrow:last-child{border-bottom:none}
+  .coachrow .ctm{font-weight:700;min-width:2.6em}
+  .coachrow .cfull{color:var(--dim);font-size:11px}
+  .coachrow .cline{color:var(--ink);font-size:12.5px;margin-left:auto;text-align:right}
+  @media (max-width:560px){ .coachrow .cline{margin-left:0;text-align:left;flex-basis:100%} }
   .filt{width:100%;max-width:280px;margin:0 0 8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:12.5px}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
@@ -188,6 +194,39 @@
     main.appendChild(sec);
   }
 
+  // COACH & STYLE -- per-team head coach + role-distribution style, read from ./coach_style.json.
+  // Complements the power board; re-inserted at the end of every render so it survives the 60s
+  // poll re-render. Graceful null when the file is absent or a team has no entry.
+  var COACH=null;
+  function insertCoach(){
+    if(!COACH || !COACH.teams) return;
+    var main=document.getElementById("main"); if(!main) return;
+    var old=document.getElementById("coachstyle"); if(old && old.parentNode) old.parentNode.removeChild(old);
+    // Order + full names off the board's own team list (strength order); fall back to file key order.
+    var order=[], full={};
+    if(curData && curData.teams){ curData.teams.forEach(function(r){ if(r.team){ order.push(r.team); full[r.team]=r.team_full; } }); }
+    if(!order.length){ order=Object.keys(COACH.teams); }
+    var styles=(COACH.card&&COACH.card.styles)||{};
+    var sec=el("section"); sec.id="coachstyle";
+    sec.appendChild(el("h2",null,(COACH.card&&COACH.card.title)||"Coach & Style"));
+    var card=el("div","card"); var any=false;
+    order.forEach(function(tm){
+      var c=COACH.teams[tm]; if(!c) return; any=true;
+      var row=el("div","coachrow");
+      row.appendChild(el("span","ctm", tm));
+      if(full[tm]) row.appendChild(el("span","cfull", full[tm]));
+      var line=el("span","cline", c.line || ((c.coach||"")+(c.style?(" -- "+c.style):"")));
+      var desc=c.style_key && styles[c.style_key] && styles[c.style_key].desc;
+      if(desc) line.title=desc;   // optional tooltip legend
+      row.appendChild(line);
+      card.appendChild(row);
+    });
+    if(!any) return;
+    sec.appendChild(card);
+    if(COACH.card && COACH.card.blurb) sec.appendChild(el("div","note", COACH.card.blurb));
+    main.appendChild(sec);
+  }
+
   function summaryLine(d){
     var teams=d&&d.teams;
     if(!teams||!teams.length) return null;
@@ -249,7 +288,7 @@
     curData=d;
     var main=document.getElementById("main"); main.innerHTML="";
     document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Strength ranks the roster on our season-long model. Momentum is recent form, not the ranking basis. Title odds come from simulating the rest of the season.";
-    if(!d.available){ main.appendChild(el("p","empty", d.note||"Power board being built.")); insertPlayoff(); return; }
+    if(!d.available){ main.appendChild(el("p","empty", d.note||"Power board being built.")); insertPlayoff(); insertCoach(); return; }
     main.appendChild(el("p","lede", d.source||""));
     var sm=summaryLine(d); if(sm) main.appendChild(sm);
     // relative strength-bar scale across the field (min→max, with a visible floor)
@@ -298,6 +337,7 @@
       "Title % and Playoffs % are from our end-of-season simulation" + (d.title_as_of?(" (current through "+plainDate(d.title_as_of)+")"):"") + "; the last column is the one-day change in title odds."));
     flash();
     insertPlayoff();
+    insertCoach();
   }
 
   /* ---------- shared live runtime ---------- */
@@ -325,6 +365,9 @@
   fetch("./playoff_odds.json?v="+Date.now(),{cache:"no-cache"})
     .then(function(r){ return r.ok?r.json():null; })
     .then(function(j){ PLAYOFF=j; insertPlayoff(); }).catch(function(){});
+  fetch("./coach_style.json?v="+Date.now(),{cache:"no-cache"})
+    .then(function(r){ return r.ok?r.json():null; })
+    .then(function(j){ COACH=j; insertCoach(); }).catch(function(){});
   poll(); setInterval(poll,60000); setInterval(updAgo,1000);
 })();
 </script>
