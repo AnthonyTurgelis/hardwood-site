@@ -127,6 +127,10 @@
   // ---------- money formatting ----------
   function money(v){ if(v==null) return "—"; if(v>=1e6) return "$"+(v/1e6).toFixed(2)+"M"; return "$"+Math.round(v/1000)+"k"; }
   function perWar(v){ if(v==null) return "—"; return "$"+Math.round(v/1000)+"k"; }
+  // Second value face: active-only per-possession on-court rating -> net points / 100 possessions, signed.
+  // NULL (retired / prior-only / not-yet-active) renders an em dash, NEVER a 0 — a 0 would misread as a real,
+  // replacement-level rating and misprice the asset (CEO data-integrity rule #1).
+  function ppRating(v){ if(v==null) return "—"; var s=v*100; return (s>=0?"+":"")+s.toFixed(1); }
 
   // ---------- $/WAR value tiers (league-relative, over salaried + positive-WAR players) ----------
   var DPW_SORTED=[];
@@ -160,7 +164,7 @@
     opts=opts||{};
     var card=el("div","card"), sc=el("div","scroll"), t=el("table");
     var thead=el("thead"), hr=el("tr");
-    ["Player","Age","Proj WAR","Salary","$/WAR","Value"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
+    ["Player","Age","Proj WAR","On-court","Salary","$/WAR","Value"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
     players.forEach(function(p){
@@ -170,6 +174,7 @@
       tr.appendChild(nm);
       tr.appendChild(el("td",null,num(p.age_2026)));
       tr.appendChild(el("td","war",num(p.proj_war_2026,1)));
+      tr.appendChild(el("td",null,ppRating(p.pp_rating_active)));
       tr.appendChild(el("td",null,money(p.salary_2026)));
       tr.appendChild(el("td",null,perWar(p.dollar_per_war)));
       var f=valueFlag(p); var vc=el("td");
@@ -470,7 +475,7 @@
       main.appendChild(el("div","note","Historical return by draft slot — a reference for valuing your draft capital, not a claim about which picks you own.")); }
     main.appendChild(el("h2",null,"Value for Money — my roster"));
     main.appendChild(valueTable(roster(team),{}));
-    main.appendChild(el("div","note","Each player's 2026 base salary against projected WAR. Value flag compares $/WAR to the league of salaried players — Bargain (cheapest third), Fair, Overpay (most expensive third). Players with no salary on file show value-only."));
+    main.appendChild(el("div","note","Each player's 2026 base salary against projected WAR. On-court is the complementary second value face — the active-only per-possession rating (RAPM-scale, net points per 100 possessions) from real 2026 on-court time; it prices alongside WAR, not instead of it, and shows — for players not yet rated this season (retired / prior-only / no 2026 minutes), never a fabricated 0. Value flag compares $/WAR to the league of salaried players — Bargain (cheapest third), Fair, Overpay (most expensive third). Players with no salary on file show value-only."));
     main.appendChild(el("h2",null,"Trade Targets by Value"));
     main.appendChild(tradeBoard());
     main.appendChild(el("h2",null,"What Just Moved"));

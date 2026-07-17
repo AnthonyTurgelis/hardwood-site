@@ -102,6 +102,10 @@
   var SPINE=null, COACH=null, state={lens:"team", a:null, b:null};
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function num(v,d){ return v==null?"—":(typeof d==="number"?v.toFixed(d):String(v)); }
+  // Second value face: active-only per-possession on-court rating -> net points / 100 possessions, signed.
+  // NULL (retired / prior-only / not-yet-active) renders an em dash, NEVER a 0 — a 0 would misread as a real,
+  // replacement-level rating and misrank the player (CEO data-integrity rule #1).
+  function ppRating(v){ if(v==null) return "—"; var s=v*100; return (s>=0?"+":"")+s.toFixed(1); }
 
   var STYLE_METRICS=[
     // key, label, [dir] where dir=+1 higher is "more of it"; ast_rate omitted (0 for all 2025 teams — assist-log gap)
@@ -190,7 +194,7 @@
     var rs=roster(team);
     var card=el("div","card"); var sc=el("div","scroll"); var t=el("table");
     var thead=el("thead"), hr=el("tr");
-    var cols=compact?["Player","Proj WAR","Archetype","Status"]:["Player","Age","Proj WAR","'25 WAR","Archetype","Skills","Status"];
+    var cols=compact?["Player","Proj WAR","On-court","Archetype","Status"]:["Player","Age","Proj WAR","On-court","'25 WAR","Archetype","Skills","Status"];
     cols.forEach(function(h){ hr.appendChild(el("th",null,h)); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
@@ -199,6 +203,7 @@
       var nm=el("td"); nm.appendChild(el("b",null,p.name)); tr.appendChild(nm);
       if(!compact) tr.appendChild(el("td",null,num(p.age_2026)));
       tr.appendChild(el("td","war",num(p.proj_war_2026,1)));
+      tr.appendChild(el("td",null,ppRating(p.pp_rating_active)));
       if(!compact) tr.appendChild(el("td",null,num(p.war_2025,1)));
       var at=el("td"); if(p.archetype){ var pl=el("span","pill arch",p.archetype); at.appendChild(pl); } else { at.appendChild(el("span","pill","—")); } tr.appendChild(at);
       if(!compact){ var sk=el("td"); sk.style.textAlign="left"; sk.appendChild(skillBars(p)); tr.appendChild(sk); }
@@ -371,7 +376,7 @@
     main.appendChild(sc);
     main.appendChild(el("h2",null,"Player Value Board"));
     main.appendChild(playerBoard(team,false));
-    main.appendChild(el("div","note","Roster ranked by projected Wins Above Replacement for 2026 (age-adjusted). Skill bars are league percentiles across five skills — scoring, playmaking, rebounding, defense, ball security — from the 2025 skillset decomposition; players with no 2025 minutes show no bars. Value is honestly WAR-based (a per-possession on-court rating is a follow-up)."));
+    main.appendChild(el("div","note","Roster ranked by projected Wins Above Replacement for 2026 (age-adjusted). On-court is the complementary second value face — the active-only per-possession rating (RAPM-scale, shown as net points per 100 possessions) from real 2026 on-court time; it reads alongside WAR, not instead of it, and shows — for players not yet rated this season (retired / prior-only / no 2026 minutes), never a fabricated 0. Skill bars are league percentiles across five skills — scoring, playmaking, rebounding, defense, ball security — from the 2025 skillset decomposition; players with no 2025 minutes show no bars."));
     var av=availStrip([team]);
     if(av){ main.appendChild(el("h2",null,"Availability")); main.appendChild(av);
       main.appendChild(el("div","note","Current injury / availability, dual-feed reconciled. Players not listed have no reported issue.")); }
