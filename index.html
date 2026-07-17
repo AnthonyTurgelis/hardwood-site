@@ -254,6 +254,21 @@
   .edge .et{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:800;color:var(--promote)}
   .edge .eh{font-size:15px;font-weight:780;margin-top:3px}
   .edge .ew{font-size:12.5px;color:var(--muted);margin-top:2px}
+  /* ---------- COVERAGE tile: honest interval-calibration readout on the HOME board. Single-sourced
+     from accuracy.json (the SAME read_accuracy scorecard the Accuracy tab renders); an audit of our
+     own honesty, not a directional call. --verified (blue) accent = independently checked, never the
+     green "good" wash. ---------- */
+  .covtile{margin-top:8px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--verified);
+    border-radius:12px;padding:11px 14px;box-shadow:var(--shadow)}
+  .covtile .ch{font-size:14.5px;font-weight:760;letter-spacing:-.01em}
+  .covtile .cbands{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .covtile .cband{display:flex;flex-direction:column;gap:1px;min-width:0}
+  .covtile .cbig{font-size:20px;font-weight:820;font-variant-numeric:tabular-nums;line-height:1.05}
+  .covtile .cbig.off{color:var(--warn)}
+  .covtile .csub{font-size:11px;color:var(--muted)}
+  .covtile .cthin{color:var(--warn);font-weight:700}
+  .covtile .cw{font-size:12px;color:var(--muted);margin-top:8px}
+  .covtile .cw a{white-space:nowrap}
   /* freshness / stale */
   .prov b{color:var(--live);font-variant-numeric:tabular-nums;font-weight:700}
   .banner.stale{border-left:3px solid var(--warn)}
@@ -912,6 +927,59 @@
     if(e.detail){ s.appendChild(el("div","ew", e.detail)); }
     return s;
   }
+  /* HOME COVERAGE TILE — a glanceable, honest calibration readout on the front page so a coach sees
+     "our ranges cover as advertised" WITHOUT opening the Accuracy tab. SINGLE-SOURCED from
+     ./accuracy.json's `calibration` array (the SAME read_accuracy output the Accuracy tab renders);
+     nothing is recomputed here. Omit-not-invent: a band missing a real coverage number is dropped,
+     and with no bands at all the tile does not render (graceful-null). Thin samples are LABELLED, not
+     dressed up as a firm read (anti-cherry-pick discipline). Betting-free: an audit of our own
+     honesty, never a pick. */
+  var COV_THIN_N=40;   // below this a band's coverage is an early read — flagged, not a firm claim
+  function covOff(k){ return !!k.flag || Math.abs((k.actual||0)-(k.target||0))>5; }
+  function covThin(k){ return k.n!=null && k.n<COV_THIN_N; }
+  function renderCoverageTile(acc){
+    if(!acc) return null;
+    var cal=(acc.calibration||[]).filter(function(k){
+      return k && k.actual!=null && k.target!=null; });   // omit any band without a real number
+    if(!cal.length) return null;
+    // headline band = the highest target (the 90% range leads); deterministic sort so the tile is stable
+    var bands=cal.slice().sort(function(a,b){ return (b.target||0)-(a.target||0); });
+    var s=el("section","hero"); s.setAttribute("data-k","coverage");
+    var eb=el("div","eyebrow");
+    eb.appendChild(el("span",null,"Are our ranges honest?"));
+    var p=provFor("accuracy_cov");
+    if(p.stale){ eb.appendChild(staleBadge(p.reason)); }
+    eb.appendChild(p.prov);
+    s.appendChild(eb);
+    var tile=el("div","covtile");
+    var top=bands[0];
+    var base="Our "+top.target+"% ranges contained the actual result "+top.actual+"% of the time";
+    var suffix=(!covThin(top) && !covOff(top)) ? " — right about where they should." : ".";
+    tile.appendChild(el("div","ch", base+suffix));
+    var row=el("div","cbands");
+    bands.forEach(function(k){
+      var b=el("div","cband");
+      b.appendChild(el("div","cbig"+(covOff(k)?" off":""), k.actual+"%"));
+      var sub=el("div","csub");
+      sub.appendChild(document.createTextNode("inside our "+k.target+"% range"
+        + (k.n!=null?(" · n="+k.n):"")));
+      if(covThin(k)){ sub.appendChild(el("span","cthin"," · thin sample")); }
+      b.appendChild(sub);
+      row.appendChild(b);
+    });
+    tile.appendChild(row);
+    // honest one-liner, DERIVED from the data (never a marketing claim)
+    var cw=el("div","cw"), msg;
+    if(bands.some(covThin)){ msg="An early read on a thin sample — we publish it now and firm it up as more games grade."; }
+    else if(bands.some(covOff)){ msg="One range is running off its target — we show it plainly rather than hide it."; }
+    else { msg="A range should contain the real result about as often as it claims — and ours do. Audited on our own scored games, not a marketing number."; }
+    cw.appendChild(document.createTextNode(msg+" "));
+    var a=el("a","rlink","See the full scorecard →"); a.href="./accuracy.html";
+    cw.appendChild(a);
+    tile.appendChild(cw);
+    s.appendChild(tile);
+    return s;
+  }
   /* FOUL-TROUBLE WATCH — mount point for tonight's foul-risk readout. Renders ONLY when
      ./foul_risk.json is present with entries (a separate data feed produces it); until then
      nothing shows (graceful degradation). Descriptive readout of who is at risk of foul
@@ -1158,6 +1226,7 @@
   var lastLive=null;   // newest live payload
   var lastB=null;      // what is currently displayed (live or snapshot)
   var FOUL=null;       // tonight's foul-risk feed (./foul_risk.json), null until it lands
+  var ACC=null;        // self-graded scorecard (./accuracy.json), null until it lands — feeds the HOME coverage tile
   function render(b){
     lastB=b;
     SRC=b.section_sources||{};
@@ -1165,6 +1234,12 @@
     if(FOUL && (FOUL.as_of||FOUL.generated_utc)){
       SRC.foul_risk={ as_of:(FOUL.as_of||FOUL.generated_utc), source:(FOUL.source||"tonight's foul-risk read"),
         stale_after:(FOUL.stale_after||43200) };
+    }
+    // Register the coverage tile's freshness so its badge + within-tier sort behave like any section.
+    // accuracy re-bakes ~daily, so a 48h window avoids false-alarming a normal overnight-old scorecard.
+    if(ACC && (ACC.generated_utc||ACC.date)){
+      SRC.accuracy_cov={ as_of:(ACC.generated_utc||ACC.date),
+        source:(ACC.source||"our self-graded scorecard"), stale_after:172800 };
     }
     FRESH=b.freshness||{};
     var sec=b.sections||{};
@@ -1201,6 +1276,7 @@
       addPanel(renderFoulWatch(FOUL), "foul_risk", 1);
       addPanel(renderTonightEdge(sec.tonight_edge), null, 1);
       addPanel(renderReports(b.reports, b.rollover), "reports", 1);
+      addPanel(renderCoverageTile(ACC), "accuracy_cov", 2);
       addPanel(renderAgentUpdates(sec.agent_updates), "agent_updates", 2);
       addPanel(renderWatch(sec.watch_list), "watch_list", 2);
       addPanel(renderRunning(live), "running_now", 3);
@@ -1256,6 +1332,15 @@
         if(changed && !viewDate && lastLive){ render(lastLive); } } }).catch(function(){});
   }
   pollFoul(); setInterval(pollFoul,60000);
+  /* accuracy scorecard feed — polled independently of the board (same pattern as foul-risk). The
+     HOME coverage tile is single-sourced from ./accuracy.json; graceful-null on 404/absent so the
+     tile simply does not appear until the scorecard lands. Slow feed (re-bakes ~daily) -> 5-min poll. */
+  function pollAccuracy(){
+    fetch(bust("./accuracy.json"),{cache:"no-cache"}).then(function(r){ return r.ok? r.json() : null; })
+      .then(function(j){ if(j){ var changed=JSON.stringify(j)!==JSON.stringify(ACC); ACC=j;
+        if(changed && !viewDate && lastLive){ render(lastLive); } } }).catch(function(){});
+  }
+  pollAccuracy(); setInterval(pollAccuracy,300000);
   setInterval(function(){ updAgo(); tickChips(); tickProv(); }, 1000);
   setInterval(tickElapsed, 15000);
 
