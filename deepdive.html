@@ -505,7 +505,99 @@
     return f;
   }
 
-  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch };
+  // -- pace ------------------------------------------------------------------
+  function renderPace(d){
+    var f=frag();
+    var h=d.headline||{};
+    f.appendChild(el("div","dhead", h.text||""));
+    f.appendChild(tiles([
+      {v:num(h.pace_vs_win_r,2), l:"pace ↔ win% (r)"},
+      {v:num(h.net_eff_vs_win_r,2), l:"net-eff ↔ win% (r)"},
+      {v:num(h.fastest_minus_slowest_poss,1), l:"fastest − slowest poss/g", sm:true},
+      {v:num(h.points_per_possession_2026,3), l:"pts / possession (2026)", sm:true}
+    ]));
+
+    // Panel 1 — pace leaderboard (fastest→slowest), with win% alongside to show the disconnect
+    var pl=d.pace_leaderboard||[];
+    if(pl.length){
+      f.appendChild(plab("Pace leaderboard — possessions per game (fastest → slowest)"));
+      var w1=el("div","dtwrap"), t1=el("table","dt"), hd1=el("tr");
+      ["Team","Pace","Win%","G"].forEach(function(x,i){ hd1.appendChild(el("th",i?"num":null,x)); });
+      var th1=el("thead"); th1.appendChild(hd1); t1.appendChild(th1); var tb1=el("tbody");
+      var mxp=Math.max.apply(null, pl.map(function(r){return r.pace||0;}))||1;
+      pl.forEach(function(r){
+        var tr=el("tr");
+        tr.appendChild(el("td","rowh", r.name||r.team||"—"));
+        var ptd=el("td","num"); ptd.appendChild(document.createTextNode(num(r.pace,1)));
+        var cb=el("span","cellbar"), ci=el("i"); ci.style.width=(Math.min(1,(r.pace||0)/mxp)*100).toFixed(0)+"%"; cb.appendChild(ci); ptd.appendChild(cb);
+        tr.appendChild(ptd);
+        tr.appendChild(el("td","num", pct((r.win_pct!=null?r.win_pct*100:null),1)));
+        tr.appendChild(el("td","num", num(r.n)));
+        tb1.appendChild(tr);
+      });
+      t1.appendChild(tb1); w1.appendChild(t1); f.appendChild(w1);
+    }
+
+    // Panel 2 — net-efficiency leaderboard (the actual driver of winning)
+    var ef=d.efficiency_leaderboard||[];
+    if(ef.length){
+      f.appendChild(plab("Net-efficiency leaderboard — margin per 100 possessions (the real driver)"));
+      var w2=el("div","dtwrap"), t2=el("table","dt"), hd2=el("tr");
+      ["Team","Off","Def","Net","Win%"].forEach(function(x,i){ hd2.appendChild(el("th",i?"num":null,x)); });
+      var th2=el("thead"); th2.appendChild(hd2); t2.appendChild(th2); var tb2=el("tbody");
+      var mxn=Math.max.apply(null, ef.map(function(r){return Math.abs(r.net_eff||0);}))||1;
+      ef.forEach(function(r){
+        var tr=el("tr");
+        tr.appendChild(el("td","rowh", r.name||r.team||"—"));
+        tr.appendChild(el("td","num", num(r.off_eff,1)));
+        tr.appendChild(el("td","num", num(r.def_eff,1)));
+        var ntd=el("td","num"); ntd.appendChild(document.createTextNode(sign(r.net_eff,1)));
+        var cb=el("span","cellbar"), ci=el("i"); if((r.net_eff||0)<0) ci.style.background="var(--away)";
+        ci.style.width=(Math.min(1,Math.abs(r.net_eff||0)/mxn)*100).toFixed(0)+"%"; cb.appendChild(ci); ntd.appendChild(cb);
+        tr.appendChild(ntd);
+        tr.appendChild(el("td","num", pct((r.win_pct!=null?r.win_pct*100:null),1)));
+        tb2.appendChild(tr);
+      });
+      t2.appendChild(tb2); w2.appendChild(t2); f.appendChild(w2);
+    }
+
+    // Panel 3 — the pace-vs-wins point: correlation of each factor with winning (near-zero for pace)
+    var cr=(d.correlations||{}).all_seasons||{};
+    if(cr.pace_vs_win!=null || cr.net_eff_vs_win!=null){
+      f.appendChild(plab("What actually correlates with winning (all seasons, |r| bar)"));
+      var factors=[
+        ["Net efficiency", cr.net_eff_vs_win],
+        ["Offensive efficiency", cr.off_eff_vs_win],
+        ["Defensive efficiency", cr.def_eff_vs_win],
+        ["Pace (possessions/game)", cr.pace_vs_win]
+      ];
+      factors.forEach(function(fx){
+        if(fx[1]==null) return;
+        f.appendChild(barrow(fx[0], fx[1], 1, num(fx[1],2), null, (fx[1]||0)<0));
+      });
+    }
+
+    // read
+    var reads=[]; if(h.text) reads.push(h.text);
+    reads.push("Pace inflates BOTH teams' point totals equally, so how fast a team plays is a style choice, not a skill signal — the slowest team here is the 2nd-best by net efficiency, the fastest is mid-pack. Points PER possession (efficiency), not raw tempo, is what separates winners.");
+    f.appendChild(readStrip(reads));
+
+    // provenance + caveats
+    var pv=d.provenance||{}, def=d.definitions||{};
+    f.appendChild(methodBlock("Definitions · how this is computed · caveats", function(b){
+      provList(b, [
+        ["Sources", (pv.sources||[]).join("; ")||"—"],
+        ["Net efficiency", def.net_eff||"—"],
+        ["Pace", def.pace||"—"],
+        ["Method", pv.method||"—"],
+        ["Script", pv.script||"—"]
+      ]);
+      caveatList(b, pv.caveats, "Honest limitations");
+    }));
+    return f;
+  }
+
+  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace };
 
   function renderDiveCard(row, data){
     var c=el("div","dive");
