@@ -52,6 +52,8 @@
   .pill.arch{background:rgba(47,111,237,.12);color:var(--acc)}
   .pill.fit{background:rgba(31,136,61,.14);color:var(--good);margin-left:4px}
   .pill.fit.top{background:rgba(31,136,61,.24);font-weight:720}
+  .pill.fit.value{background:rgba(31,136,61,.30);color:var(--good);font-weight:730}
+  .pill.fit.pricey{background:rgba(154,103,0,.16);color:var(--warn);font-weight:680}
   .war{font-weight:720;font-variant-numeric:tabular-nums}
   .tv{font-weight:720;font-variant-numeric:tabular-nums;color:var(--acc)}
   .flag-bargain{color:var(--good);font-weight:680}
@@ -273,7 +275,10 @@
       if(need && need.ranked.length){
         nl.innerHTML="<b>Fit hint —</b> "+teamName(state.team)+"'s roster is thin at <b>"+
           need.ranked.map(function(a){ return a+(a===need.top?" (biggest gap)":""); }).join("</b>, <b>")+
-          "</b> versus a typical roster. Targets whose archetype fills a gap are flagged “fills need” below.";
+          "</b> versus a typical roster. Targets whose archetype fills a gap are flagged “fills need” below — "+
+          "with a green “· good value” when the target is also an affordable $/WAR, or an honest “· pricey” "+
+          "when it fills the need but you'd overpay (a target with no salary on file keeps the plain fills-need "+
+          "flag — value not guessed).";
       } else if(need){
         nl.textContent="Fit hint — "+teamName(state.team)+"'s roster carries at least a typical share of every skill archetype; no standout gap to flag.";
       }
@@ -305,13 +310,32 @@
       var at=el("td");
       if(r.archetype){
         at.appendChild(el("span","pill arch",r.archetype));
-        // fit hint: My-team lens only, real target archetype vs real team need, and only on an actual TARGET
-        // (not the team's own player — a fit is someone you'd ACQUIRE). Omit silently on any missing side.
+        // affordability-aware fit hint: My-team lens only, real target archetype vs real team need, and
+        // only on an actual TARGET (not the team's own player — a fit is someone you'd ACQUIRE). The need
+        // side is omit-guarded (no archetype / no rostered archetypes / own player / League lens => no
+        // pill). Over that need we layer an AFFORDABILITY read from the SAME $/WAR value tier the board
+        // prices by (valueFlag): fills-a-need AND good value (Bargain/Fair $/WAR) => a distinct green
+        // "· good value" pill; fills a need but an Overpay $/WAR => an honest "· pricey" flag; and — the
+        // data-integrity case — a target with NO salary/$/WAR on file keeps the PLAIN fills-need pill with
+        // NO affordability claim (never guess a value). CEO rule #1: every claim (need AND value) comes
+        // from a real spine field; value-unknown never becomes value-implied.
         if(state.lens==="team" && state.team && r.team!==state.team && need && need.needs.hasOwnProperty(r.archetype)){
           var isTop=need.top===r.archetype;
-          var fp=el("span","pill fit"+(isTop?" top":""), isTop?"fills top need":"fills need");
+          var baseLabel=isTop?"fills top need":"fills need";
+          var vf=valueFlag(r); // {txt,cls} from the $/WAR tier, or null when $/WAR is unknown
+          var cls="pill fit"+(isTop?" top":""), label=baseLabel, vtitle="";
+          if(vf && (vf.txt==="Bargain"||vf.txt==="Fair")){
+            cls+=" value"; label=baseLabel+" · good value";
+            vtitle=" and is good value ("+vf.txt.toLowerCase()+" $/WAR at "+perWar(r.dollar_per_war)+") — it fills the gap without overpaying.";
+          } else if(vf && vf.txt==="Overpay"){
+            cls+=" pricey"; label=baseLabel+" · pricey";
+            vtitle=" but is pricey (overpay $/WAR at "+perWar(r.dollar_per_war)+") — it fills the gap, but you'd pay up for the production.";
+          } else {
+            vtitle=" (no salary on file — value not assessed, so no affordability read).";
+          }
+          var fp=el("span",cls,label);
           fp.title=teamName(state.team)+" is thin at "+r.archetype+" relative to a typical roster"+
-            (isTop?" (its biggest gap)":"")+"; this target fills that gap.";
+            (isTop?" (its biggest gap)":"")+"; this target fills that gap"+vtitle;
           at.appendChild(fp);
         }
       } else { at.appendChild(el("span","legend","—")); }
@@ -325,9 +349,14 @@
       "internal figure. Contract length / control years are NOT shown — they need the v2 structured-contract data. ";
     if(state.lens==="team"){
       noteTxt+="“Fills need” flags a target whose skill archetype fills a gap in your roster — a gap = a skill "+
-        "archetype you carry fewer of than a typical rostered team (“top need” = your biggest gap). Both the "+
-        "target archetype and the team need come from the 2025 skill-archetype decomposition; a target with no "+
-        "archetype, or a team with no archetype data, shows no flag (never a guessed fit). ";
+        "archetype you carry fewer of than a typical rostered team (“top need” = your biggest gap). An "+
+        "affordability read is layered on top from the same $/WAR value tiers as the Value-for-Money board: "+
+        "“· good value” = fills a need AND a Bargain/Fair $/WAR (favourable value); “· pricey” = fills a need "+
+        "but an Overpay $/WAR (honest — it fills the gap, but you'd pay up). Both the target archetype and the "+
+        "team need come from the 2025 skill-archetype decomposition, and the value read from the canonical 2026 "+
+        "base salary ÷ projected WAR; a target with no archetype (or a team with no archetype data) shows no flag, "+
+        "and a target with no salary on file keeps the plain fills-need flag with no affordability claim (never a "+
+        "guessed fit or a guessed value). ";
     }
     noteTxt+="Showing top "+Math.min(rows.length,60)+" of "+rows.length+".";
     wrap.appendChild(el("div","note",noteTxt));
