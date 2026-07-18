@@ -248,6 +248,15 @@
     color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 4px;flex:0 0 auto}
   .gcard .range .rval{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
   .gcard .venue{font-size:11px;color:var(--warn);line-height:1.4;margin-top:1px}
+  /* IMPACT-FIRST availability line (BR-V2): who is OUT tonight (the coach signal), not a 28-name dump.
+     Reuses the card's existing token language — a small bad-color "Out" label + plain names. */
+  .gcard .outs{font-size:11.5px;line-height:1.4;margin-top:1px;color:var(--ink)}
+  .gcard .outs .lab{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+    color:#fff;background:var(--bad);border-radius:5px;padding:1px 6px;margin-right:6px}
+  .gcard .outs .stp{color:var(--muted)}
+  /* full depth chart is now on-demand (collapsed) so the card leads with the pick + who's out */
+  .gcard details.depth>summary{cursor:pointer;font-size:10.5px;color:var(--accent);list-style:none;margin-top:2px}
+  .gcard details.depth>summary::-webkit-details-marker{display:none}
   /* ---------- EDGE hero (data-gated: only renders if the board carries a tonight_edge block) ---------- */
   .edge{margin-top:12px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--promote);
     border-radius:12px;padding:11px 14px;box-shadow:var(--shadow)}
