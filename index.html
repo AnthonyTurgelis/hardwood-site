@@ -901,11 +901,39 @@
       }
       if(g.venue_note){ c.appendChild(el("div","venue", g.venue_note)); }
 
-      // Depth Chart Rendering
+      // ---- IMPACT-FIRST availability (BR-V2 reader-value pass) ----
+      // The one thing a coach/GM/fan needs from a game card is WHO IS OUT tonight (and who steps up),
+      // not a 28-name depth dump in 11px type. So we (1) surface the ruled-out players + any promotion
+      // as a plain "Out …" line up top, and (2) keep the full depth chart but COLLAPSED behind a toggle
+      // so the card stays scannable and reads as one product, not a table.
+      // Discipline: `g.abbr` is guarded (a game missing it must degrade cleanly, never throw and kill
+      // the whole hero); omit-not-invent (no outs -> NO line, never a fabricated "nobody out").
+      var sides = String(g.abbr||"").split(" @ ");
+      var awayAbbr = (sides[0]||"").trim(), homeAbbr = (sides[1]||"").trim();
+      function scanSide(dc, abbr){
+        var outs=[], steps=[];
+        (dc||[]).forEach(function(p){
+          if(!p || !p.player) return;
+          var tag = abbr ? (" ("+abbr+")") : "";
+          if(p.out || p.susp){ outs.push(p.player+tag); }
+          else if(p.effective && p.base && p.effective < p.base){ steps.push(p.player+tag); }
+        });
+        return {outs:outs, steps:steps};
+      }
+      var aw=scanSide(g.away_depth, awayAbbr), hm=scanSide(g.home_depth, homeAbbr);
+      var outs=aw.outs.concat(hm.outs), steps=aw.steps.concat(hm.steps);
+      if(outs.length){
+        var ol=el("div","outs");
+        ol.appendChild(el("span","lab","Out"));
+        ol.appendChild(document.createTextNode(outs.join(", ")));
+        if(steps.length){ ol.appendChild(el("span","stp"," · steps up: "+steps.join(", "))); }
+        c.appendChild(ol);
+      }
+      // Full depth chart — kept for the reader who wants the whole rotation, but on-demand (collapsed).
       function renderDc(title, dc) {
         if (!dc || !dc.length) return null;
         var wrap = el("div", "dc-wrap");
-        wrap.appendChild(el("div", "dc-title", title + " Depth"));
+        wrap.appendChild(el("div", "dc-title", (title||"") + " Depth"));
         var grid = el("div", "dc-grid");
         dc.forEach(function(p) {
           var pEl = el("div", "dc-player");
@@ -921,12 +949,17 @@
         wrap.appendChild(grid);
         return wrap;
       }
-      var dcBox = el("div", "dc-box");
-      var awayDc = renderDc(g.abbr.split(" @ ")[0], g.away_depth);
-      if (awayDc) dcBox.appendChild(awayDc);
-      var homeDc = renderDc(g.abbr.split(" @ ")[1], g.home_depth);
-      if (homeDc) dcBox.appendChild(homeDc);
-      if (awayDc || homeDc) c.appendChild(dcBox);
+      var awayDc = renderDc(awayAbbr, g.away_depth);
+      var homeDc = renderDc(homeAbbr, g.home_depth);
+      if (awayDc || homeDc) {
+        var det = el("details", "depth");
+        det.appendChild(el("summary", null, "Depth chart ▾"));
+        var dcBox = el("div", "dc-box");
+        if (awayDc) dcBox.appendChild(awayDc);
+        if (homeDc) dcBox.appendChild(homeDc);
+        det.appendChild(dcBox);
+        c.appendChild(det);
+      }
 
       grid.appendChild(c);
     });
