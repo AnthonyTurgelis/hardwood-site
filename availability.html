@@ -50,6 +50,7 @@
   .pill.ret{color:var(--ink)}
   .pill.recon{border-color:var(--accent);color:var(--accent)}
   .pill.stale{border-color:var(--warn);color:var(--warn)}
+  .pill.unk{border-style:dashed}
   .disc{font-size:12px;color:var(--muted);margin:22px 0 0;padding-left:10px;border-left:3px solid var(--line)}
   .empty{color:var(--muted);font-style:italic}
   footer{max-width:1000px;margin:0 auto;padding:22px 16px;color:var(--muted);font-size:11px}
@@ -87,6 +88,25 @@
   "use strict";
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
 
+  // Order the injury list as a RETURN TIMELINE: soonest expected-back first, no-timeline last.
+  // Display-only ordinal (parses "Jul 19" / "Aug 3"); null/unparseable -> Infinity so it sinks to
+  // the bottom. A return month EARLIER than the report month season-wraps to next year (Dec -> Jan)
+  // so the ordering stays chronological. Never invents a date — only orders the ones on file.
+  var MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  function retOrd(ret, baseMonth){
+    if(!ret) return Infinity;
+    var m=/^\s*([A-Za-z]{3})[A-Za-z]*\.?\s+(\d{1,2})\s*$/.exec(String(ret));
+    if(!m) return Infinity;
+    var mi=MON[m[1].toLowerCase()]; if(mi==null) return Infinity;
+    var ord=mi*31+parseInt(m[2],10);
+    if(baseMonth!=null && mi<baseMonth) ord+=12*31;
+    return ord;
+  }
+  function baseMon(dateStr){
+    var m=/^\d{4}-(\d{2})-\d{2}/.exec(String(dateStr||""));
+    return m ? (parseInt(m[1],10)-1) : null;
+  }
+
   function tile(cls,n,k){
     var t=el("div","tile "+cls);
     t.appendChild(el("div","n", (n==null?"—":String(n))));
@@ -109,6 +129,7 @@
     if(p.note) row.appendChild(el("div","rnote", p.note));
     var meta=el("div","meta");
     if(p["return"]) meta.appendChild(el("span","pill ret","expected back "+p["return"]));
+    else meta.appendChild(el("span","pill unk","no return timeline yet"));
     if(p.updated) meta.appendChild(el("span","pill","updated "+p.updated));
     if(p.reconciled_from_feed){ var rp=el("span","pill recon","read from the latest report");
       rp.title="Our read is fresher than the raw feed — the latest official report moved this player to a less-restrictive status."; meta.appendChild(rp); }
@@ -118,7 +139,7 @@
     return row;
   }
 
-  function groupSection(g){
+  function groupSection(g, baseMonth){
     var cls = g.status==="day-to-day" ? "dtd" : "out";
     var s=el("section","grp "+cls); s.setAttribute("data-k","g|"+g.status);
     var gh=el("div","gh");
@@ -127,7 +148,12 @@
     gh.appendChild(el("span","gc", "· "+g.count+(g.count===1?" player":" players")));
     s.appendChild(gh);
     if(g.blurb) s.appendChild(el("div","blurb", g.blurb));
-    (g.players||[]).forEach(function(p){ s.appendChild(playerRow(p, cls)); });
+    // read the list as a return timeline: soonest back first, no-timeline last (stable within ties).
+    var ordered=(g.players||[]).slice().sort(function(a,b){
+      var oa=retOrd(a["return"], baseMonth), ob=retOrd(b["return"], baseMonth);
+      return oa===ob ? 0 : (oa<ob ? -1 : 1);
+    });
+    ordered.forEach(function(p){ s.appendChild(playerRow(p, cls)); });
     return s;
   }
 
@@ -165,7 +191,8 @@
       main.appendChild(tl);
     }
 
-    d.groups.forEach(function(g){ main.appendChild(groupSection(g)); });
+    var bm=baseMon(d.date);
+    d.groups.forEach(function(g){ main.appendChild(groupSection(g, bm)); });
 
     if(d.note) main.appendChild(el("p","disc", d.note));
     document.getElementById("foot").textContent = "Baked " + (d.generated_et||d.generated_utc||"") + ". A readout of the availability our projections assume — not injury news, and never a betting call.";
