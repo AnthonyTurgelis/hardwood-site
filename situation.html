@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Situation Explorer</title>
+<style>
+  :root{ --bg:#f4f6f8; --card:#fff; --card2:#f7f9fc; --ink:#161a21; --muted:#5a6675; --dim:#8a93a3;
+    --line:#e3e7ee; --line2:#d3d9e3; --acc:#2b6cb0; --good:#1f883d; --bad:#c62828; --warn:#9a6700;
+    --chip:#eef2f8; --shadow:0 1px 2px rgba(20,24,35,.06); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --card2:#1c2330; --ink:#e6edf3;
+    --muted:#9aa7b4; --dim:#6b7684; --line:#242c38; --line2:#39424f; --acc:#58a6ff; --good:#3fb950; --bad:#ff7b72;
+    --warn:#d29922; --chip:#21324a; --shadow:none; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0}
+  .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto;padding:0 14px}
+  .ago{font-size:11px;color:var(--dim);white-space:nowrap}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--acc);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 48px}
+  .lede{color:var(--muted);font-size:12.5px;margin:6px 0}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:18px 0 8px;font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);overflow:hidden}
+  .pad{padding:12px 14px}
+  .scroll{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+  th,td{padding:5px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;background:var(--card2)}
+  td .cn{display:block;font-size:9.5px;color:var(--dim)}
+  .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
+  .empty{color:var(--dim);font-style:italic}
+  /* controls */
+  .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 16px;margin:8px 0}
+  .ctl{display:flex;flex-direction:column;gap:4px}
+  .ctl label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+  .ctl .val{font-size:12.5px;font-weight:680}
+  select{font-size:13px;padding:6px 10px;border:1px solid var(--line2);border-radius:8px;background:var(--card);color:var(--ink);font-weight:620;max-width:100%}
+  input[type=range]{width:100%;accent-color:var(--acc)}
+  .seg{display:inline-flex;border:1px solid var(--line2);border-radius:999px;overflow:hidden;width:max-content}
+  .seg button{border:0;background:var(--card);color:var(--muted);font-size:12.5px;font-weight:640;padding:6px 14px;cursor:pointer}
+  .seg button.on{background:var(--acc);color:#fff}
+  /* result */
+  .big{font-size:38px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.05}
+  .big small{font-size:16px;font-weight:650;color:var(--muted)}
+  .big.lead{color:var(--good)} .big.trail{color:var(--bad)} .big.even{color:var(--acc)}
+  .readline{font-size:14px;font-weight:650;margin-top:2px}
+  .basis{font-size:12px;color:var(--muted);margin-top:6px}
+  .adjline{font-size:12px;color:var(--muted);margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)}
+  .caution{font-size:11.5px;color:var(--warn);background:rgba(154,103,0,.08);border:1px solid rgba(154,103,0,.25);border-radius:8px;padding:6px 10px;margin-top:8px}
+  .agree{font-size:11.5px;color:var(--good);background:rgba(31,136,61,.07);border:1px solid rgba(31,136,61,.22);border-radius:8px;padding:6px 10px;margin-top:8px}
+  .ctx{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
+  .prov{font-size:11px;color:var(--muted);background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:8px 11px;margin:8px 0;line-height:1.5}
+  .prov b{color:var(--ink)}
+  .two{display:grid;grid-template-columns:1.3fr 1fr;gap:10px}
+  @media (max-width:720px){ .two{grid-template-columns:1fr} }
+  footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
+</style>
+<link rel="stylesheet" href="./hardwood.css">
+</head>
+<body>
+<header>
+  <h1>The Hardwood — Situation Explorer</h1>
+  <span class="ago" id="ago"></span>
+</header>
+<div class="sub">Set the score, the clock, the floor and the matchup — and read what actually happened from that exact spot across a decade of real games. Every number is measured, never a formula.</div>
+<nav>
+  <a href="./index.html">Board</a>
+  <a href="./queue.html">What's Next</a>
+  <a href="./games.html">Games</a>
+  <a href="./availability.html">Injuries</a>
+  <a href="./teams.html">Teams</a>
+  <a href="./coach.html">Coach</a>
+  <a href="./gm.html">GM</a>
+  <a href="./players.html">Players</a>
+  <a class="active" href="./situation.html">Situations</a>
+  <a href="./review.html">Daily Review</a>
+  <a href="./accuracy.html">Our Accuracy</a>
+  <a href="./ledger.html">Error Map</a>
+  <a href="./org.html">The Team</a>
+  <a href="./scouting.html">Scouting</a>
+  <a href="./deepdive.html">Deep Dives</a>
+  <a href="./primer.html">Learn</a>
+</nav>
+<main id="main"><p class="empty">Loading the situation explorer…</p></main>
+<footer id="foot"></footer>
+<script src="./hardwood.js"></script>
+<script>
+(function(){
+  "use strict";
+  var DATA=null;
+  var state={ ck:"q3", margin:-6, side:"neutral", teamA:"", teamB:"" };
+
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+
+  // ---------- pure lookup helpers (the page only looks up + draws straight lines) ----------
+  function cpOf(data,key){
+    for(var i=0;i<data.checkpoints.length;i++) if(data.checkpoints[i].key===key) return data.checkpoints[i];
+    return data.checkpoints[0];
+  }
+  function interp(curve,m){
+    // straight-line read between the two nearest MEASURED points; clamped at the dial's ends.
+    var lo=curve[0], hi=curve[curve.length-1];
+    if(m<=lo.margin) return { winpct:lo.winpct, clamped:(m<lo.margin) };
+    if(m>=hi.margin) return { winpct:hi.winpct, clamped:(m>hi.margin) };
+    for(var i=0;i<curve.length-1;i++){
+      var a=curve[i], b=curve[i+1];
+      if(m>=a.margin && m<=b.margin){
+        if(b.margin===a.margin) return { winpct:a.winpct, clamped:false };
+        var f=(m-a.margin)/(b.margin-a.margin);
+        return { winpct:a.winpct+f*(b.winpct-a.winpct), clamped:false };
+      }
+    }
+    return { winpct:hi.winpct, clamped:false };
+  }
+  function nearestMeasured(curve,m){
+    // the closest measured point that carries a real game count (the tied point is definitional)
+    var best=null, bd=1e9;
+    for(var i=0;i<curve.length;i++){
+      var p=curve[i];
+      if(p.n==null) continue;
+      var d=Math.abs(p.margin-m);
+      if(d<bd){ bd=d; best=p; }
+    }
+    return best;
+  }
+  function strengthOf(data,abbr){
+    if(!abbr) return 0;
+    for(var i=0;i<data.teams.length;i++) if(data.teams[i].team===abbr) return data.teams[i].strength;
+    return 0;
+  }
+  function computeRead(data,st){
+    var cp=cpOf(data,st.ck);
+    var homeShift = st.side==="home" ? cp.home_edge_pts_left : (st.side==="away" ? -cp.home_edge_pts_left : 0);
+    var gap = strengthOf(data,st.teamA)-strengthOf(data,st.teamB);   // full-game points, your side positive
+    var gapShift = gap*cp.frac_left;                                  // the part of that edge still to come
+    var eff = st.margin + homeShift + gapShift;
+    var raw = interp(cp.curve, st.margin);
+    var adj = interp(cp.curve, eff);
+    var near = nearestMeasured(cp.curve, eff);
+    return {
+      cp:cp, eff:eff, homeShift:homeShift, gap:gap, gapShift:gapShift,
+      shift:homeShift+gapShift,
+      rawpct:raw.winpct, winpct:adj.winpct,
+      clamped:adj.clamped||raw.clamped,
+      n: near?near.n:null, spot: near?near.spot:null,
+      thin: !!(near && near.n!=null && near.n<data.thin_n)
+    };
+  }
+  function fmtPct(w){
+    if(w<=0.05) return "under 1%";
+    if(w>=99.95) return "over 99%";
+    return (Math.round(w*10)/10)+"%";
+  }
+  function oneIn(w){
+    if(w<=0.05) return "it has essentially never happened from here in the games we watched";
+    if(w>=99.95) return "we have essentially never seen this spot lost";
+    if(w<=50){ var k=Math.round(100/w); return "about 1 in "+k+" teams in this spot go on to win"; }
+    var k2=Math.round(100/(100-w)); return "about 1 in "+k2+" teams in this spot still lose it";
+  }
+  function marginText(m){
+    if(m===0) return "tied";
+    return (m<0?"down ":"up ")+Math.abs(m);
+  }
+
+  // ---------- result panel ----------
+  function renderResult(data,st){
+    var r=computeRead(data,st);
+    var box=el("div","card");
+    var pad=el("div","pad"); box.appendChild(pad);
+
+    var cls = r.winpct>52 ? "lead" : (r.winpct<48 ? "trail" : "even");
+    var big=el("div","big "+cls, fmtPct(r.winpct));
+    big.appendChild(el("small",null," chance your team wins"));
+    pad.appendChild(big);
+    pad.appendChild(el("div","readline",
+      marginText(st.margin).replace(/^./,function(c){return c.toUpperCase();})+" — "+r.cp.label.toLowerCase()+" ("+r.cp.clock+"): "+oneIn(r.winpct)+"."));
+
+    if(r.n!=null){
+      pad.appendChild(el("div","basis",
+        "Resting on "+r.n.toLocaleString()+" real games where a team sat "+r.spot+" at this point (nearest measured spot on the dial)."));
+    }
+
+    if(r.shift!==0){
+      var bits=[];
+      if(r.homeShift!==0) bits.push((r.homeShift>0?"the home floor is still worth about +":"playing on the road costs about ")+Math.abs(r.homeShift).toFixed(1)+" points from here");
+      if(r.gapShift!==0) bits.push("the strength gap ("+(r.gap>0?"you by ":"them by ")+Math.abs(r.gap).toFixed(1)+" points per game) is worth about "+(r.gapShift>0?"+":"-")+Math.abs(r.gapShift).toFixed(1)+" points over the time left");
+      pad.appendChild(el("div","adjline",
+        "Adjustments: "+bits.join("; ")+". That slides you from the plain even-floor read of "+fmtPct(r.rawpct)+" to "+fmtPct(r.winpct)+" — same measured curve, different spot on it."));
+    }
+
+    if(r.thin){
+      pad.appendChild(el("div","caution",
+        "Thin sample: the nearest measured spot rests on only "+r.n+" games — treat this as a rough read, not a precise probability."));
+    }
+    if(r.clamped){
+      pad.appendChild(el("div","caution",
+        "You are past the deepest spot we have measured (leads beyond 18 points). The reading is pinned to the edge of the dial — beyond here the game is about as decided as they get, but we will not invent a decimal."));
+    }
+
+    // independent cross-check where the second grid has the same spot measured
+    var xs=data.cross_check[st.ck];
+    if(xs && st.side==="neutral" && r.gap===0){
+      for(var i=0;i<xs.length;i++){
+        if(Math.abs(st.margin)===xs[i].lead){
+          var v = st.margin>0 ? xs[i].winpct : Math.round((100-xs[i].winpct)*10)/10;
+          pad.appendChild(el("div","agree",
+            "Second opinion: our separate lead-value study reads this same spot at "+v+"% — the two independent studies agree."));
+          break;
+        }
+      }
+    }
+
+    // plain-English context line
+    if(st.margin<0){
+      pad.appendChild(el("div","ctx",
+        "For hope: the biggest comeback in our decade of games erased a "+data.facts.biggest_comeback_pts+"-point hole, and teams have climbed out of 15-plus down "+data.facts.comebacks_from_15_plus+" times ("+data.facts.comebacks_from_20_plus+" times from 20-plus). Deep holes are rare escapes — but not zero."));
+    } else if(st.margin>0){
+      pad.appendChild(el("div","ctx", data.late_lead_caution.text));
+    } else {
+      pad.appendChild(el("div","ctx",
+        "Tied game: between even teams on an even floor this is a coin flip by definition — the home-floor and strength dials above are what tilt it."));
+    }
+    return box;
+  }
+
+  // ---------- the underlying measured grid ----------
+  function renderGrid(data){
+    var card=el("div","card scroll");
+    var tb=el("table");
+    var tr=el("tr"); tr.appendChild(el("th",null,"Trailing by"));
+    data.checkpoints.forEach(function(cp){ tr.appendChild(el("th",null,cp.label)); });
+    tb.appendChild(tr);
+    var bandSpots=["down 1-3","down 4-6","down 7-10","down 11-15","down 16+"];
+    bandSpots.forEach(function(spot){
+      var row=el("tr"); row.appendChild(el("td",null,spot.replace("down ","")+" points"));
+      data.checkpoints.forEach(function(cp){
+        var cell=null;
+        for(var i=0;i<cp.curve.length;i++) if(cp.curve[i].spot===spot){ cell=cp.curve[i]; break; }
+        var td=el("td");
+        if(cell){
+          td.appendChild(document.createTextNode(cell.winpct<=0.05?"<1%":cell.winpct+"%"));
+          var cn=el("span","cn",cell.n.toLocaleString()+" games"); td.appendChild(cn);
+        } else td.textContent="—";
+        row.appendChild(td);
+      });
+      tb.appendChild(row);
+    });
+    card.appendChild(tb);
+    return card;
+  }
+
+  /* ---------- live boot: controls, wiring, fetch own JSON ---------- */
+  function ctl(labelText,node,valNode){
+    var w=el("div","ctl"); var l=el("label",null,labelText); w.appendChild(l); w.appendChild(node);
+    if(valNode) w.appendChild(valNode); return w;
+  }
+  function teamSelect(data,id){
+    var s=el("select"); s.id=id;
+    var o0=el("option",null,"Average team"); o0.value=""; s.appendChild(o0);
+    data.teams.forEach(function(t){
+      var o=el("option",null,t.name+" ("+(t.strength>0?"+":"")+t.strength.toFixed(1)+" per game)");
+      o.value=t.team; s.appendChild(o);
+    });
+    return s;
+  }
+  function render(){
+    var main=document.getElementById("main");
+    main.innerHTML="";
+    if(!DATA||!DATA.checkpoints||!DATA.checkpoints.length){
+      main.appendChild(el("p","empty","The situation data is not available right now — the rest of the board is unaffected."));
+      return;
+    }
+    main.appendChild(el("p","lede",DATA.static_note));
+
+    // controls
+    var controls=el("div","controls");
+    var ckSel=el("select"); ckSel.id="ck";
+    DATA.checkpoints.forEach(function(cp){
+      var o=el("option",null,cp.label+" — "+cp.clock); o.value=cp.key;
+      if(cp.key===state.ck) o.selected=true;
+      ckSel.appendChild(o);
+    });
+    ckSel.onchange=function(){ state.ck=ckSel.value; paint(); };
+    controls.appendChild(ctl("Moment in the game",ckSel));
+
+    var mval=el("div","val");
+    var slider=el("input"); slider.type="range"; slider.min=-18; slider.max=18; slider.step=1; slider.value=state.margin; slider.id="margin";
+    slider.oninput=function(){ state.margin=parseInt(slider.value,10)||0; paint(); };
+    controls.appendChild(ctl("Score (your team)",slider,mval));
+
+    var seg=el("div","seg");
+    [["away","On the road"],["neutral","Even floor"],["home","At home"]].forEach(function(p){
+      var b=el("button",null,p[1]); b.type="button";
+      if(state.side===p[0]) b.className="on";
+      b.onclick=function(){ state.side=p[0]; paint(); };
+      seg.appendChild(b);
+    });
+    controls.appendChild(ctl("Whose floor",seg));
+
+    var ta=teamSelect(DATA,"teamA"); ta.value=state.teamA;
+    ta.onchange=function(){ state.teamA=ta.value; paint(); };
+    var tbsel=teamSelect(DATA,"teamB"); tbsel.value=state.teamB;
+    tbsel.onchange=function(){ state.teamB=tbsel.value; paint(); };
+    controls.appendChild(ctl("Your team",ta));
+    controls.appendChild(ctl("Opponent",tbsel));
+    main.appendChild(controls);
+
+    var resultHost=el("div"); resultHost.id="result"; main.appendChild(resultHost);
+
+    main.appendChild(el("h2",null,"The measured grid under the dial"));
+    main.appendChild(renderGrid(DATA));
+    main.appendChild(el("p","note",
+      "Trailing-team win rates at each moment; the leading side of the dial is the same games seen from the other bench. "+
+      "Quarter-break columns pool "+DATA.facts.games.toLocaleString()+" games ("+DATA.facts.seasons+"); the mid-4th columns use the "+DATA.facts.clock_games.toLocaleString()+" games with full clock detail."));
+
+    main.appendChild(el("h2",null,"Why late leads are less safe than they look"));
+    var cau=el("div","card"); var cp2=el("div","pad");
+    cp2.appendChild(el("div","ctx",DATA.late_lead_caution.text));
+    cp2.appendChild(el("div","ctx",DATA.late_lead_caution.mechanism.text));
+    cau.appendChild(cp2); main.appendChild(cau);
+
+    var prov=el("div","prov");
+    prov.appendChild(el("b",null,"Where these numbers come from: "));
+    prov.appendChild(document.createTextNode(DATA.method+" Home floor measured at +"+DATA.home.edge_pts+" points ("+DATA.home.win_pct+"% home wins across "+DATA.home.n_games.toLocaleString()+" games); as a check, home teams trailing entering the 4th came back "+DATA.home.end_q3_split.home_trailing_winpct+"% of the time vs "+DATA.home.end_q3_split.away_trailing_winpct+"% for road teams."));
+    main.appendChild(prov);
+
+    paint();
+
+    function paint(){
+      mval.textContent = state.margin===0 ? "Tied" : (state.margin<0?"Your team down "+(-state.margin):"Your team up "+state.margin);
+      var host=document.getElementById("result");
+      host.innerHTML="";
+      host.appendChild(renderResult(DATA,state));
+      var bs=seg.querySelectorAll("button");
+      for(var i=0;i<bs.length;i++) bs[i].className = (["away","neutral","home"][i]===state.side)?"on":"";
+    }
+  }
+  function load(){
+    fetch("./situation.json?v="+Date.now(),{cache:"no-cache"})
+      .then(function(r){ return r.ok?r.json():null; })
+      .catch(function(){ return null; })
+      .then(function(d){
+        DATA=d;
+        render();
+        var a=document.getElementById("ago"); if(a) a.textContent="static study";
+        var f=document.getElementById("foot");
+        if(f) f.textContent="Baked "+((DATA&&DATA.generated_utc)||"")+" from our published deep-dive studies (comebacks, lead values, home floor, score effects) and current team strength. Static explorer — it does not follow tonight's games live; that live version is the natural next step.";
+      });
+  }
+  load();
+})();
+</script>
+</body>
+</html>

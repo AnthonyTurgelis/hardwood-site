@@ -126,6 +126,7 @@
   <a href="./coach.html">Coach</a>
   <a href="./gm.html">GM</a>
   <a href="./players.html">Players</a>
+  <a href="./situation.html">Situations</a>
   <a href="./review.html">Daily Review</a>
   <a href="./accuracy.html">Our Accuracy</a>
   <a href="./ledger.html">Error Map</a>
@@ -623,6 +624,14 @@
       var hl=(typeof h==="string")?h:(h&&(h.text||h.one_liner));
       if(!hl) hl=(typeof data.one_line==="string"?data.one_line:null)||row.one_line;
       c.appendChild(el("div","dhead", hl||"Detail available in the source data."));
+    }
+    // a dive that lives on its own page (row.page, e.g. the Situation Explorer) gets a
+    // card link out to it — same graceful pattern as the data cards, never required.
+    if(row.page&&/^[\w.-]+\.html$/.test(row.page)){
+      var lk=document.createElement("a");
+      lk.className="dive-open"; lk.href="./"+row.page; lk.textContent="Open the explorer →";
+      lk.style.cssText="display:inline-block;margin-top:8px;font-weight:600;text-decoration:none;color:var(--acc)";
+      c.appendChild(lk);
     }
     return c;
   }
