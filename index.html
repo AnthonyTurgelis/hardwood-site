@@ -927,13 +927,19 @@
       // the whole hero); omit-not-invent (no outs -> NO line, never a fabricated "nobody out").
       var sides = String(g.abbr||"").split(" @ ");
       var awayAbbr = (sides[0]||"").trim(), homeAbbr = (sides[1]||"").trim();
+      // CONSOLIDATED promotion rule (2026-07-22): the "steps up" rule is baked SERVER-SIDE as the
+      // `promoted` boolean on every depth row (build_site.py _depth_promoted — the exact old client
+      // rule !out && !susp && effective && base && effective < base). This renderer only READS the
+      // flag; it no longer re-derives the rule, so it can never drift from the availability
+      // readout's "Likely to step up" clause (which reads the same flag). A pre-flag row degrades
+      // to no "steps up" entry (omit-not-invent), never a locally re-derived guess.
       function scanSide(dc, abbr){
         var outs=[], steps=[];
         (dc||[]).forEach(function(p){
           if(!p || !p.player) return;
           var tag = abbr ? (" ("+abbr+")") : "";
           if(p.out || p.susp){ outs.push(p.player+tag); }
-          else if(p.effective && p.base && p.effective < p.base){ steps.push(p.player+tag); }
+          else if(p.promoted){ steps.push(p.player+tag); }
         });
         return {outs:outs, steps:steps};
       }
@@ -956,6 +962,10 @@
           var pEl = el("div", "dc-player");
           var cls = ["dc-name"];
           if (p.out || p.susp) { cls.push("dc-out"); }
+          // NOTE: dc-promoted is a DISPLAY-ONLY slot-elevation highlight and is DELIBERATELY a
+          // broader rule than the consolidated `promoted` steps-up flag (no out/susp guard — an
+          // out player whose effective slot moved still shows her slot elevation in the full
+          // chart). NOT part of the steps-up rule; do not "consolidate" it onto p.promoted.
           if (p.effective && p.base && p.effective < p.base) { cls.push("dc-promoted"); }
           var nm = el("span", cls.join(" "), p.player);
           var pos = el("span", "dc-pos", p.group + (p.effective ? p.effective : ""));
