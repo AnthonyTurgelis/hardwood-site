@@ -53,6 +53,11 @@
   .pill.unk{border-style:dashed}
   .implead{border-left:3px solid var(--out)}
   .implead .unsz{font-size:11.5px;color:var(--muted);margin-top:5px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;box-shadow:var(--shadow)}
+  .chip .vs{color:var(--muted);font-size:10px;text-transform:uppercase;margin:0 6px}
+  .chip .lean{color:var(--out);font-weight:700}
+  .chnote{font-size:11.5px;color:var(--muted);margin-top:6px}
   .short .row .rname{font-weight:480;font-size:12.5px}
   .pill.tonite{border-color:var(--accent);color:var(--accent)}
   .disc{font-size:12px;color:var(--muted);margin:22px 0 0;padding-left:10px;border-left:3px solid var(--line)}
@@ -203,6 +208,26 @@
       tl.appendChild(tile("q", d.summary.questionable, "questionable"));
       tl.appendChild(tile("ok", d.summary.available, "available"));
       main.appendChild(tl);
+    }
+
+    // Per-matchup short-handed comparison chips (baked; one chip per game with any absences —
+    // a full-strength-both-sides game is omitted at bake, never invented here). The baked `more`
+    // team gets the visual lean; labels render as baked text only.
+    if(d.matchup_chips && d.matchup_chips.length){
+      var mc=el("section","chips-sec"); mc.setAttribute("data-k","chips");
+      mc.appendChild(el("h2",null,"Tonight's matchups — who's more short-handed"));
+      var wrap=el("div","chips");
+      d.matchup_chips.forEach(function(c){
+        if(!c || !c.away || !c.home) return;
+        var ch=el("div","chip"); ch.setAttribute("data-k","c|"+(c.game||""));
+        ch.appendChild(el("span", c.more && c.more===c.away.team ? "side lean":"side", c.away.label||""));
+        ch.appendChild(el("span","vs","vs"));
+        ch.appendChild(el("span", c.more && c.more===c.home.team ? "side lean":"side", c.home.label||""));
+        wrap.appendChild(ch);
+      });
+      mc.appendChild(wrap);
+      if(d.chips_note) mc.appendChild(el("div","chnote", d.chips_note));
+      main.appendChild(mc);
     }
 
     // Per-team "who's short-handed" roll-up (baked; a team whose absences we can't size shows an

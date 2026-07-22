@@ -215,6 +215,72 @@
       var note=el("div","rnote");
       note.textContent="Auto-picked from the table below - only slices with enough games to trust can appear here; a hot or cold handful of games never makes this box.";
       c.appendChild(note);
+      // Trend-over-time on the headline number: cumulative average miss as games graded in,
+      // n marked at every point (bar tooltips + caption). The verdict line is baked server-side
+      // from the same rows and says "flat/noisy" outright when that's the truth.
+      if(hm.trend && hm.trend.points && hm.trend.points.length){
+        var tp=hm.trend.points, tnoun=hm.trend.noun||"games";
+        var trWrap=el("div"); trWrap.style.marginTop="9px"; trWrap.setAttribute("data-k","hmtrend");
+        trWrap.appendChild(el("span","k","Has it been getting better?"));
+        var strip=el("div");
+        strip.style.cssText="display:flex;align-items:flex-end;gap:2px;height:34px;max-width:360px;margin:6px 0 3px";
+        var tmax=0; tp.forEach(function(p){ if(num(p.avg)&&p.avg>tmax) tmax=p.avg; });
+        tp.forEach(function(p,i){
+          var b=el("div");
+          var h=(tmax>0&&num(p.avg))? Math.max(2,Math.round(p.avg/tmax*32)) : 2;
+          b.style.cssText="flex:1;min-width:3px;border-radius:2px 2px 0 0;height:"+h+
+            "px;background:var(--accent);opacity:"+(i===tp.length-1?"1":"0.5");
+          b.title=(p.date||"")+" - avg miss "+(num(p.avg)?p.avg.toFixed(1):"-")+" after "+p.n+" "+tnoun;
+          strip.appendChild(b);
+        });
+        trWrap.appendChild(strip);
+        var tf=tp[0], tl=tp[tp.length-1], cap=el("div","rnote");
+        var capTxt="Average miss as games graded in: "+
+          (num(tf.avg)?tf.avg.toFixed(1):"-")+" after "+tf.n+" "+tnoun+" → "+
+          (num(tl.avg)?tl.avg.toFixed(1):"-")+" after "+tl.n+" "+tnoun+".";
+        if(hm.trend.label) capTxt+=" "+hm.trend.label;
+        cap.textContent=capTxt;
+        trWrap.appendChild(cap);
+        c.appendChild(trWrap);
+      }
+      // Per-slice drill-down: the actual graded rows behind the headline number, baked
+      // server-side from the same slice (client only renders). Collapsed by default.
+      var dd=hm.drilldown;
+      if(dd && dd.rows && dd.rows.length){
+        var ddNoun=dd.noun||"games", ddTotal=num(dd.total)?dd.total:dd.rows.length;
+        var open=false;
+        var btn=el("button","showall","Show the "+ddTotal+" "+ddNoun+" behind this");
+        btn.type="button";
+        var wrap=el("div"); wrap.style.display="none"; wrap.style.marginTop="8px";
+        wrap.setAttribute("data-k","hmdrill");
+        var scroll=el("div","scroll"), tb=el("table"), thd=el("thead"), htr=el("tr");
+        var hasPlayer=dd.rows.some(function(r){ return r.player; });
+        var heads=["Date","Matchup"].concat(hasPlayer?["Player"]:[])
+          .concat(["We called","What happened","Miss"]);
+        heads.forEach(function(h){ htr.appendChild(el("th",null,h)); });
+        thd.appendChild(htr); tb.appendChild(thd);
+        var body=el("tbody");
+        dd.rows.forEach(function(r){
+          var tr=el("tr");
+          tr.appendChild(el("td",null,r.date||"-"));
+          tr.appendChild(el("td",null,r.matchup||"-"));
+          if(hasPlayer) tr.appendChild(el("td",null,r.player||"-"));
+          tr.appendChild(el("td",null,r.called==null?"-":String(r.called)));
+          tr.appendChild(el("td",null,r.actual==null?"-":String(r.actual)));
+          tr.appendChild(el("td",null,num(r.miss)?String(r.miss):"-"));
+          body.appendChild(tr);
+        });
+        tb.appendChild(body); scroll.appendChild(tb); wrap.appendChild(scroll);
+        if(ddTotal>dd.rows.length){
+          wrap.appendChild(el("div","rnote","Showing the "+dd.rows.length+
+            " biggest misses of the "+ddTotal+" "+ddNoun+" in this group."));
+        }
+        btn.onclick=function(){
+          open=!open; wrap.style.display=open?"":"none";
+          btn.textContent=(open?"Hide":"Show")+" the "+ddTotal+" "+ddNoun+" behind this";
+        };
+        c.appendChild(btn); c.appendChild(wrap);
+      }
     } else {
       var emptyLine=el("div",null,(hm && hm.line) ? hm.line : "No slice has enough games yet to call out a trustworthy weak spot.");
       emptyLine.style.color="var(--muted)";
