@@ -299,7 +299,9 @@
     // point reads
     if((d.point_reads||[]).length){
       f.appendChild(plab("Quick reads (comeback win% · n)"));
-      (d.point_reads||[]).slice(0,6).forEach(function(pr){
+      // Reader-value gate: show EVERY point read (no silent cap — the list is short and each row
+      // is a real, distinct scenario a reader may be looking for).
+      (d.point_reads||[]).forEach(function(pr){
         f.appendChild(barrow(pr.tag, pr.comeback_winpct||0, 50, pct(pr.comeback_winpct,1), "n="+(pr.n!=null?pr.n:"—")));
       });
     }
@@ -455,7 +457,9 @@
     ]));
     function playerTable(label, arr){
       if(!arr||!arr.length) return;
-      f.appendChild(plab(label));
+      // Reader-value gate: the panel says how deep the cut goes ("top 8 of N measured") — never a
+      // silent slice that hides real rows behind an unexplained cap.
+      f.appendChild(plab(label+(arr.length>8?(" — top 8 of "+arr.length+" measured"):"")));
       var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
       ["Player","Team","Shots","Clutch TS%","Base TS%","Δ TS%"].forEach(function(x,i){ hd.appendChild(el("th",i>1?"num":null,x)); });
       var th=el("thead"); th.appendChild(hd); t.appendChild(th); var tb=el("tbody");

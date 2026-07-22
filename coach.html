@@ -237,8 +237,16 @@
     return COACH.availability.players[pkey]||null;
   }
   function statusCell(pkey){
+    // Reader-value gate: a MISSING availability feed is UNKNOWN, never a blank column that reads
+    // as "everyone fine" (a false all-clear). A blank cell means the feed is live and nothing is
+    // reported for this player — and says so on hover.
+    if(!COACH||!COACH.availability||!COACH.availability.players){
+      var u=el("td",null,"—");
+      u.title="The availability feed is unavailable right now — status unknown, not an all-clear.";
+      return u;
+    }
     var a=availOf(pkey);
-    if(!a) return el("td",null,"");
+    if(!a){ var okc=el("td",null,""); okc.title="No reported availability issue."; return okc; }
     var st=(a.status||"").toLowerCase();
     var cls = st.indexOf("out")>=0 ? "st-out" : "st-dtd";
     var td=el("td",cls, a.status||"");
@@ -289,6 +297,22 @@
       card.appendChild(line);
     });
     return card;
+  }
+  // Reader-value gate: three honest availability states — a real list, a real "nothing reported",
+  // or "the feed is down" (unknown). A silently-vanished section could read as an all-clear when
+  // the feed simply failed to load.
+  function availSection(main,teams,title){
+    var feedOk=!!(COACH&&COACH.availability&&COACH.availability.players);
+    var av=feedOk?availStrip(teams):null;
+    main.appendChild(el("h2",null,title));
+    if(av){
+      main.appendChild(av);
+      main.appendChild(el("div","note","Current injury / availability, dual-feed reconciled. Players not listed have no reported issue."));
+    } else if(feedOk){
+      main.appendChild(el("p","empty","No reported availability issues on "+(teams.length>1?"either roster":"this roster")+" right now."));
+    } else {
+      main.appendChild(el("p","empty","The availability feed is unavailable right now — statuses are unknown, not an all-clear."));
+    }
   }
 
   // ---------- C3: archetype edge grid ----------
@@ -446,10 +470,8 @@
     main.appendChild(sc);
     main.appendChild(el("h2",null,"Player Value Board"));
     main.appendChild(playerBoard(team,false));
-    main.appendChild(methodNote("Roster ranked by projected Wins Above Replacement for 2026 (age-adjusted); the bar under each WAR shows its size against the league's best. On-court is the complementary second value face — the active-only per-possession rating (RAPM-scale, shown as net points per 100 possessions) from real 2026 on-court time; it reads alongside WAR, not instead of it, and shows — for players not yet rated this season (retired / prior-only / no 2026 minutes), never a fabricated 0. Skill bars are league percentiles across five skills — scoring, playmaking, rebounding, defense, ball security — from the 2025 skillset decomposition; players with no 2025 minutes show no bars."));
-    var av=availStrip([team]);
-    if(av){ main.appendChild(el("h2",null,"Availability")); main.appendChild(av);
-      main.appendChild(el("div","note","Current injury / availability, dual-feed reconciled. Players not listed have no reported issue.")); }
+    main.appendChild(methodNote("Roster ranked by projected Wins Above Replacement for 2026 (age-adjusted); the bar under each WAR shows its size against the league's best. On-court is the complementary second value face — the active-only per-possession rating (RAPM-scale, shown as net points per 100 possessions) from real 2026 on-court time; it reads alongside WAR, not instead of it, and shows — for players not yet rated this season (retired / prior-only / no 2026 minutes), never a fabricated 0. Skill bars are league percentiles across five skills — scoring, playmaking, rebounding, defense, ball security — from the 2025 skillset decomposition; players with no 2025 minutes show no bars. Status flags a reported injury or availability issue — a blank Status means nothing is reported for that player, and the whole column shows — if the availability feed itself is down (unknown, not an all-clear)."));
+    availSection(main,[team],"Availability");
     coverageNote(main,[team]);
   }
   function renderMatchup(){
@@ -475,8 +497,7 @@
     main.appendChild(playerBoard(a,true));
     main.appendChild(el("h2",null,"Player Value — "+b));
     main.appendChild(playerBoard(b,true));
-    var av=availStrip([a,b]);
-    if(av){ main.appendChild(el("h2",null,"Availability (both rosters)")); main.appendChild(av); }
+    availSection(main,[a,b],"Availability (both rosters)");
     coverageNote(main,[a,b]);
   }
   function styleRead(a,b){

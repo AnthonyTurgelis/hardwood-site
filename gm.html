@@ -450,7 +450,10 @@
   }
   function pickCurveCard(){
     if(!GM||!GM.pick_value_curve||!GM.pick_value_curve.picks.length) return null;
-    var picks=GM.pick_value_curve.picks.filter(function(p){ return p.pick<=14; });
+    // Reader-value gate: show EVERY studied pick — no silent cap. The late-pick rows are the point
+    // (they show how fast draft value decays), and hiding them behind an unexplained cutoff would
+    // misstate the curve.
+    var picks=GM.pick_value_curve.picks;
     var card=el("div","card"), sc=el("div","scroll"), t=el("table");
     var thead=el("thead"), hr=el("tr"); ["Pick","Avg career WAR","Avg peak WAR","Avg seasons","n"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
     thead.appendChild(hr); t.appendChild(thead);
@@ -472,26 +475,35 @@
   var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   function plainDate(iso){ if(!iso) return ""; var m=String(iso).match(/^(\d{4})-(\d{2})-(\d{2})/); if(!m) return iso; return (MON[+m[2]-1]||m[2])+" "+(+m[3]); }
   function officialWire(limit){
-    var mv=(GM&&GM.movement_wire&&GM.movement_wire.official&&GM.movement_wire.official.moves)||[];
+    // Reader-value gate: a missing feed is UNKNOWN, never "no moves" (a false all-clear); and a
+    // truncated list says so ("latest N of M"), never a silent slice that hides real moves.
+    var feed=(GM&&GM.movement_wire&&GM.movement_wire.official)||null;
+    if(!feed) return el("p","empty","The movement wire is unavailable right now — recent moves are unknown, not absent.");
+    var mv=feed.moves||[];
     if(!mv.length) return el("p","empty","No recent official moves.");
     var card=el("div","card pad");
-    mv.slice(0,limit||18).forEach(function(m){
+    var shown=mv.slice(0,limit||18);
+    shown.forEach(function(m){
       var line=el("div","wire");
       line.appendChild(el("span","dt",plainDate(m.date)+"  "));
       line.appendChild(el("b",null,m.name+" "));
-      var t=(m.type||"").toLowerCase();
       var route = m.to_team? (m.from_team?(m.from_team+" → "+m.to_team):("→ "+m.to_team)) : (m.from_team?(m.from_team+" →"):"");
       line.appendChild(el("span","pill",(m.type||"move")));
       if(route){ line.appendChild(el("span","legend","  "+route)); }
       card.appendChild(line);
     });
+    if(mv.length>shown.length){
+      var more=el("div","legend","Showing the latest "+shown.length+" of "+mv.length+" official moves on the wire (newest first).");
+      more.style.padding="6px 0 2px"; card.appendChild(more);
+    }
     return card;
   }
   function rumorWire(limit){
     var rm=(GM&&GM.movement_wire&&GM.movement_wire.rumors&&GM.movement_wire.rumors.items)||[];
     if(!rm.length) return null;
     var card=el("div","card pad");
-    rm.slice(0,limit||14).forEach(function(r){
+    var shownRm=rm.slice(0,limit||14);
+    shownRm.forEach(function(r){
       var line=el("div","wire");
       line.appendChild(el("span","dt",plainDate(r.signal_ts)+"  "));
       line.appendChild(el("b",null,r.name+" "));
@@ -504,6 +516,10 @@
       }
       card.appendChild(line);
     });
+    if(rm.length>shownRm.length){
+      var moreRm=el("div","legend","Showing the latest "+shownRm.length+" of "+rm.length+" reports (newest first).");
+      moreRm.style.padding="6px 0 2px"; card.appendChild(moreRm);
+    }
     return card;
   }
   function availWire(teams){
@@ -525,16 +541,29 @@
     });
     return card;
   }
+  // Reader-value gate: three honest availability states — a real list, a real "nothing reported",
+  // or "the feed is down" (unknown). A silently-vanished section could read as an all-clear when
+  // the feed simply failed to load.
+  function availSection(main,teams,title){
+    var feedOk=!!(GM&&GM.movement_wire&&GM.movement_wire.availability&&GM.movement_wire.availability.players);
+    var aw=feedOk?availWire(teams):null;
+    main.appendChild(el("h2",null,title));
+    if(aw){ main.appendChild(aw); }
+    else if(feedOk){ main.appendChild(el("p","empty","No reported availability issues"+(teams?" on this roster":"")+" right now.")); }
+    else { main.appendChild(el("p","empty","The availability feed is unavailable right now — statuses are unknown, not an all-clear.")); }
+  }
 
   // ============================================================ G5: contract efficiency leaderboard
   function efficiencyLeaderboard(){
     var pool=[]; SPINE.players.forEach(function(p){ if(p.dollar_per_war!=null && p.proj_war_2026!=null && p.proj_war_2026>0.5 && p.salary_2026!=null) pool.push(p); });
     pool.sort(function(a,b){ return a.dollar_per_war-b.dollar_per_war; });
+    // Reader-value gate: the columns say how deep they go and out of how many — "12 of N
+    // qualifying" — so the cut is stated, never a silent slice.
     var best=pool.slice(0,12);
     var worst=pool.slice(-12).reverse();
     var two=el("div","two");
-    two.appendChild(effCol("Best deals (lowest $/WAR)",best));
-    two.appendChild(effCol("Worst deals (highest $/WAR)",worst));
+    two.appendChild(effCol("Best deals — the "+best.length+" lowest $/WAR of "+pool.length+" qualifying",best));
+    two.appendChild(effCol("Worst deals — the "+worst.length+" highest $/WAR of "+pool.length+" qualifying",worst));
     return two;
   }
   function effCol(title,rows){
@@ -610,7 +639,7 @@
     main.appendChild(officialWire(14));
     var rw=rumorWire(10); if(rw){ main.appendChild(el("h2",null,"Rumor Wire (social, match-scored)")); main.appendChild(rw);
       main.appendChild(el("div","note","Media speculation from social, with a confidence that the report is matched to the right player. Lower confidence = treat as unconfirmed.")); }
-    var aw=availWire([team]); if(aw){ main.appendChild(el("h2",null,"Availability — my roster")); main.appendChild(aw); }
+    availSection(main,[team],"Availability — my roster");
     provenanceBlock(main);
     coverageNote(main,team);
   }
@@ -630,7 +659,7 @@
     main.appendChild(el("h2",null,"What Just Moved (league)"));
     main.appendChild(officialWire(24));
     var rw=rumorWire(20); if(rw){ main.appendChild(el("h2",null,"Rumor Wire (social, match-scored)")); main.appendChild(rw); }
-    var aw=availWire(null); if(aw){ main.appendChild(el("h2",null,"Availability (league)")); main.appendChild(aw); }
+    availSection(main,null,"Availability (league)");
     provenanceBlock(main);
     coverageNote(main,null);
   }
