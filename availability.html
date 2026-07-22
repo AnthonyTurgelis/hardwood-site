@@ -51,6 +51,10 @@
   .pill.recon{border-color:var(--accent);color:var(--accent)}
   .pill.stale{border-color:var(--warn);color:var(--warn)}
   .pill.unk{border-style:dashed}
+  .implead{border-left:3px solid var(--out)}
+  .implead .unsz{font-size:11.5px;color:var(--muted);margin-top:5px}
+  .short .row .rname{font-weight:480;font-size:12.5px}
+  .pill.tonite{border-color:var(--accent);color:var(--accent)}
   .disc{font-size:12px;color:var(--muted);margin:22px 0 0;padding-left:10px;border-left:3px solid var(--line)}
   .empty{color:var(--muted);font-style:italic}
   footer{max-width:1000px;margin:0 auto;padding:22px 16px;color:var(--muted);font-size:11px}
@@ -184,12 +188,40 @@
     if(d.as_of) hero.appendChild(el("div","asof","As of "+d.as_of+"."));
     main.appendChild(hero);
 
+    // Impact-first lead: the single biggest availability loss (baked; omitted when nobody is out
+    // in scope — never an invented line). Renders baked text only.
+    if(d.impact_lead && d.impact_lead.line){
+      var il=el("div","hero implead"); il.setAttribute("data-k","implead");
+      il.appendChild(el("div","line", d.impact_lead.line));
+      if(d.impact_lead.unsized_note) il.appendChild(el("div","unsz", d.impact_lead.unsized_note));
+      main.appendChild(il);
+    }
+
     if(d.summary){
       var tl=el("div","tiles"); tl.setAttribute("data-k","tiles");
       tl.appendChild(tile("out", d.summary.out, "out"));
       tl.appendChild(tile("q", d.summary.questionable, "questionable"));
       tl.appendChild(tile("ok", d.summary.available, "available"));
       main.appendChild(tl);
+    }
+
+    // Per-team "who's short-handed" roll-up (baked; a team whose absences we can't size shows an
+    // honest "impact unknown" count, never a fake 0 minutes).
+    if(d.shorthanded && d.shorthanded.length){
+      var sh=el("section","short"); sh.setAttribute("data-k","short");
+      sh.appendChild(el("h2",null,"Who's short-handed"));
+      d.shorthanded.forEach(function(t){
+        var r=el("div","row"); r.setAttribute("data-k","t|"+(t.team||""));
+        var top=el("div","rtop");
+        var left=el("div","rname");
+        if(t.team){ left.appendChild(el("span","team", t.team)); }
+        left.appendChild(document.createTextNode(t.line||""));
+        top.appendChild(left);
+        if(t.tonight){ var tp=el("span","pill tonite","plays tonight"); top.appendChild(tp); }
+        r.appendChild(top);
+        sh.appendChild(r);
+      });
+      main.appendChild(sh);
     }
 
     var bm=baseMon(d.date);
