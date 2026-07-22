@@ -198,6 +198,31 @@
     return c;
   }
 
+  // Biggest trustworthy miss — one auto-picked highlight ABOVE the error-ledger table. The pick is
+  // baked server-side from the SAME rows the table shows, gated by each row's own thin-sample flag
+  // (the ledger's enough-games convention), so a thin-slice cherry-pick can never headline. When no
+  // slice qualifies, the honest empty state renders instead of an invented finding.
+  function headlineMissSection(hm){
+    var s=el("section"); s.setAttribute("data-k","headlinemiss");
+    s.appendChild(el("h2",null,"Biggest trustworthy miss"));
+    var c=el("div","reading");
+    if(hm && hm.available && hm.line){
+      var head=el("div");
+      head.appendChild(el("span","k","Weak spot "));
+      head.appendChild(document.createTextNode(" "+hm.line));
+      c.appendChild(head);
+      var note=el("div","rnote");
+      note.textContent="Auto-picked from the table below - only slices with enough games to trust can appear here; a hot or cold handful of games never makes this box.";
+      c.appendChild(note);
+    } else {
+      var emptyLine=el("div",null,(hm && hm.line) ? hm.line : "No slice has enough games yet to call out a trustworthy weak spot.");
+      emptyLine.style.color="var(--muted)";
+      c.appendChild(emptyLine);
+    }
+    s.appendChild(c);
+    return s;
+  }
+
   function makeTable(title, data, readingNode){
     var s=el("section"); s.appendChild(el("h2",null,title));
     if(readingNode) s.appendChild(readingNode);
@@ -340,7 +365,10 @@
     main.appendChild(el("p","lede", d.source || "Our own error map."));
     var shown=false;
     if(d.error_map && d.error_map.available){ main.appendChild(errorMapSection(d.error_map)); shown=true; }
-    if(d.error_ledger && d.error_ledger.rows && d.error_ledger.rows.length){ main.appendChild(makeTable("Where we miss most (error ledger)", d.error_ledger, ledgerReading(d.error_ledger))); shown=true; }
+    if(d.error_ledger && d.error_ledger.rows && d.error_ledger.rows.length){
+      if(d.headline_miss) main.appendChild(headlineMissSection(d.headline_miss));
+      main.appendChild(makeTable("Where we miss most (error ledger)", d.error_ledger, ledgerReading(d.error_ledger))); shown=true;
+    }
     if(d.market_relative && d.market_relative.rows && d.market_relative.rows.length){ main.appendChild(makeTable("Where we beat the market", d.market_relative, marketReading(d.market_relative))); shown=true; }
     if(!shown){
       var ph=el("div","placeholder");
