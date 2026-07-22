@@ -60,6 +60,10 @@
   .flag-fair{color:var(--muted);font-weight:600}
   .flag-overpay{color:var(--bad);font-weight:680}
   .st-out{color:var(--bad);font-weight:660}.st-dtd{color:var(--warn);font-weight:640}
+  .pill.watch{background:rgba(154,103,0,.14);color:var(--warn);font-weight:700}
+  .pill.expl{background:rgba(154,103,0,.10);color:var(--warn);margin-left:5px;font-size:9.5px;letter-spacing:.03em;text-transform:uppercase}
+  .shift-up{color:var(--good);font-weight:700;font-variant-numeric:tabular-nums}
+  .shift-dn{color:var(--bad);font-weight:700;font-variant-numeric:tabular-nums}
   .conf{font-size:10px;font-weight:660;padding:1px 6px;border-radius:999px}
   .conf.hi{background:rgba(31,136,61,.14);color:var(--good)} .conf.mid{background:rgba(154,103,0,.14);color:var(--warn)} .conf.lo{background:rgba(198,40,40,.12);color:var(--bad)}
   .cov{font-size:11px;color:var(--warn);background:rgba(154,103,0,.08);border:1px solid rgba(154,103,0,.25);border-radius:8px;padding:6px 10px;margin:6px 0}
@@ -586,6 +590,134 @@
     return wrap;
   }
 
+  // ============================================================ G6: Deployment Watch (scouting view)
+  // Early-signal context reads on players whose raw numbers may misstate their impact because of
+  // HOW they are deployed. Clearly labeled a WATCH view (not a rating); every value comes from a
+  // real baked field and a missing value renders an em dash, NEVER a 0 (null-vs-zero law — a 0
+  // would misread as a real measurement). Pairing numbers carry an explicit EXPLORATORY label.
+  function sgn(v,d){ if(v==null) return "—"; var s=Math.abs(v).toFixed(d==null?1:d); return (v<0?"−":"+")+s; }
+  function pctTxt(v){ return v==null?"—":v.toFixed(1)+"%"; }
+  function dwUsageCard(uw){
+    var wrap=el("div");
+    var card=el("div","card"), sc=el("div","scroll"), t=el("table");
+    var thead=el("thead"), hr=el("tr");
+    ["Player","Team","Season","Skillset role","Usage share","Typical for role","True shooting","Impact vs role expectation"]
+      .forEach(function(h){ hr.appendChild(el("th",null,h)); });
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb=el("tbody");
+    var shown=(uw.players||[]).slice(0,8);
+    shown.forEach(function(p){
+      var tr=el("tr");
+      var nm=el("td"); nm.appendChild(el("b",null,p.name)); tr.appendChild(nm);
+      tr.appendChild(el("td",null,p.team||"—"));
+      tr.appendChild(el("td",null,num(p.season)));
+      var rc=el("td"); rc.appendChild(p.role?el("span","pill arch",p.role):el("span","legend","—")); tr.appendChild(rc);
+      tr.appendChild(el("td",null,pctTxt(p.usage_pct)));
+      tr.appendChild(el("td",null,pctTxt(p.role_norm_pct)));
+      tr.appendChild(el("td",null,pctTxt(p.efficiency_pct)));
+      var ic=el("td"); ic.appendChild(el("span","shift-up",sgn(p.impact_above_expected,1)));
+      ic.title=(p.name||"")+" delivered about "+sgn(p.impact_above_expected,1)+" net points per 100 possessions MORE than her workload alone would predict, while being used "+
+        (p.usage_pct!=null&&p.role_norm_pct!=null?("on just "+pctTxt(p.usage_pct)+" of plays vs the "+pctTxt(p.role_norm_pct)+" typical for her role"):"below her role's typical share")+
+        " — a candidate for a bigger role, not a proven claim.";
+      tr.appendChild(ic);
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); sc.appendChild(t); card.appendChild(sc);
+    wrap.appendChild(card);
+    var tot=(uw.players||[]).length;
+    var lg=el("div","legend","Showing the top "+shown.length+" of "+tot+" flagged players"+
+      (uw.evaluated_n!=null?(" (of "+uw.evaluated_n+" player-seasons evaluated)"):"")+".");
+    lg.style.padding="6px 0 2px"; wrap.appendChild(lg);
+    return wrap;
+  }
+  function dwCtxCol(title,rows,up){
+    var wrap=el("div");
+    wrap.appendChild(el("div","legend",title));
+    var card=el("div","card"), sc=el("div","scroll"), t=el("table");
+    var thead=el("thead"), hr=el("tr");
+    ["Player","Season","Plays","Raw","Close-game weighted","Shift"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb=el("tbody"); var anyEst=false;
+    rows.forEach(function(r){
+      var tr=el("tr");
+      var nm=el("td"); nm.appendChild(el("b",null,r.name+(r.estimated?" *":""))); if(r.estimated)anyEst=true; tr.appendChild(nm);
+      tr.appendChild(el("td",null,num(r.season)));
+      tr.appendChild(el("td",null,r.plays==null?"—":r.plays.toLocaleString()));
+      tr.appendChild(el("td",null,sgn(r.raw_per100,2)));
+      tr.appendChild(el("td",null,sgn(r.weighted_per100,2)));
+      var scell=el("td"); scell.appendChild(el("span",up?"shift-up":"shift-dn",sgn(r.shift_per100,2))); tr.appendChild(scell);
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); sc.appendChild(t); card.appendChild(sc);
+    wrap.appendChild(card);
+    if(anyEst){ var n=el("div","legend","* current-season rows use estimated close-game weights."); n.style.padding="4px 0 0"; wrap.appendChild(n); }
+    return wrap;
+  }
+  function deploymentWatchSection(main){
+    main.appendChild(el("h2",null,"Deployment Watch — players who may be mis-used"));
+    var dw=GM&&GM.deployment_watch;
+    if(!dw){
+      // Honest three-state feed handling: a missing feed is UNKNOWN, never a silent all-clear.
+      main.appendChild(el("p","empty","The deployment-watch read is unavailable right now — its watch list is unknown, not empty."));
+      return;
+    }
+    var wrap=el("div");
+    var banner=el("div","note");
+    banner.appendChild(el("span","pill watch",dw.status||"Early signal - under evaluation"));
+    banner.appendChild(el("span","legend","  A scouting watch list, not a rating — context reads that flag film-room candidates. Nothing here feeds a rating or a prediction."));
+    wrap.appendChild(banner);
+    var uw=dw.usage_watch;
+    if(uw && uw.players && uw.players.length){
+      wrap.appendChild(dwUsageCard(uw));
+      if(uw.note) wrap.appendChild(methodNote(uw.note+" Usage share = the share of her team's plays she finishes while on the floor; 'typical for role' = the median share for players with her skillset profile."));
+    } else if(uw){
+      wrap.appendChild(el("p","empty","No players currently flagged on the usage watch."));
+    }
+    var cw=dw.context_watch;
+    if(cw && ((cw.undersold&&cw.undersold.length)||(cw.oversold&&cw.oversold.length))){
+      var d=el("details","method"); d.appendChild(el("summary",null,"Scoreboard vs close-game impact — the biggest movers"));
+      var body=el("div","method-body");
+      var two=el("div","two");
+      two.appendChild(dwCtxCol("Better than the scoreboard says — top "+(cw.undersold||[]).length+" risers",cw.undersold||[],true));
+      two.appendChild(dwCtxCol("Padded by low-stakes minutes — top "+(cw.oversold||[]).length+" faders",cw.oversold||[],false));
+      body.appendChild(two);
+      var covTxt=(cw.note||"")+" Movers screened at "+(cw.min_plays!=null?cw.min_plays.toLocaleString():"—")+"+ plays";
+      if(cw.screened_n!=null) covTxt+=" ("+cw.screened_n+" players qualify";
+      if(cw.measured_n!=null) covTxt+=(cw.screened_n!=null?" of ":" (")+cw.measured_n+" measured";
+      if(cw.screened_n!=null||cw.measured_n!=null) covTxt+=")";
+      covTxt+=". Both columns are net points per 100 possessions with the player on the floor.";
+      body.appendChild(el("div","note",covTxt));
+      d.appendChild(body); wrap.appendChild(d);
+    }
+    var pw=dw.pairing_watch;
+    if(pw && ((pw.best&&pw.best.length)||(pw.worst&&pw.worst.length))){
+      var pd=el("details","method"); var psum=el("summary",null,"Which skillset pairings fit together");
+      psum.appendChild(el("span","pill expl","exploratory")); pd.appendChild(psum);
+      var pbody=el("div","method-body");
+      var ptwo=el("div","two");
+      [["Fit well together",pw.best||[],true],["Collide",pw.worst||[],false]].forEach(function(side){
+        var col=el("div"); col.appendChild(el("div","legend",side[0]));
+        var card=el("div","card"), sc=el("div","scroll"), t=el("table");
+        var thead=el("thead"), hr=el("tr"); ["Pairing","Duos measured","Lift together"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
+        thead.appendChild(hr); t.appendChild(thead);
+        var tb=el("tbody");
+        side[1].forEach(function(p){
+          var tr=el("tr");
+          var nm=el("td"); nm.appendChild(el("b",null,p.pair)); tr.appendChild(nm);
+          tr.appendChild(el("td",null,num(p.pairs_n)));
+          var lc=el("td"); lc.appendChild(el("span",side[2]?"shift-up":"shift-dn",sgn(p.together_lift,1)));
+          lc.appendChild(el("span","pill expl","exploratory")); tr.appendChild(lc);
+          tb.appendChild(tr);
+        });
+        t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); col.appendChild(card); ptwo.appendChild(col);
+      });
+      pbody.appendChild(ptwo);
+      if(pw.note) pbody.appendChild(el("div","note",pw.note+(pw.combos_evaluated_n!=null?(" Showing the clearest of "+pw.combos_evaluated_n+" pairings evaluated.") : "")));
+      pd.appendChild(pbody); wrap.appendChild(pd);
+    }
+    main.appendChild(wrap);
+  }
+
   // ---------- coverage + provenance ----------
   function provenanceBlock(main){
     if(!GM||!GM.provenance) return;
@@ -635,6 +767,7 @@
     main.appendChild(methodNote("Each player's 2026 base salary against projected WAR; the bar under each WAR shows its size against the league's best. On-court is the complementary second value face — the active-only per-possession rating (RAPM-scale, net points per 100 possessions) from real 2026 on-court time; it prices alongside WAR, not instead of it, and shows — for players not yet rated this season (retired / prior-only / no 2026 minutes), never a fabricated 0. Value badge compares $/WAR to the league of salaried players — Bargain (cheapest third), Fair, Overpay (most expensive third). Players with no salary on file show value-only."));
     main.appendChild(el("h2",null,"Trade Targets by Value"));
     main.appendChild(tradeBoard());
+    deploymentWatchSection(main);
     main.appendChild(el("h2",null,"What Just Moved"));
     main.appendChild(officialWire(14));
     var rw=rumorWire(10); if(rw){ main.appendChild(el("h2",null,"Rumor Wire (social, match-scored)")); main.appendChild(rw);
@@ -651,6 +784,7 @@
     main.appendChild(el("h2",null,"Contract Efficiency — best & worst deals"));
     main.appendChild(efficiencyLeaderboard());
     main.appendChild(methodNote("Best and worst value contracts league-wide, by 2026 base salary per projected WAR (min 0.5 projected WAR, salary on file). Top-of-market stars can still be 'bargains' if their WAR is high enough; small deals for low-WAR players can read as 'overpays'."));
+    deploymentWatchSection(main);
     main.appendChild(el("h2",null,"Value for Money — the whole market"));
     var salaried=SPINE.players.filter(function(p){ return p.salary_2026!=null; })
       .sort(function(a,b){ var av=a.dollar_per_war==null?Infinity:a.dollar_per_war, bv=b.dollar_per_war==null?Infinity:b.dollar_per_war; return av-bv; });
