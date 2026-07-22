@@ -247,6 +247,7 @@
   .gcard .range .rlab{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;
     color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 4px;flex:0 0 auto}
   .gcard .range .rval{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+  .gcard .range .rmut{font-variant-numeric:tabular-nums;font-weight:500;color:var(--muted)}
   .gcard .venue{font-size:11px;color:var(--warn);line-height:1.4;margin-top:1px}
   /* IMPACT-FIRST availability line (BR-V2): who is OUT tonight (the coach signal), not a 28-name dump.
      Reuses the card's existing token language — a small bad-color "Out" label + plain names. */
@@ -889,6 +890,21 @@
         rg.appendChild(el("span","rlab","80% range"));
         rg.appendChild(el("span","rval", g.range80));
         c.appendChild(rg);
+      }
+      // GAME-SHAPE tail read (VIS-P2): chance of a one-possession finish vs a 20+ blowout — baked
+      // server-side from the same margin distribution as the range above (client renders, never
+      // computes). Omit-not-invent: a game with no distribution shows NO shape line. The "vs
+      // typical" context sits inline (muted) with the plain-English definition on hover.
+      if(g.tails && g.tails.nail_pct!=null && g.tails.blow_pct!=null){
+        var ts=el("div","range tails");
+        ts.appendChild(el("span","rlab","Game shape"));
+        ts.appendChild(el("span","rval","Nailbiter "+g.tails.nail_pct+"% · Blowout "+g.tails.blow_pct+"%"));
+        if(g.tails.nail_base_pct!=null && g.tails.blow_base_pct!=null){
+          ts.appendChild(el("span","rmut","typical: "+g.tails.nail_base_pct+"% · "+g.tails.blow_base_pct+"%"));
+        }
+        ts.title="Nailbiter = decided by 3 points or fewer; blowout = decided by 20 or more. "+
+          "Read from tonight's predicted-margin range, next to a typical league night.";
+        c.appendChild(ts);
       }
       // one-line HONEST "why we favor them" — the driver behind the pick (our full-roster rating
       // edge, plus an availability or pace note when the row carries one). Reuses the range row's
