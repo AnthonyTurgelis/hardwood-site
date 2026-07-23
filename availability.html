@@ -140,8 +140,21 @@
     row.appendChild(top);
     if(p.note) row.appendChild(el("div","rnote", p.note));
     var meta=el("div","meta");
+    // A reported return DATE (specific, authoritative) keeps its own pill (unchanged).
     if(p["return"]) meta.appendChild(el("span","pill ret","expected back "+p["return"]));
-    else meta.appendChild(el("span","pill unk","no return timeline yet"));
+    // The empirical "expected back ~N games" range (baked; league-wide guide by injury TYPE, never a
+    // player-specific prognosis). It FILLS the gap for a no-date row, so the "no timeline" pill only
+    // shows when there is genuinely no empirical guide either (omit-not-invent). Renders baked text.
+    var eb=p.exp_back;
+    if(eb && eb.text){
+      var ep=el("span","pill exp"+(eb.season_ending?" season":""), eb.text);
+      ep.title = eb.season_ending
+        ? "Our injury-return study finds this injury type is typically season-ending."
+        : "A league-wide guide from our injury-return study: typical games missed for this injury type across 2023-25 (median, with a p25-p75 range). Not a player-specific prognosis.";
+      meta.appendChild(ep);
+    } else if(!p["return"]){
+      meta.appendChild(el("span","pill unk","no return timeline yet"));
+    }
     if(p.updated) meta.appendChild(el("span","pill","updated "+p.updated));
     if(p.reconciled_from_feed){ var rp=el("span","pill recon","read from the latest report");
       rp.title="Our read is fresher than the raw feed — the latest official report moved this player to a less-restrictive status."; meta.appendChild(rp); }
