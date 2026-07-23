@@ -194,6 +194,54 @@
     return wrap;
   }
 
+  // STARTER SKILL SHAPES -- a small-multiples grid. Each projected starter's skill mix
+  // (Pts/Reb/Ast) is drawn as a tiny repeated bar profile, side by side across both starting
+  // fives. Every bar is scaled against the SAME skill's max over all starters shown, so the
+  // SHAPE reads at a glance -- scorer vs playmaker vs glass-cleaner -- across all ten at once.
+  // Reuses the already-baked box rows (no extra feed); degrades to nothing if the box is absent.
+  var SKILL_AXES=[{k:"pts",label:"Pts"},{k:"reb",label:"Reb"},{k:"ast",label:"Ast"}];
+  function starterFive(rows){
+    return (rows||[]).filter(function(r){ return r && r.min!=null; })
+      .slice().sort(function(a,b){ return (b.min||0)-(a.min||0); }).slice(0,5);
+  }
+  function starterProfiles(d){
+    if(!d.box || !(d.box.home || d.box.away)) return null;
+    var away=starterFive(d.box.away), home=starterFive(d.box.home);
+    if(!away.length && !home.length) return null;
+    var all=away.concat(home);
+    // shared per-skill max across every starter shown, so each skill's bars compare directly
+    var mx={}; SKILL_AXES.forEach(function(a){
+      var m=0; all.forEach(function(r){ var v=+r[a.k]||0; if(v>m)m=v; }); mx[a.k]=m||1;
+    });
+    var sec=el("section");
+    sec.appendChild(el("h2",null,"Starter skill shapes"));
+    sec.appendChild(el("div","note","The five projected starters on each side, drawn as a skill mix. Each bar is scaled against the same skill across every starter shown here, so the shape reads at a glance — who scores, who rebounds, who sets up. A descriptive look at projected role, not a rating or a prediction."));
+    [[(d.away_full||d.away), away], [(d.home_full||d.home), home]].forEach(function(pair){
+      if(!pair[1].length) return;
+      sec.appendChild(el("div","smteam", pair[0]));
+      var grid=el("div","smgrid");
+      pair[1].forEach(function(r){
+        var card=el("div","smcard");
+        var nm=el("div","smnm"); nm.textContent=r.name;
+        if(r.gtd){ nm.appendChild(el("span","gtd","GTD")); }
+        card.appendChild(nm);
+        SKILL_AXES.forEach(function(a){
+          var v=+r[a.k]||0;
+          var row=el("div","smrow");
+          row.appendChild(el("span","smlab", a.label));
+          var track=el("span","smbar"), fill=el("i");
+          fill.style.width=Math.max(2,Math.min(100,(v/mx[a.k])*100)).toFixed(1)+"%";
+          track.appendChild(fill); row.appendChild(track);
+          row.appendChild(el("span","smval", (r[a.k]==null?"—":(+r[a.k]).toFixed(1))));
+          card.appendChild(row);
+        });
+        grid.appendChild(card);
+      });
+      sec.appendChild(grid);
+    });
+    return sec;
+  }
+
   function availLine(label, badges){
     if(!badges || !badges.length) return null;
     var d=el("div","av");
@@ -307,6 +355,9 @@
       if(a1||a2){ bs.appendChild(el("h2",null,"Availability")); if(a1)bs.appendChild(a1); if(a2)bs.appendChild(a2); }
       if(d.box_note) bs.appendChild(el("div","note", d.box_note));
       main.appendChild(bs);
+
+      // Starter skill shapes — small-multiples grid off the same projected box rows.
+      var sp=starterProfiles(d); if(sp) main.appendChild(sp);
     }
 
     // STYLE

@@ -31,6 +31,11 @@
   .striphead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 8px}
   .striphead h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0;font-weight:700}
   .striphead .sum{color:var(--dim);font-size:12px}
+  /* LOUD stale badge — mirrors the main board's section-freshness staleBadge (loud red pill, not a
+     whisper): a frozen agent-activity strip (dead coordinator / stalled claim ledger) must read as a
+     warning, never a silently-fresh green. org.html has no --blocked var, so the red is explicit. */
+  .stalebadge{font-size:10px;font-weight:800;letter-spacing:.07em;color:#fff;background:#c62828;
+    border-radius:999px;padding:2px 8px;text-transform:uppercase;box-shadow:0 0 0 2px rgba(198,40,40,.22)}
   .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:7px}
   .achip{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
   .achip.working{border-color:var(--acc);background:var(--card)}
@@ -86,6 +91,17 @@
       var strip=el("div","strip");
       var head=el("div","striphead");
       head.appendChild(el("h2",null,"Working right now"));
+      // LOUD stale badge: the strip is a snapshot of the running-claim ledger + coordinator heartbeat.
+      // If that feed freezes (dead coordinator / stalled ledger), the assembler's FR-5 heal-check
+      // (STRIP_STALE_SECS = 30m, recomputed by the independent board-bake tasks) sets strip.stale, and
+      // a dead seat would otherwise show as WORKING with no warning. Surface it as a loud red badge
+      // (mirrors the board's section-freshness staleBadge). Omit when not stale (no fabricated warning);
+      // the stale_reason is the hover explanation.
+      if(d.strip.stale){
+        var sb=el("span","stalebadge","stale");
+        if(d.strip.stale_reason){ sb.title=d.strip.stale_reason; }
+        head.appendChild(sb);
+      }
       if(d.strip.summary){ head.appendChild(el("span","sum",d.strip.summary)); }
       strip.appendChild(head);
       var ag=el("div","agrid");
