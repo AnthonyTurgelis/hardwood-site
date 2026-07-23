@@ -54,6 +54,11 @@
      the transient 'refreshing…' state (amber dot) shows ONLY during a real in-flight board fetch. */
   .hchip.clickable{cursor:pointer}
   .hchip.refreshing .dot{background:var(--warn)}
+  /* A+++ stale-reason sub-line: the crowned panel's OWN copy-gated stale_reason, surfaced inline
+     beneath the freshness chip so the operator reads WHY without hovering the panel's own badge. Its
+     own line (flex-basis:100%) so the pill never crowds; hidden entirely when the crowned panel
+     carries no reason (reason-omitted-when-absent) — never an empty "— " dangle. */
+  .chipreason{flex-basis:100%;font-size:10px;color:var(--muted);margin:1px 0 0;padding-left:2px}
   .banner{margin:8px 0 0;padding:7px 11px;border-radius:8px;font-size:12.5px;font-weight:600;
     border:1px solid var(--line);background:var(--card)}
   .banner.idle{border-left:3px solid var(--bad)} .banner.paused{border-left:3px solid var(--warn)}
@@ -506,7 +511,10 @@
       var info=staleInfo(k);
       if(!info.stale || info.ageSecs==null) continue;
       staleCount++;
-      if(!best || info.ageSecs>best.ageSecs){ best={key:k, name:nm, ageSecs:info.ageSecs}; }
+      // A+++: carry the crowned panel's OWN copy-gated stale_reason (the assembler's section_sources
+      // reason string) so the header chip can surface WHY inline. Upstream-only — empty when the
+      // section has no reason (reason-omitted-when-absent; NEVER the composed client fallback here).
+      if(!best || info.ageSecs>best.ageSecs){ best={key:k, name:nm, ageSecs:info.ageSecs, reason:(info.m && info.m.stale_reason) || ""}; }
     }
     if(best){ best.count=staleCount-1; }   // OTHER stale panels beyond the crowned one
     return best;
@@ -567,10 +575,18 @@
     var cd=mk("ch-data","", "How fresh the numbers on this page are (time since the page data last refreshed).");
     // A++ click-to-culprit: the chip scrolls to the stalest panel when one is crowned (no-op otherwise).
     cd.onclick=scrollToStalest;
+    // A+++ stale-reason holder: an empty sub-line span, populated by tickChips ONLY when a crowned
+    // panel carries its own copy-gated stale_reason; stays display:none (no reason -> no dangle).
+    var cr=el("span","chipreason"); cr.id="ch-reason"; cr.style.display="none"; wrap.appendChild(cr);
     tickChips();
   }
   function setChip(id, cls, text, title){ var c=document.getElementById(id); if(!c) return;
     c.className="hchip "+cls; c.lastChild.textContent=text; if(title!=null) c.title=title; }
+  // A+++: render the crowned panel's stale_reason inline beneath the chip. textContent-safe (the
+  // reason is copy-gated upstream but never trusted as markup here); an empty/falsy reason hides the
+  // sub-line entirely (reason-omitted-when-absent) so a crowned panel with no reason shows name+age only.
+  function setChipReason(txt){ var r=document.getElementById("ch-reason"); if(!r) return;
+    if(txt){ r.textContent=txt; r.style.display=""; } else { r.textContent=""; r.style.display="none"; } }
   function tickChips(){
     if(!lastB) return;
     var b=lastB;
@@ -580,6 +596,7 @@
     // or fails (poll() clears the flag and re-ticks in both its .then and .catch).
     if(boardFetching){
       setChip("ch-data","refreshing","data · refreshing…","Fetching the latest board data…");
+      setChipReason("");   // an in-flight refresh is not a stale claim -> no reason sub-line
       return;
     }
     // A+ freshness ROLL-UP: when any nameable panel has crossed its own staleness window, the header
@@ -593,8 +610,12 @@
       var mtip=(st.count>0) ? (" "+st.count+" other panel"+(st.count>1?"s are":" is")+" also stale.") : "";
       setChip("ch-data","bad clickable","data · "+st.name+" "+agoSecs(st.ageSecs)+" old"+more,
         "Stalest panel: "+st.name+" — last updated "+agoSecs(st.ageSecs)+" ago."+mtip+" Click to jump to it.");
+      // A+++: surface the crowned panel's OWN reason inline (or hide the sub-line when it has none).
+      // Recomputed every tick, so the reason follows the crown when it changes between ticks.
+      setChipReason(st.reason);
       return;
     }
+    setChipReason("");   // nothing crowned -> no reason sub-line
     var s=sinceIso(b.generated_utc);
     // single freshness dot: green when fresh, amber then red as the numbers age (stale-data guard).
     // no crowned panel -> the chip is NOT a click control (plain, non-clickable).

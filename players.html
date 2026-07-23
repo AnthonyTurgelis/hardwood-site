@@ -46,6 +46,9 @@
      scoring" — so the divergence between on-court impact and box-score scoring reads at a glance.
      Firm-impact rows only (a provisional row has no firm impact rank, so no chip). */
   .divchip{display:inline-block;font-size:9px;font-weight:700;color:var(--acc);border:1px solid var(--acc);border-radius:999px;padding:0 6px;margin-left:6px;vertical-align:middle;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+  .trendarrow{font-size:11px;font-weight:700;margin-left:5px;vertical-align:middle;font-variant-numeric:tabular-nums;cursor:default}
+  .trendarrow.up{color:var(--good)}
+  .trendarrow.down{color:var(--warn)}
   /* board headline (A-rung): the accent-bordered takeaway tile (same look as the Teams "biggest
      mover" callout) naming the biggest impact-over-scoring riser — the "most underrated by points"
      player. OMITTED entirely when no firm ranking exists or nobody actually rises (never fabricated). */
@@ -120,6 +123,22 @@
   var RAT_PAGE=50;   // default view = top 50; "show all" reveals the full uncapped board
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function td(c,x){ return el("td",c,x); }
+
+  // RISING/FALLING IMPACT ARROW (A+-rung element 3): a small ▲/▼ beside the impact rating, reading
+  // the baked r.impact_trend {delta, days} — the honest recent direction of the SAME dated rating
+  // series the player-card sparkline draws (derived bake-side in build_players_deep, NOT here, so
+  // it can never contradict that sparkline). Renders NOTHING when the field is absent: a flat /
+  // short / stale history — or a provisional row (baked null) — carries no trend (omit, never a
+  // fabricated 0). The plain-English tooltip states the delta, the window, and the honesty floor.
+  function trendArrow(t){
+    if(!t || t.delta==null || !t.days) return null;
+    var up = t.delta > 0;
+    var mag = Math.abs(t.delta).toFixed(1);
+    var a = el("span", "trendarrow "+(up?"up":"down"), up?"▲":"▼");
+    a.title = "On-court impact rating "+(up?"rising":"falling")+" — "+(up?"+":"−")+mag+
+              " over its last "+t.days+" days of games (moves under 0.2 aren't shown).";
+    return a;
+  }
 
   function num(v,u){ return v==null? "—" : (v.toFixed(1)+(u?u:"")); }
   var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -307,6 +326,7 @@
         impCell.appendChild(document.createTextNode((r.rating>0?"+":"")+r.rating.toFixed(1)));
         if(r.impact_provisional){ impCell.className="strong prov"; var ptg=el("span","provtag","prov"); ptg.title="Provisional — rests on a thin on-court sample this early in the season."; impCell.appendChild(ptg); }
       }
+      var ta=trendArrow(r.impact_trend); if(ta) impCell.appendChild(ta);   // A+ element 3: rising/falling arrow
       tr.appendChild(impCell);
       tr.appendChild(td("thin", r.min_share_pct==null?"—":(r.min_share_pct+"%")));
       tr.appendChild(td("thin", r.gp==null?"—":String(r.gp)));

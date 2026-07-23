@@ -55,6 +55,10 @@
   .why{color:var(--ink);font-size:13px;margin-top:9px;line-height:1.5}
   /* impact-vs-scoring divergence (A+-rung): the two-axis rank read on the player card */
   .divergence{color:var(--acc);font-size:12px;font-weight:600;margin-top:6px;font-variant-numeric:tabular-nums;line-height:1.4}
+  /* rising/falling impact trend (A+-rung element 3): recent direction of the rating, same series as the sparkline */
+  .trendline{font-size:12px;font-weight:600;margin-top:5px;font-variant-numeric:tabular-nums;line-height:1.4}
+  .trendline.up{color:var(--good)}
+  .trendline.down{color:var(--warn)}
   .asof{font-size:11px;color:var(--dim);margin-top:5px}
   .asof.stale{color:var(--warn);font-weight:600}
   .statline{margin-top:10px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -214,6 +218,21 @@
     else if(gap<0){ s+=" — "+(-gap)+" spots higher by scoring than on-court impact"; }
     return s;
   }
+  // RISING/FALLING IMPACT (A+-rung element 3): the recent direction of THIS player's on-court
+  // rating, read from the baked impact_trend {delta, days} — the honest slope of the SAME dated
+  // series the trajectory sparkline below draws (derived bake-side, so the two can never disagree).
+  // Returns null (renders nothing) when the field is absent: a flat / short / stale history, or a
+  // provisional card (baked null) — omit, never a fabricated direction.
+  function impactTrendLine(t){
+    if(!t || t.delta==null || !t.days) return null;
+    var up = t.delta > 0;
+    var mag = Math.abs(t.delta).toFixed(1);
+    return { up: up,
+      text: (up?"▲ ":"▼ ")+"On-court impact "+(up?"rising":"falling")+" — "+(up?"+":"−")+mag+
+            " over its last "+t.days+" days of games",
+      title: "The recent direction of our on-court impact rating for this player, from the same "+
+             "dated series the trajectory below draws. Moves smaller than 0.2 rating points aren't shown." };
+  }
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
     var back=el("a","back","← Back to all players"); back.href="./players.html"; main.appendChild(back);
@@ -273,6 +292,13 @@
     (function(){
       var dv=divergenceLine(d);
       if(dv){ var e=el("div","divergence", dv); e.title="Where she ranks by our on-court impact rating vs by season scoring — the gap the box score alone misses."; hero.appendChild(e); }
+    })();
+
+    // RISING/FALLING IMPACT TREND (A+-rung element 3) — the recent direction of the on-court rating,
+    // render-only from the baked impact_trend; omitted for a flat/short/stale/provisional card.
+    (function(){
+      var tl=impactTrendLine(d.impact_trend);
+      if(tl){ var te=el("div","trendline "+(tl.up?"up":"down"), tl.text); te.title=tl.title; hero.appendChild(te); }
     })();
 
     // AS-OF — honest per-card recency. This card's own bake can lag the site-wide strip; flag it stale.
