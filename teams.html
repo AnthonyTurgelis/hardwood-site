@@ -60,6 +60,7 @@
   .mover-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--acc);white-space:nowrap}
   .mover-t{color:var(--ink);line-height:1.4}
   .mover-t b{font-weight:700}
+  .mover-field{color:var(--muted);font-style:italic}
   /* per-team title-odds SPARKLINE + N-day trend arrow (viz-teams-trend-sparkline). Inline SVG,
      theme-aware (line = currentColor off a muted var; endpoint dot colored by net direction),
      phone-safe (fixed 64px in the existing horizontal-scroll table). A team with <2 snapshot days
@@ -148,6 +149,28 @@
   // snapshot yet — day-over-day tracking hasn't started), the whole callout is OMITTED; a mover is
   // never invented. When deltas exist but the field is essentially flat, we say so honestly rather
   // than crown a non-move. Uses the same 0.05-pt "meaningful move" floor as the table's 1-day column.
+  // FIELD-RELATIVE read for the biggest mover — where its move sits in TODAY's title_delta
+  // distribution across the WHOLE board, derived at render from the SAME deltas already rendered
+  // (no new source, no DB). Returns a short honest clause (or null). Thresholds:
+  //   MOVE_FLOOR = 0.05 pts -> a title_delta counts as a "move" (same floor the mover callout +
+  //                            the table's 1-day column use).
+  //   BIG_MOVE   = 0.40 pts -> the "notable" magnitude; crown uniqueness ("the only move over
+  //                            0.4 pts") ONLY when exactly one team clears it (that team is the
+  //                            mover, since it carries the max |delta|).
+  //   QUIET_MAX  = 4 movers -> up to this many moves reads as a quiet field; more is a busy day.
+  // HONESTY: no fabricated superlatives — if many teams moved similarly we say "a busy day for
+  // the field", never a false crown; the phrasing is always literally true of the distribution.
+  // Returns null when the mover itself is a sub-floor non-move (the flat-day branch owns that).
+  function fieldRelative(withDelta, mover){
+    var MOVE_FLOOR=0.05, BIG_MOVE=0.40, QUIET_MAX=4;
+    if(!mover || Math.abs(mover.title_delta)<MOVE_FLOOR) return null;
+    var n=withDelta.filter(function(r){ return Math.abs(r.title_delta)>=MOVE_FLOOR; }).length;
+    var big=withDelta.filter(function(r){ return Math.abs(r.title_delta)>BIG_MOVE; }).length;
+    if(n<=1) return "the only move today";                                  // nobody else budged
+    if(big===1) return "the only move over "+BIG_MOVE.toFixed(1)+" pts today";  // uniquely large
+    return "largest of "+n+" moves — a "+(n<=QUIET_MAX?"quiet":"busy")+" day for the field";
+  }
+
   function moverCallout(d){
     var teams=d&&d.teams;
     if(!teams||!teams.length) return null;
@@ -166,6 +189,11 @@
       t.appendChild(document.createTextNode(" "+(up?"climbed":"slipped")+" "));
       t.appendChild(el("b",null,Math.abs(mover.title_delta).toFixed(1)));
       t.appendChild(document.createTextNode(" pts in title odds since yesterday"));
+      var fr=fieldRelative(withDelta, mover);
+      if(fr){
+        t.appendChild(document.createTextNode(" — "));
+        t.appendChild(el("span","mover-field",fr));
+      }
     } else {
       t.textContent="Title odds held steady since yesterday (largest move "+Math.abs(mover.title_delta).toFixed(1)+" pts).";
     }
