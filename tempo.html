@@ -46,6 +46,12 @@
   .tier{display:inline-block;font-size:10.5px;font-weight:660;padding:1px 9px;border-radius:999px;background:var(--chip);color:var(--bal);white-space:nowrap}
   .tier.uptempo{background:rgba(180,83,10,.12);color:var(--fast)}
   .tier.grind{background:rgba(47,111,237,.12);color:var(--slow)}
+  /* recent-form trend chip (last-5 vs season, on the as-of pace feed) */
+  .trend{display:inline-flex;align-items:baseline;gap:5px;justify-content:flex-end}
+  .trend .rc{color:var(--muted);font-variant-numeric:tabular-nums}
+  .trend .dl{font-size:10.5px;font-weight:660;padding:1px 7px;border-radius:999px;background:var(--chip);color:var(--bal);font-variant-numeric:tabular-nums}
+  .trend .dl.faster{background:rgba(180,83,10,.12);color:var(--fast)}
+  .trend .dl.slower{background:rgba(47,111,237,.12);color:var(--slow)}
   /* matchups */
   .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
   .mcard{border:1px solid var(--line);border-radius:9px;background:var(--card);padding:10px 12px}
@@ -126,6 +132,20 @@
 
   function tierChip(tier,label){ var s=el("span","tier "+tier,label); return s; }
 
+  function trendCell(t){
+    var td=el("td");
+    if(t.pace_recent==null||t.pace_delta==null){ td.textContent="—"; return td; } // omit, never guess
+    var w=el("span","trend");
+    w.appendChild(el("span","rc",num(t.pace_recent,1)));
+    var d=Number(t.pace_delta);
+    var cls=(t.pace_trend==="faster")?"faster":(t.pace_trend==="slower")?"slower":"";
+    var sign=(d>0?"+":"")+num(d,1);
+    var chip=el("span","dl"+(cls?(" "+cls):""),sign);
+    chip.title="Last 5 games vs season pace, on the nightly as-of feed (+ = faster lately)";
+    w.appendChild(chip);
+    td.appendChild(w); return td;
+  }
+
   function renderTeams(main){
     var teams=DATA.teams||[];
     main.appendChild(el("h2",null,"Team tempo board"));
@@ -147,7 +167,7 @@
     var card=el("div","card scroll");
     var tbl=el("table");
     var thead=el("thead"), htr=el("tr");
-    ["#","Team","Pace","","Tier","GP"].forEach(function(h){ htr.appendChild(el("th",null,h)); });
+    ["#","Team","Pace","","Tier","GP","Last 5"].forEach(function(h){ htr.appendChild(el("th",null,h)); });
     thead.appendChild(htr); tbl.appendChild(thead);
     var tb=el("tbody");
     teams.forEach(function(t){
@@ -161,10 +181,12 @@
       i.style.width=w+"%"; bar.appendChild(i); bc.appendChild(bar); tr.appendChild(bc);
       var tc=el("td"); tc.appendChild(tierChip(t.tier,t.tier_label)); tr.appendChild(tc);
       tr.appendChild(el("td",null,(t.n_games!=null)?String(t.n_games):"—"));
+      // Last-5 recent pace + signed trend delta (omit-not-invent: thin team shows —).
+      tr.appendChild(trendCell(t));
       tb.appendChild(tr);
     });
     tbl.appendChild(tb); card.appendChild(tbl); main.appendChild(card);
-    main.appendChild(el("div","note","Pace = possessions per game (estimated from box-score totals); both teams share a game's pace. Fastest at top."));
+    main.appendChild(el("div","note","Pace = possessions per game (estimated from box-score totals); both teams share a game's pace. Fastest at top. “Last 5” = mean pace over the last five games with a signed trend vs the team’s season norm (+ = playing faster lately); a team with fewer than five games shows no trend."));
   }
 
   function renderMatchups(main){
