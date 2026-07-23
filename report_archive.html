@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Report Archive</title>
+<style>
+  :root{ --bg:#f6f7f9; --card:#ffffff; --ink:#16181d; --muted:#5b6472; --line:#e5e8ee; --accent:#2b6cb0; --shadow:0 1px 3px rgba(20,24,35,.08); --good:#1f883d; --flash:rgba(43,108,176,.18); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#222a35; --accent:#58a6ff; --shadow:none; --good:#3fb950; --flash:rgba(88,166,255,.24); } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1000px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0}
+  .sub{color:var(--muted);font-size:12px;max-width:1000px;margin:0 auto;padding:0 14px}
+  .ago{font-size:11px;color:var(--muted);white-space:nowrap}
+  .ago b{color:var(--good);font-variant-numeric:tabular-nums}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1000px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--accent);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
+  nav a.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  main{max-width:1000px;margin:0 auto;padding:8px 14px 48px}
+  .lede{color:var(--muted);font-size:12.5px;margin:6px 0 2px;max-width:760px}
+  .day{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px 14px;box-shadow:var(--shadow);margin-top:12px}
+  .day.flash{animation:fl 1.1s ease}
+  @keyframes fl{0%{background:var(--flash)}100%{background:var(--card)}}
+  .day h2{font-size:14px;margin:0 0 3px;font-weight:700}
+  .day .cnt{color:var(--muted);font-size:11.5px;font-weight:500}
+  .reports{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+  .reports a{font-size:12px;text-decoration:none;color:var(--accent);border:1px solid var(--line);border-radius:7px;padding:4px 9px;background:var(--bg)}
+  .reports a:hover{border-color:var(--accent)}
+  .preds{margin-top:9px;border-top:1px solid var(--line);padding-top:8px}
+  .pred{display:grid;grid-template-columns:minmax(74px,auto) 1fr;gap:4px 12px;padding:5px 0;border-bottom:1px dashed var(--line)}
+  .pred:last-child{border-bottom:none}
+  .pred .mu{font-weight:640}
+  .pred .mu small{display:block;color:var(--muted);font-weight:500;font-size:11px;margin-top:1px}
+  .pred .call{font-size:12.5px}
+  .pred .win{color:var(--muted);font-size:11.5px;margin-top:1px}
+  .pred .rng{color:var(--muted);font-size:11.5px;margin-top:1px}
+  .norep{color:var(--muted);font-size:11.5px;font-style:italic}
+  .empty{color:var(--muted);font-style:italic}
+  footer{max-width:860px;margin:0 auto;padding:24px 16px;color:var(--muted);font-size:12px}
+</style>
+<link rel="stylesheet" href="./hardwood.css">
+</head>
+<body>
+<header>
+  <h1>The Hardwood — Report Archive</h1>
+  <span class="ago" id="ago"></span>
+</header>
+<div class="sub" id="sub">Loading…</div>
+<nav>
+  <a href="./index.html">Board</a>
+  <a href="./queue.html">What's Next</a>
+  <a href="./games.html">Games</a>
+  <a href="./standings.html">Standings</a>
+  <a href="./availability.html">Injuries</a>
+  <a href="./teams.html">Teams</a>
+  <a href="./coach.html">Coach</a>
+  <a href="./tempo.html">Tempo</a>
+  <a href="./gm.html">GM</a>
+  <a href="./players.html">Players</a>
+  <a href="./compare.html">Compare</a>
+  <a href="./situation.html">Situations</a>
+  <a href="./review.html">Daily Review</a>
+  <a href="./accuracy.html">Our Accuracy</a>
+  <a href="./ledger.html">Error Map</a>
+  <a class="active" href="./report_archive.html">Report Archive</a>
+  <a href="./org.html">The Team</a>
+  <a href="./scouting.html">Scouting</a>
+  <a href="./deepdive.html">Deep Dives</a>
+  <a href="./primer.html">Learn</a>
+</nav>
+<main id="main"><p class="empty">Loading the archive…</p></main>
+<footer id="foot"></footer>
+<script src="./hardwood.js"></script>
+<script>
+(function(){
+  "use strict";
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  function prettyDate(iso){
+    if(!iso) return "";
+    var d=new Date(iso+"T12:00:00");
+    if(isNaN(d)) return iso;
+    return d.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric",year:"numeric"});
+  }
+  function reportsWrap(items){
+    var w=el("div","reports");
+    (items||[]).forEach(function(r){
+      if(!r || !r.href) return;
+      var a=el("a",null, r.label||"report"); a.href=r.href; a.target="_blank"; a.rel="noopener";
+      w.appendChild(a);
+    });
+    return w;
+  }
+  function predRow(p){
+    var row=el("div","pred");
+    var mu=el("div","mu"); mu.appendChild(document.createTextNode(p.matchup||"—"));
+    if(p.tip){ mu.appendChild(el("small",null, p.tip)); }
+    row.appendChild(mu);
+    var body=el("div");
+    if(p.call){ body.appendChild(el("div","call", p.call)); }
+    if(p.win_line){ body.appendChild(el("div","win", p.win_line)); }
+    if(p.range80){ body.appendChild(el("div","rng","80% range: "+p.range80)); }
+    row.appendChild(body);
+    return row;
+  }
+  function dayCard(dy){
+    var c=el("div","day"); c.setAttribute("data-k","day|"+dy.date);
+    var nrep=(dy.reports||[]).length, npred=(dy.predictions||[]).length;
+    var h=el("h2"); h.appendChild(document.createTextNode(prettyDate(dy.date)+" "));
+    var bits=[];
+    if(nrep) bits.push(nrep+" report"+(nrep===1?"":"s"));
+    if(npred) bits.push(npred+" prediction"+(npred===1?"":"s")+" on record");
+    if(bits.length){ h.appendChild(el("span","cnt","· "+bits.join(" · "))); }
+    c.appendChild(h);
+    if(nrep){ c.appendChild(reportsWrap(dy.reports)); }
+    else { c.appendChild(el("div","norep","No gameday report PDFs archived for this date.")); }
+    if(npred){
+      var pw=el("div","preds");
+      dy.predictions.forEach(function(p){ pw.appendChild(predRow(p)); });
+      c.appendChild(pw);
+    }
+    return c;
+  }
+  /* ---------- render ---------- */
+  var cardHTML={},first=true;
+  function flash(){
+    var nodes=document.querySelectorAll("#main [data-k]"), nm={};
+    nodes.forEach(function(n){ var k=n.getAttribute("data-k"), h=n.innerHTML; nm[k]=h;
+      if(!first && cardHTML[k]!==undefined && cardHTML[k]!==h){ n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); } });
+    cardHTML=nm; first=false;
+  }
+  function render(a){
+    var main=document.getElementById("main"); main.innerHTML="";
+    document.getElementById("sub").textContent =
+      "Every gameday report we published, plus the prediction we had on the board for each slate — a dated, immutable record.";
+    if(a.note){ main.appendChild(el("p","lede", a.note)); }
+    var days=(a.days||[]).filter(function(d){ return (d.reports&&d.reports.length)||(d.predictions&&d.predictions.length); });
+    if(!days.length){ main.appendChild(el("p","empty","No archived reports yet.")); flash(); return; }
+    days.forEach(function(d){ main.appendChild(dayCard(d)); });
+    document.getElementById("foot").textContent =
+      "Baked " + (a.generated_et||a.generated_utc||"") + ". Each day's board is snapshotted once and never edited — the calls shown are exactly what we posted for that slate. An audit of what we said and when, not a directional call.";
+    flash();
+  }
+  /* ---------- shared live runtime ---------- */
+  var URL="./report_archive.json", etag=null,lastMod=null,lastFetch=0;
+  function updAgo(){
+    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
+    var t = s<60 ? (s+"s ago") : (Math.floor(s/60)+"m "+(s%60)+"s ago");
+    var a=document.getElementById("ago"); if(a) a.innerHTML = lastFetch? ("live · updated <b>"+t+"</b>") : "";
+  }
+  function poll(){
+    var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
+    fetch(URL,{headers:h,cache:"no-cache"}).then(function(r){
+      if(r.status===304) return null;
+      etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
+    }).then(function(a){ lastFetch=Date.now(); if(a){ render(a); } updAgo(); }).catch(function(e){
+      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the archive. '+(e&&e.message?e.message:"")+'</p>'; }
+    });
+  }
+  poll(); setInterval(poll,60000); setInterval(updAgo,1000);
+})();
+</script>
+</body>
+</html>

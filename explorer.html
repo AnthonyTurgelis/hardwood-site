@@ -67,8 +67,15 @@
   <a href="./index.html">Board</a>
   <a href="./queue.html">What's Next</a>
   <a href="./games.html">Games</a>
+  <a href="./standings.html">Standings</a>
+  <a href="./availability.html">Injuries</a>
   <a href="./teams.html">Teams</a>
+  <a href="./coach.html">Coach</a>
+  <a href="./tempo.html">Tempo</a>
+  <a href="./gm.html">GM</a>
   <a href="./players.html">Players</a>
+  <a href="./compare.html">Compare</a>
+  <a href="./situation.html">Situations</a>
   <a href="./review.html">Daily Review</a>
   <a href="./accuracy.html">Our Accuracy</a>
   <a href="./ledger.html">Error Map</a>
@@ -76,6 +83,7 @@
   <a href="./scouting.html">Scouting</a>
   <a href="./deepdive.html">Deep Dives</a>
   <a class="active" href="./explorer.html">Data Explorer</a>
+  <a href="./primer.html">Learn</a>
 </nav>
 <main id="main"><p class="empty">Loading…</p></main>
 <footer id="foot"></footer>
@@ -95,9 +103,18 @@
   function sgn(n,d){ if(n==null||isNaN(n)) return "—"; var v=Number(n); return (v>=0?"+":"")+v.toFixed(d==null?1:d); }
   function esc(s){ return String(s==null?"":s); }
 
+  /* Only surface a tab when its panel actually has baked data — a panel the current
+     data baker does not feed (e.g. model-scorecard / rookies / styles await a
+     model-eval baker) is omitted rather than shown empty. The tab set auto-grows the
+     moment explorer.json carries that panel, with no front-end change. */
+  function availTabs(){
+    var panels=(DATA&&DATA.panels)||{};
+    var out=TABS.filter(function(tb){ return panels[tb[0]]!=null; });
+    return out.length?out:TABS;
+  }
   function tabBar(){
     var t=el("div","tabs");
-    TABS.forEach(function(tb){
+    availTabs().forEach(function(tb){
       var b=el("button",(tb[0]===CUR?"active":""),tb[1]);
       b.onclick=function(){ CUR=tb[0]; render(); };
       t.appendChild(b);
@@ -356,6 +373,9 @@
   function render(){
     var main=document.getElementById("main"); main.innerHTML="";
     main.appendChild(el("p","lede","This is the deep view: every current model number, browsable. Pick a section below. Everything here is read-only and refreshes automatically."));
+    /* keep the active section on a tab that actually has data before painting the bar */
+    var avail=availTabs().map(function(tb){ return tb[0]; });
+    if(avail.indexOf(CUR)<0){ CUR=avail[0]; }
     main.appendChild(tabBar());
     if(!DATA || !DATA.panels){ main.appendChild(noData("Loading the current data…")); return; }
     if(!DATA.available){ main.appendChild(noData("The explorer data is being rebuilt — check back shortly.")); return; }
