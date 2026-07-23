@@ -131,6 +131,11 @@
   /* A+++: an interior min/max (peak-year) callout, derived from the SAME parsed rows; distinct class
      so it never collides with the first-vs-last delta chip. */
   .item .takeaway-pk{font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;background:var(--card2);border:1px dashed var(--line2);border-radius:999px;padding:2px 9px}
+  /* A++++: a per-metric mini-sparkline of the SAME parsed series over the SAME time axis (drawn from
+     the parsed values at render time, never hardcoded). Theme-safe — strokes reuse the accent var. */
+  .item .takeaway-spark{flex:0 0 auto;display:block;width:72px;height:18px;overflow:visible}
+  .item .takeaway-spark .spark-line{fill:none;stroke:var(--acc);stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+  .item .takeaway-spark .spark-dot{fill:var(--acc)}
   .item .body{margin-top:10px;font-size:13px;line-height:1.55}
   .item .body h3{font-size:14px;margin:15px 0 4px;font-weight:700}
   .item .body h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:13px 0 3px;font-weight:700}
@@ -923,8 +928,75 @@
     var pi=hiInterior ? iMax : iMin;
     var dm=p.dec[mc]; if(dm==null) dm=1;
     var dt=p.dec[tc]; if(dt==null) dt=0;
+    // A++++: a peak-DISTANCE-FROM-BASELINE read, computed ONLY from these same parsed rows and ONLY
+    // now that an interior peak already qualified (never an independent second computation). Baseline
+    // = the earliest-by-time value (order[0]), the SAME anchor the first-vs-last delta uses. Because
+    // an interior peak is STRICTLY above/below BOTH endpoints, its side vs the baseline is fixed:
+    // a "peaked" sits above the baseline, a "bottomed" sits below it.
+    var base=vals[0];
     return { label:humanizeHeader(p.header[mc]), kind: hiInterior?"peaked":"bottomed",
-             value: vals[pi].toFixed(dm), at: Number(p.rows[order[pi]][tc]).toFixed(dt) };
+             value: vals[pi].toFixed(dm), at: Number(p.rows[order[pi]][tc]).toFixed(dt),
+             base: base.toFixed(dm), baseAt: Number(p.rows[order[0]][tc]).toFixed(dt),
+             dist: Math.abs(vals[pi]-base).toFixed(dm), rel: hiInterior ? "above" : "below" };
+  }
+
+  // A++++ rung: a per-metric MINI-SPARKLINE geometry, DERIVED from the SAME parsed rows + the SAME
+  // single-metric / single-time-axis guard the delta and peak read. Pure + deterministic: returns
+  // {label,w,h,pad,min,max,pts:[{t,v,x,y}]} or null — the render just draws these points, so the SVG
+  // can never disagree with the parsed data. Honest floor: 4+ points (fewer is not a trend worth a
+  // drawing; tablePeak needs 3 for an interior extreme, a line wants a couple more). x is placed by
+  // the ACTUAL time value (uneven gaps stay honest), y inverts so a higher value sits higher; a flat
+  // series pins to the mid-line. Coords round to 2dp so an independent recompute matches exactly.
+  function sparkline(content, findingText){
+    var ax=metricTimeAxis(content, findingText);
+    if(!ax) return null;
+    var p=ax.p, mc=ax.metricCol, tc=ax.timeCol, order=ax.order, n=order.length;
+    if(n<4) return null;                                   // 4+ points floor (stated)
+    var vals=order.map(function(k){ return Number(p.rows[k][mc]); });
+    var times=order.map(function(k){ return Number(p.rows[k][tc]); });
+    if(vals.some(function(v){ return !isFinite(v); }) || times.some(function(t){ return !isFinite(t); })) return null;
+    var vMin=Math.min.apply(null,vals), vMax=Math.max.apply(null,vals);
+    var tMin=times[0], tMax=times[n-1];
+    if(tMax===tMin) return null;                           // no time spread (guard already forbids, belt+braces)
+    var W=72, H=18, pad=2, span=vMax-vMin;
+    var pts=[];
+    for(var i=0;i<n;i++){
+      var x=pad+(W-2*pad)*((times[i]-tMin)/(tMax-tMin));
+      var y=span>0 ? (H-pad)-(H-2*pad)*((vals[i]-vMin)/span) : H/2;
+      pts.push({ t:times[i], v:vals[i], x:Number(x.toFixed(2)), y:Number(y.toFixed(2)) });
+    }
+    return { label:humanizeHeader(p.header[mc]), w:W, h:H, pad:pad, min:vMin, max:vMax, pts:pts };
+  }
+
+  // Build the sparkline SVG from sparkline() geometry. SVG-namespace aware with a plain-createElement
+  // fallback (the test DOM shim has no createElementNS), and every setAttribute is guarded so a shim
+  // without it never throws. Only NUMERIC geometry + the humanized label go in (no innerHTML, no
+  // table-derived string ever parsed as markup) — the label rides a <title> via textContent.
+  function sparkSvg(sp){
+    if(!sp) return null;
+    var NS="http://www.w3.org/2000/svg";
+    var mk=document.createElementNS ? function(t){ return document.createElementNS(NS,t); }
+                                    : function(t){ return document.createElement(t); };
+    var svg=mk("svg");
+    if(svg.setAttribute){
+      svg.setAttribute("class","takeaway-spark");
+      svg.setAttribute("viewBox","0 0 "+sp.w+" "+sp.h);
+      svg.setAttribute("width",sp.w); svg.setAttribute("height",sp.h);
+      svg.setAttribute("preserveAspectRatio","none");
+      svg.setAttribute("role","img");
+      svg.setAttribute("aria-label",sp.label+" trend over "+sp.pts.length+" points");
+    } else { svg.className="takeaway-spark"; }
+    var title=mk("title"); title.textContent=sp.label+" over time ("+sp.pts.length+" points)"; svg.appendChild(title);
+    var poly=mk("polyline");
+    var ptsStr=sp.pts.map(function(q){ return q.x+","+q.y; }).join(" ");
+    if(poly.setAttribute){ poly.setAttribute("class","spark-line"); poly.setAttribute("points",ptsStr); }
+    else { poly.className="spark-line"; }
+    svg.appendChild(poly);
+    var last=sp.pts[sp.pts.length-1], dot=mk("circle");
+    if(dot.setAttribute){ dot.setAttribute("class","spark-dot"); dot.setAttribute("cx",last.x); dot.setAttribute("cy",last.y); dot.setAttribute("r","1.7"); }
+    else { dot.className="spark-dot"; }
+    svg.appendChild(dot);
+    return svg;
   }
 
   // Per-dive VERDICT chip (A+ rung). FIXED vocabulary — NOISE / SIGNAL / ADOPTED — only SELECTED
@@ -990,10 +1062,15 @@
               tk.appendChild(el("span","takeaway-d",
                 dl.latest+" "+dl.label+", "+(dl.dir==="up"?"up from ":"down from ")+dl.baseline));
               // A+++: an interior min/max callout from the SAME parsed rows; omitted unless the
-              // extreme is strictly interior + unambiguous.
+              // extreme is strictly interior + unambiguous. A++++: the peak carries its DISTANCE from
+              // the earliest-by-time baseline, computed from those same rows inside tablePeak().
               var pk=tablePeak(it.content, lede);
               if(pk){ tk.appendChild(el("span","takeaway-pk",
-                (pk.kind==="peaked"?"peaked ":"bottomed ")+pk.at+", "+pk.value)); }
+                (pk.kind==="peaked"?"peaked ":"bottomed ")+pk.at+", "+pk.value+
+                " — "+pk.dist+" "+pk.rel+" the "+pk.baseAt+" baseline")); }
+              // A++++: a mini-sparkline of the SAME parsed series (same axis, drawn from parsed values).
+              var sp=sparkline(it.content, lede);
+              if(sp){ tk.appendChild(sparkSvg(sp)); }
             }
             body.appendChild(tk);
           }
