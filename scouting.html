@@ -59,11 +59,14 @@
   <a href="./index.html">Board</a>
   <a href="./queue.html">What's Next</a>
   <a href="./games.html">Games</a>
+  <a href="./standings.html">Standings</a>
   <a href="./availability.html">Injuries</a>
   <a href="./teams.html">Teams</a>
   <a href="./coach.html">Coach</a>
+  <a href="./tempo.html">Tempo</a>
   <a href="./gm.html">GM</a>
   <a href="./players.html">Players</a>
+  <a href="./compare.html">Compare</a>
   <a href="./situation.html">Situations</a>
   <a href="./review.html">Daily Review</a>
   <a href="./accuracy.html">Our Accuracy</a>
@@ -180,16 +183,109 @@
     return s;
   }
 
+  // ---- Zone spatial-impact (OFFENSE only) -------------------------------------------------
+  // Points Above Expected (PAX) per 100 shots: points a shooter adds vs a league-average
+  // shooter taking the same shots, against a leak-safe strict-prior baseline. OFFENSE ONLY -
+  // this is a shot-making read, NOT a defensive value. Static career data (2021-2025); a
+  // second, independent feed (./scouting_zone.json) that never mutates, so no flash keys.
+  function pax100(v){ return (v>0?"+":"")+(Math.round(v*10)/10).toFixed(1); }
+
+  function paxTable(rows, withZoneCols){
+    var maxAbs=1; rows.forEach(function(r){ var v=Math.abs(r.pax_per_100||0); if(v>maxAbs)maxAbs=v; });
+    var card=el("div","card"), sc=el("div","scroll"), t=el("table");
+    var heads = withZoneCols
+      ? ["#","Player","Shots","FG%","Exp FG%","PAX / 100"]
+      : ["#","Player","Shots","PAX / 100",""];
+    var thead=el("thead"), hr=el("tr");
+    heads.forEach(function(h){ hr.appendChild(el("th",null,h)); });
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb=el("tbody");
+    rows.forEach(function(r,i){
+      var tr=el("tr");
+      tr.appendChild(td("rk", String(i+1)));
+      tr.appendChild(td("nm", r.name));
+      tr.appendChild(td(null, String(r.n_shots)));
+      if(withZoneCols){
+        tr.appendChild(td(null, (r.fg==null?"-":(r.fg*100).toFixed(1)+"%")));
+        tr.appendChild(td(null, (r.xfg==null?"-":(r.xfg*100).toFixed(1)+"%")));
+        tr.appendChild(td("strong", pax100(r.pax_per_100)));
+      } else {
+        tr.appendChild(td("strong", pax100(r.pax_per_100)));
+        var bcell=el("td",null), bar=el("div","bar"), fill=el("i");
+        fill.style.width=Math.max(2,Math.min(100,(Math.abs(r.pax_per_100)/maxAbs)*100)).toFixed(1)+"%";
+        bar.appendChild(fill); bcell.appendChild(bar); tr.appendChild(bcell);
+      }
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); sc.appendChild(t); card.appendChild(sc);
+    return card;
+  }
+
+  function zoneSpatialSection(z){
+    var s=el("section");
+    var m=(z&&z.metric)||{};
+    s.appendChild(el("h2",null,"Shot-making by zone - offense, last five seasons"));
+    s.appendChild(el("p","lede","Where a player adds the most points with their shot. "+(m.what||"")));
+
+    // Offense-only + how-to-read scale. Stated plainly so the number is never mistaken for a
+    // two-way or defensive read.
+    var scl=el("div","scale");
+    scl.appendChild(el("b",null,"Offense only: "));
+    scl.appendChild(document.createTextNode((m.axis_note ? m.axis_note.replace(/^OFFENSE ONLY -- /,"") : "a shooting-value read - it does not include any defensive value.")+" 0 is a league-average shooter; the numbers below are points added (or given up) per 100 shots, versus what a league-average shooter would score on the same shots. "+(m.coverage||"")));
+    s.appendChild(scl);
+
+    var elite=(z.overall_elite||[]), poor=(z.overall_poor||[]);
+    if(elite.length){
+      var top=elite[0];
+      var hd=el("div","headline");
+      hd.appendChild(document.createTextNode("Most valuable overall shot-maker: "));
+      hd.appendChild(el("b",null,top.name));
+      hd.appendChild(document.createTextNode(" - "+pax100(top.pax_per_100)+" points per 100 shots above a league-average shooter, over "+top.n_shots.toLocaleString()+" shots."));
+      s.appendChild(hd);
+
+      s.appendChild(el("h2",null,"Best overall shot value"));
+      s.appendChild(paxTable(elite, false));
+      s.appendChild(el("div","note","Ranked by Points Above Expected per 100 shots, among players with at least "+(m.overall_floor||300)+" shots since 2021 - enough for a steady read. Thin-volume zones are already shrunk toward league-average in the underlying numbers, so a small sample cannot manufacture an extreme rating."));
+    }
+    if(poor.length){
+      s.appendChild(el("h2",null,"Toughest shooting value"));
+      s.appendChild(el("p","lede","The other end of the same scale: players whose shot mix came in below what a league-average shooter would have scored. Descriptive, not a judgement of a player's overall game - a high-usage creator often takes the hardest shots by role."));
+      s.appendChild(paxTable(poor, false));
+    }
+
+    var zones=(z.zones||[]);
+    if(zones.length){
+      s.appendChild(el("h2",null,"By-zone specialists"));
+      s.appendChild(el("p","lede","Who adds the most value from each spot on the floor. \"FG%\" is what they actually shot; \"Exp FG%\" is what a league-average shooter made on those same shots - the gap is the value."));
+      zones.forEach(function(zn){
+        var leaders=(zn.leaders||[]);
+        if(!leaders.length) return;
+        s.appendChild(el("h2",null,zn.label));
+        s.appendChild(paxTable(leaders, true));
+      });
+      s.appendChild(el("div","note","Per-zone boards include players with at least "+((m.zone_floor)||100)+" shots from that spot since 2021. A player with no shots from a zone is left off (never shown as a zero). Career-pooled 2021-2025; no contest or defender adjustment - a descriptive scouting look, not a forecast."));
+    }
+    return s;
+  }
+
   function render(d){
     curData=d;
     var main=document.getElementById("main"); main.innerHTML="";
     document.getElementById("foot").textContent="Updated "+(d.generated_et||d.generated_utc||"")+". Descriptive scouting stats — refreshed daily, not a betting line.";
     main.appendChild(rimSection(d));
+    if(zoneData){ main.appendChild(zoneSpatialSection(zoneData)); }
     flash();
   }
 
   /* ---------- shared live runtime ---------- */
-  var curData=null, etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
+  var curData=null, zoneData=null, etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
+  // Static career zone-spatial feed: fetched once. Graceful — if it 404s, the rim board still
+  // renders; if it lands after the first rim render, we re-render to inject the zone section.
+  function loadZone(){
+    fetch("./scouting_zone.json",{cache:"no-cache"}).then(function(r){
+      return r.ok ? r.json() : null;
+    }).then(function(z){ if(z){ zoneData=z; if(curData){ render(curData); } } }).catch(function(){});
+  }
   function updAgo(){
     var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
     var t = s<60 ? (s+"s ago") : (Math.floor(s/60)+"m "+(s%60)+"s ago");
@@ -210,7 +306,7 @@
       if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load scouting boards. '+(e&&e.message?e.message:"")+'</p>'; }
     });
   }
-  poll(); setInterval(poll,60000); setInterval(updAgo,1000);
+  poll(); loadZone(); setInterval(poll,60000); setInterval(updAgo,1000);
 })();
 </script>
 </body>

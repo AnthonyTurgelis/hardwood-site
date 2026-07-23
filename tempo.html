@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Tempo</title>
+<style>
+  :root{ --bg:#f4f6f8; --card:#fff; --card2:#f7f9fc; --ink:#161a21; --muted:#5a6675; --dim:#8a93a3;
+    --line:#e3e7ee; --line2:#d3d9e3; --acc:#2b6cb0; --good:#1f883d; --bad:#c62828; --warn:#9a6700;
+    --chip:#eef2f8; --shadow:0 1px 2px rgba(20,24,35,.06);
+    --fast:#b4530a; --slow:#2f6fed; --bal:#5a6675; }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --card2:#1c2330; --ink:#e6edf3;
+    --muted:#9aa7b4; --dim:#6b7684; --line:#242c38; --line2:#39424f; --acc:#58a6ff; --good:#3fb950; --bad:#ff7b72;
+    --warn:#d29922; --chip:#21324a; --shadow:none; --fast:#e0913f; --slow:#6ea0f5; --bal:#9aa7b4; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0}
+  .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto;padding:0 14px}
+  .ago{font-size:11px;color:var(--dim);white-space:nowrap}
+  .ago b{color:var(--good);font-variant-numeric:tabular-nums}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--acc);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 48px}
+  .lede{color:var(--muted);font-size:12.5px;margin:6px 0 2px}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:20px 0 8px;font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);overflow:hidden}
+  .pad{padding:10px 12px}
+  .scroll{overflow-x:auto}
+  /* KPI strip */
+  .kpis{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:flex-end}
+  .kpi{display:inline-flex;flex-direction:column;line-height:1.2}
+  .kpi b{font-size:19px;font-variant-numeric:tabular-nums}
+  .kpi span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  /* team board */
+  table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+  th,td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;vertical-align:middle}
+  th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+  th{color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;background:var(--card2)}
+  td.tm{font-weight:660}
+  .barcell{width:40%;min-width:150px}
+  .pbar{position:relative;height:9px;border-radius:5px;background:var(--line2);overflow:hidden}
+  .pbar>i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:var(--bal)}
+  .pbar>i.uptempo{background:var(--fast)} .pbar>i.grind{background:var(--slow)}
+  .tier{display:inline-block;font-size:10.5px;font-weight:660;padding:1px 9px;border-radius:999px;background:var(--chip);color:var(--bal);white-space:nowrap}
+  .tier.uptempo{background:rgba(180,83,10,.12);color:var(--fast)}
+  .tier.grind{background:rgba(47,111,237,.12);color:var(--slow)}
+  /* matchups */
+  .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+  .mcard{border:1px solid var(--line);border-radius:9px;background:var(--card);padding:10px 12px}
+  .mteams{font-size:13px;font-weight:680;margin-bottom:2px}
+  .mteams .vs{color:var(--dim);font-weight:600;font-size:11px;padding:0 5px}
+  .mexp{display:flex;align-items:baseline;gap:8px;margin:6px 0 4px}
+  .mexp b{font-size:22px;font-variant-numeric:tabular-nums}
+  .mexp .u{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  .mtag{display:inline-block;font-size:10.5px;font-weight:660;padding:1px 9px;border-radius:999px}
+  .mtag.fast{background:rgba(180,83,10,.12);color:var(--fast)}
+  .mtag.slow{background:rgba(47,111,237,.12);color:var(--slow)}
+  .mtag.average{background:var(--chip);color:var(--bal)}
+  .msplit{font-size:11px;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}
+  .note{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.5}
+  .empty{color:var(--dim);font-style:italic}
+  details.method{margin-top:14px;border:1px solid var(--line);border-radius:9px;background:var(--card2);overflow:hidden}
+  details.method summary{cursor:pointer;padding:9px 12px;font-size:12px;font-weight:640;color:var(--muted);list-style:none}
+  details.method summary::-webkit-details-marker{display:none}
+  details.method .method-body{padding:2px 14px 12px;font-size:11.5px;color:var(--muted);line-height:1.6}
+  details.method .method-body li{margin:4px 0}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px;color:var(--muted);margin:6px 0 2px}
+  .legend .tier{margin-right:4px}
+  footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
+</style>
+<link rel="stylesheet" href="./hardwood.css">
+</head>
+<body>
+<header>
+  <h1>The Hardwood — Tempo</h1>
+  <span class="ago" id="ago"></span>
+</header>
+<div class="sub">Who plays fast, who grinds it out, and the tempo tonight's matchups project to. Pace is a style read — not a strength ranking.</div>
+<nav>
+  <a href="./index.html">Board</a>
+  <a href="./queue.html">What's Next</a>
+  <a href="./games.html">Games</a>
+  <a href="./standings.html">Standings</a>
+  <a href="./availability.html">Injuries</a>
+  <a href="./teams.html">Teams</a>
+  <a href="./coach.html">Coach</a>
+  <a class="active" href="./tempo.html">Tempo</a>
+  <a href="./gm.html">GM</a>
+  <a href="./players.html">Players</a>
+  <a href="./compare.html">Compare</a>
+  <a href="./situation.html">Situations</a>
+  <a href="./review.html">Daily Review</a>
+  <a href="./accuracy.html">Our Accuracy</a>
+  <a href="./ledger.html">Error Map</a>
+  <a href="./org.html">The Team</a>
+  <a href="./scouting.html">Scouting</a>
+  <a href="./deepdive.html">Deep Dives</a>
+  <a href="./primer.html">Learn</a>
+</nav>
+<main id="main"><p class="empty">Loading the tempo board…</p></main>
+<footer id="foot"></footer>
+<script src="./hardwood.js"></script>
+<script>
+(function(){
+  "use strict";
+  var DATA=null;
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  function num(v,d){ if(v==null) return "—"; return (typeof d==="number")?Number(v).toFixed(d):String(v); }
+
+  function kpi(v,l){ var k=el("div","kpi"); k.appendChild(el("b",null,v)); k.appendChild(el("span",null,l)); return k; }
+
+  function renderLeague(main){
+    var lg=DATA.league||{};
+    var wrap=el("div","card"); var pad=el("div","pad kpis");
+    pad.appendChild(kpi(num(lg.pace_mean,1),"League pace"));
+    pad.appendChild(kpi(num(lg.fastest,1),"Fastest"));
+    pad.appendChild(kpi(num(lg.slowest,1),"Slowest"));
+    if(lg.fastest!=null&&lg.slowest!=null) pad.appendChild(kpi("+"+num(lg.fastest-lg.slowest,1),"Fast–slow spread"));
+    pad.appendChild(kpi(num(lg.n_teams,0),"Teams"));
+    wrap.appendChild(pad); main.appendChild(wrap);
+  }
+
+  function tierChip(tier,label){ var s=el("span","tier "+tier,label); return s; }
+
+  function renderTeams(main){
+    var teams=DATA.teams||[];
+    main.appendChild(el("h2",null,"Team tempo board"));
+    // legend
+    var tiers=(DATA.card&&DATA.card.tiers)||{};
+    var leg=el("div","legend");
+    ["uptempo","balanced","grind"].forEach(function(k){
+      if(!tiers[k]) return;
+      var g=el("span"); g.appendChild(tierChip(k,tiers[k].label));
+      g.appendChild(document.createTextNode(tiers[k].desc));
+      leg.appendChild(g);
+    });
+    main.appendChild(leg);
+
+    var lg=DATA.league||{};
+    var lo=(lg.slowest!=null)?lg.slowest-0.6:75, hi=(lg.fastest!=null)?lg.fastest+0.6:86;
+    var span=(hi-lo)||1;
+
+    var card=el("div","card scroll");
+    var tbl=el("table");
+    var thead=el("thead"), htr=el("tr");
+    ["#","Team","Pace","","Tier","GP"].forEach(function(h){ htr.appendChild(el("th",null,h)); });
+    thead.appendChild(htr); tbl.appendChild(thead);
+    var tb=el("tbody");
+    teams.forEach(function(t){
+      var tr=el("tr");
+      tr.appendChild(el("td",null,String(t.rank)));
+      tr.appendChild(el("td","tm",t.team_full||t.team));
+      tr.appendChild(el("td",null,num(t.pace,1)));
+      // bar cell
+      var bc=el("td","barcell"); var bar=el("div","pbar"); var i=el("i",t.tier);
+      var w=(t.pace!=null)?Math.max(4,Math.min(100,Math.round((t.pace-lo)/span*100))):0;
+      i.style.width=w+"%"; bar.appendChild(i); bc.appendChild(bar); tr.appendChild(bc);
+      var tc=el("td"); tc.appendChild(tierChip(t.tier,t.tier_label)); tr.appendChild(tc);
+      tr.appendChild(el("td",null,(t.n_games!=null)?String(t.n_games):"—"));
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb); card.appendChild(tbl); main.appendChild(card);
+    main.appendChild(el("div","note","Pace = possessions per game (estimated from box-score totals); both teams share a game's pace. Fastest at top."));
+  }
+
+  function renderMatchups(main){
+    var m=DATA.matchups||{};
+    main.appendChild(el("h2",null,"Matchup tempo"));
+    if(!m.available||!(m.games&&m.games.length)){
+      var e=el("div","card"); var p=el("div","pad empty",m.note||"No matchup tempo available.");
+      e.appendChild(p); main.appendChild(e); return;
+    }
+    var sd=m.slate_date?(" — "+m.slate_date):"";
+    main.appendChild(el("div","lede","Expected tempo for the next scheduled slate"+sd+"."));
+    var grid=el("div","mgrid");
+    m.games.forEach(function(g){
+      var c=el("div","mcard");
+      var tm=el("div","mteams");
+      tm.appendChild(document.createTextNode((g.away_full||g.away)));
+      tm.appendChild(el("span","vs","at"));
+      tm.appendChild(document.createTextNode((g.home_full||g.home)));
+      c.appendChild(tm);
+      var ex=el("div","mexp"); ex.appendChild(el("b",null,num(g.exp_pace,1))); ex.appendChild(el("span","u","exp. poss."));
+      var tag=el("span","mtag "+(g.exp_tag||"average"),g.exp_tag_label||""); ex.appendChild(tag);
+      c.appendChild(ex);
+      var sp=el("div","msplit",
+        (g.away||"")+" "+num(g.away_pace,1)+"  ·  "+(g.home||"")+" "+num(g.home_pace,1));
+      c.appendChild(sp);
+      grid.appendChild(c);
+    });
+    main.appendChild(grid);
+    if(m.note) main.appendChild(el("div","note",m.note));
+  }
+
+  function renderMethod(main){
+    var def=DATA.definitions||{}, pr=DATA.provenance||{};
+    var d=el("details","method"); d.appendChild(el("summary",null,"How this is measured"));
+    var b=el("div","method-body");
+    var ul=el("ul");
+    Object.keys(def).forEach(function(k){ ul.appendChild(el("li",null,k+": "+def[k])); });
+    (pr.caveats||[]).forEach(function(cv){ ul.appendChild(el("li",null,cv)); });
+    b.appendChild(ul); d.appendChild(b); main.appendChild(d);
+  }
+
+  function render(){
+    var main=document.getElementById("main"); main.innerHTML="";
+    if(!DATA||!DATA.teams){ main.innerHTML='<p class="empty">Tempo data not available.</p>'; return; }
+    var asof=DATA.as_of?("as of "+DATA.as_of):"";
+    main.appendChild(el("div","lede",(DATA.card&&DATA.card.blurb)||""));
+    if(asof) main.appendChild(el("div","note",asof));
+    renderLeague(main);
+    renderTeams(main);
+    renderMatchups(main);
+    renderMethod(main);
+    var foot=document.getElementById("foot");
+    foot.textContent="Tempo baked "+(DATA.generated_utc||"")+
+      (DATA.as_of?(" · data as of "+DATA.as_of):"")+
+      ". Display-only from the current-season pace factors; teams/matchups that don't join are omitted, never invented.";
+  }
+
+  function load(){
+    fetch("./tempo.json?v="+Date.now(),{cache:"no-cache"})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(j){
+        DATA=j;
+        if(!DATA){ document.getElementById("main").innerHTML='<p class="empty">Could not load the tempo board.</p>'; return; }
+        render();
+        var a=document.getElementById("ago"); if(a) a.innerHTML="live";
+      })
+      .catch(function(){ document.getElementById("main").innerHTML='<p class="empty">Could not load the tempo board.</p>'; });
+  }
+  load();
+  setInterval(load,120000);
+})();
+</script>
+</body>
+</html>

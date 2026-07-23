@@ -34,7 +34,12 @@
   .dc-name { font-weight: 500; }
   .dc-out { text-decoration: line-through; color: var(--muted); }
   .dc-promoted { color: var(--live); font-weight: 600; }
-  .dc-pos { color: var(--muted); font-size: 10px; }
+  .dc-pos { color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+  /* position-grouped sub-sections + inline role-change (base->effective) indicator */
+  .dc-sec { margin-bottom: 8px; }
+  .dc-sec:last-child { margin-bottom: 0; }
+  .dc-glabel { font-size: 9px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); opacity: 0.75; margin: 0 0 3px; }
+  .dc-move { color: var(--live); font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums; }
 
   .wrap{max-width:860px;margin:0 auto;padding:0 12px}
   header{padding:6px 0 2px}
@@ -344,11 +349,14 @@
     <a class="active" href="./index.html">Board</a>
     <a href="./queue.html">What's Next</a>
     <a href="./games.html">Games</a>
+    <a href="./standings.html">Standings</a>
     <a href="./availability.html">Injuries</a>
     <a href="./teams.html">Teams</a>
     <a href="./coach.html">Coach</a>
+  <a href="./tempo.html">Tempo</a>
     <a href="./gm.html">GM</a>
     <a href="./players.html">Players</a>
+    <a href="./compare.html">Compare</a>
     <a href="./situation.html">Situations</a>
     <a href="./review.html">Daily Review</a>
     <a href="./accuracy.html">Our Accuracy</a>
@@ -1153,27 +1161,62 @@
         c.appendChild(ol);
       }
       // Full depth chart — kept for the reader who wants the whole rotation, but on-demand (collapsed).
+      // BR-V2.1 reader-value pass (depth-charts-on-cards lane): render it as a real coach's depth
+      // chart — GROUPED BY POSITION (Guards / Wings / Bigs; an unknown code degrades to "Other",
+      // never dropped), and with the ROLE CHANGE made legible INLINE: a player who stepped up shows
+      // an explicit base->effective slot move (e.g. "2→1"), not just a color. This surfaces the
+      // one thing the backlog item asks for — who moved into a vacated slot tonight — without a raw
+      // name dump. Display-only from the baked depth rows; omit-not-invent throughout.
+      var DC_GROUPS = [["G","Guards"],["W","Wings"],["B","Bigs"],["U","Other"]];
       function renderDc(title, dc) {
         if (!dc || !dc.length) return null;
         var wrap = el("div", "dc-wrap");
         wrap.appendChild(el("div", "dc-title", (title||"") + " Depth"));
-        var grid = el("div", "dc-grid");
+        // bucket rows into their position group; an unrecognized group code -> "Other" (we never
+        // invent a position we don't have in the data).
+        var buckets = {};
         dc.forEach(function(p) {
-          var pEl = el("div", "dc-player");
-          var cls = ["dc-name"];
-          if (p.out || p.susp) { cls.push("dc-out"); }
-          // NOTE: dc-promoted is a DISPLAY-ONLY slot-elevation highlight and is DELIBERATELY a
-          // broader rule than the consolidated `promoted` steps-up flag (no out/susp guard — an
-          // out player whose effective slot moved still shows her slot elevation in the full
-          // chart). NOT part of the steps-up rule; do not "consolidate" it onto p.promoted.
-          if (p.effective && p.base && p.effective < p.base) { cls.push("dc-promoted"); }
-          var nm = el("span", cls.join(" "), p.player);
-          var pos = el("span", "dc-pos", p.group + (p.effective ? p.effective : ""));
-          pEl.appendChild(nm);
-          pEl.appendChild(pos);
-          grid.appendChild(pEl);
+          if (!p || !p.player) return;
+          var gk = (p.group === "G" || p.group === "W" || p.group === "B") ? p.group : "U";
+          (buckets[gk] = buckets[gk] || []).push(p);
         });
-        wrap.appendChild(grid);
+        DC_GROUPS.forEach(function(pair) {
+          var gk = pair[0], rows = buckets[gk];
+          if (!rows || !rows.length) return;
+          // available players first, ordered by their EFFECTIVE (tonight) slot; ruled-out players
+          // sink to the bottom of their group, ordered by base rank.
+          rows.sort(function(a, b) {
+            var ao = !!(a.out || a.susp), bo = !!(b.out || b.susp);
+            if (ao !== bo) return ao ? 1 : -1;
+            var av = ao ? (a.base || 99) : (a.effective || a.base || 99);
+            var bv = bo ? (b.base || 99) : (b.effective || b.base || 99);
+            return av - bv;
+          });
+          var sec = el("div", "dc-sec");
+          sec.appendChild(el("div", "dc-glabel", pair[1]));
+          rows.forEach(function(p) {
+            var pEl = el("div", "dc-player");
+            var out = !!(p.out || p.susp);
+            // NOTE: dc-promoted is a DISPLAY-ONLY slot-elevation highlight and is DELIBERATELY a
+            // broader rule than the consolidated `promoted` steps-up flag. NOT part of the steps-up
+            // rule; do not "consolidate" it onto p.promoted. (An out player has effective=null, so
+            // `moved` is false — the line-through and the move-arrow never collide.)
+            var moved = (p.effective && p.base && p.effective < p.base);
+            var cls = ["dc-name"];
+            if (out) { cls.push("dc-out"); }
+            if (moved) { cls.push("dc-promoted"); }
+            pEl.appendChild(el("span", cls.join(" "), p.player));
+            // role indicator: OUT for ruled-out; an explicit base->effective move for a stepped-up
+            // player (the legible role change); otherwise the plain tonight slot. Never null-as-0.
+            var slot;
+            if (out) { slot = el("span", "dc-pos", "OUT"); }
+            else if (moved) { slot = el("span", "dc-move", p.base + "→" + p.effective); }
+            else { slot = el("span", "dc-pos", String(p.effective || p.base || "")); }
+            pEl.appendChild(slot);
+            sec.appendChild(pEl);
+          });
+          wrap.appendChild(sec);
+        });
         return wrap;
       }
       var awayDc = renderDc(awayAbbr, g.away_depth);

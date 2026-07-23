@@ -36,6 +36,11 @@
   .rk{color:var(--dim);width:1.6em}
   .tm{font-weight:640}
   .full{color:var(--muted);font-weight:400;font-size:11px}
+  /* current won-lost RECORD cell (viz-teams-record-col) — the mainstream team-page fact the rating
+     board otherwise omits; W–L primary + muted win%. Merged by abbr from the already-public
+     standings.json; a team with no record row renders a plain dash (never a fabricated record). */
+  .rec{font-weight:640;font-variant-numeric:tabular-nums}
+  .rec .wl{color:var(--muted);font-weight:400;font-size:11px;margin-left:4px}
   .up{color:var(--good);font-weight:600}.down{color:var(--bad);font-weight:600}.flat{color:var(--dim)}
   .strong{font-weight:680}
   .scell{display:flex;align-items:center;justify-content:flex-end;gap:7px}
@@ -96,11 +101,14 @@
   <a href="./index.html">Board</a>
   <a href="./queue.html">What's Next</a>
   <a href="./games.html">Games</a>
+  <a href="./standings.html">Standings</a>
   <a href="./availability.html">Injuries</a>
   <a class="active" href="./teams.html">Teams</a>
   <a href="./coach.html">Coach</a>
+  <a href="./tempo.html">Tempo</a>
   <a href="./gm.html">GM</a>
   <a href="./players.html">Players</a>
+  <a href="./compare.html">Compare</a>
   <a href="./situation.html">Situations</a>
   <a href="./review.html">Daily Review</a>
   <a href="./accuracy.html">Our Accuracy</a>
@@ -116,7 +124,7 @@
 <script>
 (function(){
   "use strict";
-  var URL="./teams.json", curData=null, teamFilter="";
+  var URL="./teams.json", curData=null, teamFilter="", STANDINGS=null;
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function td(c,x){ return el("td",c,x); }
   // Render an ISO date (YYYY-MM-DD) as plain "Jul 15" — no timezone jargon, no Date() TZ shift.
@@ -125,6 +133,30 @@
     if(!iso||typeof iso!=="string") return "";
     var m=iso.match(/^(\d{4})-(\d{2})-(\d{2})/); if(!m) return iso;
     return (MON[parseInt(m[2],10)-1]||m[2])+" "+parseInt(m[3],10);
+  }
+
+  // CURRENT RECORD MERGE (viz-teams-record-col). The power board rates rosters + odds but never
+  // showed each team's actual won-lost mark — the one fact every mainstream team/power page leads
+  // with. It's already baked and already PUBLIC in ./standings.json (the same file the Standings
+  // page serves), so we fetch it read-only and merge by team abbr onto the board. No new source, no
+  // DB, no model. DATA-INTEGRITY: a missing file or a team with no record row degrades to a plain
+  // dash — a record is never fabricated.
+  function stdMap(){
+    var m={}; if(STANDINGS && STANDINGS.teams){ STANDINGS.teams.forEach(function(r){ if(r.team) m[r.team]=r; }); }
+    return m;
+  }
+  // ".793" style win% (leading zero trimmed); "" when absent so callers can omit it cleanly.
+  function pctText(row){
+    if(!row || row.win_pct==null) return "";
+    return row.win_pct.toFixed(3).replace(/^0(?=\.)/,"");
+  }
+  // Record table cell: en-dash "23–6" primary + muted win%. Plain dash when no record row.
+  function recordCell(row){
+    var cell=el("td","rec");
+    if(!row || row.wins==null || row.losses==null){ cell.appendChild(el("span","flat","—")); return cell; }
+    cell.appendChild(document.createTextNode(row.wins+"–"+row.losses));
+    var p=pctText(row); if(p) cell.appendChild(el("span","wl", p));
+    return cell;
   }
 
   // Shared 'as of' freshness badge (same shape/behaviour as players.html / index.html): a pill naming
@@ -402,7 +434,11 @@
     var teams=d&&d.teams;
     if(!teams||!teams.length) return null;
     var box=el("div","summary");
+    var std=stdMap();
     function nm(r){ return r?(r.team_full||r.team):"—"; }
+    // current record suffix, e.g. " (23–6)" — omitted when no record row is merged yet.
+    function rec(r){ var s=r&&std[r.team]; return (s&&s.wins!=null&&s.losses!=null)?
+      (' <span class="k">('+s.wins+'–'+s.losses+')</span>'):""; }
     // Impact-first: the coach's first question is who wins it all.
     var byTitle=teams.filter(function(r){ return r.title_pct!=null; }).slice()
       .sort(function(a,b){ return b.title_pct-a.title_pct; });
@@ -410,13 +446,13 @@
     var chasers=byTitle.slice(1).filter(function(r){ return r.title_pct>=10; }).slice(0,4);
     var lines=[];
     if(fav){
-      var t='<span class="k">Title favorite</span> <b>'+nm(fav)+'</b> '+fav.title_pct.toFixed(1)+'%';
+      var t='<span class="k">Title favorite</span> <b>'+nm(fav)+'</b>'+rec(fav)+' '+fav.title_pct.toFixed(1)+'%';
       if(chasers.length) t+=' <span class="k">— right behind:</span> '+chasers.map(function(r){
         return '<b>'+r.team+'</b> '+r.title_pct.toFixed(1)+'%'; }).join(', ');
       lines.push(t);
     }
     var top=teams[0]; // #1 by strength (feed is strength-ranked)
-    lines.push('<span class="k">Strongest roster right now</span> <b>'+nm(top)+'</b>');
+    lines.push('<span class="k">Strongest roster right now</span> <b>'+nm(top)+'</b>'+rec(top));
     var hot=null,cold=null;
     teams.forEach(function(r){
       if(r.churn==null) return;
@@ -471,7 +507,8 @@
     var card=el("div","card"); var sc=el("div","scroll");
     var t=el("table");
     var thead=el("thead"); var hr=el("tr");
-    ["#","Team","Strength","Momentum","Title %","1-day move","2-wk title trend","Playoffs %"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
+    var std=stdMap();
+    ["#","Team","Record","Strength","Momentum","Title %","1-day move","2-wk title trend","Playoffs %"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
     function buildRow(r){
@@ -479,6 +516,7 @@
       tr.appendChild(td("rk", r.rank));
       var name=el("td","tm"); name.appendChild(document.createTextNode(r.team+" "));
       name.appendChild(el("span","full", r.team_full)); tr.appendChild(name);
+      tr.appendChild(recordCell(std[r.team]));
       tr.appendChild(strengthCell(r.strength, sfrac(r.strength)));
       tr.appendChild(churnCell(r.churn));
       tr.appendChild(td(r.title_pct!=null&&r.title_pct>=10?"strong":null, r.title_pct==null?"—":r.title_pct.toFixed(1)+"%"));
@@ -493,7 +531,7 @@
     TIERS.forEach(function(tier){
       var group=rows.filter(function(r){ return tierOf(r)===tier[0]; });
       if(!group.length) return;
-      var hrow=el("tr","tier"); var hc=el("td"); hc.colSpan=8;
+      var hrow=el("tr","tier"); var hc=el("td"); hc.colSpan=9;
       hc.innerHTML='<span class="tlabel">'+tier[1]+'</span><span class="tmeaning">'+tier[2]+'</span>'+
         '<span class="tcount">'+group.length+(group.length===1?' team':' teams')+'</span>';
       hrow.appendChild(hc); tb.appendChild(hrow);
@@ -502,6 +540,7 @@
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); main.appendChild(card);
     main.appendChild(el("div","note",
       "Teams are grouped by how the end-of-season simulation sees them — title contenders, in the mix, on the bubble, and out of the race — then ordered by roster strength within each group. "+
+      "Record is each team's current won-lost mark (with win% beside it), straight from the season standings. "+
       "Strength = our on-court team-strength index (higher is better), carried to today; the bar shows each team's spot on the field from weakest to strongest. "+
       "Momentum = how the team's recent-form rating has moved over its last few games (▲ heating up, ▼ cooling) — a form read, not the ranking. "+
       "Title % and Playoffs % are from our end-of-season simulation" + (d.title_as_of?(" (current through "+plainDate(d.title_as_of)+")"):"") + "; the one-day move is the change in title odds since yesterday. "+
@@ -539,6 +578,11 @@
   fetch("./coach_style.json?v="+Date.now(),{cache:"no-cache"})
     .then(function(r){ return r.ok?r.json():null; })
     .then(function(j){ COACH=j; insertCoach(); }).catch(function(){});
+  // current won-lost record — merged onto the board by team abbr; a full re-render on arrival so the
+  // Record column + summary marks fill in (graceful dash until then, never a fabricated record).
+  fetch("./standings.json?v="+Date.now(),{cache:"no-cache"})
+    .then(function(r){ return r.ok?r.json():null; })
+    .then(function(j){ STANDINGS=j; if(curData) render(curData); }).catch(function(){});
   poll(); setInterval(poll,60000); setInterval(updAgo,1000);
 })();
 </script>

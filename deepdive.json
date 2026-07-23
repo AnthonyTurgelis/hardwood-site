@@ -1,8 +1,19 @@
 {
- "generated_utc": "2026-07-23T16:08:07+00:00",
+ "generated_utc": "2026-07-23T20:09:59+00:00",
  "date": "2026-07-23",
  "available": true,
  "items": [
+  {
+   "title": "Using an age curve to predict minutes played",
+   "as_of": "2026-07-23T19:17:13Z",
+   "content": [
+    "# Using an age curve to predict minutes played",
+    "We have an age-and-experience adjustment that genuinely sharpens our scoring-rate projections — older and younger players trend in predictable ways. A side-reading suggested the same age curve might also improve how many minutes we expect a player to log. We chased that lead.",
+    "Run through the full pre-registered, hold-out-the-future test, **the age adjustment on minutes was noise.** What helps scoring rate does not carry over to playing time — a coach's rotation decides minutes far more than a player's age does.",
+    "So we kept the age curve on scoring, where it earns its keep, and left minutes projections alone. Same tool, honest about where it works and where it does not.",
+    "Record: age-carry prior on minutes, gated eval NO-PROMOTE, 2026-07-23 (valid null; the scoring-rate gain does not transfer to minutes)."
+   ]
+  },
   {
    "title": "Era Adjustment Across Years",
    "as_of": "2026-07-13T04:27:23Z",
@@ -17,6 +28,72 @@
    ]
   },
   {
+   "title": "Replacing hand-picked blending numbers with learned ones",
+   "as_of": "2026-07-23T19:18:02Z",
+   "content": [
+    "# Replacing hand-picked blending numbers with learned ones",
+    "Good models should learn their weights from data, not have a human guess them. We went hunting through our margin-prediction path for any hand-picked blending number still hiding in there, planning to replace it with a fitted one.",
+    "We came up empty — in a good way. Every material weight on the live margin path is already fit from out-of-sample past games, walk-forward, no peeking at the future. There was no hand-set number left to replace. Re-fitting them would just be re-doing work already done.",
+    "So we changed nothing and wrote down the evidence. The honest headline: our prediction blend is already learned from data, not hand-tuned — and we verified that rather than assuming it.",
+    "Record: learned-weights backfit audit, 2026-07-23 (VERIFY-NOT-REBUILD — every material margin-spine weight already fitted out-of-sample; nothing hand-set left open)."
+   ]
+  },
+  {
+   "title": "Fine-tuning how much we rate each team",
+   "as_of": "2026-07-23T19:16:48Z",
+   "content": [
+    "# Fine-tuning how much we rate each team",
+    "We keep a running list of teams we might rate a little too high or too low, and every so often we try adding a per-team correction to nudge those numbers into line.",
+    "We ran the idea through a strict do-no-harm test on the live prediction basis: re-fit each team's correction on past games only, then check whether it actually made future game-margin predictions better. **It turned out to be noise.** On the current rating basis, no team is mis-rated by an amount we can tell apart from random game-to-game swings — the one team that used to look under-rated stopped looking that way once the model already accounts for team strength properly.",
+    "So we did not ship a per-team fudge factor. Adding one would have been fitting to the last few coin-flips, not to a real bias — exactly the kind of over-fitting we are trying to avoid.",
+    "Record: per-team rating-bias re-test, 2026-07-23 (no team clears the 95% significance bar; production is per-team well-calibrated)."
+   ]
+  },
+  {
+   "title": "Whether our prediction ranges could be tightened",
+   "as_of": "2026-07-23T19:17:31Z",
+   "content": [
+    "# Whether our prediction ranges could be tightened",
+    "Alongside each game we publish a range — the 80% and 90% band around our predicted margin and total. A fair question: could we point those bands at a different, better-calibrated version and sharpen them?",
+    "We checked every frozen version of our range models against actual decided games, asking a simple thing: when we say \"90% of the time the result lands in here,\" does it really land there 90% of the time? The ranges we already publish came out on top — best-calibrated AND tightest of everything on the shelf. No alternative passed the do-no-harm bar.",
+    "So there was nothing to change. We kept the current ranges. Worth noting because the honest outcome of a tune-up is often \"the thing you have is already the right one\" — and that only counts if you actually go look.",
+    "Record: served-interval calibration audit, 2026-07-23 (NO-PROMOTE — current margin and total bands are already the best-calibrated available; no repoint staged)."
+   ]
+  },
+  {
+   "title": "Predicting rookies from their college box scores",
+   "as_of": "2026-07-23T19:17:02Z",
+   "content": [
+    "# Predicting rookies from their college box scores",
+    "Every year we would love to know how a rookie will perform before she plays a pro game. The obvious place to look is her college stats. We tested whether college box-score numbers predict a rookie's real on-court pro impact.",
+    "We even rebuilt the test the honest way — measuring pro impact net of the situation a rookie is dropped into (who she plays with, who she plays against, whether her role fits). Even with that clean target, **college box scores turned out to be noise** for predicting pro impact: no better than a flat, everyone-starts-here prior.",
+    "So we did not build a college-stats rookie model. New players still get a sensible cold-start rating that improves fast once real pro games arrive.",
+    "Record: rookie clean-target re-test, 2026-07-22 (STILL NULL — out-of-sample college-box signal indistinguishable from a flat prior)."
+   ]
+  },
+  {
+   "title": "A machine-learning model for rookie projections",
+   "as_of": "2026-07-23T19:17:08Z",
+   "content": [
+    "# A machine-learning model for rookie projections",
+    "Separately from the raw box-score check, we tried a small machine-learning model that combines a rookie's college numbers and draft position to project her first pro season.",
+    "An early look flashed a faint positive signal. But when we held out games the model had never seen — the only test that counts — **the fancy model was noise: it tied a flat, constant prior, dead even.** The early \"it's working\" reading was just fold-to-fold luck averaging out to nothing.",
+    "So we did not wire it in. The existing cold-start rule for new and international players stays. We would rather ship nothing than ship a model that only looks smart on the data it already saw.",
+    "Record: light college+draft rookie prior, out-of-sample gate FAIL, 2026-06-04 (held-out error identical to a flat prior; do-not-wire)."
+   ]
+  },
+  {
+   "title": "Weighting recent seasons more when we rate a player",
+   "as_of": "2026-07-23T19:16:54Z",
+   "content": [
+    "# Weighting recent seasons more when we rate a player",
+    "When we build a player's season-long impact rating, we pool several past seasons. The natural next idea: lean harder on the most recent season, since players change year to year. We fit a recency-decay curve that does exactly that and put it through a pre-registered accuracy gate.",
+    "The recency weighting beat using only the latest season by a mile — but it was **statistically indistinguishable from a plain, flat average across seasons.** In other words, the thing that helped was pooling several seasons to cut down the noise; the fancy \"weight recent years more\" part was just noise on top of that.",
+    "So we kept the simple multi-season pool and did not ship the recency-decay curve. The honest lesson: the win here is more data, not a cleverer weighting.",
+    "Record: Season Impact V2 fitted-decay eval, 2026-07-16 (NO-PROMOTE — ties the flat multi-season baseline; value is pooling, not recency)."
+   ]
+  },
+  {
    "title": "Role-Conditional Minutes (Slot-Delta)",
    "as_of": "2026-07-13T00:04:08Z",
    "content": [
@@ -26,9 +103,31 @@
     "The slot-delta model consistently performed worse than a simple exponentially weighted moving average (EWMA). By attempting to precisely map out who takes whose minutes when injuries occur, the model overfit to noisy rotation data and introduced more variance than the naive baseline.",
     "The baseline v8 (EWMA) model remains our core, providing a more stable and accurate foundation for player projections. Sometimes, trying to be too clever with the data just introduces noise."
    ]
+  },
+  {
+   "title": "Letting social-media chatter move our predictions",
+   "as_of": "2026-07-23T19:17:42Z",
+   "content": [
+    "# Letting social-media chatter move our predictions",
+    "Beat writers and team accounts often hint at an injury or a rest day before the official report catches up. We built a pipeline that reads that chatter, and asked the real question: when social posts disagree with the official injury feed, should we trust the social lead enough to move a prediction?",
+    "Not yet — and we are being disciplined about it. So far we have only a handful of clean disagreement cases, far short of the number we set in advance as the minimum to judge whether the social lead is right often enough to act on. Acting on that little would be reading tea leaves.",
+    "So we do not let social posts move any prediction. We do surface the lead as a non-binding early-warning flag, and we will re-run the test once enough real cases accumulate. Shiny signal, not enough evidence — we wait.",
+    "Record: social-to-prediction gate re-check, 2026-07-17 (INSUFFICIENT — n=5 clean disagreements versus a pre-set minimum of 30; do-not-wire, flag-only ceiling holds)."
+   ]
+  },
+  {
+   "title": "Do our stated win chances match reality",
+   "as_of": "2026-07-23T19:17:36Z",
+   "content": [
+    "# Do our stated win chances match reality",
+    "When we say \"this team has a 70% chance to win,\" that claim only earns trust if teams we give 70% to actually win about 70% of the time. We audited our published win chances against decided 2026 games to find out.",
+    "They line up. Across the season's decided games, our stated win probabilities track the rate teams actually win — no systematic over-confidence or under-confidence worth correcting. The headline number is already honest.",
+    "So we changed nothing. We are recording it here anyway, because \"we checked and it was already right\" is a result too — and a platform that only tells you about its wins is hiding half the ledger.",
+    "Record: win-probability calibration audit, 2026-07-23 (ALREADY-CALIBRATED — stated win chances match realized win rates on decided games; no change staged)."
+   ]
   }
  ],
  "placeholder": "We are currently investigating new ideas.",
  "source": "our noise investigations",
- "generated_et": "Jul 23, 12:08pm ET"
+ "generated_et": "Jul 23, 4:09pm ET"
 }
