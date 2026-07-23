@@ -352,7 +352,10 @@
   }
 
   // Per-row click-to-evidence drill-down (AAA rung). Extends the headline's own evidence — the full
-  // n-marked sparkline strip AND the graded calls behind the miss — to EVERY material ledger row.
+  // n-marked sparkline strip AND the graded calls behind the miss — to every material ledger row
+  // THAT CARRIES A READABLE TREND (not literally every row: the baker omits a slice whose calls are
+  // too clustered in time to draw a line — e.g. the b2b_0-1 rest slices, 27 calls but only ~3
+  // distinct dates — so those honestly show no toggle; see build_site._attach_ledger_row_trends).
   // A coach clicks "show the evidence" on any slice and self-serves the exact calls that drove it +
   // that slice's complete trend line (not just the from->to the AA inline marker shows). Uses the
   // SAME shared builders (sparkBars/sparkCaption/buildDrillTable) as the headline, so they can't
