@@ -66,6 +66,15 @@
   .triser .tm{font-weight:700;color:var(--acc);font-variant-numeric:tabular-nums}
   .triser .nm{font-weight:600}
   .triser .gap{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* board momentum (A++-rung): the single biggest RISING + biggest FALLING on-court-impact mover,
+     reusing the per-team riser strip idiom; the ▲/▼ arrow carries the direction color (good up /
+     warn down). Omitted entirely when no firm player has a material recent move (never fabricated). */
+  .mover{display:inline-flex;align-items:baseline;gap:5px;font-size:11px;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:7px;padding:3px 8px;line-height:1.35}
+  .mover .ar{font-weight:700;font-variant-numeric:tabular-nums}
+  .mover.up .ar{color:var(--good)}
+  .mover.down .ar{color:var(--warn)}
+  .mover .nm{font-weight:600}
+  .mover .gap{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
   /* as_of freshness badge (BR-V2): every board section names the slate its data reflects; a data date
      two+ days behind the board date reads LOUD (red), never a silent stale board passed off as fresh. */
   .asof{display:inline-block;font-size:9.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;margin-left:9px;vertical-align:middle;font-variant-numeric:tabular-nums}
@@ -213,6 +222,34 @@
     box.appendChild(wrap);
     return box;
   }
+  // BOARD MOMENTUM (A++-rung): the single biggest RISING + biggest FALLING firm player, read from
+  // the SERVER-BAKED rt.momentum — a re-projection of the SAME per-row impact_trend the ▲/▼ arrows
+  // and the card sparkline draw (one core, three surfaces; it can never contradict them). Firm-only,
+  // provisional-excluded, and the sub-floor/stale/short-span omit guards are all applied bake-side,
+  // so a provisional/thin player is never crowned a mover. OMIT-when-none: a side with no material
+  // mover contributes no pill; NEITHER side -> the whole strip is omitted (no empty strip, no fake
+  // crown). No client re-compute — a pre-A++ players.json simply carries no momentum and this omits.
+  function momentumPill(m, up){
+    if(!m || m.delta==null || !m.days) return null;                        // omit — never fabricate
+    var pill=el("span","mover "+(up?"up":"down"));
+    pill.appendChild(el("span","ar", up?"▲":"▼"));
+    pill.appendChild(el("span","nm", m.name + (m.team?(" ("+m.team+")"):"")));
+    pill.appendChild(el("span","gap",(up?"+":"−")+Math.abs(m.delta).toFixed(1)+" over "+m.days+"d"));
+    return pill;
+  }
+  function momentumStrip(rt){
+    var mo=rt.momentum;
+    if(!mo) return null;                                                   // pre-A++ bake -> omit
+    var rp=momentumPill(mo.rising,true), fp=momentumPill(mo.falling,false);
+    if(!rp && !fp) return null;                                            // no material mover -> omit
+    var box=el("div","trisers momentum");
+    box.appendChild(el("span","trisers-k","On-court impact momentum — biggest movers"));
+    var wrap=el("div","triser-list");
+    if(rp) wrap.appendChild(rp);
+    if(fp) wrap.appendChild(fp);
+    box.appendChild(wrap);
+    return box;
+  }
   function ratingsSection(rt){
     var s=el("section");
     var h=el("h2"); h.appendChild(document.createTextNode("Players — this season"));
@@ -230,6 +267,8 @@
       : "Ranked by season scoring — points per game from the official box scores. Impact leads the stat columns: our on-court rating of how much better a team plays with her on the floor. It now separates players into a real signal; a player still resting on a thin on-court sample is regressed toward league average and tagged “prov.” Her share of team minutes rides alongside too, so a big scoring line on limited minutes is easy to spot. Tap a name for her full card."));
     // BOARD HEADLINE — biggest impact-over-scoring riser (shown on both axes; omitted when none rises)
     var riser=riserCallout(rt); if(riser) s.appendChild(riser);
+    // BOARD MOMENTUM (A++-rung) — biggest rising + falling on-court-impact mover (omitted when none)
+    var momentum=momentumStrip(rt); if(momentum) s.appendChild(momentum);
     // PER-TEAM RISERS (A+-rung element 1) — each roster's most-underrated-by-points, compact strip
     var trisers=teamRisersStrip(rt); if(trisers) s.appendChild(trisers);
     // rank-axis toggle — reuses the shared .segbtns component (same look as the Realm-of-outcomes tabs)

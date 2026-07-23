@@ -136,6 +136,10 @@
   .item .takeaway-spark{flex:0 0 auto;display:block;width:72px;height:18px;overflow:visible}
   .item .takeaway-spark .spark-line{fill:none;stroke:var(--acc);stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
   .item .takeaway-spark .spark-dot{fill:var(--acc)}
+  /* A+++++: the interior peak/valley vertex marked ON the line at the SAME tablePeak extreme point —
+     a ringed accent dot (halo separates it from the solid endpoint dot). Theme-safe: accent fill +
+     background-colored ring so it reads on either theme. Drawn ONLY when the peak callout qualified. */
+  .item .takeaway-spark .spark-peak{fill:var(--acc);stroke:var(--bg);stroke-width:1;vector-effect:non-scaling-stroke}
   .item .body{margin-top:10px;font-size:13px;line-height:1.55}
   .item .body h3{font-size:14px;margin:15px 0 4px;font-weight:700}
   .item .body h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:13px 0 3px;font-weight:700}
@@ -972,7 +976,11 @@
   // fallback (the test DOM shim has no createElementNS), and every setAttribute is guarded so a shim
   // without it never throws. Only NUMERIC geometry + the humanized label go in (no innerHTML, no
   // table-derived string ever parsed as markup) — the label rides a <title> via textContent.
-  function sparkSvg(sp){
+  // A+++++: the optional `peak` arg is the SAME tablePeak() result. When it qualified, mark its
+  // interior extreme ON the line — the vertex point is LOOKED UP in sp.pts by the peak's own time
+  // value (never recomputed), so the drawn (x,y) is EXACTLY the sparkline point at the peak's index
+  // and can never disagree with the geometry. Omit the marker entirely when tablePeak omitted.
+  function sparkSvg(sp, peak){
     if(!sp) return null;
     var NS="http://www.w3.org/2000/svg";
     var mk=document.createElementNS ? function(t){ return document.createElementNS(NS,t); }
@@ -996,6 +1004,24 @@
     if(dot.setAttribute){ dot.setAttribute("class","spark-dot"); dot.setAttribute("cx",last.x); dot.setAttribute("cy",last.y); dot.setAttribute("r","1.7"); }
     else { dot.className="spark-dot"; }
     svg.appendChild(dot);
+    // A+++++: mark the interior peak/valley vertex ON the line, at the SAME point tablePeak named.
+    // The vertex is found by matching the peak's time value (time is strictly monotonic => unique),
+    // so (cx,cy) is exactly sp.pts[peak-index] — same geometry, never a second computation.
+    if(peak && peak.at!=null){
+      var pt=null, pkt=Number(peak.at);
+      for(var j=0;j<sp.pts.length;j++){ if(sp.pts[j].t===pkt){ pt=sp.pts[j]; break; } }
+      if(pt){
+        var vtx=mk("circle");
+        if(vtx.setAttribute){
+          vtx.setAttribute("class","spark-peak");
+          vtx.setAttribute("cx",pt.x); vtx.setAttribute("cy",pt.y); vtx.setAttribute("r","2.1");
+        } else { vtx.className="spark-peak"; }
+        var vt=mk("title");
+        vt.textContent=(peak.kind==="peaked"?"peaked ":"bottomed ")+peak.at+", "+peak.value;
+        vtx.appendChild(vt);
+        svg.appendChild(vtx);
+      }
+    }
     return svg;
   }
 
@@ -1069,8 +1095,10 @@
                 (pk.kind==="peaked"?"peaked ":"bottomed ")+pk.at+", "+pk.value+
                 " — "+pk.dist+" "+pk.rel+" the "+pk.baseAt+" baseline")); }
               // A++++: a mini-sparkline of the SAME parsed series (same axis, drawn from parsed values).
+              // A+++++: pass the SAME pk so its interior extreme is marked ON the line (null-safe: no
+              // qualifying peak => no vertex dot; the vertex reuses the sparkline's own geometry).
               var sp=sparkline(it.content, lede);
-              if(sp){ tk.appendChild(sparkSvg(sp)); }
+              if(sp){ tk.appendChild(sparkSvg(sp, pk)); }
             }
             body.appendChild(tk);
           }

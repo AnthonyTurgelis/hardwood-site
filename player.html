@@ -38,6 +38,9 @@
   th:first-child,td:first-child{text-align:left}
   th{color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;background:var(--card2)}
   .traj{width:100%;height:96px;display:block}
+  /* sparkline endpoint delta (A++-rung): the baked impact_trend.delta annotated on the last dot, so
+     the number sits on the line it derives from; direction color matches the arrow (good up/warn down). */
+  .trajend{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
   .rbar{position:relative;height:15px;min-width:130px;background:var(--card2);border:1px solid var(--line);border-radius:4px}
   .rbar .b90{position:absolute;top:5px;height:5px;background:var(--band);border-radius:3px}
   .rbar .b50{position:absolute;top:3px;height:9px;background:var(--acc);opacity:.6;border-radius:3px}
@@ -156,7 +159,7 @@
     hero.parentNode.insertBefore(sec, hero.nextSibling);
   }
 
-  function trajSvg(pts){
+  function trajSvg(pts, trend){
     if(!pts || pts.length<2) return el("p","empty","Not enough history yet for a trajectory.");
     var w=680, h=96, pad=6;
     var vals=pts.map(function(p){return p.rating;});
@@ -171,9 +174,24 @@
     path.setAttribute("d",d); path.setAttribute("fill","none");
     path.setAttribute("stroke","var(--acc)"); path.setAttribute("stroke-width","2");
     svg.appendChild(path);
+    var lx=xf(n-1), ly=yf(pts[n-1].rating);
     var last=document.createElementNS("http://www.w3.org/2000/svg","circle");
-    last.setAttribute("cx",xf(n-1)); last.setAttribute("cy",yf(pts[n-1].rating));
+    last.setAttribute("cx",lx); last.setAttribute("cy",ly);
     last.setAttribute("r","3"); last.setAttribute("fill","var(--good)"); svg.appendChild(last);
+    // ENDPOINT DELTA (A++-rung): annotate the last dot with the SAME baked impact_trend.delta the
+    // arrow/momentum-strip read — the number sits ON the line it derives from (the trend is baked
+    // over this exact series). Rendered ONLY when a real, material trend is baked (firm + past the
+    // omit guards); a flat/short/stale/provisional history carries none -> no label (never a fake 0).
+    if(trend && trend.delta!=null && trend.days){
+      var up=trend.delta>0;
+      var ty=Math.max(11, Math.min(h-3, ly + (up? -7 : 15)));           // clamp inside the frame
+      var lbl=document.createElementNS("http://www.w3.org/2000/svg","text");
+      lbl.setAttribute("x",(lx-5).toFixed(1)); lbl.setAttribute("y",ty.toFixed(1));
+      lbl.setAttribute("text-anchor","end"); lbl.setAttribute("class","trajend "+(up?"up":"down"));
+      lbl.setAttribute("fill", up?"var(--good)":"var(--warn)");
+      lbl.textContent=(up?"+":"−")+Math.abs(trend.delta).toFixed(1);
+      svg.appendChild(lbl);
+    }
     return svg;
   }
 
@@ -424,8 +442,8 @@
     }
 
     var s1=el("section"); s1.appendChild(el("h2",null,"Rating trajectory"));
-    var c1=el("div","card"), p1=el("div","pad"); p1.appendChild(trajSvg(d.trajectory)); c1.appendChild(p1); s1.appendChild(c1);
-    s1.appendChild(el("div","note","How her on-court impact rating has moved across the season (higher is better). The dot marks the latest value. Early-season values rest on a small on-court sample and are provisional."));
+    var c1=el("div","card"), p1=el("div","pad"); p1.appendChild(trajSvg(d.trajectory, d.impact_trend)); c1.appendChild(p1); s1.appendChild(c1);
+    s1.appendChild(el("div","note","How her on-court impact rating has moved across the season (higher is better). The dot marks the latest value, labelled with its recent change when the rating has moved materially. Early-season values rest on a small on-court sample and are provisional."));
     main.appendChild(s1);
 
     var s2=el("section"); s2.appendChild(el("h2",null,"Realm of outcomes"));
