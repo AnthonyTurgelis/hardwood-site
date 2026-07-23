@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-07-23T23:13:10+00:00",
+ "generated_utc": "2026-07-23T23:18:17+00:00",
  "freshness": {
-  "baked_utc": "2026-07-23T23:13:10+00:00",
-  "baked_et": "Jul 23, 7:13pm ET",
-  "revalidated_utc": "2026-07-23T23:13:10+00:00",
+  "baked_utc": "2026-07-23T23:18:17+00:00",
+  "baked_et": "Jul 23, 7:18pm ET",
+  "revalidated_utc": "2026-07-23T23:18:17+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-23",
@@ -13,7 +13,7 @@
   "done_today": 40,
   "maintenance": 4,
   "needs_anthony": 0,
-  "lanes_today": 184,
+  "lanes_today": 185,
   "upcoming": 95
  },
  "sections": {
@@ -111,6 +111,17 @@
     "link": "https://drive.google.com/file/d/1O7RarXhzv-yJrbO-vmaLIXmI1ChoK-Cu/view?usp=drivesdk",
     "impact": 2,
     "passes": 26
+   },
+   {
+    "name": "Infra autorespawn three faults killtest",
+    "one_liner": "Infra — auto-respawn: three faults killed, kill-test harness landed",
+    "chip": "DONE",
+    "team": "",
+    "time": "",
+    "at_iso": null,
+    "link": "https://drive.google.com/file/d/18mLUtwnSOKeomt9HManRmRfxrN7Onnln/view?usp=drivesdk",
+    "impact": 2,
+    "maint": true
    },
    {
     "name": "Daybyday actuals retro comparison",
@@ -504,17 +515,6 @@
     "at_iso": null,
     "link": "https://drive.google.com/file/d/13jYfF_mQ3b3Dg3Of5okET3k3KXkHpHf_/view?usp=drivesdk",
     "impact": 1
-   },
-   {
-    "name": "Official injury bridge guard wired",
-    "one_liner": "Tested — no improvement; recorded honestly.",
-    "chip": "NULL",
-    "team": "Data",
-    "time": "",
-    "at_iso": null,
-    "link": "https://drive.google.com/file/d/1laimYmIo1JtLn3WFZ0sPyyz-h7DtOHmF/view?usp=drivesdk",
-    "impact": 2,
-    "maint": true
    }
   ],
   "upcoming": {
@@ -3861,9 +3861,9 @@
     "target": 40,
     "count": 95,
     "ok": true,
-    "label": "95 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 24m ago.)",
+    "label": "95 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 29m ago.)",
     "as_of_utc": "2026-07-23T22:48:44Z",
-    "age_secs": 1468,
+    "age_secs": 1776,
     "stale": false
    },
    "source": "dispatch queue",
@@ -4217,66 +4217,66 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-23T23:13:07Z",
-  "age_s": 5,
-  "cycles": 3,
-  "label": "scout: alive, last poll 5s ago",
+  "last_poll_utc": "2026-07-23T23:17:32Z",
+  "age_s": 47,
+  "cycles": 7,
+  "label": "scout: alive, last poll 47s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "7:09pm",
-   "text": "poll #4 · nothing new",
-   "detail": "poll cycle=4 ok directives_new=0"
+   "time": "7:15pm",
+   "text": "WAKE begin: scout pid=5324 session=1 active console session=1 headless=False",
+   "detail": "WAKE begin: scout pid=5324 session=1 active_console_session=1 headless=False"
   },
   {
-   "time": "7:10pm",
-   "text": "no spawn - WEEKLY usage pause active (kind=weekly); clears only on explicit ack.py --resume",
-   "detail": "no spawn - WEEKLY usage pause active (kind=weekly); clears only on explicit ack.py --resume"
+   "time": "7:15pm",
+   "text": "recovered a lost in-session prompt from a crashed session -> inbox directive for the successor to surface",
+   "detail": "recovered a lost in-session prompt from a crashed session -> inbox directive for the successor to surface"
   },
   {
-   "time": "7:10pm",
-   "text": "USAGE-RESET VERIFIED available after 1 probe(s) past the predicted reset - clearing the pause; the next gated spawn/recovery resumes the backlog (no human needed",
-   "detail": "USAGE-RESET VERIFIED available after 1 probe(s) past the predicted reset - clearing the pause; the next gated spawn/recovery resumes the bac"
+   "time": "7:15pm",
+   "text": "started a fresh coordinator (window ready)",
+   "detail": "WAKE spawned pid=12116 mode=visible-window spawn_log=C:\\Users\\antho\\hardwood-cron\\logs\\spawn_attempts\\spawn_.log"
   },
   {
-   "time": "7:10pm",
+   "time": "7:15pm",
+   "text": "WAKE spawn liveness OK: pid=12116 still alive after 3s (awaiting lock declaration",
+   "detail": "WAKE spawn liveness OK: pid=12116 still alive after 3s (awaiting lock declaration)"
+  },
+  {
+   "time": "7:15pm",
+   "text": "WAKE attempt (reason=inbox) - awaiting coordinator confirmation (<= 300s), one attempt only",
+   "detail": "WAKE attempt (reason=inbox) - awaiting coordinator confirmation (<= 300s), one attempt only"
+  },
+  {
+   "time": "7:15pm",
    "text": "poll #5 · nothing new",
    "detail": "poll cycle=5 ok directives_new=0"
   },
   {
-   "time": "7:10pm",
+   "time": "7:15pm",
    "text": "publish-health: clean (public board is fresh",
    "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "7:10pm",
-   "text": "monitor started",
-   "detail": "scout watcher START pid=5324 poll=60s folder=1wFZtN61Ze5EaUv9ia7rJ8LjHQByhIMOj inbox=C:\\Users\\antho\\hardwood-cron\\ops\\scout\\inbox"
+   "time": "7:16pm",
+   "text": "fresh coordinator confirmed live",
+   "detail": "WAKE confirmed - coordinator declared itself in coordinator.lock"
   },
   {
-   "time": "7:10pm",
-   "text": "poll #1 · nothing new",
-   "detail": "poll cycle=1 ok directives_new=0"
+   "time": "7:16pm",
+   "text": "poll #6 · nothing new",
+   "detail": "poll cycle=6 ok directives_new=0"
   },
   {
-   "time": "7:12pm",
-   "text": "poll #2 · nothing new",
-   "detail": "poll cycle=2 ok directives_new=0"
-  },
-  {
-   "time": "7:12pm",
-   "text": "inbox-unread: RECOVERED - all filed directives read/consumed",
-   "detail": "inbox-unread: RECOVERED - all filed directives read/consumed"
-  },
-  {
-   "time": "7:13pm",
-   "text": "poll #3 · nothing new",
-   "detail": "poll cycle=3 ok directives_new=0"
+   "time": "7:17pm",
+   "text": "poll #7 · nothing new",
+   "detail": "poll cycle=7 ok directives_new=0"
   }
  ],
  "helpers": {
-  "as_of": "2026-07-23T23:13:07Z",
+  "as_of": "2026-07-23T23:18:07.591625+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -4285,16 +4285,16 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "5s",
-    "state_text": "on · seen 5s ago"
+    "age_label": "47s",
+    "state_text": "on · seen 47s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "11s",
-    "state_text": "on · seen 11s ago"
+    "age_label": "12s",
+    "state_text": "on · seen 12s ago"
    },
    {
     "name": "Status-page baker",
@@ -4309,8 +4309,8 @@
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "6s",
-    "state_text": "on · seen 6s ago"
+    "age_label": "20s",
+    "state_text": "on · seen 20s ago"
    },
    {
     "name": "Inbox triage",
@@ -4479,14 +4479,14 @@
  },
  "coordinator_heartbeat": {
   "alive": true,
-  "last_heartbeat_utc": "2026-07-23T23:12:48Z"
+  "last_heartbeat_utc": "2026-07-23T23:17:27Z"
  },
  "pipe_health": {
-  "directives_pending": 1,
+  "directives_pending": 0,
   "last_processed_clock": "7:06pm",
   "last_processed_iso": "2026-07-23T23:06:04Z",
-  "newest_directive_clock": "6:50pm",
-  "newest_directive_iso": "2026-07-23T22:50:02Z",
+  "newest_directive_clock": "",
+  "newest_directive_iso": null,
   "source": "director inbox",
   "anchor": "inbox files + delivered/processed trail",
   "as_of": "2026-07-23T23:06:04Z"
@@ -4500,7 +4500,7 @@
  "width_defect": {
   "active": true,
   "state": "defect",
-  "text": "Only 0 of 6 work lanes have been running for 27 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 6 work lanes have been running for 31 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 6
  },
@@ -4509,25 +4509,25 @@
    "source": "live lane ledger",
    "as_of": "2026-07-23T22:47:07Z",
    "stale": true,
-   "revalidated": "2026-07-23T23:13:10+00:00",
-   "stale_reason": "These readings may be out of date — last updated 26m ago.",
-   "age_label": "26m",
+   "revalidated": "2026-07-23T23:18:17+00:00",
+   "stale_reason": "These readings may be out of date — last updated 31m ago.",
+   "age_label": "31m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-23T23:13:10+00:00",
+   "as_of": "2026-07-23T23:18:17+00:00",
    "stale": false,
-   "revalidated": "2026-07-23T23:13:10+00:00",
+   "revalidated": "2026-07-23T23:18:17+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-23T23:13:10+00:00",
+   "as_of": "2026-07-23T23:18:17+00:00",
    "stale": false,
-   "revalidated": "2026-07-23T23:13:10+00:00",
+   "revalidated": "2026-07-23T23:18:17+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
@@ -4536,7 +4536,7 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-23T23:13:10+00:00",
+   "revalidated": "2026-07-23T23:18:17+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -4545,16 +4545,16 @@
    "source": "dispatch queue",
    "as_of": "2026-07-23T22:48:44Z",
    "stale": false,
-   "revalidated": "2026-07-23T23:13:10+00:00",
+   "revalidated": "2026-07-23T23:18:17+00:00",
    "stale_reason": "",
-   "age_label": "24m",
+   "age_label": "29m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-23T23:13:10+00:00",
+   "revalidated": "2026-07-23T23:18:17+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -4563,38 +4563,38 @@
    "source": "director inbox",
    "as_of": "2026-07-23T23:06:04Z",
    "stale": false,
-   "revalidated": "2026-07-23T23:13:10+00:00",
+   "revalidated": "2026-07-23T23:18:17+00:00",
    "stale_reason": "",
-   "age_label": "7m",
+   "age_label": "12m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
-   "as_of": "2026-07-23T23:13:10+00:00",
+   "as_of": "2026-07-23T23:18:17+00:00",
    "stale": false,
-   "revalidated": "2026-07-23T23:13:10+00:00",
+   "revalidated": "2026-07-23T23:18:17+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 172800
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-23T23:08:11+00:00",
+   "as_of": "2026-07-23T23:13:10+00:00",
    "stale": false,
-   "revalidated": "2026-07-23T23:13:10+00:00",
+   "revalidated": "2026-07-23T23:18:17+00:00",
    "stale_reason": "",
    "age_label": "5m",
    "stale_after": null
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-23T23:13:07Z",
+   "as_of": "2026-07-23T23:18:07.591625+00:00",
    "stale": false,
-   "revalidated": "2026-07-23T23:13:10+00:00",
+   "revalidated": "2026-07-23T23:18:17+00:00",
    "stale_reason": "",
-   "age_label": "5s",
+   "age_label": "12s",
    "stale_after": null
   }
  },
- "generated_et": "Jul 23, 7:13pm ET"
+ "generated_et": "Jul 23, 7:18pm ET"
 }
