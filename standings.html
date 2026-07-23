@@ -299,6 +299,10 @@
     .then(function(d){ lastFetch=Date.now(); render(d); updAgo(); })
     .catch(function(e){ if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load. '+(e&&e.message?e.message:"")+'</p>'; } }); }
   poll(); setInterval(poll,300000); setInterval(updAgo,1000);
+  // Seed distribution (stakes overlay) — fetched once; re-renders the last standings when it lands.
+  fetch("./playoff_odds.json?v="+Date.now(),{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; })
+    .then(function(j){ if(j&&j.teams&&j.teams.length){ PLAYOFF=j; if(lastData) render(lastData); } })
+    .catch(function(){});
 })();
 </script>
 </body>
