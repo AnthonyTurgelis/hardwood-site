@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-07-23T22:03:26+00:00",
+ "generated_utc": "2026-07-23T22:08:14+00:00",
  "date": "2026-07-23",
  "available": true,
  "items": [
@@ -12,6 +12,17 @@
     "Run through the full pre-registered, hold-out-the-future test, **the age adjustment on minutes was noise.** What helps scoring rate does not carry over to playing time — a coach's rotation decides minutes far more than a player's age does.",
     "So we kept the age curve on scoring, where it earns its keep, and left minutes projections alone. Same tool, honest about where it works and where it does not.",
     "Record: age-carry prior on minutes, gated eval NO-PROMOTE, 2026-07-23 (valid null; the scoring-rate gain does not transfer to minutes)."
+   ]
+  },
+  {
+   "title": "Whether knowing who guards whom makes our game predictions better",
+   "as_of": "2026-07-23T22:05:04Z",
+   "content": [
+    "# Whether knowing who guards whom makes our game predictions better",
+    "We built real who-guards-whom matchup data — which defender actually spent possessions on which scorer, drawn from the league's own matchup tracking rather than a guess. A natural hope followed: feed that defensive-assignment signal into the model and predict game margins more accurately.",
+    "We checked it against the thing that actually decides a game — the final margin. **On margin accuracy, defender-matchup is a null.** Knowing who guarded whom does not move team-margin error in a way we can measure. Its value lives somewhere else entirely: scouting, player profiles, and matchup views, where seeing the real assignment *is* the point and no game-score claim is being made.",
+    "So we did not wire defender-matchups into the margin model. We keep the data for the scouting and player-matchup surfaces, where it earns its keep, and we did not dress it up as something that sharpens the score prediction when it does not.",
+    "Record: defender-faced margin-lift check, 2026-07-23 (team-margin error is a null — no margin lift; the value is scouting and matchup views, not prediction accuracy)."
    ]
   },
   {
@@ -61,6 +72,17 @@
    ]
   },
   {
+   "title": "How much of our \"recent seasons count more\" win was actually real",
+   "as_of": "2026-07-23T22:04:59Z",
+   "content": [
+    "# How much of our \"recent seasons count more\" win was actually real",
+    "For the player projection prior — what we expect a player to do going forward — we pool several past seasons. We tried a three-year curve that leans harder on the most recent season, and it improved projections a lot over leaning on a single season. Before calling that a recency breakthrough, we asked the honest question: how much of the gain is genuinely *recency*, and how much is just pooling more seasons to cut down the noise?",
+    "An independent re-implementation, with a different seed, reproduced the numbers exactly. Then a placebo test settled it: we shuffled the targets so no real signal could exist, and **most of the headline gain survived the placebo** — meaning the bulk of it is plain variance-reduction from pooling, not recency at all. Only a smaller slice is genuine recency signal, and we know that part is real precisely because it collapses to nothing under the placebo. So recency is real but modest; the incumbent single-season base was mostly just leaving the pooling win on the table.",
+    "So we did not sell recency as the driver. We keep the honest lesson front and center: the win is pooling more data well, with a small genuine recency top-up on top — not a clever weighting doing the heavy lifting.",
+    "Record: three-year decay projection-prior decomposition and placebo, 2026-07-23 (independently re-verified — the recency-versus-pooling gap is real but small; the bulk of the improvement is variance-reduction from pooling)."
+   ]
+  },
+  {
    "title": "Predicting rookies from their college box scores",
    "as_of": "2026-07-23T19:17:02Z",
    "content": [
@@ -80,6 +102,17 @@
     "An early look flashed a faint positive signal. But when we held out games the model had never seen — the only test that counts — **the fancy model was noise: it tied a flat, constant prior, dead even.** The early \"it's working\" reading was just fold-to-fold luck averaging out to nothing.",
     "So we did not wire it in. The existing cold-start rule for new and international players stays. We would rather ship nothing than ship a model that only looks smart on the data it already saw.",
     "Record: light college+draft rookie prior, out-of-sample gate FAIL, 2026-06-04 (held-out error identical to a flat prior; do-not-wire)."
+   ]
+  },
+  {
+   "title": "Predicting rookies from the shape of their college shots",
+   "as_of": "2026-07-23T22:04:53Z",
+   "content": [
+    "# Predicting rookies from the shape of their college shots",
+    "Beyond a rookie's raw college box scores, we also have the *shape* of her shot diet — how often she gets to the rim, the geometry of her three-point looks, and so on. The hope was that this shot-shape detail, layered on top of plain box shooting rates, would sharpen how we project a rookie before she plays a pro game.",
+    "We ran a clean head-to-head on the players who actually have shot-shape coverage: box-only versus box plus six shot-profile features, both fit on past data and scored on a held-out group. **Adding shot-shape did not help** — if anything the fuller version came out a hair worse, and the difference sat well inside the noise (its error bar straddled zero at every sample floor we tried). At this sample size, shot-shape is largely redundant with the box shooting rates already in the prior. Separately, only a handful of this season's rookies even have shot coverage yet, so there was nothing live to apply it to.",
+    "So we did not add shot-profile features to the rookie prior. We froze the test so it re-fires on one command once coverage extends and the direction can be resolved with real power.",
+    "Record: rookie shot-profile augmentation head-to-head, 2026-07-23 (thin-n, non-significant degrade — shot-shape redundant with box shooting rates; features and pre-registration frozen for re-fire when coverage grows)."
    ]
   },
   {
@@ -129,5 +162,5 @@
  ],
  "placeholder": "We are currently investigating new ideas.",
  "source": "our noise investigations",
- "generated_et": "Jul 23, 6:03pm ET"
+ "generated_et": "Jul 23, 6:08pm ET"
 }
