@@ -42,6 +42,14 @@
   .reading .k{color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:10.5px}
   .reading .good{color:var(--accent);font-weight:660}
   .reading .rnote{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.5}
+  /* Per-row same-basis mini-trend (AA rung): a compact inline read of whether THIS slice's miss is
+     shrinking/growing/flat across the window, using the SAME machinery as the headline trend. Omitted
+     entirely when thin (baker attaches no trend) — never a fabricated arrow. */
+  .rtrend{display:block;margin-top:2px;font-size:10px;line-height:1.3;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rtrend-better{color:#1a7f37}
+  .rtrend-worse{color:#cf222e}
+  .rtrend-flat{color:var(--muted)}
+  @media (prefers-color-scheme:dark){ .rtrend-better{color:#3fb950} .rtrend-worse{color:#f85149} }
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--muted);font-size:11px}
 </style>
 <link rel="stylesheet" href="./hardwood.css">
@@ -290,6 +298,27 @@
     return s;
   }
 
+  // Per-row same-basis mini-trend (AA rung). Renders a compact inline read of whether THIS slice's
+  // miss is shrinking / growing / flat across the window, baked server-side by the SAME machinery as
+  // the headline trend (cumulative-average series + the >=20%/n>=12 verdict rule). Presence-gated:
+  // a thin slice carries NO `trend` field, so nothing renders — never a fabricated arrow. The full
+  // honest verdict sentence rides in the title tooltip; the from->to marks the cumulative-avg endpoints.
+  function appendRowTrend(tdd, t){
+    if(!t || !t.state || t.state==="thin") return;   // omit-when-thin honesty guard (defensive)
+    var st=t.state;
+    var glyph = st==="better" ? "↘" : st==="worse" ? "↗" : "→"; // ↘ ↗ →
+    var word  = st==="better" ? "miss shrinking" : st==="worse" ? "miss growing" : "miss flat";
+    var m=el("span","rtrend rtrend-"+st);
+    var txt=glyph+" "+word;
+    if(t.first && t.last && num(t.first.avg) && num(t.last.avg)){
+      txt+=" · "+t.first.avg.toFixed(1)+"→"+t.last.avg.toFixed(1);
+      if(num(t.last.n)) txt+=" · n"+t.last.n;
+    }
+    m.textContent=txt;
+    if(t.label) m.setAttribute("title", t.label);
+    tdd.appendChild(m);
+  }
+
   function makeTable(title, data, readingNode){
     var s=el("section"); s.appendChild(el("h2",null,title));
     if(readingNode) s.appendChild(readingNode);
@@ -356,6 +385,7 @@
             var f=(v-bounds[c][0])/(bounds[c][1]-bounds[c][0]);
             tdd.style.background="rgba(207,34,46,"+(0.05+f*0.28).toFixed(3)+")";
           }
+          if(c==="Slice" && r.trend) appendRowTrend(tdd, r.trend);
           tr.appendChild(tdd);
         });
         tbody.appendChild(tr);
