@@ -53,6 +53,8 @@
   .avail.warn{color:var(--warn);background:rgba(154,103,0,.12);border:1px solid var(--warn)}
   .avail.out{color:var(--bad);background:rgba(198,40,40,.10);border:1px solid var(--bad)}
   .why{color:var(--ink);font-size:13px;margin-top:9px;line-height:1.5}
+  /* impact-vs-scoring divergence (A+-rung): the two-axis rank read on the player card */
+  .divergence{color:var(--acc);font-size:12px;font-weight:600;margin-top:6px;font-variant-numeric:tabular-nums;line-height:1.4}
   .asof{font-size:11px;color:var(--dim);margin-top:5px}
   .asof.stale{color:var(--warn);font-weight:600}
   .statline{margin-top:10px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -197,6 +199,21 @@
     t.appendChild(tb); sc.appendChild(t); return sc;
   }
 
+  // IMPACT-vs-SCORING DIVERGENCE (A+-rung element 2): a plain-English one-liner reading the two
+  // canonical ranks the bake ALREADY put on this card's row (impact_rank = firm on-court rank,
+  // scoring_rank = season-scoring board rank) — render-only, no computation beyond a subtraction.
+  // Returns null unless BOTH ranks are present (a provisional/no-rating player has no firm
+  // impact_rank, so the line is simply omitted — never a fabricated rank). When the two ranks
+  // diverge it names the gap (the point of the read: on-court value the box score misses/overstates).
+  function divergenceLine(d){
+    var ir=d&&d.impact_rank, sr=d&&d.scoring_rank;
+    if(ir==null || sr==null) return null;                   // both ranks required — else omit
+    var s="#"+ir+" by on-court impact · #"+sr+" by scoring";
+    var gap=sr-ir;
+    if(gap>0){ s+=" — a "+gap+"-spot lift the box score misses"; }
+    else if(gap<0){ s+=" — "+(-gap)+" spots higher by scoring than on-court impact"; }
+    return s;
+  }
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
     var back=el("a","back","← Back to all players"); back.href="./players.html"; main.appendChild(back);
@@ -249,6 +266,13 @@
       }
       if(prov) line+=" Impact is still provisional on a thin sample — lean on the scoring and minutes for now.";
       if(line){ hero.appendChild(el("div","why", line)); }
+    })();
+
+    // IMPACT-vs-SCORING DIVERGENCE (A+-rung element 2) — the two-axis read, render-only from the
+    // baked impact_rank + scoring_rank; omitted for a provisional/no-rating card (no firm impact rank).
+    (function(){
+      var dv=divergenceLine(d);
+      if(dv){ var e=el("div","divergence", dv); e.title="Where she ranks by our on-court impact rating vs by season scoring — the gap the box score alone misses."; hero.appendChild(e); }
     })();
 
     // AS-OF — honest per-card recency. This card's own bake can lag the site-wide strip; flag it stale.

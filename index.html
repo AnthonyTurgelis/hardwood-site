@@ -50,6 +50,10 @@
   .hchip .dot{width:7px;height:7px;border-radius:50%;background:var(--done);flex:0 0 auto}
   .hchip.ok .dot{background:var(--ok)} .hchip.warn .dot{background:var(--warn)}
   .hchip.bad .dot{background:var(--bad)}
+  /* A++ actionable roll-up: when a panel is stale the freshness chip is a click-to-culprit control;
+     the transient 'refreshing…' state (amber dot) shows ONLY during a real in-flight board fetch. */
+  .hchip.clickable{cursor:pointer}
+  .hchip.refreshing .dot{background:var(--warn)}
   .banner{margin:8px 0 0;padding:7px 11px;border-radius:8px;font-size:12.5px;font-weight:600;
     border:1px solid var(--line);background:var(--card)}
   .banner.idle{border-left:3px solid var(--bad)} .banner.paused{border-left:3px solid var(--warn)}
@@ -100,6 +104,10 @@
   .row:last-child{border-bottom:none}
   .row.flash{animation:fl 1.1s ease}
   @keyframes fl{0%{background:var(--flash)}100%{background:transparent}}
+  /* A++ click-to-culprit landing highlight: a brief wash on the stalest panel's section head so the
+     operator's eye lands on the culprit after the chip scrolls them to it. */
+  .sechead.culprit-flash{animation:cf 2s ease;border-radius:6px}
+  @keyframes cf{0%{background:var(--flash)}100%{background:transparent}}
   .row .nm{font-weight:620;flex:0 1 auto;min-width:0}
   .row .oneln{color:var(--muted);font-size:12px;flex:1 1 40%;min-width:0;overflow:hidden;
     text-overflow:ellipsis;white-space:nowrap}
@@ -369,6 +377,7 @@
     if(CHIPMEAN[status]) c.title=CHIPMEAN[status]; return c; }
 
   var SRC={}, FRESH={};
+  var boardFetching=false;   // A++: true only while poll() is actively re-fetching board.json (honest refreshing state)
   // PANEL-NAME registry (A+ freshness roll-up): plain-English label per rendered section, so the
   // header roll-up can NAME the stalest panel a reader can actually navigate to. This is a DISPLAY-name
   // lookup only — it is NOT a second freshness authority (staleness is still computed from section_sources
@@ -468,7 +477,11 @@
   function staleBadge(reason){ var b=el("span","stalebadge","stale"); if(reason){ b.title=reason; } return b; }
   function sectionHead(title, key){
     if(key && title){ PANELNAME[key]=title; }   // keep the roll-up's display name in sync with what renders
-    var wrap=el("div","sechead"); wrap.appendChild(el("h2",null,title));
+    var wrap=el("div","sechead");
+    // A++ click-to-culprit anchor: a stable per-key section-head id the header freshness chip can
+    // scroll to (sec-<key>). Keyed panels only; keyless heads (e.g. "Coming soon") stay un-anchored.
+    if(key){ wrap.id="sec-"+key; }
+    wrap.appendChild(el("h2",null,title));
     var p=provFor(key);
     if(p.stale){ wrap.appendChild(staleBadge(p.reason)); }
     wrap.appendChild(p.prov);
@@ -483,15 +496,32 @@
   //     "freshness unknown" and is never crowned stalest over a section with a real, aged verdict.
   // Stalest = greatest data age (oldest as_of) among those. null when nothing qualifies (no manufactured
   // alarm -> the dot keeps its normal generated_utc behavior).
+  // A++: returns {key,name,ageSecs,count} — count = how many OTHER nameable panels are ALSO stale
+  // (drives the "+N more" suffix), tallied from the SAME staleInfo verdicts (never a second authority).
+  // count===0 when only one panel is stale (so the chip never fabricates a "+0 more").
   function stalestSection(){
-    var best=null;
+    var best=null, staleCount=0;
     for(var k in SRC){ if(!SRC.hasOwnProperty(k)) continue;
       var nm=PANELNAME[k]; if(!nm) continue;
       var info=staleInfo(k);
       if(!info.stale || info.ageSecs==null) continue;
+      staleCount++;
       if(!best || info.ageSecs>best.ageSecs){ best={key:k, name:nm, ageSecs:info.ageSecs}; }
     }
+    if(best){ best.count=staleCount-1; }   // OTHER stale panels beyond the crowned one
     return best;
+  }
+  // A++ CLICK-TO-CULPRIT: scroll the operator to the stalest panel's section head + briefly highlight
+  // it, so a glance at the header chip becomes a one-click jump to the actual stale panel. No-op when
+  // nothing is stale (stalestSection()===null) or the panel is not currently rendered (no sec-<key> id).
+  function scrollToStalest(){
+    var st=stalestSection(); if(!st) return;
+    var target=document.getElementById("sec-"+st.key); if(!target) return;
+    if(target.scrollIntoView){ target.scrollIntoView({behavior:"smooth", block:"center"}); }
+    if(target.classList){
+      target.classList.remove("culprit-flash"); void target.offsetWidth; target.classList.add("culprit-flash");
+      setTimeout(function(){ if(target.classList){ target.classList.remove("culprit-flash"); } }, 2000);
+    }
   }
   function tickProv(){
     // Tick the DATA-age anchor (data-asof), so "as of Xm ago" reflects when the source last changed —
@@ -534,7 +564,9 @@
     // and a loud tick to bad if the data goes stale). The old crew-status chips (the monitor
     // heartbeat + the inbox backlog) were internal plumbing that told a reader nothing about
     // tonight's picks, so they were pulled out of the top per the CEO.
-    mk("ch-data","", "How fresh the numbers on this page are (time since the page data last refreshed).");
+    var cd=mk("ch-data","", "How fresh the numbers on this page are (time since the page data last refreshed).");
+    // A++ click-to-culprit: the chip scrolls to the stalest panel when one is crowned (no-op otherwise).
+    cd.onclick=scrollToStalest;
     tickChips();
   }
   function setChip(id, cls, text, title){ var c=document.getElementById(id); if(!c) return;
@@ -542,18 +574,30 @@
   function tickChips(){
     if(!lastB) return;
     var b=lastB;
+    // A++ REFRESHING STATE: while the client is actually re-fetching board.json, show an honest
+    // transient "refreshing…" instead of a frozen stale claim. Driven by the REAL in-flight flag
+    // (set/cleared by poll()), never a fake animation; reverts to truth the instant the fetch resolves
+    // or fails (poll() clears the flag and re-ticks in both its .then and .catch).
+    if(boardFetching){
+      setChip("ch-data","refreshing","data · refreshing…","Fetching the latest board data…");
+      return;
+    }
     // A+ freshness ROLL-UP: when any nameable panel has crossed its own staleness window, the header
     // dot NAMES the single stalest panel + its age (so the operator sees the culprit without scanning
-    // every panel) and goes loud. When nothing is stale, it keeps its normal behavior below — the dot's
-    // colour tracks the page-data age off generated_utc, no manufactured alarm.
+    // every panel) and goes loud. A++ makes it ACTIONABLE: the chip is a click-to-culprit control and
+    // carries a "+N more" tail when OTHER panels are also stale. When nothing is stale, it keeps its
+    // normal behavior below — the dot's colour tracks the page-data age off generated_utc, no alarm.
     var st=stalestSection();
     if(st){
-      setChip("ch-data","bad","data · "+st.name+" "+agoSecs(st.ageSecs)+" old",
-        "Stalest panel: "+st.name+" — last updated "+agoSecs(st.ageSecs)+" ago. Other panels may be fresh.");
+      var more=(st.count>0) ? (" · +"+st.count+" more") : "";   // only when OTHER panels are stale (never "+0 more")
+      var mtip=(st.count>0) ? (" "+st.count+" other panel"+(st.count>1?"s are":" is")+" also stale.") : "";
+      setChip("ch-data","bad clickable","data · "+st.name+" "+agoSecs(st.ageSecs)+" old"+more,
+        "Stalest panel: "+st.name+" — last updated "+agoSecs(st.ageSecs)+" ago."+mtip+" Click to jump to it.");
       return;
     }
     var s=sinceIso(b.generated_utc);
     // single freshness dot: green when fresh, amber then red as the numbers age (stale-data guard).
+    // no crowned panel -> the chip is NOT a click control (plain, non-clickable).
     if(s!=null) setChip("ch-data", s<1200?"ok":(s<3600?"warn":"bad"), "data · updated "+agoSecs(s)+" ago",
       "How fresh the numbers on this page are (time since the page data last refreshed).");
   }
@@ -1506,10 +1550,14 @@
   }
   function poll(){
     var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
+    // A++ honest refreshing state: flag the in-flight fetch + tick so the chip shows "refreshing…"
+    // while the request is genuinely open; cleared (and re-ticked to truth) in BOTH branches below.
+    boardFetching=true; tickChips();
     fetch(bust(URL),{headers:h,cache:"no-cache"}).then(function(r){
       if(r.status===304) return null;
       etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
-    }).then(function(b){ lastFetch=Date.now(); if(b){ lastLive=b; if(!viewDate){ render(b); } else { healthChips(b); } } updAgo(); }).catch(function(e){
+    }).then(function(b){ boardFetching=false; lastFetch=Date.now(); if(b){ lastLive=b; if(!viewDate){ render(b); } else { healthChips(b); } } else { tickChips(); } updAgo(); }).catch(function(e){
+      boardFetching=false; tickChips();
       if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the board (board.json). '+(e&&e.message?e.message:"")+'</p>'; }
     });
   }
