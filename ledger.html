@@ -50,6 +50,14 @@
   .rtrend-worse{color:#cf222e}
   .rtrend-flat{color:var(--muted)}
   @media (prefers-color-scheme:dark){ .rtrend-better{color:#3fb950} .rtrend-worse{color:#f85149} }
+  /* Per-row click-to-evidence drill-down (AAA rung): a toggle in the slice cell opens a detail row
+     with THIS slice's full sparkline + the graded calls behind its miss. Presence-gated identically
+     to the AA marker — a thin/absent-trend row renders neither toggle nor panel. */
+  .rdrill{display:block;margin-top:3px;padding:1px 6px;font-size:10px;line-height:1.4;cursor:pointer;
+    color:var(--accent);background:transparent;border:1px solid var(--line);border-radius:5px}
+  .rdrill:hover{background:var(--card)}
+  .rdetail-cell{padding:10px 12px !important;background:var(--card);border-radius:0 0 8px 8px}
+  .rdetail-cell .k{font-size:11px}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--muted);font-size:11px}
 </style>
 <link rel="stylesheet" href="./hardwood.css">
@@ -207,6 +215,64 @@
     return c;
   }
 
+  // Shared evidence builders — used by BOTH the headline block and (AAA rung) every per-row
+  // drill-down, so the two can never diverge. Each is textContent-/attribute-safe (SVG-free numeric
+  // geometry + <title>/text only; no innerHTML from data) and reuses hardwood.css tokens.
+
+  // The cumulative-average sparkline strip: one bar per baked point, n marked in each bar tooltip,
+  // recent point solid / earlier points dimmed. Geometry is numeric only (heights from p.avg).
+  function sparkBars(points, noun){
+    var strip=el("div");
+    strip.style.cssText="display:flex;align-items:flex-end;gap:2px;height:34px;max-width:360px;margin:6px 0 3px";
+    var tmax=0; points.forEach(function(p){ if(num(p.avg)&&p.avg>tmax) tmax=p.avg; });
+    points.forEach(function(p,i){
+      var b=el("div");
+      var h=(tmax>0&&num(p.avg))? Math.max(2,Math.round(p.avg/tmax*32)) : 2;
+      b.style.cssText="flex:1;min-width:3px;border-radius:2px 2px 0 0;height:"+h+
+        "px;background:var(--accent);opacity:"+(i===points.length-1?"1":"0.5");
+      b.title=(p.date||"")+" - avg miss "+(num(p.avg)?p.avg.toFixed(1):"-")+" after "+p.n+" "+noun;
+      strip.appendChild(b);
+    });
+    return strip;
+  }
+  // The honest n-marked caption string for a sparkline (first -> last cumulative average).
+  function sparkCaption(points, noun){
+    var tf=points[0], tl=points[points.length-1];
+    return "Average miss as games graded in: "+
+      (num(tf.avg)?tf.avg.toFixed(1):"-")+" after "+tf.n+" "+noun+" → "+
+      (num(tl.avg)?tl.avg.toFixed(1):"-")+" after "+tl.n+" "+noun+".";
+  }
+  // The drill-down table: the graded calls behind a slice's miss, baked server-side (biggest-miss
+  // first, capped). Returns a wrapper (scroll+table, plus an honest "showing X of Y" note when
+  // capped). Player column present only when the rows carry players (team surfaces omit it).
+  function buildDrillTable(dd){
+    var ddNoun=dd.noun||"games", ddTotal=num(dd.total)?dd.total:dd.rows.length;
+    var wrap=el("div");
+    var scroll=el("div","scroll"), tb=el("table"), thd=el("thead"), htr=el("tr");
+    var hasPlayer=dd.rows.some(function(r){ return r.player; });
+    var heads=["Date","Matchup"].concat(hasPlayer?["Player"]:[])
+      .concat(["We called","What happened","Miss"]);
+    heads.forEach(function(h){ htr.appendChild(el("th",null,h)); });
+    thd.appendChild(htr); tb.appendChild(thd);
+    var body=el("tbody");
+    dd.rows.forEach(function(r){
+      var tr=el("tr");
+      tr.appendChild(el("td",null,r.date||"-"));
+      tr.appendChild(el("td",null,r.matchup||"-"));
+      if(hasPlayer) tr.appendChild(el("td",null,r.player||"-"));
+      tr.appendChild(el("td",null,r.called==null?"-":String(r.called)));
+      tr.appendChild(el("td",null,r.actual==null?"-":String(r.actual)));
+      tr.appendChild(el("td",null,num(r.miss)?String(r.miss):"-"));
+      body.appendChild(tr);
+    });
+    tb.appendChild(body); scroll.appendChild(tb); wrap.appendChild(scroll);
+    if(ddTotal>dd.rows.length){
+      wrap.appendChild(el("div","rnote","Showing the "+dd.rows.length+
+        " biggest misses of the "+ddTotal+" "+ddNoun+" in this group."));
+    }
+    return wrap;
+  }
+
   // Biggest trustworthy miss — one auto-picked highlight ABOVE the error-ledger table. The pick is
   // baked server-side from the SAME rows the table shows, gated by each row's own thin-sample flag
   // (the ledger's enough-games convention), so a thin-slice cherry-pick can never headline. When no
@@ -230,22 +296,9 @@
         var tp=hm.trend.points, tnoun=hm.trend.noun||"games";
         var trWrap=el("div"); trWrap.style.marginTop="9px"; trWrap.setAttribute("data-k","hmtrend");
         trWrap.appendChild(el("span","k","Has it been getting better?"));
-        var strip=el("div");
-        strip.style.cssText="display:flex;align-items:flex-end;gap:2px;height:34px;max-width:360px;margin:6px 0 3px";
-        var tmax=0; tp.forEach(function(p){ if(num(p.avg)&&p.avg>tmax) tmax=p.avg; });
-        tp.forEach(function(p,i){
-          var b=el("div");
-          var h=(tmax>0&&num(p.avg))? Math.max(2,Math.round(p.avg/tmax*32)) : 2;
-          b.style.cssText="flex:1;min-width:3px;border-radius:2px 2px 0 0;height:"+h+
-            "px;background:var(--accent);opacity:"+(i===tp.length-1?"1":"0.5");
-          b.title=(p.date||"")+" - avg miss "+(num(p.avg)?p.avg.toFixed(1):"-")+" after "+p.n+" "+tnoun;
-          strip.appendChild(b);
-        });
-        trWrap.appendChild(strip);
-        var tf=tp[0], tl=tp[tp.length-1], cap=el("div","rnote");
-        var capTxt="Average miss as games graded in: "+
-          (num(tf.avg)?tf.avg.toFixed(1):"-")+" after "+tf.n+" "+tnoun+" → "+
-          (num(tl.avg)?tl.avg.toFixed(1):"-")+" after "+tl.n+" "+tnoun+".";
+        trWrap.appendChild(sparkBars(tp, tnoun));
+        var cap=el("div","rnote");
+        var capTxt=sparkCaption(tp, tnoun);
         if(hm.trend.label) capTxt+=" "+hm.trend.label;
         cap.textContent=capTxt;
         trWrap.appendChild(cap);
@@ -261,28 +314,7 @@
         btn.type="button";
         var wrap=el("div"); wrap.style.display="none"; wrap.style.marginTop="8px";
         wrap.setAttribute("data-k","hmdrill");
-        var scroll=el("div","scroll"), tb=el("table"), thd=el("thead"), htr=el("tr");
-        var hasPlayer=dd.rows.some(function(r){ return r.player; });
-        var heads=["Date","Matchup"].concat(hasPlayer?["Player"]:[])
-          .concat(["We called","What happened","Miss"]);
-        heads.forEach(function(h){ htr.appendChild(el("th",null,h)); });
-        thd.appendChild(htr); tb.appendChild(thd);
-        var body=el("tbody");
-        dd.rows.forEach(function(r){
-          var tr=el("tr");
-          tr.appendChild(el("td",null,r.date||"-"));
-          tr.appendChild(el("td",null,r.matchup||"-"));
-          if(hasPlayer) tr.appendChild(el("td",null,r.player||"-"));
-          tr.appendChild(el("td",null,r.called==null?"-":String(r.called)));
-          tr.appendChild(el("td",null,r.actual==null?"-":String(r.actual)));
-          tr.appendChild(el("td",null,num(r.miss)?String(r.miss):"-"));
-          body.appendChild(tr);
-        });
-        tb.appendChild(body); scroll.appendChild(tb); wrap.appendChild(scroll);
-        if(ddTotal>dd.rows.length){
-          wrap.appendChild(el("div","rnote","Showing the "+dd.rows.length+
-            " biggest misses of the "+ddTotal+" "+ddNoun+" in this group."));
-        }
+        wrap.appendChild(buildDrillTable(dd));
         btn.onclick=function(){
           open=!open; wrap.style.display=open?"":"none";
           btn.textContent=(open?"Hide":"Show")+" the "+ddTotal+" "+ddNoun+" behind this";
@@ -317,6 +349,53 @@
     m.textContent=txt;
     if(t.label) m.setAttribute("title", t.label);
     tdd.appendChild(m);
+  }
+
+  // Per-row click-to-evidence drill-down (AAA rung). Extends the headline's own evidence — the full
+  // n-marked sparkline strip AND the graded calls behind the miss — to EVERY material ledger row.
+  // A coach clicks "show the evidence" on any slice and self-serves the exact calls that drove it +
+  // that slice's complete trend line (not just the from->to the AA inline marker shows). Uses the
+  // SAME shared builders (sparkBars/sparkCaption/buildDrillTable) as the headline, so they can't
+  // diverge. Presence-gated identically to the AA marker: a thin/absent-trend row carries neither
+  // `trend.points` nor `drilldown`, so NO toggle and NO panel render — never fabricated evidence.
+  // Appends a toggle into the slice cell + a hidden detail <tr> (spanning all columns) after the row.
+  function appendRowEvidence(tbody, sliceCell, r, span){
+    var t=r.trend, dd=r.drilldown;
+    var hasSpark = t && t.points && t.points.length;
+    var hasDrill = dd && dd.rows && dd.rows.length;
+    if(!hasSpark && !hasDrill) return;
+    var ddNoun = hasDrill ? (dd.noun||"games") : "";
+    var ddTotal = hasDrill ? (num(dd.total)?dd.total:dd.rows.length) : 0;
+    var shownLabel = hasDrill ? ("the "+ddTotal+" "+ddNoun+" behind this") : "this slice's trend";
+    var open=false;
+    var btn=el("button","rdrill","▸ show "+shownLabel); btn.type="button";
+    var drow=el("tr","rdetail");
+    var dcell=el("td"); dcell.setAttribute("colspan", String(span));
+    dcell.className="rdetail-cell";
+    if(hasSpark){
+      var snoun=t.noun||"calls";
+      var sWrap=el("div"); sWrap.setAttribute("data-k","rowtrend");
+      sWrap.appendChild(el("span","k","How this slice's miss has moved"));
+      sWrap.appendChild(sparkBars(t.points, snoun));
+      var scap=el("div","rnote");
+      var scapTxt=sparkCaption(t.points, snoun);
+      if(t.label) scapTxt+=" "+t.label;
+      scap.textContent=scapTxt;
+      sWrap.appendChild(scap);
+      dcell.appendChild(sWrap);
+    }
+    if(hasDrill){
+      var dWrap=el("div"); dWrap.setAttribute("data-k","rowdrill"); dWrap.style.marginTop="8px";
+      dWrap.appendChild(buildDrillTable(dd));
+      dcell.appendChild(dWrap);
+    }
+    drow.appendChild(dcell); drow.style.display="none";
+    btn.onclick=function(){
+      open=!open; drow.style.display=open?"":"none";
+      btn.textContent=(open?"▾ hide ":"▸ show ")+shownLabel;
+    };
+    sliceCell.appendChild(btn);
+    tbody.appendChild(drow);
   }
 
   function makeTable(title, data, readingNode){
@@ -378,17 +457,23 @@
       var matched=rows.filter(matches);
       var cap=(filterStr||expanded)? matched.length : Math.min(CAP, matched.length);
       matched.slice(0,cap).forEach(function(r){
-        var tr=el("tr");
+        var tr=el("tr"); var sliceCell=null;
         cols.forEach(function(c){
           var v=r[c]; var tdd=el("td", null, label(c,v));
           if(num(v) && bounds[c] && bounds[c][1]>bounds[c][0]){
             var f=(v-bounds[c][0])/(bounds[c][1]-bounds[c][0]);
             tdd.style.background="rgba(207,34,46,"+(0.05+f*0.28).toFixed(3)+")";
           }
-          if(c==="Slice" && r.trend) appendRowTrend(tdd, r.trend);
+          if(c==="Slice"){
+            sliceCell=tdd;
+            // AA inline marker + AAA click-to-evidence — each guarded so ONE bad row can never
+            // drop the table (or the other rows' markers/panels): the row renders plain instead.
+            if(r.trend){ try{ appendRowTrend(tdd, r.trend); }catch(e){} }
+          }
           tr.appendChild(tdd);
         });
         tbody.appendChild(tr);
+        if(sliceCell){ try{ appendRowEvidence(tbody, sliceCell, r, cols.length); }catch(e){} }
       });
       if(!filterStr && !expanded && matched.length>CAP){
         moreBtn.textContent="Show all "+matched.length+" rows";

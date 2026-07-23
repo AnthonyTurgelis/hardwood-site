@@ -59,6 +59,14 @@
      own line (flex-basis:100%) so the pill never crowds; hidden entirely when the crowned panel
      carries no reason (reason-omitted-when-absent) — never an empty "— " dangle. */
   .chipreason{flex-basis:100%;font-size:10px;color:var(--muted);margin:1px 0 0;padding-left:2px}
+  /* A++++ freshness-history spark: a compact green/red strip of the crowned panel's last-N revalidation
+     verdicts, so the operator reads at a glance whether the culprit is CHRONICALLY stale (a run of red)
+     or a one-off blip. Reuses the --ok/--bad tokens (light+dark), textContent-free (squares carry no
+     text), and is HIDDEN entirely below the min-history threshold (never a fabricated trend). */
+  .freshspark{display:inline-flex;align-items:center;gap:2px;margin-left:2px;vertical-align:middle}
+  .freshspark .fresh-sq{width:5px;height:9px;border-radius:1px;background:var(--muted);opacity:.9}
+  .freshspark .fresh-sq.stale{background:var(--bad);opacity:1}
+  .freshspark .fresh-sq.ok{background:var(--ok);opacity:1}
   .banner{margin:8px 0 0;padding:7px 11px;border-radius:8px;font-size:12.5px;font-weight:600;
     border:1px solid var(--line);background:var(--card)}
   .banner.idle{border-left:3px solid var(--bad)} .banner.paused{border-left:3px solid var(--warn)}
@@ -383,6 +391,15 @@
 
   var SRC={}, FRESH={};
   var boardFetching=false;   // A++: true only while poll() is actively re-fetching board.json (honest refreshing state)
+  // A++++ FRESHNESS-HISTORY spark: a per-panel client-side ring buffer of the last-N revalidation verdicts
+  // (true=stale/red, false=fresh/green), keyed by panel. Accumulated once per REAL poll (recordFreshHist,
+  // called from poll()'s resolve path — NOT the 1-second cosmetic tick), from the SAME staleInfo verdicts
+  // the crown/badges already compute (NO new source, no bake/DB change). The header chip renders the
+  // CROWNED panel's own slice so the operator sees chronic-vs-blip without leaving the header. Keyed by
+  // panel so a crown change can never show panel A's history under panel B; cleared wholesale on a
+  // none-stale poll (the unhealthy window ended). SPARK_MIN gates it: below that many accumulated ticks it
+  // renders NOTHING (never a fabricated trend).
+  var freshHist={}, SPARK_N=8, SPARK_MIN=3;
   // PANEL-NAME registry (A+ freshness roll-up): plain-English label per rendered section, so the
   // header roll-up can NAME the stalest panel a reader can actually navigate to. This is a DISPLAY-name
   // lookup only — it is NOT a second freshness authority (staleness is still computed from section_sources
@@ -575,6 +592,10 @@
     var cd=mk("ch-data","", "How fresh the numbers on this page are (time since the page data last refreshed).");
     // A++ click-to-culprit: the chip scrolls to the stalest panel when one is crowned (no-op otherwise).
     cd.onclick=scrollToStalest;
+    // A++++ freshness-history spark holder: a small inline strip sitting right beside the crown pill,
+    // populated by tickChips (setChipSpark) with the crowned panel's last-N revalidation verdicts;
+    // hidden until enough history has accumulated (no fabricated trend).
+    var csp=el("span","freshspark"); csp.id="ch-spark"; csp.style.display="none"; wrap.appendChild(csp);
     // A+++ stale-reason holder: an empty sub-line span, populated by tickChips ONLY when a crowned
     // panel carries its own copy-gated stale_reason; stays display:none (no reason -> no dangle).
     var cr=el("span","chipreason"); cr.id="ch-reason"; cr.style.display="none"; wrap.appendChild(cr);
@@ -587,6 +608,39 @@
   // sub-line entirely (reason-omitted-when-absent) so a crowned panel with no reason shows name+age only.
   function setChipReason(txt){ var r=document.getElementById("ch-reason"); if(!r) return;
     if(txt){ r.textContent=txt; r.style.display=""; } else { r.textContent=""; r.style.display="none"; } }
+  // A++++ RECORD a revalidation tick into the per-panel freshness ring buffer. Called once per REAL poll
+  // (poll().then), NEVER on the cosmetic 1-second tickChips, so 8 entries = 8 revalidations, not 8 seconds.
+  // Records EVERY nameable panel that carries a real, aged verdict (so the crowned panel's slice can hold
+  // the greens from when it was fresh earlier in the same unhealthy window — that is what distinguishes a
+  // one-off blip from chronic staleness). Honesty guards carried intact: only PANELNAME panels (an
+  // internal no-panel row is never charted) with a DERIVABLE age (ageSecs!=null — an unknown-timestamp
+  // section is never charted, mirroring the crown's own eligibility). A none-stale poll clears the whole
+  // buffer (the unhealthy window is over; the next stale event starts a fresh history).
+  function recordFreshHist(){
+    if(!stalestSection()){ freshHist={}; return; }   // none-stale -> reset all history
+    for(var k in SRC){ if(!SRC.hasOwnProperty(k)) continue;
+      if(!PANELNAME[k]) continue;                     // nameable, rendered panels only
+      var info=staleInfo(k);
+      if(info.ageSecs==null) continue;                // unknown timestamp -> never charted
+      if(!freshHist[k]) freshHist[k]=[];
+      freshHist[k].push(!!info.stale);
+      if(freshHist[k].length>SPARK_N) freshHist[k].shift();   // ring: keep only the last N
+    }
+  }
+  // A++++ RENDER the crowned panel's freshness-history spark inline on the chip. Omits entirely (hidden,
+  // no children) below SPARK_MIN accumulated ticks (never a fabricated trend) and for a null/no-history
+  // key; keyed lookup means panel B's crown can never render panel A's history.
+  function setChipSpark(key){
+    var sp=document.getElementById("ch-spark"); if(!sp) return;
+    var h=(key && freshHist[key]) ? freshHist[key] : null;
+    if(!h || h.length<SPARK_MIN){ sp.innerHTML=""; sp.style.display="none"; sp.title=""; return; }
+    sp.innerHTML="";
+    var seq=h.slice(-SPARK_N), nstale=0;
+    for(var i=0;i<seq.length;i++){ if(seq[i]) nstale++;
+      sp.appendChild(el("span","fresh-sq "+(seq[i]?"stale":"ok"))); }
+    sp.style.display="";
+    sp.title="Freshness of the last "+seq.length+" checks (oldest left): "+nstale+" stale / "+(seq.length-nstale)+" fresh.";
+  }
   function tickChips(){
     if(!lastB) return;
     var b=lastB;
@@ -597,6 +651,7 @@
     if(boardFetching){
       setChip("ch-data","refreshing","data · refreshing…","Fetching the latest board data…");
       setChipReason("");   // an in-flight refresh is not a stale claim -> no reason sub-line
+      setChipSpark(null);  // ...nor a history claim -> hide the spark for the transient
       return;
     }
     // A+ freshness ROLL-UP: when any nameable panel has crossed its own staleness window, the header
@@ -613,9 +668,13 @@
       // A+++: surface the crowned panel's OWN reason inline (or hide the sub-line when it has none).
       // Recomputed every tick, so the reason follows the crown when it changes between ticks.
       setChipReason(st.reason);
+      // A++++: render the crowned panel's freshness-history spark (chronic-vs-blip), or hide it below
+      // the min-history threshold. Keyed by st.key, so it always shows THIS crown's own history.
+      setChipSpark(st.key);
       return;
     }
     setChipReason("");   // nothing crowned -> no reason sub-line
+    setChipSpark(null);  // ...and no spark (the none-stale fallback carries no culprit history)
     var s=sinceIso(b.generated_utc);
     // single freshness dot: green when fresh, amber then red as the numbers age (stale-data guard).
     // no crowned panel -> the chip is NOT a click control (plain, non-clickable).
@@ -1577,7 +1636,10 @@
     fetch(bust(URL),{headers:h,cache:"no-cache"}).then(function(r){
       if(r.status===304) return null;
       etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
-    }).then(function(b){ boardFetching=false; lastFetch=Date.now(); if(b){ lastLive=b; if(!viewDate){ render(b); } else { healthChips(b); } } else { tickChips(); } updAgo(); }).catch(function(e){
+    }).then(function(b){ boardFetching=false; lastFetch=Date.now(); if(b){ lastLive=b; if(!viewDate){ render(b); } else { healthChips(b); } } else { tickChips(); }
+      // A++++: a completed fetch (200 or 304) IS a revalidation tick — record this poll's per-panel
+      // verdicts (SRC is now current from render), then re-tick so the crown's history spark redraws.
+      recordFreshHist(); tickChips(); updAgo(); }).catch(function(e){
       boardFetching=false; tickChips();
       if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the board (board.json). '+(e&&e.message?e.message:"")+'</p>'; }
     });
