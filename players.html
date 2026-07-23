@@ -75,6 +75,14 @@
   .mover.down .ar{color:var(--warn)}
   .mover .nm{font-weight:600}
   .mover .gap{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* A+++: a mover pill is a click-through to her card when her id resolves (same route as the board
+     rows); it keeps the pill look (no link-blue), adding only a hover accent. A mover with no
+     resolvable id degrades to a plain, non-link span (never a dead link). */
+  .mover.plink{text-decoration:none;color:var(--ink);cursor:pointer}
+  .mover.plink:hover{border-color:var(--acc)}
+  /* A+++: field-relative magnitude clause under the strip — how many firm players moved today
+     (from the SAME baked impact_trend distribution); flat field appends nothing. */
+  .mover-field{color:var(--muted);font-style:italic;font-size:11px;margin-top:4px}
   /* as_of freshness badge (BR-V2): every board section names the slate its data reflects; a data date
      two+ days behind the board date reads LOUD (red), never a silent stale board passed off as fresh. */
   .asof{display:inline-block;font-size:9.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;margin-left:9px;vertical-align:middle;font-variant-numeric:tabular-nums}
@@ -229,9 +237,37 @@
   // so a provisional/thin player is never crowned a mover. OMIT-when-none: a side with no material
   // mover contributes no pill; NEITHER side -> the whole strip is omitted (no empty strip, no fake
   // crown). No client re-compute — a pre-A++ players.json simply carries no momentum and this omits.
-  function momentumPill(m, up){
+  // A+++ CLICK-THROUGH: resolve a mover to her player-card id by matching name (+ team when both
+  // carry one) against the SAME board rows — no new field, render-only. A mover with no resolvable
+  // id (e.g. a synthetic/pre-bake object with no players list) returns null and the pill degrades to
+  // plain text (no dead link).
+  function moverId(rt, m){
+    if(!m || !m.name) return null;
+    var ps=(rt && rt.players) || [];
+    for(var i=0;i<ps.length;i++){
+      var p=ps[i];
+      if(p.id==null) continue;
+      if(p.name===m.name && (!m.team || !p.team || p.team===m.team)) return p.id;
+    }
+    return null;
+  }
+  // A+++ FIELD-RELATIVE MAGNITUDE: how many FIRM players moved materially today, from the SAME baked
+  // impact_trend distribution the pills read (provisional rows carry impact_trend=null bake-side, so
+  // none is counted). HONEST — no fabricated superlative: a lone mover reads "the only mover", a busy
+  // field reads "of N movers"; a flat/sub-floor field (no movers, or no board rows to count) appends
+  // NOTHING. Mirrors the teams.html moverCallout/fieldRelative idiom (quiet vs busy at the same 4-cut).
+  function momentumField(rt){
+    var movers=((rt && rt.players) || []).filter(function(p){ return p.impact_trend && p.impact_trend.delta!=null; });
+    var n=movers.length;
+    if(n<=0) return null;                                                  // flat field -> no clause
+    if(n===1) return "the only mover on the board today";
+    return "of "+n+" firm movers today — a "+(n<=4?"quiet":"busy")+" day for the field";
+  }
+  function momentumPill(m, up, id){
     if(!m || m.delta==null || !m.days) return null;                        // omit — never fabricate
-    var pill=el("span","mover "+(up?"up":"down"));
+    var link=(id!=null);
+    var pill=el(link?"a":"span","mover "+(up?"up":"down")+(link?" plink":""));
+    if(link){ pill.href="./player.html?id="+id; pill.title="Open "+m.name+"'s card"; }  // real card route
     pill.appendChild(el("span","ar", up?"▲":"▼"));
     pill.appendChild(el("span","nm", m.name + (m.team?(" ("+m.team+")"):"")));
     pill.appendChild(el("span","gap",(up?"+":"−")+Math.abs(m.delta).toFixed(1)+" over "+m.days+"d"));
@@ -240,7 +276,7 @@
   function momentumStrip(rt){
     var mo=rt.momentum;
     if(!mo) return null;                                                   // pre-A++ bake -> omit
-    var rp=momentumPill(mo.rising,true), fp=momentumPill(mo.falling,false);
+    var rp=momentumPill(mo.rising,true,moverId(rt,mo.rising)), fp=momentumPill(mo.falling,false,moverId(rt,mo.falling));
     if(!rp && !fp) return null;                                            // no material mover -> omit
     var box=el("div","trisers momentum");
     box.appendChild(el("span","trisers-k","On-court impact momentum — biggest movers"));
@@ -248,6 +284,8 @@
     if(rp) wrap.appendChild(rp);
     if(fp) wrap.appendChild(fp);
     box.appendChild(wrap);
+    var fld=momentumField(rt);                                            // A+++ field-relative clause
+    if(fld) box.appendChild(el("div","mover-field", fld));
     return box;
   }
   function ratingsSection(rt){
