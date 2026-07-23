@@ -43,6 +43,15 @@
   .seg{display:inline-flex;border:1px solid var(--line2);border-radius:999px;overflow:hidden;width:max-content}
   .seg button{border:0;background:var(--card);color:var(--muted);font-size:12.5px;font-weight:640;padding:6px 14px;cursor:pointer}
   .seg button.on{background:var(--acc);color:#fff}
+  /* live strip */
+  .livechips{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 2px}
+  .livechip{border:1px solid var(--line2);background:var(--card);border-radius:10px;padding:8px 12px;cursor:pointer;text-align:left;color:var(--ink);font:inherit}
+  .livechip:hover{border-color:var(--acc)}
+  .livechip .score{font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+  .livechip .meta{font-size:10.5px;color:var(--muted);margin-top:2px}
+  .livechip .snap{font-size:10px;color:var(--dim);margin-top:2px}
+  .livepaused{font-size:11px;color:var(--dim);font-style:italic;margin:2px 0 4px}
+  .livehint{font-size:10.5px;color:var(--dim);margin:2px 0 6px}
   /* result */
   .big{font-size:38px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.05}
   .big small{font-size:16px;font-weight:650;color:var(--muted)}
@@ -91,7 +100,7 @@
 <script>
 (function(){
   "use strict";
-  var DATA=null;
+  var DATA=null, LIVE=null;
   var state={ ck:"q3", margin:-6, side:"neutral", teamA:"", teamB:"" };
 
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
@@ -253,6 +262,116 @@
     return card;
   }
 
+  // ---------- tonight's live strip (renders the baked live file verbatim; computes nothing) ----------
+  function parseClockMin(clock){
+    // "4:12" -> 4.2 minutes; a sub-minute clock like "45.3" -> 0.755. Bad shape -> null (omit).
+    if(clock==null) return null;
+    var s=String(clock).trim();
+    if(s.indexOf(":")>=0){
+      var p=s.split(":"), mm=parseInt(p[0],10), ss=parseFloat(p[1]);
+      if(isNaN(mm)||isNaN(ss)) return null;
+      return mm+ss/60;
+    }
+    var secs=parseFloat(s);
+    return isNaN(secs)?null:secs/60;
+  }
+  function liveMinutesLeft(game){
+    // regulation minutes of game time left; a 5th period or later is overtime (ot:true) —
+    // beyond the measured regulation grid, pinned to the final-minute checkpoint with a caveat.
+    var cm=parseClockMin(game.clock);
+    if(cm==null||!game.period||game.period<1) return null;
+    if(game.period>4) return { minutes:0, ot:true };
+    return { minutes:(4-game.period)*10+cm, ot:false };
+  }
+  function nearestCheckpoint(data,minutes){
+    // snap to the NEAREST measured moment — never a time-axis interpolation (the page's
+    // contract is that every probability traces to a measured cell).
+    var best=null, bd=1e9;
+    for(var i=0;i<data.checkpoints.length;i++){
+      var cp=data.checkpoints[i], d=Math.abs(cp.minutes_left-minutes);
+      if(d<bd){ bd=d; best=cp; }
+    }
+    return best;
+  }
+  function lastCheckpoint(data){
+    var best=null;
+    for(var i=0;i<data.checkpoints.length;i++){
+      var cp=data.checkpoints[i];
+      if(best===null||cp.minutes_left<best.minutes_left) best=cp;
+    }
+    return best;
+  }
+  function teamKnown(data,abbr){
+    for(var i=0;i<data.teams.length;i++) if(data.teams[i].team===abbr) return true;
+    return false;
+  }
+  function liveFill(data,game){
+    // Map one in-progress game onto the four EXISTING dials. Perspective defaults to the
+    // TRAILING team as "your team" (tied -> the home team). Margin clamps to the measured
+    // dial band; a clamp is labeled, never silent. Returns null if the game can't be read.
+    var t=liveMinutesLeft(game);
+    if(t==null) return null;
+    var cp = t.ot ? lastCheckpoint(data) : nearestCheckpoint(data,t.minutes);
+    if(!cp) return null;
+    var diff=game.away.score-game.home.score;              // away-perspective margin
+    var yourSide = (diff<0) ? "away" : (diff>0 ? "home" : "home"); // trailing team; tied -> home
+    var you  = yourSide==="away" ? game.away : game.home;
+    var opp  = yourSide==="away" ? game.home : game.away;
+    var margin = you.score-opp.score;
+    var clampedBand=false;
+    if(margin<-18){ margin=-18; clampedBand=true; }
+    if(margin> 18){ margin= 18; clampedBand=true; }
+    return {
+      st:{ ck:cp.key, margin:margin, side:(yourSide==="home"?"home":"away"),
+           teamA:(teamKnown(data,you.abbr)?you.abbr:""), teamB:(teamKnown(data,opp.abbr)?opp.abbr:"") },
+      ot:t.ot, clampedBand:clampedBand,
+      snapLabel:(t.ot ? "overtime — beyond the measured regulation grid, pinned to the final minute"
+                      : "nearest measured moment: "+cp.label.toLowerCase()),
+      yourAbbr:you.abbr, oppAbbr:opp.abbr
+    };
+  }
+  function liveAgeMin(fetchedUtc,nowMs){
+    if(!fetchedUtc) return null;
+    var t=Date.parse(fetchedUtc);
+    if(isNaN(t)) return null;
+    return Math.max(0,Math.round((nowMs-t)/60000));
+  }
+  function liveChipLabel(game){
+    var q = game.period>4 ? "OT"+(game.period>5?(game.period-4):"") : "Q"+game.period;
+    return game.away.abbr+" "+game.away.score+" @ "+game.home.abbr+" "+game.home.score+" · "+q+" "+game.clock;
+  }
+  function renderLiveStrip(data,live,nowMs,onPick){
+    // The strip renders the baked live file VERBATIM and only pre-fills the existing dials.
+    // Hidden entirely (returns null) when there is nothing honest to show.
+    if(!live||!live.games||!live.games.length) return null;
+    var age=liveAgeMin(live.fetched_utc,nowMs);
+    if(age==null||age>45) return null;                     // too old to show at all
+    var wrap=el("div"); wrap.id="livestrip";
+    wrap.appendChild(el("h2",null,"Live right now"));
+    var paused = (live.status!=="ok")||age>20;
+    if(paused) wrap.appendChild(el("div","livepaused","Live read paused — showing the last captured score."));
+    var chips=el("div","livechips");
+    var shown=0;
+    for(var i=0;i<live.games.length;i++){
+      var fill=liveFill(data,live.games[i]);
+      if(!fill) continue;                                  // unreadable game -> omit, never invent
+      shown++;
+      var b=el("button","livechip"); b.type="button";
+      b.appendChild(el("span","score",liveChipLabel(live.games[i])));
+      var meta="score as of "+(age<=1?"a minute":age+" min")+" ago";
+      b.appendChild(el("span","meta",meta));
+      var snap=fill.snapLabel+(fill.clampedBand?" · beyond the measured 16+ band, pinned to the edge of the dial":"");
+      b.appendChild(el("span","snap",snap));
+      (function(f){ b.onclick=function(){ if(onPick) onPick(f); }; })(fill);
+      chips.appendChild(b);
+    }
+    if(!shown) return null;
+    wrap.appendChild(chips);
+    wrap.appendChild(el("div","livehint",
+      "Tap a game to load it into the dials below — the trailing side starts as your team, snapped to the nearest measured moment. The score arrives a few minutes behind the arena; every probability is still the measured decade of games."));
+    return wrap;
+  }
+
   /* ---------- live boot: controls, wiring, fetch own JSON ---------- */
   function ctl(labelText,node,valNode){
     var w=el("div","ctl"); var l=el("label",null,labelText); w.appendChild(l); w.appendChild(node);
@@ -274,7 +393,11 @@
       main.appendChild(el("p","empty","The situation data is not available right now — the rest of the board is unaffected."));
       return;
     }
-    main.appendChild(el("p","lede",DATA.static_note));
+    var lede=el("p","lede",DATA.static_note); lede.id="lede";
+    main.appendChild(lede);
+
+    var liveHost=el("div"); liveHost.id="livehost";
+    main.appendChild(liveHost);
 
     // controls
     var controls=el("div","controls");
@@ -329,6 +452,7 @@
     main.appendChild(prov);
 
     paint();
+    paintLive();
 
     function paint(){
       mval.textContent = state.margin===0 ? "Tied" : (state.margin<0?"Your team down "+(-state.margin):"Your team up "+state.margin);
@@ -339,18 +463,50 @@
       for(var i=0;i<bs.length;i++) bs[i].className = (["away","neutral","home"][i]===state.side)?"on":"";
     }
   }
+  function paintLive(){
+    // repaints ONLY the live strip host (never the dials — a refresh must not clobber the
+    // reader's controls). Fails soft to nothing: no live file / no live games = today's page.
+    var host=document.getElementById("livehost");
+    if(!host||!DATA) return;
+    host.innerHTML="";
+    var strip=renderLiveStrip(DATA,LIVE,Date.now(),function(fill){
+      state.ck=fill.st.ck; state.margin=fill.st.margin; state.side=fill.st.side;
+      state.teamA=fill.st.teamA; state.teamB=fill.st.teamB;
+      render();
+    });
+    var lede=document.getElementById("lede");
+    if(strip){
+      host.appendChild(strip);
+      if(lede) lede.textContent="Set the score, the clock, the floor and the matchup — or tap a live game above — and read what actually happened from that exact spot across a decade of real games. Every number is measured, never a formula.";
+    } else if(lede&&DATA.static_note){ lede.textContent=DATA.static_note; }
+  }
+  function fetchLive(){
+    return fetch("./live_state.json?v="+Date.now(),{cache:"no-cache"})
+      .then(function(r){ return r.ok?r.json():null; })
+      .catch(function(){ return null; });
+  }
   function load(){
     fetch("./situation.json?v="+Date.now(),{cache:"no-cache"})
       .then(function(r){ return r.ok?r.json():null; })
       .catch(function(){ return null; })
       .then(function(d){
         DATA=d;
+        return fetchLive();
+      })
+      .then(function(lv){
+        LIVE=lv;
         render();
-        var a=document.getElementById("ago"); if(a) a.textContent="static study";
+        var a=document.getElementById("ago"); if(a) a.textContent="measured study";
         var f=document.getElementById("foot");
-        if(f) f.textContent="Baked "+((DATA&&DATA.generated_utc)||"")+" from our published deep-dive studies (comebacks, lead values, home floor, score effects) and current team strength. Static explorer — it does not follow tonight's games live; that live version is the natural next step.";
+        if(f) f.textContent="Baked "+((DATA&&DATA.generated_utc)||"")+" from our published deep-dive studies (comebacks, lead values, home floor, score effects) and current team strength. Every probability is a measured historical read; when games are in progress, the strip up top shows the last captured score, a few minutes behind the arena.";
       });
   }
+  // keep the age label + scores honest while the tab is open: re-read the small live file
+  // every 90 seconds (same-origin, cache-busted) — the dials are never touched by a refresh.
+  setInterval(function(){
+    if(document.hidden||!DATA) return;
+    fetchLive().then(function(lv){ LIVE=lv; paintLive(); });
+  },90000);
   load();
 })();
 </script>
