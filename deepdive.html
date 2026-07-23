@@ -656,7 +656,247 @@
     return f;
   }
 
-  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace };
+  // -- shared compact table builder (col spec -> styled .dt table) ------------
+  // cols: [{h, get(row), num?, rowh?}]. Reuses the .dt look every renderer above builds by hand,
+  // so a latent-field table is one line. Built entirely via el()/textContent (no HTML injection).
+  function simpleTable(cols, rows){
+    var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
+    cols.forEach(function(c){ hd.appendChild(el("th", c.num?"num":null, c.h)); });
+    var thead=el("thead"); thead.appendChild(hd); t.appendChild(thead);
+    var tb=el("tbody");
+    (rows||[]).forEach(function(r){
+      var tr=el("tr");
+      cols.forEach(function(c){ tr.appendChild(el("td", c.num?"num":(c.rowh?"rowh":null), c.get(r))); });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); w.appendChild(t); return w;
+  }
+
+  // -- scoringmix ------------------------------------------------------------
+  // Shares are baked in PERCENT units (38.2 = 38.2%); win_pct is a FRACTION (0.72); net_eff is
+  // signed pts/100. Every value below is a field ALREADY in deepdive_scoringmix.json.
+  function renderScoringmix(d){
+    var f=frag(); var h=d.headline||{}, lg=d.league||{};
+    f.appendChild(el("div","dhead", h.text||""));
+    f.appendChild(tiles([
+      {v:pct(lg.share_3p_2026,1), l:"points from 3 (2026)"},
+      {v:pct(lg.share_2p_2026,1), l:"points from 2"},
+      {v:pct(lg.share_ft_2026,1), l:"points from the line"},
+      {v:num(h.net_eff_vs_win_r,2), l:"net-eff ↔ win% (r)", sm:true},
+      {v:num(h.share3p_vs_win_r,2), l:"3P-share ↔ win% (r)", sm:true}
+    ]));
+    var lb=d.team_mix_leaderboard||[];
+    if(lb.length){
+      f.appendChild(plab("Team scoring mix — where each team's points come from"));
+      f.appendChild(simpleTable([
+        {h:"Team", rowh:true, get:function(r){return r.name||r.team;}},
+        {h:"From 3", num:true, get:function(r){return pct(r.share_3p,1);}},
+        {h:"From 2", num:true, get:function(r){return pct(r.share_2p,1);}},
+        {h:"From FT", num:true, get:function(r){return pct(r.share_ft,1);}},
+        {h:"Net", num:true, get:function(r){return sign(r.net_eff,1);}},
+        {h:"Win%", num:true, get:function(r){return pct((r.win_pct!=null?r.win_pct*100:null),1);}}
+      ], lb));
+    }
+    var tr=d.trend||[];
+    if(tr.length){
+      f.appendChild(plab("The 3-point era — league scoring mix by season"));
+      f.appendChild(simpleTable([
+        {h:"Season", num:true, get:function(r){return num(r.season);}},
+        {h:"G", num:true, get:function(r){return num(r.games);}},
+        {h:"From 3", num:true, get:function(r){return pct(r.share_3p,1);}},
+        {h:"From 2", num:true, get:function(r){return pct(r.share_2p,1);}},
+        {h:"From FT", num:true, get:function(r){return pct(r.share_ft,1);}}
+      ], tr));
+    }
+    var cr=(d.correlations||{}).all_seasons||{};
+    if(cr.net_eff_vs_win!=null){
+      f.appendChild(plab("What actually correlates with winning (all seasons, r)"));
+      [["Net efficiency", cr.net_eff_vs_win],["3P share ↔ offense", cr.share3p_vs_off_eff],
+       ["3P share ↔ net-eff", cr.share3p_vs_net_eff],["3P share ↔ win%", cr.share3p_vs_win]].forEach(function(x){
+        if(x[1]==null) return; f.appendChild(barrow(x[0], x[1], 1, num(x[1],2), null, (x[1]||0)<0));
+      });
+    }
+    var reads=[]; if(h.text) reads.push(h.text);
+    reads.push("Shooting more threes is a style, not a win signal — 3P-share barely correlates with winning ("+num((cr.share3p_vs_win),2)+"), while net efficiency all but decides it ("+num(cr.net_eff_vs_win,2)+").");
+    f.appendChild(readStrip(reads));
+    var pv=d.provenance||{}, def=d.definitions||{};
+    f.appendChild(methodBlock("Definitions · how this is computed · caveats", function(b){
+      provList(b, [
+        ["Sources", (pv.sources||[]).join("; ")||"—"],
+        ["Scoring mix", def.share_3p||"—"],
+        ["Net efficiency", def.net_eff||"—"],
+        ["Method", pv.method||"—"],
+        ["Script", pv.script||"—"]
+      ]);
+      caveatList(b, pv.caveats, "Honest limitations");
+    }));
+    return f;
+  }
+
+  // -- margins ---------------------------------------------------------------
+  function renderMargins(d){
+    var f=frag(); var h=d.headline||{};
+    f.appendChild(el("div","dhead", h.text||""));
+    f.appendChild(tiles([
+      {v:pct(h.share_one_possession,1), l:"one-possession (≤3)"},
+      {v:pct(h.share_within_6,1), l:"close (≤6)"},
+      {v:pct(h.share_blowout_20plus,1), l:"blowout (20+)"},
+      {v:num(h.mean_margin,1), l:"mean margin", sm:true},
+      {v:num(h.median_margin,1), l:"median margin", sm:true}
+    ]));
+    var bk=(d.distribution||{}).buckets||[];
+    if(bk.length){
+      f.appendChild(plab("Final-margin distribution (share of all games)"));
+      var mxs=Math.max.apply(null, bk.map(function(r){return r.share||0;}))||1;
+      bk.forEach(function(r){ f.appendChild(barrow(r.bucket, r.share||0, mxs, pct(r.share,1), "n="+(r.games!=null?r.games:"—"))); });
+    }
+    var tr=d.trend||[];
+    if(tr.length){
+      f.appendChild(plab("Are games getting closer? Margin by season"));
+      f.appendChild(simpleTable([
+        {h:"Season", num:true, get:function(r){return num(r.season);}},
+        {h:"G", num:true, get:function(r){return num(r.games);}},
+        {h:"Mean", num:true, get:function(r){return num(r.mean_margin,1);}},
+        {h:"Median", num:true, get:function(r){return num(r.median_margin,1);}},
+        {h:"Nailbiter%", num:true, get:function(r){return pct(r.share_nailbiter,1);}},
+        {h:"Blowout%", num:true, get:function(r){return pct(r.share_blowout,1);}}
+      ], tr));
+    }
+    var bl=d.biggest_blowouts||[];
+    if(bl.length){
+      f.appendChild(plab("Biggest blowouts on record"));
+      f.appendChild(simpleTable([
+        {h:"Date", rowh:true, get:function(r){return r.date;}},
+        {h:"Winner", get:function(r){return r.winner_name||r.winner;}},
+        {h:"Loser", get:function(r){return r.loser_name||r.loser;}},
+        {h:"Score", num:true, get:function(r){return r.score;}},
+        {h:"Margin", num:true, get:function(r){return num(r.margin);}}
+      ], bl));
+    }
+    var tt=d.team_tilt||[];
+    if(tt.length){
+      f.appendChild(plab("Team tilt — average final margin of the games a team plays"));
+      f.appendChild(simpleTable([
+        {h:"Team", rowh:true, get:function(r){return r.name||r.team;}},
+        {h:"Avg margin", num:true, get:function(r){return num(r.avg_margin,1);}},
+        {h:"G", num:true, get:function(r){return num(r.games);}}
+      ], tt));
+    }
+    var reads=[]; if(h.text) reads.push(h.text);
+    var ts=d.trend_summary||{}; if(ts.read) reads.push(ts.read);
+    f.appendChild(readStrip(reads));
+    var pv=d.provenance||{}, def=d.definitions||{}, val=d.validation||{};
+    f.appendChild(methodBlock("Definitions · validation · caveats", function(b){
+      provList(b, [
+        ["Sources", (pv.sources||[]).join("; ")||"—"],
+        ["One-possession", def.one_possession||"—"],
+        ["Blowout", def.blowout||"—"],
+        ["Validation", (val.method||"—")+(val.exact_agreement_pct!=null?(" — "+val.exact_agreement_pct+"% exact on "+(val.games_checked!=null?val.games_checked:"—")+" games"):"")],
+        ["Script", pv.script||"—"]
+      ]);
+      caveatList(b, pv.caveats, "Caveats");
+    }));
+    return f;
+  }
+
+  // -- scoringleaders --------------------------------------------------------
+  function renderScoringleaders(d){
+    var f=frag();
+    f.appendChild(el("div","dhead", typeof d.headline==="string"?d.headline:""));
+    var th=d.thresholds||{}, sp=d.span||{};
+    f.appendChild(tiles([
+      {v:num(th.qualified_players), l:"qualified players"},
+      {v:num(th.total_players), l:"players tracked", sm:true},
+      {v:num(th.qualified_games), l:"games to qualify", sm:true},
+      {v:num(sp.team_games), l:"team-games played", sm:true}
+    ]));
+    function leaderTable(label, arr, cols){ if(!arr||!arr.length) return; f.appendChild(plab(label)); f.appendChild(simpleTable(cols, arr)); }
+    leaderTable("Points per game", d.points_per_game, [
+      {h:"#", num:true, get:function(r){return num(r.rank);}},
+      {h:"Player", rowh:true, get:function(r){return r.player;}},
+      {h:"Team", get:function(r){return r.team;}},
+      {h:"G", num:true, get:function(r){return num(r.games);}},
+      {h:"MPG", num:true, get:function(r){return num(r.minutes_per_game,1);}},
+      {h:"PPG", num:true, get:function(r){return num(r.points_per_game,1);}}
+    ]);
+    leaderTable("True-shooting leaders (efficiency, 8+ PPG)", d.true_shooting_leaders, [
+      {h:"#", num:true, get:function(r){return num(r.rank);}},
+      {h:"Player", rowh:true, get:function(r){return r.player;}},
+      {h:"Team", get:function(r){return r.team;}},
+      {h:"PPG", num:true, get:function(r){return num(r.points_per_game,1);}},
+      {h:"TS%", num:true, get:function(r){return pct(r.true_shooting_pct,1);}},
+      {h:"Pts/shot", num:true, get:function(r){return num(r.points_per_shot,2);}}
+    ]);
+    leaderTable("Volume + efficiency (13+ shots / game)", d.high_volume_efficient, [
+      {h:"#", num:true, get:function(r){return num(r.rank);}},
+      {h:"Player", rowh:true, get:function(r){return r.player;}},
+      {h:"Team", get:function(r){return r.team;}},
+      {h:"PPG", num:true, get:function(r){return num(r.points_per_game,1);}},
+      {h:"TS%", num:true, get:function(r){return pct(r.true_shooting_pct,1);}},
+      {h:"Shots/G", num:true, get:function(r){return num(r.shot_attempts_per_game,1);}}
+    ]);
+    leaderTable("Single-game highs", d.single_game_highs, [
+      {h:"#", num:true, get:function(r){return num(r.rank);}},
+      {h:"Player", rowh:true, get:function(r){return r.player;}},
+      {h:"Opp", get:function(r){return r.opponent;}},
+      {h:"Date", get:function(r){return r.date;}},
+      {h:"Pts", num:true, get:function(r){return num(r.points);}},
+      {h:"Line", get:function(r){return r.line;}}
+    ]);
+    var pv=d.provenance||{}, def=d.definitions||{};
+    f.appendChild(methodBlock("Definitions · sources", function(b){
+      provList(b, [
+        ["Source", pv.source||"—"],
+        ["True shooting %", def.true_shooting_pct||"—"],
+        ["Shot attempts / game", def.shot_attempts_per_game||"—"],
+        ["Method", pv.method||"—"],
+        ["Regenerable", pv.regenerable||"—"]
+      ]);
+    }));
+    return f;
+  }
+
+  // -- scoreeffects ----------------------------------------------------------
+  function renderScoreeffects(d){
+    var f=frag();
+    f.appendChild(el("div","dhead", typeof d.headline==="string"?d.headline:""));
+    function statesTable(label, states){
+      if(!states) return;
+      var rows=["lead10","lead1_9","tied","trail1_9","trail10"].map(function(k){return states[k];}).filter(Boolean);
+      if(!rows.length) return;
+      f.appendChild(plab(label));
+      f.appendChild(simpleTable([
+        {h:"Score state", rowh:true, get:function(r){return r.label;}},
+        {h:"Poss", num:true, get:function(r){return num(r.possessions);}},
+        {h:"Sec/poss", num:true, get:function(r){return num(r.sec_per_poss,1);}},
+        {h:"Poss/48", num:true, get:function(r){return num(r.poss_per48,1);}},
+        {h:"3PA%", num:true, get:function(r){return pct(r.three_pa_pct,1);}},
+        {h:"FT/FGA", num:true, get:function(r){return num(r.ft_per_fga,3);}},
+        {h:"TOV/100", num:true, get:function(r){return num(r.tov_per100,1);}},
+        {h:"Pts/100", num:true, get:function(r){return num(r.pts_per100,1);}}
+      ], rows));
+    }
+    statesTable("How teams play by scoreboard state — full game", d.states_overall);
+    statesTable("Same states, fourth quarter only", d.states_q4);
+    var fd=d.findings||{}, reads=[];
+    if(d.method_note) reads.push(d.method_note);
+    ["confirmed_slowdown","confirmed_ease_off","confirmed_foul_game","not_confirmed_three_rate"].forEach(function(k){ if(fd[k]) reads.push(fd[k]); });
+    f.appendChild(readStrip(reads));
+    var sr=d.sim_recommendation||{}, win=d.window||{};
+    f.appendChild(methodBlock("Simulator recommendation · window · caveats", function(b){
+      provList(b, [
+        ["Window", (win.games!=null?win.games+" games":"—")+(win.pool_games!=null?(", "+win.pool_games+" pooled for robustness"):"")],
+        ["Proposal", sr.proposal||"—"],
+        ["Do NOT", sr.explicitly_do_not||"—"],
+        ["Why it matters", sr.why_it_matters||"—"],
+        ["Disposition", sr.disposition||"—"]
+      ]);
+      if(sr.caveats){ var p=el("p"); p.appendChild(el("b",null,"Caveat: ")); p.appendChild(document.createTextNode(sr.caveats)); b.appendChild(p); }
+    }));
+    return f;
+  }
+
+  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace, scoringmix:renderScoringmix, margins:renderMargins, scoringleaders:renderScoringleaders, scoreeffects:renderScoreeffects };
 
   function renderDiveCard(row, data){
     var c=el("div","dive");
