@@ -107,6 +107,45 @@
   .ti-item .body pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 13px;overflow-x:auto;margin:9px 0}
   .ti-item .body pre code{background:none;border:none;padding:0;white-space:pre;display:block;font-size:11px;line-height:1.5}
   .soon{background:var(--card);border:1px dashed var(--line2);border-radius:11px;padding:18px 16px;text-align:center;color:var(--muted);font-size:12.5px;max-width:620px;margin:10px 0}
+
+  /* --- We Tested It card: verdict chip (A+) + takeaway tile with a derived delta (A++) + an
+     interior peak callout and a verdict-threaded magnitude (A+++). All values are computed at
+     render time from the dive's OWN table rows; a card that can't pin an unambiguous value shows
+     nothing extra (omit-when-ambiguous). --- */
+  .item{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:13px 15px;margin:10px 0}
+  .item .dvhd{display:flex;justify-content:space-between;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .item .ti{font-weight:750;font-size:14px;letter-spacing:-.01em}
+  .item .chips{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .item .verdict{font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;border-radius:999px;padding:2px 9px;background:var(--chip);border:1px solid var(--line);color:var(--muted)}
+  .item .verdict.v-noise{color:var(--dim);border-color:var(--line2)}
+  .item .verdict.v-signal{color:var(--good);border-color:var(--good)}
+  .item .verdict.v-adopted{color:var(--acc);border-color:var(--acc)}
+  /* A+++: the SAME derived delta magnitude threaded flush against the verdict chip — a reused value
+     (never a second computation), so it can never disagree with the takeaway's delta. */
+  .item .verdict-mag{font-size:10px;font-weight:700;letter-spacing:.02em;white-space:nowrap;border-radius:999px;padding:2px 8px;background:var(--accent-weak);border:1px solid var(--line);color:var(--acc);font-variant-numeric:tabular-nums;margin-left:-3px}
+  .item .fresh{font-size:10px;font-weight:600;color:var(--muted);background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em}
+  .item .takeaway{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:10px;padding:9px 11px;background:var(--accent-weak);border-left:3px solid var(--acc);border-radius:7px}
+  .item .takeaway-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--acc);white-space:nowrap}
+  .item .takeaway-t{font-size:13px;font-weight:600;color:var(--ink);line-height:1.4;flex:1 1 200px}
+  .item .takeaway-d{font-size:11px;font-weight:700;color:var(--acc);white-space:nowrap;font-variant-numeric:tabular-nums;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+  /* A+++: an interior min/max (peak-year) callout, derived from the SAME parsed rows; distinct class
+     so it never collides with the first-vs-last delta chip. */
+  .item .takeaway-pk{font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;background:var(--card2);border:1px dashed var(--line2);border-radius:999px;padding:2px 9px}
+  .item .body{margin-top:10px;font-size:13px;line-height:1.55}
+  .item .body h3{font-size:14px;margin:15px 0 4px;font-weight:700}
+  .item .body h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:13px 0 3px;font-weight:700}
+  .item .body p{margin:8px 0}
+  .item .body strong{font-weight:680;color:var(--ink)}
+  .item .body code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:.9em;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .item .body pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 13px;overflow-x:auto;margin:9px 0}
+  .item .body pre code{background:none;border:none;padding:0;white-space:pre;display:block;font-size:11.5px;line-height:1.5}
+  .item .body .dtwrap{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:8px}
+  .item .body table.dtable{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+  .item .body .dtable th,.item .body .dtable td{padding:5px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  .item .body .dtable th{background:var(--card2);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+  .item .body .dtable th.num,.item .body .dtable td.num{text-align:right}
+  .item .body .dtable tbody tr:last-child td{border-bottom:none}
+  .item .body .dtable tbody tr:hover{background:var(--card2)}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
 <link rel="stylesheet" href="./hardwood.css">
@@ -674,7 +713,10 @@
     (paras||[]).forEach(function(raw){
       var t=(raw==null?"":String(raw)).replace(/^\s+/,"");
       if(t.indexOf("```")===0){
+        var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
         var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
+        var tbl=dataTable(inner, info);
+        if(tbl){ body.appendChild(tbl); return; }
         var pre=el("pre"); pre.appendChild(el("code",null,inner)); body.appendChild(pre); return;
       }
       var hm=/^(#{1,6})\s+([^\n]*)([\s\S]*)$/.exec(t);
@@ -689,21 +731,282 @@
   var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   function fmtDate(s){ var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(s||"")); if(!m) return String(s||""); var mo=MON[Number(m[2])-1]; return mo?(mo+" "+Number(m[3])+", "+m[1]):String(s); }
   function loadTested(){
-    var box=document.getElementById("tested");
-    fetch("./deepdive.json",{cache:"no-cache"}).then(function(r){ return r.json(); }).then(function(d){
-      box.innerHTML="";
-      if(d.available&&(d.items||[]).length){
-        (d.items||[]).forEach(function(it){
-          var c=el("div","ti-item"); var hd=el("div");
-          hd.appendChild(el("span","ti",it.title||"We Tested It"));
-          if(it.as_of) hd.appendChild(el("span","fresh","As of "+fmtDate(it.as_of)));
-          c.appendChild(hd);
-          if(it.content&&it.content.length){ var body=el("div","body"); renderContent(body,it.content,it.title); c.appendChild(body); }
-          box.appendChild(c);
-        });
-      } else { box.appendChild(el("div","soon", d.placeholder||"We are currently investigating new ideas.")); }
-      if(d.generated_et||d.generated_utc){ document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc)+"."; }
+    // Fetch the dive JSON and hand it to render() (the shared A+/A++/A+++ path). A failure here is
+    // secondary — it never blocks the hub above.
+    fetch("./deepdive.json",{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; }).then(function(d){
+      render(d||{available:false});
     }).catch(function(){ /* We Tested It is secondary — a failure here never blocks the hub */ });
+  }
+
+  /* ============================ We Tested It: derived readouts (A+ / A++ / A+++) ============================ */
+  // Coach-readable headers for the raw column slugs the deep-dive tables carry (display only; an
+  // unknown slug falls back to a mechanical de-underscore so a new column never renders as jargon).
+  var HDR={
+    "season":"Season","games":"Games","ft_rate":"FT rate","ftr":"FT rate",
+    "fta_per_team_game":"FTA / team-game","pts_per_team_game":"Points / team-game",
+    "fga_per_team_game":"FGA / team-game","fg3a_per_team_game":"3PA / team-game",
+    "reb_per_team_game":"Rebounds / team-game","ast_per_team_game":"Assists / team-game",
+    "n":"Count","mae":"MAE","rmse":"RMSE"
+  };
+  function humanizeHeader(h){
+    var k=String(h).toLowerCase();
+    if(HDR[k]) return HDR[k];
+    var s=k.replace(/_per_team_game$/," / team-game").replace(/_per_game$/," / game")
+           .replace(/_pct$/," %").replace(/_/g," ").trim();
+    return s ? (s.charAt(0).toUpperCase()+s.slice(1)) : String(h);
+  }
+  function isNum(s){ return s!=="" && s!=null && isFinite(Number(s)); }
+
+  // Parse a fenced block as a whitespace-columned NUMERIC table. Returns {header,ncol,rows,colNum,dec}
+  // or null (real code / prose / ragged / non-numeric). SINGLE source of truth for "is a table": both
+  // the renderer (dataTable) and the derived readouts read it, so a delta/peak can only ever compute
+  // for a block that ACTUALLY renders as a table.
+  function parseTable(inner, info){
+    var lang=(info||"").trim().toLowerCase();
+    if(lang!=="" && lang!=="text") return null;
+    var lines=inner.split("\n").map(function(l){ return l.replace(/\s+$/,""); })
+                   .filter(function(l){ return l.trim()!==""; });
+    if(lines.length<3) return null;
+    var header=lines[0].trim().split(/\s+/);
+    var ncol=header.length;
+    if(ncol<2 || header.some(isNum)) return null;
+    var rows=[];
+    for(var i=1;i<lines.length;i++){
+      var cells=lines[i].trim().split(/\s+/);
+      if(cells.length!==ncol) return null;
+      rows.push(cells);
+    }
+    var colNum=[], numCount=0;
+    for(var c=0;c<ncol;c++){
+      var allNum=rows.every(function(r){ return isNum(r[c]); });
+      colNum.push(allNum); if(allNum) numCount++;
+    }
+    if(numCount < Math.ceil(ncol/2)) return null;
+    var dec=[];
+    for(var c2=0;c2<ncol;c2++){
+      if(!colNum[c2]){ dec.push(null); continue; }
+      var vals=rows.map(function(r){ return Number(r[c2]); });
+      var allInt=vals.every(function(v){ return isFinite(v) && Math.floor(v)===v; });
+      var maxAbs=vals.reduce(function(m,v){ return Math.max(m,Math.abs(v)); },0);
+      dec.push(allInt ? 0 : (maxAbs<1.5 ? 3 : 1));
+    }
+    return {header:header, ncol:ncol, rows:rows, colNum:colNum, dec:dec};
+  }
+
+  // Render a fenced numeric block as a styled <table> (humanized headers, sensible rounding), or
+  // null to fall back to <pre>. Built entirely from el()/textContent, so no author text is injected.
+  function dataTable(inner, info){
+    var p=parseTable(inner, info);
+    if(!p) return null;
+    var header=p.header, ncol=p.ncol, rows=p.rows, colNum=p.colNum, dec=p.dec;
+    var wrap=el("div","dtwrap"), t=el("table","dtable"), thead=el("thead"), hr=el("tr");
+    header.forEach(function(h,c){ hr.appendChild(el("th", colNum[c]?"num":null, humanizeHeader(h))); });
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb=el("tbody");
+    rows.forEach(function(r){
+      var tr=el("tr");
+      r.forEach(function(cell,c){
+        tr.appendChild(el("td", colNum[c]?"num":null, colNum[c] ? Number(cell).toFixed(dec[c]) : cell));
+      });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); wrap.appendChild(t); return wrap;
+  }
+
+  // The dive's lede = its first real prose paragraph (skip the repeated H1 / any heading / any fence).
+  function ledeText(content){
+    var items=content||[];
+    for(var i=0;i<items.length;i++){
+      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
+      if(t==="" || t.indexOf("```")===0 || /^#{1,6}\s/.test(t)) continue;
+      return t;
+    }
+    return "";
+  }
+  // First sentence only. Split on a terminator FOLLOWED by whitespace/end so decimals (0.315) are
+  // never mistaken for a sentence break. Verbatim author text.
+  function firstSentence(t){
+    t=String(t||"").trim();
+    var m=/^([\s\S]*?[.!?])(?:\s|$)/.exec(t);
+    return m ? m[1] : t;
+  }
+  // Does this dive carry a block that actually renders as a table? (Takeaway tile is table-only.)
+  function hasDataTable(content){
+    var items=content||[];
+    for(var i=0;i<items.length;i++){
+      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
+      if(t.indexOf("```")!==0) continue;
+      var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
+      var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
+      if(dataTable(inner, info)) return true;
+    }
+    return false;
+  }
+
+  // Shared parse + STRICT single-metric / single-time-axis guard. Both the delta (A++) and the peak
+  // (A+++) read this SAME result, so they are derived from the exact same parsed rows under the exact
+  // same ambiguity rules. Returns {p, metricCol, timeCol, order} or null.
+  //   (a) the finding sentence names EXACTLY ONE numeric column (by its humanized label) = THE metric.
+  //       0 named => nothing to quantify; >1 named => ambiguous which is "the" metric => null.
+  //   (b) among the OTHER numeric columns, EXACTLY ONE is strictly monotonic = the time/order axis.
+  //       0 or >1 => no clear ordering => null.
+  function metricTimeAxis(content, findingText){
+    var items=content||[], p=null;
+    for(var i=0;i<items.length;i++){
+      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
+      if(t.indexOf("```")!==0) continue;
+      var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
+      var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
+      p=parseTable(inner, info);
+      if(p) break;
+    }
+    if(!p || p.rows.length<2) return null;
+    var lede=String(findingText||"").toLowerCase(), metricCol=-1, named=0;
+    for(var c=0;c<p.ncol;c++){
+      if(!p.colNum[c]) continue;
+      var label=humanizeHeader(p.header[c]).toLowerCase();
+      if(label && lede.indexOf(label)>=0){ named++; metricCol=c; }
+    }
+    if(named!==1) return null;
+    var timeCol=-1, monoCount=0;
+    for(var c2=0;c2<p.ncol;c2++){
+      if(!p.colNum[c2] || c2===metricCol) continue;
+      var inc=true, decr=true;
+      for(var r=1;r<p.rows.length;r++){
+        var prev=Number(p.rows[r-1][c2]), cur=Number(p.rows[r][c2]);
+        if(!(cur>prev)) inc=false;
+        if(!(cur<prev)) decr=false;
+      }
+      if(inc||decr){ monoCount++; timeCol=c2; }
+    }
+    if(monoCount!==1) return null;
+    var order=p.rows.map(function(_,k){ return k; })
+                    .sort(function(a,b){ return Number(p.rows[a][timeCol])-Number(p.rows[b][timeCol]); });
+    return {p:p, metricCol:metricCol, timeCol:timeCol, order:order};
+  }
+
+  // A++ rung: a mechanically-DERIVED first-vs-last trend delta, computed ONLY from the table's OWN
+  // rows (never hardcoded, never read out of the prose). Returns {label, latest, baseline, dir} or
+  // null (baseline===latest => no real trend => omit).
+  function tableDelta(content, findingText){
+    var ax=metricTimeAxis(content, findingText);
+    if(!ax) return null;
+    var p=ax.p, mc=ax.metricCol, order=ax.order;
+    var baseline=Number(p.rows[order[0]][mc]), latest=Number(p.rows[order[order.length-1]][mc]);
+    if(!isFinite(baseline) || !isFinite(latest) || baseline===latest) return null;
+    var d=p.dec[mc]; if(d==null) d=1;
+    return { label:humanizeHeader(p.header[mc]), latest:latest.toFixed(d),
+             baseline:baseline.toFixed(d), dir: latest>baseline ? "up" : "down" };
+  }
+
+  // A+++ rung: an interior MIN/MAX (peak-year) callout, derived from the SAME parsed rows + the SAME
+  // guard as the delta. Returns {label, kind, value, at} or null. Emitted ONLY when the metric's
+  // global extreme is STRICTLY INTERIOR (not the first or last row by time) AND unique — an extreme
+  // AT an endpoint is already told by the first-vs-last delta, and a series that both humps ABOVE and
+  // dips BELOW its endpoints has no single unambiguous peak, so both of those omit (omit-when-
+  // ambiguous). "kind" is "peaked" (interior max) or "bottomed" (interior min).
+  function tablePeak(content, findingText){
+    var ax=metricTimeAxis(content, findingText);
+    if(!ax) return null;
+    var p=ax.p, mc=ax.metricCol, tc=ax.timeCol, order=ax.order, n=order.length;
+    if(n<3) return null;                                   // need at least one interior row
+    var vals=order.map(function(k){ return Number(p.rows[k][mc]); });
+    if(vals.some(function(v){ return !isFinite(v); })) return null;
+    var iMax=0, iMin=0;
+    for(var i=1;i<n;i++){ if(vals[i]>vals[iMax]) iMax=i; if(vals[i]<vals[iMin]) iMin=i; }
+    var maxCount=vals.filter(function(v){ return v===vals[iMax]; }).length;
+    var minCount=vals.filter(function(v){ return v===vals[iMin]; }).length;
+    var first=vals[0], last=vals[n-1];
+    var hiInterior=(iMax>0 && iMax<n-1) && maxCount===1 && vals[iMax]>first && vals[iMax]>last;
+    var loInterior=(iMin>0 && iMin<n-1) && minCount===1 && vals[iMin]<first && vals[iMin]<last;
+    if(hiInterior===loInterior) return null;               // both or neither => omit
+    var pi=hiInterior ? iMax : iMin;
+    var dm=p.dec[mc]; if(dm==null) dm=1;
+    var dt=p.dec[tc]; if(dt==null) dt=0;
+    return { label:humanizeHeader(p.header[mc]), kind: hiInterior?"peaked":"bottomed",
+             value: vals[pi].toFixed(dm), at: Number(p.rows[order[pi]][tc]).toFixed(dt) };
+  }
+
+  // Per-dive VERDICT chip (A+ rung). FIXED vocabulary — NOISE / SIGNAL / ADOPTED — only SELECTED
+  // (never synthesized) from the dive's OWN conclusion prose; null (no chip) when the prose states no
+  // clear verdict (omit, never fabricate). Fences are excluded so a number in a table can't be
+  // misread as a verdict. Order matters: NOISE first (a noise dive may still call its baseline "core").
+  function verdictOf(content){
+    var s="";
+    (content||[]).forEach(function(raw){
+      var t=(raw==null?"":String(raw)).replace(/^\s+/,"");
+      if(t.indexOf("```")===0) return;
+      s+=" "+t;
+    });
+    s=s.toLowerCase();
+    if(/\b(proved|proven|shown to be|turned out to be|is|was|were|it's|just)\b[^.!?]*\bnoise\b/.test(s))
+      return {label:"NOISE", cls:"v-noise"};
+    if(/\b(have|has|we've|now)\b[^.!?]*\b(incorporated|adopted|folded in|added it|shipped|baked in|in production)\b/.test(s)
+       || /\b(adopted|incorporated|shipped)\b[^.!?]*\b(into|in)\b[^.!?]*\b(pipeline|core|model|production)\b/.test(s))
+      return {label:"ADOPTED", cls:"v-adopted"};
+    var negated=/\b(should not|shouldn't|do not recommend|don't recommend|not a real|no real (signal|effect))\b/.test(s);
+    if(!negated && /\b(we should|we recommend|should incorporate|should adjust|should add|recommend incorporating|real (signal|effect))\b/.test(s))
+      return {label:"SIGNAL", cls:"v-signal"};
+    return null;
+  }
+
+  // Render the "We Tested It" cards (verdict + takeaway + derived delta/peak + prose body). Targets
+  // the #tested section on the live hub page; falls back to #main for the standalone test harness.
+  function render(d){
+    var host=document.getElementById("tested")||document.getElementById("main");
+    if(!host) return;
+    host.innerHTML="";
+    if(d && d.available && (d.items||[]).length){
+      (d.items||[]).forEach(function(it){
+        var c=el("div","item");
+        var hd=el("div","dvhd");
+        hd.appendChild(el("div","ti", it.title||"We Tested It"));
+        var chips=el("div","chips");
+        // The finding lede + its derived delta are computed once and REUSED by both the header
+        // magnitude (A+++) and the takeaway tile (A++), so the two can never disagree.
+        var lede="", dl=null;
+        if(hasDataTable(it.content)){ lede=firstSentence(ledeText(it.content)); if(lede) dl=tableDelta(it.content, lede); }
+        var vd=verdictOf(it.content);
+        if(vd){
+          chips.appendChild(el("span","verdict "+vd.cls, vd.label));
+          // A+++: thread the SAME computed delta magnitude next to the verdict chip, ONLY when the
+          // takeaway delta itself qualified. Signed change of the metric, reusing dl's rounding.
+          if(dl){
+            var mag=Number(dl.latest)-Number(dl.baseline);
+            var dot=dl.latest.indexOf("."), dp=dot>=0?(dl.latest.length-dot-1):0;
+            chips.appendChild(el("span","verdict-mag", (mag>0?"+":"")+mag.toFixed(dp)+" "+dl.label));
+          }
+        }
+        if(it.as_of){ chips.appendChild(el("span","fresh","As of "+fmtDate(it.as_of))); }
+        if(chips.children.length){ hd.appendChild(chips); }
+        c.appendChild(hd);
+        if(it.content && it.content.length){
+          var body=el("div","body");
+          if(lede){
+            var tk=el("div","takeaway");
+            tk.appendChild(el("span","takeaway-k","The finding"));
+            var tt=el("span","takeaway-t"); inlineMd(tt, lede); tk.appendChild(tt);
+            if(dl){
+              tk.appendChild(el("span","takeaway-d",
+                dl.latest+" "+dl.label+", "+(dl.dir==="up"?"up from ":"down from ")+dl.baseline));
+              // A+++: an interior min/max callout from the SAME parsed rows; omitted unless the
+              // extreme is strictly interior + unambiguous.
+              var pk=tablePeak(it.content, lede);
+              if(pk){ tk.appendChild(el("span","takeaway-pk",
+                (pk.kind==="peaked"?"peaked ":"bottomed ")+pk.at+", "+pk.value)); }
+            }
+            body.appendChild(tk);
+          }
+          renderContent(body, it.content, it.title);
+          c.appendChild(body);
+        }
+        host.appendChild(c);
+      });
+    } else {
+      host.appendChild(el("div","soon", (d&&d.placeholder)||"We are currently testing new ideas."));
+    }
+    var foot=document.getElementById("foot");
+    if(foot){ foot.textContent="Baked "+((d&&(d.generated_et||d.generated_utc))||"")+"."; }
   }
 
   var lastFetch=0;

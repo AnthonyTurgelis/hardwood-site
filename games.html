@@ -82,6 +82,7 @@
   .avfull{color:var(--good)}
   .avroster{font-size:10px;color:var(--dim);white-space:nowrap}
   .avnote{font-size:10px;color:var(--dim);margin-top:5px;line-height:1.4}
+  .gstyle{font-size:11px;color:var(--dim);margin:2px 0 4px;line-height:1.4}
   /* projected rotation + active roster — the expandable per-game preview (upcoming-preview rung) */
   .rot{margin:6px 0 2px;font-size:11.5px}
   .rot summary{cursor:pointer;font-size:10.5px;color:var(--acc);font-weight:600;user-select:none}
@@ -134,6 +135,39 @@
      PV = the preview payload, joined by game_id; ROTOPEN remembers which cards the reader
      expanded so a live re-render never collapses an open rotation. */
   var PURL="./preview.json", PV=null, lastData=null, ROTOPEN={};
+  /* per-team coaching STYLE read (matchup context line, B rung) — REUSE the SAME per-team
+     read already baked for coach.html (./coach_style.json), fetched separately + graceful:
+     a missing/late style file can never blank a card, it just drops the context line. */
+  var CSURL="./coach_style.json", CS=null;
+  /* plain-English coaching style for one team abbr, or null when we have no established read
+     (new coach / no history / file absent) -> the card omits it (omit-not-invent, never guess). */
+  function teamStyle(abbr){
+    if(!CS||!CS.teams||!abbr) return null;
+    var t=CS.teams[abbr]; if(!t||!t.has_history) return null;
+    var s=(t.style||"").trim(); return s||null;
+  }
+  /* the matchup/style context line for a game card: "How they play: Away — style · Home — style".
+     Shows only the side(s) we actually have a style for; returns null when neither is known so no
+     empty line is invented. */
+  function styleLine(g){
+    var hs=teamStyle(g.home), as_=teamStyle(g.away);
+    if(!hs && !as_) return null;
+    var parts=[];
+    if(as_) parts.push((g.away_full||g.away)+" — "+as_);
+    if(hs) parts.push((g.home_full||g.home)+" — "+hs);
+    return el("div","gstyle","How they play: "+parts.join(" · "));
+  }
+  /* absolute ET clock ("Jul 22, 11:28 PM ET") for the preview freshness stamp so a coach can
+     see how stale the shown assumptions are. Formats a UTC ISO string in America/New_York;
+     graceful-'' on a bad/absent stamp (the stamp line is then omitted). */
+  function etStamp(utc){
+    if(!utc) return "";
+    var d=new Date(utc); if(isNaN(d.getTime())) return "";
+    try{
+      return d.toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",
+        hour:"numeric",minute:"2-digit"})+" ET";
+    }catch(e){ return ""; }
+  }
   /* CACHE-BUST: append a CHANGING ?v=<ms> token per fetch so the CDN never serves a stale
      games.json on reload; a fresh token per poll keeps live polling live. */
   function bust(u){ return u + (u.indexOf("?")<0?"?":"&") + "v=" + Date.now(); }
@@ -268,7 +302,12 @@
           if(p.status==="limited"){
             r.appendChild(el("span","rotlim", p.play_pct!=null ? (p.play_pct+"% to play") : "limited"));
           }
-          r.appendChild(el("span","rotmin", p.min==null ? "—" : (Math.round(p.min)+" min")));
+          // projected minutes, and — when the preview carries it — projected SCORING alongside
+          // (B rung). `pts` undefined = not baked on this row -> show minutes only (forward-safe);
+          // `pts` null = status moved after the projection froze -> a dash, never a fake 0.
+          var stat=(p.min==null ? "—" : (Math.round(p.min)+" min"));
+          if(p.pts!==undefined){ stat += " · " + (p.pts==null ? "—" : (Math.round(p.pts)+" pts")); }
+          r.appendChild(el("span","rotmin", stat));
           box.appendChild(r);
         });
       } else {
@@ -286,6 +325,11 @@
       det.appendChild(box);
     });
     if(PV.note){ det.appendChild(el("div","avnote", PV.note)); }
+    // PREVIEW FRESHNESS (B rung): when these assumptions were set, in plain ET, so a coach can
+    // judge staleness at a glance. Prefer this game's own preview stamp, fall back to the payload's.
+    var setUtc=(pv && pv.generated_utc) || PV.generated_utc;
+    var setEt=etStamp(setUtc);
+    if(setEt){ det.appendChild(el("div","avnote","Assumptions set "+setEt)); }
     return det;
   }
 
@@ -344,6 +388,7 @@
       : "Margin range (how much the result could swing):"));
     c.appendChild(densityStrip(g));
 
+    var sl=styleLine(g); if(sl){ c.appendChild(sl); }
     var ab=availBlock(g); if(ab){ c.appendChild(ab); }
     var rb=rotationBlock(g); if(rb){ c.appendChild(rb); }
 
@@ -400,6 +445,20 @@
       c.appendChild(g);
     } else {
       c.appendChild(el("div","grade na","No pre-game call stored for this game."));
+    }
+    // per-game retro link (cross-lane render half of the "where we missed" A rung): the baker
+    // sets `retro_slug` (e.g. "g4018...") ONLY when site/games/retro/<id>.html actually exists,
+    // so this link is NEVER dead — honest omission when the field is absent (most games until
+    // retros accrue). Client strips the leading 'g' -> ./games/retro/<id>.html; href is built
+    // from an encoded id (textContent-safe).
+    if(r.retro_slug){
+      var rid=String(r.retro_slug).replace(/^g/,"");
+      if(rid){
+        var rp=el("div","pdfs");
+        var ra=el("a",null,"Where we missed →");
+        ra.href="./games/retro/"+encodeURIComponent(rid)+".html"; ra.rel="noopener";
+        rp.appendChild(ra); c.appendChild(rp);
+      }
     }
     return c;
   }
@@ -466,7 +525,14 @@
         }
       }).catch(function(){});
   }
-  poll(); pollPreview(); setInterval(poll,60000); setInterval(pollPreview,60000); setInterval(updAgo,1000);
+  // one-shot fetch of the per-team style read (matchup context line) — independent + graceful,
+  // re-renders once when it lands so the line appears without waiting on a slate poll. Styles
+  // change rarely (per game, not per minute) so a single load is enough.
+  function loadStyle(){
+    fetch(bust(CSURL),{cache:"no-cache"}).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(c){ if(c && c.teams){ CS=c; if(lastData){ render(lastData); } } }).catch(function(){});
+  }
+  poll(); pollPreview(); loadStyle(); setInterval(poll,60000); setInterval(pollPreview,60000); setInterval(updAgo,1000);
 })();
 </script>
 </body>

@@ -288,6 +288,7 @@
   .covtile .cpm span{font-size:11px;color:var(--muted)}
   /* freshness / stale */
   .prov b{color:var(--live);font-variant-numeric:tabular-nums;font-weight:700}
+  .prov .nextref{color:var(--muted);font-variant-numeric:tabular-nums}
   .banner.stale{border-left:3px solid var(--warn)}
   @media (max-width:520px){
     .row{flex-wrap:wrap}
@@ -368,6 +369,18 @@
     if(CHIPMEAN[status]) c.title=CHIPMEAN[status]; return c; }
 
   var SRC={}, FRESH={};
+  // PANEL-NAME registry (A+ freshness roll-up): plain-English label per rendered section, so the
+  // header roll-up can NAME the stalest panel a reader can actually navigate to. This is a DISPLAY-name
+  // lookup only — it is NOT a second freshness authority (staleness is still computed from section_sources
+  // in staleInfo). Only keys that surface as a real panel appear here (internal section_sources rows with
+  // no on-page panel, e.g. pipe_health, are deliberately absent so they are never crowned "stalest" over a
+  // panel the operator can see). Seeded statically so the roll-up works on any tab regardless of which
+  // panels have rendered yet; sectionHead ALSO refreshes an entry live so a title change can't drift it.
+  var PANELNAME={
+    needs_anthony:"Needs you", today_games:"Tonight's picks", foul_risk:"Foul-Trouble Watch",
+    reports:"Game reports", accuracy_cov:"Coverage check", agent_updates:"What we've learned",
+    watch_list:"Watch list", running_now:"Running now", done_today:"Done today",
+    helpers:"Helpers running", upcoming:"The full queue" };
   function clock(iso){ var m=/T(\d{2}):(\d{2})/.exec(iso||""); return m ? (m[1]+":"+m[2]) : ""; }
   /* Eastern-time clock from any ISO/UTC stamp — the board never shows a raw UTC clock to a human
      (kills the 'as of 06:23' UTC leak beside a live 'checked 29s ago' chip; directive 230000Z section 3). */
@@ -382,9 +395,31 @@
   // ORDER-1 helper: a panel's own freshness stamp = its section_sources[key].as_of (one-status-truth).
   function secAsOf(key){ var m=(SRC && key && SRC[key])||null; return (m && m.as_of) ? m.as_of : null; }
   function staleAfterSecs(){ return (FRESH && FRESH.stale_after_secs) || 300; }
-  function provFor(key){
-    var m=(SRC && SRC[key])||null;
+  // ONE freshness authority: given a section key, compute its data age + stale verdict from
+  // section_sources exactly as provFor / the STALE badge do. Both provFor (per-panel badge) and
+  // stalestSection (the header roll-up) call this — no second staleness rule anywhere.
+  function staleInfo(key){
+    var m=(SRC && key && SRC[key])||null;
     var asOf=(m && m.as_of) || null;
+    var win=(m && m.stale_after) || staleAfterSecs();
+    var ageSecs = asOf ? sinceIso(asOf) : null;
+    var clientStale = (ageSecs!=null) && (ageSecs > win);
+    var stale = !!(m && m.stale) || clientStale;
+    return {m:m, asOf:asOf, win:win, ageSecs:ageSecs, stale:stale};
+  }
+  // The "next refresh ~Xm" hint text — ONLY when a section carries a REAL per-section cadence
+  // (m.stale_after) AND is not already overdue. No cadence -> "" (never a fabricated countdown);
+  // overdue -> "" (the STALE badge already carries that story). cadence is passed explicitly so a
+  // panel on the board-level fallback window (no own cadence) shows nothing.
+  function nextRefText(ageSecs, cadence){
+    if(ageSecs==null || !cadence) return "";
+    var rem = cadence - ageSecs;
+    return rem>0 ? (" · next refresh ~"+agoSecs(rem)) : "";
+  }
+  function provFor(key){
+    var info=staleInfo(key);
+    var m=info.m;
+    var asOf=info.asOf;
     var prov=el("span","prov");
     var src=(m && m.source) ? ("from "+m.source+" · ") : "";
     // HONEST FRESHNESS (BR-V2 — never show stale data as fresh): the ticking age is anchored on the
@@ -397,10 +432,9 @@
     // Per-panel window: use THIS section's own stale_after cadence (queue 5m, review 16h, pipe 8h,
     // updates 48h) so a long-cadence panel is never false-alarmed and a short one is never missed;
     // fall back to the board-level window (the frozen-board net) for recomputed-fresh panels.
-    var win = (m && m.stale_after) || staleAfterSecs();
-    var ageSecs = asOf ? sinceIso(asOf) : null;
-    var clientStale = (ageSecs!=null) && (ageSecs > win);
-    var stale = !!(m && m.stale) || clientStale;
+    var win = info.win;
+    var ageSecs = info.ageSecs;
+    var stale = info.stale;
     // HONEST reason for the red flag (A-rung: the STALE badge must explain ITSELF, not just sit red).
     // Prefer the assembler's own copy-gated stale_reason; else compose one from the LIVE client-side age
     // so a frozen board (a 304 that never re-bakes, so no server reason was written) still says why.
@@ -414,6 +448,14 @@
       prov.innerHTML = src + "as of <b>…</b>";
       prov.setAttribute("data-asof", asOf);
       prov.setAttribute("data-staleafter", win);
+      // A+ per-panel "next refresh ~Xm" hint — appended as a real child span so it ticks (tickProv).
+      // Only when this section has its OWN cadence (m.stale_after); omitted otherwise (no fabricated
+      // countdown) and self-blanks once overdue (nextRefText returns "").
+      if(m && m.stale_after){
+        prov.setAttribute("data-cadence", m.stale_after);
+        var nr=el("span","nextref"); nr.textContent=nextRefText(ageSecs, m.stale_after);
+        prov.appendChild(nr);
+      }
     } else {
       // No source stamp at all — say so plainly; never fabricate a fresh tick for data of unknown age.
       prov.innerHTML = src + "freshness unknown";
@@ -425,11 +467,31 @@
   // who sees red on a panel learns WHY without opening anything. One builder for every panel's badge.
   function staleBadge(reason){ var b=el("span","stalebadge","stale"); if(reason){ b.title=reason; } return b; }
   function sectionHead(title, key){
+    if(key && title){ PANELNAME[key]=title; }   // keep the roll-up's display name in sync with what renders
     var wrap=el("div","sechead"); wrap.appendChild(el("h2",null,title));
     var p=provFor(key);
     if(p.stale){ wrap.appendChild(staleBadge(p.reason)); }
     wrap.appendChild(p.prov);
     return wrap;
+  }
+  // BOARD-LEVEL FRESHNESS ROLL-UP (A+): find the single stalest NAMEABLE panel so the header dot can
+  // name the culprit without the operator scanning every panel. Uses the SAME staleInfo verdicts the
+  // badges compute (no second authority). Eligibility, honest by construction:
+  //   - must be a rendered, nameable panel (in PANELNAME) — an internal section_sources row with no
+  //     on-page panel (e.g. pipe_health) is never crowned over a panel the operator can actually see;
+  //   - must carry a REAL stale verdict AND a derivable age — an unknown-timestamp section stays
+  //     "freshness unknown" and is never crowned stalest over a section with a real, aged verdict.
+  // Stalest = greatest data age (oldest as_of) among those. null when nothing qualifies (no manufactured
+  // alarm -> the dot keeps its normal generated_utc behavior).
+  function stalestSection(){
+    var best=null;
+    for(var k in SRC){ if(!SRC.hasOwnProperty(k)) continue;
+      var nm=PANELNAME[k]; if(!nm) continue;
+      var info=staleInfo(k);
+      if(!info.stale || info.ageSecs==null) continue;
+      if(!best || info.ageSecs>best.ageSecs){ best={key:k, name:nm, ageSecs:info.ageSecs}; }
+    }
+    return best;
   }
   function tickProv(){
     // Tick the DATA-age anchor (data-asof), so "as of Xm ago" reflects when the source last changed —
@@ -442,6 +504,9 @@
       var node=pv[p];
       var ps=sinceIso(node.getAttribute("data-asof"));
       var bb=node.querySelector("b"); if(bb) bb.textContent=(ps==null)?"just now":(agoSecs(ps)+" ago");
+      // tick the per-panel "next refresh ~Xm" hint (data-cadence only; self-blanks once overdue)
+      var cad=+node.getAttribute("data-cadence");
+      var nrn=node.querySelector(".nextref"); if(nrn && cad){ nrn.textContent=nextRefText(ps, cad); }
       var head=node.parentNode; if(!head) continue;
       var win=(+node.getAttribute("data-staleafter")) || staleAfterSecs();
       var want=(ps!=null) && (ps > win);
@@ -472,14 +537,25 @@
     mk("ch-data","", "How fresh the numbers on this page are (time since the page data last refreshed).");
     tickChips();
   }
-  function setChip(id, cls, text){ var c=document.getElementById(id); if(!c) return;
-    c.className="hchip "+cls; c.lastChild.textContent=text; }
+  function setChip(id, cls, text, title){ var c=document.getElementById(id); if(!c) return;
+    c.className="hchip "+cls; c.lastChild.textContent=text; if(title!=null) c.title=title; }
   function tickChips(){
     if(!lastB) return;
     var b=lastB;
+    // A+ freshness ROLL-UP: when any nameable panel has crossed its own staleness window, the header
+    // dot NAMES the single stalest panel + its age (so the operator sees the culprit without scanning
+    // every panel) and goes loud. When nothing is stale, it keeps its normal behavior below — the dot's
+    // colour tracks the page-data age off generated_utc, no manufactured alarm.
+    var st=stalestSection();
+    if(st){
+      setChip("ch-data","bad","data · "+st.name+" "+agoSecs(st.ageSecs)+" old",
+        "Stalest panel: "+st.name+" — last updated "+agoSecs(st.ageSecs)+" ago. Other panels may be fresh.");
+      return;
+    }
     var s=sinceIso(b.generated_utc);
     // single freshness dot: green when fresh, amber then red as the numbers age (stale-data guard).
-    if(s!=null) setChip("ch-data", s<1200?"ok":(s<3600?"warn":"bad"), "data · updated "+agoSecs(s)+" ago");
+    if(s!=null) setChip("ch-data", s<1200?"ok":(s<3600?"warn":"bad"), "data · updated "+agoSecs(s)+" ago",
+      "How fresh the numbers on this page are (time since the page data last refreshed).");
   }
   function banner(b){
     var w=document.getElementById("banner"); w.innerHTML="";

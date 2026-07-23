@@ -54,6 +54,10 @@
   .pill.fit.top{background:rgba(31,136,61,.24);font-weight:720}
   .pill.fit.value{background:rgba(31,136,61,.30);color:var(--good);font-weight:730}
   .pill.fit.pricey{background:rgba(154,103,0,.16);color:var(--warn);font-weight:680}
+  /* matchup-axis pills (the 4-class matchup taxonomy — a SECOND, separate read from the skill axis) */
+  .pill.marc{background:rgba(180,83,10,.13);color:var(--b);margin-left:4px}
+  .pill.mgap{background:rgba(180,83,10,.18);color:var(--b);margin-left:4px;font-weight:660}
+  .pill.mgap.top{background:rgba(180,83,10,.28);font-weight:720}
   .war{font-weight:720;font-variant-numeric:tabular-nums}
   .tv{font-weight:720;font-variant-numeric:tabular-nums;color:var(--acc)}
   .flag-bargain{color:var(--good);font-weight:680}
@@ -168,6 +172,43 @@
     NEED_CACHE[team]=res; return res;
   }
 
+  // ---------- G2 SECOND-AXIS fit: MATCHUP-taxonomy need (4-class) ----------
+  // The board's skill-gap read (above) is the C4 skillset axis. A player ALSO carries a MATCHUP class
+  // (the 4-class taxonomy the coach's archetype-edge grid uses): p.archetype_matchup, baked onto the SAME
+  // shared value spine by the one shipped archetype crosswalk (bake_value_spine_read's ARCHETYPE_CROSSWALK —
+  // NOT re-derived here; this view renders the baked class verbatim, one-core-many-views). We mirror the
+  // skill-need predicate EXACTLY on this second axis: a matchup need = the league-typical count of that
+  // matchup class per team MINUS this team's count, when >= 0.5. The two axes are SEPARATE honest reads —
+  // a target can fill a skill gap AND/OR a matchup gap; they are never merged into one composite score.
+  // A player with no skill archetype has no matchup class either (the crosswalk maps only classified
+  // players), so an unmapped target yields NO matchup class and NO matchup-gap claim (omit, never guess).
+  var MATCHUP_ARCHES=["Floor general","Perimeter defender","Role player","Sharpshooter"];
+  function matchupCounts(team){
+    // count a team's rostered players by matchup class; null when NONE carry one (need indeterminate)
+    var c={}, any=false; MATCHUP_ARCHES.forEach(function(a){ c[a]=0; });
+    roster(team).forEach(function(p){ if(p.archetype_matchup && c.hasOwnProperty(p.archetype_matchup)){ c[p.archetype_matchup]++; any=true; } });
+    return any? c : null;
+  }
+  var MNEED_CACHE={};
+  function matchupNeed(team){
+    // mirror of archetypeNeed on the 4-class matchup axis (same >= 0.5 deficit threshold, same
+    // league-typical baseline over rostered teams that HAVE matchup classes) or null when indeterminate.
+    if(MNEED_CACHE.hasOwnProperty(team)) return MNEED_CACHE[team];
+    var res=null, teamC=matchupCounts(team);
+    if(teamC){
+      var sums={}, denom=0; MATCHUP_ARCHES.forEach(function(a){ sums[a]=0; });
+      teamsWithRoster().forEach(function(t){ var c=matchupCounts(t); if(c){ denom++; MATCHUP_ARCHES.forEach(function(a){ sums[a]+=c[a]; }); } });
+      if(denom){
+        var needs={}, ranked=[], top=null, topDef=0;
+        MATCHUP_ARCHES.forEach(function(a){ var deficit=(sums[a]/denom)-teamC[a];
+          if(deficit>=0.5){ needs[a]=deficit; ranked.push(a); if(deficit>topDef){ topDef=deficit; top=a; } } });
+        ranked.sort(function(x,y){ return needs[y]-needs[x]; });
+        res={needs:needs, top:top, ranked:ranked};
+      }
+    }
+    MNEED_CACHE[team]=res; return res;
+  }
+
   // ---------- money formatting ----------
   function money(v){ if(v==null) return "—"; if(v>=1e6) return "$"+(v/1e6).toFixed(2)+"M"; return "$"+Math.round(v/1000)+"k"; }
   function perWar(v){ if(v==null) return "—"; return "$"+Math.round(v/1000)+"k"; }
@@ -266,7 +307,8 @@
         age:r.age, proj_war_2026:(sp.proj_war_2026!=null?sp.proj_war_2026:r.proj_war_2026),
         salary_2026:(sp.salary_2026!=null?sp.salary_2026:null),
         dollar_per_war:(sp.dollar_per_war!=null?sp.dollar_per_war:null),
-        archetype:(sp.archetype||null)
+        archetype:(sp.archetype||null),
+        archetype_matchup:(sp.archetype_matchup||null)
       };
     });
     return rows;
@@ -274,6 +316,7 @@
   function tradeBoard(){
     var rows=tradeRows();
     var need=(state.lens==="team" && state.team)? archetypeNeed(state.team) : null;
+    var mneed=(state.lens==="team" && state.team)? matchupNeed(state.team) : null;
     if(state.lens==="team" && state.excludeOwn){ rows=rows.filter(function(r){ return r.team!==state.team; }); }
     var f=state.tvFilt.trim().toLowerCase();
     if(f){ rows=rows.filter(function(r){ return (r.name||"").toLowerCase().indexOf(f)>=0 || (r.team||"").toLowerCase().indexOf(f)>=0; }); }
@@ -316,6 +359,16 @@
       }
       // need===null (no rostered archetypes) -> no line, no guessed need
       if(nl.textContent) wrap.appendChild(nl);
+      // Second, SEPARATE axis: matchup-type gaps (the coach's 4-class matchup taxonomy). Same honest
+      // rules — omitted entirely when the matchup need can't be determined; never merged with the skill read.
+      if(mneed && mneed.ranked.length){
+        var ml=el("div","note");
+        ml.innerHTML="<b>Matchup fit —</b> on the matchup-profile axis, "+teamName(state.team)+
+          " is short on <b>"+mneed.ranked.map(function(a){ return a+(a===mneed.top?" (biggest gap)":""); }).join("</b>, <b>")+
+          "</b>-type coverage versus a typical roster. Targets who add a missing matchup profile carry a separate "+
+          "“fills matchup gap” flag below — a distinct read from the skill-archetype gap above, never combined into one score.";
+        wrap.appendChild(ml);
+      }
     }
 
     var card=el("div","card"), sc=el("div","scroll"), t=el("table");
@@ -370,6 +423,28 @@
             (isTop?" (its biggest gap)":"")+"; this target fills that gap"+vtitle;
           at.appendChild(fp);
         }
+        // ---- SECOND axis: the matchup class (baked verbatim from the shipped crosswalk) + its own gap
+        // read. Rendered as a distinct amber pill so it never reads as the same thing as the skill class.
+        // A player with a skill archetype always has a matchup class (the crosswalk maps every class), but
+        // we guard on the field anyway so an unmapped value can NEVER fabricate a matchup claim. The gap
+        // pill mirrors the skill guards EXACTLY: My-team lens, a real TARGET (not own player), a real
+        // matchup class, and that class is in this team's matchup need. No affordability layer here — the
+        // $/WAR value read is a single price on the player, carried on the skill pill; duplicating it would
+        // imply a fabricated composite. The two gap reads stay SEPARATE and honest.
+        if(r.archetype_matchup){
+          var mpill=el("span","pill marc",r.archetype_matchup);
+          mpill.title="Matchup profile (the coach's 4-class matchup taxonomy): "+r.archetype_matchup+
+            ". Derived from the skill profile via the shipped archetype crosswalk — a second lens on the same player, not a separate rating.";
+          at.appendChild(mpill);
+          if(state.lens==="team" && state.team && r.team!==state.team && mneed && mneed.needs.hasOwnProperty(r.archetype_matchup)){
+            var mIsTop=mneed.top===r.archetype_matchup;
+            var mLabel=mIsTop?"fills top matchup gap":"fills matchup gap";
+            var mfp=el("span","pill mgap"+(mIsTop?" top":""),mLabel);
+            mfp.title=teamName(state.team)+" is thin on "+r.archetype_matchup+"-type matchup coverage relative to a typical roster"+
+              (mIsTop?" (its biggest matchup gap)":"")+"; this target adds that matchup profile. A separate read from the skill-gap fit above — the two axes are not combined into one score.";
+            at.appendChild(mfp);
+          }
+        }
       } else { at.appendChild(el("span","legend","—")); }
       tr.appendChild(at);
       tb.appendChild(tr);
@@ -388,7 +463,13 @@
         "team need come from the 2025 skill-archetype decomposition, and the value read from the canonical 2026 "+
         "base salary ÷ projected WAR; a target with no archetype (or a team with no archetype data) shows no flag, "+
         "and a target with no salary on file keeps the plain fills-need flag with no affordability claim (never a "+
-        "guessed fit or a guessed value). ";
+        "guessed fit or a guessed value). A SECOND, separate read runs on the matchup-profile axis (the coach's "+
+        "4-class matchup taxonomy — Floor general, Perimeter defender, Role player, Sharpshooter): the amber matchup "+
+        "pill shows each target's matchup profile, and “fills matchup gap” flags a target whose matchup class fills a "+
+        "gap your roster is short of (same half-a-typical-allocation threshold as the skill gap). The skill gap and the "+
+        "matchup gap are two independent honest reads — a target can fill one, both, or neither — and are never merged "+
+        "into a single composite score. A target the crosswalk can't classify carries no matchup class and no matchup-gap "+
+        "claim. ";
     }
     noteTxt+="Showing top "+Math.min(rows.length,60)+" of "+rows.length+".";
     wrap.appendChild(methodNote(noteTxt));
@@ -817,7 +898,7 @@
     ]).then(function(res){
       SPINE=res[0]; GM=res[1];
       if(!SPINE){ document.getElementById("main").innerHTML='<p class="empty">Could not load the value spine.</p>'; return; }
-      indexSpine(); computeDpw(); computeMaxWar(); NEED_CACHE={};
+      indexSpine(); computeDpw(); computeMaxWar(); NEED_CACHE={}; MNEED_CACHE={};
       render();
       var a=document.getElementById("ago"); if(a) a.innerHTML="live";
     });
