@@ -50,6 +50,10 @@
   .actual{margin-top:9px;border-top:1px dashed var(--line);padding-top:7px;font-size:12px}
   .actual .lab{font-weight:600;color:var(--muted)}
   .actual .gated{color:var(--dim);font-style:italic}
+  .actual .score{color:var(--muted);margin-top:2px}
+  .actual .verdict{margin-top:3px;font-weight:600}
+  .actual .verdict.hit{color:var(--good)} .actual .verdict.miss{color:var(--warn)}
+  .actual .winnote{color:var(--muted);font-size:11.5px;margin-top:2px}
   .reports{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
   .reports a{font-size:11.5px;text-decoration:none;color:var(--accent);border:1px solid var(--line);border-radius:7px;padding:3px 8px;background:var(--bg)}
   .empty{color:var(--muted);font-style:italic;margin-top:14px}
@@ -107,7 +111,8 @@ function winLineFromPct(pHome, homeFull, awayFull){
 /* Normalize a PAST as-of prediction (report_archive.json .days[].predictions[]). */
 function normPast(p){
   return { matchup:(p.matchup||"—"), tip:(p.tip||""), call:(p.call||""),
-    win_line:(p.win_line||""), range80:(p.range80||""), avail:"", side:"past", actual:null };
+    win_line:(p.win_line||""), win_pct:(p.win_pct!=null?p.win_pct:null),
+    range80:(p.range80||""), avail:"", side:"past", actual:null };
 }
 /* Normalize a FORWARD projection (games.json .games[]). */
 function normFuture(g){
@@ -155,10 +160,63 @@ function buildTimeline(archive, gamesJson, todayISO){
 function stepIndex(len, cur, dir){
   var n=cur+dir; if(n<0) n=0; if(n>len-1) n=len-1; return n;
 }
+/* ---- ACTUAL-RESULT GRADING (finals.json join) — pure, honest-by-construction ---- */
+/* Index finals.json ({games:[{date,matchup,...}]}) by "date|matchup" for an O(1) join. */
+function indexFinals(finals){
+  var m={}; var gs=(finals&&finals.games)||[];
+  gs.forEach(function(f){ if(f&&f.date&&f.matchup) m[f.date+"|"+f.matchup]=f; });
+  return m;
+}
+/* Parse the favored side + predicted margin from an as-of "Team Name by N.N" call.
+   Returns {pick:"Team Name", mag:7.9} or null when there is no faithful margin call to grade. */
+function parseCall(call){
+  if(!call) return null;
+  var m=String(call).match(/^(.*?) by (\d+(?:\.\d+)?)/);
+  if(!m) return null;
+  return { pick:m[1].trim(), mag:parseFloat(m[2]) };
+}
+/* Grade ONE immutable as-of prediction against its actual final. Returns a render-ready object,
+   or null when we do NOT have BOTH a faithful as-of call AND a final (the row stays gated — never
+   invented). pastGame: a normPast() object; fin: a finals.json game row. Margin + winner only. */
+function compareAsof(pastGame, fin){
+  if(!pastGame || !fin) return null;
+  if(fin.home_score==null || fin.away_score==null || fin.home_margin==null) return null;
+  var pc=parseCall(pastGame.call);
+  if(!pc) return null;                       // no faithful as-of margin call -> gate
+  var actMag=Math.abs(Number(fin.home_margin));
+  var winnerFull=fin.winner_full||fin.winner||"";
+  var hit=(pc.pick===winnerFull);
+  var winPct=(pastGame.win_pct!=null)? round0(pastGame.win_pct) : null;
+  return {
+    final: (fin.final||""),
+    result_line: winnerFull+" won by "+round0(actMag),
+    hit: hit,
+    verdict: (hit? "Correct call — we projected "+pc.pick+" by "+pc.mag
+                  +", and they won by "+round0(actMag)+"."
+                : "Missed — we projected "+pc.pick+" by "+pc.mag
+                  +", but "+winnerFull+" won by "+round0(actMag)+"."),
+    win_note: (winPct!=null)
+      ? ("Our win call: "+pc.pick+" "+winPct+"% — "+(hit?"they won.":"they lost.")) : ""
+  };
+}
+/* Attach graded actuals onto the PAST games of a built timeline, in place. Future games are
+   left untouched (not played). A past game with no matching final, or no gradeable as-of call,
+   stays gated (actual=null). Returns the same timeline for chaining. */
+function attachActuals(timeline, finIndex){
+  (timeline||[]).forEach(function(day){
+    (day.games||[]).forEach(function(g){
+      if(g.side!=="past") return;
+      var fin=finIndex[day.date+"|"+g.matchup];
+      if(fin){ var a=compareAsof(g, fin); if(a) g.actual=a; }
+    });
+  });
+  return timeline;
+}
 /*__DAYBYDAY_LOGIC_END__*/
 if (typeof module!=="undefined" && module.exports){
   module.exports={ fmtHomeRange:fmtHomeRange, winLineFromPct:winLineFromPct, normPast:normPast,
-    normFuture:normFuture, buildTimeline:buildTimeline, stepIndex:stepIndex };
+    normFuture:normFuture, buildTimeline:buildTimeline, stepIndex:stepIndex,
+    indexFinals:indexFinals, parseCall:parseCall, compareAsof:compareAsof, attachActuals:attachActuals };
 }
 (function(){
   if (typeof document==="undefined") return; // running under the node test harness
@@ -189,15 +247,21 @@ if (typeof module!=="undefined" && module.exports){
       c.appendChild(a);
     }
     var act=el("div","actual");
-    act.appendChild(el("span","lab","Actual result: "));
     if(g.actual==null){
+      act.appendChild(el("span","lab","Actual result: "));
       if(g.side==="future"){
         act.appendChild(el("span","gated","game hasn't been played yet — this is our forward projection with the lineups we know now."));
       } else {
-        act.appendChild(el("span","gated","final score not yet wired into the public feed — the projection-vs-result comparison lands when finals are published (roadmap)."));
+        act.appendChild(el("span","gated","final not on record for this game yet — the projection-vs-result comparison shows once the result posts."));
       }
     } else {
-      act.appendChild(document.createTextNode(g.actual));
+      var a=g.actual;
+      var head=el("div"); head.appendChild(el("span","lab","Actual result: "));
+      head.appendChild(document.createTextNode(a.result_line||""));
+      act.appendChild(head);
+      if(a.final){ act.appendChild(el("div","score", a.final)); }
+      if(a.verdict){ act.appendChild(el("div","verdict "+(a.hit?"hit":"miss"), a.verdict)); }
+      if(a.win_note){ act.appendChild(el("div","winnote", a.win_note)); }
     }
     c.appendChild(act);
     return c;
@@ -261,8 +325,9 @@ if (typeof module!=="undefined" && module.exports){
     flash();
   }
 
-  function ingest(archive, gamesJson){
+  function ingest(archive, gamesJson, finals){
     var built=buildTimeline(archive||{days:[]}, gamesJson||{games:[]}, todayISO());
+    attachActuals(built.timeline, indexFinals(finals||{games:[]}));
     var keepDate = (STATE.timeline.length && STATE.timeline[STATE.idx]) ? STATE.timeline[STATE.idx].date : null;
     STATE.timeline=built.timeline; STATE.defIdx=built.defaultIndex;
     if(keepDate){
@@ -273,11 +338,12 @@ if (typeof module!=="undefined" && module.exports){
     }
     renderDay();
     document.getElementById("foot").textContent =
-      "The past-slate calls are read from an immutable, once-snapshotted board — exactly what we posted at the time, not re-figured after the fact. Upcoming calls are our current projection. An audit of what we said and when, not a directional call.";
+      "The past-slate calls are read from an immutable, once-snapshotted board — exactly what we posted at the time, not re-figured after the fact. Where a game has been played we grade that as-of call against the actual final (winner and margin only — game point totals aren't tracked as an as-of projection). Upcoming calls are our current projection. An audit of what we said and when, not a directional call.";
   }
 
   /* ---------- runtime: two already-published reads, both graceful ---------- */
-  var A_URL="./report_archive.json", G_URL="./games.json", lastFetch=0, archive=null, games=null;
+  var A_URL="./report_archive.json", G_URL="./games.json", F_URL="./finals.json",
+      lastFetch=0, archive=null, games=null, finals=null;
   function bust(u){ return u+(u.indexOf("?")<0?"?":"&")+"v="+Date.now(); }
   function updAgo(){
     var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
@@ -287,11 +353,12 @@ if (typeof module!=="undefined" && module.exports){
   function poll(){
     Promise.all([
       fetch(bust(A_URL),{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; }),
-      fetch(bust(G_URL),{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; })
+      fetch(bust(G_URL),{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; }),
+      fetch(bust(F_URL),{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; })
     ]).then(function(res){
-      if(res[0]) archive=res[0]; if(res[1]) games=res[1];
+      if(res[0]) archive=res[0]; if(res[1]) games=res[1]; if(res[2]) finals=res[2];
       lastFetch=Date.now();
-      if(archive||games){ ingest(archive, games); }
+      if(archive||games){ ingest(archive, games, finals); }
       else if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the timeline.</p>'; }
       updAgo();
     });
