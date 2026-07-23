@@ -82,6 +82,18 @@
   .avfull{color:var(--good)}
   .avroster{font-size:10px;color:var(--dim);white-space:nowrap}
   .avnote{font-size:10px;color:var(--dim);margin-top:5px;line-height:1.4}
+  /* projected rotation + active roster — the expandable per-game preview (upcoming-preview rung) */
+  .rot{margin:6px 0 2px;font-size:11.5px}
+  .rot summary{cursor:pointer;font-size:10.5px;color:var(--acc);font-weight:600;user-select:none}
+  .rotside{margin:6px 0 2px}
+  .rotteam{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+  .rotrow{display:flex;gap:7px;align-items:baseline;padding:1px 0;border-bottom:1px dotted var(--line)}
+  .rotrow:last-child{border-bottom:none}
+  .rotname{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rotmin{color:var(--ink);font-weight:620;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rotlim{color:var(--warn);font-size:10px;white-space:nowrap;font-weight:600}
+  .rotout{color:var(--bad);font-size:10.5px;margin-top:3px}
+  .rotroster{color:var(--dim);font-size:10px;margin-top:3px;line-height:1.45}
   .empty{color:var(--dim);font-style:italic}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
@@ -118,6 +130,10 @@
 (function(){
   "use strict";
   var URL="./games.json";
+  /* per-game rotation preview (fetched separately so the slate poll stays light):
+     PV = the preview payload, joined by game_id; ROTOPEN remembers which cards the reader
+     expanded so a live re-render never collapses an open rotation. */
+  var PURL="./preview.json", PV=null, lastData=null, ROTOPEN={};
   /* CACHE-BUST: append a CHANGING ?v=<ms> token per fetch so the CDN never serves a stale
      games.json on reload; a fresh token per poll keeps live polling live. */
   function bust(u){ return u + (u.indexOf("?")<0?"?":"&") + "v=" + Date.now(); }
@@ -222,6 +238,57 @@
     return wrap;
   }
 
+  // PROJECTED ROTATION + ACTIVE ROSTER (upcoming-preview rung): the per-player minutes the
+  // projection assumed AFTER redistributing unavailable players' time — rendered verbatim from
+  // the baked preview, never recomputed here. Collapsed by default (the impact line above stays
+  // the lead); a dash marks a player whose status changed after the projection froze, NEVER a
+  // fabricated number. Renders nothing when the preview has no entry for this game (graceful).
+  function rotationBlock(g){
+    if(!PV || !PV.games) return null;
+    var pv=PV.games[g.game_id]; if(!pv || !pv.sides) return null;
+    var det=document.createElement("details"); det.className="rot";
+    if(ROTOPEN[g.game_id]){ det.setAttribute("open","open"); det.open=true; }
+    det.addEventListener("toggle", function(){ ROTOPEN[g.game_id]=!!det.open; });
+    var sum=document.createElement("summary"); sum.textContent="Projected rotation & active roster";
+    det.appendChild(sum);
+    [["away", g.away], ["home", g.home]].forEach(function(pair){
+      var side=pv.sides[pair[0]]; if(!side) return;
+      var box=el("div","rotside");
+      box.appendChild(el("div","rotteam", side.team||pair[1]||""));
+      // rotation = everyone not out, biggest projected minutes first (the order the preview
+      // bakes); a null-minutes row still shows (as a dash) so nobody silently disappears.
+      var rows=(side.players||[]).filter(function(p){
+        return p.status!=="out" && (p.min==null || p.min>=1);
+      });
+      if(rows.length){
+        rows.forEach(function(p){
+          var r=el("div","rotrow");
+          var nmtxt=p.name + (p.updated ? " (status changed since we set this projection)" : "");
+          r.appendChild(el("span","rotname", nmtxt));
+          if(p.status==="limited"){
+            r.appendChild(el("span","rotlim", p.play_pct!=null ? (p.play_pct+"% to play") : "limited"));
+          }
+          r.appendChild(el("span","rotmin", p.min==null ? "—" : (Math.round(p.min)+" min")));
+          box.appendChild(r);
+        });
+      } else {
+        box.appendChild(el("div","note","No projected rotation stored for this game."));
+      }
+      var outs=(side.players||[]).filter(function(p){ return p.status==="out"; })
+                                 .map(function(p){ return p.name; });
+      if(outs.length){
+        box.appendChild(el("div","rotout","Not projected to play: "+outs.join(", ")));
+      }
+      if(side.roster_names && side.roster_names.length){
+        box.appendChild(el("div","rotroster","Active roster ("+side.roster_names.length+"): "+
+          side.roster_names.map(function(p){ return p.pos ? (p.name+" ("+p.pos+")") : p.name; }).join(", ")));
+      }
+      det.appendChild(box);
+    });
+    if(PV.note){ det.appendChild(el("div","avnote", PV.note)); }
+    return det;
+  }
+
   // Plain-language read of HOW SURE the call is — a coach glances for "coin flip vs lock",
   // not a raw percentage. Derived from the SAME win probability the bar shows; it introduces
   // NO new margin number (single canonical margin preserved). Graceful: renders nothing if
@@ -278,6 +345,7 @@
     c.appendChild(densityStrip(g));
 
     var ab=availBlock(g); if(ab){ c.appendChild(ab); }
+    var rb=rotationBlock(g); if(rb){ c.appendChild(rb); }
 
     var pw=el("div","pdfs");
     if(g.game_id){ var dd=el("a",null,"deep dive →"); dd.href="./game.html?id="+encodeURIComponent(g.game_id); pw.appendChild(dd); }
@@ -382,11 +450,23 @@
       if(r.status===304){ return null; }
       etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod;
       return r.json();
-    }).then(function(d){ lastFetch=Date.now(); if(d){ render(d); } updAgo(); }).catch(function(e){
+    }).then(function(d){ lastFetch=Date.now(); if(d){ lastData=d; render(d); } updAgo(); }).catch(function(e){
       if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load games. '+(e&&e.message?e.message:"")+'</p>'; }
     });
   }
-  poll(); setInterval(poll,60000); setInterval(updAgo,1000);
+  // rotation-preview poll — independent of the slate poll so a missing/late preview.json can
+  // never block the cards (graceful: no preview, no rotation section). Re-renders the already
+  // fetched slate once a NEW preview lands so the rotation blocks appear without waiting a cycle.
+  function pollPreview(){
+    fetch(bust(PURL),{cache:"no-cache"}).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(p){
+        if(p && p.games && (!PV || PV.generated_utc!==p.generated_utc)){
+          PV=p;
+          if(lastData){ render(lastData); }
+        }
+      }).catch(function(){});
+  }
+  poll(); pollPreview(); setInterval(poll,60000); setInterval(pollPreview,60000); setInterval(updAgo,1000);
 })();
 </script>
 </body>
