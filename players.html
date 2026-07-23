@@ -53,6 +53,16 @@
   .riser-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--acc);white-space:nowrap}
   .riser-t{color:var(--ink);line-height:1.4}
   .riser-t b{font-weight:700}
+  /* per-team risers (A+-rung element 1): a compact expandable strip of EACH roster's "most
+     underrated by points" — the biggest impact-over-scoring riser inside that team. One pill per
+     team that HAS an eligible firm riser (omit-not-invent: a team with none contributes no pill). */
+  .trisers{margin:2px 0 8px}
+  .trisers-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--acc);display:block;margin-bottom:5px}
+  .triser-list{display:flex;flex-wrap:wrap;gap:6px}
+  .triser{display:inline-flex;align-items:baseline;gap:5px;font-size:11px;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:7px;padding:3px 8px;line-height:1.35}
+  .triser .tm{font-weight:700;color:var(--acc);font-variant-numeric:tabular-nums}
+  .triser .nm{font-weight:600}
+  .triser .gap{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
   /* as_of freshness badge (BR-V2): every board section names the slate its data reflects; a data date
      two+ days behind the board date reads LOUD (red), never a silent stale board passed off as fresh. */
   .asof{display:inline-block;font-size:9.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;margin-left:9px;vertical-align:middle;font-variant-numeric:tabular-nums}
@@ -160,6 +170,30 @@
     box.appendChild(t);
     return box;
   }
+  // PER-TEAM RISERS (A+-rung element 1): a compact strip naming EACH roster's "most underrated by
+  // points" — the biggest impact-over-scoring riser inside that team. The server bakes
+  // rt.team_risers as the single source (same firm-only/provisional-excluded/omit-when-none guards
+  // as the league riser, applied per team); the FE renders it VERBATIM — no client re-compute (a
+  // pre-A+ players.json simply carries no team_risers and this strip is omitted). Sorted
+  // most-underrated-first server-side. Returns null when no team has an eligible riser.
+  function teamRisersStrip(rt){
+    var list = rt.team_risers;
+    if(!Array.isArray(list) || !list.length) return null;                  // omit — never fabricate
+    var box=el("div","trisers");
+    box.appendChild(el("span","trisers-k","Most underrated by points — per team"));
+    var wrap=el("div","triser-list");
+    list.forEach(function(r){
+      if(!r || r.delta==null || r.delta<=0) return;                        // defensive: skip a non-riser
+      var pill=el("span","triser");
+      pill.appendChild(el("span","tm", r.team||"—"));
+      pill.appendChild(el("span","nm", r.name));
+      pill.appendChild(el("span","gap","#"+r.impact_rank+" impact / #"+r.scoring_rank+" scoring · +"+r.delta));
+      wrap.appendChild(pill);
+    });
+    if(!wrap.children.length) return null;
+    box.appendChild(wrap);
+    return box;
+  }
   function ratingsSection(rt){
     var s=el("section");
     var h=el("h2"); h.appendChild(document.createTextNode("Players — this season"));
@@ -177,6 +211,8 @@
       : "Ranked by season scoring — points per game from the official box scores. Impact leads the stat columns: our on-court rating of how much better a team plays with her on the floor. It now separates players into a real signal; a player still resting on a thin on-court sample is regressed toward league average and tagged “prov.” Her share of team minutes rides alongside too, so a big scoring line on limited minutes is easy to spot. Tap a name for her full card."));
     // BOARD HEADLINE — biggest impact-over-scoring riser (shown on both axes; omitted when none rises)
     var riser=riserCallout(rt); if(riser) s.appendChild(riser);
+    // PER-TEAM RISERS (A+-rung element 1) — each roster's most-underrated-by-points, compact strip
+    var trisers=teamRisersStrip(rt); if(trisers) s.appendChild(trisers);
     // rank-axis toggle — reuses the shared .segbtns component (same look as the Realm-of-outcomes tabs)
     var pkey=function(r){ return r.id!=null ? ("i"+r.id) : ("n"+r.name); };
     var rseg=el("div","segbtns");
