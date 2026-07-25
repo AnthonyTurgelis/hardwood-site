@@ -796,6 +796,36 @@
     return det;
   }
 
+  /* ---------- long-section collapse (readability, additive) ----------
+     Fold a LONG list's overflow behind the page's existing details.more idiom so the board
+     stays scannable: the top rows lead, the long tail folds behind one keyboard-accessible
+     "Show N more" control. Short lists are left fully open (helper no-ops at/under keepN).
+     No data changes — only the initial collapsed/expanded state. The reader's expand choice
+     PERSISTS in localStorage (mirrors the queue-ops QKEY pattern) so the 60s background
+     re-render never re-collapses a section the reader opened. */
+  var COLKEY="hw_section_expanded_v1";
+  function loadExpanded(){ try{ var v=JSON.parse(localStorage.getItem(COLKEY));
+    return (v && typeof v==="object") ? v : {}; }catch(e){ return {}; } }
+  function setExpanded(id, on){ try{ var m=loadExpanded(); if(on){ m[id]=1; } else { delete m[id]; }
+    localStorage.setItem(COLKEY, JSON.stringify(m)); }catch(e){} }
+  function collapseOverflow(listEl, keepN, id, noun){
+    if(!listEl || !listEl.children) return;
+    var kids=[]; for(var i=0;i<listEl.children.length;i++){ kids.push(listEl.children[i]); }
+    if(kids.length<=keepN) return;                       // short section: leave fully open
+    var hidden=kids.slice(keepN), n=hidden.length, one=(n===1);
+    var det=el("details","more morefold"); det.setAttribute("data-k","fold|"+id);
+    var sum=el("summary",null,""); det.appendChild(sum);
+    var inner=el("div","list"); inner.style.marginTop="6px";
+    hidden.forEach(function(node){ inner.appendChild(node); });   // MOVES nodes (still in DOM, just folded)
+    det.appendChild(inner);
+    function relabel(){ sum.textContent = det.open ? "▾ Show fewer"
+      : ("▸ Show "+n+" more "+(one?noun.replace(/s$/,""):noun)); }
+    if(loadExpanded()[id]) det.open=true;
+    relabel();
+    det.addEventListener("toggle", function(){ relabel(); setExpanded(id, det.open); });
+    listEl.parentNode.insertBefore(det, listEl.nextSibling);
+  }
+
   /* ---------- decisions ---------- */
   function setupCard(su){
     var c=el("div","setup"); c.setAttribute("data-k","setup|"+(su.kind||"ntfy"));
@@ -941,6 +971,7 @@
         var list=el("div","list"); list.style.marginTop="7px";
         normal.forEach(function(c){ list.appendChild(doneRow(c)); });
         s.appendChild(list);
+        collapseOverflow(list, 8, "done_normal", "items");
       }
       if(minor.length){
         var det=el("details","more");
@@ -1450,6 +1481,8 @@
       list.appendChild(d);
     });
     s.appendChild(list);
+    // "What we've learned" cards carry long text bodies; keep the 4 most recent open, fold older.
+    collapseOverflow(list, 4, "agent_updates", "updates");
     return s;
   }
 
@@ -1511,6 +1544,9 @@
     var list=el("div","list");
     order.forEach(function(c,i){ list.appendChild(queueRow(c,i,snapshot)); });
     s.appendChild(list);
+    // Long queue (often ~90+ ranked items): lead with the top 15, fold the tail behind one
+    // "Show N more" control so the page is scannable. Reorder buttons stay live inside the fold.
+    collapseOverflow(list, 15, "queue", "items");
     if(comingSoon && comingSoon.length){
       var s2=el("div"); s2.appendChild(sectionHead("Coming soon",""));
       var cl=el("div","list");
