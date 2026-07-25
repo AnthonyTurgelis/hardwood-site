@@ -25,6 +25,11 @@
   .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}
   .tabs button{background:var(--card);color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:7px 13px;cursor:pointer;font-size:13px;font-weight:600}
   .tabs button.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+  .barwrap-flex{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .viewtoggle{display:inline-flex;align-items:center;gap:5px;margin:10px 0 14px}
+  .viewtoggle .vtlab{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px;margin-right:2px}
+  .viewtoggle button{background:var(--card);color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12.5px;font-weight:600}
+  .viewtoggle button.active{background:var(--acc);color:#fff;border-color:var(--acc)}
   .card{background:var(--card);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow);padding:13px 15px;margin:0 0 14px}
   .card h2{font-size:15px;margin:0 0 3px}
   .note{font-size:11.5px;color:var(--dim);margin-top:4px}
@@ -91,14 +96,21 @@
 <script>
 (function(){
   "use strict";
-  var DATA=null, CUR="games";
+  var DATA=null, CUR="impact";
   var TABS=[
+    ["impact","Player Impact"],
     ["games","Upcoming Games"],
     ["realm","Player Outcomes"],
     ["scorecard","Model Scorecard"],
     ["rookies","Rookie Priors"],
     ["styles","Team Styles"]
   ];
+  /* Summary vs Deep view. Summary leads with the impact metrics and hides the extra
+     context columns; Deep surfaces MORE of the same impact model (share, trend, basis)
+     plus the trailing box-score context — never a raw dump. Persisted per-browser. */
+  var DEEP=false;
+  try{ DEEP = localStorage.getItem("hw_explorer_view")==="deep"; }catch(e){}
+  function setDeep(on){ DEEP=!!on; try{ localStorage.setItem("hw_explorer_view",DEEP?"deep":"summary"); }catch(e){} render(); }
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function fmt(n,d){ if(n==null||isNaN(n)) return "—"; return Number(n).toFixed(d==null?1:d); }
   function sgn(n,d){ if(n==null||isNaN(n)) return "—"; var v=Number(n); return (v>=0?"+":"")+v.toFixed(d==null?1:d); }
@@ -121,6 +133,78 @@
       t.appendChild(b);
     });
     return t;
+  }
+
+  /* ---------- Player Impact (impact-first) ---------- */
+  var ISTATE={team:"",hideThin:true};
+  function panelImpact(main){
+    var p=(DATA.panels||{}).impact;
+    if(!p||!p.rows||!p.rows.length){ main.appendChild(noData("Player impact ratings are not available right now.")); return; }
+    var head=el("div","card");
+    head.appendChild(el("h2",null,"Player impact ratings"));
+    var nt=el("div","note","Our on-court impact rating leads — how much a team is better or worse with a player on the floor (signed; 0 is league-average), with her impact rank, share of the team's minutes and games, projected minutes and recent direction. Box-score scoring trails as context. Impact rank shows only once a player has enough games to be firm.");
+    var af=el("span","asof"); af.textContent="  As of "+esc(p.as_of)+"."; nt.appendChild(af);
+    head.appendChild(nt);
+    main.appendChild(head);
+
+    var teams={}; p.rows.forEach(function(r){ if(r.team)teams[r.team]=1; });
+    var filt=el("div","filters");
+    filt.appendChild(selLabel("Team", [["","all teams"]].concat(Object.keys(teams).sort().map(function(t){return [t,t];})), ISTATE.team, function(v){ ISTATE.team=v; render(); }));
+    var chkL=el("label"); chkL.style.flexDirection="row"; chkL.style.alignItems="center"; chkL.style.gap="5px";
+    var chk=el("input"); chk.type="checkbox"; chk.style.width="auto"; chk.checked=ISTATE.hideThin;
+    chk.onchange=function(){ ISTATE.hideThin=chk.checked; render(); };
+    chkL.appendChild(chk); chkL.appendChild(document.createTextNode("hide low-confidence (thin sample)"));
+    filt.appendChild(chkL);
+    main.appendChild(filt);
+
+    var rows=p.rows.filter(function(r){
+      if(ISTATE.team && r.team!==ISTATE.team) return false;
+      if(ISTATE.hideThin && r.thin) return false;
+      return true;
+    });
+    if(!rows.length){ main.appendChild(noData("No players match those filters.")); return; }
+
+    var card=el("div","card scroll");
+    var thinN=p.rows.filter(function(r){return r.thin;}).length;
+    card.appendChild(el("div","note",rows.length+" players · ranked by on-court impact · impact metrics first, scoring last."+(DEEP?" Deep view — full context columns.":" Summary view — switch to Deep for share, trend, basis and full box score.")+(thinN?(" "+thinN+" low-confidence on thin samples."):"")));
+    var tbl=el("table");
+    var hd="<thead><tr><th>Player</th><th>Team</th><th>Impact</th><th>Impact rank</th><th>Min share</th>";
+    if(DEEP){ hd+="<th>Gm share</th><th>Proj min</th><th>Trend</th><th>Basis</th><th>Scoring rank</th>"; }
+    hd+="<th>PTS</th>";
+    if(DEEP){ hd+="<th>REB</th><th>AST</th><th>STL</th><th>BLK</th>"; }
+    hd+="</tr></thead>";
+    tbl.innerHTML=hd;
+    var tb=el("tbody");
+    rows.forEach(function(r){
+      var tr=el("tr");
+      tr.appendChild(td(r.name,"l"));
+      tr.appendChild(td(r.team,"l"));
+      var impCls=r.rating==null?"dim":(r.rating>=0?"good":"bad");
+      tr.appendChild(td(sgn(r.rating,1),impCls));
+      tr.appendChild(td(r.provisional||r.impact_rank==null?"provisional":("#"+r.impact_rank), r.provisional?"dim":""));
+      tr.appendChild(td(r.min_share_pct==null?"—":(r.min_share_pct+"%")));
+      if(DEEP){
+        tr.appendChild(td(r.gp_share_pct==null?"—":(r.gp_share_pct+"%"),"dim"));
+        tr.appendChild(td(fmt(r.proj_min,1),"dim"));
+        tr.appendChild(td(trendCell(r),"dim"));
+        tr.appendChild(td((r.n_basis==null?"—":String(r.n_basis))+(r.thin?" ⚠":""),r.thin?"warn":"dim"));
+        tr.appendChild(td(r.scoring_rank==null?"—":("#"+r.scoring_rank),"dim"));
+      }
+      tr.appendChild(td(fmt(r.pts,1)));
+      if(DEEP){
+        tr.appendChild(td(fmt(r.reb,1),"dim"));
+        tr.appendChild(td(fmt(r.ast,1),"dim"));
+        tr.appendChild(td(fmt(r.stl,1),"dim"));
+        tr.appendChild(td(fmt(r.blk,1),"dim"));
+      }
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb); card.appendChild(tbl); main.appendChild(card);
+  }
+  function trendCell(r){
+    if(r.trend_delta==null) return "—";
+    var d=Number(r.trend_delta), arrow=d>0?"▲":(d<0?"▼":"–");
+    return arrow+" "+sgn(d,1)+(r.trend_days?(" / "+r.trend_days+"d"):"");
   }
 
   /* ---------- Upcoming Games ---------- */
@@ -206,7 +290,10 @@
     var lowN=rows.filter(function(r){return r.low_conf;}).length;
     card.appendChild(el("div","note",rows.length+" players · "+RSTATE.stat+" · bar shows the 90% range (light), central range (solid) and projection (tick). "+lowN+" low-confidence."));
     var tbl=el("table");
-    tbl.innerHTML="<thead><tr><th>Player</th><th>Team</th><th>Opp</th><th>Basis</th><th>Projection</th><th>Central range</th><th>90% range</th><th>Range</th><th>Sample</th></tr></thead>";
+    var rhd="<thead><tr><th>Player</th><th>Team</th><th>Opp</th><th>Basis</th><th>Projection</th>";
+    if(DEEP){ rhd+="<th>Central range</th><th>90% range</th>"; }
+    rhd+="<th>Range</th><th>Sample</th></tr></thead>";
+    tbl.innerHTML=rhd;
     var tb=el("tbody");
     rows.forEach(function(r){
       var tr=el("tr");
@@ -216,8 +303,10 @@
       tr.appendChild(td((r.home?"vs ":"@ ")+r.opp,"l dim"));
       tr.appendChild(td(r.basis,"l"));
       tr.appendChild(td(fmt(r.point,1)));
-      tr.appendChild(td(fmt(r.lo,1)+" … "+fmt(r.hi,1),"dim"));
-      tr.appendChild(td(fmt(r.lo90,1)+" … "+fmt(r.hi90,1),"dim"));
+      if(DEEP){
+        tr.appendChild(td(fmt(r.lo,1)+" … "+fmt(r.hi,1),"dim"));
+        tr.appendChild(td(fmt(r.lo90,1)+" … "+fmt(r.hi90,1),"dim"));
+      }
       var bcell=el("td"); bcell.style.textAlign="left"; bcell.appendChild(rangeBar(r,hi)); tr.appendChild(bcell);
       tr.appendChild(td((r.n==null?"—":r.n)+(r.low_conf?" ⚠":""),r.low_conf?"warn":"dim"));
       tb.appendChild(tr);
@@ -371,16 +460,32 @@
     opts.forEach(function(o){ var op=el("option",null,o[1]); op.value=o[0]; if(o[0]===cur)op.selected=true; s.appendChild(op); });
     s.onchange=function(){ cb(s.value); }; l.appendChild(s); return l;
   }
+  function viewToggle(){
+    var wrap=el("div","viewtoggle");
+    var lab=el("span","vtlab","View");
+    wrap.appendChild(lab);
+    [["summary","Summary",false],["deep","Deep",true]].forEach(function(o){
+      var b=el("button",(DEEP===o[2]?"active":""),o[1]);
+      b.onclick=function(){ setDeep(o[2]); };
+      wrap.appendChild(b);
+    });
+    return wrap;
+  }
   function render(){
     var main=document.getElementById("main"); main.innerHTML="";
-    main.appendChild(el("p","lede","This is the deep view: every current model number, browsable. Pick a section below. Everything here is read-only and refreshes automatically."));
+    main.appendChild(el("p","lede",DEEP
+      ? "Deep view: every current model number with full context — share of minutes and games, recent trend, sample basis and the box score. Read-only; refreshes automatically."
+      : "Summary view: each surface leads with the impact metrics. Switch to Deep for the full context columns. Read-only; refreshes automatically."));
     /* keep the active section on a tab that actually has data before painting the bar */
     var avail=availTabs().map(function(tb){ return tb[0]; });
     if(avail.indexOf(CUR)<0){ CUR=avail[0]; }
-    main.appendChild(tabBar());
+    var bar=el("div","barwrap-flex");
+    bar.appendChild(tabBar()); bar.appendChild(viewToggle());
+    main.appendChild(bar);
     if(!DATA || !DATA.panels){ main.appendChild(noData("Loading the current data…")); return; }
     if(!DATA.available){ main.appendChild(noData("The explorer data is being rebuilt — check back shortly.")); return; }
-    if(CUR==="games") panelGames(main);
+    if(CUR==="impact") panelImpact(main);
+    else if(CUR==="games") panelGames(main);
     else if(CUR==="realm") panelRealm(main);
     else if(CUR==="scorecard") panelScorecard(main);
     else if(CUR==="rookies") panelRookies(main);
