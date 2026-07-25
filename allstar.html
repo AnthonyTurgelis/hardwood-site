@@ -320,8 +320,12 @@
     }
     it(pc.multiplier,"Pace vs league average","not estimated",2);
     if(has(pc.lo)&&has(pc.hi)){
-      var e=el("div","ei"); e.appendChild(el("b",null,fmt(pc.lo,2)+" – "+fmt(pc.hi,2)));
+      var e=el("div","ei"); e.appendChild(el("b",null,fmt(pc.lo,3)+" to "+fmt(pc.hi,3)));
       e.appendChild(el("span",null,"Interval")); g.appendChild(e);
+    } else {
+      var e2=el("div","ei"); var b2=el("b");
+      b2.appendChild(unknown(pc.interval_reason||"an interval for this multiplier was not established"));
+      e2.appendChild(b2); e2.appendChild(el("span",null,"Interval")); g.appendChild(e2);
     }
     it(pc.league_pace,"League pace this season","league pace not published to this page",1);
     it(pc.n_games,"All-Star games in the sample","sample size not published",0);
