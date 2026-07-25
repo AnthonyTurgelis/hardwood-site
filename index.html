@@ -1673,7 +1673,10 @@
       function addPanel(node, key, tier){ if(node){ panels.push({node:node, asOf:secAsOf(key), tier:tier, i:panels.length}); } }
       addPanel(renderDecisions(sec.needs_anthony, b.setup, b.answer_all), "needs_anthony", decActionable?0:3);
       addPanel(renderTodayGames(sec.today_games), "today_games", 1);
-      addPanel(renderFoulWatch(FOUL), "foul_risk", 1);
+      // FOUL-TROUBLE WATCH removed from the homepage (CEO 20260725: "why is the foul model on the
+      // homepage" + it was surfacing 13h-stale data on a no-games day). renderFoulWatch() is retained
+      // below so it can be remounted on a dedicated page (fresh-gated) if wanted later — data untouched.
+      // addPanel(renderFoulWatch(FOUL), "foul_risk", 1);
       addPanel(renderTonightEdge(sec.tonight_edge), null, 1);
       addPanel(renderReports(b.reports, b.rollover), "reports", 1);
       addPanel(renderCoverageTile(ACC), "accuracy_cov", 2);
