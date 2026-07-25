@@ -1,6 +1,6 @@
 {
- "generated_utc": "2026-07-25T23:10:24+00:00",
- "generated_et": "Jul 25, 7:10pm ET",
+ "generated_utc": "2026-07-25T23:13:44+00:00",
+ "generated_et": "Jul 25, 7:13pm ET",
  "date": "2026-07-25",
  "available": true,
  "event": {
@@ -986,15 +986,22 @@
    "text": "Bueckers and Clark were assigned to opposite teams by coin flip, not drafted."
   }
  ],
+ "fun_caveat": "EXHIBITION REGIME ADJUSTMENT IS AN ASSUMPTION, NOT A FIT: defensive share weighted 0.35x, offensive share 1.25x. No player-level All-Star history was modelled in the time available, so this coefficient is asserted on the face of the output, not estimated. It is the single largest modelling choice here.",
+ "fun_note": "Anything below that turns on the exhibition adjustment is downstream of that assumed weight. It is asserted, it is the largest single choice in this model, and it is not measured.",
  "assumptions": [
   "CHEMISTRY IS NEUTRALIZED OUTRIGHT -- set to exactly zero, not estimated. Drafted teams have no shared lineup history; any chemistry term fitted here is noise.",
-  "IMPACT RATINGS ARE APPLIED OUTSIDE THE REGIME THEY WERE FIT IN. site/players.json ratings are fit on regular-season WNBA play and are being used on an exhibition.",
+  "IMPACT RATINGS ARE APPLIED OUTSIDE THE REGIME THEY WERE FIT IN. our published player ratings ratings are fit on regular-season WNBA play and are being used on an exhibition.",
   "EXHIBITION REGIME ADJUSTMENT IS AN ASSUMPTION, NOT A FIT: defensive share weighted 0.35x, offensive share 1.25x. No player-level All-Star history was modelled in the time available, so this coefficient is asserted on the face of the output, not estimated. It is the single largest modelling choice here.",
   "DEFENSIVE SHARE IS A BOX-SCORE PROXY (stl/blk/reb vs pts/ast), z-scored within the All-Star pool. It is NOT a defensive RAPM. Real defensive impact is not separable from the ratings available.",
   "MINUTES ARE FLATTENED: 85% equal-split of 200 team-minutes + 15% starter tilt. Regular-season minute distributions do NOT apply to an All-Star Game.",
   "Total points modelled on S = total/(2*league_pace_per40), which is invariant to the free-throw possession bias. The pace-vs-efficiency split is NOT invariant to it.",
   "Margin sign is not predicted -- only a higher side and a lower side.",
   "League 1999-2014 pace inputs are 'estimated_calibrated', not measured; that uncertainty is NOT propagated into the intervals.",
+  "Era contrast on PACE -- tested, did not survive the power check; pace uses its mean.",
+  "Chemistry -- zeroed by assumption.",
+  "Rule effects -- carried verbatim from the rosters file as named lines with is_guess flags; NOT re-estimated and NOT silently summed into the total.",
+  "Per-player variance / player-level intervals -- not estimable at this n.",
+  "Margin sign / which team wins -- not modelled.",
   {
    "name": "Chemistry is neutralized outright",
    "text": "These are drafted sides with no shared history. Any chemistry term fitted here would be noise dressed as signal, so it is set to zero by assumption rather than estimated."
@@ -1553,6 +1560,7 @@
    "2025_ppg_per_team": 81.7,
    "delta": 5.1
   },
-  "note": "Provided as a sanity anchor for the downstream modeling lane, not as a Hardwood projection."
+  "note": "Provided as a sanity anchor for the downstream modeling lane, not as a Hardwood projection.",
+  "overlap_note": "Tonight's posted totals land around the 72th to 78th percentile of our own distribution, comfortably inside it. We are not far apart — we are just honest about how wide the range is."
  }
 }

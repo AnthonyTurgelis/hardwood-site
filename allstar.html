@@ -89,6 +89,8 @@
   .dd .val{font-size:11.5px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
   .dd .val b{color:var(--ink)}
   .ddkey{display:flex;gap:16px;flex-wrap:wrap;font-size:10.5px;color:var(--muted);padding:8px 12px 0}
+  .hl{font-size:16px;font-weight:720;line-height:1.35;margin-bottom:6px}
+  .hlp{font-size:12px;color:var(--muted);line-height:1.6;margin-top:6px}
   /* fun cards */
   .fun{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
   .fcard{border:1px solid var(--line);border-radius:9px;background:var(--card);padding:10px 12px}
@@ -495,8 +497,60 @@
     tb.appendChild(tbody); sc.appendChild(tb); c.appendChild(sc);
     var n=el("div","pad");
     n.appendChild(el("div","note",pl.note||"Ordered by projected impact. Impact leads because it is the only column that answers 'did this player help the team win'; the counting stats sit last on purpose. Minutes in an All-Star Game are flattened relative to the regular season, which compresses every counting projection."));
+    if(has(pl.out_note)) n.appendChild(el("div","note",pl.out_note));
     if(has(pl.reference)){ var r3=el("div","ref"); r3.appendChild(el("b",null,"Source: ")); r3.appendChild(document.createTextNode(pl.reference)); n.appendChild(r3); }
     c.appendChild(n);
+  }
+
+  function renderHeadline(main){
+    var h=DATA.headline;
+    if(!h||!has(h.finding)) return;
+    var c=cardIn(main);
+    var p=el("div","pad");
+    p.appendChild(el("div","hl",h.finding));
+    (h.points||[]).forEach(function(t){ p.appendChild(el("div","hlp",t)); });
+    c.appendChild(p);
+  }
+
+  function renderAlternatives(main){
+    var a=DATA.alternatives;
+    if(!a||!(a.rows||[]).length) return;
+    section("The same record, answered three ways");
+    var c=cardIn(main);
+    var sc=el("div","scroll"); var tb=el("table");
+    var thead=el("thead"); var tr=el("tr");
+    ["Which games we count","Games","Total"].forEach(function(x){ tr.appendChild(el("th",null,x)); });
+    thead.appendChild(tr); tb.appendChild(thead);
+    var tbody=el("tbody");
+    a.rows.forEach(function(r){
+      var t=el("tr");
+      var nm=el("td","nm",String(r.basis||""));
+      if(has(a.shipped) && String(r.basis||"").toLowerCase().indexOf("captain")>=0){
+        nm.appendChild(document.createTextNode(" ")); nm.appendChild(el("span","chip up","shipped"));
+      }
+      t.appendChild(nm);
+      var n=el("td"); if(typeof r.n==="number") n.textContent=String(r.n); else n.appendChild(unknown("count not stated")); t.appendChild(n);
+      var v=el("td"); if(typeof r.total==="number") v.textContent=fmt(r.total,1); else v.appendChild(unknown("not computed")); t.appendChild(v);
+      tbody.appendChild(t);
+    });
+    tb.appendChild(tbody); sc.appendChild(tb); c.appendChild(sc);
+    var n2=el("div","pad");
+    n2.appendChild(el("div","note",a.note||""));
+    if(has(a.shipped)) n2.appendChild(el("div","note","We ship the format-matched read: "+a.shipped+". The strict all-years number is shown above it so the choice is auditable rather than hidden."));
+    c.appendChild(n2);
+  }
+
+  function renderScenario(main){
+    var s=DATA.scenario;
+    if(!s||!has(s.text)) return;
+    var b=el("div","banner");
+    b.appendChild(el("h3",null,s.title||"An unconfirmed rule"));
+    if(has(s.status)) b.appendChild(el("div","fx",s.status));
+    var ul=el("ul");
+    ul.appendChild(el("li",null,s.text));
+    if(has(s.extra)) ul.appendChild(el("li",null,s.extra));
+    b.appendChild(ul);
+    main.appendChild(b);
   }
 
   function renderReconciliation(main){
@@ -536,6 +590,7 @@
     var extra=[];
     if(has(lc["2026_ppg_per_team"])&&has(lc["2025_ppg_per_team"]))
       extra.push("League scoring is up this season: "+lc["2026_ppg_per_team"]+" points per team per game, against "+lc["2025_ppg_per_team"]+" last season.");
+    if(has(cc.overlap_note)) extra.push(cc.overlap_note);
     if(has(cc.note)) extra.push(cc.note);
     extra.push("The posted totals are shown as a sanity anchor for our own number. They are not our projection and nothing on this page is a pick.");
     extra.forEach(function(t){ p.appendChild(el("div","note",t)); });
@@ -698,6 +753,13 @@
     var fun=DATA.fun||[];
     if(!fun.length) return;
     section("Front-office angles");
+    if(has(DATA.fun_caveat)){
+      var cav=el("div","banner");
+      cav.appendChild(el("h3",null,"Read this first — the assumption these turn on"));
+      cav.appendChild(el("div","fx",DATA.fun_caveat));
+      if(has(DATA.fun_note)) cav.appendChild(el("div","hlp",DATA.fun_note));
+      document.getElementById("main").appendChild(cav);
+    }
     var g=el("div","fun");
     fun.forEach(function(f){
       var c=el("div","fcard");
@@ -765,8 +827,10 @@
       c.appendChild(p); main.appendChild(c); return;
     }
     renderEvent(main);
+    renderHeadline(main);
     renderBanner(main);
     renderTotal(main);
+    renderAlternatives(main);
     renderReconciliation(main);
     renderCrossCheck(main);
     renderPace(main);
@@ -774,6 +838,7 @@
     renderDraftDisagreement(main);
     renderRules(main);
     renderNotFitted(main);
+    renderScenario(main);
     renderUnknowns(main);
     renderPlayers(main);
     renderRosters(main);
