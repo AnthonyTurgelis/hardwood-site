@@ -330,6 +330,31 @@
     it(pc.league_pace,"League pace this season","league pace not published to this page",1);
     it(pc.n_games,"All-Star games in the sample","sample size not published",0);
     p.appendChild(g);
+    if(has(pc.projected_pace)){
+      var pp=el("div","note");
+      var txt="That works out to about "+fmt(pc.projected_pace,1)+" possessions per 40 minutes";
+      if(has(pc.projected_pace_lo)&&has(pc.projected_pace_hi))
+        txt+=", with a range of "+fmt(pc.projected_pace_lo,1)+" to "+fmt(pc.projected_pace_hi,1);
+      txt+=".";
+      if(has(pc.n_basis)) txt+=" Measured on "+pc.n_basis+" format-matched games"+(has(pc.df)?" ("+pc.df+" degrees of freedom)":"")+".";
+      pp.textContent=txt; p.appendChild(pp);
+    }
+    var wt=pc.why_tighter;
+    if(wt && (has(wt.plain)||has(wt.finding))){
+      var wb=el("div","banner");
+      wb.appendChild(el("h3",null,"Why the pace band is tighter than the total band"));
+      if(has(wt.finding)) wb.appendChild(el("div","fx",wt.finding));
+      if(has(wt.plain)) wb.appendChild(el("div","hlp",wt.plain));
+      var wl=el("ul");
+      if(has(wt.share_of_total_variance_from_efficiency))
+        wl.appendChild(el("li",null,"Share of tonight's total-points uncertainty coming from how EFFICIENT the game is: "+Math.round(wt.share_of_total_variance_from_efficiency*100)+"%."));
+      if(has(wt.share_of_total_variance_from_pace))
+        wl.appendChild(el("li",null,"Share coming from how FAST it is: "+Math.round(wt.share_of_total_variance_from_pace*100)+"%."));
+      if(has(wt.pace_cv)&&has(wt.efficiency_cv))
+        wl.appendChild(el("li",null,"Pace varies far less game to game than efficiency does ("+fmt(wt.pace_cv,4)+" against "+fmt(wt.efficiency_cv,4)+" on the same scale)."));
+      if(wl.childNodes.length) wb.appendChild(wl);
+      p.appendChild(wb);
+    }
     if(has(pc.method)) p.appendChild(el("div","note",pc.method));
     if(has(pc.note)) p.appendChild(el("div","note",pc.note));
     if(has(pc.reference)){ var r=el("div","ref"); r.appendChild(el("b",null,"Source: ")); r.appendChild(document.createTextNode(pc.reference)); p.appendChild(r); }
