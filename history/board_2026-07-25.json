@@ -1,19 +1,19 @@
 {
- "generated_utc": "2026-07-25T23:33:07+00:00",
+ "generated_utc": "2026-07-25T23:53:09+00:00",
  "freshness": {
-  "baked_utc": "2026-07-25T23:33:07+00:00",
-  "baked_et": "Jul 25, 7:33pm ET",
-  "revalidated_utc": "2026-07-25T23:33:07+00:00",
+  "baked_utc": "2026-07-25T23:53:09+00:00",
+  "baked_et": "Jul 25, 7:53pm ET",
+  "revalidated_utc": "2026-07-25T23:53:09+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-25",
  "day_summary": "No games on tonight's schedule. Nothing needs you right now.",
  "counts": {
   "running": 3,
-  "done_today": 16,
+  "done_today": 17,
   "maintenance": 3,
   "needs_anthony": 0,
-  "lanes_today": 17,
+  "lanes_today": 18,
   "upcoming": 80
  },
  "sections": {
@@ -31,33 +31,51 @@
     "body_markdown": "Tested no improvement; recorded honestly."
    },
    {
+    "id": "allstar-2026-read",
+    "title": "Why All-Star scoring exploded, and why it is not because the games got faster",
+    "timestamp": "Jul 25, 2026",
+    "body_markdown": "> **The finding:** All-Star scoring has roughly exploded over 27 years, and the obvious explanation - that the games keep getting faster - turns out to be wrong. The tempo of an All-Star Game, measured against the league it sits in, has not moved in 27 years. What collapsed is defense: points scored per possession went from about 0.85 to about 1.36.\n\n**The nuance that matters:** All-Star basketball genuinely is fast - roughly 1.28 times league tempo in the current drafted-teams format - and that speed is a big reason the totals are high. But it has always been fast. The *rise* is entirely the disappearing defense, not an acceleration.\n\n**What we published:** a projected combined score of about 261 points, with an 80% range running from about 225 to about 297. That range is wide on purpose. Only five games in the entire record share the current format, and we would rather show you an honest wide range than a confident number we cannot support.\n\n**The caveat we are carrying openly:** the adjustment for how much less defense gets played in an exhibition rests on an assumption we chose rather than measured. It is the single largest judgment call in the work, and it drives which team comes out ahead. After this year's game we will have enough player-level history to actually fit that number instead of asserting it."
+   },
+   {
+    "id": "probable-play-rate-correction",
+    "title": "We were mispricing questionable players - in both directions at once",
+    "timestamp": "Jul 25, 2026",
+    "body_markdown": "> **The finding:** When a player was listed as probable, we treated that as a 95% chance she takes the floor. Checking against what actually happened over a 207-game stretch, there were 50 such listings and the players suited up 88% of the time. We were too optimistic.\n\n**The surprise:** investigating it turned up a second, opposite error hiding underneath. Only about half of those listings were ever getting the 95% figure. The other half were being priced at 55% - against a real play rate of 92%. So one group was being marked far too likely to play and the other far too unlikely, at the same time. Both halves are now corrected.\n\n**Why it matters:** whether a player is on the floor is the input almost everything else depends on, so an error here quietly leaks into projections and game previews. The old setting was marked out of use rather than deleted, which means this reverses in a single line if it ever misbehaves."
+   },
+   {
+    "id": "three-season-projection-base",
+    "title": "Sharper projections for players we have barely seen this season",
+    "timestamp": "Jul 25, 2026",
+    "body_markdown": "> **The finding:** For a player with only a handful of games behind her, we were building her projection off her most recent season alone - discarding what we already knew about her from the two seasons before that.\n\n**The fix:** her starting point now blends her last three seasons, weighting the recent ones more heavily. Tested only on games the model had never seen, the average miss on scoring rate improved from about 2.06 to about 1.87 points per 36 minutes. Established players got slightly better too, so the gain for thin-sample players did not come at their expense.\n\n**The honest part, which is easy to oversell:** most of that improvement - roughly 0.16 of the 0.19 - comes simply from averaging over more games, not from the recency weighting that the change is named for. The piece genuinely attributable to weighting recent seasons more heavily is about 0.05, it shows up early in a season, and it shrinks as games accumulate. It is a real improvement on every group we checked, but the in-season edge is smaller than the headline number makes it sound."
+   },
+   {
     "id": "infra-readyset-full-backlog-honest",
     "title": "Infra readyset full backlog honest",
-    "timestamp": "Jul 25, 2026",
+    "timestamp": "Jul 24, 2026",
     "body_markdown": "Tested no improvement; recorded honestly."
    },
    {
     "id": "infra-board-activity-stale-mojibake-target",
     "title": "Infra board activity stale mojibake target",
-    "timestamp": "Jul 25, 2026",
+    "timestamp": "Jul 24, 2026",
     "body_markdown": "Finished and independently double checked."
    },
    {
     "id": "preview-interval-pace",
     "title": "Preview interval pace",
-    "timestamp": "Jul 25, 2026",
+    "timestamp": "Jul 24, 2026",
     "body_markdown": "Finished and independently double checked."
    },
    {
     "id": "board-collapsible-sections",
     "title": "Board collapsible sections",
-    "timestamp": "Jul 25, 2026",
+    "timestamp": "Jul 24, 2026",
     "body_markdown": "Improved and recorded."
    },
    {
     "id": "infra-watcher-restart-directive-replay-fix",
     "title": "Coordination",
-    "timestamp": "Jul 25, 2026",
+    "timestamp": "Jul 24, 2026",
     "body_markdown": "Improved and recorded."
    },
    {
@@ -71,12 +89,6 @@
     "title": "Sharper minutes forecasts for players changing roles",
     "timestamp": "Jul 12, 2026",
     "body_markdown": "> **The finding:** We compared two ways to forecast playing time on the games that matter most — players stepping into bigger or different roles.\n\n**Result:** the simpler rolling-average method is **better by 0.86 minutes** on these role-change games. The role-aware version systematically over-corrected on promoted or demoted players.\n\n**Action:** we kept the rolling-average method as the official minutes model and shelved the role-aware one."
-   },
-   {
-    "id": "era-shift-2026",
-    "title": "Historical Era Adjustments (2024-2026)",
-    "timestamp": "Jul 12, 2026",
-    "body_markdown": "> 2026 season represents a distinct era in officiating. Free Throw Rate skyrocketed from to 0.315 adding over 3 free throw attempts per team per game. Impact on Backtesting When backtesting player stat projections (especially PTS) on 2024 2025 data we must apply a downward era-adjustment for free throw volume to avoid artificially grading our 2026-calibrated models too harshly on historical undershoots."
    }
   ],
   "today_games": {
@@ -87,33 +99,33 @@
   "running_now": [],
   "running_live": [
    {
-    "name": "Infra dead test suites repair",
+    "name": "Asg 2026 props render",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
-    "team": "",
+    "team": "Site",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-07-25T19:32:22-04:00",
+    "at_iso": "2026-07-25T19:52:00-04:00",
     "start_unknown": true
    },
    {
-    "name": "Asg 2026 prop sim",
+    "name": "Infra busy spare hysteresis",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-07-25T19:32:22-04:00",
+    "at_iso": "2026-07-25T19:52:00-04:00",
     "start_unknown": true
    },
    {
-    "name": "P0f1b wake request consumer",
+    "name": "Infra decode sweep",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-07-25T19:32:22-04:00",
+    "at_iso": "2026-07-25T19:52:00-04:00",
     "start_unknown": true
    }
   ],
@@ -125,19 +137,29 @@
     "one_liner": "Tested — no improvement; recorded honestly.",
     "chip": "NULL",
     "team": "",
-    "time": "",
-    "at_iso": null,
+    "time": "7:59pm",
+    "at_iso": "2026-07-25T19:59:00-04:00",
     "link": "https://drive.google.com/file/d/1Ba6K5XmjLg_tov8AJ5rkBLoIm-oRFKh5/view?usp=drivesdk",
     "impact": 3,
     "headline": true
+   },
+   {
+    "name": "Asg prop sim",
+    "one_liner": "Completed and recorded.",
+    "chip": "DONE",
+    "team": "",
+    "time": "7:52pm",
+    "at_iso": "2026-07-25T19:52:00-04:00",
+    "link": "https://drive.google.com/file/d/10A2SxE-TcWe4B7LmeEMTIvf2u3Sj-FpR/view?usp=drivesdk",
+    "impact": 1
    },
    {
     "name": "Correctly size the combined-score ranges",
     "one_liner": "Finished and independently double-checked.",
     "chip": "VERIFIED",
     "team": "Modeling",
-    "time": "",
-    "at_iso": null,
+    "time": "7:40pm",
+    "at_iso": "2026-07-25T19:40:00-04:00",
     "link": "https://drive.google.com/file/d/1tu69rHrZXhASWhCnn4No8_Q3HEufxKPg/view?usp=drivesdk",
     "impact": 2
    },
@@ -146,8 +168,8 @@
     "one_liner": "Tested — no improvement; recorded honestly.",
     "chip": "NULL",
     "team": "Data",
-    "time": "",
-    "at_iso": null,
+    "time": "7:40pm",
+    "at_iso": "2026-07-25T19:40:00-04:00",
     "link": "https://drive.google.com/file/d/1cPHsrFBSMzwmS99C92VoU43Es8Bfljbi/view?usp=drivesdk",
     "impact": 3,
     "headline": true
@@ -157,8 +179,8 @@
     "one_liner": "Completed and recorded.",
     "chip": "DONE",
     "team": "",
-    "time": "",
-    "at_iso": null,
+    "time": "7:30pm",
+    "at_iso": "2026-07-25T19:30:00-04:00",
     "link": "https://drive.google.com/file/d/1z0M23iR99paV40-9ajzaK8mj4cX39vvt/view?usp=drivesdk",
     "impact": 1
    },
@@ -167,8 +189,8 @@
     "one_liner": "Finished and independently double-checked.",
     "chip": "VERIFIED",
     "team": "",
-    "time": "",
-    "at_iso": null,
+    "time": "2:00am",
+    "at_iso": "2026-07-25T02:00:00-04:00",
     "link": "https://drive.google.com/file/d/1LDGjMzAEEr3BYOzRV_5szg_U-8nqnEfq/view?usp=drivesdk",
     "impact": 2,
     "passes": 2
@@ -188,8 +210,8 @@
     "one_liner": "Tested — no improvement; recorded honestly.",
     "chip": "NULL",
     "team": "",
-    "time": "",
-    "at_iso": null,
+    "time": "10:55pm",
+    "at_iso": "2026-07-24T22:55:00-04:00",
     "link": "https://drive.google.com/file/d/17JwP9js5OPqC_31A_kUD2yUCfb_yQ2PU/view?usp=drivesdk",
     "impact": 3,
     "headline": true
@@ -199,8 +221,8 @@
     "one_liner": "Finished and independently double-checked.",
     "chip": "VERIFIED",
     "team": "",
-    "time": "",
-    "at_iso": null,
+    "time": "10:35pm",
+    "at_iso": "2026-07-24T22:35:00-04:00",
     "link": "https://drive.google.com/file/d/1bWClScQZXf4UBc4fVxbYgbekVxe0MHgu/view?usp=drivesdk",
     "impact": 3,
     "headline": true
@@ -210,8 +232,8 @@
     "one_liner": "Finished and independently double-checked.",
     "chip": "VERIFIED",
     "team": "Site",
-    "time": "",
-    "at_iso": null,
+    "time": "10:30pm",
+    "at_iso": "2026-07-24T22:30:00-04:00",
     "link": "https://drive.google.com/file/d/1Ro7gNGYXMNFOKIeOvuQh8cBuRnmaNSpW/view?usp=drivesdk",
     "impact": 3,
     "headline": true
@@ -221,8 +243,8 @@
     "one_liner": "Completed and recorded.",
     "chip": "DONE",
     "team": "Site",
-    "time": "",
-    "at_iso": null,
+    "time": "10:24pm",
+    "at_iso": "2026-07-24T22:24:00-04:00",
     "link": "https://drive.google.com/file/d/1qNVSC0emfehCTHYSVRp0v7mIGWM1Y-gQ/view?usp=drivesdk",
     "impact": 3,
     "headline": true
@@ -232,8 +254,8 @@
     "one_liner": "Completed and recorded.",
     "chip": "DONE",
     "team": "",
-    "time": "",
-    "at_iso": null,
+    "time": "10:15pm",
+    "at_iso": "2026-07-24T22:15:00-04:00",
     "link": "https://drive.google.com/file/d/1txOl1v1V5Kw2dvODGHfPFWfZDLdEZIBb/view?usp=drivesdk",
     "impact": 2,
     "maint": true
@@ -243,8 +265,8 @@
     "one_liner": "Finished and independently double-checked.",
     "chip": "VERIFIED",
     "team": "Site",
-    "time": "",
-    "at_iso": null,
+    "time": "10:12pm",
+    "at_iso": "2026-07-24T22:12:00-04:00",
     "link": "https://drive.google.com/file/d/1PtmTUJLHjmC4EvB8klOALTv-wnWp1nXT/view?usp=drivesdk",
     "impact": 2
    },
@@ -253,8 +275,8 @@
     "one_liner": "Finished and independently double-checked.",
     "chip": "VERIFIED",
     "team": "",
-    "time": "",
-    "at_iso": null,
+    "time": "10:10pm",
+    "at_iso": "2026-07-24T22:10:00-04:00",
     "link": "https://drive.google.com/file/d/1Aq6fnxpInX7FIl93z6peuoT2R4-hiXju/view?usp=drivesdk",
     "impact": 2
    },
@@ -263,8 +285,8 @@
     "one_liner": "Completed and recorded.",
     "chip": "DONE",
     "team": "",
-    "time": "",
-    "at_iso": null,
+    "time": "10:10pm",
+    "at_iso": "2026-07-24T22:10:00-04:00",
     "link": "https://drive.google.com/file/d/1CE78gc10hrz0J6dIXkzv619dsA72BJBY/view?usp=drivesdk",
     "impact": 3
    },
@@ -273,8 +295,8 @@
     "one_liner": "Completed and recorded.",
     "chip": "DONE",
     "team": "",
-    "time": "",
-    "at_iso": null,
+    "time": "9:55pm",
+    "at_iso": "2026-07-24T21:55:00-04:00",
     "link": "https://drive.google.com/file/d/1R9OkZEPmvoxaTti7IhpYkaa-2Id18wFA/view?usp=drivesdk",
     "impact": 2,
     "maint": true
@@ -284,8 +306,8 @@
     "one_liner": "Completed and recorded.",
     "chip": "DONE",
     "team": "",
-    "time": "",
-    "at_iso": null,
+    "time": "9:55pm",
+    "at_iso": "2026-07-24T21:55:00-04:00",
     "link": "https://drive.google.com/file/d/1TQgkdN_d30qs6uQQ09knkONF7UBBlIhI/view?usp=drivesdk",
     "impact": 1,
     "maint": true
@@ -3110,9 +3132,9 @@
     "target": 40,
     "count": 80,
     "ok": true,
-    "label": "80 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 14m ago.)",
-    "as_of_utc": "2026-07-25T23:18:46Z",
-    "age_secs": 864,
+    "label": "80 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 4m ago.)",
+    "as_of_utc": "2026-07-25T23:48:46Z",
+    "age_secs": 265,
     "stale": false
    },
    "source": "dispatch queue",
@@ -3466,67 +3488,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-25T23:32:43Z",
-  "age_s": 26,
-  "cycles": 21,
+  "last_poll_utc": "2026-07-25T23:52:15Z",
+  "age_s": 55,
+  "cycles": 38,
   "known": true,
-  "label": "scout: alive, last poll 26s ago",
+  "label": "scout: alive, last poll 55s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "7:29pm",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
+   "time": "7:49pm",
+   "text": "chain-health: CHAIN DOWN (#2): broken=outbound paged=True",
+   "detail": "chain-health: CHAIN DOWN (#2): broken=outbound paged=True"
   },
   {
-   "time": "7:29pm",
-   "text": "REAP-STRAGGLER: released session pid 11072 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confirmed dead); taskkill rc=0 SUCCESS: The process with PID 11604 (child process of PID 11072) has been termin [Part 2 hard-exit backstop]",
-   "detail": "REAP-STRAGGLER: released session_pid 11072 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confir"
+   "time": "7:49pm",
+   "text": "chain-health: CHAIN DOWN (#3): broken=outbound paged=True",
+   "detail": "chain-health: CHAIN DOWN (#3): broken=outbound paged=True"
   },
   {
-   "time": "7:29pm",
-   "text": "poll #18 · nothing new",
-   "detail": "poll cycle=18 ok directives_new=0"
+   "time": "7:49pm",
+   "text": "chain-health: CHAIN DOWN (#1): broken=drive paged=False",
+   "detail": "chain-health: CHAIN DOWN (#1): broken=drive paged=False"
   },
   {
-   "time": "7:30pm",
-   "text": "poll #19 · nothing new",
-   "detail": "poll cycle=19 ok directives_new=0"
+   "time": "7:49pm",
+   "text": "chain-health: CHAIN DOWN (#2): broken=inbound,drive paged=True",
+   "detail": "chain-health: CHAIN DOWN (#2): broken=inbound,drive paged=True"
   },
   {
-   "time": "7:31pm",
-   "text": "FORCE-RESTART SKIPPED: session pid 4242 heartbeat stale 701s but the process is CPU-ACTIVE (BUSY, not hung) - not killing [defect-1b]",
-   "detail": "FORCE-RESTART SKIPPED: session_pid 4242 heartbeat stale 701s but the process is CPU-ACTIVE (BUSY, not hung) - not killing [defect-1b]"
+   "time": "7:49pm",
+   "text": "chain-health: chain HEALTHY again — flag cleared",
+   "detail": "chain-health: chain HEALTHY again — flag cleared"
   },
   {
-   "time": "7:31pm",
-   "text": "FORCE-RESTART (fast idle-wake: no heartbeat since a directive arrived 700s ago (> 180s)) with unprocessed inbox directives - surgically killing session pid 4242 (+tree) + spawning successor next cycle",
-   "detail": "FORCE-RESTART (fast idle-wake: no heartbeat since a directive arrived 700s ago (> 180s)) with unprocessed inbox directives - surgically kill"
+   "time": "7:49pm",
+   "text": "chain-health: CHAIN DOWN (#1): broken=inbound,board paged=False",
+   "detail": "chain-health: CHAIN DOWN (#1): broken=inbound,board paged=False"
   },
   {
-   "time": "7:31pm",
-   "text": "FORCE-RESTART could NOT reap session pid 4242 (taskkill rc=0 | Stop-Process rc=0 ) - ZOMBIE; excluded from the live-coordinator probe so the successor still spawns (retry-reap next cycle",
-   "detail": "FORCE-RESTART could NOT reap session_pid 4242 (taskkill rc=0 | Stop-Process rc=0 ) - ZOMBIE; excluded from the live-coordinator probe so the"
+   "time": "7:49pm",
+   "text": "chain-health: CHAIN DOWN (#2): broken=inbound,board paged=True",
+   "detail": "chain-health: CHAIN DOWN (#2): broken=inbound,board paged=True"
   },
   {
-   "time": "7:31pm",
-   "text": "poll #20 · nothing new",
-   "detail": "poll cycle=20 ok directives_new=0"
+   "time": "7:50pm",
+   "text": "poll #36 · nothing new",
+   "detail": "poll cycle=36 ok directives_new=0"
   },
   {
-   "time": "7:31pm",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
+   "time": "7:51pm",
+   "text": "poll #37 · nothing new",
+   "detail": "poll cycle=37 ok directives_new=0"
   },
   {
-   "time": "7:32pm",
-   "text": "poll #21 · nothing new",
-   "detail": "poll cycle=21 ok directives_new=0"
+   "time": "7:52pm",
+   "text": "poll #38 · nothing new",
+   "detail": "poll cycle=38 ok directives_new=0"
   }
  ],
  "helpers": {
-  "as_of": "2026-07-25T23:33:00.117933+00:00",
+  "as_of": "2026-07-25T23:53:00.022859+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -3535,40 +3557,40 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "26s",
-    "state_text": "on · seen 26s ago"
+    "age_label": "55s",
+    "state_text": "on · seen 55s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "9s",
-    "state_text": "on · seen 9s ago"
+    "age_label": "10s",
+    "state_text": "on · seen 10s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "1m",
-    "state_text": "on · seen 1m ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "27s",
-    "state_text": "on · seen 27s ago"
+    "age_label": "55s",
+    "state_text": "on · seen 55s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "4m",
-    "state_text": "on · seen 4m ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    }
   ],
   "width": {
@@ -3730,9 +3752,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-07-25T23:33:06Z",
-  "session_age_secs": 4325,
-  "last_progress_age_secs": 3,
+  "last_heartbeat_utc": "2026-07-25T23:53:03Z",
+  "session_age_secs": 5526,
+  "last_progress_age_secs": 7,
   "last_spawn_attempt": "2026-07-25T22:19:19Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -3764,27 +3786,27 @@
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-07-25T23:32:22Z",
+   "as_of": "2026-07-25T23:52:00Z",
    "stale": false,
-   "revalidated": "2026-07-25T23:33:07+00:00",
+   "revalidated": "2026-07-25T23:53:09+00:00",
    "stale_reason": "",
-   "age_label": "45s",
+   "age_label": "69s",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-25T23:33:07+00:00",
+   "as_of": "2026-07-25T23:53:09+00:00",
    "stale": false,
-   "revalidated": "2026-07-25T23:33:07+00:00",
+   "revalidated": "2026-07-25T23:53:09+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-25T23:33:07+00:00",
+   "as_of": "2026-07-25T23:53:09+00:00",
    "stale": false,
-   "revalidated": "2026-07-25T23:33:07+00:00",
+   "revalidated": "2026-07-25T23:53:09+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
@@ -3793,25 +3815,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-25T23:33:07+00:00",
+   "revalidated": "2026-07-25T23:53:09+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-07-25T23:26:07Z",
+   "as_of": "2026-07-25T23:48:46Z",
    "stale": false,
-   "revalidated": "2026-07-25T23:33:07+00:00",
+   "revalidated": "2026-07-25T23:53:09+00:00",
    "stale_reason": "",
-   "age_label": "7m",
+   "age_label": "4m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-25T23:33:07+00:00",
+   "revalidated": "2026-07-25T23:53:09+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -3820,38 +3842,38 @@
    "source": "director inbox",
    "as_of": "2026-07-25T22:47:17Z",
    "stale": false,
-   "revalidated": "2026-07-25T23:33:07+00:00",
+   "revalidated": "2026-07-25T23:53:09+00:00",
    "stale_reason": "",
-   "age_label": "45m",
+   "age_label": "65m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
-   "as_of": "2026-07-25T23:33:07+00:00",
+   "as_of": "2026-07-25T19:59:00-04:00",
    "stale": false,
-   "revalidated": "2026-07-25T23:33:07+00:00",
+   "revalidated": "2026-07-25T23:53:09+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 172800
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-25T23:28:09+00:00",
+   "as_of": "2026-07-25T23:33:07+00:00",
    "stale": false,
-   "revalidated": "2026-07-25T23:33:07+00:00",
+   "revalidated": "2026-07-25T23:53:09+00:00",
    "stale_reason": "",
-   "age_label": "5m",
+   "age_label": "20m",
    "stale_after": null
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-25T23:33:00.117933+00:00",
+   "as_of": "2026-07-25T23:53:00.022859+00:00",
    "stale": false,
-   "revalidated": "2026-07-25T23:33:07+00:00",
+   "revalidated": "2026-07-25T23:53:09+00:00",
    "stale_reason": "",
-   "age_label": "9s",
+   "age_label": "10s",
    "stale_after": null
   }
  },
- "generated_et": "Jul 25, 7:33pm ET"
+ "generated_et": "Jul 25, 7:53pm ET"
 }
