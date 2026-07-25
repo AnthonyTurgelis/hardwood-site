@@ -83,6 +83,7 @@
       '  <span class="hwpill" id="hw-poll" title="When your browser last checked for a fresh copy">Checked for updates: <b>—</b></span>' +
       '  <span class="hwpill" id="hw-pipe" title="Director directives waiting / last one processed">directives: <b>—</b></span>' +
       '  <span class="hwpill" id="hw-scout" title="The 24/7 directive watcher liveness"><span class="dot"></span><span class="txt">scout: starting</span></span>' +
+      '  <span class="hwpill" id="hw-coord" title="The work coordinator (the chair that runs the session)"><span class="dot"></span><span class="txt">coordinator: —</span></span>' +
       '</div>';
     nav.parentNode.insertBefore(strip, nav.nextSibling);
     // legacy per-page ".ago" chip is now redundant with the two-timer strip — hide it
@@ -119,7 +120,41 @@
             : (sc.label || "scout: starting");
         }
       }
+      // COORDINATOR pill (CEO P0b 20260725) — the chair NEVER renders blank. A missing/empty
+      // coordinator object, an UNKNOWN state, or alive:false all render LOUD RED (warn), never a
+      // silent gap that reads as 'nothing here'. Distinguishes ALIVE / DEAD / UNKNOWN explicitly.
+      renderCoordinator(status.coordinator);
       renderBanner(status.beacon || {});
+    }
+  }
+
+  function fmtAge(s) { return (s == null) ? "unknown" : agoSecs(s); }
+
+  function renderCoordinator(co) {
+    var pill = document.getElementById("hw-coord");
+    if (!pill) return;
+    var txt = pill.querySelector(".txt");
+    // NEVER-BLANK: a missing/empty object is itself the UNKNOWN case, not an excuse to render "—".
+    if (!co || typeof co !== "object") {
+      pill.className = "hwpill warn";
+      if (txt) txt.textContent = "coordinator: UNKNOWN — status unreadable";
+      return;
+    }
+    var state = (co.state || (co.alive ? "ALIVE" : (co.known === false ? "UNKNOWN" : "DEAD"))).toUpperCase();
+    if (state === "ALIVE" && co.alive) {
+      pill.className = "hwpill ok";
+      if (txt) txt.textContent = "coordinator: alive" +
+        (co.session_age_secs != null ? " (up " + agoSecs(co.session_age_secs).replace(" ago", "") + ")" : "");
+    } else if (state === "UNKNOWN" || co.known === false) {
+      pill.className = "hwpill warn";
+      if (txt) txt.textContent = "coordinator: UNKNOWN — " + (co.reason || "source unreadable");
+    } else {
+      // confidently DEAD: loud, but honest about what we DO know (last progress / spawn / block).
+      pill.className = "hwpill warn";
+      var extra = "no progress for " + fmtAge(co.last_progress_age_secs);
+      if (co.blocked_reason) extra += " · " + co.blocked_reason;
+      else if (co.last_spawn_attempt) extra += " · respawn attempted";
+      if (txt) txt.textContent = "coordinator: DOWN — " + extra;
     }
   }
 
