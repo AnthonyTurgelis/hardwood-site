@@ -144,6 +144,14 @@
      read already baked for coach.html (./coach_style.json), fetched separately + graceful:
      a missing/late style file can never blank a card, it just drops the context line. */
   var CSURL="./coach_style.json", CS=null;
+  /* per-matchup expected TEMPO (upcoming-preview B->A rung) — REUSE the already-baked per-team
+     season pace read (./tempo.json), whose `matchups` block carries, per game, the expected tempo
+     = the two teams' season-pace average plus a league +/-0.5sd fast/slow/average tag. Fetched
+     separately + graceful: a missing/late tempo file, or a game the pace read didn't cover (a side
+     did not join the pace table, or a date past the nearest computed slate), just drops the line —
+     omit-not-invent, never a guessed pace. This is the WHY behind a high/low projected total:
+     faster pace inflates both teams' point totals equally (a style read, not a strength signal). */
+  var TVURL="./tempo.json", TV=null;
   /* plain-English coaching style for one team abbr, or null when we have no established read
      (new coach / no history / file absent) -> the card omits it (omit-not-invent, never guess). */
   function teamStyle(abbr){
@@ -161,6 +169,29 @@
     if(as_) parts.push((g.away_full||g.away)+" — "+as_);
     if(hs) parts.push((g.home_full||g.home)+" — "+hs);
     return el("div","gstyle","How they play: "+parts.join(" · "));
+  }
+  /* find this card's matchup in the baked per-matchup tempo read by team abbrs; null when the
+     tempo read didn't cover it (omit-not-invent). Pace is season-level, so an abbr join is exact. */
+  function paceMatchup(g){
+    if(!TV||!TV.matchups||!TV.matchups.games||!g) return null;
+    var gm=TV.matchups.games;
+    for(var i=0;i<gm.length;i++){
+      if(gm[i] && gm[i].home===g.home && gm[i].away===g.away) return gm[i];
+    }
+    return null;
+  }
+  /* the per-matchup expected-tempo line (B->A rung): a REAL possessions-per-game number joined
+     from ./tempo.json, with each side's season pace so the reader sees WHY a game projects high or
+     low-scoring. Returns null when no matchup joins (missing/uncovered) — the card just omits it. */
+  function paceLine(g){
+    var m=paceMatchup(g); if(!m || m.exp_pace==null) return null;
+    var tag=m.exp_tag_label ? (" · "+m.exp_tag_label) : "";
+    var sides=[];
+    if(m.away_pace!=null) sides.push((g.away||"")+" "+m.away_pace);
+    if(m.home_pace!=null) sides.push((g.home||"")+" "+m.home_pace);
+    var detail=sides.length ? (" — "+sides.join(", ")) : "";
+    return el("div","gstyle","Expected tempo: "+m.exp_pace+" possessions/game"+tag+detail+
+      ". Faster pace lifts both teams' point totals — a style read, not a strength signal.");
   }
   /* absolute ET clock ("Jul 22, 11:28 PM ET") for the preview freshness stamp so a coach can
      see how stale the shown assumptions are. Formats a UTC ISO string in America/New_York;
@@ -387,6 +418,10 @@
     kv.appendChild(k2);
     c.appendChild(kv);
 
+    // per-matchup expected tempo — sits right under the combined total so the reader sees WHY the
+    // game projects high/low-scoring (graceful: omitted when the pace read didn't cover this game).
+    var pl=paceLine(g); if(pl){ c.appendChild(pl); }
+
     var hasDist=!!(g.density && g.density.dens && g.density.dens.length);
     c.appendChild(el("div","note", hasDist
       ? "How the final margin could land — taller bars are more likely, and each shaded side is that team's win chance:"
@@ -537,7 +572,13 @@
     fetch(bust(CSURL),{cache:"no-cache"}).then(function(r){ return r.ok ? r.json() : null; })
       .then(function(c){ if(c && c.teams){ CS=c; if(lastData){ render(lastData); } } }).catch(function(){});
   }
-  poll(); pollPreview(); loadStyle(); setInterval(poll,60000); setInterval(pollPreview,60000); setInterval(updAgo,1000);
+  // one-shot fetch of the per-matchup tempo read (expected-pace line) — independent + graceful,
+  // re-renders once when it lands. Pace changes per game, not per minute, so a single load suffices.
+  function loadTempo(){
+    fetch(bust(TVURL),{cache:"no-cache"}).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(t){ if(t && t.matchups){ TV=t; if(lastData){ render(lastData); } } }).catch(function(){});
+  }
+  poll(); pollPreview(); loadStyle(); loadTempo(); setInterval(poll,60000); setInterval(pollPreview,60000); setInterval(updAgo,1000);
 })();
 </script>
 </body>
