@@ -100,11 +100,11 @@
   .asm{margin:0;padding-left:18px;font-size:12px;color:var(--muted);line-height:1.65}
   .asm li{margin:5px 0}
   .asm b{color:var(--ink);font-weight:640}
-  details.method{margin-top:16px;border:1px solid var(--line);border-radius:9px;background:var(--card2);overflow:hidden}
-  details.method summary{cursor:pointer;padding:9px 12px;font-size:12px;font-weight:640;color:var(--muted);list-style:none}
-  details.method summary::-webkit-details-marker{display:none}
-  details.method .method-body{padding:2px 14px 12px;font-size:11.5px;color:var(--muted);line-height:1.65}
-  details.method .method-body li{margin:4px 0}
+  /* method blocks are ALWAYS OPEN: never a click, never a disclosure widget */
+  .method{margin-top:16px;border:1px solid var(--line);border-radius:9px;background:var(--card2);overflow:hidden}
+  .method .method-hd{padding:9px 12px;font-size:12px;font-weight:640;color:var(--muted)}
+  .method .method-body{padding:2px 14px 12px;font-size:11.5px;color:var(--muted);line-height:1.65}
+  .method .method-body li{margin:4px 0}
   /* player props */
   .propctl{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:9px 12px 3px}
   .propctl .lbl{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin-right:3px}
@@ -114,12 +114,68 @@
   .clr{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px}
   .odd{font-variant-numeric:tabular-nums;white-space:nowrap}
   .odd small{color:var(--dim);font-size:10px}
-  .xbtn{font:inherit;font-size:10.5px;cursor:pointer;border:1px solid var(--line2);background:var(--card2);
-    color:var(--muted);padding:1px 8px;border-radius:999px;white-space:nowrap}
-  .ladderwrap{padding:8px 10px 12px;background:var(--card2);border-top:1px solid var(--line)}
-  .ladderwrap .lhd{font-size:11.5px;font-weight:660;margin-bottom:5px}
-  .ladderwrap table{font-size:11.5px}
+  .psrch{font:inherit;font-size:11.5px;border:1px solid var(--line2);background:var(--card2);
+    color:var(--ink);padding:3px 9px;border-radius:999px;min-width:150px;margin-left:6px}
+  /* the flat, fully-expanded ladder — nothing behind a click */
+  .fxh{font-size:11.5px;font-weight:680;color:var(--muted);padding:8px 12px 4px;
+    text-transform:uppercase;letter-spacing:.03em}
+  table.fmv{font-size:12px;font-variant-numeric:tabular-nums}
+  table.fmv th,table.fmv td{padding:3px 8px;white-space:nowrap}
+  table.fmv thead th{position:sticky;top:0;background:var(--card2);z-index:2}
+  td.fmvc{font-weight:700;font-variant-numeric:tabular-nums}
+  .lft{text-align:left!important}
+  .dimc{color:var(--dim)}
+  .jump{display:flex;flex-wrap:wrap;gap:4px 10px;padding:8px 12px;border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);font-size:11px}
+  .jump .lbl{color:var(--dim);text-transform:uppercase;letter-spacing:.04em;font-size:10px}
+  a.jl{color:var(--acc);text-decoration:none}
+  a.jl:hover{text-decoration:underline}
+  .plblk{border-top:1px solid var(--line);padding-bottom:6px;scroll-margin-top:8px}
+  .plhd{padding:9px 12px 4px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+  .plhd .pln{font-size:14px;font-weight:700}
+  .plhd .plsub{font-size:11px;color:var(--dim)}
+  table.lad{font-size:11.5px;font-variant-numeric:tabular-nums}
+  table.lad th,table.lad td{padding:1px 8px;white-space:nowrap;line-height:1.5}
+  table.lad thead th{position:sticky;top:0;background:var(--card2);z-index:1}
+  table.lad tr.mstart td{border-top:1px solid var(--line)}
+  table.lad tr.key td{background:rgba(120,160,255,.13);font-weight:660}
+  td.lnc{font-weight:700}
+  .pdfbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px 2px}
+  .pdfbtn{display:inline-block;font:inherit;font-size:12px;font-weight:660;text-decoration:none;
+    background:var(--acc);color:#fff;padding:5px 13px;border-radius:999px;border:0;cursor:pointer}
+  table.flat tr[id]{scroll-margin-top:44px}
+  .pdfnote{font-size:10.5px;color:var(--dim)}
   .propnote{font-size:10.5px;color:var(--dim);padding:0 12px 10px;line-height:1.55}
+  /* ONE FLAT BOOK-CHECK TABLE: one row per offered line, nothing behind a click */
+  table.flat{font-size:11.5px;font-variant-numeric:tabular-nums;width:100%}
+  table.flat th,table.flat td{padding:2px 7px;white-space:nowrap;line-height:1.5}
+  table.flat thead th{position:sticky;top:0;background:var(--card2);z-index:3;
+    border-bottom:1px solid var(--line2);font-size:10.5px;text-transform:uppercase;letter-spacing:.03em}
+  table.flat tr.pstart td{border-top:2px solid var(--line2)}
+  table.flat tr.mstart td{border-top:1px solid var(--line)}
+  table.flat tr.key td{background:rgba(120,160,255,.13);font-weight:660}
+  table.flat td.pl{font-weight:660;text-align:left}
+  table.flat td.met{font-weight:640;text-align:left}
+  table.flat td.fmvc{color:var(--acc);font-weight:700}
+  table.flat td.proj{font-weight:640}
+  .flatwrap{max-width:100%;overflow-x:auto}
+  @media print{
+    @page{size:letter portrait;margin:10mm}
+    html,body{background:#fff!important;color:#000!important}
+    nav,.propctl,.jump,.pdfbar,header .ago,.noprint{display:none!important}
+    .card,.banner,.method{border:1px solid #999!important;background:#fff!important;
+      box-shadow:none!important;break-inside:auto}
+    .flatwrap,.scroll{overflow:visible!important}
+    table.flat{font-size:8pt;width:100%}
+    table.flat thead{display:table-header-group}
+    table.flat tr{break-inside:avoid;page-break-inside:avoid}
+    table.flat thead th{position:static;background:#eee!important;color:#000!important;border-bottom:1px solid #000}
+    table.flat td,table.flat th{padding:1px 4px;color:#000!important}
+    table.flat tr.key td{background:#e8e8e8!important}
+    table.fmv{font-size:8pt}
+    a{color:#000!important;text-decoration:none}
+    .dimc,.propnote,.method,.method-body{color:#333!important}
+  }
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
 <link rel="stylesheet" href="./hardwood.css">
@@ -690,11 +746,13 @@
     p.appendChild(ul); c.appendChild(p);
   }
 
-  // ---- player props: the simulated clear-rate ladder ---------------------- //
+  // ---- player props: the FULL FLAT ladder (nothing collapsed) ------------ //
+  // CEO directive 2026-07-25: this surface is used to check a book's posted
+  // numbers against ours, fast, during the game. Every player, every metric,
+  // every offered line renders AT ONCE — no expand/collapse gates any number.
   // Everything below is READ from the payload — the page never recomputes a
   // probability. Numeric guards are explicit typeof checks, never truthiness,
   // because a legitimate 0 (a line nobody clears) must survive.
-  var PROPM=null;
 
   function pctTxt(v){ return (typeof v==="number"&&isFinite(v)) ? v.toFixed(1)+"%" : "—"; }
   function decTxt(v){ return (typeof v==="number"&&isFinite(v)) ? v.toFixed(2) : "—"; }
@@ -703,148 +761,171 @@
     var r=Math.round(v); return (r>0?"+":"")+r;
   }
   function lnTxt(v){ return (typeof v==="number"&&isFinite(v)) ? String(v) : "—"; }
+  function n1(v){ return (typeof v==="number"&&isFinite(v)) ? v.toFixed(1) : null; }
+  function n2(v){ return (typeof v==="number"&&isFinite(v)) ? v.toFixed(2) : null; }
   function clearedOf(ln){
     if(!ln) return null;
     if(typeof ln.pct_of_time_cleared==="number" && isFinite(ln.pct_of_time_cleared)) return ln.pct_of_time_cleared;
     if(typeof ln.p_over==="number" && isFinite(ln.p_over)) return ln.p_over*100;
     return null;
   }
-  function nearest50(lines){
-    var best=null, bd=Infinity;
-    (lines||[]).forEach(function(ln){
+  var ESCM={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"};
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){ return ESCM[c]; }); }
+  // the offered line whose clear rate sits closest to 50% — the crossing row
+  function nearest50Idx(lines){
+    var bi=-1, bd=Infinity;
+    (lines||[]).forEach(function(ln,i){
       var c=clearedOf(ln); if(c===null) return;
-      var d=Math.abs(c-50); if(d<bd){ bd=d; best=ln; }
+      var d=Math.abs(c-50); if(d<bd){ bd=d; bi=i; }
     });
-    return best;
+    return bi;
   }
 
-  // The full ladder for one player + one metric: every offered line, the clear
-  // rate, and both fair prices on both sides.
-  function ladderTable(lines){
-    var sc=el("div","scroll"); var tb=el("table");
-    var thead=el("thead"); var tr=el("tr");
-    ["Line","% of the time they cleared it","Fair OVER","Fair UNDER"].forEach(function(h){
-      tr.appendChild(el("th",null,h));
-    });
-    thead.appendChild(tr); tb.appendChild(thead);
-    var tbody=el("tbody");
-    (lines||[]).forEach(function(ln){
-      if(!ln) return;
-      var t=el("tr");
-      t.appendChild(el("td","nm",lnTxt(ln.line)));
-      var c=el("td"); c.appendChild(el("span","clr",pctTxt(clearedOf(ln)))); t.appendChild(c);
-      var o=el("td","odd");
-      o.appendChild(document.createTextNode(decTxt(ln.fair_decimal_over)+"  "));
-      o.appendChild(el("small",null,amTxt(ln.fair_american_over)));
-      t.appendChild(o);
-      var u=el("td","odd");
-      u.appendChild(document.createTextNode(decTxt(ln.fair_decimal_under)+"  "));
-      u.appendChild(el("small",null,amTxt(ln.fair_american_under)));
-      t.appendChild(u);
-      tbody.appendChild(t);
-    });
-    tb.appendChild(tbody); sc.appendChild(tb);
-    return sc;
-  }
-
-  function propsTable(pr, host){
+  // One flat, fully-expanded render. Built as markup (not 25k DOM calls) so a
+  // 3,000-row ladder paints in one pass instead of stuttering mid-scan.
+  function propsFlat(pr, host){
     host.textContent="";
-    var mkey=PROPM;
-    var sc=el("div","scroll"); var tb=el("table");
-    var thead=el("thead"); var tr=el("tr");
-    ["Player","Side","Impact","Proj min","Median","Fair line","Closest line",
-     "% cleared","Fair OVER","Fair UNDER",""].forEach(function(h){
-      tr.appendChild(el("th",null,h));
+    var mets=(pr.metrics||[]).filter(function(k){ return typeof k==="string"; });
+    // IMPACT LEADS THE ORDERING. Highest projected impact first, so the names
+    // worth checking against a book sit at the top of both the FMV grid and the
+    // flat table. A player with no impact number sorts last rather than first.
+    var players=(pr.players||[]).filter(function(p){ return p && p.metrics; }).slice();
+    players.sort(function(a,b){
+      var av=(typeof a.adj_impact==="number"&&isFinite(a.adj_impact))?a.adj_impact:-1e9;
+      var bv=(typeof b.adj_impact==="number"&&isFinite(b.adj_impact))?b.adj_impact:-1e9;
+      if(bv!==av) return bv-av;
+      return String(a.name||"").localeCompare(String(b.name||""));
     });
-    thead.appendChild(tr); tb.appendChild(thead);
-    var tbody=el("tbody"); var shown=0;
+    var labels=pr.metric_labels||{};
+    if(!mets.length || !players.length){
+      var pz=el("div","pad"); pz.appendChild(unknown("no prop line survived the simulation"));
+      host.appendChild(pz); return 0;
+    }
+    var h=[], rows=0;
 
-    (pr.players||[]).forEach(function(p,i){
-      if(!p) return;
-      var mets=p.metrics||{};
-      var m=mets[mkey];
-      var lines=(m&&m.lines)||[];
-      if(!m || !lines.length) return;
-      shown++;
-      var t=el("tr");
+    // ---- 1. the FMV board: every player x every metric, fair line, one grid.
+    h.push('<div class="fxh">Fair lines (FMV) &mdash; every player, every metric, at a glance</div>');
+    h.push('<div class="scroll"><table class="fmv"><thead><tr>');
+    h.push('<th class="lft">Player</th><th class="lft">Side</th>');
+    mets.forEach(function(m){
+      h.push('<th title="'+esc(labels[m]||m)+'">'+esc(m)+'</th>');
+    });
+    h.push('</tr></thead><tbody>');
+    players.forEach(function(p,pi){
+      h.push('<tr data-pname="'+esc(String(p.name||"").toLowerCase())+'">');
+      h.push('<td class="nm lft"><a class="jl" href="#asgp'+pi+'">'+esc(p.name||"Unnamed")+'</a>'
+             +(p.starter===true?' <span class="chip">starter</span>':'')+'</td>');
+      h.push('<td class="lft dimc">'+esc(p.team||"—")+'</td>');
+      mets.forEach(function(m){
+        var mm=(p.metrics||{})[m]||null;
+        var fl=mm?mm.fair_line:null;
+        var s=n1(fl);
+        h.push('<td class="fmvc" data-met="'+esc(m)+'">'+(s!==null?s:'<span class="dimc">—</span>')+'</td>');
+      });
+      h.push('</tr>');
+    });
+    h.push('</tbody></table></div>');
 
-      var nmc=el("td","nm"); nmc.textContent=p.name||"Unnamed";
-      if(p.starter===true){ nmc.appendChild(document.createTextNode(" ")); nmc.appendChild(el("span","chip","starter")); }
-      if(typeof p.draft_pick==="number"){ nmc.appendChild(document.createTextNode(" ")); nmc.appendChild(el("span","chip","pick "+p.draft_pick)); }
-      t.appendChild(nmc);
+    // ---- 2. jump strip: 22 names, one click to a player's full ladder.
+    h.push('<div class="jump"><span class="lbl">Jump</span>');
+    players.forEach(function(p,pi){
+      h.push('<a class="jl" href="#asgp'+pi+'">'+esc(p.name||"Unnamed")+'</a>');
+    });
+    h.push('</div>');
 
-      var sd=el("td"); sd.style.textAlign="left";
-      if(has(p.team)) sd.textContent=String(p.team); else sd.appendChild(unknown("side not published"));
-      t.appendChild(sd);
-
-      var im=el("td");
-      if(typeof p.adj_impact==="number") im.textContent=signed(p.adj_impact,3);
-      else im.appendChild(unknown("no impact rating for this player"));
-      t.appendChild(im);
-
+    // ---- 3. THE FLAT BOOK-CHECK TABLE.
+    // One row per offered line. Player, side, metric, projection, FMV, line,
+    // clear rate and both fair prices sit on EVERY row, so a row read alone is
+    // complete: nothing above it has to be scrolled back to, and a page break
+    // in print never orphans a number from its label. Impact leads the order.
+    h.push('<div class="fxh">Every offered line, one row each &mdash; impact-ranked, nothing hidden</div>');
+    h.push('<div class="flatwrap"><table class="flat"><thead><tr>'
+      +'<th class="lft">Player</th><th class="lft">Side</th><th>Impact</th><th>Min</th>'
+      +'<th class="lft">Metric</th><th>Proj</th><th>FMV</th><th>Line</th><th>% cleared</th>'
+      +'<th>Fair OVER</th><th>Fair UNDER</th>'
+      +'</tr></thead><tbody>');
+    players.forEach(function(p,pi){
+      var pnm=esc(p.name||"Unnamed");
+      var pnl=esc(String(p.name||"").toLowerCase());
+      var team=esc(p.team||"-");
       var mn=p.minutes||{};
-      var mc=el("td");
-      if(typeof mn.mean==="number"){
-        mc.textContent=fmt(mn.mean,1);
-        if(typeof mn.q10==="number"&&typeof mn.q90==="number") mc.title="80% of sims between "+fmt(mn.q10,1)+" and "+fmt(mn.q90,1)+" minutes";
-      } else mc.appendChild(unknown("minutes not simulated"));
-      t.appendChild(mc);
-
-      var d=m.distribution||{};
-      var md=el("td");
-      if(typeof d.q50==="number"){
-        md.textContent=fmt(d.q50,1);
-        if(typeof d.q05==="number"&&typeof d.q95==="number") md.title="90% of sims between "+fmt(d.q05,1)+" and "+fmt(d.q95,1);
-      } else md.appendChild(unknown("no simulated distribution"));
-      t.appendChild(md);
-
-      var fl=el("td");
-      if(typeof m.fair_line==="number"){ fl.appendChild(el("b",null,fmt(m.fair_line,2))); }
-      else fl.appendChild(unknown("no 50/50 crossing inside the offered range"));
-      t.appendChild(fl);
-
-      var key=nearest50(lines);
-      t.appendChild(el("td",null,key?lnTxt(key.line):"—"));
-      var cl=el("td"); cl.appendChild(el("span","clr",pctTxt(clearedOf(key)))); t.appendChild(cl);
-
-      var ov=el("td","odd");
-      if(key){ ov.appendChild(document.createTextNode(decTxt(key.fair_decimal_over)+"  ")); ov.appendChild(el("small",null,amTxt(key.fair_american_over))); }
-      else ov.textContent="—";
-      t.appendChild(ov);
-      var un=el("td","odd");
-      if(key){ un.appendChild(document.createTextNode(decTxt(key.fair_decimal_under)+"  ")); un.appendChild(el("small",null,amTxt(key.fair_american_under))); }
-      else un.textContent="—";
-      t.appendChild(un);
-
-      var xc=el("td");
-      var btn=el("button","xbtn","all "+lines.length+" lines");
-      xc.appendChild(btn); t.appendChild(xc);
-      tbody.appendChild(t);
-
-      // the expandable full ladder, collapsed by default
-      var lr=el("tr"); lr.style.display="none";
-      var ltd=el("td"); ltd.colSpan=11; ltd.style.padding="0";
-      var wrap=el("div","ladderwrap");
-      wrap.appendChild(el("div","lhd",(p.name||"This player")+" — every offered "+mkey+" line"));
-      wrap.appendChild(ladderTable(lines));
-      ltd.appendChild(wrap); lr.appendChild(ltd); tbody.appendChild(lr);
-      btn.onclick=function(){
-        var open=(lr.style.display!=="none");
-        lr.style.display=open?"none":"";
-        btn.textContent=open?("all "+lines.length+" lines"):"hide";
-      };
+      var mtxt=n1(mn.mean); mtxt=(mtxt!==null?mtxt:"-");
+      var ai=n2(p.adj_impact); ai=(ai!==null?((p.adj_impact>0?"+":"")+ai):"-");
+      var firstRow=true;
+      mets.forEach(function(m){
+        var mm=(p.metrics||{})[m];
+        var lines=(mm&&mm.lines)||[];
+        if(!mm||!lines.length) return;
+        var fl=n1(mm.fair_line);
+        var d=mm.distribution||{};
+        var md=n1(d.q50);
+        var ki=nearest50Idx(lines);
+        lines.forEach(function(ln,li){
+          if(!ln) return;
+          rows++;
+          var cls="lr"+(li===ki?" key":"")+(li===0?" mstart":"")+(firstRow?" pstart":"");
+          var idA=firstRow?(' id="asgp'+pi+'"'):"";
+          firstRow=false;
+          h.push('<tr class="'+cls+'"'+idA+' data-met="'+esc(m)+'" data-pname="'+pnl+'">');
+          h.push('<td class="pl lft">'+pnm+'</td>');
+          h.push('<td class="lft dimc">'+team+'</td>');
+          h.push('<td class="dimc">'+ai+'</td>');
+          h.push('<td class="dimc">'+mtxt+'</td>');
+          h.push('<td class="met lft">'+esc(m)+'</td>');
+          h.push('<td class="proj">'+(md!==null?md:'<span class="dimc">-</span>')+'</td>');
+          h.push('<td class="fmvc">'+(fl!==null?fl:'<span class="dimc">-</span>')+'</td>');
+          h.push('<td class="lnc">'+esc(lnTxt(ln.line))+'</td>');
+          h.push('<td class="clr">'+esc(pctTxt(clearedOf(ln)))+'</td>');
+          h.push('<td class="odd">'+esc(decTxt(ln.fair_decimal_over))+' <small>'+esc(amTxt(ln.fair_american_over))+'</small></td>');
+          h.push('<td class="odd">'+esc(decTxt(ln.fair_decimal_under))+' <small>'+esc(amTxt(ln.fair_american_under))+'</small></td>');
+          h.push('</tr>');
+        });
+      });
+      if(firstRow){
+        h.push('<tr class="lr pstart" id="asgp'+pi+'" data-pname="'+pnl+'">');
+        h.push('<td class="pl lft">'+pnm+'</td><td class="lft dimc">'+team+'</td>');
+        h.push('<td class="dimc">'+ai+'</td><td class="dimc">'+mtxt+'</td>');
+        h.push('<td class="lft dimc" colspan="7">no line survived the filter for this player</td></tr>');
+      }
     });
+    h.push('</tbody></table></div>');
+    host.innerHTML=h.join("");
+    return rows;
+  }
 
-    tb.appendChild(tbody); sc.appendChild(tb); host.appendChild(sc);
-    if(!shown){
-      var e=el("div","pad");
-      e.appendChild(unknown("no "+mkey+" line survived the 5%-95% filter for any player"));
-      host.appendChild(e);
+  // Filters HIDE nothing by default — every control starts wide open, and a
+  // filter only ever narrows what is already on screen.
+  function applyPropFilter(host, met, q){
+    var i, n;
+    var needle0=String(q||"").trim().toLowerCase();
+    var lad=host.querySelectorAll("tr.lr");
+    for(i=0;i<lad.length;i++){
+      n=lad[i];
+      var okm=(!met || n.getAttribute("data-met")===met);
+      var okn=(!needle0 || (n.getAttribute("data-pname")||"").indexOf(needle0)>=0);
+      n.style.display=(okm&&okn) ? "" : "none";
+    }
+    var fc=host.querySelectorAll("td.fmvc[data-met]");
+    for(i=0;i<fc.length;i++){
+      n=fc[i];
+      n.style.display=(!met || n.getAttribute("data-met")===met) ? "" : "none";
+    }
+    var fh=host.querySelectorAll("table.fmv thead th");
+    for(i=2;i<fh.length;i++){
+      n=fh[i];
+      n.style.display=(!met || n.textContent.trim()===met) ? "" : "none";
+    }
+    var needle=String(q||"").trim().toLowerCase();
+    var blk=host.querySelectorAll("table.fmv tbody tr");
+    for(i=0;i<blk.length;i++){
+      n=blk[i];
+      var nm=n.getAttribute("data-pname")||"";
+      n.style.display=(!needle || nm.indexOf(needle)>=0) ? "" : "none";
     }
   }
 
   function renderProps(main){
-    section("Player props — how often each number cleared");
+    section("Player props — every number, all of it, no clicks");
     var pr=DATA.props;
     if(!pr || pr.available!==true || !((pr.players||[]).length)){
       var c0=cardIn(main); var p0=el("div","pad");
@@ -860,8 +941,16 @@
       "THIS IS AN EXHIBITION. Every rate below was fit on regular-season play and is applied OUT OF REGIME. Nothing here is a regular-season-grade projection.",
       "The team total this hangs off rests on n=5 format-matched games; the player level is thinner still. The WIDTH IS THE FINDING — a tight prop is a manufactured prop.",
       "Odds shown are FAIR (zero vig). A real book prices worse on both sides. An edge exists only if the book's price beats fair by more than its hold.",
-      "Betting is a DOWNSTREAM READOUT of the impact model and the team projection — read those first, these second."
+      "Betting is a DOWNSTREAM READOUT of the impact model and the team projection — read those first, these second.",
+      "Kelsey Plum is OUT. Kahleah Copper is her replacement and was NOT drafted (no pick slot).",
+      "STL / BLK / TOV are NOT offered: the All-Star box record carries no steal, block or turnover column, so there is no basis to calibrate them. UNKNOWN, not guessed."
     ];
+    // The minutes caveat is load-bearing and the payload does not always carry it: 2018+
+    // All-Star minutes are NULL at source, so the minutes model is fitted on 1999-2017 and the
+    // starter/reserve gap is ASSERTED. If nothing in the block already says so, append it.
+    var saysMin=false;
+    rtf.forEach(function(t){ if(String(t).indexOf("1999-2017")>=0) saysMin=true; });
+    if(!saysMin) rtf.push("2018+ All-Star minutes are NULL in the source, so the minutes model is fitted on 1999-2017 and the starter/reserve gap is ASSERTED, not fitted.");
     {
       var b=el("div","banner");
       b.appendChild(el("h3",null,"Read this first"));
@@ -872,40 +961,69 @@
     }
 
     var c=cardIn(main);
-    var ctl=el("div","propctl");
-    ctl.appendChild(el("span","lbl","Metric"));
-    var mets=(pr.metrics||[]).filter(function(k){ return typeof k==="string"; });
-    if(!mets.length){
-      var pz=el("div","pad"); pz.appendChild(unknown("no metric survived the simulation")); c.appendChild(pz); return;
+
+    // PRINT / SAVE AS PDF. The print stylesheet lays the SAME flat table across
+    // pages with the header row repeating, so the paper copy and the screen copy
+    // are the same numbers. Always offered; a baked PDF file, if the board has
+    // one, is an EXTRA link and never a precondition for printing.
+    {
+      var pw=el("div","pdfbar");
+      var pb=el("button","pdfbtn","Print / Save as PDF");
+      pb.type="button";
+      pb.onclick=function(){ try{ window.print(); }catch(e){} };
+      pw.appendChild(pb);
+      if(has(pr.pdf_href)){
+        var a=el("a","pdfbtn","Open the baked PDF");
+        a.href=String(pr.pdf_href); a.target="_blank"; a.rel="noopener";
+        pw.appendChild(a);
+      }
+      pw.appendChild(el("span","pdfnote","Prints every player, every metric, every line as one flat table, header repeating on each page."));
+      c.appendChild(pw);
     }
-    PROPM=mets[0];
+
     var host=el("div");
+    var mets=(pr.metrics||[]).filter(function(k){ return typeof k==="string"; });
+    var state={met:null, q:""};
+
+    var ctl=el("div","propctl");
+    ctl.appendChild(el("span","lbl","Show"));
     var btns=[];
+    function setMet(k,btn){
+      state.met=k;
+      btns.forEach(function(x){ x.className="mbtn"+(x===btn?" on":""); });
+      try{ applyPropFilter(host,state.met,state.q); }catch(e){}
+    }
+    var ball=el("button","mbtn on","All metrics");
+    ball.onclick=function(){ setMet(null,ball); };
+    btns.push(ball); ctl.appendChild(ball);
     mets.forEach(function(k){
-      var lab=((pr.metric_labels||{})[k])||k;
-      var b2=el("button","mbtn"+(k===PROPM?" on":""),k);
-      b2.title=lab;
-      b2.onclick=function(){
-        PROPM=k;
-        btns.forEach(function(x){ x.className="mbtn"+(x===b2?" on":""); });
-        try{ propsTable(pr,host); }catch(e){
-          host.textContent=""; var pe=el("div","pad");
-          pe.appendChild(unknown("this metric could not be drawn")); host.appendChild(pe);
-        }
-      };
+      var b2=el("button","mbtn",k);
+      b2.title=((pr.metric_labels||{})[k])||k;
+      b2.onclick=function(){ setMet(k,b2); };
       btns.push(b2); ctl.appendChild(b2);
     });
+    var srch=el("input","psrch");
+    srch.type="search"; srch.placeholder="filter by player…"; srch.setAttribute("aria-label","filter by player");
+    srch.oninput=function(){ state.q=srch.value; try{ applyPropFilter(host,state.met,state.q); }catch(e){} };
+    ctl.appendChild(srch);
     c.appendChild(ctl);
     c.appendChild(host);
-    propsTable(pr,host);
+
+    var rows=0;
+    try{ rows=propsFlat(pr,host); }
+    catch(e){
+      host.textContent=""; var pe=el("div","pad");
+      pe.appendChild(unknown("the prop ladder could not be drawn on this device"));
+      host.appendChild(pe);
+    }
 
     var n=el("div","propnote");
     var counts=[];
     if(typeof pr.n_players==="number") counts.push(pr.n_players+" players");
     if(typeof pr.n_lines==="number") counts.push(pr.n_lines+" priced lines");
     if(typeof pr.sims==="number") counts.push(pr.sims.toLocaleString()+" simulations per player");
-    if(counts.length) n.appendChild(el("div",null,counts.join(" · ")+"."));
-    n.appendChild(el("div",null,"“% cleared” is the share of simulations in which the player finished ABOVE the line — x% of the time they cleared this number. “Fair line” is where that share crosses 50%: the number a zero-vig book would hang."));
+    if(counts.length) n.appendChild(el("div",null,counts.join(" · ")+" — all of it on this page, nothing hidden."));
+    n.appendChild(el("div",null,"“FMV” is the fair line: where the clear rate crosses 50%, the number a zero-vig book would hang. “% cleared” is the share of simulations that finished ABOVE the line. The highlighted row in each metric is the offered line closest to that 50% crossing."));
     if(has(pr.line_filter)) n.appendChild(el("div",null,String(pr.line_filter)));
     n.appendChild(el("div",null,"Prices are FAIR (zero vig): decimal first, American second. A real book prices worse on BOTH sides, so an edge exists only where the book beats the fair price by more than its hold."));
     if((pr.players_out||[]).length) n.appendChild(el("div",null,"Out: "+pr.players_out.join(", ")+"."));
@@ -915,8 +1033,8 @@
 
     var unk=pr.unknowns||[], asm=pr.assumptions||[];
     if(unk.length || asm.length){
-      var d2=el("details","method");
-      d2.appendChild(el("summary",null,"What this prop ladder does not know, and what it assumed"));
+      var d2=el("div","method");
+      d2.appendChild(el("div","method-hd","What this prop ladder does not know, and what it assumed"));
       var bb=el("div","method-body");
       if(unk.length){
         bb.appendChild(el("div",null,"UNKNOWN — stated, not guessed:"));
@@ -1081,8 +1199,8 @@
 
   function renderSample(main){
     var s=DATA.sample||{};
-    var d=el("details","method");
-    d.appendChild(el("summary",null,"Sample, method and what would make this wrong"));
+    var d=el("div","method");
+    d.appendChild(el("div","method-hd","Sample, method and what would make this wrong"));
     var b=el("div","method-body");
     var ul=el("ul");
     var items=[];
