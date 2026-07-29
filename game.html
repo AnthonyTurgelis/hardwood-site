@@ -31,6 +31,21 @@
   .fac .fn{font-weight:640;font-size:13px}
   .fac .fv{font-weight:700;font-size:14px;color:var(--acc);font-variant-numeric:tabular-nums;white-space:nowrap}
   .fac .fd{color:var(--muted);font-size:11.5px;margin-top:2px}
+  /* Reasoning chain: neutral strength -> adjustment -> final. The parts are shown adding up, so
+     a close number reads as a real result rather than an absence of conviction. */
+  .why{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:11px 13px;box-shadow:var(--shadow);margin-bottom:7px}
+  .wrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:5px 0}
+  .wlab{font-weight:640;font-size:13px}
+  .wval{font-weight:700;font-size:14px;color:var(--acc);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .wdet{color:var(--muted);font-size:11.5px;margin:0 0 3px;line-height:1.45}
+  .wsub{margin:2px 0 2px 13px;padding-left:10px;border-left:2px solid var(--line2)}
+  .wsub .wrow{padding:2px 0}
+  .wsub .wlab{font-weight:520;font-size:12px;color:var(--muted)}
+  .wsub .wval{font-size:12.5px;font-weight:640;color:var(--ink)}
+  .wsub .wdet{font-size:10.5px;color:var(--dim);margin-bottom:1px}
+  .wtot{border-top:2px solid var(--line);margin-top:5px;padding-top:3px}
+  .wtot .wlab{font-size:13.5px;font-weight:700}
+  .wtot .wval{font-size:16px}
   .empty{color:var(--dim);font-style:italic}
   .note{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.5}
   footer{max-width:900px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
@@ -137,6 +152,37 @@
     return box;
   }
   function esc(s){ var e=el("span"); e.textContent=s==null?"":s; return e.innerHTML; }
+
+  // REASONING CHAIN — renders d.why.steps verbatim: neutral strength edge, the adjustments that
+  // move it, then the projected margin as their sum. The baker only emits a chain it has proven
+  // adds up, so this draws what it is given and never does arithmetic of its own. Absent chain
+  // (older bake, or a margin model whose shape could not be decomposed) simply renders nothing.
+  function whyCard(d){
+    var w=d.why||{}; var steps=w.steps||[]; if(!steps.length) return null;
+    var box=el("div","why");
+    steps.forEach(function(s,i){
+      var last=(i===steps.length-1);
+      var r=el("div","wrow"+(last?" wtot":""));
+      r.appendChild(el("div","wlab", s.label));
+      r.appendChild(el("div","wval", s.value==null?"—":s.value));
+      box.appendChild(r);
+      if(s.detail) box.appendChild(el("div","wdet", s.detail));
+      if((s.sub||[]).length){
+        var sub=el("div","wsub");
+        s.sub.forEach(function(x){
+          var sr=el("div","wrow");
+          sr.appendChild(el("div","wlab", x.label));
+          sr.appendChild(el("div","wval", x.value==null?"—":x.value));
+          sub.appendChild(sr);
+          if(x.detail) sub.appendChild(el("div","wdet", x.detail));
+        });
+        box.appendChild(sub);
+      }
+    });
+    if(w.omitted) box.appendChild(el("div","note", w.omitted));
+    if(w.as_of) box.appendChild(el("div","note","Team inputs frozen "+w.as_of+"."));
+    return box;
+  }
 
   function fairCard(d){
     var f=d.fair_value; if(!f || (f.our_spread==null && f.our_total==null)) return null;
@@ -323,6 +369,11 @@
     hero.appendChild(el("div","call","Our call: "+(d.call||"—")));
     hero.appendChild(el("div","sub", d.date||""));
     main.appendChild(hero);
+
+    // REASONING CHAIN — leads the page: the analysis behind the headline number comes before
+    // setup and market context.
+    var wy=whyCard(d);
+    if(wy){ var ws=el("section"); ws.appendChild(el("h2",null,"How we get to this number")); ws.appendChild(wy); main.appendChild(ws); }
 
     // CONTEXT + FAIR VALUE (front-office layer)
     var cx=ctxCard(d); if(cx){ var cs=el("section"); cs.appendChild(el("h2",null,"Setup")); cs.appendChild(cx); main.appendChild(cs); }
