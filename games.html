@@ -575,7 +575,10 @@
   }
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
-    document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Ranges are calibrated from our own past accuracy — a single game's margin swings a lot. Win chance is recalibrated. Updates within ~2 min of a refresh.";
+    // This page DOES draw every range (densityStrip / marginBar), so the footer says where the width
+    // comes from and stops re-describing what the reader can already see — the "a single game's
+    // margin swings a lot" clause was the bar's job, said in words.
+    document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Every band shown is calibrated from our own past accuracy. Win chance is recalibrated. Updates within ~2 min of a refresh.";
     if(!d.available){ main.appendChild(el("p","empty", d.note||"No games on the board yet.")); flash(); return; }
     main.appendChild(el("p","lede", d.source||""));
     if(d.basis){ main.appendChild(el("p","note", d.basis)); }

@@ -45,6 +45,15 @@
   .game .call{font-size:13px;margin-top:6px;font-weight:600}
   .game .win{color:var(--muted);font-size:12px;margin-top:2px}
   .game .rng{color:var(--muted);font-size:12px;margin-top:2px}
+  /* Margin range, DRAWN — the same .mbar/.mcap dialect the slate list and the game card use for this
+     exact quantity, mirrored rather than re-invented. Fallback tokens (var(--x,var(--y))) because
+     this page's palette predates the shared one and hardwood.css is a layer, not a dependency. */
+  .game .mbar{position:relative;height:20px;margin:6px 0 2px;background:var(--card2);border:1px solid var(--line);border-radius:5px}
+  .game .mbar .b90{position:absolute;top:6px;height:8px;background:var(--line2,var(--line));border-radius:3px}
+  .game .mbar .b80{position:absolute;top:5px;height:10px;background:var(--accent);opacity:.55;border-radius:3px}
+  .game .mbar .pt{position:absolute;top:2px;width:3px;height:16px;background:var(--good);transform:translateX(-1px)}
+  .game .mbar .zero{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.7}
+  .game .mcap{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:1px;font-variant-numeric:tabular-nums}
   .game .avail{font-size:11.5px;margin-top:6px;color:var(--warn)}
   .game .avail b{color:var(--ink);font-weight:600}
   .actual{margin-top:9px;border-top:1px dashed var(--line);padding-top:7px;font-size:12px}
@@ -126,6 +135,15 @@ function normFuture(g){
   return { matchup:((g.away||"")+" @ "+(g.home||"")), tip:(g.tip_et||""), call:(g.call||""),
     win_line:winLineFromPct(g.p_home_win, g.home_full, g.away_full),
     range80:fmtHomeRange(g.range80_lo, g.range80_hi, g.home, g.away),
+    /* The RAW band, carried alongside the sentence so the card can DRAW the range instead of
+       reciting it. Additive on purpose: range80 stays exactly as it was, because PAST rows come
+       from the archive with only the pre-formatted string and must keep their numbers. A forward
+       row with no published band gets band:null and falls back to the sentence — omit, don't
+       invent. Home-positive, same convention as every other margin field on the platform. */
+    band:((g.range90_lo==null||g.range90_hi==null) ? null : {
+      lo:g.range90_lo, hi:g.range90_hi,
+      lo80:(g.range80_lo==null?null:g.range80_lo), hi80:(g.range80_hi==null?null:g.range80_hi),
+      point:(g.pred_margin==null?null:g.pred_margin), home:g.home, away:g.away }),
     avail:out.join(" · "), side:"future", actual:null };
 }
 /* Merge the immutable past-archive + the forward games slate into one ordered date timeline.

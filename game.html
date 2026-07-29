@@ -28,6 +28,28 @@
      Sits directly under the call, in body ink, so the two read as one thought at a glance. */
   .hero .lead{font-size:13px;color:var(--ink);margin-top:4px;line-height:1.5}
   .hero .sub{color:var(--muted);font-size:12.5px;margin-top:5px}
+  /* PROJECTED-MARGIN RANGE BAR. Mirrored VERBATIM from the slate list (site/games.html .mbar/.mcap)
+     — the same visual dialect this platform already ships for this exact quantity — so the card a
+     reader clicks INTO shows its range the same way as the card they clicked FROM. Deliberately not
+     a new look: a fourth range dialect is how this drifted in the first place. Each page keeps its
+     own inline copy because hardwood.css is a progressive layer, not a dependency (a failed load
+     must still render). .mleg is the one addition the detail page earns over the list: a legend, so
+     the two bands are self-describing instead of needing a sentence somewhere else to explain them. */
+  .mbar{position:relative;height:20px;margin:7px 0 2px;background:var(--card2);border:1px solid var(--line);border-radius:5px}
+  .mbar .b90{position:absolute;top:6px;height:8px;background:var(--line2);border-radius:3px}
+  .mbar .b80{position:absolute;top:5px;height:10px;background:var(--acc);opacity:.55;border-radius:3px}
+  .mbar .pt{position:absolute;top:2px;width:3px;height:16px;background:var(--good);transform:translateX(-1px)}
+  .mbar .zero{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.7}
+  .mcap{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:1px;font-variant-numeric:tabular-nums}
+  .mrange{margin-top:10px}
+  .mleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10px;color:var(--dim);margin-top:5px}
+  .mleg span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+  .mleg i{display:inline-block;width:13px;height:6px;border-radius:2px;flex:none}
+  .mleg i.l80{background:var(--acc);opacity:.55}
+  .mleg i.l90{background:var(--line2)}
+  .mleg i.lpt{width:3px;height:12px;background:var(--good);border-radius:1px}
+  .mleg b{font-weight:600}
+  .microcap{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);font-weight:800;margin:9px 0 3px}
   h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:16px 0 8px;font-weight:700}
   .fac{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:10px 13px;box-shadow:var(--shadow);margin-bottom:7px}
   .fac .fl{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -209,6 +231,84 @@
     return head+" "+tail;
   }
   // ---- LEAD-LINE-END ----
+
+  // ---- MARGIN-RANGE-BEGIN (exercised directly by scripts/test_game_card_range.py — the test
+  // extracts this exact block and runs it in node against the real baked payloads, so there is one
+  // implementation of the geometry, not a Python copy of it) ----
+  // THE RANGE IS SHOWN, NOT DESCRIBED.
+  //
+  // Every card already carried margin.lo80/hi80/lo90/hi90 and drew NONE of it. The single widest
+  // and most important honesty signal on the page — a ~34-point 80% interval sitting under a
+  // 1.3-point call — was represented by a footer sentence saying margins "swing a lot". That is
+  // exactly backwards: a range you can SEE is the point, and a sentence about it is a substitute
+  // for the point. The platform had already settled this — the slate list one click away has drawn
+  // this bar, for this quantity, from this data, for a long time. The card had silently skipped it.
+  //
+  // SAME DIALECT AS THE SLATE, DELIBERATELY. The scale, the class names and the sign-aware endpoint
+  // labels below are games.html's marginBar(), mirrored rather than re-invented, so one game reads
+  // the same way in the list and on the card.
+  //
+  // SIGN CONVENTION: every margin field is HOME-POSITIVE (+N = the home side by N). The scale is
+  // symmetric about zero, so the "even" line is always dead centre and which side of it the band
+  // sits on is legible at a glance — an interval that STRADDLES even looks like the coin-flip it is
+  // instead of having to be called one. Endpoints are labelled by the SIGN of their own value, so
+  // a one-sided range never names the wrong team as favoured.
+  //
+  // READ, NEVER RECOMPUTE. The five numbers are drawn exactly as the baker published them; nothing
+  // here derives a bound. A card missing them gets NO bar rather than an invented one — the same
+  // omit-not-invent rule the lead and the appendix follow.
+  function marginRangeModel(d){
+    var m=(d&&d.margin)||{};
+    var lo=m.lo90, hi=m.hi90, l80=m.lo80, h80=m.hi80, pt=m.point;
+    if(lo==null||hi==null) return null;               // no published band -> no bar
+    var span=Math.max(Math.abs(lo),Math.abs(hi),1);   // symmetric about zero: even is always centre
+    function sc(v){ return ((v+span)/(2*span))*100; }
+    function endLabel(v){
+      if(v>0) return d.home+" +"+v.toFixed(0);
+      if(v<0) return d.away+" +"+Math.abs(v).toFixed(0);
+      return "even";
+    }
+    var has80=(l80!=null&&h80!=null);
+    return {
+      lo:lo, hi:hi, lo80:l80, hi80:h80, point:pt, has80:has80,
+      x:{ zero:sc(0), lo:sc(lo), hi:sc(hi),
+          lo80:has80?sc(l80):null, hi80:has80?sc(h80):null,
+          point:(pt!=null)?sc(pt):null },
+      ends:{ lo:endLabel(lo), hi:endLabel(hi) }
+    };
+  }
+  // ---- MARGIN-RANGE-END ----
+
+  // The bar itself: the model above, drawn. Sits in the hero directly under the lead, because the
+  // range is the honesty about the answer — not a footnote to it.
+  function marginRangeBar(d){
+    var mo=marginRangeModel(d); if(!mo) return null;
+    var wrap=el("div","mrange");
+    wrap.appendChild(el("div","microcap","Projected final margin · where the result actually lands"));
+    var bar=el("div","mbar");
+    var z=el("div","zero"); z.style.left=mo.x.zero.toFixed(1)+"%"; bar.appendChild(z);
+    var b90=el("div","b90"); b90.style.left=mo.x.lo.toFixed(1)+"%";
+    b90.style.width=(mo.x.hi-mo.x.lo).toFixed(1)+"%"; bar.appendChild(b90);
+    if(mo.has80){
+      var b80=el("div","b80"); b80.style.left=mo.x.lo80.toFixed(1)+"%";
+      b80.style.width=(mo.x.hi80-mo.x.lo80).toFixed(1)+"%"; bar.appendChild(b80);
+    }
+    if(mo.x.point!=null){ var p=el("div","pt"); p.style.left=mo.x.point.toFixed(1)+"%"; bar.appendChild(p); }
+    wrap.appendChild(bar);
+    var cap=el("div","mcap");
+    cap.appendChild(el("span",null, mo.ends.lo));
+    cap.appendChild(el("span",null,"even"));
+    cap.appendChild(el("span",null, mo.ends.hi));
+    wrap.appendChild(cap);
+    // Legend — the two bands say what they are, so no sentence elsewhere has to.
+    var leg=el("div","mleg");
+    function key(cls,txt){ var s=el("span"); s.appendChild(el("i",cls)); s.appendChild(el("b",null,txt)); return s; }
+    if(mo.has80) leg.appendChild(key("l80","80% of outcomes land in here"));
+    leg.appendChild(key("l90","90%"));
+    leg.appendChild(key("lpt","our number"));
+    wrap.appendChild(leg);
+    return wrap;
+  }
 
   // REASONING CHAIN — renders d.why.steps verbatim: neutral strength edge, the adjustments that
   // move it, then the projected margin as their sum. The baker only emits a chain it has proven
@@ -428,6 +528,8 @@
     // drives it. Everything else on this page is support for these two lines.
     var lead=leadLine(d);
     if(lead) hero.appendChild(el("div","lead", lead));
+    // ...and immediately under the lead, the range that answer lives inside — drawn, not narrated.
+    var mr=marginRangeBar(d); if(mr) hero.appendChild(mr);
     hero.appendChild(el("div","sub", d.date||""));
     main.appendChild(hero);
 
@@ -437,8 +539,19 @@
 
     // MODEL BREAKDOWN
     var s=el("section"); s.appendChild(el("h2",null,"Full model breakdown"));
-    if((d.factors||[]).length) s.appendChild(el("div","sub2","Each line is one ingredient that goes into our number, with what it contributed and why."));
-    (d.factors||[]).forEach(function(f){
+    // THE RANGE IS DRAWN ONCE, NOT DRAWN AND THEN ALSO NARRATED.
+    // The breakdown restated the interval in prose twice — "Likely margin range (80%) … -16.3 to
+    // 17.2" and "Wider margin range (90%) … the outer band, a single game's margin swings a lot".
+    // Those rows ARE the narration: the same fact the bar above now shows, said a worse way, in the
+    // position a reader reaches after they have already seen it. They are dropped here, at render,
+    // and ONLY when the bar actually rendered — if this card has no published band there is no bar,
+    // so the rows stay and the reader keeps the numbers. Dropped at the surface, not at the baker:
+    // the range fields stay in the payload for every other consumer, and this is a presentation
+    // call, which is this page's to make.
+    var factors=(d.factors||[]);
+    if(mr) factors=factors.filter(function(f){ return !/margin range/i.test(f.label||""); });
+    if(factors.length) s.appendChild(el("div","sub2","Each line is one ingredient that goes into our number, with what it contributed and why."));
+    factors.forEach(function(f){
       var c=el("div","fac"); var l=el("div","fl");
       l.appendChild(el("span","fn", f.label));
       l.appendChild(el("span","fv", f.value==null?"—":f.value));
@@ -446,7 +559,7 @@
       if(f.detail) c.appendChild(el("div","fd", f.detail));
       s.appendChild(c);
     });
-    if(!(d.factors||[]).length) s.appendChild(el("p","empty","No breakdown available for this game yet."));
+    if(!factors.length) s.appendChild(el("p","empty","No breakdown available for this game yet."));
     s.appendChild(el("div","note", d.note||""));
     main.appendChild(s);
 
@@ -486,7 +599,10 @@
     // PDF REPORT LINK
     if(d.pdf){ var ps=el("section"); var a=el("a","pdf","Full game report (PDF) →"); a.href=d.pdf; ps.appendChild(a); main.appendChild(ps); }
 
-    document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Ranges are calibrated from our own past accuracy; a single game's margin swings a lot.";
+    // The footer used to say "ranges are calibrated ... a single game's margin swings a lot" on a
+    // page that drew no range at all — a sentence standing in for the thing itself. The range is on
+    // the card now, so the footer only says where its width comes from and stops describing it.
+    document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". The band above is calibrated from our own past accuracy.";
     insertEarlyWord();
   }
 

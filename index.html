@@ -113,6 +113,10 @@
      whisper (agent-updates stale-badge wire). Text is the literal "STALE" (uppercased in CSS). */
   .stalebadge{font-size:10px;font-weight:800;letter-spacing:.07em;color:#fff;background:var(--blocked);
     border-radius:999px;padding:2px 8px;text-transform:uppercase;box-shadow:0 0 0 2px rgba(198,40,40,.22)}
+  /* QUIET variant — still loud enough to read at a glance, but NOT the red fault colour. A panel with
+     no new rows because nothing shipped is reporting correctly; painting that red sends the reader
+     hunting a broken feed (it did, once, and cost a lane). Amber = "look, but the plumbing is fine". */
+  .stalebadge.quiet{background:var(--warn);box-shadow:0 0 0 2px rgba(245,124,0,.2)}
   .empty{color:var(--muted);font-size:12.5px;font-style:italic;margin:4px 0}
   /* ---------- dense rows ---------- */
   .list{background:var(--card);border:1px solid var(--line);border-radius:9px;overflow:hidden;
@@ -508,11 +512,19 @@
       prov.innerHTML = src + "freshness unknown";
     }
     if(reason){ prov.title=reason; }
-    return {prov:prov, stale:stale, reason:reason};
+    // `quiet` = the assembler could tell this panel is stale ONLY because nothing was shipped in the
+    // window, not because its feed died. Server-set (build_site knows the work-record card count);
+    // never inferred here, so a board baked before this existed simply reads as a normal stale.
+    return {prov:prov, stale:stale, reason:reason, quiet:!!(m && m.quiet)};
   }
   // The loud STALE flag, carrying its own hover-explanation (the section's stale_reason) so a coach
   // who sees red on a panel learns WHY without opening anything. One builder for every panel's badge.
-  function staleBadge(reason){ var b=el("span","stalebadge","stale"); if(reason){ b.title=reason; } return b; }
+  // `quiet` swaps the wording (and the colour) for the case the badge used to get wrong: the panel IS
+  // past its cadence, but because nothing shipped — so it says "no new updates" instead of accusing
+  // its own feed of being out of date. Optional arg: every other call site keeps the plain red STALE.
+  function staleBadge(reason, quiet){
+    var b=el("span", quiet?"stalebadge quiet":"stalebadge", quiet?"no new updates":"stale");
+    if(reason){ b.title=reason; } return b; }
   function sectionHead(title, key){
     if(key && title){ PANELNAME[key]=title; }   // keep the roll-up's display name in sync with what renders
     var wrap=el("div","sechead");
@@ -521,7 +533,7 @@
     if(key){ wrap.id="sec-"+key; }
     wrap.appendChild(el("h2",null,title));
     var p=provFor(key);
-    if(p.stale){ wrap.appendChild(staleBadge(p.reason)); }
+    if(p.stale){ wrap.appendChild(staleBadge(p.reason, p.quiet)); }
     wrap.appendChild(p.prov);
     return wrap;
   }
