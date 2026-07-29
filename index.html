@@ -255,7 +255,8 @@
     border:1px solid var(--line);background:var(--card);padding:3px 9px;border-radius:7px}
   .watch{margin:0;padding:12px;background:var(--warn-bg,#fff3cd);border:1px solid var(--warn,#ffeeba);border-radius:4px;list-style-type:none}
   .watch li{margin-bottom:6px;color:var(--text);font-size:14px;font-weight:bold}
-  .watch li:before{content:"⚠️ ";}
+  /* no glyph marker: the amber card + bold text already read as "watch", and the emoji it used to
+     prepend is exactly the stray old-emoji class being swept out of rendered copy. */
   .legend{font-size:11px;color:var(--muted);margin-top:6px}
   footer{padding:16px 0;color:var(--muted);font-size:11px}
   /* sticky unsaved-queue-changes bar */
@@ -393,7 +394,7 @@
   <div class="subtabs" id="subtabs"></div>
   <div class="filters" id="filters"></div>
 </header>
-<main id="main"><p class="empty">Loading the board…</p></main>
+<main id="main"><p class="empty">Loading the board...</p></main>
 <footer id="foot"></footer>
 </div>
 <script>
@@ -716,9 +717,23 @@
     setChipReason("");   // nothing crowned -> no reason sub-line
     setChipSpark(null);  // ...and no spark (the none-stale fallback carries no culprit history)
     var s=sinceIso(b.generated_utc);
-    // single freshness dot: green when fresh, amber then red as the numbers age (stale-data guard).
-    // no crowned panel -> the chip is NOT a click control (plain, non-clickable).
-    if(s!=null) setChip("ch-data", s<1200?"ok":(s<3600?"warn":"bad"), "data · updated "+agoSecs(s)+" ago",
+    /* Single freshness dot: green when fresh, amber once a refresh is overdue, red once the board is
+       stale by the definition the machine itself pages on. The ramp used to be two constants of its
+       own — green below 1200s, red above 3600s — which put a 900-to-1200s window on this header where
+       the dot read GREEN while publish_health.py was already paging about the very same board, and
+       while the strip two lines below it said STALE. Same numbers, contradictory severity, three
+       thresholds on one page.
+
+       Deliberate change, not a swap: the two magic constants are DELETED rather than retuned, and
+       the dot now rides the SAME ladder as the strip and the pager — this board's own published
+       contract (staleAfterSecs, when a refresh is DUE) then max(that, publish_health's 900s floor,
+       when it becomes an alarm). That is one definition of stale on the page instead of three, and it
+       is pinned by the loud-threshold check in tests/test_board_status_strip.js, so it cannot drift
+       back. The chip goes amber EARLIER than before (from 300s rather than 1200s) and red EARLIER
+       (from 900s rather than 3600s); that is the point — the floor exists so ordinary publish lag
+       never cries wolf, and nothing below it was ever worth a red dot.
+       No crowned panel -> the chip is NOT a click control (plain, non-clickable). */
+    if(s!=null) setChip("ch-data", s<=staleAfterSecs()?"ok":(s<=loudAfterSecs()?"warn":"bad"), "data · updated "+agoSecs(s)+" ago",
       "How fresh the numbers on this page are (time since the page data last refreshed).");
   }
   function banner(b){
@@ -727,10 +742,14 @@
     // Present only when the server-side alarm is active AND fresh; absent otherwise (self-clearing).
     var wd=b.width_defect||{};
     if(wd.active && wd.text){
-      w.appendChild(el("div","banner width-defect","⚠ "+wd.text));
+      // ASCII ONLY in rendered copy: the leading warning glyph is gone (the full red wash + the
+      // 4px bad-colour rule already carry the severity, and a stray glyph re-read as cp1252 on this
+      // box is the mojibake the CEO calls old emoji).
+      w.appendChild(el("div","banner width-defect",wd.text));
     } else if(wd.refilling && wd.text){
-      // CALM finishing/refill beat — a soft, reassuring line, NOT the red outage wash.
-      w.appendChild(el("div","banner refilling","↻ "+wd.text));
+      // CALM finishing/refill beat — a soft, reassuring line, NOT the red outage wash. Its own
+      // accent rule carries the "in progress" reading; the recycle glyph is likewise gone.
+      w.appendChild(el("div","banner refilling",wd.text));
     }
     // THE PAUSE STORY MOVED UP into the board status strip (tickStrip), and it is NOT duplicated
     // here on purpose. Two banners on one page reading two flags is how a reader ends up looking at
@@ -788,7 +807,7 @@
     var n=loadOps().length;
     if(n>0){
       msg.className="qbar-msg";
-      msg.textContent="● Unsaved changes — "+n+" queue change"+(n>1?"s":"")+" not sent yet";
+      msg.textContent="Unsaved changes: "+n+" queue change"+(n>1?"s":"")+" not sent yet";
       send.disabled=false; disc.style.display="";
       bar.style.display="flex"; document.body.classList.add("hasbar");
     } else if(sent){
@@ -1721,7 +1740,7 @@
     }
     document.getElementById("foot").textContent =
       "Auto-generated from the working record. Last refreshed " + (b.generated_et||"") +
-      ". Every number on this page is baked in advance — your browser never touches a database.";
+      ". Every number on this page is baked in advance; your browser never touches a database.";
     tickElapsed(); tickProv(); tickStrip();
     flash();
   }

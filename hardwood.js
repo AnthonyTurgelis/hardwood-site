@@ -98,8 +98,14 @@
       "@media (prefers-color-scheme:dark){#hwfresh.warn,#hwwork.warn{background:#332708;color:#e3b341;border-color:#6b530f}" +
       "#hwfresh.bad,#hwwork.bad{background:#3a1512;color:#ff8a80;border-color:#7a271f}}" +
       "#hwbar{display:flex;flex-wrap:wrap;gap:5px;align-items:center}" +
+      /* Pills WRAP their own text and never exceed the viewport. They used to be white-space:nowrap,
+         which was safe only because the copy was terse jargon: the moment a pill said something a
+         human could read ("Work is being run right now (for an hour and 35 minutes)") a 320px phone
+         had content unreachable off the right edge - caught by tests/test_phone_layout_overflow.py on
+         the rendered page, not by any string check. Wrapping is the structural fix; tuning wording
+         until it happens to fit would just break again on the next sentence. */
       ".hwpill{display:inline-flex;align-items:center;gap:4px;border:1px solid #d9dee7;background:#fff;color:#5a6675;" +
-      "border-radius:999px;padding:2px 9px;white-space:nowrap}" +
+      "border-radius:999px;padding:2px 9px;max-width:100%;overflow-wrap:anywhere}" +
       ".hwpill b{color:#16181d;font-variant-numeric:tabular-nums;font-weight:640}" +
       ".hwpill.live b{color:#1f883d}" +
       ".hwpill .dot{width:6px;height:6px;border-radius:50%;background:#8a93a3}" +
