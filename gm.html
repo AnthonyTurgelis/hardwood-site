@@ -79,14 +79,18 @@
   .qcell.on{border-color:var(--acc);background:rgba(47,111,237,.10);box-shadow:0 0 0 1px var(--acc) inset}
   .qcell .qt{font-weight:740;font-size:13px} .qcell .qd{font-size:10.5px;color:var(--muted);margin-top:2px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media (max-width:620px){ .two{grid-template-columns:1fr} .quad{grid-template-columns:1fr} }
+  /* minmax(0,1fr), NOT 1fr: a bare `1fr` track is minmax(auto,1fr) and cannot shrink below its
+     item's min-content, so collapsing to one column still left a 468px track inside a 321px phone
+     screen and pushed the card off the right edge. minmax(0,1fr) lets the track shrink; the wide
+     table inside then scrolls in its own `.scroll` container instead of the page. */
+  @media (max-width:620px){ .two{grid-template-columns:minmax(0,1fr)} .quad{grid-template-columns:minmax(0,1fr)} }
   .wire{padding:4px 0;border-bottom:1px solid var(--line);font-size:12.5px}
   .wire .dt{color:var(--dim);font-size:11px;font-variant-numeric:tabular-nums}
   .legend{font-size:11px;color:var(--muted)}
   th.sortable{cursor:pointer;user-select:none} th.sortable.act{color:var(--acc)}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
-<link rel="stylesheet" href="./hardwood.css?v=ec0f9f8c">
+<link rel="stylesheet" href="./hardwood.css?v=0358d41a">
 </head>
 <body>
 <header>

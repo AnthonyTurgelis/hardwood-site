@@ -132,8 +132,13 @@ button,.pill,.qbtn,.taybtn,.subtab{min-height:32px}
   nav{gap:5px}
   nav a{padding:8px 12px}
   /* card grids collapse to a single column so a phone never scrolls sideways
-     (minmax(300-320px) card tracks would otherwise overflow a ~320px viewport) */
-  .grid,.gcards,.mgrid,.seats,.agrid{grid-template-columns:1fr !important}
+     (minmax(300-320px) card tracks would otherwise overflow a ~320px viewport).
+     minmax(0,1fr), NOT a bare 1fr: `1fr` means minmax(auto,1fr), and an `auto` minimum cannot go
+     below the item's min-content width — so a one-column grid can STILL be wider than the screen
+     if anything inside it is wide (measured on gm.html: a collapsed grid held a 468px track inside
+     a 321px container). The 0 minimum lets the track shrink and hands the overflow to the nearest
+     scroll container instead of to the page. */
+  .grid,.gcards,.mgrid,.seats,.agrid{grid-template-columns:minmax(0,1fr) !important}
 
   /* ---- wide data tables scroll THEMSELVES, so the page never has to ----
      MEASURED DEFECT (2026-07-29): ten pages laid out a data table wider than a phone screen —
