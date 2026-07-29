@@ -37,6 +37,12 @@
   .dive{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:13px 15px;margin:10px 0}
   .dive-q{font-size:15px;font-weight:750;letter-spacing:-.01em;line-height:1.25}
   .dive-src{color:var(--dim);font-size:10.5px;margin-top:3px;text-transform:uppercase;letter-spacing:.03em;font-variant-numeric:tabular-nums}
+  /* the as-of line — every dive says how old it is, on its face. A dive that is eleven days old
+     should LOOK eleven days old; a dive whose build time was never recorded says that instead of
+     staying silent, because silence reads as "current". */
+  .dive-asof{display:inline-block;margin-top:6px;font-size:10px;font-weight:600;color:var(--muted);background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em;font-variant-numeric:tabular-nums}
+  .dive-asof.aging{color:var(--ink);border-color:var(--acc)}
+  .dive-asof.unknown{font-style:italic}
   /* the headline number line — the one answer, up top and bold */
   .dhead{margin:11px 0 4px;padding:10px 12px;background:var(--accent-weak);border-left:3px solid var(--acc);border-radius:8px;font-size:13.5px;font-weight:600;line-height:1.4;color:var(--ink)}
 
@@ -898,11 +904,41 @@
 
   var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace, scoringmix:renderScoringmix, margins:renderMargins, scoringleaders:renderScoringleaders, scoreeffects:renderScoreeffects };
 
+  /* ---- as-of: every dive wears its age ----------------------------------------------------
+     Silently stale is the banned state — an old number that presents itself as current. So each
+     card carries its build date AND how long ago that was, read from the dive's own generated_utc
+     (the same stamp build_site puts on every baked payload). A dive with no recorded build time
+     says exactly that: never blank, never a guessed date. */
+  function ageWords(days){
+    if(days<=0) return "today";
+    if(days===1) return "1 day old";
+    if(days<60) return days+" days old";
+    var mo=Math.round(days/30.4);
+    return mo<=1?"about a month old":("about "+mo+" months old");
+  }
+  function diveAsOf(data){
+    var raw=data&&(data.generated_utc||data.as_of_utc||data.as_of||data.generated_at);
+    if(!raw){
+      var u=el("span","dive-asof unknown","As-of not recorded");
+      u.title="This dive does not record when it was built, so its age cannot be shown.";
+      return u;
+    }
+    var t=new Date(String(raw));
+    if(isNaN(t.getTime())) return el("span","dive-asof unknown","As-of not recorded");
+    var days=Math.floor((Date.now()-t.getTime())/86400000);
+    var chip=el("span","dive-asof"+(days>=7?" aging":""),
+                "As of "+fmtDate(raw)+"  ·  "+ageWords(days));
+    chip.title="Built "+(data.generated_et||String(raw))+". Deep dives are built on demand, not "
+              +"on a daily schedule, so this figure is as of that date.";
+    return chip;
+  }
+
   function renderDiveCard(row, data){
     var c=el("div","dive");
     c.appendChild(el("div","dive-q", (data&&(data.question))||row.question||row.title||row.slug));
     var srcbits=[]; if(row.source_table) srcbits.push(row.source_table); if(row.n!=null) srcbits.push("n = "+row.n);
     if(srcbits.length) c.appendChild(el("div","dive-src", srcbits.join("  ·  ")));
+    if(data) c.appendChild(diveAsOf(data));
     if(!data){
       c.appendChild(el("p","empty","This dive's detail could not be loaded right now."));
       return c;
