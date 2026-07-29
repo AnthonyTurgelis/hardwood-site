@@ -286,8 +286,11 @@
     }
     var age = Math.round((nowMs - t) / 1000);
     if (age <= thresh) return { stale: false, age: age, thresh: thresh, text: "" };
+    // agoSecs() appends " ago", which read as "hasn't refreshed in 16m ago" on the live page during
+    // the 2026-07-29 publish freeze. Strip the suffix here: this string wants a DURATION, not a
+    // point in time. Same numbers, correct English, on a surface the CEO reads.
     return { stale: true, age: age, thresh: thresh,
-             text: "⚠ The site data hasn't refreshed in " + agoSecs(age) +
+             text: "⚠ The site data hasn't refreshed in " + agoSecs(age).replace(/ ago$/, "") +
                    " (expected < " + Math.round(thresh / 60) + "m). The data shown is STALE." };
   }
 
