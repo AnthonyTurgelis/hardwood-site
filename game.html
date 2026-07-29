@@ -24,7 +24,10 @@
   .hero{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:13px 15px;box-shadow:var(--shadow);margin-bottom:12px}
   .hero .mu{font-size:20px;font-weight:720}
   .hero .call{font-size:14px;font-weight:640;color:var(--acc);margin-top:5px}
-  .hero .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+  /* THE LEAD: the call and the one thing driving it, in a single line at the top of every card.
+     Sits directly under the call, in body ink, so the two read as one thought at a glance. */
+  .hero .lead{font-size:13px;color:var(--ink);margin-top:4px;line-height:1.5}
+  .hero .sub{color:var(--muted);font-size:12.5px;margin-top:5px}
   h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:16px 0 8px;font-weight:700}
   .fac{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:10px 13px;box-shadow:var(--shadow);margin-bottom:7px}
   .fac .fl{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -32,7 +35,8 @@
   .fac .fv{font-weight:700;font-size:14px;color:var(--acc);font-variant-numeric:tabular-nums;white-space:nowrap}
   .fac .fd{color:var(--muted);font-size:11.5px;margin-top:2px}
   /* Reasoning chain: neutral strength -> adjustment -> final. The parts are shown adding up, so
-     a close number reads as a real result rather than an absence of conviction. */
+     a close number reads as a real result rather than an absence of conviction. It is the APPENDIX,
+     not the headline — see .appx below for why it is collapsed and last. */
   .why{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:11px 13px;box-shadow:var(--shadow);margin-bottom:7px}
   .wrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:5px 0}
   .wlab{font-weight:640;font-size:13px}
@@ -46,6 +50,15 @@
   .wtot{border-top:2px solid var(--line);margin-top:5px;padding-top:3px}
   .wtot .wlab{font-size:13.5px;font-weight:700}
   .wtot .wval{font-size:16px}
+  /* THE APPENDIX. The derivation is correct and it reconciles, but it is not the answer — so it is
+     collapsed and last, one tap away, instead of occupying the top of every card every day. */
+  .appx{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow)}
+  .appx > summary{cursor:pointer;list-style:none;padding:9px 13px;font-size:12.5px;font-weight:640;color:var(--acc)}
+  .appx > summary::-webkit-details-marker{display:none}
+  .appx > summary::before{content:"\25B8\00a0";color:var(--dim)}
+  .appx[open] > summary::before{content:"\25BE\00a0"}
+  .appx > summary:hover{text-decoration:underline}
+  .appx .why{background:transparent;border:none;box-shadow:none;border-radius:0;margin:0;padding:0 13px 11px}
   .empty{color:var(--dim);font-style:italic}
   .note{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.5}
   footer{max-width:900px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
@@ -101,7 +114,7 @@
   .smbar > i{position:absolute;left:0;top:0;bottom:0;background:var(--acc);opacity:.6;border-radius:2px;display:block}
   .smval{font-size:11px;font-variant-numeric:tabular-nums;color:var(--muted);width:2.6em;text-align:right;flex:none}
 </style>
-<link rel="stylesheet" href="./hardwood.css?v=c643cfd1">
+<link rel="stylesheet" href="./hardwood.css?v=04e913ef">
 </head>
 <body>
 <header>
@@ -152,6 +165,50 @@
     return box;
   }
   function esc(s){ var e=el("span"); e.textContent=s==null?"":s; return e.innerHTML; }
+
+  // ---- LEAD-LINE-BEGIN (exercised directly by scripts/test_game_card_lead.py — the test extracts
+  // this exact block and runs it in node against the real baked payloads, so there is one
+  // implementation, not a Python copy of it) ----
+  // THE LEAD — the answer in one line, at the top of every card.
+  //
+  // The card used to open with the full derivation. That was backwards: a DERIVATION was given the
+  // position that belongs to the ANSWER, on every card, every day. This line restores the order —
+  // the call and the single thing that drives it, readable at a glance, standing on its own.
+  //
+  // What actually varies game to game is the NEUTRAL-COURT edge; home court and calibration are the
+  // same constant push toward the home side on every card. So the one load-bearing fact is who is
+  // genuinely the better side and by how much, and whether that constant then FLIPS the game, adds
+  // to it, or merely trims it. That is what the verb carries, and it is why the line still reads as
+  // information on the twelfth card of a slate rather than as a template.
+  //
+  // ARITHMETIC SAFETY. Every number here is READ from the chain the baker already proved reconciles;
+  // nothing is recomputed. Only two numbers are printed — the neutral edge and the published margin
+  // — deliberately: printing the adjustment too would invite a mental sum that double-rounding can
+  // make look wrong by 0.1. The parts that must add up live in the appendix, at the precision that
+  // reconciles. No chain, or no call, means no lead — the same omit-not-invent rule as the appendix.
+  function leadLine(d){
+    var w=d.why||{}, steps=w.steps||[];
+    if(!steps.length || w.neutral==null || w.published==null) return null;
+    var call=d.call||"";
+    if(!call || call==="no call") return null;
+    var n=parseFloat(w.neutral), t=parseFloat(w.published);
+    if(!isFinite(n) || !isFinite(t)) return null;
+    var n1=Math.round(Math.abs(n)*10)/10;   // one decimal, the same precision the call is stated in
+    var t1=Math.round(Math.abs(t)*10)/10;
+    var better=(n>0) ? (d.home_full||d.home) : (d.away_full||d.away);
+    if(!better) return null;
+    var head=(n1===0) ? "These two are level on a neutral floor."
+                      : "On a neutral floor, "+better+" by "+n1.toFixed(1)+".";
+    var tail;
+    if(t1===0)             tail="Home court and calibration make it a pick'em.";
+    else if(n1===0)        tail="Home court and calibration make it "+call+".";
+    else if((n>0)!==(t>0)) tail="Home court and calibration flip it to "+call+".";
+    else if(t1>n1)         tail="Home court and calibration take it to "+t1.toFixed(1)+".";
+    else if(t1<n1)         tail="Home court and calibration trim it to "+t1.toFixed(1)+".";
+    else                   tail="Home court and calibration leave it at "+t1.toFixed(1)+".";
+    return head+" "+tail;
+  }
+  // ---- LEAD-LINE-END ----
 
   // REASONING CHAIN — renders d.why.steps verbatim: neutral strength edge, the adjustments that
   // move it, then the projected margin as their sum. The baker only emits a chain it has proven
@@ -367,13 +424,12 @@
     var hero=el("div","hero");
     hero.appendChild(el("div","mu", (d.away_full||d.away)+" @ "+(d.home_full||d.home)));
     hero.appendChild(el("div","call","Our call: "+(d.call||"—")));
+    // THE ANSWER, LED WITH: the call above, and immediately under it the one line that says what
+    // drives it. Everything else on this page is support for these two lines.
+    var lead=leadLine(d);
+    if(lead) hero.appendChild(el("div","lead", lead));
     hero.appendChild(el("div","sub", d.date||""));
     main.appendChild(hero);
-
-    // REASONING CHAIN — leads the page: the analysis behind the headline number comes before
-    // setup and market context.
-    var wy=whyCard(d);
-    if(wy){ var ws=el("section"); ws.appendChild(el("h2",null,"How we get to this number")); ws.appendChild(wy); main.appendChild(ws); }
 
     // CONTEXT + FAIR VALUE (front-office layer)
     var cx=ctxCard(d); if(cx){ var cs=el("section"); cs.appendChild(el("h2",null,"Setup")); cs.appendChild(cx); main.appendChild(cs); }
@@ -413,6 +469,19 @@
 
     // STYLE
     var stg=styleTags(d); if(stg){ var sts=el("section"); sts.appendChild(el("h2",null,"Team style")); sts.appendChild(stg); main.appendChild(sts); }
+
+    // APPENDIX — the full derivation, LAST and COLLAPSED. It is correct, it reconciles to the
+    // published margin exactly, and it is the honest backing for the number, so it is kept in full
+    // and unchanged. It is simply no longer the first thing on the card: the answer leads, the
+    // derivation is one tap away for anyone who wants to check it.
+    var wy=whyCard(d);
+    if(wy){
+      var ws=el("section"); ws.appendChild(el("h2",null,"Appendix"));
+      var dt=el("details","appx");
+      dt.appendChild(el("summary",null,"How we get to this number"));
+      dt.appendChild(wy);
+      ws.appendChild(dt); main.appendChild(ws);
+    }
 
     // PDF REPORT LINK
     if(d.pdf){ var ps=el("section"); var a=el("a","pdf","Full game report (PDF) →"); a.href=d.pdf; ps.appendChild(a); main.appendChild(ps); }
