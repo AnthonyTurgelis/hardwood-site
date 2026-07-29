@@ -121,7 +121,7 @@ function winLineFromPct(pHome, homeFull, awayFull){
 function normPast(p){
   return { matchup:(p.matchup||"—"), tip:(p.tip||""), call:(p.call||""),
     win_line:(p.win_line||""), win_pct:(p.win_pct!=null?p.win_pct:null),
-    range80:(p.range80||""), avail:"", side:"past", actual:null };
+    range80:(p.range80||""), band:null, avail:"", side:"past", actual:null };
 }
 /* Normalize a FORWARD projection (games.json .games[]). */
 function normFuture(g){
@@ -252,6 +252,39 @@ if (typeof module!=="undefined" && module.exports){
 
   var STATE={ timeline:[], idx:0, defIdx:0 };
 
+  /* Margin range, drawn. Same geometry as site/games.html marginBar() and site/game.html
+     marginRangeModel(): a scale symmetric about zero so "even" is always dead centre, the 90% band
+     behind the 80%, the point estimate as a tick, and endpoints labelled by the SIGN of their own
+     value (home-positive) so a one-sided range never names the wrong team. Reads the published
+     numbers; derives nothing. No band -> no bar. */
+  function marginBar(b){
+    if(!b || b.lo==null || b.hi==null) return null;
+    var span=Math.max(Math.abs(b.lo),Math.abs(b.hi),1);
+    function sc(v){ return ((v+span)/(2*span))*100; }
+    function endLabel(v){
+      if(v>0) return b.home+" +"+Math.round(v);
+      if(v<0) return b.away+" +"+Math.abs(Math.round(v));
+      return "even";
+    }
+    var wrap=el("div");
+    var bar=el("div","mbar");
+    var z=el("div","zero"); z.style.left=sc(0).toFixed(1)+"%"; bar.appendChild(z);
+    var b90=el("div","b90"); b90.style.left=sc(b.lo).toFixed(1)+"%";
+    b90.style.width=(sc(b.hi)-sc(b.lo)).toFixed(1)+"%"; bar.appendChild(b90);
+    if(b.lo80!=null && b.hi80!=null){
+      var b80=el("div","b80"); b80.style.left=sc(b.lo80).toFixed(1)+"%";
+      b80.style.width=(sc(b.hi80)-sc(b.lo80)).toFixed(1)+"%"; bar.appendChild(b80);
+    }
+    if(b.point!=null){ var p=el("div","pt"); p.style.left=sc(b.point).toFixed(1)+"%"; bar.appendChild(p); }
+    wrap.appendChild(bar);
+    var cap=el("div","mcap");
+    cap.appendChild(el("span",null,endLabel(b.lo)));
+    cap.appendChild(el("span",null,"even · shaded 80%"));
+    cap.appendChild(el("span",null,endLabel(b.hi)));
+    wrap.appendChild(cap);
+    return wrap;
+  }
+
   function gameCard(g){
     var c=el("div","game"); c.setAttribute("data-k","g|"+g.matchup+"|"+g.side);
     var mu=el("div","mu"); mu.appendChild(document.createTextNode(g.matchup||"—"));
@@ -259,7 +292,12 @@ if (typeof module!=="undefined" && module.exports){
     c.appendChild(mu);
     if(g.call){ c.appendChild(el("div","call", g.call)); }
     if(g.win_line){ c.appendChild(el("div","win", g.win_line)); }
-    if(g.range80){ c.appendChild(el("div","rng","80% range: "+g.range80)); }
+    // The range is SHOWN when we hold the raw band, and only described when we do not. Archived
+    // past rows carry the sentence and nothing else, so they keep the sentence rather than losing
+    // the information to a presentation change.
+    var mb=marginBar(g.band);
+    if(mb){ c.appendChild(mb); }
+    else if(g.range80){ c.appendChild(el("div","rng","80% range: "+g.range80)); }
     if(g.side==="future" && g.avail){
       var a=el("div","avail"); a.appendChild(el("b",null,"Current lineups: ")); a.appendChild(document.createTextNode(g.avail));
       c.appendChild(a);
