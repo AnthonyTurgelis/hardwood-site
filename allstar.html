@@ -39,6 +39,12 @@
   .event .ei{display:inline-flex;flex-direction:column;line-height:1.25}
   .event .ei b{font-size:14px}
   .event .ei span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  /* correction notice — a retracted finding is louder than an honesty caveat, on purpose */
+  .retract{border:1px solid var(--bad);border-left:5px solid var(--bad);background:var(--card);border-radius:9px;padding:12px 15px;margin:12px 0 4px;box-shadow:var(--shadow)}
+  .retract h3{margin:0 0 7px;font-size:13.5px;line-height:1.35;color:var(--bad);font-weight:700}
+  .retract .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--bad);border-radius:999px;padding:2px 8px;margin-bottom:7px}
+  .retract p{margin:0 0 7px;font-size:12.5px;line-height:1.65;color:var(--ink)}
+  .retract p:last-of-type{margin-bottom:0}
   /* honesty banner */
   .banner{border:1px solid var(--line2);border-left:4px solid var(--warn);background:var(--card2);border-radius:9px;padding:10px 13px;margin:10px 0 2px}
   .banner h3{margin:0 0 5px;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--warn)}
@@ -178,7 +184,7 @@
   }
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
-<link rel="stylesheet" href="./hardwood.css?v=0358d41a">
+<link rel="stylesheet" href="./hardwood.css?v=c643cfd1">
 </head>
 <body>
 <header>
@@ -338,6 +344,20 @@
     if(has(ev.format)) item(ev.format,"Format");
     c.appendChild(p);
     if(has(ev.note)) { var n=el("div","pad"); n.appendChild(el("div","note",ev.note)); c.appendChild(n); }
+  }
+
+  // A retracted finding is announced, never quietly deleted. This sits above the
+  // read-me banner so nobody can reach the affected cards without passing it, and it
+  // renders only when the bake actually carries a correction.
+  function renderRetraction(main){
+    var r=DATA.retraction;
+    if(!r || (!has(r.headline) && !(r.lines&&r.lines.length))) return;
+    var b=el("div","retract");
+    b.appendChild(el("span","tag","Correction"));
+    if(has(r.headline)) b.appendChild(el("h3",null,r.headline));
+    (r.lines||[]).forEach(function(t){ if(has(t)) b.appendChild(el("p",null,String(t))); });
+    if(has(r.reference)){ var rf=el("div","ref"); rf.appendChild(el("b",null,"Basis: ")); rf.appendChild(document.createTextNode(r.reference)); b.appendChild(rf); }
+    main.appendChild(b);
   }
 
   function renderBanner(main){
@@ -597,6 +617,7 @@
     tb.appendChild(tbody); sc.appendChild(tb); c.appendChild(sc);
     var n=el("div","pad");
     n.appendChild(el("div","note",pl.note||"Ordered by projected impact. Impact leads because it is the only column that answers 'did this player help the team win'; the counting stats sit last on purpose. Minutes in an All-Star Game are flattened relative to the regular season, which compresses every counting projection."));
+    if(has(pl.correction_note)) n.appendChild(el("div","note",pl.correction_note));
     if(has(pl.out_note)) n.appendChild(el("div","note",pl.out_note));
     if(has(pl.reference)){ var r3=el("div","ref"); r3.appendChild(el("b",null,"Source: ")); r3.appendChild(document.createTextNode(pl.reference)); n.appendChild(r3); }
     c.appendChild(n);
@@ -791,8 +812,10 @@
     // flat table. A player with no impact number sorts last rather than first.
     var players=(pr.players||[]).filter(function(p){ return p && p.metrics; }).slice();
     players.sort(function(a,b){
-      var av=(typeof a.adj_impact==="number"&&isFinite(a.adj_impact))?a.adj_impact:-1e9;
-      var bv=(typeof b.adj_impact==="number"&&isFinite(b.adj_impact))?b.adj_impact:-1e9;
+      // UN-ADJUSTED season impact. The exhibition-adjusted number this used to
+      // order by was retracted 2026-07-29; it is not read here as a fallback.
+      var av=(typeof a.impact==="number"&&isFinite(a.impact))?a.impact:-1e9;
+      var bv=(typeof b.impact==="number"&&isFinite(b.impact))?b.impact:-1e9;
       if(bv!==av) return bv-av;
       return String(a.name||"").localeCompare(String(b.name||""));
     });
@@ -850,7 +873,7 @@
       var team=esc(p.team||"-");
       var mn=p.minutes||{};
       var mtxt=n1(mn.mean); mtxt=(mtxt!==null?mtxt:"-");
-      var ai=n2(p.adj_impact); ai=(ai!==null?((p.adj_impact>0?"+":"")+ai):"-");
+      var ai=n2(p.impact); ai=(ai!==null?((p.impact>0?"+":"")+ai):"-");
       var firstRow=true;
       mets.forEach(function(m){
         var mm=(p.metrics||{})[m];
@@ -1162,7 +1185,7 @@
     section("Front-office angles");
     if(has(DATA.fun_caveat)){
       var cav=el("div","banner");
-      cav.appendChild(el("h3",null,"Read this first — the assumption these turn on"));
+      cav.appendChild(el("h3",null,DATA.fun_caveat_title||"Read this first — the assumption these turn on"));
       cav.appendChild(el("div","fx",DATA.fun_caveat));
       if(has(DATA.fun_note)) cav.appendChild(el("div","hlp",DATA.fun_note));
       document.getElementById("main").appendChild(cav);
@@ -1234,6 +1257,7 @@
       c.appendChild(p); main.appendChild(c); return;
     }
     renderEvent(main);
+    renderRetraction(main);
     renderHeadline(main);
     renderBanner(main);
     renderTotal(main);

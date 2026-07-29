@@ -98,7 +98,7 @@
   .empty{color:var(--dim);font-style:italic}
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
-<link rel="stylesheet" href="./hardwood.css?v=0358d41a">
+<link rel="stylesheet" href="./hardwood.css?v=c643cfd1">
 </head>
 <body>
 <header>
@@ -170,19 +170,44 @@
     if(hs) parts.push((g.home_full||g.home)+" — "+hs);
     return el("div","gstyle","How they play: "+parts.join(" · "));
   }
-  /* find this card's matchup in the baked per-matchup tempo read by team abbrs; null when the
-     tempo read didn't cover it (omit-not-invent). Pace is season-level, so an abbr join is exact. */
+  /* "2026-07-22" -> "Jul 22" for the pace as-of stamp. Plain date in, plain label out;
+     graceful-'' on anything unparseable so a bad stamp drops the clause, never the line. */
+  function shortDate(iso){
+    if(!iso) return "";
+    var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); if(!m) return "";
+    var MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    var mi=parseInt(m[2],10)-1; if(mi<0||mi>11) return "";
+    return MN[mi]+" "+parseInt(m[3],10);
+  }
+  /* find this card's expected-tempo read, normalised to ONE shape regardless of source.
+     PREFERRED source is ./preview.json — the bake joins per-team season pace to EVERY upcoming
+     game by that game's own team abbreviations and carries the read's true as-of, so coverage is
+     the whole slate rather than the nearest date. Falls back to the ./tempo.json matchups block
+     (same pace source, same definition) when the preview has no pace for this game. Null when
+     neither joins — the card omits the line rather than guess a pace. */
   function paceMatchup(g){
-    if(!TV||!TV.matchups||!TV.matchups.games||!g) return null;
+    if(!g) return null;
+    if(PV && PV.games && PV.games[g.game_id] && PV.games[g.game_id].pace){
+      var p=PV.games[g.game_id].pace;
+      if(p.exp_pace!=null){
+        return {exp_pace:p.exp_pace, exp_tag_label:p.tag_label,
+                home_pace:p.home_pace, away_pace:p.away_pace,
+                as_of:p.as_of, days_behind:p.days_behind,
+                missing_games:p.missing_games, stale:p.stale};
+      }
+    }
+    if(!TV||!TV.matchups||!TV.matchups.games) return null;
     var gm=TV.matchups.games;
     for(var i=0;i<gm.length;i++){
       if(gm[i] && gm[i].home===g.home && gm[i].away===g.away) return gm[i];
     }
     return null;
   }
-  /* the per-matchup expected-tempo line (B->A rung): a REAL possessions-per-game number joined
-     from ./tempo.json, with each side's season pace so the reader sees WHY a game projects high or
-     low-scoring. Returns null when no matchup joins (missing/uncovered) — the card just omits it. */
+  /* the per-matchup expected-tempo line (B->A rung): a REAL possessions-per-game number for THIS
+     matchup, with each side's season pace so the reader sees WHY a game projects high or
+     low-scoring, and — when the pace read does not yet include every game played — an explicit
+     "through <date>" stamp so an old number can never read as a current one. Returns null when no
+     matchup joins (missing/uncovered) — the card just omits it. */
   function paceLine(g){
     var m=paceMatchup(g); if(!m || m.exp_pace==null) return null;
     var tag=m.exp_tag_label ? (" · "+m.exp_tag_label) : "";
@@ -190,8 +215,46 @@
     if(m.away_pace!=null) sides.push((g.away||"")+" "+m.away_pace);
     if(m.home_pace!=null) sides.push((g.home||"")+" "+m.home_pace);
     var detail=sides.length ? (" — "+sides.join(", ")) : "";
+    /* the as-of stamp. A pace read can fall behind two ways — the whole read lags the schedule
+       by days, or it lags by GAMES already played that it has not absorbed (which a date alone
+       cannot see when only some teams are behind). Report whichever applies; a current read is
+       still stamped, so the reader never has to assume. */
+    var asof="", d=shortDate(m.as_of);
+    if(d){
+      asof=" Season pace through "+d;
+      var lag=[];
+      if(m.days_behind>0){ lag.push(m.days_behind+(m.days_behind===1?" day":" days")); }
+      if(m.missing_games>0){ lag.push(m.missing_games+(m.missing_games===1?" game":" games")); }
+      if(lag.length){ asof+=" — "+lag.join(" and ")+" behind the latest game played"; }
+      asof+=".";
+    }
     return el("div","gstyle","Expected tempo: "+m.exp_pace+" possessions/game"+tag+detail+
-      ". Faster pace lifts both teams' point totals — a style read, not a strength signal.");
+      ". Faster pace lifts both teams' point totals — a style read, not a strength signal."+asof);
+  }
+  /* the projected-scoring range for one rotation row, as "(9–38)". The bake attaches pts_lo/pts_hi
+     ONLY when the projection itself is shown and the band could be fitted, so a dashed projection
+     or an unavailable fit simply renders the point with no range (omit-not-invent). */
+  function ptsRange(p){
+    if(!p || p.pts_lo==null || p.pts_hi==null) return "";
+    return " ("+p.pts_lo+"–"+p.pts_hi+")";
+  }
+  /* one plain-English line explaining what the scoring range IS and how often it actually
+     contained the result — the coverage is measured at bake time, never asserted. Null when the
+     payload carries no band (then no row shows a range either, so nothing to explain). */
+  function bandNote(){
+    var b=PV && PV.scoring_band; if(!b || b.level_pct==null) return null;
+    var t="The range after each scoring number is where about "+b.level_pct+
+          " out of 100 results have landed — it widens for bigger scorers because their game-to-game "+
+          "swing is genuinely bigger.";
+    if(b.coverage_pct!=null){
+      t+=" Checked against "+b.fit_n+" projections we have since graded: "+b.coverage_pct+
+         "% landed inside it";
+      if(b.oos_coverage_pct!=null){
+        t+=", and "+b.oos_coverage_pct+"% on the "+b.oos_n+" games the range was not fitted on";
+      }
+      t+=".";
+    }
+    return el("div","avnote",t);
   }
   /* absolute ET clock ("Jul 22, 11:28 PM ET") for the preview freshness stamp so a coach can
      see how stale the shown assumptions are. Formats a UTC ISO string in America/New_York;
@@ -342,7 +405,9 @@
           // (B rung). `pts` undefined = not baked on this row -> show minutes only (forward-safe);
           // `pts` null = status moved after the projection froze -> a dash, never a fake 0.
           var stat=(p.min==null ? "—" : (Math.round(p.min)+" min"));
-          if(p.pts!==undefined){ stat += " · " + (p.pts==null ? "—" : (Math.round(p.pts)+" pts")); }
+          if(p.pts!==undefined){
+            stat += " · " + (p.pts==null ? "—" : (Math.round(p.pts)+" pts"+ptsRange(p)));
+          }
           r.appendChild(el("span","rotmin", stat));
           box.appendChild(r);
         });
@@ -360,6 +425,7 @@
       }
       det.appendChild(box);
     });
+    var bn=bandNote(); if(bn){ det.appendChild(bn); }
     if(PV.note){ det.appendChild(el("div","avnote", PV.note)); }
     // PREVIEW FRESHNESS (B rung): when these assumptions were set, in plain ET, so a coach can
     // judge staleness at a glance. Prefer this game's own preview stamp, fall back to the payload's.
