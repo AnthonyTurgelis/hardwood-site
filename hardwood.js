@@ -1,29 +1,47 @@
-/* hardwood.js — shared PUBLIC status chrome for every board tab (BOARD-V2, directives #3/#5/#6/#7/#9).
+/* hardwood.js - the shared status chrome loaded by every board tab except the main board.
  *
- * ONE small self-contained script, loaded by every page. It owns the top-of-page status strip:
- *   (i)  "Data updated: HH:MM (Xm ago)"     — from status.json's OWN baked generated timestamp
- *   (ii) "Checked for updates: Xs ago"       — the 60s background poll of status.json
- *   pipe health  "directives: N pending, last processed HH:MM"  (or UNKNOWN + the reason)
- *   scout heartbeat  "scout: alive, last poll Xs ago"
- *   pause state  TWO DISTINCT states — SELF-PAUSE (we filed it) vs PROVIDER LIMIT (they refused us)
- *   idle-beacon banner  three DISTINCT states: normal (hidden) / NEEDS DIRECTOR / paused
+ * ONE small self-contained script. It owns the strip under the nav on all 22 secondary pages, and
+ * it answers the same two questions the main board's own strip answers, IN THE SAME WORDS:
  *
- * NEVER-BLANK (P0-F8): every field renders a DEFINITE state. Unreadable publishes
- * "UNKNOWN — <reason>", never an empty slot and never a stale value presented as current. The
- * coordinator pill proved this pattern; every other field now follows it.
+ *   1. IS WHAT I AM READING CURRENT?  one freshness sentence, measured against this page's own
+ *      published refresh contract and escalated at the threshold the machine itself pages on.
+ *   2. IS ANYTHING STOPPED?           one work-state sentence, under ONE order of precedence.
  *
- * It ALSO ticks every element with class "hw-stamp" and a data-utc attribute into a muted
- * "HH:MM . Xm ago" per-card timestamp, so every page gets per-card times for free.
+ * Plus a dense pill row (updated / last checked / instructions / listening / who is running it /
+ * work state) and a per-card timestamp ticker for any element with class "hw-stamp".
+ *
+ * COPY RULES (CEO 20260729: "there was also LOTS of technical jargon and nonsense in those updates
+ * ... that's not realistic to read"). These are mechanical, not stylistic:
+ *   * ASCII ONLY in anything a reader sees. A utf-8 em-dash or a warning glyph written here comes
+ *     back as mojibake once anything on this box re-reads it as cp1252, and the glyphs read as the
+ *     stray old emoji he asked us to stop sending. Hyphens, "...", and words instead.
+ *   * NO SHELL COMMANDS, NO FILE NAMES, NO IDENTIFIERS, NO ISO TIMESTAMPS, NO snake_case. This strip
+ *     used to print "Remedy: python ops/scout/ack.py --resume" and "directives: 2 pending" at him.
+ *     Nobody reading a basketball page is going to run a command. Say what it MEANS or say nothing:
+ *     the payload's own `remedy` / `evidence` / `reason` / `label` / `filed_by` strings are internal
+ *     diagnostics and are deliberately NOT rendered. They stay in status.json, where they belong.
+ *   * Plain words, but DENSE: short pills, and a banner only when something is actually wrong.
+ *
+ * NEVER-BLANK (P0-F8): every field renders a DEFINITE state. An unreadable signal says so in plain
+ * English ("we cannot tell ..."), never an empty slot and never a stale value presented as current.
+ * Silence on "is anything paused" reads as "fine", so it is banned.
+ *
+ * ONE DEFINITION OF STALE: the loud threshold is NOT ours to invent. This page's own contract
+ * (stale_after_secs, published by the baker) is when a refresh is DUE; the alarm the machine raises
+ * on the public board fires at max(that, the 900s floor in scripts/publish_health.py). Both numbers
+ * live here as ONE ladder, so a page can never call itself fine while the pager is paging about it.
+ * tests/test_hardwood_chrome_copy.js reads that floor out of the Python and fails if they drift.
  *
  * DISCIPLINE: same-origin fetch of ./status.json ONLY. No DB, no framework, no CDN, no secrets.
- * The poll is NON-DISRUPTIVE — it only rewrites the strip's own nodes; it never touches #main,
+ * The poll is NON-DISRUPTIVE - it only rewrites the strip's own nodes; it never touches #main,
  * never scrolls, never collapses the reader's section.
  */
 (function () {
   "use strict";
   var STATUS_URL = "./status.json";
   var lastFetch = 0;          // ms epoch of last status.json poll
-  var genIso = null;          // status.json generated_utc (timer i basis)
+  var polled = false;         // has ANY poll resolved? "not asked yet" is not "asked and cannot tell"
+  var genIso = null;          // status.json generated_utc (the freshness basis)
   var status = null;
 
   // ---- tiny helpers ----
@@ -41,6 +59,7 @@
     if (isNaN(d.getTime())) return "";
     return agoSecs(Math.round((Date.now() - d.getTime()) / 1000));
   }
+  // TERSE age, for the muted per-card stamps only (small type beside a card time).
   function agoSecs(s) {
     s = Math.max(0, s);
     if (s < 60) return s + "s ago";
@@ -48,39 +67,59 @@
     if (s < 86400) return Math.floor(s / 3600) + "h " + (Math.floor((s % 3600) / 60)) + "m ago";
     return Math.floor(s / 86400) + "d ago";
   }
+  /* PLAIN-ENGLISH age, for everything a sentence or a pill says. Word-for-word the same function the
+     main board's strip uses, so all 23 pages describe the same age with the same words. It TRUNCATES
+     exactly as agoSecs() does (rounding here once produced "2 minutes ago" beside a chip reading "1m
+     ago" off one timestamp), and under a minute it quotes no number at all, so it cannot disagree
+     with a ticking seconds counter either. */
+  function plainAgo(s) {
+    if (s == null) return "";
+    s = Math.max(0, s);
+    if (s < 60) return "just now";
+    if (s < 3600) { var m = Math.floor(s / 60); return (m === 1 ? "a minute ago" : m + " minutes ago"); }
+    if (s < 86400) {
+      var h = Math.floor(s / 3600), rm = Math.floor((s % 3600) / 60);
+      return (h === 1 ? "an hour" : h + " hours") +
+             (rm ? (" and " + (rm === 1 ? "a minute" : rm + " minutes")) : "") + " ago";
+    }
+    var d = Math.floor(s / 86400); return (d === 1 ? "a day ago" : d + " days ago");
+  }
+  function plainFor(s) { return plainAgo(s).replace(/ ago$/, ""); }   // a DURATION, not a point in time
+  function plainMins(s) { var m = Math.round((s || 0) / 60); return (m <= 1 ? "minute" : m + " minutes"); }
 
   // ---- strip DOM (built once, injected right after <nav>) ----
   function injectStyle() {
     if (document.getElementById("hw-style")) return;
     var css =
       "#hwstrip{max-width:1080px;margin:6px auto 0;padding:0 14px;font:11.5px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}" +
-      "#hwbanner{display:none;border-radius:8px;padding:6px 11px;margin-bottom:6px;font-weight:650;font-size:12.5px}" +
-      "#hwbanner.needs{display:block;background:#fbe9e7;color:#b3261e;border:1px solid #f3b6ae}" +
-      "#hwbanner.paused{display:block;background:#fff4e2;color:#9a6700;border:1px solid #f0d9a8}" +
-      "#hwpause{display:none;border-radius:8px;padding:6px 11px;margin-bottom:6px;font-weight:650;font-size:12.5px}" +
-      "#hwpause.selfpause{display:block;background:#fff4e2;color:#9a6700;border:1px solid #f0d9a8}" +
-      "#hwpause.provider{display:block;background:#fbe9e7;color:#b3261e;border:1px solid #f3b6ae}" +
-      "#hwpause.unknownstate{display:block;background:#fbe9e7;color:#b3261e;border:1px dashed #f3b6ae}" +
-      "@media (prefers-color-scheme:dark){#hwbanner.needs{background:#3a1512;color:#ff8a80;border-color:#7a271f}" +
-      "#hwbanner.paused{background:#332708;color:#e3b341;border-color:#6b530f}" +
-      "#hwpause.selfpause{background:#332708;color:#e3b341;border-color:#6b530f}" +
-      "#hwpause.provider,#hwpause.unknownstate{background:#3a1512;color:#ff8a80;border-color:#7a271f}}" +
+      "#hwfresh,#hwwork{display:none;border-radius:8px;padding:6px 11px;margin-bottom:6px;font-weight:650;font-size:12.5px}" +
+      "#hwfresh.warn,#hwwork.warn{display:block;background:#fff4e2;color:#9a6700;border:1px solid #f0d9a8}" +
+      "#hwfresh.bad,#hwwork.bad{display:block;background:#fbe9e7;color:#b3261e;border:1px solid #f3b6ae}" +
+      "@media (prefers-color-scheme:dark){#hwfresh.warn,#hwwork.warn{background:#332708;color:#e3b341;border-color:#6b530f}" +
+      "#hwfresh.bad,#hwwork.bad{background:#3a1512;color:#ff8a80;border-color:#7a271f}}" +
       "#hwbar{display:flex;flex-wrap:wrap;gap:5px;align-items:center}" +
       ".hwpill{display:inline-flex;align-items:center;gap:4px;border:1px solid #d9dee7;background:#fff;color:#5a6675;" +
       "border-radius:999px;padding:2px 9px;white-space:nowrap}" +
       ".hwpill b{color:#16181d;font-variant-numeric:tabular-nums;font-weight:640}" +
       ".hwpill.live b{color:#1f883d}" +
       ".hwpill .dot{width:6px;height:6px;border-radius:50%;background:#8a93a3}" +
-      ".hwpill.ok .dot{background:#1f883d}.hwpill.warn .dot{background:#c62828}" +
+      ".hwpill.ok .dot{background:#1f883d}.hwpill.warn .dot{background:#d29922}.hwpill.bad .dot{background:#c62828}" +
+      ".hwpill.bad{color:#b3261e}" +
       ".hw-stamp{font-size:10.5px;color:#8a93a3;font-variant-numeric:tabular-nums;white-space:nowrap}" +
       "@media (prefers-color-scheme:dark){.hwpill{background:#161b22;border-color:#2a3340;color:#9aa7b4}" +
       ".hwpill b{color:#e6edf3}.hwpill.live b{color:#3fb950}.hwpill.ok .dot{background:#3fb950}" +
-      ".hwpill.warn .dot{background:#ff7b72}.hw-stamp{color:#6b7684}}";
+      ".hwpill.warn .dot{background:#d29922}.hwpill.bad .dot{background:#ff7b72}.hwpill.bad{color:#ff8a80}" +
+      ".hw-stamp{color:#6b7684}}";
     var st = document.createElement("style");
     st.id = "hw-style"; st.textContent = css;
     document.head.appendChild(st);
   }
 
+  /* The two banners have ONE job each and cannot contradict one another: #hwfresh only ever talks
+     about how old the numbers are, #hwwork only ever talks about whether work is stopped. The old
+     pair (#hwbanner reading the beacon flag, #hwpause reading the pause block) could and did show
+     "paused" and nothing-is-paused at the same time; that duplication is retired here, exactly as it
+     was retired on the main board. */
   function mount() {
     injectStyle();
     var nav = document.querySelector("nav");
@@ -88,18 +127,18 @@
     var strip = document.createElement("div");
     strip.id = "hwstrip";
     strip.innerHTML =
-      '<div id="hwbanner"></div>' +
-      '<div id="hwpause"></div>' +
+      '<div id="hwfresh"></div>' +
+      '<div id="hwwork"></div>' +
       '<div id="hwbar">' +
-      '  <span class="hwpill live" id="hw-data" title="When the site data was last rebaked">Data updated: <b>—</b></span>' +
-      '  <span class="hwpill" id="hw-poll" title="When your browser last checked for a fresh copy">Checked for updates: <b>—</b></span>' +
-      '  <span class="hwpill" id="hw-pipe" title="Director directives waiting / last one processed">directives: <b>—</b></span>' +
-      '  <span class="hwpill" id="hw-scout" title="The 24/7 directive watcher liveness"><span class="dot"></span><span class="txt">scout: starting</span></span>' +
-      '  <span class="hwpill" id="hw-coord" title="The work coordinator (the chair that runs the session)"><span class="dot"></span><span class="txt">coordinator: —</span></span>' +
-      '  <span class="hwpill" id="hw-pause" title="Usage/pause state: SELF-PAUSE (we stopped ourselves) vs PROVIDER LIMIT (the provider stopped us)"><span class="dot"></span><span class="txt">usage: —</span></span>' +
+      '  <span class="hwpill live" id="hw-data" title="When the numbers on this page were last rebuilt">Numbers updated: <b>not read yet</b></span>' +
+      '  <span class="hwpill" id="hw-poll" title="When your browser last looked for newer numbers">Checked for new numbers: <b>not yet</b></span>' +
+      '  <span class="hwpill" id="hw-pipe" title="Instructions you have sent, and whether they have been picked up">Your instructions: <b>checking</b></span>' +
+      '  <span class="hwpill" id="hw-scout" title="Whether anything is listening for new instructions right now"><span class="dot"></span><span class="txt">Listening for new instructions: checking</span></span>' +
+      '  <span class="hwpill" id="hw-coord" title="Whether anyone is actually running the work right now"><span class="dot"></span><span class="txt">Who is running the work: checking</span></span>' +
+      '  <span class="hwpill" id="hw-pause" title="Whether work is running, paused by us, or stopped from outside"><span class="dot"></span><span class="txt">Checking whether anything is paused</span></span>' +
       '</div>';
     nav.parentNode.insertBefore(strip, nav.nextSibling);
-    // legacy per-page ".ago" chip is now redundant with the two-timer strip — hide it
+    // legacy per-page ".ago" chip is now redundant with the strip's own timers - hide it
     var legacy = document.getElementById("ago");
     if (legacy) legacy.style.display = "none";
   }
@@ -108,231 +147,265 @@
   function renderStrip() {
     var dataP = document.querySelector("#hw-data b");
     if (dataP) {
-      var c = clockOf(genIso), a = agoOf(genIso);
-      dataP.textContent = genIso ? (c + " (" + a + ")") : "—";
+      var age = genIso ? Math.round((Date.now() - new Date(genIso).getTime()) / 1000) : null;
+      dataP.textContent = (genIso && age != null && !isNaN(age))
+        ? (clockOf(genIso) + " (" + plainAgo(age) + ")")
+        : "not read yet";
     }
     var pollP = document.querySelector("#hw-poll b");
-    if (pollP) pollP.textContent = lastFetch ? agoSecs(Math.round((Date.now() - lastFetch) / 1000)) : "—";
-
-    if (status) {
-      var pipeP = document.querySelector("#hw-pipe b");
-      if (pipeP) pipeP.textContent = pipeView(status.pipe_health).text;
-      var sc = status.scout || {};
-      var scoutPill = document.getElementById("hw-scout");
-      if (scoutPill) {
-        scoutPill.className = "hwpill " + (sc.alive ? "ok" : "warn");
-        var txt = scoutPill.querySelector(".txt");
-        if (txt) {
-          txt.textContent = sc.alive
-            ? ("scout: alive" + (sc.age_s != null ? ", last poll " + sc.age_s + "s ago" : ""))
-            : (sc.label || "scout: starting");
-        }
-      }
-      // COORDINATOR pill (CEO P0b 20260725) — the chair NEVER renders blank. A missing/empty
-      // coordinator object, an UNKNOWN state, or alive:false all render LOUD RED (warn), never a
-      // silent gap that reads as 'nothing here'. Distinguishes ALIVE / DEAD / UNKNOWN explicitly.
-      renderCoordinator(status.coordinator);
-      renderPause(status.pause);
-      renderBanner(status.beacon || {});
+    if (pollP) {
+      pollP.textContent = lastFetch
+        ? plainAgo(Math.round((Date.now() - lastFetch) / 1000))
+        : "not yet";
     }
+
+    var pipeP = document.querySelector("#hw-pipe b");
+    if (pipeP) pipeP.textContent = status ? pipeView(status.pipe_health).text : "checking";
+
+    renderScout(status ? status.scout : null);
+    // COORDINATOR pill (CEO P0b 20260725) - the chair NEVER renders blank. A missing/empty
+    // coordinator object, an UNKNOWN state, or alive:false all render LOUD, never a silent gap that
+    // reads as 'nothing here'. Distinguishes ALIVE / DEAD / UNKNOWN explicitly.
+    renderCoordinator(status ? status.coordinator : null);
+
+    /* ONE precedence, computed ONCE: the work state decides its own sentence AND tells the freshness
+       sentence whether an ageing page is a broken publisher or the expected result of a pause. */
+    var work = polled
+      ? workView(status ? status.pause : null, status ? status.beacon : null, !!status)
+      : { level: "", paused: false, short: "Checking whether anything is paused",
+          text: "Checking whether anything is paused..." };
+    renderWork(work);
+    renderFresh(staleView(genIso, status ? status.stale_after_secs : null, Date.now(), work.paused));
   }
 
-  function fmtAge(s) { return (s == null) ? "unknown" : agoSecs(s); }
-
-  // ---- PIPE (never-blank): a missing/unknown "last processed" says UNKNOWN + WHY, never "" ----
-  // The stamp used to render blank-or-frozen: the builder read two retired sources, so the board
-  // showed a July 9 clock as current for twenty days. The payload now carries an explicit
-  // last_processed_known + last_processed_display; we render the honest string, never a bare clock.
+  /* ---- INSTRUCTIONS (never-blank): how many things he has sent that are still waiting, and when
+     one was last picked up. This used to render "directives: 2 pending, last processed 9:26am" and,
+     when the stamp was unreadable, the internal reason verbatim ("unknown - only a retired source
+     had one"). The reason is a diagnostic for us, not copy for him; it stays in status.json. The
+     stamp itself still matters: the board once showed a July 9 clock as current for twenty days
+     because its two sources were dead, so an unknown stamp says it is unknown rather than guessing. */
   function pipeView(ph) {
     if (!ph || typeof ph !== "object") {
-      return { text: "UNKNOWN — status unreadable", known: false };
+      return { text: "we cannot tell right now", known: false };
     }
     var n = (ph.directives_pending == null) ? 0 : ph.directives_pending;
-    var head = (n === 0 ? "none pending" : (n + " pending"));
+    var head = (n === 0 ? "none waiting" : (n === 1 ? "1 waiting" : n + " waiting"));
     var known = (ph.last_processed_known === true) ||
                 (ph.last_processed_known == null && !!ph.last_processed_clock);
     if (known && ph.last_processed_clock) {
-      return { text: head + ", last processed " + ph.last_processed_clock, known: true };
+      return { text: head + ", last one picked up " + ph.last_processed_clock, known: true };
     }
-    var why = ph.last_processed_display || ("unknown" + (ph.reason ? " — " + ph.reason : ""));
-    return { text: head + ", last processed " + why, known: false };
+    return { text: head + ", and we cannot tell when the last one was picked up", known: false };
   }
 
-  // ---- PAUSE: SELF-PAUSE and PROVIDER LIMIT are two DISTINCT states, never one "usage pause" ----
-  // SELF-PAUSE  = we filed ops/PAUSED_UNTIL.json.  Remedy: ack.py --resume. Show who + when.
-  // PROVIDER LIMIT = the provider actually refused/limited us. Remedy: wait for the verified reset.
-  // The live percent rides along WITH ITS QUALITY — an unmeasured percent renders "unknown (not
-  // measured)", never a confident number.
-  function pctPhrase(pc) {
-    if (!pc || typeof pc !== "object") return "usage unknown (no reading)";
-    var q = (pc.quality || "UNKNOWN").toUpperCase();
-    if (q === "UNKNOWN") {
-      return "usage unknown" + (pc.reason ? " (" + pc.reason + ")" : " (not measured)") +
-             (pc.last_known_display ? " · last known " + pc.last_known_display : "");
+  /* ---- WHO IS LISTENING. The payload's own `label` ("scout: alive, last poll 13s ago") is an
+     internal string with an internal name in it; we render our own words off the same two fields. */
+  function scoutView(sc) {
+    if (!sc || typeof sc !== "object") {
+      return { level: "warn", text: "We cannot tell if anything is listening for new instructions" };
     }
-    return "usage " + (pc.display || "?") + " (" + q.toLowerCase() + ")";
+    if (sc.alive) {
+      return { level: "ok", text: "Listening for new instructions" +
+        (sc.age_s != null ? " (checked " + plainAgo(sc.age_s) + ")" : "") };
+    }
+    return { level: "bad", text: "NOTHING IS LISTENING for new instructions" };
   }
 
-  // The PILL is a one-line chip — carry the state + the qualified number, and leave the full
-  // reason/last-known detail to the banner. Still never a bare unqualified number.
-  function pctShort(pc) {
-    if (!pc || typeof pc !== "object") return "usage unknown";
-    var q = (pc.quality || "UNKNOWN").toUpperCase();
-    if (q === "UNKNOWN") return "usage unknown (not measured)";
-    return "usage " + (pc.display || "?") + " (" + q.toLowerCase() + ")";
-  }
-
-  function pauseView(p) {
-    // NEVER-BLANK: a missing/garbled pause object is itself the UNKNOWN state.
-    if (!p || typeof p !== "object") {
-      return { state: "UNKNOWN", pillCls: "hwpill warn", bannerCls: "unknownstate",
-               pill: "usage: UNKNOWN — status unreadable",
-               banner: "⚠ PAUSE STATE UNKNOWN — the status source could not be read." };
-    }
-    var st = (p.state || "UNKNOWN").toUpperCase();
-    var sp = p.self_pause || {}, pl = p.provider_limit || {}, pc = p.percent || {};
-    var pct = pctPhrase(pc), pctp = pctShort(pc);
-    if (st === "PROVIDER_LIMIT") {
-      var ev = (pl.evidence && pl.evidence.length) ? pl.evidence.join("; ") : "provider refusal on record";
-      var reset = pl.resets_known && pl.resets_clock
-        ? ("resets " + pl.resets_clock)
-        : "reset time NOT reported by the provider";
-      return { state: st, pillCls: "hwpill warn", bannerCls: "provider",
-               pill: "PROVIDER LIMIT — " + pctp,
-               banner: "⛔ PROVIDER LIMIT — the provider limited us (" + ev + "). " + pct +
-                       ". " + reset + ". Remedy: " + (pl.remedy || "wait for the verified reset") + "." };
-    }
-    if (st === "SELF_PAUSE") {
-      var who = sp.filed_by && sp.filed_by !== "unknown" ? sp.filed_by : "filer not recorded";
-      var when = sp.filed_clock ? sp.filed_clock : "time not recorded";
-      var kind = sp.kind && sp.kind !== "none" ? sp.kind : "unspecified kind";
-      return { state: st, pillCls: "hwpill warn", bannerCls: "selfpause",
-               pill: "SELF-PAUSE — " + pctp,
-               banner: "⏸ SELF-PAUSE — WE filed this pause (" + kind + "), filed " + when +
-                       " by " + who + (sp.reason ? " · " + sp.reason : "") + ". " + pct +
-                       ". Remedy: " + (sp.remedy || "python ops/scout/ack.py --resume") + "." };
-    }
-    if (st === "NORMAL") {
-      var q = (pc.quality || "UNKNOWN").toUpperCase();
-      return { state: st, pillCls: "hwpill " + (q === "MEASURED" ? "ok" : (q === "UNKNOWN" ? "warn" : "")),
-               bannerCls: "", pill: "no pause · " + pctp, banner: "" };
-    }
-    return { state: "UNKNOWN", pillCls: "hwpill warn", bannerCls: "unknownstate",
-             pill: "usage: UNKNOWN — " + (p.label || "pause state unreadable"),
-             banner: "⚠ PAUSE STATE UNKNOWN — " + (p.label || "the pause flag could not be read") +
-                     ". " + pct + "." };
-  }
-
-  function renderPause(p) {
-    var v = pauseView(p);
-    var pill = document.getElementById("hw-pause");
-    if (pill) {
-      pill.className = v.pillCls;
-      var txt = pill.querySelector(".txt");
-      if (txt) txt.textContent = v.pill;
-    }
-    var banner = document.getElementById("hwpause");
-    if (banner) {
-      banner.className = v.bannerCls;   // "" hides it (NORMAL)
-      banner.textContent = v.banner;
-    }
-  }
-
-  function renderCoordinator(co) {
-    var pill = document.getElementById("hw-coord");
-    if (!pill) return;
-    var txt = pill.querySelector(".txt");
-    // NEVER-BLANK: a missing/empty object is itself the UNKNOWN case, not an excuse to render "—".
+  function coordView(co) {
+    // NEVER-BLANK: a missing/empty object is itself the UNKNOWN case, not an excuse to render blank.
     if (!co || typeof co !== "object") {
-      pill.className = "hwpill warn";
-      if (txt) txt.textContent = "coordinator: UNKNOWN — status unreadable";
-      return;
+      return { level: "warn", text: "We cannot tell if anyone is running the work" };
     }
     var state = (co.state || (co.alive ? "ALIVE" : (co.known === false ? "UNKNOWN" : "DEAD"))).toUpperCase();
     if (state === "ALIVE" && co.alive) {
-      pill.className = "hwpill ok";
-      if (txt) txt.textContent = "coordinator: alive" +
-        (co.session_age_secs != null ? " (up " + agoSecs(co.session_age_secs).replace(" ago", "") + ")" : "");
-    } else if (state === "UNKNOWN" || co.known === false) {
-      pill.className = "hwpill warn";
-      if (txt) txt.textContent = "coordinator: UNKNOWN — " + (co.reason || "source unreadable");
-    } else {
-      // confidently DEAD: loud, but honest about what we DO know (last progress / spawn / block).
-      pill.className = "hwpill warn";
-      var extra = "no progress for " + fmtAge(co.last_progress_age_secs);
-      if (co.blocked_reason) extra += " · " + co.blocked_reason;
-      else if (co.last_spawn_attempt) extra += " · respawn attempted";
-      if (txt) txt.textContent = "coordinator: DOWN — " + extra;
+      return { level: "ok", text: "Work is being run right now" +
+        (co.session_age_secs != null ? " (for " + plainFor(co.session_age_secs) + ")" : "") };
     }
+    if (state === "UNKNOWN" || co.known === false) {
+      return { level: "warn", text: "We cannot tell if anyone is running the work" };
+    }
+    // confidently DEAD: loud, and honest about the one thing a reader can act on - how long it has
+    // been standing still. `blocked_reason` is an internal token and is deliberately not shown.
+    var extra = (co.last_progress_age_secs == null)
+      ? "nothing has moved and we cannot tell for how long"
+      : "nothing has moved for " + plainFor(co.last_progress_age_secs);
+    if (co.last_spawn_attempt) extra += ", and a restart has been tried";
+    return { level: "bad", text: "NOBODY IS RUNNING THE WORK - " + extra };
   }
 
-  // ---- STALENESS: the page's own 300s contract, enforced here. `stale_after_secs` is published
-  // BY the baker (bake_status) so the threshold and this banner can never drift apart. A MISSING
-  // threshold now falls back to the same 300s contract (the old 86400s fallback meant a payload
-  // without the field could sit a whole day stale in silence). Age is measured against the payload's
-  // own generated_utc, so a page that stops being republished goes loud on its own clock.
+  /* ---- HOW MUCH OF THE WORK LIMIT IS USED, only ever as well as we actually know it. A number is
+     printed ONLY when the reading is a real one; an unread meter says it is unread. (A meter that
+     scraped a plausible-looking number out of an unrelated file and showed it as real is exactly the
+     failure this wording exists to make impossible.) The payload's `reason` and `last_known_display`
+     are diagnostics, not copy - an old number shown beside a live page is worse than no number. */
+  function pctSentence(pc) {
+    if (!pc || typeof pc !== "object") return "We cannot read how much of our work limit is used.";
+    var q = String(pc.quality || "UNKNOWN").toUpperCase(), d = pc.display;
+    if (q === "MEASURED" && d) return "We have used " + d + " of our work limit.";
+    if (q === "INFERRED" && d) return "We have used about " + d + " of our work limit, and that " +
+      "figure is an estimate rather than a direct reading.";
+    return "We cannot read how much of our work limit is used right now.";
+  }
+  function pctShort(pc) {
+    if (!pc || typeof pc !== "object") return "limit use unknown";
+    var q = String(pc.quality || "UNKNOWN").toUpperCase(), d = pc.display;
+    if (q === "MEASURED" && d) return d + " of our limit used";
+    if (q === "INFERRED" && d) return "about " + d + " of our limit used, estimated";
+    return "limit use unknown";
+  }
+
+  /* ---- ONE work-state sentence, under ONE order of precedence: a limit imposed from OUTSIDE
+     outranks a pause we filed ourselves, which outranks the coordinator's own beacon. A pause we
+     filed for the WEEK and a short one are genuinely different situations - the weekly kind never
+     restarts by itself - so they never render in the same words. Same words as the main board.
+     `short` is the pill; `text` is the banner; both come off this ONE ladder so they cannot
+     disagree about what is happening. */
+  function workView(p, bc, ok) {
+    bc = bc || {};
+    if (!ok || !p || typeof p !== "object") {
+      return { level: "warn", paused: false, short: "We cannot tell whether work is paused",
+        text: "We cannot tell whether work is paused right now - that reading did not load. " +
+              "Nothing here says it is running." };
+    }
+    var st = String(p.state || "UNKNOWN").toUpperCase();
+    var sp = p.self_pause || {}, pl = p.provider_limit || {}, pc = p.percent || {};
+    if (st === "PROVIDER_LIMIT") {
+      var back = (pl.resets_known && pl.resets_clock)
+        ? ("Work restarts when that clears, around " + pl.resets_clock + ".")
+        : "They have not said when it clears, so we are waiting on them.";
+      return { level: "bad", paused: true, short: "STOPPED FROM OUTSIDE - we have hit our limit",
+        text: "STOPPED FROM OUTSIDE - we have hit the limit on our account, so nothing is running. " +
+              back + " " + pctSentence(pc) };
+    }
+    if (st === "SELF_PAUSE") {
+      var kind = String(sp.kind || "unknown").toLowerCase();
+      var since = sp.filed_clock ? (" It has been paused since " + sp.filed_clock + ".") : "";
+      if (kind === "weekly") {
+        return { level: "bad", paused: true, short: "PAUSED BY US FOR THE WEEK",
+          text: "PAUSED BY US FOR THE WEEK - this kind never restarts by itself. It stays paused " +
+                "until someone here starts it again." + since + " " + pctSentence(pc) };
+      }
+      if (kind === "rolling") {
+        return { level: "warn", paused: true, short: "Paused by us for a short while",
+          text: "PAUSED BY US FOR A SHORT WHILE - this kind clears itself once the limit resets, " +
+                "and work carries on on its own." + since + " " + pctSentence(pc) };
+      }
+      return { level: "bad", paused: true, short: "PAUSED BY US, and we cannot read which kind",
+        text: "PAUSED BY US, and we could not read which kind of pause it is - so it is being " +
+              "treated as the kind that never restarts by itself, and it stays paused until " +
+              "someone here starts it again." + since + " " + pctSentence(pc) };
+    }
+    if (st !== "NORMAL") {
+      return { level: "bad", paused: true, short: "WE CANNOT TELL whether work is paused",
+        text: "WE CANNOT TELL whether work is paused - the pause note could not be read, and an " +
+              "unreadable one counts as paused. Someone here has to look. " + pctSentence(pc) };
+    }
+    var bs = String(bc.state || "").toLowerCase();
+    if (bs === "paused") {
+      return { level: "warn", paused: true, short: "Paused on purpose for a while",
+        text: "PAUSED ON PURPOSE for a while" +
+              (bc.usage_resets_clock ? (" - work should be back around " + bc.usage_resets_clock) : "") +
+              "." + (bc.note ? (" " + bc.note) : "") };
+    }
+    if (bs === "idle") {
+      return { level: "bad", paused: false, short: "WORK HAS STOPPED and needs attention",
+        text: "WORK HAS STOPPED and needs attention" +
+              (bc.idle_since_clock ? (" - nothing has been running since " + bc.idle_since_clock) : "") +
+              "." + (bc.note ? (" " + bc.note) : "") };
+    }
+    return { level: "ok", paused: false, short: "Nothing is paused" + (pctShort(pc) ? " (" + pctShort(pc) + ")" : ""),
+      text: "" };
+  }
+
+  /* ---- FRESHNESS: three bands off TWO published numbers, never a magic constant of our own.
+       calm      up to this page's own refresh contract (stale_after_secs, default 300s)
+       running late  past due, but inside the window the alarm itself tolerates
+       STALE     past max(contract, the 900s floor scripts/publish_health.py alarms on)
+     The floor is why ordinary publish and content-delivery lag never cries wolf, and pinning to it
+     is why this page can never sit calm while the pager is paging about the very same board.
+     Age is measured against the payload's own generated_utc and recomputed in the browser every
+     second, so a page that stops being republished goes loud on the reader's clock - a sentence
+     baked server-side would freeze at "fresh" exactly when it mattered. */
   var STALE_DEFAULT_SECS = 300;
-  function staleView(genIsoStr, staleAfterSecs, nowMs) {
-    var thresh = (typeof staleAfterSecs === "number" && staleAfterSecs > 0)
-      ? staleAfterSecs : STALE_DEFAULT_SECS;
+  var PUB_FLOOR_SECS = 900;
+  function contractSecs(staleAfterSecs) {
+    return (typeof staleAfterSecs === "number" && staleAfterSecs > 0) ? staleAfterSecs : STALE_DEFAULT_SECS;
+  }
+  function loudAfterSecs(staleAfterSecs) {
+    return Math.max(contractSecs(staleAfterSecs), PUB_FLOOR_SECS);
+  }
+  function staleView(genIsoStr, staleAfterSecs, nowMs, workPaused) {
+    var due = contractSecs(staleAfterSecs), loud = loudAfterSecs(staleAfterSecs);
     if (!genIsoStr) {
-      return { stale: true, age: null, thresh: thresh,
-               text: "⚠ The site data has no publish timestamp — freshness UNKNOWN." };
+      // HONEST UNAVAILABLE, never an invented age.
+      return { level: "warn", stale: false, age: null, thresh: loud,
+               text: "We cannot tell how fresh these numbers are - this page did not publish a " +
+                     "time. Treat nothing here as current until that is fixed." };
     }
     var t = new Date(genIsoStr).getTime();
     if (isNaN(t)) {
-      return { stale: true, age: null, thresh: thresh,
-               text: "⚠ The site data's publish timestamp is unreadable — freshness UNKNOWN." };
+      return { level: "warn", stale: false, age: null, thresh: loud,
+               text: "We cannot tell how fresh these numbers are - the time this page published " +
+                     "cannot be read. Treat nothing here as current until that is fixed." };
     }
-    var age = Math.round((nowMs - t) / 1000);
-    if (age <= thresh) return { stale: false, age: age, thresh: thresh, text: "" };
-    // agoSecs() appends " ago", which read as "hasn't refreshed in 16m ago" on the live page during
-    // the 2026-07-29 publish freeze. Strip the suffix here: this string wants a DURATION, not a
-    // point in time. Same numbers, correct English, on a surface the CEO reads.
-    return { stale: true, age: age, thresh: thresh,
-             text: "⚠ The site data hasn't refreshed in " + agoSecs(age).replace(/ ago$/, "") +
-                   " (expected < " + Math.round(thresh / 60) + "m). The data shown is STALE." };
+    var age = Math.max(0, Math.round((nowMs - t) / 1000));
+    if (age <= due) {
+      return { level: "ok", stale: false, age: age, thresh: loud, text: "" };
+    }
+    if (age <= loud) {
+      // Overdue, but inside the settling window the alarm itself allows: state the real age, stay calm.
+      return { level: "warn", stale: false, age: age, thresh: loud,
+               text: "A refresh is running late - these numbers were updated " + plainAgo(age) +
+                     ", and this page aims to refresh every " + plainMins(due) + "." };
+    }
+    if (workPaused) {
+      /* FALSE-STALE GUARD. When work is paused on purpose, an ageing page is the EXPECTED
+         consequence, not a broken publisher. State the age just as plainly, name the real reason,
+         and do not paint it as a fault. */
+      return { level: "warn", stale: true, age: age, thresh: loud,
+               text: "These numbers were updated " + plainAgo(age) + ", so they are out of date - " +
+                     "because work is paused, which the next line explains. Nothing new arrives " +
+                     "until work restarts." };
+    }
+    return { level: "bad", stale: true, age: age, thresh: loud,
+             text: "STALE - these numbers were last updated " + plainAgo(age) + ", and this page " +
+                   "aims to refresh every " + plainMins(due) +
+                   ". Do not trust anything on this page until it refreshes." };
   }
 
-  function renderBanner(b) {
-    var banner = document.getElementById("hwbanner");
+  // ---- painters (every one of them writes a DEFINITE state; none of them can render blank) ----
+  function paintPill(id, level, text) {
+    var pill = document.getElementById(id);
+    if (!pill) return;
+    pill.className = "hwpill" + (level ? " " + level : "");
+    var txt = pill.querySelector(".txt");
+    if (txt) txt.textContent = text;
+  }
+  function renderScout(sc) { var v = scoutView(sc); paintPill("hw-scout", v.level, v.text); }
+  function renderCoordinator(co) { var v = coordView(co); paintPill("hw-coord", v.level, v.text); }
+  function renderWork(v) {
+    paintPill("hw-pause", v.level, v.short);
+    var banner = document.getElementById("hwwork");
+    if (banner) {
+      banner.className = v.level === "ok" ? "" : v.level;   // "" hides it (nothing is paused)
+      banner.textContent = v.text;
+    }
+  }
+  function renderFresh(v) {
+    var banner = document.getElementById("hwfresh");
     if (!banner) return;
-
-    var sv = staleView(genIso, status ? status.stale_after_secs : null, Date.now());
-    var isStale = sv.stale;
-    var age = sv.age;
-
-    var state = (b.state || "active").toLowerCase();
-
-    if (isStale) {
-      banner.className = "needs";
-      banner.style.borderLeft = "3px solid #d29922";
-      banner.textContent = sv.text;
-    } else if (state === "idle") {
-      banner.className = "needs";
-      banner.style.borderLeft = "";
-      banner.textContent = "⏸ NEEDS DIRECTOR — idle since " + (b.idle_since_clock || "recently") +
-        (b.note ? " · " + b.note : "");
-    } else if (state === "paused") {
-      banner.className = "paused";
-      banner.style.borderLeft = "";
-      banner.textContent = "⏳ paused — usage resets " + (b.usage_resets_clock || "soon") +
-        (b.note ? " · " + b.note : "");
-    } else {
-      banner.className = "";
-      banner.style.borderLeft = "";
-      banner.textContent = "";
-    }
+    banner.className = v.level === "ok" ? "" : v.level;
+    banner.textContent = v.text;
   }
 
-  // ---- per-card stamps: any .hw-stamp[data-utc] -> "HH:MM . Xm ago" ----
+  // ---- per-card stamps: any .hw-stamp[data-utc] -> "HH:MM (Xm ago)" ----
   function tickStamps() {
     var nodes = document.querySelectorAll(".hw-stamp[data-utc]");
     for (var i = 0; i < nodes.length; i++) {
       var iso = nodes[i].getAttribute("data-utc");
       var c = clockOf(iso);
       if (!c) { nodes[i].textContent = nodes[i].getAttribute("data-fallback") || ""; continue; }
-      nodes[i].textContent = c + " · " + agoOf(iso);
+      nodes[i].textContent = c + " (" + agoOf(iso) + ")";
     }
   }
 
@@ -342,10 +415,17 @@
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (s) {
         lastFetch = Date.now();
+        polled = true;
         if (s) { status = s; genIso = s.generated_utc || genIso; }
         renderStrip();
       })
-      .catch(function () { /* keep last-known strip; the per-page board still polls its own JSON */ });
+      .catch(function () {
+        // A failed poll keeps the last-known payload deliberately: the freshness line ages it on the
+        // reader's own clock and goes loud by itself, which is more honest than blanking the strip.
+        // A poll that has NEVER landed is a different thing, and says "we cannot tell".
+        polled = true;
+        renderStrip();
+      });
   }
 
   function tick() { renderStrip(); tickStamps(); }
@@ -376,10 +456,18 @@
     },
     clockOf: clockOf,
     agoOf: agoOf,
-    // PURE view functions, exported so the test suite exercises THE SHIPPED CODE (not a copy):
-    // tests/test_status_page_states.py drives these through node with a stub DOM.
+    // PURE view functions, exported so the test suites exercise THE SHIPPED CODE (not a copy):
+    // tests/test_hardwood_chrome_copy.js and tests/test_status_page_states.py drive these through
+    // node with a stub DOM.
     _pipeView: pipeView,
-    _pauseView: pauseView,
-    _staleView: staleView
+    _scoutView: scoutView,
+    _coordView: coordView,
+    _workView: workView,
+    _staleView: staleView,
+    _plainAgo: plainAgo,
+    _pctSentence: pctSentence,
+    PUB_FLOOR_SECS: PUB_FLOOR_SECS,
+    STALE_DEFAULT_SECS: STALE_DEFAULT_SECS,
+    _loudAfterSecs: loudAfterSecs
   };
 })();
