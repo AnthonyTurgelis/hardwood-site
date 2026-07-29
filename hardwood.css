@@ -134,6 +134,26 @@ button,.pill,.qbtn,.taybtn,.subtab{min-height:32px}
   /* card grids collapse to a single column so a phone never scrolls sideways
      (minmax(300-320px) card tracks would otherwise overflow a ~320px viewport) */
   .grid,.gcards,.mgrid,.seats,.agrid{grid-template-columns:1fr !important}
+
+  /* ---- wide data tables scroll THEMSELVES, so the page never has to ----
+     MEASURED DEFECT (2026-07-29): ten pages laid out a data table wider than a phone screen —
+     gm.html's was 951px inside a 375px viewport, standings 591px, situation 816px. Every cell
+     carries `white-space:nowrap` (correct — a stat must never wrap mid-number), so the table's
+     min-content width is simply wider than the phone. Together with `body{overflow-x:hidden}`
+     above, those extra columns were not merely off-screen, they were UNREACHABLE: no scrollbar,
+     no gesture, no way back. A silently amputated table is worse than an ugly one.
+
+     `display:block` is REQUIRED — `overflow` is ignored on a `display:table` box — and the rows
+     re-wrap into an anonymous table box, so column alignment survives. Desktop is deliberately
+     untouched (those same tables fit the 860px container), which also keeps desktop's sticky
+     headers working. ACCEPTED TRADE: a `position:sticky` header inside a scroll container sticks
+     to that container, so sticky table headers go static on phones (ledger/standings/allstar) —
+     a far smaller loss than half the columns being permanently unreachable. */
+  table{
+    display:block; max-width:100%;
+    overflow-x:auto; -webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;   /* a swipe past the last column must not drag the page */
+  }
 }
 
 /* ================================================================
