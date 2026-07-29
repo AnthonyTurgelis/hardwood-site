@@ -82,6 +82,17 @@
      left rule only, so a normal finishing/backfill window never reads as an outage. */
   .banner.refilling{border:1px solid var(--line);border-left:3px solid var(--accent);
     background:var(--card);color:var(--muted)}
+  /* BOARD STATUS STRIP — the two questions this page could not answer: is what I am reading current,
+     and is anything paused. Calm states are a quiet muted line; a late refresh is amber (look, but
+     nothing is broken); a genuinely dead board or a hard pause takes the same full red wash the
+     under-width alarm uses, because a soothing label on three-hour-old numbers is worse than none. */
+  .bstrip{display:flex;flex-direction:column;gap:4px;margin:6px 0 0}
+  .bline{font-size:12px;font-weight:600;color:var(--muted);border:1px solid var(--line);
+    background:var(--card);border-radius:8px;padding:5px 10px}
+  .bline.ok{border-left:3px solid var(--ok)}
+  .bline.warn{border-left:3px solid var(--warn);color:var(--ink)}
+  .bline.bad{border:1px solid var(--bad);border-left:4px solid var(--bad);
+    background:var(--bad);color:#fff}
   /* the one day-summary sentence */
   .summary{margin:9px 0 0;font-size:14.5px;line-height:1.45;font-weight:600}
   .summary .dim{color:var(--muted);font-weight:500}
@@ -352,6 +363,7 @@
     <span class="ago" id="ago"></span>
   </div>
   <div class="chips" id="chips"></div>
+  <div class="bstrip" id="bstrip"></div>
   <div id="banner"></div>
   <div class="summary" id="summary"></div>
   <nav>
@@ -720,14 +732,12 @@
       // CALM finishing/refill beat — a soft, reassuring line, NOT the red outage wash.
       w.appendChild(el("div","banner refilling","↻ "+wd.text));
     }
-    var bc=b.beacon||{};
-    if(bc.state==="idle"){
-      w.appendChild(el("div","banner idle","⏸ Work is paused and needs attention"+
-        (bc.idle_since_clock?(" — quiet since "+bc.idle_since_clock):"")+"."));
-    } else if(bc.state==="paused"){
-      w.appendChild(el("div","banner paused","⏳ On a scheduled pause"+
-        (bc.usage_resets_clock?(" — back around "+bc.usage_resets_clock):"")+"."));
-    }
+    // THE PAUSE STORY MOVED UP into the board status strip (tickStrip), and it is NOT duplicated
+    // here on purpose. Two banners on one page reading two flags is how a reader ends up looking at
+    // "on a scheduled pause" and "nothing is paused" at the same time: the coordinator's own beacon
+    // and the pause flag the spawn gate reads are SEPARATE sources that can disagree. The strip
+    // states them in one line under one documented order of precedence (an outside limit outranks a
+    // pause we filed ourselves, which outranks the beacon), so exactly one pause sentence exists.
   }
     
     /* ---------- queue reorder: local edits + one batched send ---------- */
@@ -1712,10 +1722,184 @@
     document.getElementById("foot").textContent =
       "Auto-generated from the working record. Last refreshed " + (b.generated_et||"") +
       ". Every number on this page is baked in advance — your browser never touches a database.";
-    tickElapsed(); tickProv();
+    tickElapsed(); tickProv(); tickStrip();
     flash();
   }
   function rerender(){ render(viewDate && snapB ? snapB : (lastLive||lastB)); }
+
+  /* ---------- BOARD STATUS STRIP: "are these numbers current, and is anything paused" ----------
+     THE GAP THIS FILLS: every other tab loads hardwood.js, which injects a status strip carrying a
+     page-level staleness sentence and the pause state. This page never loaded that script, so the
+     one page that actually gets opened was the only one where a three-hour-dead board and a healthy
+     board looked identical, and it never showed a pause at all.
+
+     NO SECOND AUTHORITY — both readings come from producers that already exist:
+       * freshness: this board's OWN published clock (generated_utc) measured against its OWN
+         published contract (freshness.stale_after_secs), the same pair the panel badges and the
+         other tabs' banner already use. The age comes from sinceIso(), so this sentence and the
+         header freshness chip can never quote two different numbers.
+       * pause: the `pause` block of ./status.json — the single published pause reading (the same one
+         the spawn gate itself consults), already polled by the other 22 tabs. We RENDER its state;
+         we never derive one. A read that did not land says so instead of implying "running".
+     Recomputed in the browser once a second, deliberately: a board that stops being republished
+     never re-renders, so a staleness sentence baked server-side would freeze at "fresh" exactly when
+     it mattered. The reader's clock is the only thing that can still go loud on a dead page.
+
+     COPY RULES: ASCII only (a curly dash written here has come back as garbage on this box), plain
+     English, and no internals — no file names, no identifiers, no clocks the reader has to subtract.
+     "updated 3 minutes ago", never a timestamp. */
+  var PAUSE=null;        // the published `pause` block; null until a real read lands
+  var PAUSE_OK=false;    // did the last read actually deliver one? never assume "fine" on a miss
+  var PAUSE_TRIED=false; // "not asked yet" is NOT the same as "asked and could not tell" — the first
+                         // second of a page load must not flash an alarm it has not earned
+  function setPause(p, okFlag){ PAUSE=(p && typeof p==="object")?p:null; PAUSE_OK=!!okFlag;
+    PAUSE_TRIED=true; }
+  /* Plain-English age. The header chips use the terse "3m"; a sentence a human reads wants words.
+     It TRUNCATES exactly as agoSecs() does, deliberately: rounding here instead read "updated 2
+     minutes ago" beside a chip reading "updated 1m ago" on the same header, off the same one
+     timestamp. Under a minute it quotes no number at all, so it cannot disagree with the chip's
+     ticking seconds either. */
+  function plainAgo(s){
+    if(s==null) return "";
+    s=Math.max(0,s);
+    if(s<60) return "just now";
+    if(s<3600){ var m=Math.floor(s/60); return (m===1?"a minute ago":m+" minutes ago"); }
+    if(s<86400){ var h=Math.floor(s/3600), rm=Math.floor((s%3600)/60);
+      return (h===1?"an hour":h+" hours")+(rm?(" and "+(rm===1?"a minute":rm+" minutes")):"")+" ago"; }
+    var d=Math.floor(s/86400); return (d===1?"a day ago":d+" days ago");
+  }
+  function plainMins(s){ var m=Math.round((s||0)/60); return (m<=1?"minute":m+" minutes"); }
+  /* The LOUD threshold is not ours to invent. The board's own stale_after_secs is when a refresh is
+     DUE; the alarm the machine itself raises on the public board fires at max(that, a 900s floor) —
+     the floor exists so ordinary publish and content-delivery lag never cries wolf. The suite pins
+     this constant to that same value, so this page and the alarm can never drift into disagreeing
+     about what counts as stale. */
+  var PUB_FLOOR_SECS=900;
+  function loudAfterSecs(){ return Math.max(staleAfterSecs(), PUB_FLOOR_SECS); }
+  function freshView(genIso, nowMs, workPaused, snapDate){
+    if(snapDate){
+      return {level:"ok", stale:false, age:null,
+        text:"You are reading a saved copy of the board from "+snapDate+", not the live one."};
+    }
+    var t=genIso? new Date(genIso).getTime() : NaN;
+    if(!genIso || isNaN(t)){
+      // HONEST UNAVAILABLE, never an invented age: a board that published no time is a board whose
+      // freshness we do not know, and saying so beats printing a number nothing supports.
+      return {level:"warn", stale:false, age:null,
+        text:"We cannot tell how fresh these numbers are - the board did not publish a time. "+
+             "Treat nothing here as current until that is fixed."};
+    }
+    var age=Math.max(0,Math.round((nowMs-t)/1000));
+    if(age<=staleAfterSecs()){
+      return {level:"ok", stale:false, age:age,
+        text:"These numbers are current - updated "+plainAgo(age)+"."};
+    }
+    if(age<=loudAfterSecs()){
+      // Overdue but inside the settling window the alarm itself allows: say the real age, stay calm.
+      return {level:"warn", stale:false, age:age,
+        text:"A refresh is running late - these numbers were updated "+plainAgo(age)+
+             ", and the board aims to refresh every "+plainMins(staleAfterSecs())+"."};
+    }
+    if(workPaused){
+      /* FALSE-STALE GUARD — the same distinction the quiet panel badge draws. When work is paused on
+         purpose, an ageing board is the EXPECTED consequence, not a broken publisher. State the age
+         just as plainly, name the real reason, and do not paint it as a fault. */
+      return {level:"warn", stale:true, age:age,
+        text:"These numbers were updated "+plainAgo(age)+", so they are out of date - because work "+
+             "is paused, which the next line explains. Nothing new arrives until work restarts."};
+    }
+    return {level:"bad", stale:true, age:age,
+      text:"STALE - these numbers were last updated "+plainAgo(age)+", and the board aims to refresh "+
+           "every "+plainMins(staleAfterSecs())+". Do not trust anything on this page until it refreshes."};
+  }
+  /* How much of the work limit is used, only ever as well as we actually know it. A number is
+     printed ONLY when the reading is a real one; an unread meter says it is unread. (A meter that
+     scraped a plausible-looking number out of an unrelated file and showed it as real is exactly the
+     failure this wording exists to make impossible.) */
+  function pctSentence(pc){
+    if(!pc || typeof pc!=="object") return "We cannot read how much of our work limit is used.";
+    var q=String(pc.quality||"UNKNOWN").toUpperCase(), d=pc.display;
+    if(q==="MEASURED" && d) return "We have used "+d+" of our work limit.";
+    if(q==="INFERRED" && d) return "We have used about "+d+" of our work limit, and that figure is "+
+      "an estimate rather than a direct reading.";
+    return "We cannot read how much of our work limit is used right now.";
+  }
+  /* ONE pause sentence, under ONE order of precedence: an outside limit outranks a pause we filed
+     ourselves, which outranks the coordinator's own beacon. A pause we filed for the WEEK and a
+     short one are genuinely different situations — the weekly kind never restarts by itself — so
+     they never render in the same words. */
+  function workView(p, bc, ok){
+    bc=bc||{};
+    if(!ok || !p || typeof p!=="object"){
+      return {level:"warn", paused:false,
+        text:"We cannot tell whether work is paused right now - that reading did not load. "+
+             "Nothing here says it is running."};
+    }
+    var st=String(p.state||"UNKNOWN").toUpperCase();
+    var sp=p.self_pause||{}, pl=p.provider_limit||{}, pc=p.percent||{};
+    if(st==="PROVIDER_LIMIT"){
+      var back=(pl.resets_known && pl.resets_clock)
+        ? ("Work restarts when that clears, around "+pl.resets_clock+".")
+        : "They have not said when it clears, so we are waiting on them.";
+      return {level:"bad", paused:true,
+        text:"STOPPED FROM OUTSIDE - we have hit the limit on our account, so nothing is running. "+
+             back+" "+pctSentence(pc)};
+    }
+    if(st==="SELF_PAUSE"){
+      var kind=String(sp.kind||"unknown").toLowerCase();
+      var since=sp.filed_clock? (" It has been paused since "+sp.filed_clock+".") : "";
+      if(kind==="weekly"){
+        return {level:"bad", paused:true,
+          text:"PAUSED BY US FOR THE WEEK - this kind never restarts by itself. It stays paused "+
+               "until someone here starts it again."+since+" "+pctSentence(pc)};
+      }
+      if(kind==="rolling"){
+        return {level:"warn", paused:true,
+          text:"PAUSED BY US FOR A SHORT WHILE - this kind clears itself once the limit resets, and "+
+               "work carries on on its own."+since+" "+pctSentence(pc)};
+      }
+      return {level:"bad", paused:true,
+        text:"PAUSED BY US, and we could not read which kind of pause it is - so it is being treated "+
+             "as the kind that never restarts by itself, and it stays paused until someone here "+
+             "starts it again."+since+" "+pctSentence(pc)};
+    }
+    if(st!=="NORMAL"){
+      return {level:"bad", paused:true,
+        text:"WE CANNOT TELL whether work is paused - the pause note could not be read, and an "+
+             "unreadable one counts as paused. Someone here has to look. "+pctSentence(pc)};
+    }
+    var bs=String(bc.state||"").toLowerCase();
+    if(bs==="paused"){
+      return {level:"warn", paused:true,
+        text:"PAUSED ON PURPOSE for a while"+
+             (bc.usage_resets_clock?(" - work should be back around "+bc.usage_resets_clock):"")+"."+
+             (bc.note?(" "+bc.note):"")};
+    }
+    if(bs==="idle"){
+      return {level:"bad", paused:false,
+        text:"WORK HAS STOPPED and needs attention"+
+             (bc.idle_since_clock?(" - nothing has been running since "+bc.idle_since_clock):"")+"."+
+             (bc.note?(" "+bc.note):"")};
+    }
+    return {level:"ok", paused:false, text:"Nothing is paused - work is running normally."};
+  }
+  /* Draw the strip. Called from render() AND from the 1-second tick, so a frozen page still crosses
+     its own staleness line. Deliberately carries no lane or slot counts: the helper panel owns that
+     arithmetic, and a second place quoting it is how a page ends up contradicting itself. */
+  function tickStrip(){
+    var host=document.getElementById("bstrip"); if(!host) return;
+    host.innerHTML="";
+    if(!lastB){
+      host.appendChild(el("div","bline","Checking whether the board is up to date..."));
+      return;
+    }
+    var work=PAUSE_TRIED
+      ? workView(PAUSE, lastB.beacon, PAUSE_OK)
+      : {level:"", paused:false, text:"Checking whether anything is paused..."};
+    var fresh=freshView(lastB.generated_utc, Date.now(), work.paused, viewDate);
+    host.appendChild(el("div","bline "+fresh.level, fresh.text));
+    host.appendChild(el("div","bline "+work.level, work.text));
+  }
 
   /* ---------- live runtime: poll own JSON, ETag, ago-chip, flash ---------- */
   var URL="./board.json", etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
@@ -1764,7 +1948,17 @@
         if(changed && !viewDate && lastLive){ render(lastLive); } } }).catch(function(){});
   }
   pollAccuracy(); setInterval(pollAccuracy,300000);
-  setInterval(function(){ updAgo(); tickChips(); tickProv(); }, 1000);
+  /* PAUSE STATE — polled from ./status.json, the one published pause reading (the same block every
+     other tab renders and the spawn gate itself consults). Same pattern as the feeds above, with one
+     deliberate difference: a miss is NOT graceful-null here. An absent pause reading is reported as
+     "we cannot tell", never as silence, because silence on this particular question reads as "fine".*/
+  function pollStatus(){
+    fetch(bust("./status.json"),{cache:"no-cache"}).then(function(r){ return r.ok? r.json() : null; })
+      .then(function(j){ var p=(j && j.pause)?j.pause:null; setPause(p, !!p); tickStrip(); })
+      .catch(function(){ setPause(null,false); tickStrip(); });
+  }
+  pollStatus(); setInterval(pollStatus,60000);
+  setInterval(function(){ updAgo(); tickChips(); tickProv(); tickStrip(); }, 1000);
   setInterval(tickElapsed, 15000);
 
   /* ---------- queue-edit bar: build, sync across tabs, warn on leave ---------- */

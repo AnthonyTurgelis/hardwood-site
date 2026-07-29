@@ -49,6 +49,29 @@
   .mleg i.l90{background:var(--line2)}
   .mleg i.lpt{width:3px;height:12px;background:var(--good);border-radius:1px}
   .mleg b{font-weight:600}
+  /* THE BUILD-UP BAR. Same dialect as .mbar directly above it, deliberately: home-positive, a
+     symmetric scale so "even" is always dead centre, and endpoints labelled by the tricode the sign
+     favours. A reader who has just read the range bar does not have to learn a second convention to
+     read this one. Own class prefix (.wf*) because the geometry is a stepped waterfall, not a band:
+     each row's bar starts where the previous row's ended, so the eye follows the number being built
+     rather than reading four independent bars. Row grid = label / track / signed value, tabular so
+     the value column lines up as a column of numbers. */
+  .wf{margin-top:11px}
+  .wfr{display:grid;grid-template-columns:112px 1fr 52px;align-items:center;gap:7px;margin:3px 0}
+  .wfl{font-size:11px;color:var(--muted);line-height:1.25}
+  .wft{position:relative;height:12px;background:var(--card2);border:1px solid var(--line);border-radius:3px}
+  .wft > i{position:absolute;top:2px;height:6px;border-radius:2px;background:var(--line2);display:block}
+  .wft > i.up{background:var(--good);opacity:.75}
+  .wft > i.dn{background:var(--bad);opacity:.6}
+  .wfz{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.7}
+  .wfv{font-size:11.5px;font-weight:700;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+  .wftot .wfl{font-weight:700;color:var(--ink);font-size:11.5px}
+  .wftot .wft{height:15px;border-color:var(--line2)}
+  .wftot .wft > i{top:2px;height:9px;background:var(--acc);opacity:.85}
+  .wftot .wfv{font-size:13.5px;color:var(--acc)}
+  .wfsep{border-top:1px solid var(--line);margin:5px 0 2px}
+  .wfcap{display:grid;grid-template-columns:112px 1fr 52px;gap:7px;margin-top:1px}
+  .wfcap > u{grid-column:2;display:flex;justify-content:space-between;font-size:10px;color:var(--dim);text-decoration:none;font-variant-numeric:tabular-nums}
   .microcap{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);font-weight:800;margin:9px 0 3px}
   h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:16px 0 8px;font-weight:700}
   .fac{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:10px 13px;box-shadow:var(--shadow);margin-bottom:7px}
@@ -310,11 +333,139 @@
     return wrap;
   }
 
+  // ---- WHY-CHAIN-BEGIN (exercised directly by scripts/test_game_card_chain.py - the test extracts
+  // this exact block and runs it in node against the real baked payloads, so the geometry has one
+  // implementation and not a Python replica of it) ----
+  // HOW THE NUMBER IS BUILT IS DRAWN, NOT LISTED.
+  //
+  // The projections read as "flat" to a reader who only ever saw the answer. That was investigated
+  // and settled: the flattening is PRESENTATION, not the model. The chain that explains it already
+  // existed and already reconciled - but it was a LIST OF NUMBERS with a paragraph under each row,
+  // parked in a collapsed appendix at the bottom of the page. A 1.3 that is actually "ATL better by
+  // 1.9, then a constant +3.2 push to the home side flips it" is a real result of real inputs, and
+  // that is a SHAPE: a small negative step, two positive steps, ending just past even. Written out as
+  // four labelled numbers it reads as bookkeeping; drawn as a stepped bar it reads at a glance.
+  //
+  // SAME DIALECT AS THE RANGE BAR IT SITS UNDER. Home-positive, symmetric scale so "even" is dead
+  // centre, endpoints labelled with the tricode the sign favours. The card already made those three
+  // choices one bar higher up; a second convention on the same screen for the same quantity is the
+  // drift, not the cure.
+  //
+  // WATERFALL, NOT FOUR INDEPENDENT BARS. Each row starts where the previous row ended, so the eye
+  // follows one number being assembled. The total is drawn from zero, as its own bar, because it is
+  // the answer and not another increment.
+  //
+  // READ, NEVER RECOMPUTE - AND REFUSE RATHER THAN RECONCILE. Every value is parsed from the chain
+  // the baker already proved adds up; nothing here derives a term. Three separate refusals, because
+  // a wrong number on this surface is worse than no number:
+  //   1. the parts must still sum to the published total (guards a payload edited in transit),
+  //   2. the drawn total must equal `why.published` (so the bar cannot disagree with the hero),
+  //   3. an adjustment outside the MEASURED home-court band is NOT drawn as if it were real.
+  // Any refusal yields null -> no bar, and the numeric appendix keeps its rows. Omit, don't invent.
+  //
+  // THE BAND. The home recenter is clamped live to the data-derived well-calibrated interval
+  // +/-4.38 (leaguewide HCA 95% CI upper, hca_fit n=158 - scripts/hca_autofirm_guard.py). A constant
+  // push beyond that is a runaway, not a home edge, so this surface will not render it as one.
+  var _HCA_BAND = 4.38;
+  var _CHAIN_TOL = 1e-6;
+  function whyChainModel(d){
+    var w=(d&&d.why)||{}, steps=w.steps||[];
+    // base + at least one adjustment + total. Positional, not label-matched: the baker owns the
+    // wording and it must be free to change it without silently emptying this bar.
+    if(steps.length<3) return null;
+    var vals=[], i;
+    for(i=0;i<steps.length;i++){
+      var v=parseFloat(steps[i].value);
+      if(!isFinite(v)) return null;            // a chain with an unparseable leg is not drawn
+      vals.push(v);
+    }
+    var base=vals[0], total=vals[vals.length-1], adjs=[];
+    for(i=1;i<steps.length-1;i++) adjs.push({label:steps[i].label, value:vals[i], shown:steps[i].value});
+    if(!adjs.length) return null;
+    for(i=0;i<adjs.length;i++){
+      if(Math.abs(adjs[i].value)>_HCA_BAND) return null;   // out of the measured band -> not real
+    }
+    var sum=base;
+    for(i=0;i<adjs.length;i++) sum+=adjs[i].value;
+    if(Math.abs(sum-total)>_CHAIN_TOL) return null;        // the parts do not add up -> draw nothing
+    if(w.published==null) return null;
+    // The drawn total and the published margin are the SAME quantity at different precision, so they
+    // must agree to within half a display step. Deliberately NOT a re-rounding comparison: the baker
+    // rounds half-AWAY-FROM-ZERO (Decimal ROUND_HALF_UP) and JS Math.round rounds half-toward-
+    // +Infinity, so on an exact .x5 total the two disagree by 0.1 and a perfectly valid chain gets
+    // refused (MIN at TOR: parts -11.39/+1.35/+1.89 = -8.15, published -8.2, JS re-round -8.1).
+    // A tolerance on the difference tests the invariant that actually matters and has no tie-break.
+    if(Math.abs(total-w.published)>0.05+_CHAIN_TOL) return null;
+    // Cumulative track: 0 -> base -> +each adjustment -> total. The scale must contain every point
+    // the bar visits AND zero, and stays symmetric about zero so "even" is centre as it is above.
+    var cum=[0], run=base;
+    cum.push(run);
+    for(i=0;i<adjs.length;i++){ run+=adjs[i].value; cum.push(run); }
+    var span=1;
+    for(i=0;i<cum.length;i++) span=Math.max(span, Math.abs(cum[i]));
+    function sc(v){ return ((v+span)/(2*span))*100; }
+    function seg(from,to){
+      var a=sc(from), b=sc(to);
+      return {left:Math.min(a,b), width:Math.abs(b-a), dir:(to>=from?"up":"dn")};
+    }
+    var rows=[{label:steps[0].label, value:steps[0].value, from:0, to:base, seg:seg(0,base), total:false}];
+    for(i=0;i<adjs.length;i++){
+      rows.push({label:adjs[i].label, value:adjs[i].shown, from:cum[i+1], to:cum[i+2],
+                 seg:seg(cum[i+1],cum[i+2]), total:false});
+    }
+    rows.push({label:steps[steps.length-1].label, value:steps[steps.length-1].value,
+               from:0, to:total, seg:seg(0,total), total:true});
+    function endLabel(v){
+      if(v>0) return d.home+" +"+v.toFixed(0);
+      if(v<0) return d.away+" +"+Math.abs(v).toFixed(0);
+      return "even";
+    }
+    return {rows:rows, span:span, zero:sc(0), total:total, published:w.published,
+            ends:{lo:endLabel(-span), hi:endLabel(span)}};
+  }
+  // ---- WHY-CHAIN-END ----
+
+  // The build-up, drawn. Sits in the hero under the range bar: the answer and its uncertainty come
+  // first, then how the answer was reached. The full-precision numeric derivation stays in the
+  // appendix for anyone checking the arithmetic - this is the shape of it, at a glance, on the card.
+  function whyChainBar(d){
+    var mo=whyChainModel(d); if(!mo) return null;
+    var wrap=el("div","wf");
+    wrap.appendChild(el("div","microcap","How we get there: neutral floor, then each adjustment"));
+    mo.rows.forEach(function(r){
+      if(r.total) wrap.appendChild(el("div","wfsep"));
+      var row=el("div","wfr"+(r.total?" wftot":""));
+      row.appendChild(el("div","wfl", r.label));
+      var track=el("div","wft");
+      var z=el("div","wfz"); z.style.left=mo.zero.toFixed(1)+"%"; track.appendChild(z);
+      var bar=el("i", r.total?null:r.seg.dir);
+      bar.style.left=r.seg.left.toFixed(1)+"%";
+      // A zero-width step would vanish; floor it so "this adjustment applied and it was tiny" is
+      // still visible as a mark rather than reading as "no adjustment".
+      bar.style.width=Math.max(r.seg.width,0.6).toFixed(1)+"%";
+      track.appendChild(bar);
+      row.appendChild(track);
+      row.appendChild(el("div","wfv", r.value));
+      wrap.appendChild(row);
+    });
+    var cap=el("div","wfcap"), u=el("u");
+    u.appendChild(el("span",null,mo.ends.lo));
+    u.appendChild(el("span",null,"even"));
+    u.appendChild(el("span",null,mo.ends.hi));
+    cap.appendChild(u); wrap.appendChild(cap);
+    return wrap;
+  }
+
   // REASONING CHAIN — renders d.why.steps verbatim: neutral strength edge, the adjustments that
   // move it, then the projected margin as their sum. The baker only emits a chain it has proven
   // adds up, so this draws what it is given and never does arithmetic of its own. Absent chain
   // (older bake, or a margin model whose shape could not be decomposed) simply renders nothing.
-  function whyCard(d){
+  // `drawn` = the hero build-up bar rendered for this card. When it did, each row's paragraph is
+  // dropped here: the bar now SHOWS what those sentences described, and the same fact stated twice on
+  // one page in two registers is what this page keeps having to un-ship. Dropped ONLY when the bar
+  // actually rendered — a card whose chain the bar refused keeps every word of its explanation. And
+  // dropped at the SURFACE, not at the baker: the payload still carries `detail` for other consumers.
+  function whyCard(d, drawn){
     var w=d.why||{}; var steps=w.steps||[]; if(!steps.length) return null;
     var box=el("div","why");
     steps.forEach(function(s,i){
@@ -323,7 +474,7 @@
       r.appendChild(el("div","wlab", s.label));
       r.appendChild(el("div","wval", s.value==null?"—":s.value));
       box.appendChild(r);
-      if(s.detail) box.appendChild(el("div","wdet", s.detail));
+      if(s.detail && !drawn) box.appendChild(el("div","wdet", s.detail));
       if((s.sub||[]).length){
         var sub=el("div","wsub");
         s.sub.forEach(function(x){
@@ -530,6 +681,10 @@
     if(lead) hero.appendChild(el("div","lead", lead));
     // ...and immediately under the lead, the range that answer lives inside — drawn, not narrated.
     var mr=marginRangeBar(d); if(mr) hero.appendChild(mr);
+    // ...and under that, HOW the number was built — drawn, on the card, not listed in an appendix.
+    // The row this answers reads "show how each game prediction is built, right on the game card":
+    // the derivation being correct and reconciling was never the gap, being three taps away was.
+    var wc=whyChainBar(d); if(wc) hero.appendChild(wc);
     hero.appendChild(el("div","sub", d.date||""));
     main.appendChild(hero);
 
@@ -587,7 +742,7 @@
     // published margin exactly, and it is the honest backing for the number, so it is kept in full
     // and unchanged. It is simply no longer the first thing on the card: the answer leads, the
     // derivation is one tap away for anyone who wants to check it.
-    var wy=whyCard(d);
+    var wy=whyCard(d, !!wc);
     if(wy){
       var ws=el("section"); ws.appendChild(el("h2",null,"Appendix"));
       var dt=el("details","appx");
