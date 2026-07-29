@@ -78,6 +78,16 @@
   .barrow .bt>i.neg{background:var(--away)}
   .barrow .bv{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;min-width:52px;text-align:right}
   .barrow .bn{flex:0 0 auto;font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums;min-width:44px;text-align:right}
+  /* A bar row's non-negotiable parts add up: a 128px label that cannot shrink, plus 60/52/44px
+     minimums and three 9px gaps, is ~333px before the card's own padding — so on a 320px phone the
+     trailing sample-size ("n=321") was pushed past the edge and clipped away. These only relax the
+     row UNDER PRESSURE (`0 1` still starts from 128px, the minimums still hold when there is room),
+     so a 375px+ phone and every desktop render are byte-identical to before. */
+  @media (max-width:560px){
+    .barrow .bl{flex:0 1 128px;min-width:0}
+    .barrow .bt{min-width:36px}
+    .barrow .bn{min-width:0}
+  }
 
   /* --- inline cell bar (reuses the hardwood .cellbar look) --- */
   .cellbar{position:relative;width:52px;max-width:100%;height:4px;border-radius:2px;background:var(--line2);overflow:hidden;display:inline-block;vertical-align:middle;margin-left:7px}
@@ -136,7 +146,13 @@
   .item .takeaway-d{font-size:11px;font-weight:700;color:var(--acc);white-space:nowrap;font-variant-numeric:tabular-nums;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
   /* A+++: an interior min/max (peak-year) callout, derived from the SAME parsed rows; distinct class
      so it never collides with the first-vs-last delta chip. */
-  .item .takeaway-pk{font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;background:var(--card2);border:1px dashed var(--line2);border-radius:999px;padding:2px 9px}
+  .item .takeaway-pk{font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;background:var(--card2);border:1px dashed var(--line2);border-radius:999px;padding:2px 9px;max-width:100%}
+  /* This pill was sized for a short token ("peak 2019") but also carries a full phrase
+     ("bottomed 2019, 0.252 +/- 0.032 below the 2024 peak"), which at ~308px is wider than a small
+     phone. `nowrap` then pushed it off the right edge, where body{overflow-x:hidden} clipped it
+     unreachably. Keep the single line wherever it fits (desktop, and most phones); let the phrase
+     wrap inside its own pill only when the screen is genuinely too narrow for it. */
+  @media (max-width:560px){ .item .takeaway-pk{white-space:normal} }
   /* A++++: a per-metric mini-sparkline of the SAME parsed series over the SAME time axis (drawn from
      the parsed values at render time, never hardcoded). Theme-safe — strokes reuse the accent var. */
   .item .takeaway-spark{flex:0 0 auto;display:block;width:72px;height:18px;overflow:visible}
