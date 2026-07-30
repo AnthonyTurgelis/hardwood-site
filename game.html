@@ -892,12 +892,13 @@
       bs.appendChild(el("div","note","Impact is our on-court rating (how much better the team plays with her on the floor). A “prov” tag means it rests on a thin on-court sample this early, so treat it as provisional. Min shows projected minutes with her share of a 40-minute game."));
       bs.appendChild(boxTable((d.away_full||d.away)+" (away)", d.box.away));
       bs.appendChild(boxTable((d.home_full||d.home)+" (home)", d.box.home));
+      // the derivation sits directly under the numbers it explains — one tap, still collapsed.
+      bs.appendChild(howBuilt());
       // availability
       var av=d.availability||{};
       var a1=availLine(d.away, av.away), a2=availLine(d.home, av.home);
       if(a1||a2){ bs.appendChild(el("h2",null,"Availability")); if(a1)bs.appendChild(a1); if(a2)bs.appendChild(a2); }
       if(d.box_note) bs.appendChild(el("div","note", d.box_note));
-      bs.appendChild(howBuilt());
       main.appendChild(bs);
 
       // Starter skill shapes — small-multiples grid off the same projected box rows.
