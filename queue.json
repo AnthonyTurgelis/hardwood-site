@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-07-30T04:22:54+00:00",
+ "generated_utc": "2026-07-30T04:37:54+00:00",
  "date": "2026-07-30",
  "available": true,
  "intro": "This is the team's ranked to-do list — the same list the team picks its next job from, highest-value work at the top. Your own requests sit above everything else. Finished work drops off the list rather than sitting at the top. Betting work sits at the bottom and is tagged research-only — an experiment we measure, never the main product and never the top of the list.",
@@ -32,8 +32,18 @@
    "exploratory": false,
    "score": null,
    "task_id": "queue-status-closes-on-the-word-done",
-   "state": "ready now",
+   "state": "part done",
    "rank": 3
+  },
+  {
+   "title": "Stop one lane's commit from swallowing another's queue edits",
+   "one_liner": ". ops commit sweep blocks a commit that touches paths inside another lane's declared write set. ops is the shared queue index that lane and the coordinator edit and nobody declares it in a write set ...",
+   "family": "Operations",
+   "exploratory": false,
+   "score": null,
+   "task_id": "commit-sweep-guard-does-not-protect-the-shared-i",
+   "state": "ready now",
+   "rank": 4
   },
   {
    "title": "Stop telling him we are idle when we are not",
@@ -43,7 +53,7 @@
    "score": null,
    "task_id": "idle-beacon-fires-when-not-actually-out-of-work",
    "state": "part done",
-   "rank": 4
+   "rank": 5
   },
   {
    "title": "Stop the careful setting from being less careful than the real reading",
@@ -53,7 +63,7 @@
    "score": null,
    "task_id": "usage-unknown-failsafe-widens-past-last-measured",
    "state": "gated",
-   "rank": 5
+   "rank": 6
   },
   {
    "title": "Turn on the pregame snapshot capture, or decide not to",
@@ -63,7 +73,7 @@
    "score": null,
    "task_id": "gameday-presnap-write-dead-since-0708",
    "state": "gated",
-   "rank": 6
+   "rank": 7
   },
   {
    "title": "Clear the stuck board-police run so it starts checking again",
@@ -73,7 +83,7 @@
    "score": null,
    "task_id": "board-police-instance-stuck-skipping-every-tick",
    "state": "ready now",
-   "rank": 7
+   "rank": 8
   },
   {
    "title": "Collapse a repeating alarm into one item instead of one file per cycle",
@@ -83,7 +93,7 @@
    "score": null,
    "task_id": "repeating-alarm-floods-inbox",
    "state": "ready now",
-   "rank": 8
+   "rank": 9
   },
   {
    "title": "Decide, per table, whether empty means healthy",
@@ -93,7 +103,16 @@
    "score": null,
    "task_id": "sentinel-empty-reads-green-remaining-sites",
    "state": "ready now",
-   "rank": 9
+   "rank": 10
+  },
+  {
+   "title": "Find the finished work nobody turned on",
+   "one_liner": "The always-on background monitor that flags anything needing a decision",
+   "family": "Modeling",
+   "exploratory": false,
+   "score": null,
+   "task_id": "capability-built-tested-and-never-switched-on",
+   "rank": 11
   },
   {
    "title": "Re-file the one gate that was badly written, then decide the weight",
@@ -103,7 +122,7 @@
    "score": null,
    "task_id": "asg-damping-a4prime-refile",
    "state": "ready now",
-   "rank": 10
+   "rank": 12
   },
   {
    "title": "Restart the ear once so the fast feed alarm starts running",
@@ -113,7 +132,7 @@
    "score": null,
    "task_id": "feed-alarm-fast-path-needs-one-watcher-restart",
    "state": "ready now",
-   "rank": 11
+   "rank": 13
   },
   {
    "title": "Show how uncertain a single-game minute projection really is",
@@ -123,7 +142,7 @@
    "score": null,
    "task_id": "asg-minutes-show-the-dispersion",
    "state": "ready now",
-   "rank": 12
+   "rank": 14
   },
   {
    "title": "Shrink the file that gets injected into every single agent",
@@ -134,17 +153,7 @@
    "task_id": "boot-tax-regression-claudemd",
    "impact": "efficiency - compounds on every dispatch",
    "state": "part done",
-   "rank": 13
-  },
-  {
-   "title": "Stop one lane's commit from swallowing another's queue edits",
-   "one_liner": ". ops commit sweep blocks a commit that touches paths inside another lane's declared write set. ops is the shared queue index that lane and the coordinator edit and nobody declares it in a write set ...",
-   "family": "Operations",
-   "exploratory": false,
-   "score": null,
-   "task_id": "commit-sweep-guard-does-not-protect-the-shared-i",
-   "state": "ready now",
-   "rank": 14
+   "rank": 15
   },
   {
    "title": "Stop the projection from learning from the game it is projecting",
@@ -154,7 +163,7 @@
    "score": null,
    "task_id": "asg-minute-shape-self-referential",
    "state": "ready now",
-   "rank": 15
+   "rank": 16
   },
   {
    "title": "Teach the feed alarm that no games means no props",
@@ -164,7 +173,7 @@
    "score": null,
    "task_id": "feed-alarm-props-zero-capture-is-break-blind",
    "state": "ready now",
-   "rank": 16
+   "rank": 17
   },
   {
    "title": "Wire the claim-level checks we already built four times",
@@ -174,7 +183,7 @@
    "score": null,
    "task_id": "claim-guard-wire-step26",
    "state": "ready now",
-   "rank": 17
+   "rank": 18
   },
   {
    "title": "The main board is missing the freshness and pause signals every other page has",
@@ -185,7 +194,7 @@
    "task_id": "main-board-missing-status-strip",
    "impact": "CEO-visible",
    "state": "ready now",
-   "rank": 18
+   "rank": 19
   },
   {
    "title": "Fix a test that can no longer reach the thing it checks",
@@ -195,7 +204,7 @@
    "score": null,
    "task_id": "tasks-logon-independent-test-asserts-an-unreacha",
    "state": "ready now",
-   "rank": 19
+   "rank": 20
   },
   {
    "title": "Make the verification backlog mean one thing",
@@ -205,7 +214,7 @@
    "score": null,
    "task_id": "verify-debt-counter-conflates-two-things",
    "state": "ready now",
-   "rank": 20
+   "rank": 21
   },
   {
    "title": "Retire or rewrite a test that checks a console we never built",
@@ -215,7 +224,7 @@
    "score": null,
    "task_id": "console-v3-test-is-dead-its-env-var-was-never-re",
    "state": "ready now",
-   "rank": 21
+   "rank": 22
   },
   {
    "title": "Show how each game prediction is built, right on the game card",
@@ -225,7 +234,7 @@
    "score": null,
    "task_id": "ceo-gamecard-margin-annotation",
    "impact": "CEO-visible",
-   "rank": 22
+   "rank": 23
   },
   {
    "title": "Stop a stray byte at the top of the config file from hiding a key",
@@ -235,7 +244,7 @@
    "score": null,
    "task_id": "env-bom-silent-key-miss",
    "state": "ready now",
-   "rank": 23
+   "rank": 24
   },
   {
    "title": "Stop a test failing on days when nothing moved",
@@ -245,7 +254,25 @@
    "score": null,
    "task_id": "teams-mover-test-data-dependent",
    "state": "ready now",
-   "rank": 24
+   "rank": 25
+  },
+  {
+   "title": "Stop discovering this suite's live reads one incident at a time",
+   "one_liner": "The always-on background monitor that flags anything needing a decision",
+   "family": "Modeling",
+   "exploratory": false,
+   "score": null,
+   "task_id": "width-fill-suite-audit-all-live-state-reads",
+   "rank": 26
+  },
+  {
+   "title": "Stop the revert guard crying wolf when code is extracted, not deleted",
+   "one_liner": "Precommit guard warned ' - - removes def class noprompt env still referenced by 1 other file(s)' on commit . It is a verified the board-police lane had that helper into a new shared module scripts ...",
+   "family": "Modeling",
+   "exploratory": false,
+   "score": null,
+   "task_id": "precommit-guard-flags-a-def-that-moved-to-an-imp",
+   "rank": 27
   },
   {
    "title": "Show the page, not just tell him, when something ships",
@@ -255,7 +282,7 @@
    "score": null,
    "task_id": "screenshot-with-milestone-announcements",
    "impact": "CEO ask",
-   "rank": 25
+   "rank": 28
   },
   {
    "title": "Stop new requests from being filed in a way the board cannot show",
@@ -265,7 +292,7 @@
    "score": null,
    "task_id": "ops-queue-row-shape-guard",
    "impact": "reliability",
-   "rank": 26
+   "rank": 29
   },
   {
    "title": "Make the detailed analysis pages genuinely comprehensive",
@@ -275,7 +302,7 @@
    "score": null,
    "task_id": "ceo-deepdive-depth-followup",
    "impact": "CEO ask",
-   "rank": 27
+   "rank": 30
   },
   {
    "title": "Make the board stop showing stale information, and prove it holds",
@@ -285,7 +312,7 @@
    "score": null,
    "task_id": "ceo-board-staleness-chronic",
    "impact": "CEO ask",
-   "rank": 28
+   "rank": 31
   },
   {
    "title": "Audit the site for stale information, using the biggest market disagreement as the test",
@@ -295,7 +322,7 @@
    "score": null,
    "task_id": "ceo-stale-audit-market-gap-testcase",
    "impact": "CEO ask",
-   "rank": 29
+   "rank": 32
   },
   {
    "title": "Look for players unfairly punished by role, and teach the idea to the ideas seat",
@@ -305,7 +332,7 @@
    "score": null,
    "task_id": "ceo-context-equalizer-brief-visionary",
    "impact": "CEO ask",
-   "rank": 30
+   "rank": 33
   },
   {
    "title": "Simplify the read-and-reply signals on your messages",
@@ -315,7 +342,7 @@
    "score": null,
    "task_id": "ceo-receipt-and-emoji-scheme",
    "impact": "CEO ask",
-   "rank": 31
+   "rank": 34
   },
   {
    "title": "Send quick but important news immediately instead of saving it up",
@@ -325,7 +352,7 @@
    "score": null,
    "task_id": "ceo-comms-cadence-quick-important",
    "impact": "CEO ask",
-   "rank": 32
+   "rank": 35
   },
   {
    "title": "Answer whether the message channel can receive pictures",
@@ -335,7 +362,7 @@
    "score": null,
    "task_id": "ceo-discord-attachment-intake",
    "impact": "CEO ask",
-   "rank": 33
+   "rank": 36
   },
   {
    "title": "Clear out the leftover folders from the cancelled model experiment",
@@ -345,7 +372,7 @@
    "score": null,
    "task_id": "ceo-gemini-folder-consolidation",
    "impact": "CEO ask",
-   "rank": 34
+   "rank": 37
   },
   {
    "title": "Answer one-off analysis questions asked on the spot",
@@ -355,7 +382,7 @@
    "score": null,
    "task_id": "ceo-onthefly-deep-dives",
    "impact": "CEO ask",
-   "rank": 35
+   "rank": 38
   },
   {
    "title": "Stop the operation standing down while its own work is still running",
@@ -365,7 +392,7 @@
    "score": null,
    "task_id": "fault-idle-stop-with-lanes-running",
    "impact": "reliability",
-   "rank": 36
+   "rank": 39
   },
   {
    "title": "Fix the watchdog that kept killing healthy sessions",
@@ -375,7 +402,7 @@
    "score": null,
    "task_id": "fault-session-watchdog-bookkeeping",
    "impact": "reliability",
-   "rank": 37
+   "rank": 40
   },
   {
    "title": "Never leave an empty chair while there is work waiting",
@@ -385,7 +412,7 @@
    "score": null,
    "task_id": "fault-killer-unbounded-spawner-capped",
    "impact": "reliability",
-   "rank": 38
+   "rank": 41
   },
   {
    "title": "Stop replaying already-answered instructions as if they were new",
@@ -395,7 +422,7 @@
    "score": null,
    "task_id": "fault-archive-replayed-as-urgent",
    "impact": "reliability",
-   "rank": 39
+   "rank": 42
   },
   {
    "title": "Prove the machine recovers on its own, twice, with receipts",
@@ -405,7 +432,7 @@
    "score": null,
    "task_id": "fault-recovery-proofs-from-logs",
    "impact": "reliability",
-   "rank": 40
+   "rank": 43
   },
   {
    "title": "Restart the always-on background process onto current code",
@@ -415,7 +442,7 @@
    "score": null,
    "task_id": "fault-watcher-running-outdated-code",
    "impact": "reliability",
-   "rank": 41
+   "rank": 44
   },
   {
    "title": "Turn social-media injury signals into live prediction inputs",
@@ -424,7 +451,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "social-signals-to-predictions",
-   "rank": 42
+   "rank": 45
   },
   {
    "title": "Wire the finished foul engine into the live game simulation",
@@ -435,7 +462,7 @@
    "task_id": "foul-model-in-simulation",
    "impact": "High Impact",
    "state": "staged",
-   "rank": 43
+   "rank": 46
   },
   {
    "title": "Correct the remaining teams we still rate too high or too low",
@@ -446,7 +473,7 @@
    "task_id": "per-team-bias-tuneup",
    "impact": "High Impact",
    "state": "gated",
-   "rank": 44
+   "rank": 47
   },
   {
    "title": "One-time code-publishing sign-in to keep pushes flowing",
@@ -456,7 +483,7 @@
    "score": null,
    "task_id": "code-publish-signin",
    "state": "blocked",
-   "rank": 45
+   "rank": 48
   },
   {
    "title": "Turn the trade-value ranking into a live feature",
@@ -465,7 +492,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "trade-value-productionization",
-   "rank": 46
+   "rank": 49
   },
   {
    "title": "Grade our season simulation against the futures market",
@@ -475,7 +502,7 @@
    "score": null,
    "task_id": "season-sim-futures-grading",
    "state": "gated",
-   "rank": 47
+   "rank": 50
   },
   {
    "title": "Bring team pages up to a mainstream sports-site standard",
@@ -484,7 +511,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "team-pages-parity",
-   "rank": 48
+   "rank": 51
   },
   {
    "title": "Show a plain win-percent on each game card",
@@ -494,7 +521,7 @@
    "score": null,
    "task_id": "win-percent-on-cards",
    "state": "blocked",
-   "rank": 49
+   "rank": 52
   },
   {
    "title": "Add player attribute cards and a what-if lineup lab",
@@ -503,7 +530,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "attribute-cards-lineup-lab",
-   "rank": 50
+   "rank": 53
   },
   {
    "title": "Measure player impact by court zone",
@@ -513,7 +540,7 @@
    "score": null,
    "task_id": "zone-spatial-impact",
    "state": "gated",
-   "rank": 51
+   "rank": 54
   },
   {
    "title": "Build the next stage of the game simulator",
@@ -522,7 +549,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "micro-sim-p1-build",
-   "rank": 52
+   "rank": 55
   },
   {
    "title": "Model who guards whom",
@@ -531,7 +558,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "primary-defender-model",
-   "rank": 53
+   "rank": 56
   },
   {
    "title": "Build a fix for each of our biggest error types",
@@ -541,7 +568,7 @@
    "score": null,
    "task_id": "error-pocket-fixes",
    "state": "part done",
-   "rank": 54
+   "rank": 57
   },
   {
    "title": "Add referee assignments and whistle tendencies",
@@ -551,7 +578,7 @@
    "score": null,
    "task_id": "referee-assignment-ingest",
    "state": "part done",
-   "rank": 55
+   "rank": 58
   },
   {
    "title": "Per-team totals de-shrink flip-now vs wait-n>=225",
@@ -561,7 +588,7 @@
    "score": null,
    "task_id": "totals-deshrink-flip-decision",
    "state": "gated",
-   "rank": 56
+   "rank": 59
   },
   {
    "title": "Collect Spanish and French league box scores",
@@ -571,7 +598,7 @@
    "score": null,
    "task_id": "euro-league-scrapes",
    "state": "part done",
-   "rank": 57
+   "rank": 60
   },
   {
    "title": "Stats.wnba.com/stats/ is Akamai-blocked from this box — matchups/tracking need a ...",
@@ -581,7 +608,7 @@
    "score": null,
    "task_id": "stats-wnba-reachability-workaround",
    "state": "blocked",
-   "rank": 58
+   "rank": 61
   },
   {
    "title": "LFB French box reachable via Genius needs a one-time season match-id capture to unlock",
@@ -591,7 +618,7 @@
    "score": null,
    "task_id": "lfb-french-index-capture",
    "state": "blocked",
-   "rank": 59
+   "rank": 62
   },
   {
    "title": "Collect full 2026 contract terms",
@@ -600,7 +627,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "contract-terms-acquisition",
-   "rank": 60
+   "rank": 63
   },
   {
    "title": "Upgrade the accuracy-transparency page",
@@ -609,7 +636,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "accuracy-transparency-page",
-   "rank": 61
+   "rank": 64
   },
   {
    "title": "Action-type value decomposition on",
@@ -618,7 +645,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-action-type-value-decomposition-on-wnba-vaep",
-   "rank": 62
+   "rank": 65
   },
   {
    "title": "Pre-shot-sequence xG context",
@@ -627,7 +654,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-pre-shot-sequence-xg-context",
-   "rank": 63
+   "rank": 66
   },
   {
    "title": "International league-strength (movers) estimator + rookie-anchor calibration",
@@ -636,7 +663,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-international-league-strength-movers-estimato",
-   "rank": 64
+   "rank": 67
   },
   {
    "title": "Rebound board-duel, player grain",
@@ -646,7 +673,7 @@
    "score": null,
    "task_id": "bk-rebound-board-duel-player-grain",
    "state": "gated",
-   "rank": 65
+   "rank": 68
   },
   {
    "title": "Vs-sim disagreement + one-line driver â†’ blend weight",
@@ -655,7 +682,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-v12-vs-sim-disagreement-flag-one-line-driver",
-   "rank": 66
+   "rank": 69
   },
   {
    "title": "Sim-realism cluster",
@@ -664,7 +691,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-sim-realism-cluster",
-   "rank": 67
+   "rank": 70
   },
   {
    "title": "Owned- in-game live win-prob",
@@ -673,7 +700,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-owned-pbp-in-game-live-win-prob",
-   "rank": 68
+   "rank": 71
   },
   {
    "title": "Stats.wnba.com shot-location rim-defense integration spike â†’ shot-quality baseline",
@@ -683,7 +710,7 @@
    "score": null,
    "task_id": "bk-stats-wnba-com-free-shot-location-rim-defense",
    "state": "gated",
-   "rank": 69
+   "rank": 72
   },
   {
    "title": "Transactions/contracts/salary spine",
@@ -692,7 +719,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-transactions-contracts-salary-spine",
-   "rank": 70
+   "rank": 73
   },
   {
    "title": "FEB Spain + LFB France scrapes + tier-means ship",
@@ -701,7 +728,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-feb-spain-lfb-france-scrapes-fiba-tier-means",
-   "rank": 71
+   "rank": 74
   },
   {
    "title": "Self-close follow-on",
@@ -710,7 +737,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-watcher-self-close-follow-on",
-   "rank": 72
+   "rank": 75
   },
   {
    "title": "Re-test the 3 pending post-datefix conclusions + hygiene pass",
@@ -719,7 +746,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-re-test-the-3-pending-post-datefix-conclusion",
-   "rank": 73
+   "rank": 76
   },
   {
    "title": "B/-c/-d clone worker-pool formalization",
@@ -728,7 +755,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-b-c-d-clone-worker-pool-formalization",
-   "rank": 74
+   "rank": 77
   },
   {
    "title": "Register local scheduled tasks",
@@ -738,7 +765,7 @@
    "score": null,
    "task_id": "bk-register-local-scheduled-tasks-admin-powershe",
    "state": "gated",
-   "rank": 75
+   "rank": 78
   },
   {
    "title": "Full remote queue control from the phone",
@@ -747,7 +774,7 @@
    "exploratory": false,
    "score": null,
    "task_id": "bk-full-remote-queue-control-from-the-phone",
-   "rank": 76
+   "rank": 79
   },
   {
    "title": "Add a weekly where-we-beat-the-market strip",
@@ -757,7 +784,7 @@
    "score": null,
    "task_id": "market-scorecard-strip",
    "tag": "Research only — an experiment, never the top priority",
-   "rank": 77
+   "rank": 80
   },
   {
    "title": "Rank each night's best bets by confidence",
@@ -767,19 +794,19 @@
    "score": null,
    "task_id": "confidence-ranked-bets",
    "tag": "Research only — an experiment, never the top priority",
-   "rank": 78
+   "rank": 81
   }
  ],
- "shown": 78,
+ "shown": 81,
  "floor": {
   "target": 40,
-  "count": 78,
+  "count": 81,
   "ok": true,
-  "label": "78 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 29m ago.)",
-  "as_of_utc": "2026-07-30T03:53:30Z",
-  "age_secs": 1773,
+  "label": "81 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 14m ago.)",
+  "as_of_utc": "2026-07-30T04:23:11Z",
+  "age_secs": 891,
   "stale": false
  },
  "source": "the team's ranked work list",
- "generated_et": "Jul 30, 12:22am ET"
+ "generated_et": "Jul 30, 12:37am ET"
 }

@@ -1,23 +1,29 @@
 {
- "generated_utc": "2026-07-30T04:22:54+00:00",
+ "generated_utc": "2026-07-30T04:37:54+00:00",
  "freshness": {
-  "baked_utc": "2026-07-30T04:22:54+00:00",
-  "baked_et": "Jul 30, 12:22am ET",
-  "revalidated_utc": "2026-07-30T04:22:54+00:00",
+  "baked_utc": "2026-07-30T04:37:54+00:00",
+  "baked_et": "Jul 30, 12:37am ET",
+  "revalidated_utc": "2026-07-30T04:37:54+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-30",
  "day_summary": "Tonight's game reports are ready - 3 games. Nothing needs you right now.",
  "counts": {
   "running": 1,
-  "done_today": 14,
+  "done_today": 15,
   "maintenance": 1,
   "needs_anthony": 0,
-  "lanes_today": 14,
-  "upcoming": 78
+  "lanes_today": 15,
+  "upcoming": 81
  },
  "sections": {
   "agent_updates": [
+   {
+    "id": "board-police-wedged-instance-and-the-silent-over",
+    "title": "Board police wedged instance and the silent overlap",
+    "timestamp": "Jul 30, 2026",
+    "body_markdown": "Board police: a wedged instance, 401 orphaned processes, and an overlap path that could not say so."
+   },
    {
     "id": "absent-table-skip-reports-green",
     "title": "Absent table skip reports green",
@@ -912,6 +918,17 @@
   "needs_anthony": [],
   "done_today": [
    {
+    "name": "Board police wedged instance and the silent overlap",
+    "one_liner": "Board police: a wedged instance, 401 orphaned processes, and an overlap path that could not say so",
+    "chip": "DONE",
+    "team": "",
+    "time": "12:30am",
+    "at_iso": "2026-07-30T00:30:00-04:00",
+    "link": "https://drive.google.com/file/d/11B5xN7A_9Knn9zvOf2XwPijEfyegfcvX/view?usp=drivesdk",
+    "impact": 3,
+    "headline": true
+   },
+   {
     "name": "Infra the row a human reads could not show a failure",
     "one_liner": "The row a human reads could not show a failure",
     "chip": "DONE",
@@ -1139,8 +1156,8 @@
      "why": "2026-07-30T02 while retiring rows by hand. width fill. is closed status searches the status string so ANY status containing 'done' or 'shipped' closes the row outright. The natural wording for a ...",
      "priority": 0,
      "seat": "Modeling",
-     "status": "READY",
-     "state": "ready now",
+     "status": "partial - the explicit state field is IN and proven; the backfill and the guard test remain. ops/scout/width_fill.py now supports a per-row `state` (open|partial|done|gated|blocked) read by two new row-level helpers, item_is_closed() and item_blocker(), which the two ready-set call sites use. When a row declares `state`, THAT decides and the prose is free to say anything; when it does not, the old string search governs unchanged, so all 187 existing rows are unaffected and nothing needed backfilling. An unrecognised value falls back rather than guessing - a typo must never silently mark a row finished. A gated row reads its reason from an explicit `blocker` field, falling back to the status, and says so plainly if neither names one (the CEO rule that a blocker is only valid if it is named). PROVEN IN BOTH DIRECTIONS on the exact sentence that defeated the old classifier twice - 'partial - relocated the superseded provenance; the next pass need not re-derive it': with no state it still reads CLOSED (legacy behaviour intact), with state=partial it reads open and unblocked. Applied to four rows so far, including this one and the two I gated today, so their prose no longer fights the parser. REMAINING: (1) a test asserting the PROPERTY - a row whose state is open stays open no matter which words follow, with the fixture built from the two trigger vocabularies; (2) progressively add `state` to rows as they are touched, which needs no migration; (3) consider having the writers set it by default so the fallback path shrinks over time.",
+     "state": "part done",
      "pm_authored": false,
      "impact": "",
      "rank": 3,
@@ -1168,6 +1185,42 @@
      ]
     },
     {
+     "task_id": "commit-sweep-guard-does-not-protect-the-shared-i",
+     "family": "infra",
+     "name": "Stop one lane's commit from swallowing another's queue edits",
+     "header": "Stop one lane's commit from swallowing another's queue edits",
+     "why": ". ops commit sweep blocks a commit that touches paths inside another lane's declared write set. ops is the shared queue index that lane and the coordinator edit and nobody declares it in a write set ...",
+     "priority": 0,
+     "seat": "Infra",
+     "status": "READY",
+     "state": "ready now",
+     "pm_authored": false,
+     "impact": "",
+     "rank": 4,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20commit-sweep-guard-does-not-protect-the-shared-i%3A%20top&body=Stop%20one%20lane%27s%20commit%20from%20swallowing%20another%27s%20queue%20edits%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20commit-sweep-guard-does-not-protect-the-shared-i%3A%20bump&body=Stop%20one%20lane%27s%20commit%20from%20swallowing%20another%27s%20queue%20edits%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20commit-sweep-guard-does-not-protect-the-shared-i%3A%20demote&body=Stop%20one%20lane%27s%20commit%20from%20swallowing%20another%27s%20queue%20edits%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20commit-sweep-guard-does-not-protect-the-shared-i%3A%20shelve&body=Stop%20one%20lane%27s%20commit%20from%20swallowing%20another%27s%20queue%20edits%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+      }
+     ]
+    },
+    {
      "task_id": "idle-beacon-fires-when-not-actually-out-of-work",
      "family": "modeling",
      "name": "Stop telling him we are idle when we are not",
@@ -1179,7 +1232,7 @@
      "state": "part done",
      "pm_authored": false,
      "impact": "",
-     "rank": 4,
+     "rank": 5,
      "actions": [
       {
        "verb": "top",
@@ -1215,7 +1268,7 @@
      "state": "gated",
      "pm_authored": false,
      "impact": "",
-     "rank": 5,
+     "rank": 6,
      "actions": [
       {
        "verb": "top",
@@ -1251,7 +1304,7 @@
      "state": "gated",
      "pm_authored": false,
      "impact": "",
-     "rank": 6,
+     "rank": 7,
      "actions": [
       {
        "verb": "top",
@@ -1287,7 +1340,7 @@
      "state": "ready now",
      "pm_authored": false,
      "impact": "",
-     "rank": 7,
+     "rank": 8,
      "actions": [
       {
        "verb": "top",
@@ -1323,7 +1376,7 @@
      "state": "ready now",
      "pm_authored": false,
      "impact": "",
-     "rank": 8,
+     "rank": 9,
      "actions": [
       {
        "verb": "top",
@@ -1359,7 +1412,7 @@
      "state": "ready now",
      "pm_authored": false,
      "impact": "",
-     "rank": 9,
+     "rank": 10,
      "actions": [
       {
        "verb": "top",
@@ -1382,46 +1435,82 @@
        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20sentinel-empty-reads-green-remaining-sites%3A%20shelve&body=Decide%2C%20per%20table%2C%20whether%20empty%20means%20healthy%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
       }
      ]
-    },
-    {
-     "task_id": "asg-damping-a4prime-refile",
-     "family": "modeling",
-     "name": "Re-file the one gate that was badly written, then decide the weight",
-     "header": "Re-file the one gate that was badly written, then decide the weight",
-     "why": "Lane measured the All-Star minute-tilt damping properly and its recommendation is - not because the damping is right but because its own pre-registered gate failed on a leg it had written wrong. It ...",
-     "priority": 1,
-     "seat": "Modeling",
-     "status": "READY",
-     "state": "ready now",
-     "pm_authored": false,
-     "impact": "",
-     "rank": 10,
-     "actions": [
-      {
-       "verb": "top",
-       "icon": "⤒",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20asg-damping-a4prime-refile%3A%20top&body=Re-file%20the%20one%20gate%20that%20was%20badly%20written%2C%20then%20decide%20the%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-      },
-      {
-       "verb": "bump",
-       "icon": "⬆",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20asg-damping-a4prime-refile%3A%20bump&body=Re-file%20the%20one%20gate%20that%20was%20badly%20written%2C%20then%20decide%20the%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-      },
-      {
-       "verb": "demote",
-       "icon": "⬇",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20asg-damping-a4prime-refile%3A%20demote&body=Re-file%20the%20one%20gate%20that%20was%20badly%20written%2C%20then%20decide%20the%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-      },
-      {
-       "verb": "shelve",
-       "icon": "🗄",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20asg-damping-a4prime-refile%3A%20shelve&body=Re-file%20the%20one%20gate%20that%20was%20badly%20written%2C%20then%20decide%20the%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-      }
-     ]
     }
    ],
    "more_by_family": {
     "modeling": [
+     {
+      "task_id": "capability-built-tested-and-never-switched-on",
+      "family": "modeling",
+      "name": "Find the finished work nobody turned on",
+      "header": "Find the finished work nobody turned on",
+      "why": "The always-on background monitor that flags anything needing a decision",
+      "priority": 1,
+      "seat": "Modeling",
+      "status": "open - five measured instances of one pattern; the detector is the deliverable",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank": 11,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20capability-built-tested-and-never-switched-on%3A%20top&body=Find%20the%20finished%20work%20nobody%20turned%20on%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20capability-built-tested-and-never-switched-on%3A%20bump&body=Find%20the%20finished%20work%20nobody%20turned%20on%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20capability-built-tested-and-never-switched-on%3A%20demote&body=Find%20the%20finished%20work%20nobody%20turned%20on%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20capability-built-tested-and-never-switched-on%3A%20shelve&body=Find%20the%20finished%20work%20nobody%20turned%20on%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       }
+      ]
+     },
+     {
+      "task_id": "asg-damping-a4prime-refile",
+      "family": "modeling",
+      "name": "Re-file the one gate that was badly written, then decide the weight",
+      "header": "Re-file the one gate that was badly written, then decide the weight",
+      "why": "Lane measured the All-Star minute-tilt damping properly and its recommendation is - not because the damping is right but because its own pre-registered gate failed on a leg it had written wrong. It ...",
+      "priority": 1,
+      "seat": "Modeling",
+      "status": "READY",
+      "state": "ready now",
+      "pm_authored": false,
+      "impact": "",
+      "rank": 12,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20asg-damping-a4prime-refile%3A%20top&body=Re-file%20the%20one%20gate%20that%20was%20badly%20written%2C%20then%20decide%20the%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20asg-damping-a4prime-refile%3A%20bump&body=Re-file%20the%20one%20gate%20that%20was%20badly%20written%2C%20then%20decide%20the%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20asg-damping-a4prime-refile%3A%20demote&body=Re-file%20the%20one%20gate%20that%20was%20badly%20written%2C%20then%20decide%20the%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20asg-damping-a4prime-refile%3A%20shelve&body=Re-file%20the%20one%20gate%20that%20was%20badly%20written%2C%20then%20decide%20the%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       }
+      ]
+     },
      {
       "task_id": "feed-alarm-fast-path-needs-one-watcher-restart",
       "family": "modeling",
@@ -1434,7 +1523,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 11,
+      "rank": 13,
       "actions": [
        {
         "verb": "top",
@@ -1470,7 +1559,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 12,
+      "rank": 14,
       "actions": [
        {
         "verb": "top",
@@ -1506,7 +1595,7 @@
       "state": "part done",
       "pm_authored": false,
       "impact": "efficiency - compounds on every dispatch",
-      "rank": 13,
+      "rank": 15,
       "actions": [
        {
         "verb": "top",
@@ -1542,7 +1631,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 15,
+      "rank": 16,
       "actions": [
        {
         "verb": "top",
@@ -1578,7 +1667,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 16,
+      "rank": 17,
       "actions": [
        {
         "verb": "top",
@@ -1614,7 +1703,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 17,
+      "rank": 18,
       "actions": [
        {
         "verb": "top",
@@ -1650,7 +1739,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 19,
+      "rank": 20,
       "actions": [
        {
         "verb": "top",
@@ -1686,7 +1775,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 20,
+      "rank": 21,
       "actions": [
        {
         "verb": "top",
@@ -1722,7 +1811,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 21,
+      "rank": 22,
       "actions": [
        {
         "verb": "top",
@@ -1758,7 +1847,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 23,
+      "rank": 24,
       "actions": [
        {
         "verb": "top",
@@ -1794,7 +1883,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 24,
+      "rank": 25,
       "actions": [
        {
         "verb": "top",
@@ -1819,6 +1908,78 @@
       ]
      },
      {
+      "task_id": "width-fill-suite-audit-all-live-state-reads",
+      "family": "modeling",
+      "name": "Stop discovering this suite's live reads one incident at a time",
+      "header": "Stop discovering this suite's live reads one incident at a time",
+      "why": "The always-on background monitor that flags anything needing a decision",
+      "priority": 2,
+      "seat": "Modeling",
+      "status": "open - three live-state dependencies found one at a time; audit the rest before a fourth",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank": 26,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20width-fill-suite-audit-all-live-state-reads%3A%20top&body=Stop%20discovering%20this%20suite%27s%20live%20reads%20one%20incident%20at%20a%20time%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20width-fill-suite-audit-all-live-state-reads%3A%20bump&body=Stop%20discovering%20this%20suite%27s%20live%20reads%20one%20incident%20at%20a%20time%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20width-fill-suite-audit-all-live-state-reads%3A%20demote&body=Stop%20discovering%20this%20suite%27s%20live%20reads%20one%20incident%20at%20a%20time%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20width-fill-suite-audit-all-live-state-reads%3A%20shelve&body=Stop%20discovering%20this%20suite%27s%20live%20reads%20one%20incident%20at%20a%20time%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       }
+      ]
+     },
+     {
+      "task_id": "precommit-guard-flags-a-def-that-moved-to-an-imp",
+      "family": "modeling",
+      "name": "Stop the revert guard crying wolf when code is extracted, not deleted",
+      "header": "Stop the revert guard crying wolf when code is extracted, not deleted",
+      "why": "Precommit guard warned ' - - removes def class noprompt env still referenced by 1 other file(s)' on commit . It is a verified the board-police lane had that helper into a new shared module scripts ...",
+      "priority": 2,
+      "seat": "Modeling",
+      "status": "open - second false positive tonight from the same check",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank": 27,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20precommit-guard-flags-a-def-that-moved-to-an-imp%3A%20top&body=Stop%20the%20revert%20guard%20crying%20wolf%20when%20code%20is%20extracted%2C%20not%20deleted%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20precommit-guard-flags-a-def-that-moved-to-an-imp%3A%20bump&body=Stop%20the%20revert%20guard%20crying%20wolf%20when%20code%20is%20extracted%2C%20not%20deleted%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20precommit-guard-flags-a-def-that-moved-to-an-imp%3A%20demote&body=Stop%20the%20revert%20guard%20crying%20wolf%20when%20code%20is%20extracted%2C%20not%20deleted%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20precommit-guard-flags-a-def-that-moved-to-an-imp%3A%20shelve&body=Stop%20the%20revert%20guard%20crying%20wolf%20when%20code%20is%20extracted%2C%20not%20deleted%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "social-signals-to-predictions",
       "family": "modeling",
       "name": "Turn social-media injury signals into live prediction inputs",
@@ -1830,7 +1991,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 42,
+      "rank": 45,
       "actions": [
        {
         "verb": "top",
@@ -1866,7 +2027,7 @@
       "state": "staged",
       "pm_authored": true,
       "impact": "High Impact",
-      "rank": 43,
+      "rank": 46,
       "actions": [
        {
         "verb": "top",
@@ -1902,7 +2063,7 @@
       "state": "gated",
       "pm_authored": true,
       "impact": "High Impact",
-      "rank": 44,
+      "rank": 47,
       "actions": [
        {
         "verb": "top",
@@ -1938,7 +2099,7 @@
       "state": "gated",
       "pm_authored": true,
       "impact": "",
-      "rank": 47,
+      "rank": 50,
       "actions": [
        {
         "verb": "top",
@@ -1974,7 +2135,7 @@
       "state": "gated",
       "pm_authored": true,
       "impact": "",
-      "rank": 51,
+      "rank": 54,
       "actions": [
        {
         "verb": "top",
@@ -2010,7 +2171,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 52,
+      "rank": 55,
       "actions": [
        {
         "verb": "top",
@@ -2046,7 +2207,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 53,
+      "rank": 56,
       "actions": [
        {
         "verb": "top",
@@ -2082,7 +2243,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 54,
+      "rank": 57,
       "actions": [
        {
         "verb": "top",
@@ -2118,7 +2279,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 56,
+      "rank": 59,
       "actions": [
        {
         "verb": "top",
@@ -2154,7 +2315,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 61,
+      "rank": 64,
       "actions": [
        {
         "verb": "top",
@@ -2190,7 +2351,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 62,
+      "rank": 65,
       "actions": [
        {
         "verb": "top",
@@ -2226,7 +2387,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 64,
+      "rank": 67,
       "actions": [
        {
         "verb": "top",
@@ -2262,7 +2423,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 65,
+      "rank": 68,
       "actions": [
        {
         "verb": "top",
@@ -2298,7 +2459,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 66,
+      "rank": 69,
       "actions": [
        {
         "verb": "top",
@@ -2334,7 +2495,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 67,
+      "rank": 70,
       "actions": [
        {
         "verb": "top",
@@ -2370,7 +2531,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 68,
+      "rank": 71,
       "actions": [
        {
         "verb": "top",
@@ -2406,7 +2567,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 69,
+      "rank": 72,
       "actions": [
        {
         "verb": "top",
@@ -2442,7 +2603,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 70,
+      "rank": 73,
       "actions": [
        {
         "verb": "top",
@@ -2478,7 +2639,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 71,
+      "rank": 74,
       "actions": [
        {
         "verb": "top",
@@ -2514,7 +2675,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 72,
+      "rank": 75,
       "actions": [
        {
         "verb": "top",
@@ -2550,7 +2711,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 73,
+      "rank": 76,
       "actions": [
        {
         "verb": "top",
@@ -2577,42 +2738,6 @@
     ],
     "infra": [
      {
-      "task_id": "commit-sweep-guard-does-not-protect-the-shared-i",
-      "family": "infra",
-      "name": "Stop one lane's commit from swallowing another's queue edits",
-      "header": "Stop one lane's commit from swallowing another's queue edits",
-      "why": ". ops commit sweep blocks a commit that touches paths inside another lane's declared write set. ops is the shared queue index that lane and the coordinator edit and nobody declares it in a write set ...",
-      "priority": 1,
-      "seat": "Infra",
-      "status": "READY",
-      "state": "ready now",
-      "pm_authored": false,
-      "impact": "",
-      "rank": 14,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20commit-sweep-guard-does-not-protect-the-shared-i%3A%20top&body=Stop%20one%20lane%27s%20commit%20from%20swallowing%20another%27s%20queue%20edits%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20commit-sweep-guard-does-not-protect-the-shared-i%3A%20bump&body=Stop%20one%20lane%27s%20commit%20from%20swallowing%20another%27s%20queue%20edits%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20commit-sweep-guard-does-not-protect-the-shared-i%3A%20demote&body=Stop%20one%20lane%27s%20commit%20from%20swallowing%20another%27s%20queue%20edits%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20commit-sweep-guard-does-not-protect-the-shared-i%3A%20shelve&body=Stop%20one%20lane%27s%20commit%20from%20swallowing%20another%27s%20queue%20edits%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "main-board-missing-status-strip",
       "family": "infra",
       "name": "The main board is missing the freshness and pause signals every other page has",
@@ -2624,7 +2749,7 @@
       "state": "ready now",
       "pm_authored": true,
       "impact": "CEO-visible",
-      "rank": 18,
+      "rank": 19,
       "actions": [
        {
         "verb": "top",
@@ -2660,7 +2785,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 25,
+      "rank": 28,
       "actions": [
        {
         "verb": "top",
@@ -2696,7 +2821,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 26,
+      "rank": 29,
       "actions": [
        {
         "verb": "top",
@@ -2732,7 +2857,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 29,
+      "rank": 32,
       "actions": [
        {
         "verb": "top",
@@ -2768,7 +2893,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 30,
+      "rank": 33,
       "actions": [
        {
         "verb": "top",
@@ -2804,7 +2929,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 31,
+      "rank": 34,
       "actions": [
        {
         "verb": "top",
@@ -2840,7 +2965,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 32,
+      "rank": 35,
       "actions": [
        {
         "verb": "top",
@@ -2876,7 +3001,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 33,
+      "rank": 36,
       "actions": [
        {
         "verb": "top",
@@ -2912,7 +3037,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 34,
+      "rank": 37,
       "actions": [
        {
         "verb": "top",
@@ -2948,7 +3073,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 36,
+      "rank": 39,
       "actions": [
        {
         "verb": "top",
@@ -2984,7 +3109,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 37,
+      "rank": 40,
       "actions": [
        {
         "verb": "top",
@@ -3020,7 +3145,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 38,
+      "rank": 41,
       "actions": [
        {
         "verb": "top",
@@ -3056,7 +3181,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 39,
+      "rank": 42,
       "actions": [
        {
         "verb": "top",
@@ -3092,7 +3217,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 40,
+      "rank": 43,
       "actions": [
        {
         "verb": "top",
@@ -3128,7 +3253,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 41,
+      "rank": 44,
       "actions": [
        {
         "verb": "top",
@@ -3164,7 +3289,7 @@
       "state": "blocked",
       "pm_authored": true,
       "impact": "",
-      "rank": 45,
+      "rank": 48,
       "actions": [
        {
         "verb": "top",
@@ -3200,7 +3325,7 @@
       "state": "blocked",
       "pm_authored": false,
       "impact": "",
-      "rank": 58,
+      "rank": 61,
       "actions": [
        {
         "verb": "top",
@@ -3236,7 +3361,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 74,
+      "rank": 77,
       "actions": [
        {
         "verb": "top",
@@ -3272,7 +3397,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 76,
+      "rank": 79,
       "actions": [
        {
         "verb": "top",
@@ -3308,7 +3433,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 77,
+      "rank": 80,
       "actions": [
        {
         "verb": "top",
@@ -3344,7 +3469,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 78,
+      "rank": 81,
       "actions": [
        {
         "verb": "top",
@@ -3382,7 +3507,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO-visible",
-      "rank": 22,
+      "rank": 23,
       "actions": [
        {
         "verb": "top",
@@ -3418,7 +3543,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 27,
+      "rank": 30,
       "actions": [
        {
         "verb": "top",
@@ -3454,7 +3579,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 28,
+      "rank": 31,
       "actions": [
        {
         "verb": "top",
@@ -3490,7 +3615,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 35,
+      "rank": 38,
       "actions": [
        {
         "verb": "top",
@@ -3526,7 +3651,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 48,
+      "rank": 51,
       "actions": [
        {
         "verb": "top",
@@ -3562,7 +3687,7 @@
       "state": "blocked",
       "pm_authored": true,
       "impact": "",
-      "rank": 49,
+      "rank": 52,
       "actions": [
        {
         "verb": "top",
@@ -3598,7 +3723,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 50,
+      "rank": 53,
       "actions": [
        {
         "verb": "top",
@@ -3634,7 +3759,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 63,
+      "rank": 66,
       "actions": [
        {
         "verb": "top",
@@ -3670,7 +3795,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 75,
+      "rank": 78,
       "actions": [
        {
         "verb": "top",
@@ -3708,7 +3833,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 46,
+      "rank": 49,
       "actions": [
        {
         "verb": "top",
@@ -3744,7 +3869,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 55,
+      "rank": 58,
       "actions": [
        {
         "verb": "top",
@@ -3780,7 +3905,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 57,
+      "rank": 60,
       "actions": [
        {
         "verb": "top",
@@ -3816,7 +3941,7 @@
       "state": "blocked",
       "pm_authored": false,
       "impact": "",
-      "rank": 59,
+      "rank": 62,
       "actions": [
        {
         "verb": "top",
@@ -3852,7 +3977,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 60,
+      "rank": 63,
       "actions": [
        {
         "verb": "top",
@@ -3878,14 +4003,14 @@
      }
     ]
    },
-   "more_count": 68,
+   "more_count": 71,
    "floor": {
     "target": 40,
-    "count": 78,
+    "count": 81,
     "ok": true,
-    "label": "78 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 29m ago.)",
-    "as_of_utc": "2026-07-30T03:53:30Z",
-    "age_secs": 1769,
+    "label": "81 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 14m ago.)",
+    "as_of_utc": "2026-07-30T04:23:11Z",
+    "age_secs": 889,
     "stale": false
    },
    "source": "dispatch queue",
@@ -4294,67 +4419,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-30T04:22:33Z",
-  "age_s": 24,
-  "cycles": 275,
+  "last_poll_utc": "2026-07-30T04:37:23Z",
+  "age_s": 35,
+  "cycles": 289,
   "known": true,
-  "label": "scout: alive, last poll 24s ago",
+  "label": "scout: alive, last poll 35s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "12:20am",
-   "text": "board-selfpolice: auto-repair bake launch FAILED: TimeoutExpired: Command '['C:\\\\Python314\\\\python.exe', 'C:\\\\Users\\\\antho\\\\hardwood-cron\\\\scripts\\\\build site.py', '--date', '2026-07-30', '--push']' timed out after 300 seconds",
-   "detail": "board-selfpolice: auto-repair bake launch FAILED: TimeoutExpired: Command '['C:\\\\Python314\\\\python.exe', 'C:\\\\Users\\\\antho\\\\hardwood-cron\\\\s"
+   "time": "12:34am",
+   "text": "poll #286 · nothing new",
+   "detail": "poll cycle=286 ok directives_new=0"
   },
   {
-   "time": "12:21am",
-   "text": "poll #274 · nothing new",
-   "detail": "poll cycle=274 ok directives_new=0"
+   "time": "12:35am",
+   "text": "poll #287 · nothing new",
+   "detail": "poll cycle=287 ok directives_new=0"
   },
   {
-   "time": "12:21am",
-   "text": "USAGE WIND-DOWN in force [plan pct bands]: live plan usage 91% >= wind-down 85% -- finish or checkpoint in-flight lanes and park with buffer left (checkpoint written: True",
-   "detail": "USAGE WIND-DOWN in force [plan_pct_bands]: live plan usage 91% >= wind-down 85% -- finish or checkpoint in-flight lanes and park with buffer"
+   "time": "12:36am",
+   "text": "poll #288 · nothing new",
+   "detail": "poll cycle=288 ok directives_new=0"
   },
   {
-   "time": "12:21am",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 17245s newer than live (repo 2026-07-30T04:13:02+00:00 vs live 2026-07-29T23:25:37+00:00) | DATA-SURFACE-LAG: live coach.json is 14092s (3.9h) behind repo (repo 2026-07-30T03:00: vs live 2026-07-29T23:05:) | DATA-SURFACE-LAG: live availability.json is 17251s (4.8h) behind repo (repo 2026-07-30T04:13: vs live 2026-07-29T23:25:) | DATA-SURFACE-LAG: live value spine.json is 14092s (3.9h) behind repo (repo 2026-07-30T03:00: vs live 2026-07-29T23:05:) | RUNNING-NOW: live lane set != repo live lanes.json (missing on live=['2026-07-10T05:32:', '2026-07-10T05:36:', '2026-07-10T05:38:', '2026-07-10T05:40:'] stale on live=['2026-07-29T19:20:29-04:00']) | GAMES-DATE: live slate date '2026-07-29' != local today '2026-07-30'",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 17245s newer than live (repo 2026-07-30T04:13:02+00"
+   "time": "12:37am",
+   "text": "poll #289 · nothing new",
+   "detail": "poll cycle=289 ok directives_new=0"
   },
   {
-   "time": "12:22am",
-   "text": "poll #275 · nothing new",
-   "detail": "poll cycle=275 ok directives_new=0"
-  },
-  {
-   "time": "12:22am",
-   "text": "USAGE WIND-DOWN in force [plan pct bands]: live plan usage 91% >= wind-down 85% -- finish or checkpoint in-flight lanes and park with buffer left (checkpoint written: True",
-   "detail": "USAGE WIND-DOWN in force [plan_pct_bands]: live plan usage 91% >= wind-down 85% -- finish or checkpoint in-flight lanes and park with buffer"
-  },
-  {
-   "time": "12:22am",
-   "text": "publish-health: PUBLIC BOARD STALE (#98): staleness=17816s threshold=900s live=2026-07-29T23:25:37+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 17245s newer than live). CAUSE: the publish guard is holding the push because scripts/build site.py differs from origin (since 2026-07-30T02:01:, 29 cycles). REMEDY: commit scripts/build site.py (or restore it to origin) — the public board cannot publish while a publish-guard file differs from origin",
-   "detail": "publish-health: PUBLIC BOARD STALE (#98): staleness=17816s threshold=900s live=2026-07-29T23:25:37+00:00 | deploy stuck (guard/push failure)"
-  },
-  {
-   "time": "12:22am",
+   "time": "12:37am",
    "text": "divergence alarm: git fetch origin failed (fatal: Cannot prompt because user interactivity has been disabled. / remote: Invalid username or token. Password authent) — comparing against cached origin/gemini-dev",
    "detail": "divergence_alarm: git fetch origin failed (fatal: Cannot prompt because user interactivity has been disabled. / remote: Invalid username or "
   },
   {
-   "time": "12:22am",
-   "text": "divergence alarm: DIVERGED (streak=2): scripts/build site.py vs origin/gemini-dev — The publishing copy's board-build files no longer match the shared branch; the board will refuse to publish until they are reconciled.",
-   "detail": "divergence_alarm: DIVERGED (streak=2): scripts/build_site.py vs origin/gemini-dev — The publishing copy's board-build files no longer match "
+   "time": "12:37am",
+   "text": "divergence alarm: DIVERGED (streak=5): scripts/build site.py vs origin/gemini-dev — The publishing copy's board-build files no longer match the shared branch; the board will refuse to publish until they are reconciled.",
+   "detail": "divergence_alarm: DIVERGED (streak=5): scripts/build_site.py vs origin/gemini-dev — The publishing copy's board-build files no longer match "
   },
   {
-   "time": "12:22am",
-   "text": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 17245s newer than live (repo 2026-07-30T04:13:02+00:00 vs live 2026-07-29T23:25:37+00:00) | DATA-SURFACE-LAG: live coach.json is 14092s (3.9h) behind repo (repo 2026-07-30T03:00: vs live 2026-07-29T23:05:) | DATA-SURFACE-LAG: live availability.json is 17251s (4.8h) behind repo (repo 2026-07-30T04:13: vs live 2026-07-29T23:25:) | DATA-SURFACE-LAG: live value spine.json is 14092s (3.9h) behind repo (repo 2026-07-30T03:00: vs live 2026-07-29T23:05:) | RUNNING-NOW: live lane set != repo live lanes.json (missing on live=['2026-07-10T05:32:', '2026-07-10T05:36:', '2026-07-10T05:38:', '2026-07-10T05:40:'] stale on live=['2026-07-29T19:20:29-04:00']) | GAMES-DATE: live slate date '2026-07-29' != local today '2026-07-30' -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 17245s newer than live (repo 2026-07-30T04:13:02+00:00 vs live 2026-07-29T23:25:37+00:"
+   "time": "12:37am",
+   "text": "publish-health: PUBLIC BOARD STALE (#104): staleness=18734s threshold=900s live=2026-07-29T23:25:37+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 17837s newer than live). CAUSE: the publish guard is holding the push because scripts/build site.py differs from origin (since 2026-07-30T02:01:, 34 cycles). REMEDY: commit scripts/build site.py (or restore it to origin) — the public board cannot publish while a publish-guard file differs from origin",
+   "detail": "publish-health: PUBLIC BOARD STALE (#104): staleness=18734s threshold=900s live=2026-07-29T23:25:37+00:00 | deploy stuck (guard/push failure"
+  },
+  {
+   "time": "12:37am",
+   "text": "chain-health: CHAIN DOWN (#46): broken=board paged=True",
+   "detail": "chain-health: CHAIN DOWN (#46): broken=board paged=True"
+  },
+  {
+   "time": "12:37am",
+   "text": "slate-refresh: slate ok (today populated",
+   "detail": "slate-refresh: slate ok (today populated)"
+  },
+  {
+   "time": "12:37am",
+   "text": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 17837s newer than live (repo 2026-07-30T04:22:54+00:00 vs live 2026-07-29T23:25:37+00:00) | DATA-SURFACE-LAG: live coach.json is 14092s (3.9h) behind repo (repo 2026-07-30T03:00: vs live 2026-07-29T23:05:) | DATA-SURFACE-LAG: live availability.json is 17840s (5.0h) behind repo (repo 2026-07-30T04:23: vs live 2026-07-29T23:25:) | DATA-SURFACE-LAG: live value spine.json is 14092s (3.9h) behind repo (repo 2026-07-30T03:00: vs live 2026-07-29T23:05:) | RUNNING-NOW: live lane set != repo live lanes.json (missing on live=['2026-07-10T05:32:', '2026-07-10T05:36:', '2026-07-10T05:38:', '2026-07-10T05:40:'] stale on live=['2026-07-29T19:20:29-04:00']) | GAMES-DATE: live slate date '2026-07-29' != local today '2026-07-30' -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 17837s newer than live (repo 2026-07-30T04:22:54+00:00 vs live 2026-07-29T23:25:37+00:"
   }
  ],
  "helpers": {
-  "as_of": "2026-07-30T04:22:52.667831+00:00",
+  "as_of": "2026-07-30T04:37:55Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -4363,48 +4488,48 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "24s",
-    "state_text": "on · seen 24s ago"
+    "age_label": "35s",
+    "state_text": "on · seen 35s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "5s",
-    "state_text": "on · seen 5s ago"
+    "age_label": "14s",
+    "state_text": "on · seen 14s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "24s",
-    "state_text": "on · seen 24s ago"
+    "age_label": "7s",
+    "state_text": "on · seen 7s ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "13s",
-    "state_text": "on · seen 13s ago"
+    "age_label": "3s",
+    "state_text": "on · seen 3s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "5m",
-    "state_text": "on · seen 5m ago"
+    "age_label": "7s",
+    "state_text": "on · seen 7s ago"
    }
   ],
   "width": {
    "running": 1,
-   "target": 1,
-   "empty": 0,
-   "line": "1 of 1 jobs running.",
-   "reason": "Enough jobs are running for the work waiting.",
+   "target": 2,
+   "empty": 1,
+   "line": "1 of 2 jobs running.",
+   "reason": "Only 1 of 2 jobs are running - 1 more flagged for the coordinator to start from the priority list.",
    "stale": false
   },
   "scheduled_jobs": [
@@ -4564,25 +4689,25 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-07-30T04:22:44Z",
-  "session_age_secs": 8097,
-  "last_progress_age_secs": 13,
+  "last_heartbeat_utc": "2026-07-30T04:37:46Z",
+  "session_age_secs": 8998,
+  "last_progress_age_secs": 12,
   "last_spawn_attempt": "2026-07-30T02:08:04Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
  "pipe_health": {
-  "directives_pending": 0,
-  "last_processed_clock": "12:07am",
-  "last_processed_iso": "2026-07-30T04:07:04Z",
+  "directives_pending": 1,
+  "last_processed_clock": "12:34am",
+  "last_processed_iso": "2026-07-30T04:34:13Z",
   "last_processed_known": true,
-  "last_processed_display": "12:07am",
+  "last_processed_display": "12:34am",
   "last_processed_source": "directive_ledger.done",
-  "newest_directive_clock": "",
-  "newest_directive_iso": null,
+  "newest_directive_clock": "12:37am",
+  "newest_directive_iso": "2026-07-30T04:37:13Z",
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-07-30T04:07:04Z",
+  "as_of": "2026-07-30T04:37:13Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -4592,31 +4717,37 @@
   "usage_resets_clock": "",
   "note": ""
  },
- "width_defect": {},
+ "width_defect": {
+  "active": true,
+  "state": "defect",
+  "text": "Only 1 of 2 work lanes have been running for 9 min while jobs wait to start — being looked into.",
+  "running": 1,
+  "target": 2
+ },
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
    "as_of": "2026-07-30T04:04:30Z",
-   "stale": false,
-   "revalidated": "2026-07-30T04:22:54+00:00",
-   "stale_reason": "",
-   "age_label": "18m",
+   "stale": true,
+   "revalidated": "2026-07-30T04:37:54+00:00",
+   "stale_reason": "These readings may be out of date — last updated 33m ago.",
+   "age_label": "33m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-30T04:22:54+00:00",
+   "as_of": "2026-07-30T04:37:54+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T04:22:54+00:00",
+   "revalidated": "2026-07-30T04:37:54+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-30T04:22:54+00:00",
+   "as_of": "2026-07-30T04:37:54+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T04:22:54+00:00",
+   "revalidated": "2026-07-30T04:37:54+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
@@ -4625,66 +4756,66 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-30T04:22:54+00:00",
+   "revalidated": "2026-07-30T04:37:54+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-07-30T04:18:33Z",
+   "as_of": "2026-07-30T04:36:40Z",
    "stale": false,
-   "revalidated": "2026-07-30T04:22:54+00:00",
+   "revalidated": "2026-07-30T04:37:54+00:00",
    "stale_reason": "",
-   "age_label": "4m",
+   "age_label": "74s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-30T04:22:54+00:00",
+   "revalidated": "2026-07-30T04:37:54+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-07-30T04:07:04Z",
+   "as_of": "2026-07-30T04:37:13Z",
    "stale": false,
-   "revalidated": "2026-07-30T04:22:54+00:00",
+   "revalidated": "2026-07-30T04:37:54+00:00",
    "stale_reason": "",
-   "age_label": "15m",
+   "age_label": "41s",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
-   "as_of": "2026-07-29T21:55:00-04:00",
+   "as_of": "2026-07-30T00:30:00-04:00",
    "stale": false,
-   "revalidated": "2026-07-30T04:22:54+00:00",
+   "revalidated": "2026-07-30T04:37:54+00:00",
    "stale_reason": "",
-   "age_label": "2h",
+   "age_label": "7m",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-30T04:13:02+00:00",
+   "as_of": "2026-07-30T04:22:54+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T04:22:54+00:00",
+   "revalidated": "2026-07-30T04:37:54+00:00",
    "stale_reason": "",
-   "age_label": "9m",
+   "age_label": "15m",
    "stale_after": null
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-30T04:22:52.667831+00:00",
+   "as_of": "2026-07-30T04:37:55Z",
    "stale": false,
-   "revalidated": "2026-07-30T04:22:54+00:00",
+   "revalidated": "2026-07-30T04:37:54+00:00",
    "stale_reason": "",
-   "age_label": "5s",
+   "age_label": "3s",
    "stale_after": null
   }
  },
- "generated_et": "Jul 30, 12:22am ET"
+ "generated_et": "Jul 30, 12:37am ET"
 }
