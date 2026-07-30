@@ -1,14 +1,14 @@
 {
   "slug": "rest",
-  "generated_utc": "2026-07-30T15:25:40Z",
-  "generated_et": "Jul 30, 11:25am ET",
+  "generated_utc": "2026-07-30T16:11:18Z",
+  "generated_et": "Jul 30, 12:11pm ET",
   "question": "How much does a back-to-back cost a WNBA team, and do stars get load-managed on the second night?",
   "source_tables": [
     "game results (schedule + final scores)",
     "player box scores"
   ],
   "script": "scripts/analysis_rest_b2b.py",
-  "generated_at": "2026-07-30T15:25:40Z",
+  "generated_at": "2026-07-30T16:11:18Z",
   "n_played_games": 2539,
   "n_teamgames_with_rest": 4930,
   "definitions": {
@@ -28,6 +28,14 @@
     "court_adjusted_cost_winpct": -0.0283,
     "b2b_share_road": 0.6216,
     "one_liner": "A back-to-back costs a WNBA team about 0.8 points and 3 percentage points of win probability once you adjust for the fact that b2b teams are usually the road team \u2014 a real but modest edge."
+  },
+  "index_row": {
+    "slug": "rest",
+    "title": "Rest & back-to-back effects",
+    "question": "How much does a rest edge / a B2B cost?",
+    "source_json": "deepdive_rest.json",
+    "source_table": "game results + box scores",
+    "n": 2539
   },
   "rest_buckets": [
     {

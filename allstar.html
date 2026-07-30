@@ -63,6 +63,12 @@
   .fan .med{position:absolute;top:6px;width:2px;height:32px;background:var(--fan);border-radius:2px}
   .fan .tick{position:absolute;top:34px;font-size:9.5px;color:var(--dim);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
   .fan .medlab{position:absolute;top:-4px;font-size:11px;font-weight:700;color:var(--fan);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+  /* a fan whose range crosses zero gets the zero line, because the sign change is the finding */
+  .fan .zero{position:absolute;top:8px;width:1px;height:28px;background:var(--line2)}
+  .fan .zerolab{position:absolute;top:34px;font-size:9.5px;color:var(--dim);transform:translateX(-50%);white-space:nowrap}
+  /* the figure THIS page published, marked on the record it came from */
+  .fan .mark{position:absolute;top:4px;width:2px;height:36px;background:var(--warn);border-radius:2px}
+  .fan .marklab{position:absolute;top:-4px;font-size:10.5px;font-weight:700;color:var(--warn);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
   .width{display:inline-block;font-size:10.5px;font-weight:660;padding:1px 9px;border-radius:999px;background:var(--chip);color:var(--muted);font-variant-numeric:tabular-nums}
   .qtab{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:10px}
   .qtab span{display:inline-block;margin-right:14px}
@@ -304,8 +310,24 @@
     band(p5!==null?p5:lo, p95!==null?p95:hi, "b90");
     band(p10,p90,"b80");
     band(p25,p75,"b50");
+    // Zero line — drawn ONLY when the drawn range actually straddles zero, so it can
+    // never imply a sign change the record does not contain.
+    if(opts.zero && aLo<0 && aHi>0){
+      var z=el("div","zero"); z.style.left=pct(0)+"%"; fan.appendChild(z);
+      if(has(opts.zero_label)){ var zl=el("div","zerolab",String(opts.zero_label)); zl.style.left=pct(0)+"%"; fan.appendChild(zl); }
+    }
     var m=el("div","med"); m.style.left=pct(med)+"%"; fan.appendChild(m);
     var ml=el("div","medlab",fmt(med,opts.dec===undefined?0:opts.dec)); ml.style.left=pct(med)+"%"; fan.appendChild(ml);
+    // Optional marker for a SEPARATE figure read against this record. Omitted outright
+    // when it falls off the drawn axis — a clamped marker would place it at a value it
+    // does not hold, which is worse than not drawing it.
+    if(opts.marker && typeof opts.marker.v==="number" && isFinite(opts.marker.v)
+       && opts.marker.v>=aLo && opts.marker.v<=aHi){
+      var mk=el("div","mark"); mk.style.left=pct(opts.marker.v)+"%"; fan.appendChild(mk);
+      if(has(opts.marker.label)){
+        var mkl=el("div","marklab",String(opts.marker.label)); mkl.style.left=pct(opts.marker.v)+"%"; fan.appendChild(mkl);
+      }
+    }
     [[p5,"5th"],[p95,"95th"]].forEach(function(pr){
       if(pr[0]===null) return;
       var t=el("div","tick",fmt(pr[0],opts.dec===undefined?0:opts.dec)); t.style.left=pct(pr[0])+"%"; fan.appendChild(t);
@@ -661,6 +683,50 @@
     return b;
   }
 
+  // ---- the pooled gap, DRAWN rather than only described -------------------- //
+  // The block above says in words that the starter edge swings hard. This DRAWS it,
+  // in this page's own fan — the same widget the total-points distribution uses —
+  // because the page's stated dialect is that everything on it is a range, and the
+  // gap was the last quantity on the surface living only in a sentence.
+  //
+  // WHAT IS DRAWN IS THE POOLED GAP, ONE READING PER TEAM ROTATION. It is NOT a
+  // per-player give-or-take and no row gains one: that refusal is unchanged, for the
+  // reasons written above, and is locked down by tests/test_allstar_minutes_honesty.js.
+  // Reading a table-level record is a different claim from pinning a width on a row.
+  //
+  // The distribution is READ from the payload and never computed here. What IS derived
+  // is the comparison against this table's own published split — derived precisely so
+  // it cannot go stale if the split ever changes, the same discipline as the sentences
+  // above. No payload -> nothing is drawn and the words stand alone (omit-not-invent).
+  function minutesGapFan(parent, gap, rows){
+    if(!gap || !gap.quantiles) return null;
+    var qs=qlist(gap.quantiles);
+    if(qs.length<2) return null;
+    var g=minuteGroups(rows);
+    if(!g.length) return null;              // nothing published -> nothing to read it against
+    var spread=g[0].v-g[g.length-1].v;
+    var samp=(gap.sample||[]).filter(function(v){ return typeof v==="number"&&isFinite(v); });
+    var lines=[];
+    if(has(gap.note)) lines.push(String(gap.note));
+    if(samp.length){
+      var wider=samp.filter(function(v){ return v>spread; }).length;
+      lines.push(spread<0.05
+        ? ("This table hands every player the same figure, so the gap it publishes is none at all — "
+           +"and in "+wider+" of these "+samp.length+" rotations the starters finished ahead.")
+        : (wider+" of these "+samp.length+" rotations finished further ahead than the "
+           +spread.toFixed(1)+" minutes this table publishes."));
+    }
+    lines.push("The published split is one flat figure handed to everyone in a role, not a "
+      +"forecast of any single night. Read it against the width of this record, not as a point on it.");
+    var c=cardIn(parent);
+    fanBlock(c,{title:gap.label||"How far ahead starters actually finish",
+      quantiles:qs, units:gap.units||"minutes", dec:1,
+      zero:true, zero_label:"even split",
+      marker:{v:spread, label:"published "+spread.toFixed(1)},
+      note:lines.join(" "), reference:gap.reference});
+    return c;
+  }
+
   function renderPlayers(main){
     section("The players — impact first, counting stats last");
     var pl=DATA.players||{};
@@ -735,6 +801,7 @@
     if(has(pl.reference)){ var r3=el("div","ref"); r3.appendChild(el("b",null,"Source: ")); r3.appendChild(document.createTextNode(pl.reference)); n.appendChild(r3); }
     c.appendChild(n);
     minutesTrustBlock(main, rows, pl.minutes_trust);
+    minutesGapFan(main, pl.minutes_gap, rows);
   }
 
   function renderHeadline(main){
@@ -1082,12 +1149,24 @@
       "Kelsey Plum is OUT. Kahleah Copper is her replacement and was NOT drafted (no pick slot).",
       "STL / BLK / TOV are NOT offered: the All-Star box record carries no steal, block or turnover column, so there is no basis to calibrate them. UNKNOWN, not guessed."
     ];
-    // The minutes caveat is load-bearing and the payload does not always carry it: 2018+
-    // All-Star minutes are NULL at source, so the minutes model is fitted on 1999-2017 and the
-    // starter/reserve gap is ASSERTED. If nothing in the block already says so, append it.
+    // The minutes caveat is load-bearing and the payload does not always carry it, so a floor
+    // is appended when nothing in the block already covers it.
+    //
+    // CORRECTED 2026-07-30 — the old floor read "2018+ All-Star minutes are NULL in the source,
+    // so the minutes model is fitted on 1999-2017 and the starter/reserve gap is ASSERTED, not
+    // fitted." Half of that is no longer true and the page was publishing it as fact. The
+    // minutes backfill closed the modern-era hole: the live box record now carries minutes AND a
+    // starter flag on every row from 2018 onward (182 rows across 8 seasons, none missing),
+    // measured against the record on 2026-07-30. What REMAINS true is the part that matters —
+    // the shape in use was fitted before that recovery, and the published starter/reserve split
+    // is still asserted rather than fitted to the record. So the true half is kept and the false
+    // half is retired, rather than dropping the caveat wholesale.
+    //
+    // This mattered here specifically: the same page now DRAWS that recovered record above, so
+    // leaving the old line in place would have had the surface deny its own chart.
     var saysMin=false;
     rtf.forEach(function(t){ if(String(t).indexOf("1999-2017")>=0) saysMin=true; });
-    if(!saysMin) rtf.push("2018+ All-Star minutes are NULL in the source, so the minutes model is fitted on 1999-2017 and the starter/reserve gap is ASSERTED, not fitted.");
+    if(!saysMin) rtf.push("The minutes shape in use was fitted on the 1999-2017 games and the starter/reserve split is asserted, not fitted. The 2018 onward minutes have since been recovered, so that fuller record is what the range above is measured on.");
     {
       var b=el("div","banner");
       b.appendChild(el("h3",null,"Read this first"));
