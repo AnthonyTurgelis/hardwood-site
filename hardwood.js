@@ -92,6 +92,15 @@
     if (document.getElementById("hw-style")) return;
     var css =
       "#hwstrip{max-width:1080px;margin:6px auto 0;padding:0 14px;font:11.5px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}" +
+      /* THE ONE LINE a reader sees when nothing is wrong: the age of the numbers, small and muted,
+         with the operator detail folded away behind it. The pill row is now the CONTENT of that
+         fold, not the top of the page. */
+      "#hwone{color:#8a93a3;font-size:11.5px}" +
+      "#hwone summary{cursor:pointer;list-style:none;display:inline-flex;gap:6px;align-items:center}" +
+      "#hwone summary::-webkit-details-marker{display:none}" +
+      "#hwone summary .more{color:#6b7684;border-bottom:1px dotted currentColor}" +
+      "#hwone[open] #hwbar{margin-top:6px}" +
+      "@media (prefers-color-scheme:dark){#hwone{color:#6b7684}}" +
       "#hwfresh,#hwwork{display:none;border-radius:8px;padding:6px 11px;margin-bottom:6px;font-weight:650;font-size:12.5px}" +
       "#hwfresh.warn,#hwwork.warn{display:block;background:#fff4e2;color:#9a6700;border:1px solid #f0d9a8}" +
       "#hwfresh.bad,#hwwork.bad{display:block;background:#fbe9e7;color:#b3261e;border:1px solid #f3b6ae}" +
@@ -132,9 +141,22 @@
     if (!nav || document.getElementById("hwstrip")) return;
     var strip = document.createElement("div");
     strip.id = "hwstrip";
+    /* SIX PILLS AND TWO BANNERS NO LONGER GREET A READER (CEO 20260730, on the players page: six
+       chips before a single player name - "numbers updated, checked for new numbers, your
+       instructions none waiting, listening for new instructions, work is being run right now for 4
+       hours and 46 minutes, nothing is paused at 49 percent of our limit"; and "He cannot act on
+       'listening for new instructions'").
+       The pills were never wrong, they were in the wrong place: they answer an OPERATOR's questions
+       and they were sitting above a fan's. So the whole row moves INSIDE a closed disclosure whose
+       summary is the single freshness line a reader does want, and which stays one click from the
+       operator detail on every page. Nothing is deleted - every pill, every never-blank guarantee
+       and every word of its copy is unchanged inside the fold, and the two banners still push
+       THROUGH it when something is genuinely wrong. */
     strip.innerHTML =
       '<div id="hwfresh"></div>' +
       '<div id="hwwork"></div>' +
+      '<details id="hwone"><summary><span id="hwone-txt">Numbers updated: reading...</span>' +
+      '<span class="more">status</span></summary>' +
       '<div id="hwbar">' +
       '  <span class="hwpill live" id="hw-data" title="When the numbers on this page were last rebuilt">Numbers updated: <b>not read yet</b></span>' +
       '  <span class="hwpill" id="hw-poll" title="When your browser last looked for newer numbers">Checked for new numbers: <b>not yet</b></span>' +
@@ -142,7 +164,7 @@
       '  <span class="hwpill" id="hw-scout" title="Whether anything is listening for new instructions right now"><span class="dot"></span><span class="txt">Listening for new instructions: checking</span></span>' +
       '  <span class="hwpill" id="hw-coord" title="Whether anyone is actually running the work right now"><span class="dot"></span><span class="txt">Who is running the work: checking</span></span>' +
       '  <span class="hwpill" id="hw-pause" title="Whether work is running, paused by us, or stopped from outside"><span class="dot"></span><span class="txt">Checking whether anything is paused</span></span>' +
-      '</div>';
+      '</div></details>';
     nav.parentNode.insertBefore(strip, nav.nextSibling);
     // legacy per-page ".ago" chip is now redundant with the strip's own timers - hide it
     var legacy = document.getElementById("ago");
@@ -152,12 +174,15 @@
   // ---- render the strip from the latest status payload ----
   function renderStrip() {
     var dataP = document.querySelector("#hw-data b");
-    if (dataP) {
-      var age = genIso ? Math.round((Date.now() - new Date(genIso).getTime()) / 1000) : null;
-      dataP.textContent = (genIso && age != null && !isNaN(age))
-        ? (clockOf(genIso) + " (" + plainAgo(age) + ")")
-        : "not read yet";
-    }
+    var ageNow = genIso ? Math.round((Date.now() - new Date(genIso).getTime()) / 1000) : null;
+    var dataTxt = (genIso && ageNow != null && !isNaN(ageNow))
+      ? (clockOf(genIso) + " (" + plainAgo(ageNow) + ")")
+      : "not read yet";
+    if (dataP) { dataP.textContent = dataTxt; }
+    // THE ONE LINE (see mount): the same words the updated pill carries, on the closed summary, so a
+    // reader gets the only operator fact that concerns them without opening anything.
+    var one = document.getElementById("hwone-txt");
+    if (one) { one.textContent = "Numbers updated: " + dataTxt; }
     var pollP = document.querySelector("#hw-poll b");
     if (pollP) {
       pollP.textContent = lastFetch
@@ -180,8 +205,25 @@
       ? workView(status ? status.pause : null, status ? status.beacon : null, !!status)
       : { level: "", paused: false, short: "Checking whether anything is paused",
           text: "Checking whether anything is paused..." };
-    renderWork(work);
-    renderFresh(staleView(genIso, status ? status.stale_after_secs : null, Date.now(), work.paused));
+    /* AT MOST ONE BANNER, under a stated precedence (CEO 20260730: two full-width status banners
+       greeted him before a single player name). Two rules, both deliberate:
+
+       1. A BANNER IS FOR WORK THAT HAS ACTUALLY STOPPED - paused by us, stopped from outside, or an
+          unreadable pause note that we fail closed and TREAT as stopped. "We cannot tell whether
+          work is paused, that reading did not load" is an operator diagnostic, not a fact about
+          this page's numbers, and he cannot act on it; it keeps its pill inside the fold, where the
+          never-blank contract is still honoured in full, and stops occupying the top of a page
+          somebody opened to read about basketball.
+       2. STALENESS OUTRANKS the work line, not the other way round. The freshness sentence now
+          fires ONLY at genuine staleness, and its paused variant already names the pause as the
+          cause - so showing it says strictly more than the work line alone, in one line instead of
+          two. Whichever way work is behaving, a reader is never left believing stale numbers are
+          current. */
+    var fresh = staleView(genIso, status ? status.stale_after_secs : null, Date.now(), work.paused);
+    var freshLoud = !!(fresh.level && fresh.level !== "ok");
+    var workLoud = !freshLoud && !!(work.paused || work.level === "bad");
+    renderWork(work, workLoud);
+    renderFresh(freshLoud ? fresh : { level: "ok", text: "" });
   }
 
   /* ---- INSTRUCTIONS (never-blank): how many things he has sent that are still waiting, and when
@@ -341,7 +383,9 @@
     return Math.max(contractSecs(staleAfterSecs), PUB_FLOOR_SECS);
   }
   function staleView(genIsoStr, staleAfterSecs, nowMs, workPaused) {
-    var due = contractSecs(staleAfterSecs), loud = loudAfterSecs(staleAfterSecs);
+    // `due` (this page's published refresh contract) is still what `loud` is derived FROM - see
+    // loudAfterSecs - it just no longer draws anything of its own. See the calm-band note below.
+    var loud = loudAfterSecs(staleAfterSecs);
     if (!genIsoStr) {
       // HONEST UNAVAILABLE, never an invented age.
       return { level: "warn", stale: false, age: null, thresh: loud,
@@ -355,14 +399,18 @@
                      "cannot be read. Treat nothing here as current until that is fixed." };
     }
     var age = Math.max(0, Math.round((nowMs - t) / 1000));
-    if (age <= due) {
-      return { level: "ok", stale: false, age: age, thresh: loud, text: "" };
-    }
+    /* ONE CALM BAND, ALL THE WAY TO THE ALARM (CEO 20260730). There used to be a middle rung here:
+       past `due` raised a full-width amber banner reading "A refresh is running late - these numbers
+       were updated 5 minutes ago, and this page aims to refresh every 5 minutes" - an apology for
+       being on time. It was never a fault. The bake behind these pages lands on a 300s cadence whose
+       own gaps exceed 300s 49.7% of the time (n=1760 gaps over 7d in logs/board_bake.log; p99 895s),
+       and the publish + CDN hop adds more again: 390s of live staleness measured at 18:32Z on
+       2026-07-30 while scripts/publish_health.py recorded stale:false. A page must never shout before
+       the machine's own pager does. So `due` no longer changes what a reader sees - it is still the
+       published contract, and `loud` is still pinned to that pager's floor, but the only staleness
+       banner left is the loud one below. */
     if (age <= loud) {
-      // Overdue, but inside the settling window the alarm itself allows: state the real age, stay calm.
-      return { level: "warn", stale: false, age: age, thresh: loud,
-               text: "A refresh is running late - these numbers were updated " + plainAgo(age) +
-                     ", and this page aims to refresh every " + plainMins(due) + "." };
+      return { level: "ok", stale: false, age: age, thresh: loud, text: "" };
     }
     if (workPaused) {
       /* FALSE-STALE GUARD. When work is paused on purpose, an ageing page is the EXPECTED
@@ -370,13 +418,16 @@
          and do not paint it as a fault. */
       return { level: "warn", stale: true, age: age, thresh: loud,
                text: "These numbers were updated " + plainAgo(age) + ", so they are out of date - " +
-                     "because work is paused, which the next line explains. Nothing new arrives " +
-                     "until work restarts." };
+                     "because work is paused. Nothing new arrives until work restarts." };
     }
+    /* QUOTE THE THRESHOLD THAT ACTUALLY FIRED, not the schedule. This sentence used to end "and this
+       page aims to refresh every 5 minutes" while the banner had in fact waited for the 15-minute
+       alarm floor - so it named a number that was not the reason it was on screen, and made a
+       genuinely dead page look like a page that was thirty seconds late. */
     return { level: "bad", stale: true, age: age, thresh: loud,
-             text: "STALE - these numbers were last updated " + plainAgo(age) + ", and this page " +
-                   "aims to refresh every " + plainMins(due) +
-                   ". Do not trust anything on this page until it refreshes." };
+             text: "STALE - these numbers were last updated " + plainAgo(age) + ", well past the " +
+                   plainMins(loud) + " we allow before treating a page as out of date. " +
+                   "Do not trust anything on this page until it refreshes." };
   }
 
   // ---- painters (every one of them writes a DEFINITE state; none of them can render blank) ----
@@ -389,12 +440,17 @@
   }
   function renderScout(sc) { var v = scoutView(sc); paintPill("hw-scout", v.level, v.text); }
   function renderCoordinator(co) { var v = coordView(co); paintPill("hw-coord", v.level, v.text); }
-  function renderWork(v) {
+  /* The PILL always states the work state in full - that is the never-blank contract, and it is
+     unchanged. The BANNER is a separate decision made by the caller (see the precedence in
+     renderStrip): a state that is real but not actionable stays in the pill and does not take a
+     full-width line at the top of somebody's page. */
+  function renderWork(v, showBanner) {
     paintPill("hw-pause", v.level, v.short);
     var banner = document.getElementById("hwwork");
     if (banner) {
-      banner.className = v.level === "ok" ? "" : v.level;   // "" hides it (nothing is paused)
-      banner.textContent = v.text;
+      var loud = !!showBanner && v.level !== "ok";
+      banner.className = loud ? v.level : "";   // "" hides it
+      banner.textContent = loud ? v.text : "";
     }
   }
   function renderFresh(v) {

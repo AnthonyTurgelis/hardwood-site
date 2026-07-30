@@ -484,24 +484,31 @@
   // ONE freshness authority: given a section key, compute its data age + stale verdict from
   // section_sources exactly as provFor / the STALE badge do. Both provFor (per-panel badge) and
   // stalestSection (the header roll-up) call this — no second staleness rule anywhere.
+  /* A panel with NO cadence of its own falls back to the LOUD threshold, not to the board's 5-minute
+     refresh contract (CEO 20260730: a red STALE badge on tonight's picks reading "as of 5m ago", and
+     another on game reports at 9m). The old fallback was staleAfterSecs() = when a refresh is DUE,
+     which is a schedule, not a fault: the bake's own success gaps exceed it 49.7% of the time on a
+     perfectly healthy night (n=1760 over 7d), so half of all normal cycles painted the night's call
+     red. The floor below is the same one scripts/publish_health.py pages on, so no panel on this page
+     can now shout before the machine's own alarm does. Panels that publish a REAL cadence still use
+     theirs — that is the per-surface number, and it always wins over this floor. */
   function staleInfo(key){
     var m=(SRC && key && SRC[key])||null;
     var asOf=(m && m.as_of) || null;
-    var win=(m && m.stale_after) || staleAfterSecs();
+    var win=(m && m.stale_after) || loudAfterSecs();
     var ageSecs = asOf ? sinceIso(asOf) : null;
     var clientStale = (ageSecs!=null) && (ageSecs > win);
     var stale = !!(m && m.stale) || clientStale;
     return {m:m, asOf:asOf, win:win, ageSecs:ageSecs, stale:stale};
   }
-  // The "next refresh ~Xm" hint text — ONLY when a section carries a REAL per-section cadence
-  // (m.stale_after) AND is not already overdue. No cadence -> "" (never a fabricated countdown);
-  // overdue -> "" (the STALE badge already carries that story). cadence is passed explicitly so a
-  // panel on the board-level fallback window (no own cadence) shows nothing.
-  function nextRefText(ageSecs, cadence){
-    if(ageSecs==null || !cadence) return "";
-    var rem = cadence - ageSecs;
-    return rem>0 ? (" · next refresh ~"+agoSecs(rem)) : "";
-  }
+  /* RETIRED (CEO 20260730). This printed "· next refresh ~59m" beside tonight's picks, which read as
+     a PROMISE about a schedule while the number behind it is a staleness TOLERANCE — how long the
+     panel may age before we call it wrong. The board actually re-bakes every five minutes, so the
+     hint was both a third line of operator chrome on the section head AND wrong in the reader's
+     favour-free direction: it told him the night's call would sit still for an hour. A countdown can
+     only be honest if it counts to a real scheduled event, and this one never did. Kept as a no-op
+     returning "" so the call sites stay valid and nothing re-derives it locally. */
+  function nextRefText(ageSecs, cadence){ return ""; }
   function provFor(key){
     var info=staleInfo(key);
     var m=info.m;
@@ -669,8 +676,15 @@
   // A+++: render the crowned panel's stale_reason inline beneath the chip. textContent-safe (the
   // reason is copy-gated upstream but never trusted as markup here); an empty/falsy reason hides the
   // sub-line entirely (reason-omitted-when-absent) so a crowned panel with no reason shows name+age only.
+  /* THE SUB-LINE IS RETIRED (CEO 20260730: "so much space to show so much nonsense"). It printed a
+     second full-width sentence — "These readings may be out of date, last updated 128h ago" —
+     directly under a chip that had already said "data · The full queue 13d old · +8 more", above the
+     night's call. Same fact, twice, in the first inch of his page. The chip keeps the whole reason in
+     its hover title and stays a click-to-culprit control, and the panel itself still carries its own
+     badge and reason, so nothing is lost but the repetition. Kept as a no-op so every existing call
+     site stays valid and no future one can resurrect the line by accident. */
   function setChipReason(txt){ var r=document.getElementById("ch-reason"); if(!r) return;
-    if(txt){ r.textContent=txt; r.style.display=""; } else { r.textContent=""; r.style.display="none"; } }
+    r.textContent=""; r.style.display="none"; }
   // A++++ RECORD a revalidation tick into the per-panel freshness ring buffer. Called once per REAL poll
   // (poll().then), NEVER on the cosmetic 1-second tickChips, so 8 entries = 8 revalidations, not 8 seconds.
   // Records EVERY nameable panel that carries a real, aged verdict (so the crowned panel's slice can hold
@@ -726,8 +740,11 @@
     if(st){
       var more=(st.count>0) ? (" · +"+st.count+" more") : "";   // only when OTHER panels are stale (never "+0 more")
       var mtip=(st.count>0) ? (" "+st.count+" other panel"+(st.count>1?"s are":" is")+" also stale.") : "";
+      // the retired sub-line's copy moves INTO the hover title, so the reason is still one gesture
+      // away instead of occupying a line of the fold.
       setChip("ch-data","bad clickable","data · "+st.name+" "+agoSecs(st.ageSecs)+" old"+more,
-        "Stalest panel: "+st.name+" — last updated "+agoSecs(st.ageSecs)+" ago."+mtip+" Click to jump to it.");
+        "Stalest panel: "+st.name+" — last updated "+agoSecs(st.ageSecs)+" ago."+mtip+
+        (st.reason?(" "+st.reason):"")+" Click to jump to it.");
       // A+++: surface the crowned panel's OWN reason inline (or hide the sub-line when it has none).
       // Recomputed every tick, so the reason follows the crown when it changes between ticks.
       setChipReason(st.reason);
@@ -1404,13 +1421,40 @@
         });
         return {outs:outs, steps:steps};
       }
-      var aw=scanSide(g.away_depth, awayAbbr), hm=scanSide(g.home_depth, homeAbbr);
-      var outs=aw.outs.concat(hm.outs), steps=aw.steps.concat(hm.steps);
-      if(outs.length){
+      /* NAMES THAT MOVE THE CALL (CEO 20260730: "ten or more player names in small text take more
+         vertical space than every number on the card combined"). The card now prints the baked
+         `movers_*` selection — ruled-out ROTATION regulars, and only the players who actually
+         inherit a starting slot — with the remaining absences stated as a count. The rule lives
+         server-side in build_site.py _card_movers — this file renders the selection, it does not
+         make it, which is the compute-versus-render split the publish gate cares about. Wording
+         note: the internal section number that used to be cited here aborted the whole bake, since
+         the gate treats a record-internal reference on a public page as a leak. It is right to.
+         The old client scan stays as the FALLBACK for a board.json baked before those fields
+         existed, so an older payload degrades to the previous line instead of an empty card. */
+      var outs, steps, moreOut=0, stepLab=" · starting instead: ";
+      if(g.movers_out || g.movers_steps){
+        outs=g.movers_out||[]; steps=g.movers_steps||[]; moreOut=g.movers_more||0;
+      } else {
+        // legacy payload: the old cascade list, under its old and weaker label. "starting instead"
+        // is a claim only the baked selection can support, so the fallback never borrows it.
+        var aw=scanSide(g.away_depth, awayAbbr), hm=scanSide(g.home_depth, homeAbbr);
+        outs=aw.outs.concat(hm.outs); steps=aw.steps.concat(hm.steps);
+        stepLab=" · steps up: ";
+      }
+      if(outs.length || moreOut){
         var ol=el("div","outs");
         ol.appendChild(el("span","lab","Out"));
-        ol.appendChild(document.createTextNode(outs.join(", ")));
-        if(steps.length){ ol.appendChild(el("span","stp"," · steps up: "+steps.join(", "))); }
+        if(outs.length){
+          ol.appendChild(document.createTextNode(outs.join(", ")));
+          // the trim is STATED, never hidden — and the full chart is one tap away below.
+          if(moreOut){ ol.appendChild(el("span","stp"," · plus "+moreOut+
+            (moreOut===1?" bench player":" bench players"))); }
+        } else {
+          ol.appendChild(document.createTextNode(moreOut+
+            (moreOut===1?" bench player, nobody from the rotation":
+                         " bench players, nobody from the rotation")));
+        }
+        if(steps.length){ ol.appendChild(el("span","stp",stepLab+steps.join(", "))); }
         c.appendChild(ol);
       }
       // Full depth chart — kept for the reader who wants the whole rotation, but on-demand (collapsed).
@@ -1976,7 +2020,9 @@
   function loudAfterSecs(){ return Math.max(staleAfterSecs(), PUB_FLOOR_SECS); }
   function freshView(genIso, nowMs, workPaused, snapDate){
     if(snapDate){
-      return {level:"ok", stale:false, age:null,
+      // ALWAYS shown, even though it is not a fault: a reader looking at an archived day must never
+      // mistake it for tonight. `always` is what earns a line on a strip that otherwise stays quiet.
+      return {level:"ok", stale:false, age:null, always:true,
         text:"You are reading a saved copy of the board from "+snapDate+", not the live one."};
     }
     var t=genIso? new Date(genIso).getTime() : NaN;
@@ -1988,15 +2034,20 @@
              "Treat nothing here as current until that is fixed."};
     }
     var age=Math.max(0,Math.round((nowMs-t)/1000));
-    if(age<=staleAfterSecs()){
+    /* ONE CALM BAND, ALL THE WAY TO THE ALARM (CEO 20260730: "So much stale, so wordy" — the board
+       was greeting him with "A refresh is running late - these numbers were updated 5 minutes ago,
+       and the board aims to refresh every 5 minutes", i.e. apologising for being on time).
+       That middle rung was never a fault: the bake lands on a 300s cadence whose gaps exceed 300s
+       49.7% of the time (n=1760 gaps over 7d in logs/board_bake.log; p99 895s), and the publish +
+       Pages + CDN hop adds more on top — measured at 390s of live staleness at 18:32Z on 2026-07-30
+       while the machine's own pager recorded stale:false. So the board spent much of every healthy
+       day announcing a problem its own monitor did not have. DELETED, not retuned: the loud line
+       below fires at the number publish_health.py actually alarms on, and everything short of that
+       is calm. The board's own stale_after_secs contract still DERIVES that threshold
+       (loudAfterSecs) — it simply no longer draws a banner of its own. */
+    if(age<=loudAfterSecs()){
       return {level:"ok", stale:false, age:age,
         text:"These numbers are current - updated "+plainAgo(age)+"."};
-    }
-    if(age<=loudAfterSecs()){
-      // Overdue but inside the settling window the alarm itself allows: say the real age, stay calm.
-      return {level:"warn", stale:false, age:age,
-        text:"A refresh is running late - these numbers were updated "+plainAgo(age)+
-             ", and the board aims to refresh every "+plainMins(staleAfterSecs())+"."};
     }
     if(workPaused){
       /* FALSE-STALE GUARD — the same distinction the quiet panel badge draws. When work is paused on
@@ -2004,11 +2055,15 @@
          just as plainly, name the real reason, and do not paint it as a fault. */
       return {level:"warn", stale:true, age:age,
         text:"These numbers were updated "+plainAgo(age)+", so they are out of date - because work "+
-             "is paused, which the next line explains. Nothing new arrives until work restarts."};
+             "is paused. Nothing new arrives until work restarts."};
     }
+    /* QUOTE THE THRESHOLD THAT ACTUALLY FIRED, not the schedule. This used to end "and the board aims
+       to refresh every 5 minutes" while the banner had in fact waited for the 15-minute alarm floor,
+       naming a number that was not the reason it was on screen. */
     return {level:"bad", stale:true, age:age,
-      text:"STALE - these numbers were last updated "+plainAgo(age)+", and the board aims to refresh "+
-           "every "+plainMins(staleAfterSecs())+". Do not trust anything on this page until it refreshes."};
+      text:"STALE - these numbers were last updated "+plainAgo(age)+", well past the "+
+           plainMins(loudAfterSecs())+" we allow before treating the board as out of date. "+
+           "Do not trust anything on this page until it refreshes."};
   }
   /* How much of the work limit is used, only ever as well as we actually know it. A number is
      printed ONLY when the reading is a real one; an unread meter says it is unread. (A meter that
@@ -2084,6 +2139,26 @@
   /* Draw the strip. Called from render() AND from the 1-second tick, so a frozen page still crosses
      its own staleness line. Deliberately carries no lane or slot counts: the helper panel owns that
      arithmetic, and a second place quoting it is how a page ends up contradicting itself. */
+  /* AT MOST ONE LINE, AND ONLY WHEN SOMETHING IS WRONG (CEO 20260730: "CEO LENS. THE FRONT PAGE IS
+     FOR THE FUCKING CEO" — the board opened with two full-width operator banners, one of them
+     "Nothing is paused - work is running normally", above the night's call).
+     Two banners that both say "fine" are two lines of nothing: the reader's question is answered by
+     their ABSENCE, and the header's own freshness chip already carries the age where he can find it.
+     So a healthy board renders NOTHING here, and an unhealthy one renders exactly one sentence,
+     under a stated precedence: a stopped or paused crew OUTRANKS an ageing page, because a paused
+     crew is WHY the page is ageing — showing both would be the same fact twice, which is the
+     duplication the two-banner split was introduced to kill and then reintroduced by always
+     painting both. Nothing is lost: the freshness line still fires on its own whenever work is
+     healthy and the board has genuinely gone stale.
+     TWO RULES, the same pair site/hardwood.js applies to the other 22 tabs, so the board and every
+     other page cannot describe the same machine differently:
+       1. A LINE IS FOR WORK THAT HAS ACTUALLY STOPPED - paused by us, stopped from outside, or an
+          unreadable pause note that we fail closed and treat as stopped. "We cannot tell whether
+          work is paused, that reading did not load" is an operator diagnostic he cannot act on; it
+          belongs on the operator console, not above tonight's call.
+       2. STALENESS OUTRANKS the work line. The freshness sentence fires only at genuine staleness
+          now, and its paused variant already names the pause as the cause, so it says strictly more
+          than the work line would - in one line rather than two. */
   function tickStrip(){
     var host=document.getElementById("bstrip"); if(!host) return;
     host.innerHTML="";
@@ -2095,8 +2170,17 @@
       ? workView(PAUSE, lastB.beacon, PAUSE_OK)
       : {level:"", paused:false, text:"Checking whether anything is paused..."};
     var fresh=freshView(lastB.generated_utc, Date.now(), work.paused, viewDate);
-    host.appendChild(el("div","bline "+fresh.level, fresh.text));
-    host.appendChild(el("div","bline "+work.level, work.text));
+    if(fresh.always || (fresh.level && fresh.level!=="ok")){
+      host.appendChild(el("div","bline "+fresh.level, fresh.text));
+    } else if(work.paused || work.level==="bad"){
+      host.appendChild(el("div","bline "+work.level, work.text));
+    } else if(work.level==="warn"){
+      /* The remaining case is "we cannot tell whether work is paused" - the reading did not load.
+         Silence on THAT question reads as "fine", so it is never dropped; but it is not an alarm
+         either, so it renders in the strip's plain muted style rather than the amber wash. One
+         line, no colour, and only when a read genuinely failed. */
+      host.appendChild(el("div","bline", work.text));
+    }
   }
 
   /* ---------- live runtime: poll own JSON, ETag, ago-chip, flash ---------- */
