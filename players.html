@@ -564,7 +564,12 @@
     var tb=el("tbody");
     rows.forEach(function(r){
       var tr=el("tr");
-      var nm=el("td","nm"); nm.textContent=r.name; if(r.status){ nm.appendChild(el("span","tag"," ("+r.status+")")); } tr.appendChild(nm);
+      var nm=el("td","nm"); nm.textContent=r.name; if(r.status){ nm.appendChild(el("span","tag"," ("+r.status+")")); }
+      /* CONTESTED — two source rows named this player and disagreed on her numbers. We collapse to
+         one row (a reader must never see one person twice) but we never hide the disagreement:
+         the row shows the wider, less confident reading and says plainly that it is contested. */
+      if(r.contested){ var ct=el("span","tag"," (sources disagree)"); ct.title=r.contested_note||"two source rows for this player disagree"; nm.appendChild(ct); }
+      tr.appendChild(nm);
       tr.appendChild(td(null, r.team||"—"));
       tr.appendChild(td("thin", (r.is_home?"vs ":"@ ")+(r.opp||"—")));
       tr.appendChild(td("strong", r.point==null?"—":r.point.toFixed(1)));
