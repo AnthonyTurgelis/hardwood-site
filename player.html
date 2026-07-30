@@ -94,6 +94,7 @@
   <a href="./tempo.html">Tempo</a>
   <a href="./gm.html">GM</a>
   <a class="active" href="./players.html">Players</a>
+  <a href="./impact.html">Season Impact</a>
   <a href="./compare.html">Compare</a>
   <a href="./situation.html">Situations</a>
   <a href="./review.html">Daily Review</a>
@@ -412,15 +413,26 @@
       siK.appendChild(sikpi("Games", si.gp==null?null:si.gp));
       siCard.appendChild(siK);
       if(si.thin){
+        // COPY RE-TRUED AGAINST THE LIVE FEED. This note used to end "...and reads near zero for
+        // almost everyone", which described the world before the shrinkage prior was corrected —
+        // back then the flag fired on every row and every value sat near zero. On the feed as
+        // published now it is a minority flag and the leaders are nowhere near zero, so "almost
+        // everyone" was a claim the page's own data contradicted. The caveat that is still TRUE is
+        // about THIS player's own sample, so that is what it now says.
         siCard.appendChild(el("div","note thin",
-          "Provisional — this early in the season it rests on a small on-court sample, so it is "
-          + "regressed toward league average and reads near zero for almost everyone. Treat it as a "
-          + "rough, descriptive read rather than a firm separation between players."));
+          "Provisional — her on-court sample is still small, so this number is pulled toward league "
+          + "average and understates how far from average she may really be. Treat it as a rough "
+          + "read of her season rather than a firm placement against players resting on a full sample."));
       }
       var avail=null;
       if(si.currently_out){ avail="Currently listed as out — her latest Season Impact reflects the season so far."; }
       else if(si.play_prob!=null){ avail="Expected to play (chance "+Math.round(si.play_prob*100)+"%)."; }
       if(avail){ siCard.appendChild(el("div","note",avail)); }
+      // Reachability both ways: her card names the league board, so a reader who arrives on one
+      // player can see where that number places her without knowing the board exists.
+      (function(){ var n=el("div","note"); var a=document.createElement("a");
+        a.href="./impact.html"; a.textContent="See where she ranks on the season impact board";
+        n.appendChild(a); siCard.appendChild(n); })();
       main.appendChild(siCard);
     }
 
