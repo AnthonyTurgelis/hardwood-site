@@ -560,6 +560,107 @@
     c.appendChild(n);
   }
 
+  // ---- what the minute figures are worth ---------------------------------- //
+  // The minutes column publishes ONE figure per role group (as shipped: 18.5 for the ten
+  // starters, 17.9 for the twelve reserves) — 200 team minutes split evenly, then nudged
+  // slightly toward starters. Printed to one decimal it reads like a per-player forecast.
+  // It is not one, so this block says what it is, in the reader's own words.
+  //
+  // WHY THERE IS NO GIVE-OR-TAKE ON EACH ROW — adding one would be a NEW dishonesty:
+  //   * this table places nobody at a particular point in the rotation (all ten starters
+  //     carry the identical figure), so a per-row width would have to invent an ordering
+  //     the projection never made;
+  //   * the fitted width is not one number. Over the All-Star record it is tightest for
+  //     the middle of a rotation and widest at BOTH ends — a little over 1 minute in the
+  //     middle against roughly 3 minutes at either end — so a flat band misdescribes most
+  //     rows;
+  //   * and it would be the wrong size. The measured typical miss on a single player is
+  //     about 4 minutes, larger than the widest end of that fitted shape, so a tight
+  //     symmetric band would understate the real error while looking rigorous.
+  //
+  // Every figure below is MEASURED, not asserted, and RE-MEASURED for this block off the
+  // live All-Star record on 2026-07-30 rather than copied from a report. That re-measure
+  // mattered: two bases are in circulation, because the historical starter flag went
+  // 478 -> 500 non-null when the 2026 rows were backfilled mid-lane, taking the record from
+  // 42 team rotations to 44. The live table reads 500 of 500 flagged, so the 44-rotation
+  // basis is the one these sentences describe:
+  //   * fitted minute shape, 44 team rotations — busiest place averages 25.1 minutes,
+  //     least-used 10.4; the width is 1.0-1.1 minutes mid-rotation against 3.2 at either end;
+  //   * fitted starter-versus-reserve gap — mean 4.44 minutes, spread of outcomes 4.36,
+  //     swing -6.76 to +11.81, reserves ahead in 7 of the 44, and only 2 of those 7 by as
+  //     much as two minutes (the other five are near-ties, so "7 flips" alone would overstate
+  //     how often the order truly reverses);
+  //   * held-out per-player minute error — about 3.9 minutes.
+  // The per-table sentences are DERIVED from the payload's own rows so they cannot go stale
+  // if the minute split ever changes, and MINUTES_FACTS is overridable from
+  // players.minutes_trust — same payload-or-fallback pattern as renderBanner.
+  //
+  // TENSE: the 2026 game has been PLAYED (2026-07-25). This is a retrospective surface plus a
+  // method that gets reused at the next All-Star Game, so nothing here promises a coming game.
+  var MINUTES_TYPICAL_MISS = 4;
+  var MINUTES_FACTS = [
+    "Real All-Star rotations are nowhere near that even. Across the 44 team rotations on record the busiest player on a side has averaged about 25 minutes and the least-used about 10. Everyone here was handed the middle because the projection had no way of knowing who the coaches would lean on — not because the minutes were expected to be shared out equally.",
+    "Starters have out-played reserves by about four and a half minutes on average, but the edge swings hard: it has run as far as nearly seven minutes the other way and as far as nearly twelve minutes the expected way. In 7 of those 44 rotations the reserves played more — though five of those seven were near-ties of under two minutes, and only two were real reversals.",
+    "This year's game, now played, is the plainest illustration. One side's five starters played 28, 25, 23, 23 and 22 minutes; the other side's five played 24, 21, 18, 14 and 5. Aliyah Boston started and played 5 minutes, while Marina Mabrey came off the bench and played 21. That game sits inside the record these figures are fitted on, so read it as an illustration and not as a test we passed.",
+    "We do not print a give-or-take on each row, and it would flatter us to. The miss is smallest in the middle of a rotation and largest at both ends, this table puts nobody at either end, and even the direction of the starter edge is unreliable — one tidy figure on every row would claim more than we know."
+  ];
+
+  // Distinct published minute figures, largest first, with how many rows share each.
+  // Rows without a number contribute nothing — they are never counted or filled in.
+  function minuteGroups(rows){
+    var idx={}, out=[];
+    (rows||[]).forEach(function(r){
+      var v=r&&r.proj_minutes;
+      if(typeof v!=="number"||!isFinite(v)) return;
+      var k=v.toFixed(1);
+      if(!(k in idx)){ idx[k]=out.length; out.push({v:Number(k),n:0}); }
+      out[idx[k]].n++;
+    });
+    out.sort(function(a,b){ return b.v-a.v; });
+    return out;
+  }
+
+  function minutesTrustLines(rows, override){
+    var g=minuteGroups(rows);
+    if(!g.length) return [];   // nothing published -> nothing claimed about it
+    var total=0; g.forEach(function(x){ total+=x.n; });
+    var spread=g[0].v-g[g.length-1].v;
+    var lines=[];
+    if(g.length===1){
+      lines.push("All "+total+" players here are given the identical "+g[0].v.toFixed(1)
+        +" minutes — one figure shared out, not "+total+" separate projections.");
+    } else {
+      var parts=g.map(function(x){ return x.v.toFixed(1)+" for "+x.n+" of them"; });
+      lines.push("The "+total+" players here are given only "+(g.length===2?"two":String(g.length))
+        +" different minute figures — "+(parts.length===2?parts[0]+" and "+parts[1]:parts.join(", "))
+        +". Top to bottom this table spreads "+spread.toFixed(1)+" minutes.");
+    }
+    var miss="Read one line as a placeholder rather than a forecast: our typical miss on a "
+      +"single player's minutes, on games kept out of the fit, is about "+MINUTES_TYPICAL_MISS+" minutes";
+    // The "N times the spread" clause is only earned when the miss really does dwarf the
+    // spread. If the table ever publishes a wider split than our own error, the comparison
+    // is dropped rather than rounded into a claim ("roughly 0 times" would be nonsense).
+    var ratio=(spread>=0.05) ? (MINUTES_TYPICAL_MISS/spread) : null;
+    lines.push(ratio===null ? miss+", and this table shows no spread at all."
+      : (ratio>=1.5 ? miss+" — roughly "+Math.round(ratio)+" times the entire spread this table shows."
+                    : miss+"."));
+    var facts=(override&&override.length)?override:MINUTES_FACTS;
+    facts.forEach(function(t){ if(has(t)) lines.push(String(t)); });
+    return lines;
+  }
+
+  function minutesTrustBlock(parent, rows, override){
+    var lines=minutesTrustLines(rows, override);
+    if(!lines.length) return null;
+    var b=el("div","banner");
+    b.appendChild(el("h3",null,"What these minute figures are worth"));
+    var ul=el("ul");
+    lines.forEach(function(t){ ul.appendChild(el("li",null,t)); });
+    b.appendChild(ul);
+    parent.appendChild(b);
+    return b;
+  }
+
   function renderPlayers(main){
     section("The players — impact first, counting stats last");
     var pl=DATA.players||{};
@@ -582,6 +683,8 @@
     countCols.forEach(function(h){ tr.appendChild(el("th",null,h.label||h.key||"")); });
     thead.appendChild(tr); tb.appendChild(thead);
     var tbody=el("tbody");
+    var minShared={};
+    minuteGroups(rows).forEach(function(x){ minShared[x.v.toFixed(1)]=x.n; });
     rows.forEach(function(r){
       var t=el("tr");
       var nmc=el("td","nm"); nmc.textContent=r.player||"Unnamed";
@@ -608,7 +711,17 @@
       rateCols.concat(countCols).forEach(function(col){
         var k=col.key||col.label;
         var v=cell(col,k);
-        if(typeof v==="number"){ t.appendChild(el("td",null,fmt(v, col.dec===undefined?1:col.dec))); }
+        if(typeof v==="number"){
+          var td=el("td",null,fmt(v, col.dec===undefined?1:col.dec));
+          // The minutes cell keeps the model's own number and gains NO band. What it gains
+          // is the fact that the number is shared, plus the measured size of the miss.
+          if(k==="proj_minutes"){
+            var shared=minShared[v.toFixed(1)]||1;
+            td.title=(shared>1 ? "One figure shared by "+shared+" players on this table. " : "")
+              +"Typical miss on a single player is about "+MINUTES_TYPICAL_MISS+" minutes.";
+          }
+          t.appendChild(td);
+        }
         else if(has(v)){ t.appendChild(el("td",null,String(v))); }
         else t.appendChild(unkCell(col.unavailable_reason||"not projected for an exhibition"));
       });
@@ -621,6 +734,7 @@
     if(has(pl.out_note)) n.appendChild(el("div","note",pl.out_note));
     if(has(pl.reference)){ var r3=el("div","ref"); r3.appendChild(el("b",null,"Source: ")); r3.appendChild(document.createTextNode(pl.reference)); n.appendChild(r3); }
     c.appendChild(n);
+    minutesTrustBlock(main, rows, pl.minutes_trust);
   }
 
   function renderHeadline(main){

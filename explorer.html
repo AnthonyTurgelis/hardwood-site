@@ -93,6 +93,14 @@
 </nav>
 <main id="main"><p class="empty">Loading…</p></main>
 <footer id="foot"></footer>
+<!-- SHARED STATUS CHROME (2026-07-30). This page had no status strip of any kind - neither this
+     script nor a native one - so a dead board and a healthy board looked identical here, and a pause
+     never showed. hardwood.js is the SAME strip 22 other tabs already load; it self-mounts after
+     <nav>, is idempotent (#hwstrip), reads its freshness from status.json's own generated_utc, and
+     degrades to an honest unknown when that is absent. Reused rather than reimplemented on purpose -
+     the main board carries its own native strip for a reason (it reads its own published timestamp,
+     not status.json), and a THIRD variant of this copy is exactly what existing-first forbids. -->
+<script src="./hardwood.js?v=47268b8b"></script>
 <script>
 (function(){
   "use strict";
@@ -181,7 +189,28 @@
       tr.appendChild(td(r.team,"l"));
       var impCls=r.rating==null?"dim":(r.rating>=0?"good":"bad");
       tr.appendChild(td(sgn(r.rating,1),impCls));
-      tr.appendChild(td(r.provisional||r.impact_rank==null?"provisional":("#"+r.impact_rank), r.provisional?"dim":""));
+      // PROVISIONAL WORDING (2026-07-30). The visible word stays -- in a RANK column "provisional"
+      // is the true statement (there is no firm rank) -- but it no longer stands alone. It used to
+      // carry nothing at all, so an 11-season veteran we simply had not read this season looked
+      // identical to an unknown rookie. build_site.py:3530: a player whose own past we hold "is not
+      // an unknown, and must never be worded as one". The distinction rides the tooltip, worded to
+      // match site/players.html:460 so the two surfaces cannot drift apart again; the flag itself is
+      // correct and unchanged (n_basis < the fitted prior). Omit-not-invent: no career_basis on the
+      // row -> no claim about a career, and the pre-existing generic note is what shows.
+      var provCell;
+      if(r.provisional || r.impact_rank==null){
+        provCell = td("provisional", r.provisional?"dim":"");
+        provCell.title = r.career_basis
+          ? ("Provisional — her on-court rating rests on "
+             + (r.n_basis!=null?(r.n_basis+" tracked stint"+(r.n_basis===1?"":"s")):"a small on-court basis")
+             + " this season, so it carries no firm rank yet. That is a short read on her season, "
+             + "not a thin record: "
+             + (r.career_gp!=null?(r.career_gp+" career games"):"her career") + " sits behind it.")
+          : "Provisional — rests on a thin on-court sample this early in the season.";
+      } else {
+        provCell = td("#"+r.impact_rank, "");
+      }
+      tr.appendChild(provCell);
       tr.appendChild(td(r.min_share_pct==null?"—":(r.min_share_pct+"%")));
       if(DEEP){
         tr.appendChild(td(r.gp_share_pct==null?"—":(r.gp_share_pct+"%"),"dim"));

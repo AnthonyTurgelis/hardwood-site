@@ -262,6 +262,14 @@
 
     var hero=el("div","hero");
     var prov = (d.impact_provisional !== false);   // default provisional if the flag is absent
+    // HELD RECORD (2026-07-30). `prov` says the on-court basis is short; `held` says whether we hold
+    // her own past and did not read it. The two are independent, and conflating them is what put the
+    // words "thin sample" on Courtney Vandersloot's page -- 327 career games and 9,275.7 minutes held,
+    // 4 stints read. build_site.py:3530 is the contract: such a player "is not an unknown, and must
+    // never be worded as one". Only `d.season_impact.thin` may render the words "thin sample".
+    // Defaulting `prov` to true above is deliberately KEPT: with no flag we do not know the basis, and
+    // over-caveating is the honest direction. Strict === here, so a missing career_basis claims nothing.
+    var held = (d.career_basis === true);
     var nb = d.n_basis;   // on-court stint count backing the impact rating (the "basis" the read cites) — was undefined -> ReferenceError crashed every profile (VZ-1 live-outage fix)
     var si0=d.season_impact;   // availability + minutes context live here
 
@@ -306,7 +314,13 @@
         if(d.min_share_pct!=null) line+=", on "+d.min_share_pct+"% of team minutes";
         line+=".";
       }
-      if(prov) line+=" Impact is still provisional on a thin sample — lean on the scoring and minutes for now.";
+      if(prov){
+        line += held
+          ? (" Her impact read is short this season"
+             + (d.career_gp!=null ? (", with "+d.career_gp+" career games behind it") : "")
+             + " — lean on the scoring and minutes for now.")
+          : " Impact is still provisional on a thin sample — lean on the scoring and minutes for now.";
+      }
       if(line){ hero.appendChild(el("div","why", line)); }
     })();
 
@@ -356,7 +370,7 @@
     // so a regressed near-zero rating never reads as a firm 0.0 (Order 2, Director v6 0740Z).
     var impUnit=[];
     if(d.min_share_pct!=null) impUnit.push(d.min_share_pct+"% of min");
-    if(d.impact_provisional) impUnit.push("provisional — thin basis");
+    if(d.impact_provisional) impUnit.push(held ? "provisional — short season read" : "provisional — thin basis");
     kpis.appendChild(kpi("Impact rating", d.rating==null?null:((d.rating>0?"+":"")+d.rating.toFixed(1)),
       impUnit.length?("· "+impUnit.join(" · ")):null));
     // Minutes tile: a live next-game projection when we have one; otherwise fall back to the honest
@@ -420,7 +434,11 @@
         + "This early in the season it rests on only " + (nb!=null?nb:"a few") + " on-court stretch"
         + (nb===1?"":"es") + " — far short of a full-season sample — so it is heavily regressed toward "
         + "league average and reads near zero for almost everyone. It does not yet separate players; treat "
-        + "this number as provisional. For a reliable read right now, use her season scoring and share of minutes above.";
+        + "this number as provisional. For a reliable read right now, use her season scoring and share of minutes above."
+        + (held ? (" That is a short read on this season, not a thin record: "
+                   + (d.career_gp!=null ? (d.career_gp+" career games") : "her career")
+                   + (d.career_min!=null ? (" and "+Math.round(d.career_min).toLocaleString()+" minutes") : "")
+                   + " sit behind it.") : "");
     } else {
       impTxt="Our on-court impact rating measures how much better the team plays with her on the floor "
         + "(plus-minus style), now built on " + (nb!=null?nb:"enough") + " on-court stretch" + (nb===1?"":"es")
