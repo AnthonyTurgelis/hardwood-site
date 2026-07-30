@@ -46,6 +46,12 @@
      scoring" — so the divergence between on-court impact and box-score scoring reads at a glance.
      Firm-impact rows only (a provisional row has no firm impact rank, so no chip). */
   .divchip{display:inline-block;font-size:9px;font-weight:700;color:var(--acc);border:1px solid var(--acc);border-radius:999px;padding:0 6px;margin-left:6px;vertical-align:middle;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+  /* "Not ranked yet" disclosure (F3): the board's entry requirement, stated, plus every player
+     with a career record on file that it currently holds out. Deliberately quiet — it is a
+     completeness disclosure, not a second leaderboard — and it sits BELOW the board's own note. */
+  .gatecard{margin-top:10px;padding:10px 12px}
+  .gatehead{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:4px}
+  .gatetable{margin-top:8px;font-size:12px}
   .trendarrow{font-size:11px;font-weight:700;margin-left:5px;vertical-align:middle;font-variant-numeric:tabular-nums;cursor:default}
   .trendarrow.up{color:var(--good)}
   .trendarrow.down{color:var(--warn)}
@@ -339,9 +345,24 @@
           .forEach(function(r,i){ impRank[pkey(r)]=i+1; });
       }
     }
+    // F2 — this client FALLBACK carried the identical unit bug as the server compose it mirrors:
+    // it printed n_basis (a TRACKED ON-COURT STINT count) in the words "N games", beside a row
+    // that publishes its own gp. Both sides are fixed together and must stay worded identically —
+    // the fallback exists only for a pre-A bake with no r.why_impact, and a fallback that
+    // contradicts the baked string is just the same defect on a slower path.
     function impactWhy(r){
       if(r.rating==null) return "no firm on-court rating yet";
-      if(r.impact_provisional) return "provisional impact — thin on-court sample ("+(r.n_basis!=null?r.n_basis:"few")+" games)";
+      if(r.impact_provisional){
+        var nbT = (r.n_basis!=null) ? (r.n_basis+" tracked on-court stint"+(r.n_basis===1?"":"s"))
+                                    : "a small tracked on-court basis";
+        var gpT = (r.gp!=null) ? (" ("+r.gp+" game"+(r.gp===1?"":"s")+")") : "";
+        if(r.career_basis){
+          return "provisional impact — short season sample so far"+gpT+", resting on "+nbT
+               + "; her career record behind it"
+               + (r.career_gp!=null ? (" runs "+r.career_gp+" career games") : " is on file");
+        }
+        return "provisional impact — thin on-court basis: "+nbT+gpT;
+      }
       var parts=[(r.rating>0?"+":"")+r.rating.toFixed(1)+" on-court impact"];
       if(r.pts!=null && r.rank!=null){ parts.push(r.pts.toFixed(1)+" ppg (#"+r.rank+" by scoring)"); }
       else if(r.pts!=null){ parts.push(r.pts.toFixed(1)+" ppg"); }
@@ -377,7 +398,32 @@
       var nm=el("td","nm");
       if(r.id!=null){ var a=el("a",null,r.name); a.href="./player.html?id="+r.id; a.className="plink"; nm.appendChild(a); }
       else { nm.appendChild(document.createTextNode(r.name)); }
-      if(r.thin){ nm.appendChild(el("span","tag"," · thin sample")); }
+      // SMALL-SAMPLE CAVEAT (F1). This tag was UNREACHABLE for the whole life of the board: the
+      // bake computed r.thin as `games < 5` while its own pool query already required `games >= 5`,
+      // so 186/186 rows shipped thin=false and the board carried no small-sample caveat at all.
+      // r.thin now means "small basis AND we hold no career record to fall back on" — the only
+      // state that may say the words "thin sample". A player whose own past we hold gets the
+      // honest alternative instead, because a returning veteran is not an unknown.
+      if(r.thin){
+        var thT=el("span","tag"," · thin sample");
+        // The caveat explains itself rather than asserting: the basis is SAMPLED FLOOR TIME, which
+        // is why a 20-game reserve with 60 total minutes qualifies and a 5-game starter may not.
+        thT.title = "Her per-game averages rest on "
+                  + (r.season_min_read!=null ? (Math.round(r.season_min_read)+" minutes") : "very little floor time")
+                  + " of court time this season"
+                  + (r.gp!=null ? (" across "+r.gp+" game"+(r.gp===1?"":"s")) : "")
+                  + " — below the level where a player's own rate reads better than a league-average "
+                  + "baseline, and we hold no earlier record to lean on. Treat the numbers as rough.";
+        nm.appendChild(thT);
+      }
+      else if(r.career_basis){
+        var cbT=el("span","tag"," · short season sample");
+        cbT.title = "Her season averages rest on "+(r.gp!=null?r.gp:"a few")+" game"
+                  + (r.gp===1?"":"s")+" so far"
+                  + (r.career_gp!=null ? (", with "+r.career_gp+" career games on file behind them") : "")
+                  + " — a short read on a player we know, not a player we don't.";
+        nm.appendChild(cbT);
+      }
       // RANK-DELTA CHIP (A-rung): on the impact axis, a firm-impact row carries a compact pill
       // showing BOTH ranks — "#N impact / #M scoring" — surfacing the divergence between the two
       // axes at a glance. Reads the same canonical impRank (server-baked) + r.rank; a provisional
@@ -406,7 +452,20 @@
       if(r.rating==null){ impCell.textContent="—"; }
       else {
         impCell.appendChild(document.createTextNode((r.rating>0?"+":"")+r.rating.toFixed(1)));
-        if(r.impact_provisional){ impCell.className="strong prov"; var ptg=el("span","provtag","prov"); ptg.title="Provisional — rests on a thin on-court sample this early in the season."; impCell.appendChild(ptg); }
+        if(r.impact_provisional){
+          impCell.className="strong prov"; var ptg=el("span","provtag","prov");
+          // The tooltip used to assert a thin sample outright. It now describes the RATING's basis
+          // and distinguishes the two cases, so a returning veteran's provisional rating no longer
+          // reads as a claim that we know little about her (F1/F4 wording propagation).
+          ptg.title = r.career_basis
+            ? ("Provisional — her on-court rating rests on "
+               + (r.n_basis!=null?(r.n_basis+" tracked stint"+(r.n_basis===1?"":"s")):"a small on-court basis")
+               + " this season, so it is regressed toward league average. That is a short read on "
+               + "her season, not a thin record: "
+               + (r.career_gp!=null?(r.career_gp+" career games"):"her career") + " sits behind it.")
+            : "Provisional — rests on a thin on-court sample this early in the season.";
+          impCell.appendChild(ptg);
+        }
       }
       var ta=trendArrow(r.impact_trend); if(ta) impCell.appendChild(ta);   // A+ element 3: rising/falling arrow
       tr.appendChild(impCell);
@@ -430,6 +489,44 @@
       ? "This is the on-court-impact ranking: our plus-minus rating of how much better the team plays with her on the floor, biggest first — a different order from season scoring (the “#… by scoring” cue on each row shows the gap). Only firm on-court samples are ranked; a “prov” tag means a thin sample with no firm read yet, listed after the ranked group. Flip back to “Season scoring” for the box-score-volume board. % of team min is her share of the team's floor time. Tap a name for projected minutes and outcome ranges."
       : "Impact is our on-court rating (plus-minus style). A “prov” tag beside it means the rating still rests on a thin on-court sample, so it is regressed toward league average and reads near zero — provisional, not a firm read; the board ranks by season scoring instead. Use “On-court impact” above to re-rank by who moves the game most (often not the top scorers). % of team min is her share of the team's floor time, so thin-minutes vs full-time reads at a glance. Per-game averages are this season's official box scores. Tap a name for projected minutes and outcome ranges."));
     s.appendChild(note);
+    // ---------------------------------------------------------------------------------------
+    // F3 — WHO THE ENTRY REQUIREMENT LEAVES OUT, NAMED. The board ranks players with at least
+    // rt.min_games games this season. That gate silently removed six returning veterans,
+    // Napheesa Collier among them, and no copy on the page said a gate existed — so a reader
+    // could not tell "not ranked yet" from "we hold nothing on her". These rows are a DISCLOSURE
+    // only: they are baked in a separate rt.below_gate list, never in rt.players, so no rank,
+    // divergence chip, riser or comp set on the board above shifts by a digit. Graceful-null: an
+    // older bake with no below_gate key renders nothing at all, never an empty shell.
+    // ---------------------------------------------------------------------------------------
+    if(rt.below_gate_note){
+      var gsec=el("div","card gatecard");
+      gsec.appendChild(el("div","gatehead","Not ranked yet"));
+      gsec.appendChild(el("div","note", rt.below_gate_note));
+      var bg = rt.below_gate || [];
+      if(bg.length){
+        var gt=el("table","gatetable"), ghead=el("thead"), ghr=el("tr");
+        ["Player","Team","Games so far","PTS","Career games","Career minutes"].forEach(function(x){
+          ghr.appendChild(el("th",null,x)); });
+        ghead.appendChild(ghr); gt.appendChild(ghead);
+        var gtb=el("tbody");
+        bg.forEach(function(r){
+          var gr=el("tr");
+          var gnm=el("td","nm");
+          if(r.id!=null){ var ga=el("a",null,r.name); ga.href="./player.html?id="+r.id; ga.className="plink"; gnm.appendChild(ga); }
+          else { gnm.appendChild(document.createTextNode(r.name)); }
+          gr.appendChild(gnm);
+          gr.appendChild(td(null, r.team||"—"));
+          gr.appendChild(td("thin", r.gp==null?"—":String(r.gp)));
+          gr.appendChild(td(null, num(r.pts)));
+          gr.appendChild(td(null, r.career_gp==null?"—":String(r.career_gp)));
+          gr.appendChild(td(null, r.career_min==null?"—":String(Math.round(r.career_min))));
+          gtb.appendChild(gr);
+        });
+        gt.appendChild(gtb);
+        var gsc=el("div","scroll"); gsc.appendChild(gt); gsec.appendChild(gsc);
+      }
+      s.appendChild(gsec);
+    }
     return s;
   }
 
