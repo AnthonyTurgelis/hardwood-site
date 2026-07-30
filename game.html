@@ -152,6 +152,9 @@
   table.box td.prov{color:var(--muted)}
   .provtag{display:inline-block;font-size:8.5px;font-weight:700;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:0 5px;margin-left:5px;vertical-align:middle;text-transform:uppercase;letter-spacing:.02em}
   .minpct{color:var(--dim);font-size:11px}
+  /* BASIS tag on a box row — what the per-minute numbers were built from when this season alone
+     is too little to go on. Muted and small: it qualifies the number, it never competes with it. */
+  .basistag{display:inline-block;font-size:9px;color:var(--dim);border:1px solid var(--line2);border-radius:999px;padding:0 5px;margin-left:5px;vertical-align:middle;white-space:nowrap}
   .tag{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:999px;border:1px solid var(--line2);color:var(--muted);margin:2px 4px 0 0}
   .gtd{color:var(--warn);font-size:10px;font-weight:700;margin-left:4px}
   .av{font-size:12px;margin-bottom:3px}
@@ -544,12 +547,22 @@
     var cap=el("caption",null,title); t.appendChild(cap);
     var head=el("tr");
     var h0=el("th","pl","Player"); head.appendChild(h0);
-    ["Impact","Min","Pts","Reb","Ast"].forEach(function(h){ head.appendChild(el("th",null,h)); });
+    ["Impact","Min","Pts","Reb","Ast","3PM"].forEach(function(h){ head.appendChild(el("th",null,h)); });
     t.appendChild(head);
     (rows||[]).forEach(function(r){
       var tr=el("tr"); if(r.grouped) tr.className="grp";
       var nm=el("td","pl"); nm.textContent=r.name;
       if(r.gtd){ var g=el("span","gtd","GTD"); nm.appendChild(g); }
+      // WHAT THE NUMBER IS BUILT FROM, on the row itself. The printed report has carried these two
+      // states for a while; the page did not, so a line built mostly from a player's career looked
+      // identical to one built from a full season of this year. The tag names the basis; the
+      // disclosure under the tables explains it. Never suppressed and never widened away.
+      var bt = r.thin_unknown ? "little to go on" : (r.prior_basis ? "career basis" : null);
+      if(bt){ var b=el("span","basistag",bt);
+              b.title = r.thin_unknown
+                ? "She has played little enough that we lean on what a typical player in her role does."
+                : "She has played little this season, so this leans on what she has done across her career.";
+              nm.appendChild(b); }
       tr.appendChild(nm);
       // impact column first — matches the printed report's box row order. A thin-basis rating is
       // muted + tagged "prov" (provisional) so a firm-looking number never masks a thin basis (Order 2).
@@ -565,12 +578,56 @@
       if(r.min==null){ minTd.textContent="—"; }
       else { minTd.appendChild(document.createTextNode(r.min)); if(r.min_pct!=null){ minTd.appendChild(el("span","minpct"," ("+r.min_pct+"%)")); } }
       tr.appendChild(minTd);
-      ["pts","reb","ast"].forEach(function(k){ tr.appendChild(el("td",null, r[k]==null?"—":r[k])); });
+      ["pts","reb","ast","p3"].forEach(function(k){ tr.appendChild(el("td",null, r[k]==null?"—":r[k])); });
       t.appendChild(tr);
     });
-    if(!(rows||[]).length) { var tr=el("tr"); var td=el("td","pl","No projected box available."); td.colSpan=6; tr.appendChild(td); t.appendChild(tr); }
+    if(!(rows||[]).length) { var tr=el("tr"); var td=el("td","pl","No projected box available."); td.colSpan=7; tr.appendChild(td); t.appendChild(tr); }
     wrap.appendChild(t);
     return wrap;
+  }
+
+  // HOW THESE PROJECTIONS ARE BUILT — the CEO's "say how it was built" ask, applied to the box.
+  // Placed BELOW the table and COLLAPSED on purpose: the answer leads, the derivation is one tap
+  // away. Same pattern as the Appendix at the foot of the card. Plain English only — a reader
+  // should never need to know what anything is called internally to understand where a number
+  // came from. Static copy (no per-game payload) so all thirty-odd game files stay lean.
+  var HOW_BUILT = [
+    ["Minutes",
+     "How her coach has been using her lately, adjusted for who is available tonight and for how " +
+     "much the rest of the rotation can absorb. Each line also shows her share of a 40-minute game."],
+    ["Per-minute production",
+     "Mostly what she has done this season. A player who has barely played this season — back " +
+     "from an injury, newly signed, or a rookie — does not have enough of a season to read, so " +
+     "her line leans instead on what she has done across her career, weighted toward her most " +
+     "recent years. Those rows are marked career basis. Rows marked little to go on are players " +
+     "we genuinely hold very little on, and their line is pulled toward what a typical player in " +
+     "that role does."],
+    ["A correction, on 30 July",
+     "Assists and three-pointers used to be pulled toward a typical player at that position even " +
+     "for players with a long career behind them. That quietly pushed the busiest playmakers down " +
+     "and the quietest ones up, by roughly a third of a count a game in each direction — a " +
+     "typical-player number is by definition too low for the players well above it and too high " +
+     "for the ones below. Those two now lean on the player's own career instead. Points and " +
+     "rebounds were deliberately left alone: the same change did not hold up for rebounds when we " +
+     "checked it against games it had not already seen, so it was not made."],
+    ["What this is not",
+     "A projection, not a forecast of what will happen. A single game scatters widely around any " +
+     "of these numbers, and a thin line is marked thin rather than quietly narrowed to look surer " +
+     "than it is."]
+  ];
+  function howBuilt(){
+    var dt=el("details","appx");
+    dt.style.marginTop="8px";
+    dt.appendChild(el("summary",null,"How these projections are built"));
+    var body=el("div","why");
+    HOW_BUILT.forEach(function(pair){
+      var r=el("div","wrow");
+      r.appendChild(el("span","wlab", pair[0]));
+      body.appendChild(r);
+      body.appendChild(el("div","wdet", pair[1]));
+    });
+    dt.appendChild(body);
+    return dt;
   }
 
   // STARTER SKILL SHAPES -- a small-multiples grid. Each projected starter's skill mix
@@ -840,6 +897,7 @@
       var a1=availLine(d.away, av.away), a2=availLine(d.home, av.home);
       if(a1||a2){ bs.appendChild(el("h2",null,"Availability")); if(a1)bs.appendChild(a1); if(a2)bs.appendChild(a2); }
       if(d.box_note) bs.appendChild(el("div","note", d.box_note));
+      bs.appendChild(howBuilt());
       main.appendChild(bs);
 
       // Starter skill shapes — small-multiples grid off the same projected box rows.

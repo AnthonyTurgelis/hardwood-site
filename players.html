@@ -116,7 +116,7 @@
   <h1>The Hardwood — Players</h1>
   <span class="ago" id="ago"></span>
 </header>
-<div class="sub">Ranked by season scoring (points per game), with our on-court impact rating shown alongside, plus each player's share of team minutes, projected minutes, and the range of plausible box-score outcomes.</div>
+<div class="sub">Ranked by on-court impact — our plus-minus rating of how much better a team plays with her on the floor. Points, rebounds, assists and minutes sit alongside as context, and one tap re-ranks the whole board by season scoring. For who moved her team the most across the <em>whole</em> season — this rating added up over every game she played — see <a class="plink" href="./impact.html">Season Impact</a>.</div>
 <nav>
   <a href="./index.html">Board</a>
   <a href="./queue.html">What's Next</a>
@@ -148,7 +148,11 @@
 (function(){
   "use strict";
   var URL="./players.json";
-  var curStat=null, curData=null, ratFilter="", ratShowAll=false, curRank="scoring";
+  // DEFAULT RANK AXIS = IMPACT. The board leads with the on-court impact rating; season scoring is
+  // one tap away and never leaves the page. Counting stats are context, not the ranking — a
+  // reader-facing board that DEFAULTS to a counting stat is the defect this default exists to
+  // prevent (guard: tests/test_reader_boards_lead_with_impact.py + test_players_board_impact_default.js).
+  var curStat=null, curData=null, ratFilter="", ratShowAll=false, curRank="impact";
   var RAT_PAGE=50;   // default view = top 50; "show all" reveals the full uncapped board
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function td(c,x){ return el("td",c,x); }
@@ -313,8 +317,8 @@
     // burying impact in one column. Everything is sourced from the SAME baked rows — no re-fetch.
     var byImpact = (curRank==="impact");
     s.appendChild(el("p","lede", byImpact
-      ? "Ranked by ON-COURT IMPACT — our plus-minus rating of how much better a team plays with her on the floor, biggest first. This is a different list from the scoring board: the players near the top move the game without necessarily topping the box score, so each row also shows where she sits by scoring. Only players with a firm on-court sample are ranked; a thin, provisional sample is tagged “prov” and listed after the ranked group (no rank her sample can't support). Tap a name for her full card."
-      : "Ranked by season scoring — points per game from the official box scores. Impact leads the stat columns: our on-court rating of how much better a team plays with her on the floor. It now separates players into a real signal; a player still resting on a thin on-court sample is regressed toward league average and tagged “prov.” Her share of team minutes rides alongside too, so a big scoring line on limited minutes is easy to spot. Tap a name for her full card."));
+      ? "Ranked by ON-COURT IMPACT — our plus-minus rating of how much better a team plays with her on the floor, biggest first. This is the board's default order, and it is a different list from the scoring board: the players near the top move the game without necessarily topping the box score, so each row also shows where she sits by scoring. Only players with a firm on-court sample are ranked; a thin, provisional sample is tagged “prov” and listed after the ranked group (no rank her sample can't support). Tap a name for her full card."
+      : "Ranked by season scoring — points per game from the official box scores. This is the box-score-volume view; the board's default ranking is on-court impact, one tap back. Impact still leads the stat columns here: our on-court rating of how much better a team plays with her on the floor. A player resting on a thin on-court sample is regressed toward league average and tagged “prov.” Her share of team minutes rides alongside too, so a big scoring line on limited minutes is easy to spot. Tap a name for her full card."));
     // BOARD HEADLINE — biggest impact-over-scoring riser (shown on both axes; omitted when none rises)
     var riser=riserCallout(rt); if(riser) s.appendChild(riser);
     // BOARD MOMENTUM (A++-rung) — biggest rising + falling on-court-impact mover (omitted when none)
@@ -324,7 +328,9 @@
     // rank-axis toggle — reuses the shared .segbtns component (same look as the Realm-of-outcomes tabs)
     var pkey=function(r){ return r.id!=null ? ("i"+r.id) : ("n"+r.name); };
     var rseg=el("div","segbtns");
-    [["scoring","Season scoring"],["impact","On-court impact"]].forEach(function(o){
+    // Impact sits FIRST — it is the board's default ranking; season scoring is the second option,
+    // still one tap away and fully intact (counting stats move, they never disappear).
+    [["impact","On-court impact"],["scoring","Season scoring"]].forEach(function(o){
       var b=el("button", curRank===o[0]?"on":null, o[1]);
       b.onclick=function(){ if(curRank!==o[0]){ curRank=o[0]; ratShowAll=false; s.parentNode.replaceChild(ratingsSection(rt), s); } };
       rseg.appendChild(b);
@@ -438,10 +444,12 @@
       // client impactWhy() only for a pre-A bake. The scoring axis reads the baked r.why.
       var why = byImpact ? (r.why_impact || impactWhy(r)) : r.why;
       if(!why){
-        var headlineImpact = (rt.headline === "rating");
+        // The cue must describe the axis ACTUALLY RENDERING, not the bake's rt.headline hint — that
+        // field records the bake's own headline choice ("season") and would tell an impact-ranked
+        // row it was "ranked by season scoring". Read byImpact, the same flag that drove the sort.
         var wb = [];
         if(r.team_scoring_rank!=null && r.team){ wb.push("#"+r.team_scoring_rank+" scorer on "+r.team); }
-        wb.push(headlineImpact ? "ranked by on-court impact" : "ranked by season scoring");
+        wb.push(byImpact ? "ranked by on-court impact" : "ranked by season scoring");
         why = wb.join(" · ");
       }
       nm.appendChild(el("div","why", why));
@@ -487,8 +495,8 @@
       s.appendChild(tog);
     }
     var note=el("div","note"); note.appendChild(document.createTextNode(byImpact
-      ? "This is the on-court-impact ranking: our plus-minus rating of how much better the team plays with her on the floor, biggest first — a different order from season scoring (the “#… by scoring” cue on each row shows the gap). Only firm on-court samples are ranked; a “prov” tag means a thin sample with no firm read yet, listed after the ranked group. Flip back to “Season scoring” for the box-score-volume board. % of team min is her share of the team's floor time. Tap a name for projected minutes and outcome ranges."
-      : "Impact is our on-court rating (plus-minus style). A “prov” tag beside it means the rating still rests on a thin on-court sample, so it is regressed toward league average and reads near zero — provisional, not a firm read; the board ranks by season scoring instead. Use “On-court impact” above to re-rank by who moves the game most (often not the top scorers). % of team min is her share of the team's floor time, so thin-minutes vs full-time reads at a glance. Per-game averages are this season's official box scores. Tap a name for projected minutes and outcome ranges."));
+      ? "This is the on-court-impact ranking, and the board's default: our plus-minus rating of how much better the team plays with her on the floor, biggest first — a different order from season scoring (the “#… by scoring” cue on each row shows the gap). Only firm on-court samples are ranked; a “prov” tag means a thin sample with no firm read yet, listed after the ranked group — never given a rank its sample can't support. Flip to “Season scoring” for the box-score-volume board; the points, rebounds, assists and minutes columns are on every row either way. % of team min is her share of the team's floor time. Tap a name for projected minutes and outcome ranges."
+      : "You are on the season-scoring view — points per game from the official box scores. Flip back to “On-court impact” above, the board's default, to re-rank by who moves the game most (often not the top scorers). Impact is our on-court rating (plus-minus style); a “prov” tag beside it means the rating still rests on a thin on-court sample, so it is regressed toward league average and reads near zero — provisional, not a firm read. % of team min is her share of the team's floor time, so thin-minutes vs full-time reads at a glance. Per-game averages are this season's official box scores. Tap a name for projected minutes and outcome ranges."));
     s.appendChild(note);
     // ---------------------------------------------------------------------------------------
     // F3 — WHO THE ENTRY REQUIREMENT LEAVES OUT, NAMED. The board ranks players with at least
