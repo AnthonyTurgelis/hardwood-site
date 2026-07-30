@@ -295,6 +295,28 @@
     color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 4px;flex:0 0 auto}
   .gcard .range .rval{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
   .gcard .range .rmut{font-variant-numeric:tabular-nums;font-weight:500;color:var(--muted)}
+  /* DRAWN margin band — the platform DRAWS a range, it never narrates one. Only the geometry (left
+     and width, from the baked knots) is set inline; every static rule lives here. NO new palette:
+     one existing accent hue for the central band and the hairline token for the outer spread, so a
+     single-series interval needs no legend and no categorical set to validate. Mirrors the house
+     shape already shipped by rangeBar() in site/explorer.html — light 90% spread, solid central
+     band, tick for our number — in this card's own tokens. */
+  .gcard .rbar{display:flex;align-items:center;gap:5px;margin-top:3px}
+  .gcard .rbar .rtrk{position:relative;flex:1 1 auto;height:12px;min-width:64px;
+    background:var(--bg);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  /* the 90% spread is CONTEXT, so it is recessive — but --line on --bg is all but invisible in light
+     mode (#e5e8ee on #f6f7f9), so it uses the --muted ink at low alpha instead: that reads in BOTH
+     schemes off ONE token, where a literal hairline color would have needed a second. */
+  .gcard .rbar .rb90{position:absolute;top:3px;height:6px;background:var(--muted);opacity:.38;border-radius:3px}
+  .gcard .rbar .rb80{position:absolute;top:2px;height:8px;background:var(--accent);border-radius:3px}
+  /* EVEN reference line — recessive, but drawn OVER the bands: which side of a tie the band sits on
+     is the whole point of the picture, so it must stay readable where the band covers it. */
+  .gcard .rbar .rzero{position:absolute;top:0;width:1px;height:100%;background:var(--ink);opacity:.5}
+  /* our number — a surface ring keeps the tick legible where it overlaps the central band */
+  .gcard .rbar .rpt{position:absolute;top:0;width:3px;height:100%;background:var(--ink);
+    border-radius:2px;transform:translateX(-1.5px);box-shadow:0 0 0 1.5px var(--card)}
+  .gcard .rbar .rend{font-size:9.5px;font-weight:700;color:var(--muted);
+    font-variant-numeric:tabular-nums;flex:0 0 auto;white-space:nowrap}
   .gcard .venue{font-size:11px;color:var(--warn);line-height:1.4;margin-top:1px}
   /* IMPACT-FIRST availability line (BR-V2): who is OUT tonight (the coach signal), not a 28-name dump.
      Reuses the card's existing token language — a small bad-color "Out" label + plain names. */
@@ -1137,6 +1159,147 @@
     lines.forEach(function(t){ ul.appendChild(el("li",null,t)); });
     s.appendChild(ul); return s;
   }
+  /* ============================ DRAWN MARGIN RANGE (board card) ============================
+     The board used to NARRATE its widest honesty signal — `rg.appendChild(el("span","rval",
+     g.range80))` printed "CHI by 10 to NYL by 24" as a sentence on the most-viewed surface we
+     have, while four other surfaces drew the same kind of interval as a bar. This is the geometry.
+
+     WHAT IS PURE AND WHY: everything between the BOARD-MARGIN-RANGE markers is a MODEL — no DOM, no
+     globals, no helpers — because scripts/test_range_is_drawn.py extracts this exact block verbatim
+     and runs it in node against the real baked payloads. The shipped code is the tested code; there
+     is no Python re-implementation of the geometry to drift from it. boardRangeBar() below turns the
+     model into elements and is the only part that touches the page.
+
+     READ, NEVER RECOMPUTE: every bound drawn here is a number scripts/build_site.py already baked
+     into site/games.json. No interval is derived, widened, or defaulted on the client.
+
+     OMIT, NEVER INVENT: no published 90% band -> no model -> no bar (the card falls back to whatever
+     sentence the board baked). A missing knot is drawn as nothing, never as zero.
+
+     HOME-POSITIVE is the sign convention of pred_margin / range*_lo / range*_hi, so a negative bound
+     favours the AWAY team. A backwards bar is worse than no bar, so the endpoint labels are asserted
+     per payload against an independent witness — the sentence the Python baker wrote into board.json
+     must name the same team at the same end. */
+  // ---- BOARD-MARGIN-RANGE-BEGIN ----
+  // boardWhole: whole points, rounded the way the PYTHON BAKER rounds. _fav_margin_band() in
+  // scripts/build_site.py formats with f"{v:.0f}", which is round-half-to-EVEN, and Math.round is
+  // round-half-UP — they disagree by a full point on any knot landing exactly on .5. That is not
+  // hypothetical: on the 2026-07-22 slate BOTH 28.5 and 14.5 appear, so Math.round would have drawn
+  // "IND +29" on the board while site/report_archive.html's preserved sentence for the same game
+  // reads "IND by 28". One platform must never print two different numbers for one baked knot, and
+  // the baker is the reference implementation for display rounding.
+  function boardWhole(v){
+    var a=Math.abs(v), f=Math.floor(a), rem=a-f;
+    if(rem>0.5){ return f+1; }
+    if(rem<0.5){ return f; }
+    return (f%2===0) ? f : f+1;
+  }
+
+  // boardEndLabel: name the team the SIGN of this bound actually favours. Home-positive.
+  function boardEndLabel(v, band){
+    if(v==null){ return ""; }
+    var n=boardWhole(v);
+    if(n===0){ return "even"; }
+    return (v<0 ? (band.away||"") : (band.home||"")) + " +" + n;
+  }
+
+  // boardBandFor: find THIS card's published band on the slate. Returns null rather than guessing.
+  function boardBandFor(row, slate, date){
+    if(!row || !slate || !date){ return null; }
+    var key = row.abbr;
+    if(!key){ return null; }
+    var gs = slate.games;
+    if(!gs || !gs.length){ return null; }
+    for(var i=0;i<gs.length;i++){
+      var g = gs[i];
+      if(!g){ continue; }
+      // DATE-GATED: an archived board date must never borrow tonight's numbers.
+      if(g.date !== date){ continue; }
+      if(((g.away||"") + " @ " + (g.home||"")) !== key){ continue; }
+      // The 90% band is the canvas. Without it there is nothing honest to scale to.
+      if(g.range90_lo==null || g.range90_hi==null){ return null; }
+      return { lo:g.range90_lo, hi:g.range90_hi,
+               lo80:(g.range80_lo==null?null:g.range80_lo),
+               hi80:(g.range80_hi==null?null:g.range80_hi),
+               point:(g.pred_margin==null?null:g.pred_margin),
+               home:(g.home||""), away:(g.away||"") };
+    }
+    return null;
+  }
+
+  // boardRangeModel: band -> percentage geometry. The canvas is SYMMETRIC about zero, so "even"
+  // always lands at dead centre and the reader can see at a glance which side of a tie we are on.
+  // Scaling to the widest bound present means nothing can fall off canvas by construction.
+  function boardRangeModel(band){
+    if(!band){ return null; }
+    if(band.lo==null || band.hi==null){ return null; }
+    var lo=band.lo, hi=band.hi;
+    var lo80=(band.lo80==null?null:band.lo80), hi80=(band.hi80==null?null:band.hi80);
+    var point=(band.point==null?null:band.point);
+    var has80=(lo80!=null && hi80!=null);
+    var vals=[lo,hi];
+    if(has80){ vals.push(lo80,hi80); }
+    if(point!=null){ vals.push(point); }
+    var reach=0;
+    for(var i=0;i<vals.length;i++){ reach=Math.max(reach, Math.abs(vals[i])); }
+    // 1.06 pads the canvas so the widest endpoint never sits flush on the edge; a degenerate band
+    // (reach 0) still gets a finite scale so it renders as a centred tick rather than dividing by 0.
+    var R = reach>0 ? reach*1.06 : 1;
+    function px(v){
+      if(v==null){ return null; }
+      return Math.max(0, Math.min(100, 50 + (v/R)*50));
+    }
+    return {
+      lo:lo, hi:hi, lo80:lo80, hi80:hi80, point:point, has80:has80,
+      home:(band.home||""), away:(band.away||""),
+      x:{ lo:px(lo), hi:px(hi), lo80:px(lo80), hi80:px(hi80), point:px(point), zero:px(0) },
+      ends:{ lo:boardEndLabel(lo,band), hi:boardEndLabel(hi,band),
+             lo80:boardEndLabel(lo80,band), hi80:boardEndLabel(hi80,band) }
+    };
+  }
+  // ---- BOARD-MARGIN-RANGE-END ----
+
+  /* boardRangeBar: the model, drawn. Light outer bar = the 90% spread, solid bar = the central 80%,
+     tick = our number, hairline = even — the same visual grammar rangeBar() uses in
+     site/explorer.html, so a reader moving between the two pages reads one chart, not two.
+     Only `left` and `width` are set here, both from computed values; all styling is in CSS. */
+  function boardRangeBar(m){
+    function pct(v){ return v.toFixed(1) + "%"; }
+    // A published band can be legitimately degenerate (lo === hi). A hairline is the honest render
+    // of a zero-width interval; it is NOT a default standing in for a missing one (that draws nothing).
+    function span(a,b){ return Math.max(0.8, b-a); }
+    var wrap=el("div","rbar");
+    var trk=el("div","rtrk");
+    var b90=el("div","rb90");
+    b90.style.left = pct(m.x.lo);
+    b90.style.width = pct(span(m.x.lo, m.x.hi));
+    trk.appendChild(b90);
+    if(m.has80){
+      var b80=el("div","rb80");
+      b80.style.left = pct(m.x.lo80);
+      b80.style.width = pct(span(m.x.lo80, m.x.hi80));
+      trk.appendChild(b80);
+    }
+    var z=el("div","rzero");
+    z.style.left = pct(m.x.zero);
+    trk.appendChild(z);
+    if(m.x.point!=null){
+      var pt=el("div","rpt");
+      pt.style.left = pct(m.x.point);
+      trk.appendChild(pt);
+    }
+    // Direct end labels sit on the band the row is LABELLED for (the 80%), falling back to the 90%
+    // ends when no central band was published — so the number beside the bar always matches the
+    // promise in the row label.
+    wrap.appendChild(el("span","rend", m.has80 ? m.ends.lo80 : m.ends.lo));
+    wrap.appendChild(trk);
+    wrap.appendChild(el("span","rend", m.has80 ? m.ends.hi80 : m.ends.hi));
+    wrap.title = "Bar shows the 90% range (light), the central 80% range (solid), our number (tick) "+
+      "and even (hairline). 90%: " + m.ends.lo + " to " + m.ends.hi +
+      (m.has80 ? (" · 80%: " + m.ends.lo80 + " to " + m.ends.hi80) : "");
+    return wrap;
+  }
+
   /* HERO — tonight's slate is the biggest thing on the board: matchup, ET tip, OUR PICK
      (winning-margin call) prominent, win chance, venue note (redesign impact-hierarchy). */
   function renderTodayGames(tg){
@@ -1174,11 +1337,21 @@
         c.appendChild(w);
       } else if(g.win_line){ c.appendChild(el("div","win", g.win_line)); }
       // honest 80% margin band — the pick is an estimate, so show how wide the likely result is.
-      if(g.range80){
+      // DRAWN, not narrated, whenever the numeric knots are published for this card (see
+      // boardRangeModel above). The pre-formatted sentence remains the FALLBACK, not the default:
+      // if the slate feed has not landed, or an archived board date cannot be date-matched to it,
+      // the honesty signal still shows rather than disappearing.
+      var rmodel = boardRangeModel(boardBandFor(g, SLATE, tg.date));
+      if(rmodel){
         var rg=el("div","range");
         rg.appendChild(el("span","rlab","80% range"));
-        rg.appendChild(el("span","rval", g.range80));
         c.appendChild(rg);
+        c.appendChild(boardRangeBar(rmodel));
+      } else if(g.range80){
+        var rgt=el("div","range");
+        rgt.appendChild(el("span","rlab","80% range"));
+        rgt.appendChild(el("span","rval", g.range80));
+        c.appendChild(rgt);
       }
       // GAME-SHAPE tail read (VIS-P2): chance of a one-possession finish vs a 20+ blowout — baked
       // server-side from the same margin distribution as the range above (client renders, never
@@ -1669,6 +1842,12 @@
   var lastB=null;      // what is currently displayed (live or snapshot)
   var FOUL=null;       // tonight's foul-risk feed (./foul_risk.json), null until it lands
   var ACC=null;        // self-graded scorecard (./accuracy.json), null until it lands — feeds the HOME coverage tile
+  // published slate (./games.json) — carries the NUMERIC margin knots (range80_lo/hi, range90_lo/hi,
+  // pred_margin) that board.json only publishes pre-formatted as a sentence. Read so the hero cards
+  // can DRAW their range instead of printing it; null until it lands, and the cards degrade to the
+  // baked sentence while it is. Already-published core payload (site/games.json), same file
+  // site/games.html and site/daybyday.html read — no new data source and no bake change.
+  var SLATE=null;
   function render(b){
     lastB=b;
     SRC=b.section_sources||{};
@@ -1967,6 +2146,15 @@
         if(changed && !viewDate && lastLive){ render(lastLive); } } }).catch(function(){});
   }
   pollAccuracy(); setInterval(pollAccuracy,300000);
+  /* published slate feed — the numeric margin knots the hero cards DRAW their range from. Polled
+     independently of the board (same pattern as foul-risk/accuracy); graceful-null on 404/absent so
+     a card simply falls back to the baked sentence until the slate lands. */
+  function pollSlate(){
+    fetch(bust("./games.json"),{cache:"no-cache"}).then(function(r){ return r.ok? r.json() : null; })
+      .then(function(j){ if(j){ var changed=JSON.stringify(j)!==JSON.stringify(SLATE); SLATE=j;
+        if(changed && !viewDate && lastLive){ render(lastLive); } } }).catch(function(){});
+  }
+  pollSlate(); setInterval(pollSlate,60000);
   /* PAUSE STATE — polled from ./status.json, the one published pause reading (the same block every
      other tab renders and the spawn gate itself consults). Same pattern as the feeds above, with one
      deliberate difference: a miss is NOT graceful-null here. An absent pause reading is reported as
