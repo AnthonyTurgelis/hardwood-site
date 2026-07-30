@@ -1,19 +1,19 @@
 {
- "generated_utc": "2026-07-30T15:00:12+00:00",
+ "generated_utc": "2026-07-30T15:25:50+00:00",
  "freshness": {
-  "baked_utc": "2026-07-30T15:00:12+00:00",
-  "baked_et": "Jul 30, 11:00am ET",
-  "revalidated_utc": "2026-07-30T15:00:12+00:00",
+  "baked_utc": "2026-07-30T15:25:50+00:00",
+  "baked_et": "Jul 30, 11:25am ET",
+  "revalidated_utc": "2026-07-30T15:25:50+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-30",
  "day_summary": "Tonight's game reports are ready - 3 games. Nothing needs you right now.",
  "counts": {
-  "running": 0,
-  "done_today": 22,
+  "running": 1,
+  "done_today": 25,
   "maintenance": 4,
   "needs_anthony": 0,
-  "lanes_today": 22,
+  "lanes_today": 25,
   "upcoming": 100
  },
  "sections": {
@@ -23,6 +23,12 @@
     "title": "Interval width matchup response",
     "timestamp": "Jul 30, 2026",
     "body_markdown": "Tested no improvement; recorded honestly."
+   },
+   {
+    "id": "dive-generators-on-a-schedule",
+    "title": "Dive generators on a schedule",
+    "timestamp": "Jul 30, 2026",
+    "body_markdown": "Upgrade the public status board."
    },
    {
     "id": "deepdive-latent-depth-panels",
@@ -83,12 +89,6 @@
     "title": "Rebound Matchup Adjustments Implemented",
     "timestamp": "Jul 13, 2026",
     "body_markdown": "> **The Finding:** We were missing the mark on rebounds because we were completely ignoring head-to-head size differences and who is actually boxing out who.\n\n**The Fix:** I built the **Rebound Matchup Model**. It uses the new matchups feed feed to dynamically fetch the expected defender for every player on the slate. It scales each player's proj_reb based on two things: 1) the defender's historical rebound rate, and 2) the height advantage/disadvantage (in inches).\n\n**Impact:** This dynamically shifts rebounds from players guarded by elite rebounders (like A'ja Wilson) to players guarded by weak rebounders, and rewards size mismatches, making our prop lines way sharper!"
-   },
-   {
-    "id": "minutes-v8-wins-role-change",
-    "title": "Sharper minutes forecasts for players changing roles",
-    "timestamp": "Jul 12, 2026",
-    "body_markdown": "> **The finding:** We compared two ways to forecast playing time on the games that matter most — players stepping into bigger or different roles.\n\n**Result:** the simpler rolling-average method is **better by 0.86 minutes** on these role-change games. The role-aware version systematically over-corrected on promoted or demoted players.\n\n**Action:** we kept the rolling-average method as the official minutes model and shelved the role-aware one."
    }
   ],
   "today_games": {
@@ -914,7 +914,18 @@
    "note": ""
   },
   "running_now": [],
-  "running_live": [],
+  "running_live": [
+   {
+    "name": "Ops console invisible under independence",
+    "one_liner": "Running now.",
+    "chip": "IN-FLIGHT",
+    "team": "Coordination",
+    "kind": "lane",
+    "time": "",
+    "at_iso": "2026-07-30T11:24:02-04:00",
+    "start_unknown": true
+   }
+  ],
   "running_plain": [],
   "needs_anthony": [],
   "done_today": [
@@ -928,6 +939,36 @@
     "link": "https://drive.google.com/file/d/1y8A4VZz6J3NUs8ode6hVNEOFgp7i2OA6/view?usp=drivesdk",
     "impact": 3,
     "headline": true
+   },
+   {
+    "name": "Dive generators on a schedule",
+    "one_liner": "Upgrade the public status board",
+    "chip": "DONE",
+    "team": "Data",
+    "time": "11:20am",
+    "at_iso": "2026-07-30T11:20:00-04:00",
+    "link": "https://drive.google.com/file/d/1EqGfCCQYadqB9kEIuS9KENlUR2vsWGnh/view?usp=drivesdk",
+    "impact": 3,
+    "headline": true
+   },
+   {
+    "name": "Recorded update",
+    "one_liner": "Completed and recorded.",
+    "chip": "DONE",
+    "team": "",
+    "time": "11:20am",
+    "at_iso": "2026-07-30T11:20:00-04:00",
+    "impact": 1
+   },
+   {
+    "name": "Infra usage meter fallback rearms banned stop",
+    "one_liner": "Completed and recorded.",
+    "chip": "DONE",
+    "team": "",
+    "time": "11:20am",
+    "at_iso": "2026-07-30T11:20:00-04:00",
+    "link": "https://drive.google.com/file/d/1-EraB27_9o_lCx6J-8pjteJmtCme9_QM/view?usp=drivesdk",
+    "impact": 1
    },
    {
     "name": "Upgrade the public status board",
@@ -1125,8 +1166,7 @@
     "time": "9:15pm",
     "at_iso": "2026-07-29T21:15:00-04:00",
     "link": "https://drive.google.com/file/d/1QxpQsurmKdqHwL1_DVfxL_aizlPTswjW/view?usp=drivesdk",
-    "impact": 3,
-    "headline": true
+    "impact": 3
    },
    {
     "name": "Health signals cannot report failure",
@@ -1563,7 +1603,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 15,
+      "rank": 14,
       "actions": [
        {
         "verb": "top",
@@ -1599,7 +1639,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 16,
+      "rank": 15,
       "actions": [
        {
         "verb": "top",
@@ -1635,7 +1675,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 17,
+      "rank": 16,
       "actions": [
        {
         "verb": "top",
@@ -1671,7 +1711,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 19,
+      "rank": 18,
       "actions": [
        {
         "verb": "top",
@@ -1707,7 +1747,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 26,
+      "rank": 25,
       "actions": [
        {
         "verb": "top",
@@ -1743,7 +1783,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 27,
+      "rank": 26,
       "actions": [
        {
         "verb": "top",
@@ -2139,7 +2179,7 @@
       "state": "blocked",
       "pm_authored": false,
       "impact": "",
-      "rank": 47,
+      "rank": 48,
       "actions": [
        {
         "verb": "top",
@@ -2175,7 +2215,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 64,
+      "rank": 65,
       "actions": [
        {
         "verb": "top",
@@ -2211,7 +2251,7 @@
       "state": "staged",
       "pm_authored": true,
       "impact": "High Impact",
-      "rank": 65,
+      "rank": 66,
       "actions": [
        {
         "verb": "top",
@@ -2247,7 +2287,7 @@
       "state": "gated",
       "pm_authored": true,
       "impact": "High Impact",
-      "rank": 66,
+      "rank": 67,
       "actions": [
        {
         "verb": "top",
@@ -2283,7 +2323,7 @@
       "state": "gated",
       "pm_authored": true,
       "impact": "",
-      "rank": 69,
+      "rank": 70,
       "actions": [
        {
         "verb": "top",
@@ -2319,7 +2359,7 @@
       "state": "gated",
       "pm_authored": true,
       "impact": "",
-      "rank": 73,
+      "rank": 74,
       "actions": [
        {
         "verb": "top",
@@ -2355,7 +2395,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 74,
+      "rank": 75,
       "actions": [
        {
         "verb": "top",
@@ -2391,7 +2431,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 75,
+      "rank": 76,
       "actions": [
        {
         "verb": "top",
@@ -2427,7 +2467,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 76,
+      "rank": 77,
       "actions": [
        {
         "verb": "top",
@@ -2463,7 +2503,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 78,
+      "rank": 79,
       "actions": [
        {
         "verb": "top",
@@ -2499,7 +2539,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 83,
+      "rank": 84,
       "actions": [
        {
         "verb": "top",
@@ -2535,7 +2575,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 84,
+      "rank": 85,
       "actions": [
        {
         "verb": "top",
@@ -2571,7 +2611,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 86,
+      "rank": 87,
       "actions": [
        {
         "verb": "top",
@@ -2607,7 +2647,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 87,
+      "rank": 88,
       "actions": [
        {
         "verb": "top",
@@ -2643,7 +2683,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 88,
+      "rank": 89,
       "actions": [
        {
         "verb": "top",
@@ -2679,7 +2719,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 89,
+      "rank": 90,
       "actions": [
        {
         "verb": "top",
@@ -2700,42 +2740,6 @@
         "verb": "shelve",
         "icon": "🗄",
         "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20bk-rebound-board-duel-player-grain%3A%20shelve&body=Rebound%20board-duel%2C%20player%20grain%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       }
-      ]
-     },
-     {
-      "task_id": "bk-v12-vs-sim-disagreement-flag-one-line-driver",
-      "family": "modeling",
-      "name": "Vs-sim disagreement + one-line driver â†’ blend weight",
-      "header": "Vs-sim disagreement + one-line driver â†’ blend weight",
-      "why": "Queued in the master backlog; surfaced onto the board by the automated queue refresh.",
-      "priority": 966,
-      "seat": "Modeling",
-      "status": "queued",
-      "state": "",
-      "pm_authored": false,
-      "impact": "",
-      "rank": 90,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20bk-v12-vs-sim-disagreement-flag-one-line-driver%3A%20top&body=Vs-sim%20disagreement%20%2B%20one-line%20driver%20%C3%A2%E2%80%A0%E2%80%99%20blend%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20bk-v12-vs-sim-disagreement-flag-one-line-driver%3A%20bump&body=Vs-sim%20disagreement%20%2B%20one-line%20driver%20%C3%A2%E2%80%A0%E2%80%99%20blend%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20bk-v12-vs-sim-disagreement-flag-one-line-driver%3A%20demote&body=Vs-sim%20disagreement%20%2B%20one-line%20driver%20%C3%A2%E2%80%A0%E2%80%99%20blend%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20bk-v12-vs-sim-disagreement-flag-one-line-driver%3A%20shelve&body=Vs-sim%20disagreement%20%2B%20one-line%20driver%20%C3%A2%E2%80%A0%E2%80%99%20blend%20weight%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
        }
       ]
      },
@@ -2969,7 +2973,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 14,
+      "rank": 13,
       "actions": [
        {
         "verb": "top",
@@ -3005,7 +3009,7 @@
       "state": "part done",
       "pm_authored": false,
       "impact": "efficiency - compounds on every dispatch",
-      "rank": 18,
+      "rank": 17,
       "actions": [
        {
         "verb": "top",
@@ -3041,7 +3045,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 20,
+      "rank": 19,
       "actions": [
        {
         "verb": "top",
@@ -3077,7 +3081,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 25,
+      "rank": 24,
       "actions": [
        {
         "verb": "top",
@@ -3113,7 +3117,7 @@
       "state": "ready now",
       "pm_authored": true,
       "impact": "CEO-visible",
-      "rank": 28,
+      "rank": 27,
       "actions": [
        {
         "verb": "top",
@@ -3329,7 +3333,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 48,
+      "rank": 49,
       "actions": [
        {
         "verb": "top",
@@ -3365,7 +3369,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 51,
+      "rank": 52,
       "actions": [
        {
         "verb": "top",
@@ -3397,11 +3401,11 @@
       "why": "Strip out the effect of usage and coaching decisions to find a player's true impact, and brief the ideas seat on the principle so it catches more patterns like it.",
       "priority": 3.4,
       "seat": "Infra",
-      "status": "queued",
-      "state": "",
+      "status": "partial - the BRIEF half shipped, the MODELING half did not. This row asks two things: find players unfairly punished by role, and teach the principle to the ideas seat. The second is demonstrably done - docs/reports/VISIONARY_CONTEXT_EQUALIZER_20260722.md is a full Visionary pass run explicitly under THE CONTEXT-EQUALIZER PRINCIPLE (CEO doctrine 2026-07-22), reading its trigger completions in full and returning ranked possibilities. But that report says of itself: POSSIBILITIES ONLY, no dispatch, no DB writes, no plans. So nobody has yet measured which players the role effect actually punishes. THAT is what remains, and it is the half the CEO cares about.",
+      "state": "part done",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 52,
+      "rank": 53,
       "actions": [
        {
         "verb": "top",
@@ -3437,7 +3441,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 53,
+      "rank": 54,
       "actions": [
        {
         "verb": "top",
@@ -3473,7 +3477,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 54,
+      "rank": 55,
       "actions": [
        {
         "verb": "top",
@@ -3509,7 +3513,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 55,
+      "rank": 56,
       "actions": [
        {
         "verb": "top",
@@ -3545,7 +3549,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 56,
+      "rank": 57,
       "actions": [
        {
         "verb": "top",
@@ -3581,7 +3585,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 58,
+      "rank": 59,
       "actions": [
        {
         "verb": "top",
@@ -3617,7 +3621,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 59,
+      "rank": 60,
       "actions": [
        {
         "verb": "top",
@@ -3653,7 +3657,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 60,
+      "rank": 61,
       "actions": [
        {
         "verb": "top",
@@ -3689,7 +3693,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 61,
+      "rank": 62,
       "actions": [
        {
         "verb": "top",
@@ -3725,7 +3729,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 62,
+      "rank": 63,
       "actions": [
        {
         "verb": "top",
@@ -3761,7 +3765,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 63,
+      "rank": 64,
       "actions": [
        {
         "verb": "top",
@@ -3797,7 +3801,7 @@
       "state": "blocked",
       "pm_authored": true,
       "impact": "",
-      "rank": 67,
+      "rank": 68,
       "actions": [
        {
         "verb": "top",
@@ -3833,7 +3837,7 @@
       "state": "blocked",
       "pm_authored": false,
       "impact": "",
-      "rank": 80,
+      "rank": 81,
       "actions": [
        {
         "verb": "top",
@@ -4004,42 +4008,6 @@
     ],
     "site": [
      {
-      "task_id": "ceo-compare-comprehensive-season-filters",
-      "family": "site",
-      "name": "Make the comparison page cover more than this season",
-      "header": "Make the comparison page cover more than this season",
-      "why": "CEO 2026-07-30T14:, immediately after it went live for the first time: 'Compare is good but needs to be comprehensive and have filters for more seasons etc...these are really shitty first states but ...",
-      "priority": 1,
-      "seat": "Site",
-      "status": "READY",
-      "state": "ready now",
-      "pm_authored": false,
-      "impact": "CEO ask",
-      "rank": 13,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20ceo-compare-comprehensive-season-filters%3A%20top&body=Make%20the%20comparison%20page%20cover%20more%20than%20this%20season%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20ceo-compare-comprehensive-season-filters%3A%20bump&body=Make%20the%20comparison%20page%20cover%20more%20than%20this%20season%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20ceo-compare-comprehensive-season-filters%3A%20demote&body=Make%20the%20comparison%20page%20cover%20more%20than%20this%20season%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20ceo-compare-comprehensive-season-filters%3A%20shelve&body=Make%20the%20comparison%20page%20cover%20more%20than%20this%20season%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "explorer-narrates-a-range-instead-of-drawing-it",
       "family": "site",
       "name": "The board tells you the range in words instead of showing it",
@@ -4051,7 +4019,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 21,
+      "rank": 20,
       "actions": [
        {
         "verb": "top",
@@ -4087,7 +4055,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 22,
+      "rank": 21,
       "actions": [
        {
         "verb": "top",
@@ -4123,7 +4091,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 23,
+      "rank": 22,
       "actions": [
        {
         "verb": "top",
@@ -4159,7 +4127,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 24,
+      "rank": 23,
       "actions": [
        {
         "verb": "top",
@@ -4256,6 +4224,42 @@
       ]
      },
      {
+      "task_id": "career-seasons-counts-played-not-held",
+      "family": "site",
+      "name": "One player's season count disagrees with her own season meter",
+      "header": "One player's season count disagrees with her own season meter",
+      "why": "Measured after the career-seasons fix took the mismatch from 150 rows down to one. The remaining row is not the same bug. The footnote counts seasons we hold enough of to read from needing at least ...",
+      "priority": 3,
+      "seat": "viz",
+      "status": "READY",
+      "state": "ready now",
+      "pm_authored": false,
+      "impact": "",
+      "rank": 47,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20career-seasons-counts-played-not-held%3A%20top&body=One%20player%27s%20season%20count%20disagrees%20with%20her%20own%20season%20meter%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20career-seasons-counts-played-not-held%3A%20bump&body=One%20player%27s%20season%20count%20disagrees%20with%20her%20own%20season%20meter%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20career-seasons-counts-played-not-held%3A%20demote&body=One%20player%27s%20season%20count%20disagrees%20with%20her%20own%20season%20meter%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20career-seasons-counts-played-not-held%3A%20shelve&body=One%20player%27s%20season%20count%20disagrees%20with%20her%20own%20season%20meter%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "ceo-deepdive-depth-followup",
       "family": "site",
       "name": "Make the detailed analysis pages genuinely comprehensive",
@@ -4267,7 +4271,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 49,
+      "rank": 50,
       "actions": [
        {
         "verb": "top",
@@ -4303,7 +4307,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 50,
+      "rank": 51,
       "actions": [
        {
         "verb": "top",
@@ -4339,7 +4343,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 57,
+      "rank": 58,
       "actions": [
        {
         "verb": "top",
@@ -4375,7 +4379,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 70,
+      "rank": 71,
       "actions": [
        {
         "verb": "top",
@@ -4411,7 +4415,7 @@
       "state": "blocked",
       "pm_authored": true,
       "impact": "",
-      "rank": 71,
+      "rank": 72,
       "actions": [
        {
         "verb": "top",
@@ -4447,7 +4451,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 72,
+      "rank": 73,
       "actions": [
        {
         "verb": "top",
@@ -4483,7 +4487,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 85,
+      "rank": 86,
       "actions": [
        {
         "verb": "top",
@@ -4546,6 +4550,42 @@
     ],
     "data": [
      {
+      "task_id": "board-counts-dnps-as-games-played",
+      "family": "data",
+      "name": "The board counts a did-not-play as a game played",
+      "header": "The board counts a did-not-play as a game played",
+      "why": "Found by the compare lane and left unfixed on purpose because it is a sign-off call rather than a bug one lane can decide alone. The player board counts every row in the game log as a game played ...",
+      "priority": 1.5,
+      "seat": "top",
+      "status": "READY",
+      "state": "ready now",
+      "pm_authored": false,
+      "impact": "",
+      "rank": 28,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20board-counts-dnps-as-games-played%3A%20top&body=The%20board%20counts%20a%20did-not-play%20as%20a%20game%20played%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20board-counts-dnps-as-games-played%3A%20bump&body=The%20board%20counts%20a%20did-not-play%20as%20a%20game%20played%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20board-counts-dnps-as-games-played%3A%20demote&body=The%20board%20counts%20a%20did-not-play%20as%20a%20game%20played%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20board-counts-dnps-as-games-played%3A%20shelve&body=The%20board%20counts%20a%20did-not-play%20as%20a%20game%20played%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "deepdive-payloads-unrebuilt-12-days",
       "family": "data",
       "name": "The ten dive generators were never scheduled, so they only run by hand",
@@ -4593,7 +4633,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 68,
+      "rank": 69,
       "actions": [
        {
         "verb": "top",
@@ -4629,7 +4669,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 77,
+      "rank": 78,
       "actions": [
        {
         "verb": "top",
@@ -4665,7 +4705,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 79,
+      "rank": 80,
       "actions": [
        {
         "verb": "top",
@@ -4701,7 +4741,7 @@
       "state": "blocked",
       "pm_authored": false,
       "impact": "",
-      "rank": 81,
+      "rank": 82,
       "actions": [
        {
         "verb": "top",
@@ -4737,7 +4777,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 82,
+      "rank": 83,
       "actions": [
        {
         "verb": "top",
@@ -4768,9 +4808,9 @@
     "target": 40,
     "count": 100,
     "ok": true,
-    "label": "100 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 14m ago.)",
-    "as_of_utc": "2026-07-30T14:45:26Z",
-    "age_secs": 898,
+    "label": "100 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 10m ago.)",
+    "as_of_utc": "2026-07-30T15:15:48Z",
+    "age_secs": 608,
     "stale": false
    },
    "source": "dispatch queue",
@@ -5179,67 +5219,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-30T15:00:04Z",
-  "age_s": 15,
-  "cycles": 868,
+  "last_poll_utc": "2026-07-30T15:25:37Z",
+  "age_s": 17,
+  "cycles": 890,
   "known": true,
-  "label": "scout: alive, last poll 15s ago",
+  "label": "scout: alive, last poll 17s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "10:56am",
-   "text": "slate-refresh: slate ok (today populated",
-   "detail": "slate-refresh: slate ok (today populated)"
+   "time": "11:22am",
+   "text": "poll #887 · nothing new",
+   "detail": "poll cycle=887 ok directives_new=0"
   },
   {
-   "time": "10:56am",
-   "text": "poll #865 · nothing new",
-   "detail": "poll cycle=865 ok directives_new=0"
+   "time": "11:23am",
+   "text": "poll #888 · nothing new",
+   "detail": "poll cycle=888 ok directives_new=0"
   },
   {
-   "time": "10:56am",
-   "text": "publish-health: PUBLIC BOARD STALE (#8): staleness=1891s threshold=900s live=2026-07-30T14:25:19+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 1802s newer than live",
-   "detail": "publish-health: PUBLIC BOARD STALE (#8): staleness=1891s threshold=900s live=2026-07-30T14:25:19+00:00 | deploy stuck (guard/push failure): "
+   "time": "11:24am",
+   "text": "poll #889 · nothing new",
+   "detail": "poll cycle=889 ok directives_new=0"
   },
   {
-   "time": "10:57am",
-   "text": "board-selfpolice: live fetch teams.json HTTP 503",
-   "detail": "board-selfpolice: live fetch teams.json HTTP 503"
+   "time": "11:25am",
+   "text": "board-selfpolice: board fresh again — interrupt flag cleared",
+   "detail": "board-selfpolice: board fresh again — interrupt flag cleared"
   },
   {
-   "time": "10:57am",
-   "text": "board-selfpolice: A3 coverage: teams.json live fetch miss — skipped (no page on a miss",
-   "detail": "board-selfpolice: A3 coverage: teams.json live fetch miss — skipped (no page on a miss)"
+   "time": "11:25am",
+   "text": "board-selfpolice: board-stale alert BOARD STALE ALERT .md RETIRED to inbox/processed (the board is clean; the episode record is preserved, not deleted",
+   "detail": "board-selfpolice: board-stale alert BOARD_STALE_ALERT_.md RETIRED to inbox/processed (the board is clean; the episode record is preserved, n"
   },
   {
-   "time": "10:57am",
-   "text": "board-selfpolice: auto-repair cleared the mismatch",
-   "detail": "board-selfpolice: auto-repair cleared the mismatch"
-  },
-  {
-   "time": "10:57am",
-   "text": "poll #866 · nothing new",
-   "detail": "poll cycle=866 ok directives_new=0"
-  },
-  {
-   "time": "10:58am",
-   "text": "poll #867 · nothing new",
-   "detail": "poll cycle=867 ok directives_new=0"
-  },
-  {
-   "time": "11:00am",
-   "text": "poll #868 · nothing new",
-   "detail": "poll cycle=868 ok directives_new=0"
-  },
-  {
-   "time": "11:00am",
+   "time": "11:25am",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
+  },
+  {
+   "time": "11:25am",
+   "text": "poll #890 · nothing new",
+   "detail": "poll cycle=890 ok directives_new=0"
+  },
+  {
+   "time": "11:25am",
+   "text": "width-tripwire: CRITICAL DEFECT [head not consuming] under-width 1/4 for 197s (> 180s), injected in window=True, head dead=False - wrote width defect log.jsonl + width defect.json",
+   "detail": "width-tripwire: CRITICAL DEFECT [head_not_consuming] under-width 1/4 for 197s (> 180s), injected_in_window=True, head_dead=False - wrote wid"
+  },
+  {
+   "time": "11:25am",
+   "text": "width-tripwire: CRITICAL DEFECT [head not consuming] under-width 1/4 for 197.4s (head dead=False) - width defect.json + ledger written",
+   "detail": "width-tripwire: CRITICAL DEFECT [head_not_consuming] under-width 1/4 for 197.4s (head_dead=False) - width_defect.json + ledger written"
+  },
+  {
+   "time": "11:25am",
+   "text": "publish-health: PUBLIC BOARD STALE (#4): staleness=1526s threshold=900s live=2026-07-30T15:00:12+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 1484s newer than live",
+   "detail": "publish-health: PUBLIC BOARD STALE (#4): staleness=1526s threshold=900s live=2026-07-30T15:00:12+00:00 | deploy stuck (guard/push failure): "
   }
  ],
  "helpers": {
-  "as_of": "2026-07-30T15:00:04Z",
+  "as_of": "2026-07-30T15:25:38Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -5248,48 +5288,48 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "15s",
-    "state_text": "on · seen 15s ago"
+    "age_label": "17s",
+    "state_text": "on · seen 17s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "18s",
-    "state_text": "on · seen 18s ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "16s",
+    "state_text": "on · seen 16s ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "18s",
-    "state_text": "on · seen 18s ago"
+    "age_label": "21s",
+    "state_text": "on · seen 21s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    }
   ],
   "width": {
-   "running": 0,
-   "target": 4,
-   "empty": 4,
-   "line": "0 of 4 jobs running.",
-   "reason": "Only 0 of 4 jobs are running - 4 more flagged for the coordinator to start from the priority list.",
+   "running": 1,
+   "target": 2,
+   "empty": 1,
+   "line": "1 of 2 jobs running.",
+   "reason": "Only 1 of 2 jobs are running - 1 more flagged for the coordinator to start from the priority list.",
    "stale": false
   },
   "scheduled_jobs": [
@@ -5449,25 +5489,25 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-07-30T15:00:18Z",
-  "session_age_secs": 5318,
-  "last_progress_age_secs": 1,
+  "last_heartbeat_utc": "2026-07-30T15:25:43Z",
+  "session_age_secs": 6853,
+  "last_progress_age_secs": 11,
   "last_spawn_attempt": "2026-07-30T08:43:49Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
  "pipe_health": {
   "directives_pending": 1,
-  "last_processed_clock": "10:32am",
-  "last_processed_iso": "2026-07-30T14:32:45Z",
+  "last_processed_clock": "11:22am",
+  "last_processed_iso": "2026-07-30T15:22:12Z",
   "last_processed_known": true,
-  "last_processed_display": "10:32am",
-  "last_processed_source": "directive_ledger.done",
-  "newest_directive_clock": "10:36am",
-  "newest_directive_iso": "2026-07-30T14:36:25Z",
+  "last_processed_display": "11:22am",
+  "last_processed_source": "inbox/processed archive mtime",
+  "newest_directive_clock": "11:25am",
+  "newest_directive_iso": "2026-07-30T15:25:25Z",
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-07-30T14:36:25Z",
+  "as_of": "2026-07-30T15:25:25Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -5480,34 +5520,34 @@
  "width_defect": {
   "active": true,
   "state": "defect",
-  "text": "Only 0 of 4 work lanes have been running for 56 min while jobs wait to start — being looked into.",
-  "running": 0,
+  "text": "Only 1 of 4 work lanes have been running for 3 min while jobs wait to start — being looked into.",
+  "running": 1,
   "target": 4
  },
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-07-30T14:53:59Z",
+   "as_of": "2026-07-30T15:24:02Z",
    "stale": false,
-   "revalidated": "2026-07-30T15:00:12+00:00",
+   "revalidated": "2026-07-30T15:25:50+00:00",
    "stale_reason": "",
-   "age_label": "6m",
+   "age_label": "1m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-30T15:00:12+00:00",
+   "as_of": "2026-07-30T15:25:50+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T15:00:12+00:00",
+   "revalidated": "2026-07-30T15:25:50+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-30T15:00:12+00:00",
+   "as_of": "2026-07-30T15:25:50+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T15:00:12+00:00",
+   "revalidated": "2026-07-30T15:25:50+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
@@ -5516,43 +5556,43 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-30T15:00:12+00:00",
+   "revalidated": "2026-07-30T15:25:50+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-07-30T14:45:26Z",
+   "as_of": "2026-07-30T15:24:52Z",
    "stale": false,
-   "revalidated": "2026-07-30T15:00:12+00:00",
+   "revalidated": "2026-07-30T15:25:50+00:00",
    "stale_reason": "",
-   "age_label": "14m",
+   "age_label": "58s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-30T15:00:12+00:00",
+   "revalidated": "2026-07-30T15:25:50+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-07-30T14:36:25Z",
+   "as_of": "2026-07-30T15:25:25Z",
    "stale": false,
-   "revalidated": "2026-07-30T15:00:12+00:00",
+   "revalidated": "2026-07-30T15:25:50+00:00",
    "stale_reason": "",
-   "age_label": "23m",
+   "age_label": "25s",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-07-30T12:00:00-04:00",
    "stale": false,
-   "revalidated": "2026-07-30T15:00:12+00:00",
+   "revalidated": "2026-07-30T15:25:50+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 172800,
@@ -5560,22 +5600,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-30T14:56:35+00:00",
+   "as_of": "2026-07-30T15:24:56+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T15:00:12+00:00",
+   "revalidated": "2026-07-30T15:25:50+00:00",
    "stale_reason": "",
-   "age_label": "3m",
+   "age_label": "58s",
    "stale_after": null
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-30T15:00:04Z",
+   "as_of": "2026-07-30T15:25:38Z",
    "stale": false,
-   "revalidated": "2026-07-30T15:00:12+00:00",
+   "revalidated": "2026-07-30T15:25:50+00:00",
    "stale_reason": "",
-   "age_label": "15s",
+   "age_label": "16s",
    "stale_after": null
   }
  },
- "generated_et": "Jul 30, 11:00am ET"
+ "generated_et": "Jul 30, 11:25am ET"
 }
