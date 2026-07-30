@@ -93,6 +93,31 @@
   .cellbar{position:relative;width:52px;max-width:100%;height:4px;border-radius:2px;background:var(--line2);overflow:hidden;display:inline-block;vertical-align:middle;margin-left:7px}
   .cellbar>i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:var(--acc)}
 
+  /* --- measured-range row ---------------------------------------------------------------------
+     Draws the interval a number actually lives in instead of writing the interval out as a
+     sentence. The shaded block is the 95% range, the bright tick is the measured value, the dark
+     tick is a reference the reader cares about (the number the board uses, or an even 50/50), and
+     the faint tick is the axis anchor. Same 128px label column as .barrow so a card that stacks
+     both reads as one ruler. */
+  .rngrow{display:flex;align-items:center;gap:9px;margin:7px 0}
+  .rngrow .bl{flex:0 0 128px;font-size:11.5px;color:var(--ink);font-weight:600}
+  .rngrow .rt{position:relative;flex:1 1 auto;height:13px;border-radius:7px;background:var(--line2);min-width:70px}
+  .rngrow .rt>.rspan{position:absolute;top:0;bottom:0;border-radius:7px;background:var(--acc);opacity:.42}
+  .rngrow .rt>.rpt{position:absolute;top:-3px;bottom:-3px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--acc)}
+  .rngrow .rt>.rref{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--ink);opacity:.7}
+  .rngrow .rt>.ranch{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.55}
+  .rngrow .bv{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;min-width:104px;text-align:right}
+  .rnglegend{font-size:10px;color:var(--dim);margin:4px 0 2px;line-height:1.5}
+  @media (max-width:560px){ .rngrow .bl{flex:0 1 128px;min-width:0} .rngrow .bv{min-width:0} }
+
+  /* --- contents strip: what is inside this page, ABOVE the first card ---------------------------
+     The dives are long, so the breadth of the page was only discoverable by scrolling all of it.
+     One tap-row of the real dive titles, built from the same index rows the cards are built from. */
+  .dvidx{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 2px}
+  .dvidx a{font-size:11.5px;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-weight:600;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  .dvidx a:hover{border-color:var(--acc);color:var(--acc)}
+  .dvidx a .ct{color:var(--dim);font-weight:600;font-size:10.5px;margin-left:6px;font-variant-numeric:tabular-nums}
+
   /* --- plain-English read strip --- */
   .read{margin:13px 0 2px}
   .read p{margin:7px 0;font-size:12.5px;line-height:1.55;color:var(--ink)}
@@ -215,6 +240,7 @@
     <div class="sec-h" id="hub-h">Deep Dives</div>
     <div class="sec-lede" id="hub-lede"></div>
   </div>
+  <div class="dvidx" id="hub-index"></div>
   <div id="hub"><p class="empty">Loading deep dives…</p></div>
 
   <div class="sec" style="margin-top:26px">
@@ -251,6 +277,33 @@
     i.style.width=(frac*100).toFixed(1)+"%"; bt.appendChild(i); r.appendChild(bt);
     r.appendChild(el("div","bv",valText));
     if(nText!=null) r.appendChild(el("div","bn",nText));
+    return r;
+  }
+  /* Draw the RANGE a measured number lives in, rather than writing the interval out in a sentence.
+     lo/hi/point/opts.ref/opts.anchor are all in the SAME units; the axis is derived from those
+     values (never hardcoded), so the bar can never disagree with the numbers beside it.
+       opts.ref     - a reference value to mark (e.g. the number the board actually uses)
+       opts.anchor  - a value the axis must contain (0 for a margin, 50 for a win rate), so the
+                      reader can see whether the range clears it
+       opts.fmt     - formatter for the endpoint text (defaults to 2dp) */
+  function rangerow(label, lo, hi, point, opts){
+    opts=opts||{};
+    var fmt=opts.fmt||function(v){ return num(v,2); };
+    var vals=[lo,hi,point,opts.ref,opts.anchor].filter(function(v){ return v!=null && isFinite(Number(v)); }).map(Number);
+    var r=el("div","rngrow"); r.appendChild(el("div","bl",label));
+    if(vals.length<2){ r.appendChild(el("div","rt")); r.appendChild(el("div","bv","—")); return r; }
+    var mn=Math.min.apply(null,vals), mx=Math.max.apply(null,vals);
+    var pad=((mx-mn)*0.18)||Math.abs(mx||1)*0.18||1; mn-=pad; mx+=pad;
+    function pos(v){ return Math.max(0,Math.min(100,(Number(v)-mn)/(mx-mn)*100)); }
+    var t=el("div","rt");
+    if(opts.anchor!=null){ var a=el("span","ranch"); a.style.left=pos(opts.anchor).toFixed(1)+"%"; t.appendChild(a); }
+    if(lo!=null&&hi!=null){ var s=el("span","rspan"); s.style.left=pos(lo).toFixed(1)+"%"; s.style.width=Math.max(0.6,pos(hi)-pos(lo)).toFixed(1)+"%"; t.appendChild(s); }
+    if(opts.ref!=null){ var rf=el("span","rref"); rf.style.left=pos(opts.ref).toFixed(1)+"%"; if(opts.refTitle) rf.title=opts.refTitle; t.appendChild(rf); }
+    if(point!=null){ var pt=el("span","rpt"); pt.style.left=pos(point).toFixed(1)+"%"; t.appendChild(pt); }
+    r.appendChild(t);
+    var txt=(point!=null?fmt(point):"—");
+    if(lo!=null&&hi!=null) txt+=" ("+fmt(lo)+" to "+fmt(hi)+")";
+    r.appendChild(el("div","bv",txt));
     return r;
   }
   function methodBlock(title, buildBody){
@@ -381,6 +434,33 @@
         f.appendChild(barrow(pr.tag, pr.comeback_winpct||0, 50, pct(pr.comeback_winpct,1), "n="+(pr.n!=null?pr.n:"—")));
       });
     }
+    // When a lead becomes safe. `unrecoverable_first_lt5pct_band` was baked with the grid and never
+    // rendered: for each moment in the game it names the FIRST deficit band from which the trailing
+    // team has come back less than 5% of the time. Read down the column and it is the whole story
+    // of how a game closes. The winning percentage beside each band is looked up in the SAME grid
+    // the table above renders, so the two can never disagree.
+    var un=d.unrecoverable_first_lt5pct_band||{};
+    var cps=d.checkpoints||[];
+    if(cps.length && Object.keys(un).length){
+      f.appendChild(plab("When a lead is effectively safe (trailing team wins under 5% of the time)"));
+      var safeRows=cps.map(function(cp){
+        var band=un[cp.key];
+        var cell=band?((cp.bands||{})[band]||{}):{};
+        return {label:cp.label||cp.key, band:band, winpct:cell.winpct, n:cell.n};
+      });
+      f.appendChild(simpleTable([
+        {h:"Moment", rowh:true, get:function(r){ return r.label; }},
+        {h:"Lead that is safe", num:true, get:function(r){ return r.band?(r.band+" points"):"none this early"; }},
+        {h:"Trailing team still wins", num:true, get:function(r){ return r.band?pct(r.winpct,1):"—"; }},
+        {h:"Games", num:true, get:function(r){ return r.band?num(r.n):"—"; }}
+      ], safeRows));
+      var ul=el("div","rnglegend");
+      ul.appendChild(document.createTextNode(
+        "The lead you need to be safe shrinks as the clock does. Early in the game no lead is out of "
+        +"reach; by the last minute a single possession is close to decisive. A blank row is honest: "
+        +"at that point in the game, no deficit band we measure has fallen under 5%."));
+      f.appendChild(ul);
+    }
     // read (built from the dive's own fields, not synthesized)
     var reads=[]; if(d.headline) reads.push(d.headline); if(d.method_note) reads.push(d.method_note);
     f.appendChild(readStrip(reads));
@@ -407,6 +487,30 @@
       {v:pct((h.home_winpct!=null?h.home_winpct*100:null),1), l:"home win rate"},
       {v:num(h.n), l:"games", sm:true}
     ]));
+    // How sure are we? -- the 95% range this measurement lives in, DRAWN, with the value the board
+    // actually uses marked inside it. Both intervals are baked fields (headline.home_margin_ci95 /
+    // home_winpct_ci95); nothing here is re-derived.
+    if((h.home_margin_ci95||[]).length===2 || (h.home_winpct_ci95||[]).length===2){
+      f.appendChild(plab("How sure are we? The 95% range around each measurement"));
+      var mci=h.home_margin_ci95||[], wci=h.home_winpct_ci95||[];
+      if(mci.length===2){
+        f.appendChild(rangerow("Home margin (pts)", mci[0], mci[1], h.home_margin,
+          {ref:h.board_value_pts, anchor:0, refTitle:"the home edge the board uses",
+           fmt:function(v){ return sign(v,2); }}));
+      }
+      if(wci.length===2){
+        var p100=function(v){ return v==null?null:v*100; };
+        f.appendChild(rangerow("Home win rate", p100(wci[0]), p100(wci[1]), p100(h.home_winpct),
+          {ref:p100(h.board_value_winpct), anchor:50, refTitle:"the home win rate the board uses",
+           fmt:function(v){ return pct(v,1); }}));
+      }
+      var lg=el("div","rnglegend");
+      lg.appendChild(document.createTextNode(
+        "Shaded block = the 95% range the true edge is in, from "+num(h.n)+" games. "
+        +"Bright tick = what we measured. Dark tick = the value the board uses. "
+        +"Faint tick = the level that would mean home is worth nothing."));
+      f.appendChild(lg);
+    }
     // offense/defense decomposition
     var od=d.offense_defense||{};
     if(od.hca_total!=null){
@@ -414,6 +518,40 @@
       var mx=Math.max(Math.abs(od.hca_from_offense||0), Math.abs(od.hca_from_defense||0))||1;
       f.appendChild(barrow("Defense", od.hca_from_defense||0, mx, sign(od.hca_from_defense,2)+" pts", pct((od.defense_share!=null?od.defense_share*100:null),0)));
       f.appendChild(barrow("Offense", od.hca_from_offense||0, mx, sign(od.hca_from_offense,2)+" pts", pct((od.offense_share!=null?od.offense_share*100:null),0)));
+    }
+    // What the home team actually DOES better -- the points-additive mechanism split that was baked
+    // and never shown. The two point channels sum to the margin of this sub-sample by construction
+    // (fg_points_diff is defined as sample_margin - ft_points_diff), so the panel draws how the
+    // number is built and then shows the addition, rather than asserting it.
+    var me=d.mechanism||{};
+    if(me.ft_points_diff!=null && me.fg_points_diff!=null){
+      f.appendChild(plab("What the home team actually does better (points)"));
+      var mxm2=Math.max(Math.abs(me.ft_points_diff||0), Math.abs(me.fg_points_diff||0))||1;
+      f.appendChild(barrow("From the line", me.ft_points_diff, mxm2, sign(me.ft_points_diff,2)+" pts"));
+      f.appendChild(barrow("From the field", me.fg_points_diff, mxm2, sign(me.fg_points_diff,2)+" pts"));
+      var sum=el("div","rnglegend");
+      sum.appendChild(document.createTextNode(
+        "These two channels are the whole margin: "+num(me.ft_points_diff,2)+" from the line and "
+        +num(me.fg_points_diff,2)+" from the field add to "
+        +num(Math.round((me.ft_points_diff+me.fg_points_diff)*100)/100,2)
+        +", against a measured home margin of "+sign(me.sample_margin,2)+" in the same "
+        +num(me.n)+" games. Free throws are the single biggest channel, and pace is not a channel at all."));
+      f.appendChild(sum);
+      f.appendChild(plab("And the habits underneath those points (home minus away, per game)"));
+      var mechRows=[
+        ["Free throws attempted", me.ft_attempts_diff, "more trips to the line for the home team"],
+        ["Shooting accuracy", me.fg_pct_diff_pp, "percentage points of field-goal accuracy ("+pct((me.home_fg_pct!=null?me.home_fg_pct*100:null),1)+" at home vs "+pct((me.away_fg_pct!=null?me.away_fg_pct*100:null),1)+" away)"],
+        ["Turnovers forced", me.turnover_diff, "more turnovers by the visiting team"],
+        ["Shots taken", me.fga_diff, "difference in field-goal attempts, effectively none"],
+        ["Possessions", me.pace_diff, "difference in pace ("+num(me.home_poss,1)+" vs "+num(me.away_poss,1)+"), effectively none"]
+      ].filter(function(r){ return r[1]!=null; });
+      if(mechRows.length){
+        f.appendChild(simpleTable([
+          {h:"Habit", rowh:true, get:function(r){ return r[0]; }},
+          {h:"Home edge", num:true, get:function(r){ return sign(r[1],2); }},
+          {h:"What that means", get:function(r){ return r[2]; }}
+        ], mechRows));
+      }
     }
     // quarter timing
     var qt=d.quarter_timing||{};
@@ -440,6 +578,27 @@
         tb.appendChild(row);
       });
       t.appendChild(tb); w.appendChild(t); f.appendChild(w);
+    }
+    // The empty-arena test -- three era averages that were baked and only ever described in a
+    // sentence. 2020 was played without a crowd, which makes it the closest thing the league has to
+    // a control condition for home court, so it is drawn beside the two crowd eras.
+    if(tr.era_2015_2019_margin!=null && tr.era_2020_bubble_margin!=null && tr.era_2021_2026_margin!=null){
+      f.appendChild(plab("The empty-arena test: home margin by era (pts)"));
+      var eras=[
+        ["2015-2019 (crowds)", tr.era_2015_2019_margin],
+        ["2020 (no crowd)", tr.era_2020_bubble_margin],
+        ["2021-2026 (crowds)", tr.era_2021_2026_margin]
+      ];
+      var mxe=Math.max.apply(null, eras.map(function(e){ return Math.abs(e[1]||0); }))||1;
+      eras.forEach(function(e){ f.appendChild(barrow(e[0], e[1]||0, mxe, sign(e[1],2), null, (e[1]||0)<0)); });
+      var eg=el("div","rnglegend");
+      eg.appendChild(document.createTextNode(
+        "The season with no crowd is the weakest home edge on record ("+sign(tr.era_2020_bubble_margin,2)
+        +" pts, "+pct((tr.era_2020_bubble_winpct!=null?tr.era_2020_bubble_winpct*100:null),1)
+        +" win rate, a coin flip). Across the whole span home court has been shrinking by about "
+        +num(Math.abs(tr.ols_slope_pts_per_yr||0),2)+" points a year"
+        +(tr.early_minus_modern!=null?(", or "+num(tr.early_minus_modern,2)+" points from the early era to now"):"")+"."));
+      f.appendChild(eg);
     }
     // read
     var reads=[]; if(h.one_liner) reads.push(h.one_liner);
@@ -493,6 +652,25 @@
       });
       t.appendChild(tb); w.appendChild(t); f.appendChild(w);
     }
+    // Rest edge -- the home team's rest days minus the away team's, a baked table that was never
+    // rendered. Shown with its own honest caveat: it is noisy and non-monotone, so it is a texture
+    // panel, not a read to bet a game on.
+    if((d.rest_differential||[]).length){
+      f.appendChild(plab("Rest edge: home team's days off minus the away team's"));
+      var mxd=Math.max.apply(null, d.rest_differential.map(function(r){ return Math.abs(r.home_margin||0); }))||1;
+      d.rest_differential.forEach(function(r){
+        var lab=(r.restdiff>0?("Home +"+r.restdiff+" day"+(r.restdiff===1?"":"s")):
+                 r.restdiff<0?("Away +"+Math.abs(r.restdiff)+" day"+(Math.abs(r.restdiff)===1?"":"s")):"Even rest");
+        f.appendChild(barrow(lab, r.home_margin||0, mxd, sign(r.home_margin,2),
+                             "n="+(r.n!=null?r.n:"—"), (r.home_margin||0)<0));
+      });
+      var rl=el("div","rnglegend");
+      rl.appendChild(document.createTextNode(
+        "Home margin by rest edge. It does not climb cleanly with rest, and it should not be read as "
+        +"one: road-trip structure travels with rest, so this panel is texture. The back-to-back "
+        +"bucket above is the reliable read."));
+      f.appendChild(rl);
+    }
     // player fatigue
     var pf=d.player_fatigue||{};
     if(pf.stars){
@@ -503,6 +681,37 @@
         {v:num(pf.stars.rested&&pf.stars.rested.avg_pts,1), l:"pts (rested)", sm:true},
         {v:num(pf.stars.b2b&&pf.stars.b2b.avg_pts,1), l:"pts (B2B)", sm:true}
       ]));
+    }
+    // Everyone, not just the stars. The all-players split was baked alongside the stars split and
+    // never shown, so the "no box-visible fatigue" finding could only be checked for stars. Both
+    // groups now sit in one table, with the second-night change stated per measure.
+    var fatRows=[];
+    if(pf.all_players && pf.all_players.rested) fatRows.push(["Every player", pf.all_players]);
+    if(pf.stars && pf.stars.rested) fatRows.push(["Stars only", pf.stars]);
+    if(fatRows.length){
+      f.appendChild(plab("Does the second night show up in the box score?"));
+      var fdelta=function(g,k,dp){
+        var a=g[1].rested||{}, b=g[1].b2b||{};
+        if(a[k]==null||b[k]==null) return "—";
+        return sign((k==="ts_pct"?(b[k]-a[k])*100:(b[k]-a[k])), dp);
+      };
+      f.appendChild(simpleTable([
+        {h:"Group", rowh:true, get:function(g){ return g[0]; }},
+        {h:"Player-games (rested)", num:true, get:function(g){ return num((g[1].rested||{}).n); }},
+        {h:"Player-games (B2B)", num:true, get:function(g){ return num((g[1].b2b||{}).n); }},
+        {h:"Minutes", num:true, get:function(g){ return num((g[1].rested||{}).avg_min,1)+" to "+num((g[1].b2b||{}).avg_min,1); }},
+        {h:"Change", num:true, get:function(g){ return fdelta(g,"avg_min",2); }},
+        {h:"Points", num:true, get:function(g){ return num((g[1].rested||{}).avg_pts,1)+" to "+num((g[1].b2b||{}).avg_pts,1); }},
+        {h:"Change", num:true, get:function(g){ return fdelta(g,"avg_pts",2); }},
+        {h:"True shooting", num:true, get:function(g){ return pct(((g[1].rested||{}).ts_pct!=null?g[1].rested.ts_pct*100:null),1)+" to "+pct(((g[1].b2b||{}).ts_pct!=null?g[1].b2b.ts_pct*100:null),1); }},
+        {h:"Change (pp)", num:true, get:function(g){ return fdelta(g,"ts_pct",2); }}
+      ], fatRows));
+      var fl=el("div","rnglegend");
+      fl.appendChild(document.createTextNode(
+        "Every column moves by a fraction of a minute, a fraction of a point, or a fraction of a "
+        +"percentage point. Whatever a back-to-back costs a team, it does not show up as tired legs "
+        +"in the box score, for stars or for anybody else."));
+      f.appendChild(fl);
     }
     var reads=[]; if(h.one_liner) reads.push(h.one_liner); if(pf.finding) reads.push(pf.finding);
     f.appendChild(readStrip(reads));
@@ -658,6 +867,40 @@
       });
     }
 
+    // Panel 4 -- this season against the league's own history. Every number here is a baked league
+    // field (league.*, headline.win_pct_per_net_point, correlations.2026 vs correlations.all_seasons)
+    // that the card never showed, so the reader could not tell whether 2026 is fast or normal.
+    var lgp=d.league||{};
+    if(lgp.pace_2026!=null && lgp.pace_all_seasons!=null){
+      f.appendChild(plab("Is 2026 fast? This season against the league's own history"));
+      var mxl=Math.max(lgp.pace_2026, lgp.pace_all_seasons, 1);
+      f.appendChild(barrow("Pace, 2026", lgp.pace_2026, mxl, num(lgp.pace_2026,1)+" poss"));
+      f.appendChild(barrow("Pace, all seasons", lgp.pace_all_seasons, mxl, num(lgp.pace_all_seasons,1)+" poss"));
+      if(lgp.points_per_100_2026!=null && lgp.points_per_100_all!=null){
+        var mxs=Math.max(lgp.points_per_100_2026, lgp.points_per_100_all, 1);
+        f.appendChild(barrow("Scoring, 2026", lgp.points_per_100_2026, mxs, num(lgp.points_per_100_2026,1)+" per 100"));
+        f.appendChild(barrow("Scoring, all seasons", lgp.points_per_100_all, mxs, num(lgp.points_per_100_all,1)+" per 100"));
+      }
+      var pl4=el("div","rnglegend"), pbits=[];
+      if((lgp.pace_range_2026||[]).length===2){
+        pbits.push("The fastest and slowest teams this season sit between "+num(lgp.pace_range_2026[0],1)
+                   +" and "+num(lgp.pace_range_2026[1],1)+" possessions a game"
+                   +(lgp.n_games_2026!=null?(", across "+num(lgp.n_games_2026)+" games"):"")+".");
+      }
+      if(h.win_pct_per_net_point!=null){
+        pbits.push("Each extra point of net efficiency has been worth about "
+                   +num(h.win_pct_per_net_point*100,1)+" percentage points of win rate.");
+      }
+      var c26=(d.correlations||{})["2026"]||{}, call=(d.correlations||{}).all_seasons||{};
+      if(c26.pace_vs_win!=null && call.pace_vs_win!=null){
+        pbits.push("One season can fool you: within 2026 alone the pace-to-winning link reads "
+                   +num(c26.pace_vs_win,2)+" across "+num(c26.n_team_seasons)+" teams, but over "
+                   +num(call.n_team_seasons)+" team-seasons it settles at "+num(call.pace_vs_win,2)
+                   +", which is nothing.");
+      }
+      pl4.appendChild(document.createTextNode(pbits.join(" ")));
+      f.appendChild(pl4);
+    }
     // read
     var reads=[]; if(h.text) reads.push(h.text);
     reads.push("Pace inflates BOTH teams' point totals equally, so how fast a team plays is a style choice, not a skill signal — the slowest team here is the 2nd-best by net efficiency, the fastest is mid-pack. Points PER possession (efficiency), not raw tempo, is what separates winners.");
@@ -949,8 +1192,14 @@
     return chip;
   }
 
+  // A dive's anchor id, used by BOTH the card and the contents strip so a chip can never point at a
+  // card that does not exist. Slugs are generator-written, but this page never trusts an id it did
+  // not sanitise itself.
+  function diveAnchor(slug){ return "dive-"+String(slug||"").replace(/[^A-Za-z0-9_-]/g,""); }
+
   function renderDiveCard(row, data){
     var c=el("div","dive");
+    if(row.slug) c.id=diveAnchor(row.slug);
     c.appendChild(el("div","dive-q", (data&&(data.question))||row.question||row.title||row.slug));
     var srcbits=[]; if(row.source_table) srcbits.push(row.source_table); if(row.n!=null) srcbits.push("n = "+row.n);
     if(srcbits.length) c.appendChild(el("div","dive-src", srcbits.join("  ·  ")));
@@ -997,6 +1246,22 @@
       })).then(function(datas){
         hub.innerHTML="";
         dives.forEach(function(row,i){ hub.appendChild(renderDiveCard(row, datas[i])); });
+        // Contents strip, ABOVE the first card. The dives are long, so the breadth of this page used
+        // to be discoverable only by scrolling all of it. Built from the SAME index rows the cards
+        // are built from, and only for rows that actually rendered a card.
+        var strip=document.getElementById("hub-index");
+        if(strip){
+          strip.innerHTML="";
+          dives.forEach(function(row){
+            if(!row.slug) return;
+            var a=document.createElement("a");
+            a.href="#"+diveAnchor(row.slug);
+            a.appendChild(document.createTextNode(row.title||row.slug));
+            if(row.n!=null){ var c2=el("span","ct","n = "+row.n); a.appendChild(c2); }
+            if(row.one_line) a.title=row.one_line;
+            strip.appendChild(a);
+          });
+        }
       });
     }).catch(function(e){
       hub.innerHTML=""; hub.appendChild(el("div","soon","Could not load the deep dives. "+(e&&e.message?e.message:"")));
