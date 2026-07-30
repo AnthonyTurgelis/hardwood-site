@@ -1,10 +1,9 @@
 {
   "slug": "quarter_scoreline",
-  "generated_utc": "2026-07-17T17:55:02Z",
-  "generated_et": "Jul 17, 1:55pm ET",
-  "generated_utc_basis": "recovered from the commit that first published this file",
+  "generated_utc": "2026-07-30T15:40:54Z",
+  "generated_et": "Jul 30, 11:40am ET",
   "question": "For two evenly-matched teams on a neutral floor, what are the odds of leading (and winning) at the end of each quarter?",
-  "headline": "Two even teams are a coin flip at tip; a lead is worth much more late than early \u2014 up 6 after Q1 wins ~66%, the same 6 after Q3 wins ~76%.",
+  "headline": "Two even teams are a coin flip at tip; a lead is worth much more late than early - up 6 after Q1 wins ~66%, the same 6 after Q3 wins ~75%.",
   "breaks": [
     "Q1",
     "Half",
@@ -33,38 +32,56 @@
     "Q1": {
       "tied": 5,
       "l1_3": 30,
-      "l4_6": 26,
-      "l7_10": 22,
+      "l4_6": 25,
+      "l7_10": 23,
       "l11p": 17,
-      "within3": 35,
+      "within3": 36,
       "within6": 61
     },
     "Half": {
       "tied": 4,
       "l1_3": 23,
-      "l4_6": 20,
-      "l7_10": 23,
-      "l11p": 30,
-      "within3": 26,
+      "l4_6": 21,
+      "l7_10": 22,
+      "l11p": 31,
+      "within3": 27,
       "within6": 47
     },
     "Q3": {
       "tied": 3,
       "l1_3": 19,
-      "l4_6": 18,
-      "l7_10": 19,
+      "l4_6": 17,
+      "l7_10": 20,
       "l11p": 41,
       "within3": 22,
-      "within6": 40
+      "within6": 39
     },
     "Final": {
-      "tied": 5,
-      "l1_3": 12,
+      "tied": 3,
+      "l1_3": 17,
       "l4_6": 16,
-      "l7_10": 23,
-      "l11p": 44,
-      "within3": 17,
-      "within6": 33
+      "l7_10": 19,
+      "l11p": 45,
+      "within3": 20,
+      "within6": 36
+    }
+  },
+  "empirical_band_check": {
+    "Q1": {
+      "within6": 61,
+      "l11p": 17
+    },
+    "Half": {
+      "within6": 47,
+      "l11p": 30
+    },
+    "Q3": {
+      "within6": 40,
+      "l11p": 41
+    },
+    "Final": {
+      "within6": 33,
+      "l11p": 44
     }
   },
   "winprob_grid": {
@@ -79,19 +96,19 @@
         "lead": 3,
         "emp": 59,
         "model": 60,
-        "n": 700
+        "n": 803
       },
       {
         "lead": 6,
         "emp": 66,
         "model": 70,
-        "n": 540
+        "n": 591
       },
       {
         "lead": 10,
         "emp": 81,
-        "model": 82,
-        "n": 400
+        "model": 81,
+        "n": 359
       }
     ],
     "Half": [
@@ -105,19 +122,19 @@
         "lead": 3,
         "emp": 60,
         "model": 63,
-        "n": 620
+        "n": 602
       },
       {
         "lead": 6,
         "emp": 74,
         "model": 74,
-        "n": 470
+        "n": 531
       },
       {
         "lead": 10,
         "emp": 82,
         "model": 86,
-        "n": 360
+        "n": 381
       }
     ],
     "Q3": [
@@ -131,53 +148,53 @@
         "lead": 3,
         "emp": 66,
         "model": 71,
-        "n": 480
+        "n": 488
       },
       {
         "lead": 6,
-        "emp": 76,
+        "emp": 75,
         "model": 86,
-        "n": 429
+        "n": 436
       },
       {
         "lead": 10,
-        "emp": 92,
+        "emp": 91,
         "model": 96,
-        "n": 321
+        "n": 323
       }
     ]
   },
   "scoring_by_quarter": {
-    "Q1": 41.8,
-    "Q2": 40.3,
+    "Q1": 41.9,
+    "Q2": 40.4,
     "Q3": 40.5,
     "Q4": 39.5,
-    "full_game": 162.1
+    "full_game": 162.3
   },
   "read": [
-    "Even teams are rarely separated early \u2014 6 in 10 games are within a possession-or-two (\u00b16) after Q1 \u2014 and steadily pull apart. By the final buzzer only a third of even games finish within 6, and 44% finish 11+ apart (double-digit finals are the norm even between equals, because scoring noise compounds).",
-    "A lead is worth more the later you hold it: up 6 is worth ~66% after Q1, ~74% by half, ~76% after Q3 \u2014 same six points, very different security depending on how much clock is left.",
-    "Useful caveat for late leads: a naive random-walk model says an end-Q3 lead of 6 should be worth ~86%; reality is only 76%. WNBA comebacks happen more than a smooth-noise model predicts (fouling, 3-point variance, coasting give the trailing team fatter tails). Quote the empirical number, not the model, for late-game leads."
+    "Even teams are rarely separated early - 61% of games are still within a possession or two of level after Q1 - and they steadily pull apart. By the final buzzer only 36% of even games finish within 6, and 45% finish 11 or more apart. Double-digit finals are the norm even between equals, because scoring noise compounds.",
+    "A lead is worth more the later you hold it: up 6 is worth about 66% after Q1, 74% by half and 75% after Q3 - the same six points, very different security depending on how much clock is left.",
+    "Useful caveat for late leads: a smooth random-walk model says an end-Q3 lead of 6 should be worth about 86%; the games themselves say 75%. Comebacks happen more than the model predicts - fouling, 3-point variance and coasting give the trailing team fatter tails. Quote the measured number, not the model, for late-game leads."
   ],
   "caveats": [
-    "Even-team identification is via a between/within margin-variance decomposition, not a clean spread filter (the pbp pregame-spread column is a constant junk 2.5). The decomposition shows team strength contributes negligibly to quarter-grain margin variance, so this is a small approximation, not a filtered even-game sample.",
-    "The conditional win-prob is pooled over all games (mix of even and mismatched). Conditioning on the current lead absorbs most strength information, but a leader is on average slightly the stronger team, which nudges the early empirical win% a hair above a pure even-team value.",
-    "Neutral court: home-court advantage is symmetrized out. In the real data home teams win 55.5% (avg margin +2.1). If one even team is at home, treat it as ~+2 pts / ~+5 pp ahead of the neutral numbers.",
-    "No player / injury / rest context \u2014 this is the league-average even matchup, the ground-floor baseline to reason from."
+    "Even-team identification is via a between/within margin-variance decomposition, not a clean spread filter: the play-by-play pregame-spread column is a constant junk value and cannot identify an even matchup.",
+    "The conditional win probability is pooled over all games, a mix of even and mismatched. Conditioning on the current lead absorbs most of the strength information, but a leader is on average the better team, so these read slightly high for a genuinely even pair.",
+    "Neutral court: home advantage is symmetrized out. In the real data home teams win 55.4% with an average margin of +2.1. If one even team is at home, treat it as roughly that much in its favour.",
+    "No player, injury or rest context - this is the league-average even matchup, the ground-floor baseline to reason from."
   ],
   "provenance": {
     "source": "play-by-play data",
     "seasons": "2015-2026",
-    "games": 2600,
-    "ot_games": 122,
+    "games": 2627,
+    "ot_games": 123,
     "script": "scripts/analysis_quarter_scoreline_odds.py",
-    "note": "Every number reproducible by re-running the script. Values materialized from the finalized CP-C spec (docs/reports/DEEPDIVE_QUARTER_SCORELINE_ODDS_20260717.md)."
+    "note": "Generated by the script named above. Every sentence on this page interpolates the same arrays the tables are drawn from, so the prose cannot drift away from the numbers beneath it."
   },
   "index_row": {
     "slug": "quarter_scoreline",
-    "question": "Even teams \u2014 odds of leading / winning at each quarter break?",
-    "headline": "Coin flip at tip; a 6-pt lead is worth ~66% after Q1 but ~76% after Q3 \u2014 a lead is safer the later you hold it.",
+    "question": "Even teams - odds of leading / winning at each quarter break?",
+    "headline": "Coin flip at tip; a 6-point lead is worth about 66% after Q1 but 75% after Q3 - a lead is safer the later you hold it.",
     "source": "play-by-play data",
-    "n": 2600
+    "n": 2627
   }
 }
