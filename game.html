@@ -49,6 +49,31 @@
   .mleg i.l90{background:var(--line2)}
   .mleg i.lpt{width:3px;height:12px;background:var(--good);border-radius:1px}
   .mleg b{font-weight:600}
+  /* FOUL-TROUBLE WATCH — deliberately reuses the margin-band idiom above (track, band, zero
+     rule, point) so a range means the same thing everywhere on this page. The band is the
+     headline here, not a decoration on a number: it is wide, it usually opens at zero, and
+     that width is the finding. */
+  .fw{margin-top:4px}
+  .fwr{display:grid;grid-template-columns:128px 1fr 78px;align-items:center;gap:8px;margin:5px 0 0}
+  .fwn{font-size:12px;line-height:1.2}
+  .fwn b{font-weight:660}
+  .fwn u{display:block;text-decoration:none;color:var(--dim);font-size:10px}
+  .fwt{position:relative;height:14px;background:var(--card2);border:1px solid var(--line);border-radius:3px}
+  .fwt > i{display:block;position:absolute}
+  .fwt > i.bnd{top:3px;height:8px;border-radius:2px;background:var(--warn);opacity:.5}
+  /* a thin-sample row is HATCHED, so the weaker evidence is visible at a glance and not only
+     in the text — and the text label is always there too, never colour or texture alone */
+  .fwt > i.thin{background:repeating-linear-gradient(45deg,var(--warn) 0 3px,transparent 3px 6px);opacity:.75}
+  .fwt > i.pt{top:1px;width:3px;height:12px;background:var(--acc);border-radius:1px;transform:translateX(-1px)}
+  .fwt > i.zr{top:0;bottom:0;width:1px;background:var(--dim);opacity:.75}
+  .fwv{font-size:11px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .fwchip{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--warn);border:1px solid var(--line2);border-radius:999px;padding:0 5px;margin-left:4px;vertical-align:1px}
+  .fwwhy{font-size:11px;color:var(--muted);line-height:1.4;margin:1px 0 7px 136px}
+  @media (max-width:560px){
+    .fwr{grid-template-columns:104px 1fr 66px}
+    .fwwhy{margin-left:0}
+  }
   /* THE BUILD-UP BAR. Same dialect as .mbar directly above it, deliberately: home-positive, a
      symmetric scale so "even" is always dead centre, and endpoints labelled by the tricode the sign
      favours. A reader who has just read the range bar does not have to learn a second convention to
@@ -630,7 +655,7 @@
   // ./early_warning.json. Rendered as a light "rumor" strip, visually distinct from the official
   // availability tile; it NEVER gates a prediction. Filtered to this game's two teams. Renders the
   // muted empty note only when the game is on tonight's slate; otherwise nothing.
-  var EW=null, curGame=null;
+  var EW=null, curGame=null, FOUL=null;
   function earlyWordSection(){
     if(!EW || !curGame) return null;
     var d=curGame, card=EW.card||{};
@@ -666,6 +691,92 @@
     var hero=document.querySelector("#main .hero");
     if(hero && hero.parentNode){ hero.parentNode.insertBefore(sec, hero.nextSibling); }
     else { var main=document.getElementById("main"); if(main) main.appendChild(sec); }
+  }
+
+  /* FOUL-TROUBLE WATCH — per-game, and per-game is the whole point of putting it here.
+     It used to sit on the homepage, where it was both out of place and capable of showing a
+     stale slate on a night with no games. Keyed to THIS game's id it cannot go stale: the
+     feed either holds an entry for this exact game or the section does not render at all.
+
+     WHAT IS DRAWN: the 10th-90th percentile of minutes lost to fouls, as a band. Not the
+     midpoint with the band hidden behind it. For nearly every player that band opens below
+     zero, which says plainly that fouls may cost her nothing tonight, and closes 6-7 minutes
+     out, which says a bad night is expensive. Both ends are true and the distance between
+     them is the honest content. A hatched band means her foul rate rests on a thin history,
+     so the real uncertainty is wider still than the band drawn. */
+  function foulRows(d){
+    if(!FOUL || !FOUL.games || !d) return null;
+    var g=FOUL.games["g"+safeId(String(d.game_id||qid()||"").replace(/^g/,""))];
+    if(!g || !g.players) return null;
+    if(g.date && d.date && g.date!==d.date) return null;   // never show another night's slate
+    var rows=g.players.filter(function(p){
+      return p.card_show && p.minutes_lost_range && p.minutes_lost_range[1]!=null;
+    });
+    if(!rows.length) return null;
+    rows.sort(function(a,b){ return (b.minutes_lost_mean||0)-(a.minutes_lost_mean||0); });
+    return rows;
+  }
+  function foulWatchSection(){
+    var d=curGame; var rows=foulRows(d); if(!rows) return null;
+    var lo=0, hi=0;
+    rows.forEach(function(p){
+      lo=Math.min(lo, p.minutes_lost_range[0]==null?0:p.minutes_lost_range[0]);
+      hi=Math.max(hi, p.minutes_lost_range[1]);
+    });
+    hi=Math.max(hi, 1); var span=hi-lo; if(span<=0) return null;
+    function pct(v){ return ((v-lo)/span)*100; }
+    var s=el("section"); s.id="foulwatch";
+    s.appendChild(el("h2",null,"Foul-trouble watch"));
+    s.appendChild(el("div","microcap","Minutes at risk tonight · the range, not a single number"));
+    var wrap=el("div","fw");
+    rows.forEach(function(p){
+      var blo=p.minutes_lost_range[0], bhi=p.minutes_lost_range[1];
+      if(blo==null) blo=0;
+      var r=el("div","fwr");
+      var nm=el("div","fwn"); nm.appendChild(el("b",null,p.player_name||""));
+      nm.appendChild(el("u",null,(p.team||"")+(p.budget_min!=null?" · ~"+Math.round(p.budget_min)+" min":"")));
+      r.appendChild(nm);
+      var track=el("div","fwt");
+      var band=el("i","bnd"+(p.thin_sample?" thin":""));
+      band.style.left=pct(blo).toFixed(1)+"%";
+      band.style.width=Math.max(1.5,(pct(bhi)-pct(blo))).toFixed(1)+"%";
+      track.appendChild(band);
+      if(lo<0){ var z=el("i","zr"); z.style.left=pct(0).toFixed(1)+"%"; track.appendChild(z); }
+      if(p.minutes_lost_mean!=null){
+        var pt=el("i","pt"); pt.style.left=pct(p.minutes_lost_mean).toFixed(1)+"%"; track.appendChild(pt);
+      }
+      r.appendChild(track);
+      // The number beside the band leads with the RANGE, and it is taken VERBATIM from the feed
+      // rather than re-rounded here: rounding the same bound independently in two places printed
+      // "up to 6.3 min" next to a sentence saying "about 6.2 min" on the same row.
+      r.appendChild(el("div","fwv", p.minutes_lost_label || ""));
+      wrap.appendChild(r);
+      var why=el("div","fwwhy"); why.appendChild(document.createTextNode(p.why||""));
+      if(p.thin_sample){ why.appendChild(el("span","fwchip","wide · thin sample")); }
+      wrap.appendChild(why);
+    });
+    s.appendChild(wrap);
+    var leg=el("div","mleg");
+    function key(cls,txt){ var q=el("span"); q.appendChild(el("i",cls)); q.appendChild(el("b",null,txt)); return q; }
+    var kb=el("span"); var ib=el("i"); ib.style.cssText="background:var(--warn);opacity:.5";
+    kb.appendChild(ib); kb.appendChild(el("b",null,"8 nights in 10 land in here")); leg.appendChild(kb);
+    var kt=el("span"); var it=el("i");
+    it.style.cssText="background:repeating-linear-gradient(45deg,var(--warn) 0 3px,transparent 3px 6px);opacity:.75";
+    kt.appendChild(it); kt.appendChild(el("b",null,"hatched: thin history, wider still")); leg.appendChild(kt);
+    // the legend swatch is styled to match the marker actually drawn on the band. The shared
+    // .lpt key paints green, the marker paints accent -- a legend that names a different colour
+    // than the mark it explains is worse than no legend.
+    var kp=el("span"); var ip=el("i");
+    ip.style.cssText="width:3px;height:12px;border-radius:1px;background:var(--acc)";
+    kp.appendChild(ip); kp.appendChild(el("b",null,"typical night")); leg.appendChild(kp);
+    s.appendChild(leg);
+    s.appendChild(el("div","wdet","This is a spread of outcomes, not a margin of error — it is wide because "+
+      "a single night is. Players already ruled out are not listed."));
+    return s;
+  }
+  function insertFoulWatch(){
+    var slot=document.getElementById("foulslot"); if(!slot) return;
+    slot.innerHTML=""; var s=foulWatchSection(); if(s) slot.appendChild(s);
   }
 
   function render(d){
@@ -735,6 +846,10 @@
       var sp=starterProfiles(d); if(sp) main.appendChild(sp);
     }
 
+    // FOUL-TROUBLE WATCH — a slot, because the feed is a separate fetch that may land before or
+    // after this render. Whichever arrives second fills the slot; neither has to wait.
+    var fslot=el("div"); fslot.id="foulslot"; main.appendChild(fslot);
+
     // STYLE
     var stg=styleTags(d); if(stg){ var sts=el("section"); sts.appendChild(el("h2",null,"Team style")); sts.appendChild(stg); main.appendChild(sts); }
 
@@ -759,6 +874,7 @@
     // the card now, so the footer only says where its width comes from and stops describing it.
     document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". The band above is calibrated from our own past accuracy.";
     insertEarlyWord();
+    insertFoulWatch();
   }
 
   function load(){
@@ -772,6 +888,9 @@
     fetch("./early_warning.json?v="+Date.now(),{cache:"no-cache"})
       .then(function(r){ return r.ok?r.json():null; })
       .then(function(j){ EW=j; insertEarlyWord(); }).catch(function(){});
+    fetch("./foul_risk.json?v="+Date.now(),{cache:"no-cache"})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(j){ FOUL=j; insertFoulWatch(); }).catch(function(){});
   }
   load();
 })();
