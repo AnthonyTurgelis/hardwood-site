@@ -1,34 +1,34 @@
 {
- "generated_utc": "2026-07-30T16:50:14+00:00",
+ "generated_utc": "2026-07-30T17:01:06+00:00",
  "freshness": {
-  "baked_utc": "2026-07-30T16:50:14+00:00",
-  "baked_et": "Jul 30, 12:50pm ET",
-  "revalidated_utc": "2026-07-30T16:50:14+00:00",
+  "baked_utc": "2026-07-30T17:01:06+00:00",
+  "baked_et": "Jul 30, 1:01pm ET",
+  "revalidated_utc": "2026-07-30T17:01:06+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-30",
  "day_summary": "Tonight's game reports are ready - 3 games. Nothing needs you right now.",
  "counts": {
-  "running": 0,
+  "running": 3,
   "done_today": 31,
   "maintenance": 7,
   "needs_anthony": 0,
   "lanes_today": 32,
-  "upcoming": 85
+  "upcoming": 84
  },
  "sections": {
   "agent_updates": [
-   {
-    "id": "settings-lint-pause-cut",
-    "title": "Settings lint pause cut",
-    "timestamp": "Jul 30, 2026",
-    "body_markdown": "Improved and recorded."
-   },
    {
     "id": "board-games-played-dnp-rule-20260730",
     "title": "Board games played dnp rule",
     "timestamp": "Date not recorded",
     "body_markdown": "Board games played counted did not play rows measured, then corrected."
+   },
+   {
+    "id": "settings-lint-pause-cut",
+    "title": "Settings lint pause cut",
+    "timestamp": "Jul 30, 2026",
+    "body_markdown": "Improved and recorded."
    },
    {
     "id": "interval-width-matchup-response",
@@ -914,7 +914,38 @@
    "note": ""
   },
   "running_now": [],
-  "running_live": [],
+  "running_live": [
+   {
+    "name": "Impact prior stints 500 vs 5",
+    "one_liner": "Running now.",
+    "chip": "IN-FLIGHT",
+    "team": "Modeling",
+    "kind": "lane",
+    "time": "",
+    "at_iso": "2026-07-30T12:52:04-04:00",
+    "start_unknown": true
+   },
+   {
+    "name": "Usage unknown failsafe widens past last measured",
+    "one_liner": "Running now.",
+    "chip": "IN-FLIGHT",
+    "team": "Coordination",
+    "kind": "lane",
+    "time": "",
+    "at_iso": "2026-07-30T12:52:04-04:00",
+    "start_unknown": true
+   },
+   {
+    "name": "Idle wake recovery trigger does not fire in its own test",
+    "one_liner": "Running now.",
+    "chip": "IN-FLIGHT",
+    "team": "Coordination",
+    "kind": "lane",
+    "time": "",
+    "at_iso": "2026-07-30T12:52:04-04:00",
+    "start_unknown": true
+   }
+  ],
   "running_plain": [],
   "needs_anthony": [],
   "done_today": [
@@ -1470,7 +1501,7 @@
      "why": "The newly-wired claim guard reads the impact provisional. The two wording fixes that landed - explorer profile page changed reader-facing copy and added held-record disclosure while keeping the ...",
      "priority": 1,
      "seat": "qa",
-     "status": "READY - decision-shaped, not build-shaped; pick one of the two named options",
+     "status": "READY - DECIDED 2026-07-30T16:58Z by the coordinator, which is what this row asked for. OPTION A: extend the guard to credit the DISCLOSURE. Not option B. WHY: the finding class is real and retiring it would blind us to the regression it exists to catch - a surface publishing a bare low-confidence marker on a player we hold hundreds of games on. That is the Collier class and it was a genuine defect. What the two wording fixes changed is not the boolean but the READER'S EXPERIENCE: the marker now sits beside the held record, so nobody is told we know little about a twelve-season veteran. The boolean staying true is correct - her current-season basis really is below the fitted prior - so a guard that reads only the boolean is asking a question whose honest answer no longer settles the thing it cares about. HOW, and this part is the whole risk: do NOT credit the mere PRESENCE of career_basis in the feed. That is a form check, and it would go green over a page that carries the field and never renders it - which is the single most expensive defect shape measured on this platform today, five separate instances. Credit the marker and the disclosure appearing TOGETHER on the surface: the payload carries the held-record fields AND the surface's own copy shows them. This guard is already a surface-claim-contract checker that reads both sides, so it is the right place for that and needs no new mechanism. THEN PROVE IT CAN STILL FAIL: strip the disclosure from a fixture surface while leaving the field in the feed, and the guard must go red. If it does not, the extension has quietly retired the finding class through the back door, which is option B wearing option A's clothes. DISPATCHABLE - the decision is made, the design is named, the trap is named.",
      "state": "ready now",
      "pm_authored": false,
      "impact": "",
@@ -2197,7 +2228,7 @@
       "state": "gated",
       "pm_authored": true,
       "impact": "",
-      "rank": 59,
+      "rank": 58,
       "actions": [
        {
         "verb": "top",
@@ -2233,7 +2264,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 60,
+      "rank": 59,
       "actions": [
        {
         "verb": "top",
@@ -2269,7 +2300,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 61,
+      "rank": 60,
       "actions": [
        {
         "verb": "top",
@@ -2305,7 +2336,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 62,
+      "rank": 61,
       "actions": [
        {
         "verb": "top",
@@ -2337,11 +2368,11 @@
       "why": "+ - - -OK . team totals filed. Served-surface flip = PM CEO sign-off coordinator lean wait-for-n>=225 confirm.",
       "priority": 82,
       "seat": "Modeling",
-      "status": "open - the real blocker is SAMPLE, not a signature. Re-labelled 2026-07-30T16:50Z: the row wore \"PM/CEO sign-off\" over what its own text says is a coordinator lean to wait for n>=225 before flipping the served surface. That is a statistical-power gate with a number attached, so it is checkable rather than owed. DISPATCHABLE the moment n clears; until then the blocker is named and it is not a person.",
+      "status": "open - blocked on SAMPLE, and the number is measured today rather than recited from last week. Ran the armed re-test read-only 2026-07-30T17:00Z: played rows 214, n_eval 170 against the pre-registered bar of 225, so 55 team-games to go. It held correctly and wrote nothing. Two things that matter more than the number: the re-test read TODAY's served signature rather than a pinned stale one, which is the defect its own delta was written to fix, and its sweeper is reachable from the local runner - so this flips ITSELF when the sample arrives and nobody owes it an action. The bar is not an invented cadence; it is the study's own power calculation for the effect size it claims. NOT a person-blocker: the earlier PM/CEO sign-off label was wrong, and the CEO ruled at 16:46Z that a rank move is not his call.",
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 64,
+      "rank": 63,
       "actions": [
        {
         "verb": "top",
@@ -2377,7 +2408,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 69,
+      "rank": 68,
       "actions": [
        {
         "verb": "top",
@@ -2413,7 +2444,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 70,
+      "rank": 69,
       "actions": [
        {
         "verb": "top",
@@ -2449,7 +2480,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 72,
+      "rank": 71,
       "actions": [
        {
         "verb": "top",
@@ -2485,7 +2516,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 73,
+      "rank": 72,
       "actions": [
        {
         "verb": "top",
@@ -2521,7 +2552,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 74,
+      "rank": 73,
       "actions": [
        {
         "verb": "top",
@@ -2557,7 +2588,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 75,
+      "rank": 74,
       "actions": [
        {
         "verb": "top",
@@ -2593,7 +2624,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 76,
+      "rank": 75,
       "actions": [
        {
         "verb": "top",
@@ -2629,7 +2660,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 77,
+      "rank": 76,
       "actions": [
        {
         "verb": "top",
@@ -2665,7 +2696,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 78,
+      "rank": 77,
       "actions": [
        {
         "verb": "top",
@@ -2701,7 +2732,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 79,
+      "rank": 78,
       "actions": [
        {
         "verb": "top",
@@ -2737,7 +2768,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 80,
+      "rank": 79,
       "actions": [
        {
         "verb": "top",
@@ -3675,7 +3706,7 @@
       "state": "blocked",
       "pm_authored": false,
       "impact": "",
-      "rank": 66,
+      "rank": 65,
       "actions": [
        {
         "verb": "top",
@@ -3711,7 +3742,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 81,
+      "rank": 80,
       "actions": [
        {
         "verb": "top",
@@ -3747,7 +3778,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 83,
+      "rank": 82,
       "actions": [
        {
         "verb": "top",
@@ -3783,7 +3814,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 84,
+      "rank": 83,
       "actions": [
        {
         "verb": "top",
@@ -3819,7 +3850,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 85,
+      "rank": 84,
       "actions": [
        {
         "verb": "top",
@@ -3990,42 +4021,6 @@
       ]
      },
      {
-      "task_id": "win-percent-on-cards",
-      "family": "site",
-      "name": "Show a plain win-percent on each game card",
-      "header": "Show a plain win-percent on each game card",
-      "why": "Turn the margin call into a clear percent chance that each team wins.",
-      "priority": 45,
-      "seat": "Viz",
-      "status": "open - NAMELESS BLOCKER, which is not a blocker. Re-labelled 2026-07-30T16:50Z: the row said \"blocked (needs sign-off)\" without naming who signs or what they are deciding. Standing rule is that genuinely blocked is only valid if the item NAMES its blocker, so this is dispatchable: work out what the decision actually is, and if one is genuinely owed, name the signer and what they are choosing between.",
-      "state": "",
-      "pm_authored": true,
-      "impact": "",
-      "rank": 57,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20win-percent-on-cards%3A%20top&body=Show%20a%20plain%20win-percent%20on%20each%20game%20card%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20win-percent-on-cards%3A%20bump&body=Show%20a%20plain%20win-percent%20on%20each%20game%20card%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20win-percent-on-cards%3A%20demote&body=Show%20a%20plain%20win-percent%20on%20each%20game%20card%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20win-percent-on-cards%3A%20shelve&body=Show%20a%20plain%20win-percent%20on%20each%20game%20card%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-30%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "attribute-cards-lineup-lab",
       "family": "site",
       "name": "Add player attribute cards and a what-if lineup lab",
@@ -4037,7 +4032,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 58,
+      "rank": 57,
       "actions": [
        {
         "verb": "top",
@@ -4073,7 +4068,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 71,
+      "rank": 70,
       "actions": [
        {
         "verb": "top",
@@ -4109,7 +4104,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 82,
+      "rank": 81,
       "actions": [
        {
         "verb": "top",
@@ -4183,7 +4178,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 63,
+      "rank": 62,
       "actions": [
        {
         "verb": "top",
@@ -4219,7 +4214,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 65,
+      "rank": 64,
       "actions": [
        {
         "verb": "top",
@@ -4255,7 +4250,7 @@
       "state": "blocked",
       "pm_authored": false,
       "impact": "",
-      "rank": 67,
+      "rank": 66,
       "actions": [
        {
         "verb": "top",
@@ -4291,7 +4286,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 68,
+      "rank": 67,
       "actions": [
        {
         "verb": "top",
@@ -4317,14 +4312,14 @@
      }
     ]
    },
-   "more_count": 75,
+   "more_count": 74,
    "floor": {
     "target": 40,
-    "count": 85,
+    "count": 84,
     "ok": true,
-    "label": "85 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
+    "label": "84 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 11m ago.)",
     "as_of_utc": "2026-07-30T16:49:18Z",
-    "age_secs": 62,
+    "age_secs": 716,
     "stale": false
    },
    "source": "dispatch queue",
@@ -4733,67 +4728,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-30T16:49:55Z",
-  "age_s": 23,
-  "cycles": 36,
+  "last_poll_utc": "2026-07-30T17:00:32Z",
+  "age_s": 40,
+  "cycles": 45,
   "known": true,
-  "label": "scout: alive, last poll 23s ago",
+  "label": "scout: alive, last poll 40s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "12:48pm",
-   "text": "board-selfpolice: board fresh again — interrupt flag cleared",
-   "detail": "board-selfpolice: board fresh again — interrupt flag cleared"
+   "time": "12:56pm",
+   "text": "poll #41 · nothing new",
+   "detail": "poll cycle=41 ok directives_new=0"
   },
   {
-   "time": "12:48pm",
-   "text": "board-selfpolice: board-stale alert BOARD STALE ALERT .md RETIRED to inbox/processed (the board is clean; the episode record is preserved, not deleted",
-   "detail": "board-selfpolice: board-stale alert BOARD_STALE_ALERT_.md RETIRED to inbox/processed (the board is clean; the episode record is preserved, n"
+   "time": "12:57pm",
+   "text": "poll #42 · nothing new",
+   "detail": "poll cycle=42 ok directives_new=0"
   },
   {
-   "time": "12:48pm",
-   "text": "board-selfpolice: auto-repair cleared the mismatch",
-   "detail": "board-selfpolice: auto-repair cleared the mismatch"
+   "time": "12:58pm",
+   "text": "poll #43 · nothing new",
+   "detail": "poll cycle=43 ok directives_new=0"
   },
   {
-   "time": "12:48pm",
-   "text": "poll #35 · nothing new",
-   "detail": "poll cycle=35 ok directives_new=0"
+   "time": "12:59pm",
+   "text": "poll #44 · nothing new",
+   "detail": "poll cycle=44 ok directives_new=0"
   },
   {
-   "time": "12:48pm",
+   "time": "1:00pm",
+   "text": "board-selfpolice: clean (live board matches repo truth",
+   "detail": "board-selfpolice: clean (live board matches repo truth)"
+  },
+  {
+   "time": "1:00pm",
+   "text": "poll #45 · nothing new",
+   "detail": "poll cycle=45 ok directives_new=0"
+  },
+  {
+   "time": "1:00pm",
+   "text": "inbox-unread: RED DEFECT - 1 filed directive(s) unread, oldest DIRECTOR DIRECTIVE discord .md (194s > 120s) - wrote inbox unread defect.json + ledger",
+   "detail": "inbox-unread: RED DEFECT - 1 filed directive(s) unread, oldest DIRECTOR_DIRECTIVE__discord_1532431881373614410.md (194s > 120s) - wrote inbo"
+  },
+  {
+   "time": "1:00pm",
+   "text": "inbox-unread: RED DEFECT - 1 filed directive(s) unread, oldest DIRECTOR DIRECTIVE discord .md (194s) - inbox unread defect.json + ledger written",
+   "detail": "inbox-unread: RED DEFECT - 1 filed directive(s) unread, oldest DIRECTOR_DIRECTIVE__discord_1532431881373614410.md (194s) - inbox_unread_defe"
+  },
+  {
+   "time": "1:00pm",
    "text": "publish-health: clean (public board is fresh",
    "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "12:48pm",
+   "time": "1:00pm",
    "text": "feed-streak alarm: RED=1 ['HardwoodOddsSnapshot'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
    "detail": "feed-streak alarm: RED=1 ['HardwoodOddsSnapshot'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scou"
-  },
-  {
-   "time": "12:49pm",
-   "text": "poll #36 · nothing new",
-   "detail": "poll cycle=36 ok directives_new=0"
-  },
-  {
-   "time": "12:49pm",
-   "text": "width-tripwire: CRITICAL DEFECT [enforcer silent] under-width 0/4 for 194s (> 180s), injected in window=False, head dead=False - wrote width defect log.jsonl + width defect.json",
-   "detail": "width-tripwire: CRITICAL DEFECT [enforcer_silent] under-width 0/4 for 194s (> 180s), injected_in_window=False, head_dead=False - wrote width"
-  },
-  {
-   "time": "12:49pm",
-   "text": "width-tripwire: CRITICAL DEFECT [enforcer silent] under-width 0/4 for 195.0s (head dead=False) - width defect.json + ledger written",
-   "detail": "width-tripwire: CRITICAL DEFECT [enforcer_silent] under-width 0/4 for 195.0s (head_dead=False) - width_defect.json + ledger written"
-  },
-  {
-   "time": "12:50pm",
-   "text": "board-selfpolice: MISMATCH: RUNNING-NOW: live lane set != repo lane claims.json running set (missing on live=[] stale on live=['2026-07-30T16:44:']) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: RUNNING-NOW: live lane set != repo lane_claims.json running set (missing_on_live=[] stale_on_live=['2026-07-30T1"
   }
  ],
  "helpers": {
-  "as_of": "2026-07-30T16:49:59.727697+00:00",
+  "as_of": "2026-07-30T17:01:07Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -4802,48 +4797,48 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "23s",
-    "state_text": "on · seen 23s ago"
+    "age_label": "40s",
+    "state_text": "on · seen 40s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "18s",
-    "state_text": "on · seen 18s ago"
+    "age_label": "22s",
+    "state_text": "on · seen 22s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "88s",
-    "state_text": "on · seen 88s ago"
+    "age_label": "36s",
+    "state_text": "on · seen 36s ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "23s",
-    "state_text": "on · seen 23s ago"
+    "age_label": "5s",
+    "state_text": "on · seen 5s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "8m",
+    "state_text": "on · seen 8m ago"
    }
   ],
   "width": {
-   "running": 0,
-   "target": 4,
-   "empty": 4,
-   "line": "0 of 4 jobs running.",
-   "reason": "Only 0 of 4 jobs are running - 4 more flagged for the coordinator to start from the priority list.",
+   "running": 3,
+   "target": 1,
+   "empty": 0,
+   "line": "3 of 1 jobs running.",
+   "reason": "Enough jobs are running for the work waiting.",
    "stale": false
   },
   "scheduled_jobs": [
@@ -5009,25 +5004,25 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-07-30T16:50:16Z",
-  "session_age_secs": 11917,
-  "last_progress_age_secs": 2,
+  "last_heartbeat_utc": "2026-07-30T17:01:11Z",
+  "session_age_secs": 12571,
+  "last_progress_age_secs": 1,
   "last_spawn_attempt": "2026-07-30T08:43:49Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
  "pipe_health": {
-  "directives_pending": 0,
-  "last_processed_clock": "12:48pm",
-  "last_processed_iso": "2026-07-30T16:48:17Z",
+  "directives_pending": 2,
+  "last_processed_clock": "12:52pm",
+  "last_processed_iso": "2026-07-30T16:52:07Z",
   "last_processed_known": true,
-  "last_processed_display": "12:48pm",
+  "last_processed_display": "12:52pm",
   "last_processed_source": "directive_ledger.done",
-  "newest_directive_clock": "",
-  "newest_directive_iso": null,
+  "newest_directive_clock": "12:59pm",
+  "newest_directive_iso": "2026-07-30T16:59:06Z",
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-07-30T16:48:17Z",
+  "as_of": "2026-07-30T16:59:06Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -5037,37 +5032,31 @@
   "usage_resets_clock": "",
   "note": ""
  },
- "width_defect": {
-  "active": true,
-  "state": "defect",
-  "text": "Only 0 of 4 work lanes have been running for 3 min while jobs wait to start — being looked into.",
-  "running": 0,
-  "target": 4
- },
+ "width_defect": {},
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-07-30T16:48:56Z",
+   "as_of": "2026-07-30T16:52:04Z",
    "stale": false,
-   "revalidated": "2026-07-30T16:50:14+00:00",
+   "revalidated": "2026-07-30T17:01:06+00:00",
    "stale_reason": "",
-   "age_label": "78s",
+   "age_label": "9m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-30T16:50:14+00:00",
+   "as_of": "2026-07-30T17:01:06+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T16:50:14+00:00",
+   "revalidated": "2026-07-30T17:01:06+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-30T16:50:14+00:00",
+   "as_of": "2026-07-30T17:01:06+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T16:50:14+00:00",
+   "revalidated": "2026-07-30T17:01:06+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
@@ -5076,66 +5065,66 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-30T16:50:14+00:00",
+   "revalidated": "2026-07-30T17:01:06+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-07-30T16:49:18Z",
+   "as_of": "2026-07-30T16:56:32Z",
    "stale": false,
-   "revalidated": "2026-07-30T16:50:14+00:00",
+   "revalidated": "2026-07-30T17:01:06+00:00",
    "stale_reason": "",
-   "age_label": "56s",
+   "age_label": "4m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-30T16:50:14+00:00",
+   "revalidated": "2026-07-30T17:01:06+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-07-30T16:48:17Z",
+   "as_of": "2026-07-30T16:59:06Z",
    "stale": false,
-   "revalidated": "2026-07-30T16:50:14+00:00",
+   "revalidated": "2026-07-30T17:01:06+00:00",
    "stale_reason": "",
-   "age_label": "1m",
+   "age_label": "2m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-07-30T13:00:00-04:00",
    "stale": false,
-   "revalidated": "2026-07-30T16:50:14+00:00",
+   "revalidated": "2026-07-30T17:01:06+00:00",
    "stale_reason": "",
-   "age_label": "0s",
+   "age_label": "66s",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-30T16:45:39+00:00",
+   "as_of": "2026-07-30T16:50:14+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T16:50:14+00:00",
+   "revalidated": "2026-07-30T17:01:06+00:00",
    "stale_reason": "",
-   "age_label": "4m",
+   "age_label": "10m",
    "stale_after": null
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-30T16:49:59.727697+00:00",
+   "as_of": "2026-07-30T17:01:07Z",
    "stale": false,
-   "revalidated": "2026-07-30T16:50:14+00:00",
+   "revalidated": "2026-07-30T17:01:06+00:00",
    "stale_reason": "",
-   "age_label": "18s",
+   "age_label": "5s",
    "stale_after": null
   }
  },
- "generated_et": "Jul 30, 12:50pm ET"
+ "generated_et": "Jul 30, 1:01pm ET"
 }
