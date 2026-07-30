@@ -72,16 +72,14 @@
   .freshspark .fresh-sq{width:5px;height:9px;border-radius:1px;background:var(--muted);opacity:.9}
   .freshspark .fresh-sq.stale{background:var(--bad);opacity:1}
   .freshspark .fresh-sq.ok{background:var(--ok);opacity:1}
+  /* #banner renders nothing (see the ruling on banner() below). The alarm variants that used to
+     live here — .width-defect (a full bad-colour wash), .refilling, .idle, .paused — are DELETED
+     rather than left unused, because a ready-made "paint this red across the top" rule is an
+     invitation, and this page has now had an operator alarm re-appear above the night's pick twice.
+     The base rule stays so the node degrades sanely if anything ever legitimately lands there; if
+     that day comes, it is a reader's sentence, not ours, and it earns its colour before it gets it. */
   .banner{margin:8px 0 0;padding:7px 11px;border-radius:8px;font-size:12.5px;font-weight:600;
     border:1px solid var(--line);background:var(--card)}
-  .banner.idle{border-left:3px solid var(--bad)} .banner.paused{border-left:3px solid var(--warn)}
-  /* UNDER-WIDTH ALARM (item B) — the LOUDest banner: full bad-color wash, not just a left rule */
-  .banner.width-defect{border:1px solid var(--bad);border-left:4px solid var(--bad);
-    background:var(--bad);color:#fff}
-  /* REFILLING (bookkeeping-window smoothing) — a CALM, reassuring beat, never the red wash: a soft
-     left rule only, so a normal finishing/backfill window never reads as an outage. */
-  .banner.refilling{border:1px solid var(--line);border-left:3px solid var(--accent);
-    background:var(--card);color:var(--muted)}
   /* BOARD STATUS STRIP — the two questions this page could not answer: is what I am reading current,
      and is anything paused. Calm states are a quiet muted line; a late refresh is amber (look, but
      nothing is broken); a genuinely dead board or a hard pause takes the same full red wash the
@@ -775,27 +773,49 @@
     if(s!=null) setChip("ch-data", s<=staleAfterSecs()?"ok":(s<=loudAfterSecs()?"warn":"bad"), "data · updated "+agoSecs(s)+" ago",
       "How fresh the numbers on this page are (time since the page data last refreshed).");
   }
+  /* THIS BANNER IS DELIBERATELY EMPTY. It used to carry the UNDER-WIDTH ALARM — a full red wash
+     reading "Only 0 of 4 work lanes have been running for 55 min while jobs wait to start" — sitting
+     ABOVE the night's pick. That is our own job scheduling, in alarm colour, on the page the CEO
+     opens for basketball ("CEO LENS. THE FRONT PAGE IS FOR THE FUCKING CEO", 20260730).
+
+     REMOVED, not retuned, for three measured reasons:
+
+     1. IT IS A SCHEDULE RENDERED AS A FAULT. The count is lane OCCUPANCY sampled at one instant, and
+        it reads zero for the same reason a car park reads empty at 5pm — everything just left. On
+        2026-07-30T19:30:21Z this page published a 55-minute red fault while the very same payload
+        carried `coordinator_heartbeat.alive = true` with `last_progress_age_secs = 9`: work had
+        moved NINE SECONDS earlier. Ninety-five seconds later the alarm's own source had already
+        flipped to "Enough jobs are running again", with four running. A quantity that goes 0 -> 4
+        inside two minutes cannot be sampled once and called a health verdict. This is the same
+        category error the freshness line was corrected for: a normal rhythm painted as a breakage.
+
+     2. NO THRESHOLD SAVES IT, BECAUSE THE READER CANNOT ACT ON IT. Even a defensibly-tuned lane
+        count is an operator diagnostic. The fact a reader CAN act on — work has genuinely stopped —
+        is already stated in reader language one element above, in the status strip, off the beacon.
+        Lane occupancy is how we chose to staff that work, which is our business, not his.
+
+     3. IT WAS ALSO A SECOND PLACE QUOTING THE SAME ARITHMETIC, AND IT DISAGREED. The strip carries
+        no lane counts precisely so it cannot contradict the helper panel (see tickStrip below); this
+        banner broke that rule from the top of the page. And it lost the argument: it said "0 of 4"
+        while the governor had tapered the live target to 3 and then to 1, so the denominator was a
+        ceiling nobody was trying to hit. The count still renders — calm, undecorated, and correct —
+        in "Helpers running" (renderHelpers), which is its designated home.
+
+     NOTHING IS LOST AND NOTHING IS HIDDEN. board.width_defect is still published and still gated by
+     the CEO copy scanner; the operator surfaces still read it. It simply no longer paints itself
+     across the top of the reader's page. The `refilling` variant goes with it: a calmer sentence
+     about our own backfill is still a sentence about our own backfill.
+
+     The node is still cleared on every render so no previously-painted banner can survive a repaint,
+     and the function is kept as the ONE documented place this decision lives — a future lane looking
+     for "where does the board put a banner" finds this ruling instead of an empty gap to fill.
+
+     THE PAUSE STORY likewise is NOT here: it lives once, in the status strip (tickStrip), under one
+     documented order of precedence. The coordinator's beacon and the pause flag the spawn gate reads
+     are SEPARATE sources that can disagree, and stating them twice is how a reader ends up looking
+     at "on a scheduled pause" and "nothing is paused" at the same time. */
   function banner(b){
-    var w=document.getElementById("banner"); w.innerHTML="";
-    // UNDER-WIDTH ALARM (item B) — a LOUD top banner when too few work lanes have been running.
-    // Present only when the server-side alarm is active AND fresh; absent otherwise (self-clearing).
-    var wd=b.width_defect||{};
-    if(wd.active && wd.text){
-      // ASCII ONLY in rendered copy: the leading warning glyph is gone (the full red wash + the
-      // 4px bad-colour rule already carry the severity, and a stray glyph re-read as cp1252 on this
-      // box is the mojibake the CEO calls old emoji).
-      w.appendChild(el("div","banner width-defect",wd.text));
-    } else if(wd.refilling && wd.text){
-      // CALM finishing/refill beat — a soft, reassuring line, NOT the red outage wash. Its own
-      // accent rule carries the "in progress" reading; the recycle glyph is likewise gone.
-      w.appendChild(el("div","banner refilling",wd.text));
-    }
-    // THE PAUSE STORY MOVED UP into the board status strip (tickStrip), and it is NOT duplicated
-    // here on purpose. Two banners on one page reading two flags is how a reader ends up looking at
-    // "on a scheduled pause" and "nothing is paused" at the same time: the coordinator's own beacon
-    // and the pause flag the spawn gate reads are SEPARATE sources that can disagree. The strip
-    // states them in one line under one documented order of precedence (an outside limit outranks a
-    // pause we filed ourselves, which outranks the beacon), so exactly one pause sentence exists.
+    var w=document.getElementById("banner"); if(w) w.innerHTML="";
   }
     
     /* ---------- queue reorder: local edits + one batched send ---------- */
@@ -1152,16 +1172,33 @@
       if(h.scheduled_stale){ jh.appendChild(el("span","stalebadge","stale")); }
       s.appendChild(jh);
       var jl=el("ul","helperlist list");
+      /* THREE STATES, NOT TWO — THE SAME FIX AS THE BANNER ABOVE, FOUND BY SWEEPING FOR IT.
+         This row used to be a binary: `result === "done"` was green, and EVERYTHING else got the
+         fault dot and the fault-red result word. But the baker emits FOUR results (see
+         build_site._scheduled_jobs_public): "done", "needs a look" (it ran and exited non-zero),
+         "not run" (it missed its window), and "scheduled" (its time has not come yet).
+
+         "scheduled" is not a fault. It is the job waiting for its clock — and on 2026-07-30 that
+         meant NINE rows on the CEO's front page showing a red dot beside the red word "scheduled",
+         one of them reading "next 5:15pm", i.e. flagged as broken for the crime of being due later.
+         That is the identical category error the under-width banner made at the top of this page: a
+         SCHEDULE rendered as a FAULT. Fixed the same way — the fault colour is reserved for the two
+         results that are actually faults, and a job merely waiting its turn renders in the panel's
+         neutral muted tone (the base .hdot / .hstate styles, no class needed).
+
+         DELIBERATELY NOT SOFTENED: "needs a look" and "not run" keep the red. The point is never
+         "fewer red dots", it is that red should mean something when it appears. */
       h.scheduled_jobs.forEach(function(j){
         var li=el("li","helperrow");
-        var ok=(j.result==="done");
-        li.appendChild(el("span","hdot "+(ok?"on":"off")));
+        var res=String(j.result||"");
+        var ok=(res==="done"), waiting=(res==="scheduled");
+        li.appendChild(el("span","hdot "+(ok?"on":(waiting?"":"off"))));
         var body=el("span","hbody");
         body.appendChild(el("span","hname", j.label||""));
         var when = (j.ran_et?("ran "+j.ran_et):(j.next_et?("next "+j.next_et):""));
         if(when){ body.appendChild(el("span","hdoes", when)); }
         li.appendChild(body);
-        li.appendChild(el("span","hstate"+(ok?"":" stale"), j.result||""));
+        li.appendChild(el("span","hstate"+(ok||waiting?"":" stale"), res));
         jl.appendChild(li);
       });
       s.appendChild(jl);
