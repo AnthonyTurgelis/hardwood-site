@@ -557,11 +557,15 @@
       // states for a while; the page did not, so a line built mostly from a player's career looked
       // identical to one built from a full season of this year. The tag names the basis; the
       // disclosure under the tables explains it. Never suppressed and never widened away.
-      var bt = r.thin_unknown ? "little to go on" : (r.prior_basis ? "career basis" : null);
+      var bt = r.thin_unknown ? "little to go on"
+             : (r.prior_basis ? "career basis"
+             : (r.college_basis ? "college basis" : null));
       if(bt){ var b=el("span","basistag",bt);
               b.title = r.thin_unknown
                 ? "She has played little enough that we lean on what a typical player in her role does."
-                : "She has played little this season, so this leans on what she has done across her career.";
+                : (r.prior_basis
+                   ? "She has played little this season, so this leans on what she has done across her career."
+                   : "She has barely played in the WNBA, so this leans on her college record, translated to WNBA rates — how she rebounds and passes carries over far more than how much she scores.");
               nm.appendChild(b); }
       tr.appendChild(nm);
       // impact column first — matches the printed report's box row order. A thin-basis rating is
@@ -599,9 +603,20 @@
      "Mostly what she has done this season. A player who has barely played this season — back " +
      "from an injury, newly signed, or a rookie — does not have enough of a season to read, so " +
      "her line leans instead on what she has done across her career, weighted toward her most " +
-     "recent years. Those rows are marked career basis. Rows marked little to go on are players " +
-     "we genuinely hold very little on, and their line is pulled toward what a typical player in " +
-     "that role does."],
+     "recent years. Those rows are marked career basis. A player with almost no WNBA career at " +
+     "all — a rookie, or someone who has barely got on the floor — is instead read from her " +
+     "college record, translated into WNBA rates; those rows are marked college basis. Rows " +
+     "marked little to go on are players we genuinely hold very little on, and their line is " +
+     "pulled toward what a typical player in that role does."],
+    ["What college does and does not carry over",
+     "For the college-basis rows we do not simply copy her college numbers across. We measured, on " +
+     "players who have already made the jump, how much of each part of a game survives it: " +
+     "rebounding carries over almost whole, passing and three-point shooting nearly so, and " +
+     "scoring only about half — how much a player scores in the WNBA is decided by the role and " +
+     "the roster she lands in, not carried in from college. So her rebounding leans hard on her " +
+     "college record and her scoring stays half-anchored to what a typical player in her role " +
+     "does. One caveat we will not hide: rebounding is the number this helped most, and it is " +
+     "also the one whose range around it is currently a touch too narrow."],
     ["A correction, on 30 July",
      "Assists and three-pointers used to be pulled toward a typical player at that position even " +
      "for players with a long career behind them. That quietly pushed the busiest playmakers down " +
