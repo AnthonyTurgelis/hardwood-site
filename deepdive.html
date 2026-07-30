@@ -697,14 +697,14 @@
       };
       f.appendChild(simpleTable([
         {h:"Group", rowh:true, get:function(g){ return g[0]; }},
-        {h:"Player-games (rested)", num:true, get:function(g){ return num((g[1].rested||{}).n); }},
-        {h:"Player-games (B2B)", num:true, get:function(g){ return num((g[1].b2b||{}).n); }},
+        {h:"Games rested", num:true, get:function(g){ return num((g[1].rested||{}).n); }},
+        {h:"Games B2B", num:true, get:function(g){ return num((g[1].b2b||{}).n); }},
         {h:"Minutes", num:true, get:function(g){ return num((g[1].rested||{}).avg_min,1)+" to "+num((g[1].b2b||{}).avg_min,1); }},
         {h:"Change", num:true, get:function(g){ return fdelta(g,"avg_min",2); }},
         {h:"Points", num:true, get:function(g){ return num((g[1].rested||{}).avg_pts,1)+" to "+num((g[1].b2b||{}).avg_pts,1); }},
         {h:"Change", num:true, get:function(g){ return fdelta(g,"avg_pts",2); }},
         {h:"True shooting", num:true, get:function(g){ return pct(((g[1].rested||{}).ts_pct!=null?g[1].rested.ts_pct*100:null),1)+" to "+pct(((g[1].b2b||{}).ts_pct!=null?g[1].b2b.ts_pct*100:null),1); }},
-        {h:"Change (pp)", num:true, get:function(g){ return fdelta(g,"ts_pct",2); }}
+        {h:"Change", num:true, get:function(g){ return fdelta(g,"ts_pct",2); }}
       ], fatRows));
       var fl=el("div","rnglegend");
       fl.appendChild(document.createTextNode(
