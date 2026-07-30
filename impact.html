@@ -44,6 +44,17 @@
   .axis{display:flex;gap:6px;margin:10px 0 2px;flex-wrap:wrap}
   .axis button{font:inherit;font-size:12px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--acc);cursor:pointer}
   .axis button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+  /* YEAR TOGGLE — the season picker. Same affordance as the axis switch so a reader who has
+     used one has already learned the other, but visually quieter: the axis changes what the
+     number MEANS, the year changes only which season it describes. */
+  .years{display:flex;gap:5px;margin:2px 0 0;flex-wrap:wrap;align-items:center}
+  .years button{font:inherit;font-size:11.5px;font-variant-numeric:tabular-nums;padding:3px 10px;border-radius:999px;
+    border:1px solid var(--line);background:var(--card);color:var(--acc);cursor:pointer}
+  .years button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+  .years button.off{color:var(--dim);cursor:not-allowed;background:var(--card2)}
+  .years .yl{font-size:10px;text-transform:uppercase;letter-spacing:.03em;color:var(--dim);margin-right:2px}
+  .loading{color:var(--muted);font-size:12.5px;padding:10px 0}
+  .why{font-size:11.5px;color:var(--warn);margin:8px 0 0;line-height:1.5}
   table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
   th,td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;vertical-align:middle}
   th:first-child,td:first-child,th:nth-child(2),td:nth-child(2),th:nth-child(3),td:nth-child(3){text-align:left}
@@ -77,7 +88,7 @@
   <h1>The Hardwood — Season Impact</h1>
   <span class="ago" id="ago"></span>
 </header>
-<div class="sub">Who actually moved their team's outcomes this season, and by how much — our on-court impact rating, weighted by her share of the floor and added up across the games she played. Scoring is context, shown last.</div>
+<div class="sub" id="sub">Who actually moved their team's outcomes this season, and by how much — our on-court impact rating, weighted by her share of the floor and added up across the games she played. Scoring is context, shown last.</div>
 <nav>
   <a href="./index.html">Board</a>
   <a href="./queue.html">What's Next</a>
@@ -108,7 +119,14 @@
 <script>
 (function(){
   "use strict";
-  var DATA=null, AXIS="volume";   // "volume" = season total (default), "rate" = per game
+  // CUR  = the live current-season feed (season_impact.json), fetched on load and every 5 min.
+  // HIST = the completed-season feed (season_impact_history.json, ~525 KB), fetched LAZILY the
+  //        first time a reader picks a past year, then cached for the rest of the visit so
+  //        every later toggle is instant. The default view therefore costs exactly what it
+  //        cost before this toggle existed.
+  var CUR=null, HIST=null, HISTSTATE="idle";   // idle | loading | ready | failed
+  var AXIS="volume";   // "volume" = season total (default), "rate" = per game
+  var SEASON=null;     // the year being viewed; null until the current feed names its own
 
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function sgn(v,d){ if(v==null) return "—"; var n=Number(v); return (n>0?"+":n<0?"−":"")+Math.abs(n).toFixed(d); }
@@ -121,8 +139,24 @@
   // an ordinal position in a sort of the published `season_impact_volume`, and the column header
   // says which axis it belongs to rather than implying a single canonical rank.
   // ---------------------------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------------------------
+  // WHICH SEASON AM I LOOKING AT. `isCurrent()` is the single place that decides, and every
+  // season-dependent branch below asks it rather than testing the year against a literal — a
+  // hard-coded 2026 in a view is a thing that silently becomes wrong on a January morning.
+  // `rows()` is the single place that resolves a year to its player list, so no renderer ever
+  // reaches into a feed directly and no renderer can be pointed at the wrong one.
+  // ---------------------------------------------------------------------------------------------
+  function isCurrent(){ return CUR && SEASON===CUR.season; }
+  function rows(){
+    if(isCurrent()) return CUR.players||[];
+    if(HIST && HIST.seasons && HIST.seasons[String(SEASON)]) return HIST.seasons[String(SEASON)];
+    return [];
+  }
+  function defs(){ return (isCurrent()? (CUR&&CUR.definition) : (HIST&&HIST.definition)) || {}; }
+  function srcs(){ return (isCurrent()? (CUR&&CUR.sources) : (HIST&&HIST.sources)) || {}; }
+
   function ordered(){
-    var ps=(DATA.players||[]).slice();
+    var ps=rows().slice();
     if(AXIS==="rate"){
       ps.sort(function(a,b){
         var ar=a.rank_rate, br=b.rank_rate;
@@ -146,7 +180,7 @@
   }
 
   function leaders(){
-    var ps=DATA.players||[];
+    var ps=rows();
     var bv=null, br=null;
     ps.forEach(function(p){
       if(p.season_impact_volume!=null && (bv===null || p.season_impact_volume>bv.season_impact_volume)) bv=p;
@@ -156,14 +190,15 @@
   }
 
   function kpi(main){
-    var ps=DATA.players||[], L=leaders();
+    var ps=rows(), L=leaders();
     var thin=ps.filter(function(p){ return p.thin; }).length;
     var card=el("div","card"), pad=el("div","pad kpis");
     function tile(v,l,who){ var k=el("div","kpi");
       k.appendChild(el("b",null,v)); k.appendChild(el("span",null,l));
       if(who) k.appendChild(el("i",null,who)); return k; }
     // IMPACT-FIRST: every hero tile is an impact number. No counting stat appears above the fold.
-    if(L.vol) pad.appendChild(tile(sgn(L.vol.season_impact_volume,1),"Most impact this season",
+    if(L.vol) pad.appendChild(tile(sgn(L.vol.season_impact_volume,1),
+        isCurrent()?"Most impact this season":("Most impact in "+SEASON),
         L.vol.name+" · "+L.vol.team+" · "+(L.vol.gp!=null?L.vol.gp+" games":"")));
     if(L.rate) pad.appendChild(tile(sgn(L.rate.season_impact_rate,2),"Best per game",
         L.rate.name+" · "+L.rate.team+" · "+(L.rate.gp!=null?L.rate.gp+" games":"")));
@@ -187,6 +222,44 @@
     b.appendChild(i); td.appendChild(b); return td;
   }
 
+  // ---------------------------------------------------------------------------------------------
+  // THE YEAR TOGGLE (the CEO's ask). Every chip it draws is a season the platform has MEASURED it
+  // can fill: the list is published on the current-season feed as `seasons_offered`, derived from
+  // the same query the completed-season feed uses to decide what it builds. Nothing here is a
+  // hard-coded year list, so the toggle cannot offer a year that would paint empty.
+  //
+  // A season we hold box scores for but no impact read arrives as `seasons_unavailable` WITH its
+  // reason, and is drawn as a disabled chip that states the reason. UNKNOWN RENDERS WITH A REASON —
+  // a year is never silently absent from the row.
+  // ---------------------------------------------------------------------------------------------
+  function pickSeason(main){
+    if(!CUR) return;
+    var offered=(CUR.seasons_offered||[]).slice().sort(function(a,b){ return b-a; });
+    var unavail=CUR.seasons_unavailable||[];
+    if(!offered.length && !unavail.length) return;   // no history feed — current season only
+
+    var w=el("div","years");
+    w.appendChild(el("span","yl","Season"));
+    function chip(y,label,on){
+      var b=el("button",on?"on":null,label);
+      b.onclick=function(){ if(SEASON!==y){ setSeason(y); } };
+      return b;
+    }
+    w.appendChild(chip(CUR.season, CUR.season+" · now", isCurrent()));
+    offered.forEach(function(y){ w.appendChild(chip(y,String(y),SEASON===y)); });
+    unavail.forEach(function(u){
+      var b=el("button","off",String(u.season));
+      b.disabled=true;
+      b.title=u.reason||"not available";
+      w.appendChild(b);
+    });
+    main.appendChild(w);
+    if(unavail.length){
+      main.appendChild(el("div","why", "Greyed-out years: " + unavail.map(function(u){
+        return u.season+" — "+(u.reason||"not available"); }).join(" · ")));
+    }
+  }
+
   function board(main){
     var ps=ordered();
     var key=(AXIS==="rate")?"season_impact_rate":"season_impact_volume";
@@ -205,14 +278,32 @@
     main.appendChild(ax);
 
     main.appendChild(el("div","lede", AXIS==="rate"
-      ? "Ranked by impact PER GAME — how much better her team plays in the minutes she is on the floor, on average. This favours a player who has been excellent in a short season; check the season total beside it to see how much of the year that covers."
-      : "Ranked by SEASON TOTAL — that per-game impact added up across every game she has played, so it answers how much a player has actually moved her team's outcomes over the whole season. A player who missed half the year lands lower here than her per-game rate alone would suggest; flip the axis to separate the two."));
+      ? (isCurrent()
+        ? "Ranked by impact PER GAME — how much better her team plays in the minutes she is on the floor, on average. This favours a player who has been excellent in a short season; check the season total beside it to see how much of the year that covers."
+        : "Ranked by impact PER GAME — how much better her team played in the minutes she was on the floor that season, on average. This favours a player who was excellent in a short year; check the season total beside it to see how much of "+SEASON+" that covers.")
+      : (isCurrent()
+        ? "Ranked by SEASON TOTAL — that per-game impact added up across every game she has played, so it answers how much a player has actually moved her team's outcomes over the whole season. A player who missed half the year lands lower here than her per-game rate alone would suggest; flip the axis to separate the two."
+        : "Ranked by SEASON TOTAL — that per-game impact added up across every game she played in "+SEASON+", so it answers how much she actually moved her team's outcomes over that whole year. A player who missed half the season lands lower here than her per-game rate alone would suggest; flip the axis to separate the two.")));
+
+    // CROSS-YEAR HONESTY, stated where the comparison is actually made rather than buried in the
+    // method panel. A finished season is read from our settled end-of-season estimate; the current
+    // season is read from a live one that is still pulled toward the middle while its sample is
+    // young. The two are not the same kind of number, and a reader flipping between them is owed
+    // that plainly — the feed carries the wording so the page and the feed cannot drift apart.
+    if(!isCurrent() && defs().reading_a_completed_season)
+      main.appendChild(el("div","note", defs().reading_a_completed_season));
 
     var card=el("div","card scroll"), tbl=el("table");
     var thead=el("thead"), htr=el("tr");
+    // THE BASIS COLUMN NAMES WHAT IT ACTUALLY HOLDS. The current season publishes an on-court
+    // stint basis; a completed season does not (the historical rating chain stores it empty), and
+    // its real sample basis is floor time. Printing "On-court basis" over a column of dashes would
+    // read as missing data when in fact the honest basis is right there, so the column changes with
+    // the season instead of degrading to "—".
+    var basisHead = isCurrent() ? "On-court basis" : "Total min";
     [["#",0],["Player",0],["Team",0],["",0],
      ["Season total",AXIS==="volume"],["Per game",AXIS==="rate"],
-     ["% of min",0],["GP",0],["On-court basis",0],["PTS",0],["REB",0],["AST",0]
+     ["% of min",0],["GP",0],[basisHead,0],["PTS",0],["REB",0],["AST",0]
     ].forEach(function(h){ var th=el("th",h[1]?"on":null,h[0]); htr.appendChild(th); });
     thead.appendChild(htr); tbl.appendChild(thead);
 
@@ -224,15 +315,23 @@
       if(!sepDone && p.thin){
         var sr=el("tr","sep"); var sc=el("td");
         sc.colSpan=12;
-        sc.textContent="From here down, rows tagged “thin sample” rest on a small on-court basis so "
-          + "far, so their number is pulled toward league average and should be read as provisional "
-          + "rather than as a firm separation. They are ranked in their true place and shown in full.";
+        sc.textContent=isCurrent()
+          ? "From here down, rows tagged “thin sample” rest on a small on-court basis so "
+            + "far, so their number is pulled toward league average and should be read as provisional "
+            + "rather than as a firm separation. They are ranked in their true place and shown in full."
+          : "From here down, rows tagged “thin sample” rest on a small sample in "+SEASON+" itself — "
+            + "very few games, very little floor time, or a season the model had no on-court read of "
+            + "her and fell back to what it expected. That is a statement about her "+SEASON+", not "
+            + "about her career. They are ranked in their true place and shown in full.";
         sr.appendChild(sc); tb.appendChild(sr); sepDone=true;
       }
       var tr=el("tr");
       tr.appendChild(el("td",null,p._pos==null?"—":String(p._pos)));
       var nm=el("td","nm");
-      if(p.player_id!=null){ var a=el("a",null,p.name); a.href="./player.html?id="+p.player_id; nm.appendChild(a); }
+      // PAST SEASONS DO NOT LINK. Player pages cover the current season and are keyed by its ids;
+      // the historical game logs use a different id scheme entirely, so a past-season id resolves
+      // to no page even for a player who has one today. A dead link is worse than no link.
+      if(isCurrent() && p.player_id!=null){ var a=el("a",null,p.name); a.href="./player.html?id="+p.player_id; nm.appendChild(a); }
       else nm.appendChild(document.createTextNode(p.name||"—"));
       if(p.thin) nm.appendChild(el("span","chip thin","thin sample"));
       if(p.currently_out) nm.appendChild(el("span","chip","out"));
@@ -244,8 +343,11 @@
       tr.appendChild(el("td",null,p.min_share_pct==null?"—":p.min_share_pct+"%"));
       tr.appendChild(el("td",null,p.gp==null?"—":String(p.gp)));
       // The honest denominator behind the number, on the row itself — so "thin sample" is a
-      // readable claim a reader can check rather than a label they have to trust.
-      tr.appendChild(el("td",null,p.n_basis==null?"—":String(p.n_basis)));
+      // readable claim a reader can check rather than a label they have to trust. Which
+      // denominator that is depends on the season (see basisHead above).
+      tr.appendChild(el("td",null, isCurrent()
+        ? (p.n_basis==null?"—":String(p.n_basis))
+        : (p.total_min==null?"—":String(Math.round(p.total_min)))));
       // counting stats LAST — context, never the stat
       tr.appendChild(el("td",null,plain(p.ppg,1)));
       tr.appendChild(el("td",null,plain(p.rpg,1)));
@@ -261,35 +363,98 @@
   }
 
   function method(main){
-    var def=(DATA&&DATA.definition)||{}, src=(DATA&&DATA.sources)||{};
+    var def=defs(), src=srcs();
     var d=el("details","method"); d.appendChild(el("summary",null,"How this is measured"));
     var b=el("div","method-body"), ul=el("ul");
-    if(DATA&&DATA.kind) ul.appendChild(el("li",null,DATA.kind));
+    var kind=isCurrent()?(CUR&&CUR.kind):(HIST&&HIST.kind);
+    if(kind) ul.appendChild(el("li",null,kind));
     Object.keys(def).forEach(function(k){ ul.appendChild(el("li",null,def[k])); });
     Object.keys(src).forEach(function(k){ ul.appendChild(el("li",null,"Source — "+src[k]+".")); });
     b.appendChild(ul); d.appendChild(b); main.appendChild(d);
   }
 
+  // ---------------------------------------------------------------------------------------------
+  // SEASON SELECTION. Selecting a past year for the first time triggers the one lazy fetch of the
+  // completed-season feed. Every state that fetch can be in renders SOMETHING with a reason — a
+  // year the reader picked never resolves to a blank board:
+  //     loading -> a named "reading <year>" line
+  //     failed  -> the reason, plus the way back to the current season
+  //     ready but the year is absent -> says the year is not in the record we hold
+  // ---------------------------------------------------------------------------------------------
+  function setSeason(y){
+    SEASON=y;
+    if(!isCurrent() && HISTSTATE==="idle") loadHistory();
+    render();
+  }
+
+  function loadHistory(){
+    HISTSTATE="loading";
+    fetch("./season_impact_history.json?v="+Date.now(),{cache:"no-cache"})
+      .then(function(r){ if(!r.ok) throw new Error("http "+r.status); return r.json(); })
+      .then(function(j){
+        if(!j||!j.seasons) throw new Error("empty");
+        HIST=j; HISTSTATE="ready"; render();
+      })
+      .catch(function(){ HISTSTATE="failed"; render(); });
+  }
+
+  function seasonUnavailable(main,msg){
+    main.appendChild(el("div","loading",msg));
+    var back=el("div","axis");
+    var b=el("button",null,"Back to "+(CUR?CUR.season:"the current season"));
+    b.onclick=function(){ if(CUR) setSeason(CUR.season); };
+    back.appendChild(b); main.appendChild(back);
+  }
+
   function render(){
     var main=document.getElementById("main"); main.innerHTML="";
-    if(!DATA||!(DATA.players&&DATA.players.length)){
-      main.innerHTML='<p class="empty">Season impact is not available right now.</p>'; return; }
+    if(!CUR){
+      main.innerHTML='<p class="empty">Could not load the season impact board.</p>'; return; }
+    // The standfirst names the year on screen, so a reader who has toggled cannot be reading a
+    // 2019 board under a sentence that says "this season".
+    var sub=document.getElementById("sub");
+    if(sub) sub.textContent=(isCurrent()
+        ? "Who actually moved their team's outcomes this season, and by how much"
+        : "Who actually moved their team's outcomes in "+SEASON+", and by how much")
+      + " — our on-court impact rating, weighted by her share of the floor and added up across the "
+      + "games she played. Scoring is context, shown last.";
+    pickSeason(main);
+
+    if(!isCurrent()){
+      if(HISTSTATE==="loading"){ seasonUnavailable(main,"Reading the "+SEASON+" season…"); return; }
+      if(HISTSTATE==="failed"){
+        seasonUnavailable(main,"We could not load the earlier-season record just now, so "+SEASON
+          +" cannot be shown. The current season is unaffected."); return; }
+      if(!rows().length){
+        seasonUnavailable(main,"We hold no season impact record for "+SEASON+"."); return; }
+    } else if(!rows().length){
+      main.appendChild(el("p","empty","Season impact is not available right now.")); return;
+    }
+
     kpi(main); board(main); method(main);
     var foot=document.getElementById("foot");
-    foot.textContent="A descriptive read of what has happened this season, not a projection. "
+    foot.textContent=(isCurrent()
+        ? "A descriptive read of what has happened this season, not a projection. "
+        : "A descriptive read of what happened in "+SEASON+", not a projection. ")
       + "Players we do not hold an on-court basis for are omitted rather than estimated.";
+    var a=document.getElementById("ago");
+    if(a) a.textContent=isCurrent()?"live":(SEASON+" · final");
   }
 
   function load(){
     fetch("./season_impact.json?v="+Date.now(),{cache:"no-cache"})
       .then(function(r){ return r.ok?r.json():null; })
       .then(function(j){
-        DATA=j;
-        if(!DATA){ document.getElementById("main").innerHTML='<p class="empty">Could not load the season impact board.</p>'; return; }
-        render();
-        var a=document.getElementById("ago"); if(a) a.textContent="live";
+        if(!j){ if(!CUR) document.getElementById("main").innerHTML='<p class="empty">Could not load the season impact board.</p>'; return; }
+        CUR=j;
+        // The feed names its own year, so the default view follows the season the platform is
+        // actually in — there is no year literal in this page to go stale.
+        if(SEASON===null) SEASON=CUR.season;
+        // THE 5-MINUTE REFRESH MUST NOT YANK A READER OUT OF A YEAR THEY CHOSE. It keeps the
+        // current-season data fresh underneath, but only repaints when that is what is on screen.
+        if(isCurrent()) render();
       })
-      .catch(function(){ document.getElementById("main").innerHTML='<p class="empty">Could not load the season impact board.</p>'; });
+      .catch(function(){ if(!CUR) document.getElementById("main").innerHTML='<p class="empty">Could not load the season impact board.</p>'; });
   }
   load();
   setInterval(load,300000);
