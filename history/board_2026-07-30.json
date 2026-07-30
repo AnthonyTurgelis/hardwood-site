@@ -1,23 +1,29 @@
 {
- "generated_utc": "2026-07-30T16:40:16+00:00",
+ "generated_utc": "2026-07-30T16:42:29+00:00",
  "freshness": {
-  "baked_utc": "2026-07-30T16:40:16+00:00",
-  "baked_et": "Jul 30, 12:40pm ET",
-  "revalidated_utc": "2026-07-30T16:40:16+00:00",
+  "baked_utc": "2026-07-30T16:42:29+00:00",
+  "baked_et": "Jul 30, 12:42pm ET",
+  "revalidated_utc": "2026-07-30T16:42:29+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-30",
  "day_summary": "Tonight's game reports are ready - 3 games. Nothing needs you right now.",
  "counts": {
-  "running": 2,
-  "done_today": 29,
+  "running": 1,
+  "done_today": 30,
   "maintenance": 7,
   "needs_anthony": 0,
-  "lanes_today": 30,
+  "lanes_today": 31,
   "upcoming": 86
  },
  "sections": {
   "agent_updates": [
+   {
+    "id": "board-games-played-dnp-rule-20260730",
+    "title": "Board games played dnp rule",
+    "timestamp": "Date not recorded",
+    "body_markdown": "Board games played counted did not play rows measured, then corrected."
+   },
    {
     "id": "interval-width-matchup-response",
     "title": "Interval width matchup response",
@@ -83,12 +89,6 @@
     "title": "Sharper projections for players we have barely seen this season",
     "timestamp": "Jul 25, 2026",
     "body_markdown": "> **The finding:** For a player with only a handful of games behind her, we were building her projection off her most recent season alone - discarding what we already knew about her from the two seasons before that.\n\n**The fix:** her starting point now blends her last three seasons, weighting the recent ones more heavily. Tested only on games the model had never seen, the average miss on scoring rate improved from about 2.06 to about 1.87 points per 36 minutes. Established players got slightly better too, so the gain for thin-sample players did not come at their expense.\n\n**The honest part, which is easy to oversell:** most of that improvement - roughly 0.16 of the 0.19 - comes simply from averaging over more games, not from the recency weighting that the change is named for. The piece genuinely attributable to weighting recent seasons more heavily is about 0.05, it shows up early in a season, and it shrinks as games accumulate. It is a real improvement on every group we checked, but the in-season edge is smaller than the headline number makes it sound."
-   },
-   {
-    "id": "rebound-matchup-model",
-    "title": "Rebound Matchup Adjustments Implemented",
-    "timestamp": "Jul 13, 2026",
-    "body_markdown": "> **The Finding:** We were missing the mark on rebounds because we were completely ignoring head-to-head size differences and who is actually boxing out who.\n\n**The Fix:** I built the **Rebound Matchup Model**. It uses the new matchups feed feed to dynamically fetch the expected defender for every player on the slate. It scales each player's proj_reb based on two things: 1) the defender's historical rebound rate, and 2) the height advantage/disadvantage (in inches).\n\n**Impact:** This dynamically shifts rebounds from players guarded by elite rebounders (like A'ja Wilson) to players guarded by weak rebounders, and rewards size mismatches, making our prop lines way sharper!"
    }
   ],
   "today_games": {
@@ -916,16 +916,6 @@
   "running_now": [],
   "running_live": [
    {
-    "name": "Board counts dnps as games played",
-    "one_liner": "Running now.",
-    "chip": "IN-FLIGHT",
-    "team": "Modeling",
-    "kind": "lane",
-    "time": "",
-    "at_iso": "2026-07-30T12:38:32-04:00",
-    "start_unknown": true
-   },
-   {
     "name": "Settings lint runs the cli without consulting the pause",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
@@ -1220,6 +1210,16 @@
     "at_iso": "2026-07-29T20:55:00-04:00",
     "link": "https://drive.google.com/file/d/1narHSb4nvK1Ya9iNfN915AWxpKfsPEXT/view?usp=drivesdk",
     "impact": 2
+   },
+   {
+    "name": "Board games played dnp rule",
+    "one_liner": "Board games-played counted did-not-play rows — measured, then corrected",
+    "chip": "NULL",
+    "team": "Modeling",
+    "time": "",
+    "at_iso": null,
+    "link": "https://drive.google.com/file/d/1n6wspY0dtmtPuuKX9CwKdQQcSJnvmMoe/view?usp=drivesdk",
+    "impact": 3
    },
    {
     "name": "Site — Verified improvement",
@@ -4359,9 +4359,9 @@
     "target": 40,
     "count": 86,
     "ok": true,
-    "label": "86 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
+    "label": "86 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 2m ago.)",
     "as_of_utc": "2026-07-30T16:39:51Z",
-    "age_secs": 30,
+    "age_secs": 163,
     "stale": false
    },
    "source": "dispatch queue",
@@ -4770,49 +4770,14 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-30T16:39:35Z",
+  "last_poll_utc": "2026-07-30T16:41:48Z",
   "age_s": 44,
-  "cycles": 27,
+  "cycles": 29,
   "known": true,
   "label": "scout: alive, last poll 44s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
-  {
-   "time": "12:36pm",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
-  },
-  {
-   "time": "12:36pm",
-   "text": "chain-health: clean (all four legs healthy",
-   "detail": "chain-health: clean (all four legs healthy)"
-  },
-  {
-   "time": "12:36pm",
-   "text": "slate-refresh: slate ok (today populated",
-   "detail": "slate-refresh: slate ok (today populated)"
-  },
-  {
-   "time": "12:37pm",
-   "text": "poll #25 · nothing new",
-   "detail": "poll cycle=25 ok directives_new=0"
-  },
-  {
-   "time": "12:37pm",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
-  },
-  {
-   "time": "12:37pm",
-   "text": "feed-streak alarm: RED=1 ['HardwoodOddsSnapshot'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
-   "detail": "feed-streak alarm: RED=1 ['HardwoodOddsSnapshot'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scou"
-  },
-  {
-   "time": "12:37pm",
-   "text": "board-selfpolice: auto-repair cleared the mismatch",
-   "detail": "board-selfpolice: auto-repair cleared the mismatch"
-  },
   {
    "time": "12:38pm",
    "text": "poll #26 · nothing new",
@@ -4827,10 +4792,45 @@
    "time": "12:40pm",
    "text": "board-selfpolice: MISMATCH: RUNNING-NOW: live lane set != repo lane claims.json running set (missing on live=[] stale on live=['2026-07-30T16:33:']) -> auto-repair",
    "detail": "board-selfpolice: MISMATCH: RUNNING-NOW: live lane set != repo lane_claims.json running set (missing_on_live=[] stale_on_live=['2026-07-30T1"
+  },
+  {
+   "time": "12:40pm",
+   "text": "poll #28 · nothing new",
+   "detail": "poll cycle=28 ok directives_new=0"
+  },
+  {
+   "time": "12:41pm",
+   "text": "board-selfpolice: auto-repair rc=2 (publish gate abort) :: push failed: CalledProcessError: Command '['git', '-C', 'C:\\\\Users\\\\antho\\\\hardwood-site', 'add', '-A']' returned non-zero exit status 128.",
+   "detail": "board-selfpolice: auto-repair rc=2 (publish gate abort) :: push failed: CalledProcessError: Command '['git', '-C', 'C:\\\\Users\\\\antho\\\\hardwo"
+  },
+  {
+   "time": "12:41pm",
+   "text": "divergence alarm: clean (build code matches the shared branch",
+   "detail": "divergence_alarm: clean (build code matches the shared branch)"
+  },
+  {
+   "time": "12:41pm",
+   "text": "publish-health: clean (public board is fresh",
+   "detail": "publish-health: clean (public board is fresh)"
+  },
+  {
+   "time": "12:41pm",
+   "text": "chain-health: clean (all four legs healthy",
+   "detail": "chain-health: clean (all four legs healthy)"
+  },
+  {
+   "time": "12:41pm",
+   "text": "slate-refresh: slate ok (today populated",
+   "detail": "slate-refresh: slate ok (today populated)"
+  },
+  {
+   "time": "12:41pm",
+   "text": "poll #29 · nothing new",
+   "detail": "poll cycle=29 ok directives_new=0"
   }
  ],
  "helpers": {
-  "as_of": "2026-07-30T16:40:03.454883+00:00",
+  "as_of": "2026-07-30T16:41:50.714027+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -4847,16 +4847,16 @@
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "16s",
-    "state_text": "on · seen 16s ago"
+    "age_label": "41s",
+    "state_text": "on · seen 41s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "2m",
-    "state_text": "on · seen 2m ago"
+    "age_label": "48s",
+    "state_text": "on · seen 48s ago"
    },
    {
     "name": "Two-way replies",
@@ -4871,16 +4871,16 @@
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "48s",
+    "state_text": "on · seen 48s ago"
    }
   ],
   "width": {
-   "running": 2,
+   "running": 1,
    "target": 3,
-   "empty": 1,
-   "line": "2 of 3 jobs running.",
-   "reason": "Only 2 of 3 jobs are running - 1 more flagged for the coordinator to start from the priority list.",
+   "empty": 2,
+   "line": "1 of 3 jobs running.",
+   "reason": "Only 1 of 3 jobs are running - 2 more flagged for the coordinator to start from the priority list.",
    "stale": false
   },
   "scheduled_jobs": [
@@ -5046,9 +5046,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-07-30T16:40:08Z",
-  "session_age_secs": 11318,
-  "last_progress_age_secs": 11,
+  "last_heartbeat_utc": "2026-07-30T16:42:25Z",
+  "session_age_secs": 11451,
+  "last_progress_age_secs": 7,
   "last_spawn_attempt": "2026-07-30T08:43:49Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -5080,25 +5080,25 @@
    "source": "live lane ledger",
    "as_of": "2026-07-30T16:38:32Z",
    "stale": false,
-   "revalidated": "2026-07-30T16:40:16+00:00",
+   "revalidated": "2026-07-30T16:42:29+00:00",
    "stale_reason": "",
-   "age_label": "1m",
+   "age_label": "3m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-30T16:40:16+00:00",
+   "as_of": "2026-07-30T16:42:29+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T16:40:16+00:00",
+   "revalidated": "2026-07-30T16:42:29+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-30T16:40:16+00:00",
+   "as_of": "2026-07-30T16:42:29+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T16:40:16+00:00",
+   "revalidated": "2026-07-30T16:42:29+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
@@ -5107,7 +5107,7 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-30T16:40:16+00:00",
+   "revalidated": "2026-07-30T16:42:29+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -5116,16 +5116,16 @@
    "source": "dispatch queue",
    "as_of": "2026-07-30T16:39:51Z",
    "stale": false,
-   "revalidated": "2026-07-30T16:40:16+00:00",
+   "revalidated": "2026-07-30T16:42:29+00:00",
    "stale_reason": "",
-   "age_label": "25s",
+   "age_label": "2m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-30T16:40:16+00:00",
+   "revalidated": "2026-07-30T16:42:29+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -5134,39 +5134,39 @@
    "source": "director inbox",
    "as_of": "2026-07-30T16:38:35Z",
    "stale": false,
-   "revalidated": "2026-07-30T16:40:16+00:00",
+   "revalidated": "2026-07-30T16:42:29+00:00",
    "stale_reason": "",
-   "age_label": "1m",
+   "age_label": "3m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-07-30T12:00:00-04:00",
    "stale": false,
-   "revalidated": "2026-07-30T16:40:16+00:00",
+   "revalidated": "2026-07-30T16:42:29+00:00",
    "stale_reason": "",
-   "age_label": "40m",
+   "age_label": "42m",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-30T16:35:19+00:00",
+   "as_of": "2026-07-30T16:41:38+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T16:40:16+00:00",
+   "revalidated": "2026-07-30T16:42:29+00:00",
    "stale_reason": "",
-   "age_label": "5m",
+   "age_label": "54s",
    "stale_after": null
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-30T16:40:03.454883+00:00",
+   "as_of": "2026-07-30T16:41:50.714027+00:00",
    "stale": false,
-   "revalidated": "2026-07-30T16:40:16+00:00",
+   "revalidated": "2026-07-30T16:42:29+00:00",
    "stale_reason": "",
-   "age_label": "16s",
+   "age_label": "41s",
    "stale_after": null
   }
  },
- "generated_et": "Jul 30, 12:40pm ET"
+ "generated_et": "Jul 30, 12:42pm ET"
 }
