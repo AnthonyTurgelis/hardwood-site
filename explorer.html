@@ -56,6 +56,32 @@
   .barrow{display:flex;align-items:center;gap:8px;margin:3px 0}
   .barrow .lab{width:150px;color:var(--muted);font-size:11.5px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .dial{height:12px;border-radius:3px;min-width:2px}
+  /* PROJECTED-MARGIN RANGE BAR. Mirrored VERBATIM from site/games.html and site/game.html (.mbar /
+     .mcap / .mleg) - the dialect this platform already ships for THIS EXACT QUANTITY, on the two
+     surfaces a reader clicks between. The upcoming-games panel below carried range80 and range90 on
+     every row and drew neither: it printed "-7.3 to 26.2" in a tile, which is the range in words.
+     Deliberately not a new look. A third independently-styled range widget for one quantity is the
+     drift this repo keeps re-creating, so the class names, the symmetric-about-even scale and the
+     sign-aware endpoint labels are copied, not re-invented. Inline because each page keeps its own
+     copy - hardwood.css is a progressive layer, not a dependency, and a failed load must still draw.
+     Note the page's OTHER bar (.barwrap in Player Outcomes) is a different quantity: a per-player
+     counting stat on a non-negative scale with no even line. Same reason game.html carries both
+     .mbar and .smbar. */
+  .mbar{position:relative;height:20px;margin:7px 0 2px;background:var(--card2);border:1px solid var(--line);border-radius:5px}
+  .mbar .b90{position:absolute;top:6px;height:8px;background:var(--line2);border-radius:3px}
+  .mbar .b80{position:absolute;top:5px;height:10px;background:var(--acc);opacity:.55;border-radius:3px}
+  .mbar .pt{position:absolute;top:2px;width:3px;height:16px;background:var(--good);transform:translateX(-1px)}
+  .mbar .zero{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.7}
+  .mcap{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:1px;font-variant-numeric:tabular-nums}
+  .mrange{margin-top:9px}
+  .mleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10px;color:var(--dim);margin-top:5px}
+  .mleg span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+  .mleg i{display:inline-block;width:13px;height:6px;border-radius:2px;flex:none}
+  .mleg i.l80{background:var(--acc);opacity:.55}
+  .mleg i.l90{background:var(--line2)}
+  .mleg i.lpt{width:3px;height:12px;background:var(--good);border-radius:1px}
+  .mleg b{font-weight:600}
+  .microcap{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);font-weight:800;margin:9px 0 3px}
   .good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)} .dim{color:var(--dim)}
   .empty{color:var(--dim);font-style:italic;padding:18px 4px}
   footer{max-width:1120px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
@@ -104,7 +130,7 @@
 <script>
 (function(){
   "use strict";
-  var DATA=null, CUR="impact";
+  var DATA=null, CUR=null;
   var TABS=[
     ["impact","Player Impact"],
     ["games","Upcoming Games"],
@@ -128,6 +154,21 @@
      data baker does not feed (e.g. model-scorecard / rookies / styles await a
      model-eval baker) is omitted rather than shown empty. The tab set auto-grows the
      moment explorer.json carries that panel, with no front-end change. */
+  /* DEEP-LINKABLE TABS. Every panel here lived at the same address, so there was no way to send
+     someone - or a screenshot - to a specific one; it always opened on Player Impact. The section
+     now rides the address bar (explorer.html#games), which costs nothing and makes each panel
+     linkable and capturable. An unknown or absent section falls back to the first tab exactly as
+     before. */
+  function tabFromHash(){
+    var h=String((typeof location!=="undefined"&&location.hash)||"").replace(/^#/,"");
+    for(var i=0;i<TABS.length;i++){ if(TABS[i][0]===h) return h; }
+    return null;
+  }
+  function setTab(name){
+    CUR=name;
+    try{ if(String(location.hash||"").replace(/^#/,"")!==name){ history.replaceState(null,"","#"+name); } }catch(e){}
+    render();
+  }
   function availTabs(){
     var panels=(DATA&&DATA.panels)||{};
     var out=TABS.filter(function(tb){ return panels[tb[0]]!=null; });
@@ -137,7 +178,7 @@
     var t=el("div","tabs");
     availTabs().forEach(function(tb){
       var b=el("button",(tb[0]===CUR?"active":""),tb[1]);
-      b.onclick=function(){ CUR=tb[0]; render(); };
+      b.onclick=function(){ setTab(tb[0]); };
       t.appendChild(b);
     });
     return t;
@@ -242,7 +283,7 @@
     if(!p||!p.rows||!p.rows.length){ main.appendChild(noData("No upcoming games are projected right now.")); return; }
     var head=el("div","card");
     head.appendChild(el("h2",null,"Upcoming games — full projection detail"));
-    head.appendChild(el("div","note","For each upcoming game: the projected margin and who is favored, the win probability, the 80% and 90% likely-margin ranges, and the shape of ten thousand simulated outcomes. Positive numbers favor the home team."));
+    head.appendChild(el("div","note","For each upcoming game: the projected margin and who is favored, the win probability, and the band the final margin is likely to land in - drawn, not described. Positive numbers favor the home team."));
     main.appendChild(head);
     var row=el("div","row");
     p.rows.forEach(function(g){
@@ -251,13 +292,23 @@
       var b=el("b"); b.textContent=g.away+" @ "+g.home; gt.appendChild(b);
       gt.appendChild(el("span","pill",g.date_label));
       c.appendChild(gt);
+      var mr=explorerRangeBar(g);
       var grid=el("div","grid");
       grid.appendChild(kv("Projected margin", g.fav+" by "+fmt(g.by,1), "fav"));
-      grid.appendChild(kv("Win probability", g.win_pct==null?"—":(g.win_pct+"% "+g.fav)));
-      grid.appendChild(kv("80% range", rng(g.range80)));
-      grid.appendChild(kv("90% range", rng(g.range90)));
-      if(g.sim){ grid.appendChild(kv("Simulated avg", sgn(g.sim.mean,1)+" ±"+fmt(g.sim.std,1))); }
+      grid.appendChild(kv("Win probability", g.win_pct==null?"not published":(g.win_pct+"% "+g.fav)));
+      // The two range TILES drop only when the bar actually drew, and only in Summary. A card with
+      // no published band keeps its numbers rather than losing the range entirely, and Deep view is
+      // this page's existing "show me the figures" affordance - so the reader who wants the knots
+      // still has them. Dropped at the SURFACE, never at the baker: explorer.json still carries
+      // range80 and range90 for every other consumer.
+      if(!mr || DEEP){
+        grid.appendChild(kv("80% range", rng(g.range80)));
+        grid.appendChild(kv("90% range", rng(g.range90)));
+      }
+      if(g.sim){ grid.appendChild(kv("Simulated avg", sgn(g.sim.mean,1)+" +/- "+fmt(g.sim.std,1))); }
       c.appendChild(grid);
+      if(mr){ c.appendChild(mr); }
+      else { c.appendChild(el("div","note","How far the final margin could land from that number is not published for this game.")); }
       if(g.sim && g.sim.p10!=null){
         c.appendChild(el("div","note","Simulated margin spread (home minus away): the bar runs from a poor night to a great night; the tick is the midpoint."));
         c.appendChild(simBar(g.sim));
@@ -267,7 +318,96 @@
     });
     main.appendChild(row);
   }
-  function rng(a){ if(!a||a[0]==null) return "—"; return fmt(a[0],1)+" … "+fmt(a[1],1); }
+  function rng(a){ if(!a||a[0]==null) return "not published"; return fmt(a[0],1)+" to "+fmt(a[1],1); }
+
+  // ---- EXPLORER-MARGIN-RANGE-BEGIN (exercised directly by scripts/test_explorer_range.py - the
+  // test extracts this exact block and runs it in node against the real baked explorer.json rows,
+  // and against game.html's own model on the same inputs, so the two surfaces cannot drift) ----
+  // THE RANGE IS SHOWN, NOT DESCRIBED.
+  //
+  // Every upcoming-games row already carried range80 and range90 and drew neither. The band was two
+  // tiles reading "-7.3 to 26.2" and "-9.4 to 31.4" beside a call of "ATL by 10.3" - a 33-point
+  // interval under a 10-point answer, written out as text. That is the widest honesty signal this
+  // panel has, and it was the one thing on the card the reader had to assemble in their head.
+  //
+  // SAME DIALECT AS THE SLATE AND THE CARD, DELIBERATELY. The scale, the class names and the
+  // sign-aware endpoint labels are games.html marginBar() / game.html marginRangeModel(), mirrored
+  // rather than re-invented, so one game reads the same way in the slate, on its card, and here.
+  //
+  // SIGN CONVENTION: range80 and range90 are published HOME-POSITIVE (+N = the home side by N). The
+  // scale is symmetric about zero, so "even" is always dead centre and a band that STRADDLES even
+  // looks like the coin-flip it is instead of having to be called one. Endpoints are labelled by the
+  // SIGN of their own value, so a one-sided range never names the wrong team as favoured.
+  //
+  // THE POINT MARKER IS RECOVERED, NOT DERIVED. This panel publishes the answer as a favourite and a
+  // positive amount (fav / by), which is the same number the tile above the bar prints. The baker
+  // splits it on sign - a home-positive margin becomes (home, +m), an away one becomes (away, +|m|)
+  // - so re-attaching the sign is reading the published pair back, not computing a new number, and
+  // the marker can never disagree with the tile. If fav names neither side the marker is omitted;
+  // the bands still draw. No bound is ever derived here: a row with no published 90% band gets NO
+  // bar rather than an invented one, the same omit-not-invent rule the rest of the page follows.
+  function explorerRangeModel(g){
+    g=g||{};
+    var r90=g.range90, r80=g.range80;
+    var lo=(r90&&r90[0]!=null)?Number(r90[0]):null, hi=(r90&&r90[1]!=null)?Number(r90[1]):null;
+    if(lo==null||hi==null||isNaN(lo)||isNaN(hi)) return null;   // no published band -> no bar
+    var has80=!!(r80&&r80[0]!=null&&r80[1]!=null);
+    var l80=has80?Number(r80[0]):null, h80=has80?Number(r80[1]):null;
+    var pt=null;
+    if(g.by!=null&&!isNaN(Number(g.by))){
+      if(g.fav===g.home) pt=Number(g.by);
+      else if(g.fav===g.away) pt=-Number(g.by);
+    }
+    var span=Math.max(Math.abs(lo),Math.abs(hi),1);   // symmetric about zero: even is always centre
+    function sc(v){ return ((v+span)/(2*span))*100; }
+    function endLabel(v){
+      if(v>0) return g.home+" +"+v.toFixed(0);
+      if(v<0) return g.away+" +"+Math.abs(v).toFixed(0);
+      return "even";
+    }
+    return {
+      lo:lo, hi:hi, lo80:l80, hi80:h80, point:pt, has80:has80,
+      x:{ zero:sc(0), lo:sc(lo), hi:sc(hi),
+          lo80:has80?sc(l80):null, hi80:has80?sc(h80):null,
+          point:(pt!=null)?sc(pt):null },
+      ends:{ lo:endLabel(lo), hi:endLabel(hi) }
+    };
+  }
+  // ---- EXPLORER-MARGIN-RANGE-END ----
+
+  // The bar itself: the model above, drawn. Sits directly under the answer, because the range is the
+  // honesty about the answer rather than a footnote to it. Each card is scaled to its own band, as
+  // the slate list already does - so a card is read against its own even line, not against the card
+  // beside it.
+  function explorerRangeBar(g){
+    var mo=explorerRangeModel(g); if(!mo) return null;
+    var wrap=el("div","mrange");
+    wrap.appendChild(el("div","microcap","Projected final margin - where the result actually lands"));
+    var bar=el("div","mbar");
+    var z=el("div","zero"); z.style.left=mo.x.zero.toFixed(1)+"%"; bar.appendChild(z);
+    var b90=el("div","b90"); b90.style.left=mo.x.lo.toFixed(1)+"%";
+    b90.style.width=(mo.x.hi-mo.x.lo).toFixed(1)+"%"; bar.appendChild(b90);
+    if(mo.has80){
+      var b80=el("div","b80"); b80.style.left=mo.x.lo80.toFixed(1)+"%";
+      b80.style.width=(mo.x.hi80-mo.x.lo80).toFixed(1)+"%"; bar.appendChild(b80);
+    }
+    if(mo.x.point!=null){ var pm=el("div","pt"); pm.style.left=mo.x.point.toFixed(1)+"%"; bar.appendChild(pm); }
+    wrap.appendChild(bar);
+    var cap=el("div","mcap");
+    cap.appendChild(el("span",null,mo.ends.lo));
+    cap.appendChild(el("span",null,"even"));
+    cap.appendChild(el("span",null,mo.ends.hi));
+    wrap.appendChild(cap);
+    // Legend - the bands say what they are, so no sentence elsewhere has to.
+    var leg=el("div","mleg");
+    function key(cls,txt){ var s=el("span"); s.appendChild(el("i",cls)); s.appendChild(el("b",null,txt)); return s; }
+    if(mo.has80) leg.appendChild(key("l80","80% of outcomes land in here"));
+    leg.appendChild(key("l90","90%"));
+    if(mo.x.point!=null) leg.appendChild(key("lpt","our number"));
+    wrap.appendChild(leg);
+    return wrap;
+  }
+
   function simBar(s){
     var lo=Math.min(s.p10,-2), hi=Math.max(s.p90,2), span=(hi-lo)||1;
     var W=440,H=58,pad=24;
@@ -507,6 +647,7 @@
       : "Summary view: each surface leads with the impact metrics. Switch to Deep for the full context columns. Read-only; refreshes automatically."));
     /* keep the active section on a tab that actually has data before painting the bar */
     var avail=availTabs().map(function(tb){ return tb[0]; });
+    if(CUR==null){ CUR=tabFromHash(); }
     if(avail.indexOf(CUR)<0){ CUR=avail[0]; }
     var bar=el("div","barwrap-flex");
     bar.appendChild(tabBar()); bar.appendChild(viewToggle());
@@ -528,6 +669,7 @@
   function poll(){ fetch("./explorer.json",{cache:"no-cache"}).then(function(r){ return r.json(); })
     .then(function(d){ DATA=d; lastFetch=Date.now(); render(); updAgo(); })
     .catch(function(e){ if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the explorer data. '+(e&&e.message?e.message:"")+'</p>'; } }); }
+  try{ window.addEventListener("hashchange",function(){ var t=tabFromHash(); if(t&&t!==CUR){ CUR=t; render(); } }); }catch(e){}
   poll(); setInterval(poll,300000); setInterval(updAgo,1000);
 })();
 </script>
