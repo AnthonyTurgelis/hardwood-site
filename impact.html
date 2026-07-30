@@ -383,8 +383,29 @@
   // ---------------------------------------------------------------------------------------------
   function setSeason(y){
     SEASON=y;
+    // A chosen year is addressable, so a season board can be linked, bookmarked and re-opened on
+    // the year the reader was actually looking at. replaceState (not pushState) keeps the browser
+    // back button meaning "the page I came from" rather than trapping a reader who tried six years.
+    try{
+      var u=new URL(window.location.href);
+      if(CUR && y===CUR.season) u.searchParams.delete("season"); else u.searchParams.set("season",y);
+      window.history.replaceState({},"",u);
+    }catch(e){}
     if(!isCurrent() && HISTSTATE==="idle") loadHistory();
     render();
+  }
+
+  // The year asked for in the URL, honoured only if the feed says we can actually fill it — a
+  // hand-typed ?season=1997 falls back to the current season rather than painting an empty board.
+  function requestedSeason(){
+    try{
+      var q=new URL(window.location.href).searchParams.get("season");
+      if(!q) return null;
+      var y=parseInt(q,10);
+      if(!isFinite(y)) return null;
+      if(CUR && y===CUR.season) return y;
+      return (CUR&&(CUR.seasons_offered||[]).indexOf(y)>=0) ? y : null;
+    }catch(e){ return null; }
   }
 
   function loadHistory(){
@@ -448,8 +469,14 @@
         if(!j){ if(!CUR) document.getElementById("main").innerHTML='<p class="empty">Could not load the season impact board.</p>'; return; }
         CUR=j;
         // The feed names its own year, so the default view follows the season the platform is
-        // actually in — there is no year literal in this page to go stale.
-        if(SEASON===null) SEASON=CUR.season;
+        // actually in — there is no year literal in this page to go stale. The CURRENT season
+        // stays the default; a URL may ask for another, which is the only way SEASON starts
+        // anywhere else.
+        if(SEASON===null){
+          var want=requestedSeason();
+          if(want!=null && want!==CUR.season){ SEASON=want; loadHistory(); render(); return; }
+          SEASON=CUR.season;
+        }
         // THE 5-MINUTE REFRESH MUST NOT YANK A READER OUT OF A YEAR THEY CHOSE. It keeps the
         // current-season data fresh underneath, but only repaints when that is what is on screen.
         if(isCurrent()) render();
