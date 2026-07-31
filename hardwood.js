@@ -1,7 +1,10 @@
 /* hardwood.js - the shared status chrome loaded by every board tab except the main board.
  *
- * ONE small self-contained script. It owns the strip under the nav on all 22 secondary pages, and
- * it answers the same two questions the main board's own strip answers, IN THE SAME WORDS:
+ * ONE small self-contained script. It owns the strip under the nav on all 25 secondary pages
+ * (MEASURED 2026-07-31: `grep -l '<script src="./hardwood.js">' site/*.html` = 25. This header and
+ * the note in explorer.html both said 22, which was true when they were written; three tabs have
+ * shipped since. A count written into prose rots - the grep is the number.), and it answers the same
+ * two questions the main board's own strip answers, IN THE SAME WORDS:
  *
  *   1. IS WHAT I AM READING CURRENT?  one freshness sentence, measured against this page's own
  *      published refresh contract and escalated at the threshold the machine itself pages on.
@@ -25,6 +28,29 @@
  * NEVER-BLANK (P0-F8): every field renders a DEFINITE state. An unreadable signal says so in plain
  * English ("we cannot tell ..."), never an empty slot and never a stale value presented as current.
  * Silence on "is anything paused" reads as "fine", so it is banned.
+ *
+ * OUR OWN STAFFING IS NOT THE READER'S FAULT (2026-07-31; the same ruling site/index.html took on
+ * 2026-07-30 when a red lane-count wash was removed from above the night's pick). Two of these pills
+ * describe WHO IS DOING OUR WORK - is a coordinator in the chair, is the watcher ticking. Those are
+ * operator quantities. They were painted in the alarm colour and shouted in capitals ("NOBODY IS
+ * RUNNING THE WORK", "NOTHING IS LISTENING"), on 25 reader-facing pages.
+ *
+ * They are still stated, in full, in the same place - the alarm is what came off. The distinction
+ * this file now holds, and it is the general one:
+ *
+ *   A FILED, SUSTAINED STATE MAY BE LOUD.        an outside limit, a pause somebody filed, a page
+ *                                                measurably past the threshold the machine pages on
+ *   AN INSTANTANEOUS SAMPLE MAY NOT.             whether a chair happens to be occupied this second
+ *
+ * The chair is the second kind. MEASURED on the live payload at 2026-07-31T08:25Z: coordinator
+ * absent, and the payload's own account of why was "no start attempt yet - rate floor holds the next
+ * one for up to 292s (one attempt guaranteed every 300s while the chair is empty)". That is a
+ * SCHEDULE. Painting a designed 300-second gap in fault red is the same category error as a red dot
+ * beside the word "scheduled", which is the instance that was fixed the day before this one.
+ *
+ * No threshold rescues it, so none was invented: a correctly-tuned chair alarm still tells a reader
+ * a fact about our rota that they cannot act on. What they CAN act on - are these numbers current -
+ * has its own line, keeps its own red, and is unchanged.
  *
  * ONE DEFINITION OF STALE: the loud threshold is NOT ours to invent. This page's own contract
  * (stale_after_secs, published by the baker) is when a refresh is DUE; the alarm the machine raises
@@ -273,22 +299,28 @@
   }
 
   /* ---- WHO IS LISTENING. The payload's own `label` ("scout: alive, last poll 13s ago") is an
-     internal string with an internal name in it; we render our own words off the same two fields. */
+     internal string with an internal name in it; we render our own words off the same two fields.
+
+     DE-ALARMED, NOT DELETED (see OUR OWN STAFFING at the top). Every state this function has ever
+     had still renders, in the same pill, with the same facts. What it no longer does is paint our
+     own rota in the colour reserved for something the reader has to act on. The healthy reading
+     keeps its green - a positive signal is not an alarm, and losing it would make its absence read
+     as the fault we just removed. */
   function scoutView(sc) {
     if (!sc || typeof sc !== "object") {
-      return { level: "warn", text: "We cannot tell if anything is listening for new instructions" };
+      return { level: "", text: "We cannot tell if anything is listening for new instructions" };
     }
     if (sc.alive) {
       return { level: "ok", text: "Listening for new instructions" +
         (sc.age_s != null ? " (checked " + plainAgo(sc.age_s) + ")" : "") };
     }
-    return { level: "bad", text: "NOTHING IS LISTENING for new instructions" };
+    return { level: "", text: "Nothing is listening for new instructions right now" };
   }
 
   function coordView(co) {
     // NEVER-BLANK: a missing/empty object is itself the UNKNOWN case, not an excuse to render blank.
     if (!co || typeof co !== "object") {
-      return { level: "warn", text: "We cannot tell if anyone is running the work" };
+      return { level: "", text: "We cannot tell if anyone is running the work" };
     }
     var state = (co.state || (co.alive ? "ALIVE" : (co.known === false ? "UNKNOWN" : "DEAD"))).toUpperCase();
     if (state === "ALIVE" && co.alive) {
@@ -296,15 +328,18 @@
         (co.session_age_secs != null ? " (for " + plainFor(co.session_age_secs) + ")" : "") };
     }
     if (state === "UNKNOWN" || co.known === false) {
-      return { level: "warn", text: "We cannot tell if anyone is running the work" };
+      return { level: "", text: "We cannot tell if anyone is running the work" };
     }
-    // confidently DEAD: loud, and honest about the one thing a reader can act on - how long it has
-    // been standing still. `blocked_reason` is an internal token and is deliberately not shown.
+    /* Confidently DEAD. STATED IN FULL, IN PLAIN CASE, IN THE CALM TONE. It used to open "NOBODY IS
+       RUNNING THE WORK" in fault red - our staffing, shouted at somebody reading a basketball page,
+       off an instantaneous sample of a quantity whose designed idle gap is 300 seconds. The duration
+       stays because it is the only part with any content; the capitals and the red are the part that
+       claimed a verdict. `blocked_reason` is an internal token and is deliberately still not shown. */
     var extra = (co.last_progress_age_secs == null)
       ? "nothing has moved and we cannot tell for how long"
       : "nothing has moved for " + plainFor(co.last_progress_age_secs);
     if (co.last_spawn_attempt) extra += ", and a restart has been tried";
-    return { level: "bad", text: "NOBODY IS RUNNING THE WORK - " + extra };
+    return { level: "", text: "Nobody is running the work right now - " + extra };
   }
 
   /* ---- HOW MUCH OF THE WORK LIMIT IS USED, only ever as well as we actually know it. A number is
@@ -492,7 +527,11 @@
      00:41Z is still a real projection honestly labelled by the banner, and blanking the slate would
      punish a reader for our publishing fault. */
   function staleUnknown(what) {
-    return { level: "warn",
+    /* CALM, like the two pills it degrades. This is the honest-unknown state of an operator field,
+       and an unknown is not a fault; the page's ACTUAL fault in this case - it stopped refreshing -
+       is already stated once, loudly, in the freshness banner directly above, which is where a
+       reader is meant to read it. Amber here was the same alarm a second time, one rung quieter. */
+    return { level: "",
              text: "We cannot tell " + what + " - this page stopped refreshing, so anything it says " +
                    "about right now is out of date" };
   }
@@ -590,6 +629,9 @@
     _coordView: coordView,
     _workView: workView,
     _staleView: staleView,
+    // exported so the ruling above can be pinned on the SHIPPED function rather than a copy of it:
+    // the stale-degraded chair/watcher fields must stay calm too, not merely one rung quieter.
+    _staleUnknown: staleUnknown,
     _plainAgo: plainAgo,
     _pctSentence: pctSentence,
     PUB_FLOOR_SECS: PUB_FLOOR_SECS,
