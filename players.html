@@ -411,24 +411,62 @@
       // r.thin now means "small basis AND we hold no career record to fall back on" — the only
       // state that may say the words "thin sample". A player whose own past we hold gets the
       // honest alternative instead, because a returning veteran is not an unknown.
+      // A CAVEAT EVERY ROW CARRIES TELLS A READER NOTHING, AND THIS ONE RODE 135 OF 186 ROWS.
+      // `career_basis` means "we hold earlier seasons her current sample never read" — a true fact
+      // that says nothing about whether THIS season's read is short, so it fired on the LARGEST
+      // sample on the board (a 29-game veteran near 950 minutes) and on 124 others like her.
+      // Measured on the 2026-07-31 bake: 125 of the 135 tagged rows (93%) were not a small basis at
+      // all, and the tagged rows' median floor time ran HIGHER than the untagged rows' — the
+      // warning was anti-correlated with the thing it warned about. The field was
+      // never the bug: compare.html and explorer.html both gate it behind impact_provisional before
+      // wording it, and this was the one renderer that printed it bare. It now waits on the bake's
+      // own small-basis decision (server-side single source, never re-derived here).
+      //
+      // And the tag now NAMES THE FLOOR TIME instead of asserting a category. Thin-ness is a
+      // continuum: "58 min so far" and "13 min so far" are different warnings and used to print the
+      // same four words. The number shown is the same whole-minute integer the threshold compared,
+      // so a reader can check the verdict against the row instead of taking it on trust.
+      // The chain below is deliberately SELF-CONTAINED — no helper and no outer var. Two suites
+      // slice it straight out of this file and eval it with only (r, el, nm) in scope, which is the
+      // whole reason the wording can be pinned at all; a shared local would silently un-testable it.
       if(r.thin){
-        var thT=el("span","tag"," · thin sample");
+        var fmin = (r.season_min_read!=null) ? Math.round(r.season_min_read) : null;
+        // The reference the cutoff came from, in plain words rather than asserted as a verdict.
+        // "rough" and "light" are opposite sides of a measured crossing, not one cliff.
+        var grade = (r.rate_basis==="rough")
+          ? "That is below the level where a player's own rate reads better than a league-average baseline, so league average is the better guide. "
+          : (r.rate_basis==="light")
+            ? "Her own rate edges a league-average baseline at this much floor time, but only just. "
+            : "";
+        var thT=el("span","tag"," · thin: "+(fmin!=null ? (fmin+" min so far") : "little floor time so far"));
         // The caveat explains itself rather than asserting: the basis is SAMPLED FLOOR TIME, which
         // is why a 20-game reserve with 60 total minutes qualifies and a 5-game starter may not.
         thT.title = "Her per-game averages rest on "
-                  + (r.season_min_read!=null ? (Math.round(r.season_min_read)+" minutes") : "very little floor time")
+                  + (fmin!=null ? (fmin+" minutes") : "very little floor time")
                   + " of court time this season"
                   + (r.gp!=null ? (" across "+r.gp+" game"+(r.gp===1?"":"s")) : "")
-                  + " — below the level where a player's own rate reads better than a league-average "
-                  + "baseline, and we hold no earlier record to lean on. Treat the numbers as rough.";
+                  + ". " + grade
+                  + "We hold no earlier record to lean on either, so treat the numbers as rough.";
         nm.appendChild(thT);
       }
-      else if(r.career_basis){
-        var cbT=el("span","tag"," · short season sample");
-        cbT.title = "Her season averages rest on "+(r.gp!=null?r.gp:"a few")+" game"
-                  + (r.gp===1?"":"s")+" so far"
+      // THE GATE. Without it this branch fires on held history alone — see the block comment above.
+      // Falls back to impact_provisional on a pre-field bake, which is how compare.html and
+      // explorer.html have always gated the same field, so an older payload degrades to the
+      // platform's existing rule rather than to the defect.
+      else if(r.career_basis && ((r.small_basis!=null) ? !!r.small_basis : !!r.impact_provisional)){
+        var cmin = (r.season_min_read!=null) ? Math.round(r.season_min_read) : null;
+        var cgrade = (r.rate_basis==="rough")
+          ? "That is below the level where a player's own rate reads better than a league-average baseline, so league average is the better guide. "
+          : (r.rate_basis==="light")
+            ? "Her own rate edges a league-average baseline at this much floor time, but only just. "
+            : "";
+        var cbT=el("span","tag"," · short season: "+(cmin!=null ? (cmin+" min so far") : "little floor time so far"));
+        cbT.title = "Her season averages rest on "
+                  + (cmin!=null ? (cmin+" minutes across ") : "")
+                  + (r.gp!=null?r.gp:"a few")+" game"+(r.gp===1?"":"s")+" so far"
                   + (r.career_gp!=null ? (", with "+r.career_gp+" career games on file behind them") : "")
-                  + " — a short read on a player we know, not a player we don't.";
+                  + ". " + cgrade
+                  + "This is a short read on a player we know, not a player we don't.";
         nm.appendChild(cbT);
       }
       // RANK-DELTA CHIP (A-rung): on the impact axis, a firm-impact row carries a compact pill
