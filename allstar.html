@@ -1472,7 +1472,11 @@
     var b=el("div","method-body");
     var ul=el("ul");
     var items=[];
-    if(has(s.n_games)) items.push("All-Star games in the history file: "+s.n_games+".");
+    // "on record", not "in the history file". The frozen history file holds the 21 games that
+    // existed when the projection was fitted; the 2026 row is added to the page from the graded
+    // box score without rewriting that file, so naming the file here would undercount the table
+    // the reader is looking at.
+    if(has(s.n_games)) items.push("All-Star games on record: "+s.n_games+".");
     if(has(s.effective_n_note)) items.push(s.effective_n_note);
     else items.push("The format has changed repeatedly, so the effective sample inside any single format is single digits. That is why the intervals are wide.");
     (s.notes||[]).forEach(function(t){ items.push(t); });
