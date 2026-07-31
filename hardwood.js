@@ -190,17 +190,13 @@
         : "not yet";
     }
 
-    var pipeP = document.querySelector("#hw-pipe b");
-    if (pipeP) pipeP.textContent = status ? pipeView(status.pipe_health).text : "checking";
-
-    renderScout(status ? status.scout : null);
-    // COORDINATOR pill (CEO P0b 20260725) - the chair NEVER renders blank. A missing/empty
-    // coordinator object, an UNKNOWN state, or alive:false all render LOUD, never a silent gap that
-    // reads as 'nothing here'. Distinguishes ALIVE / DEAD / UNKNOWN explicitly.
-    renderCoordinator(status ? status.coordinator : null);
-
     /* ONE precedence, computed ONCE: the work state decides its own sentence AND tells the freshness
-       sentence whether an ageing page is a broken publisher or the expected result of a pause. */
+       sentence whether an ageing page is a broken publisher or the expected result of a pause.
+
+       COMPUTED BEFORE THE PILLS ARE PAINTED, which is the ordering the 00:43Z freeze needed: freshness
+       has to be known before any now-field is allowed to assert a present-tense fact. It used to be
+       computed after them, so the pills had already claimed "running right now" by the time the page
+       worked out it was two hours stale. */
     var work = polled
       ? workView(status ? status.pause : null, status ? status.beacon : null, !!status)
       : { level: "", paused: false, short: "Checking whether anything is paused",
@@ -222,7 +218,35 @@
     var fresh = staleView(genIso, status ? status.stale_after_secs : null, Date.now(), work.paused);
     var freshLoud = !!(fresh.level && fresh.level !== "ok");
     var workLoud = !freshLoud && !!(work.paused || work.level === "bad");
-    renderWork(work, workLoud);
+
+    /* `fresh.stale` is the invalidating condition, NOT `freshLoud`. They differ, and the difference is
+       the whole point: an unreadable or absent `generated_utc` is also loud (level "warn") but its
+       `stale` is false, because we do not know that the payload is old - only that we cannot date it.
+       Degrading the now-fields on a missing timestamp would tell a reader the chair is unknown every
+       time a stamp fails to parse on an otherwise perfectly fresh page. Only a MEASURED age past the
+       loud threshold retires a now-field. */
+    var invalid = !!fresh.stale;
+
+    // Now-fields, painted only after freshness is known. Each still always says something (never-blank);
+    // past the threshold what it says is that it cannot know.
+    var pipeP = document.querySelector("#hw-pipe b");
+    if (pipeP) {
+      pipeP.textContent = !status ? "checking"
+        : (invalid ? "we cannot tell right now" : pipeView(status.pipe_health).text);
+    }
+    renderScout(status ? status.scout : null, invalid);
+    // COORDINATOR pill (CEO P0b 20260725) - the chair NEVER renders blank. A missing/empty
+    // coordinator object, an UNKNOWN state, or alive:false all render LOUD, never a silent gap that
+    // reads as 'nothing here'. Distinguishes ALIVE / DEAD / UNKNOWN explicitly. And past the staleness
+    // threshold it distinguishes a FOURTH state: we are not entitled to an opinion (see staleUnknown).
+    renderCoordinator(status ? status.coordinator : null, invalid);
+
+    /* The work line is degraded the same way, for the same reason - "Nothing is paused" read off a
+       two-hour-old file is the same class of confident wrong answer as "Work is being run right now".
+       The staleness banner still outranks it and is what actually appears at the top of the page. */
+    renderWork(invalid ? { level: "warn", paused: false,
+                           short: "We cannot tell what is paused",
+                           text: "" } : work, invalid ? false : workLoud);
     renderFresh(freshLoud ? fresh : { level: "ok", text: "" });
   }
 
@@ -438,8 +462,46 @@
     var txt = pill.querySelector(".txt");
     if (txt) txt.textContent = text;
   }
-  function renderScout(sc) { var v = scoutView(sc); paintPill("hw-scout", v.level, v.text); }
-  function renderCoordinator(co) { var v = coordView(co); paintPill("hw-coord", v.level, v.text); }
+  /* ---- STALENESS INVALIDATES A LIVE-STATE FIELD; IT DOES NOT MERELY APOLOGISE ABOVE IT.
+     (CEO P0 #4, 2026-07-31: "a stale page renders every field UNKNOWN rather than last-known".)
+
+     MEASURED, the exact incident. The public board published nothing between 00:43:47Z and 02:38:26Z -
+     1h54m, no deploy commit at all - because an interrupted lane left a publish-guard file dirty. The
+     frozen payload it left on screen said:
+
+         generated_utc     2026-07-31T00:41:22Z
+         stale_after_secs  300
+         coordinator       { alive: true, last_heartbeat_utc: 2026-07-31T00:41:42Z }
+
+     Every one of those was TRUE when it was written. `alive: true` then went on being displayed as a
+     present-tense fact for the next two hours, through the death of that coordinator and an empty
+     chair, because the pill only ever read the payload and the payload never changed. The freshness
+     banner did its job and said "do not trust anything on this page" - and directly beneath it the
+     chair pill said "Work is being run right now", which is the sentence a reader actually believes.
+
+     A WARNING ABOVE A CONFIDENT WRONG ANSWER IS STILL A CONFIDENT WRONG ANSWER. So past the loud
+     threshold, a field whose whole meaning is "right now" stops asserting anything: it degrades to
+     UNKNOWN and names staleness as the reason. This is the never-blank contract, not a break from it -
+     the pill still always says something, it just stops claiming to know a present-tense fact it
+     cannot possibly know from a two-hour-old file.
+
+     SCOPE, deliberately narrow: only NOW-fields (is anyone running, is the scout ticking, what is
+     paused, how many directives wait). Basketball numbers are NOT degraded - a projection from
+     00:41Z is still a real projection honestly labelled by the banner, and blanking the slate would
+     punish a reader for our publishing fault. */
+  function staleUnknown(what) {
+    return { level: "warn",
+             text: "We cannot tell " + what + " - this page stopped refreshing, so anything it says " +
+                   "about right now is out of date" };
+  }
+  function renderScout(sc, stale) {
+    var v = stale ? staleUnknown("if the watcher is running") : scoutView(sc);
+    paintPill("hw-scout", v.level, v.text);
+  }
+  function renderCoordinator(co, stale) {
+    var v = stale ? staleUnknown("if anyone is running the work") : coordView(co);
+    paintPill("hw-coord", v.level, v.text);
+  }
   /* The PILL always states the work state in full - that is the never-blank contract, and it is
      unchanged. The BANNER is a separate decision made by the caller (see the precedence in
      renderStrip): a state that is real but not actionable stays in the pill and does not take a
