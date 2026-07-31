@@ -146,10 +146,47 @@
     for(var i=0;i<data.teams.length;i++) if(data.teams[i].team===abbr) return data.teams[i].strength;
     return 0;
   }
+  // ---------- team-strength freshness gate ----------
+  // Team strength is the ONE input on this page that goes stale. The dive curves are a decade of
+  // finished games and never move; strength moves every game day. It arrives as a snapshot, so it
+  // carries its own stamp (team_strength_as_of) SEPARATE from the bake stamp, and this page will
+  // not feed it into a displayed probability once it is too old to stand behind.
+  // 48 hours: the team board rebakes many times a day, so a snapshot older than two days means the
+  // refresh stopped running rather than that the league went quiet.
+  var STRENGTH_MAX_AGE_H = 48;
+  function strengthAgeHours(data){
+    var raw = data && data.team_strength_as_of;
+    if(!raw) return null;                       // undated snapshot -> age UNKNOWN
+    var t = Date.parse(raw);
+    if(!isFinite(t)) return null;
+    // __now_ms lets a test pin the clock; live it is simply now.
+    var now = (data && data.__now_ms) || Date.now();
+    return (now - t)/3600000;
+  }
+  // UNKNOWN age counts as too old (fail-safe): an undated number is never treated as fresh.
+  function strengthUsable(data){
+    var h = strengthAgeHours(data);
+    return h!=null && h<=STRENGTH_MAX_AGE_H;
+  }
+  function strengthAsOfText(data){
+    var raw = data && data.team_strength_as_of;
+    if(!raw) return "an unrecorded date";
+    var t = Date.parse(raw);
+    if(!isFinite(t)) return "an unrecorded date";
+    var d = new Date(t);
+    var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return MON[d.getUTCMonth()]+" "+d.getUTCDate()+", "+d.getUTCFullYear();
+  }
   function computeRead(data,st){
     var cp=cpOf(data,st.ck);
     var homeShift = st.side==="home" ? cp.home_edge_pts_left : (st.side==="away" ? -cp.home_edge_pts_left : 0);
-    var gap = strengthOf(data,st.teamA)-strengthOf(data,st.teamB);   // full-game points, your side positive
+    // Naming EITHER side engages the strength dial (the unnamed side is the average team), so a
+    // single pick is enough to owe the reader the notice.
+    var matchupPicked = !!(st.teamA || st.teamB) && st.teamA!==st.teamB;
+    var fresh = strengthUsable(data);
+    // Stale strength contributes NOTHING to the probability. The reader is told instead (see
+    // renderResult) — a probability shifted by a week-old number is worse than an unshifted one.
+    var gap = fresh ? (strengthOf(data,st.teamA)-strengthOf(data,st.teamB)) : 0;
     var gapShift = gap*cp.frac_left;                                  // the part of that edge still to come
     var eff = st.margin + homeShift + gapShift;
     var raw = interp(cp.curve, st.margin);
@@ -161,7 +198,11 @@
       rawpct:raw.winpct, winpct:adj.winpct,
       clamped:adj.clamped||raw.clamped,
       n: near?near.n:null, spot: near?near.spot:null,
-      thin: !!(near && near.n!=null && near.n<data.thin_n)
+      thin: !!(near && near.n!=null && near.n<data.thin_n),
+      strengthFresh: fresh,
+      // true only when the reader asked for a matchup AND we had to decline to use it
+      strengthWithheld: !!(matchupPicked && !fresh),
+      strengthAsOf: strengthAsOfText(data)
     };
   }
   function fmtPct(w){
@@ -206,6 +247,14 @@
         "Adjustments: "+bits.join("; ")+". That slides you from the plain even-floor read of "+fmtPct(r.rawpct)+" to "+fmtPct(r.winpct)+" — same measured curve, different spot on it."));
     }
 
+    // Say it plainly when the matchup dial was asked for and we would not use it. OMIT, never
+    // invent: the reader is told what the number is and when it is from, not left to assume.
+    if(r.strengthWithheld){
+      pad.appendChild(el("div","caution",
+        "Matchup strength not applied: our team-strength numbers here were last refreshed "+r.strengthAsOf+
+        ", and teams have played since. The reading above is the even-teams read, adjusted for the floor only. "+
+        "For each team's strength as it stands today, see the team board."));
+    }
     if(r.thin){
       pad.appendChild(el("div","caution",
         "Thin sample: the nearest measured spot rests on only "+r.n+" games — treat this as a rough read, not a precise probability."));
@@ -385,8 +434,14 @@
   function teamSelect(data,id){
     var s=el("select"); s.id=id;
     var o0=el("option",null,"Average team"); o0.value=""; s.appendChild(o0);
+    // Print the per-game number ONLY while the snapshot is fresh. A stale one would contradict the
+    // team board about the same team on the same day (five teams were on the wrong side of zero),
+    // so it is left off rather than shown wrong — and the note beside the control says why.
+    var showNums = strengthUsable(data);
     data.teams.forEach(function(t){
-      var o=el("option",null,t.name+" ("+(t.strength>0?"+":"")+t.strength.toFixed(1)+" per game)");
+      var o=el("option",null, showNums
+        ? t.name+" ("+(t.strength>0?"+":"")+t.strength.toFixed(1)+" per game)"
+        : t.name);
       o.value=t.team; s.appendChild(o);
     });
     return s;
@@ -436,6 +491,14 @@
     controls.appendChild(ctl("Your team",ta));
     controls.appendChild(ctl("Opponent",tbsel));
     main.appendChild(controls);
+
+    // Never omit silently: when the strength snapshot is too old to use, say so where the dial is.
+    if(!strengthUsable(DATA)){
+      main.appendChild(el("p","caution",
+        "The matchup dial is resting: our team-strength numbers here were last refreshed "+
+        strengthAsOfText(DATA)+", so picking two teams will not move the reading. "+
+        "Everything else on this page is a measured historical read and is unaffected."));
+    }
 
     var resultHost=el("div"); resultHost.id="result"; main.appendChild(resultHost);
 
@@ -490,12 +553,37 @@
       .then(function(r){ return r.ok?r.json():null; })
       .catch(function(){ return null; });
   }
+  // Take team strength from the LIVE team board rather than the copy frozen into our own bake.
+  // Same origin, same field, same quantity (points per game vs the league average) — this is the
+  // exact number the bake snapshots, so reading it directly keeps the matchup dial current even if
+  // our bake has not run. Any failure returns null and we fall back to the baked snapshot, which
+  // then has to clear the freshness gate on its own.
+  function fetchStrength(){
+    return fetch("./teams.json?v="+Date.now(),{cache:"no-cache"})
+      .then(function(r){ return r.ok?r.json():null; })
+      .catch(function(){ return null; })
+      .then(function(t){
+        if(!t||!t.teams||!t.teams.length||!t.generated_utc) return null;
+        var rows=[];
+        for(var i=0;i<t.teams.length;i++){
+          var x=t.teams[i];
+          if(!x||!x.team||typeof x.strength!=="number"||!isFinite(x.strength)) continue;
+          rows.push({team:x.team,name:x.team_full||x.team,strength:x.strength});
+        }
+        return rows.length ? {teams:rows,as_of:t.generated_utc} : null;
+      })
+      .catch(function(){ return null; });
+  }
   function load(){
     fetch("./situation.json?v="+Date.now(),{cache:"no-cache"})
       .then(function(r){ return r.ok?r.json():null; })
       .catch(function(){ return null; })
       .then(function(d){
         DATA=d;
+        return fetchStrength();
+      })
+      .then(function(sv){
+        if(DATA && sv){ DATA.teams=sv.teams; DATA.team_strength_as_of=sv.as_of; }
         return fetchLive();
       })
       .then(function(lv){
@@ -503,7 +591,19 @@
         render();
         var a=document.getElementById("ago"); if(a) a.textContent="measured study";
         var f=document.getElementById("foot");
-        if(f) f.textContent="Baked "+((DATA&&DATA.generated_utc)||"")+" from our published deep-dive studies (comebacks, lead values, home floor, score effects) and current team strength. Every probability is a measured historical read; when games are in progress, the strip up top shows the last captured score, a few minutes behind the arena.";
+        // Date the two clocks SEPARATELY. The studies are a decade of finished games and do not go
+        // stale; team strength is a snapshot and does, so it is dated on its own instead of being
+        // called "current" (it was called current while nine days behind the team board).
+        if(f){
+          var studies="Built from our published deep-dive studies: comebacks, lead values, the home floor and score effects. "+
+            "Every probability is a measured historical read; when games are in progress, the strip up top shows the last "+
+            "captured score, a few minutes behind the arena.";
+          var strengthLine = strengthUsable(DATA)
+            ? " Team strength for the matchup dial is from "+strengthAsOfText(DATA)+"."
+            : " Team strength for the matchup dial was last refreshed "+strengthAsOfText(DATA)+
+              ", too far back to apply, so the matchup dial is resting.";
+          f.textContent = studies + strengthLine;
+        }
       });
   }
   // keep the age label + scores honest while the tab is open: re-read the small live file
