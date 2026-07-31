@@ -39,6 +39,16 @@
   .event .ei{display:inline-flex;flex-direction:column;line-height:1.25}
   .event .ei b{font-size:14px}
   .event .ei span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  /* FINAL RESULT — the game is over, so the outcome leads the page. Deliberately the
+     loudest block here: a reader must not be able to reach a projection without first
+     seeing what actually happened. */
+  .final{border:1px solid var(--line2);border-left:5px solid var(--acc);background:var(--card);border-radius:9px;padding:13px 15px;margin:12px 0 4px;box-shadow:var(--shadow)}
+  .final .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--acc);border-radius:999px;padding:2px 9px;margin-bottom:8px}
+  .final .score{margin:0 0 3px;font-size:22px;font-weight:760;line-height:1.25;font-variant-numeric:tabular-nums}
+  .final .when{font-size:11px;color:var(--dim);margin-bottom:9px}
+  .final p{margin:0 0 7px;font-size:12.5px;line-height:1.65;color:var(--ink)}
+  .final p:last-of-type{margin-bottom:0}
+  .final .ref{margin-top:9px;font-size:11px;color:var(--dim)}
   /* correction notice — a retracted finding is louder than an honesty caveat, on purpose */
   .retract{border:1px solid var(--bad);border-left:5px solid var(--bad);background:var(--card);border-radius:9px;padding:12px 15px;margin:12px 0 4px;box-shadow:var(--shadow)}
   .retract h3{margin:0 0 7px;font-size:13.5px;line-height:1.35;color:var(--bad);font-weight:700}
@@ -197,7 +207,7 @@
   <h1>The Hardwood — All-Star Game</h1>
   <span class="ago" id="ago"></span>
 </header>
-<div class="sub">Our read on the 2026 All-Star Game. An exhibition is the hardest thing on the calendar to project — so this page shows ranges, not verdicts, and puts every assumption on the face of the output.</div>
+<div class="sub" id="sub">Our read on the 2026 All-Star Game. An exhibition is the hardest thing on the calendar to project — so this page shows ranges, not verdicts, and puts every assumption on the face of the output.</div>
 <nav>
   <a href="./index.html">Board</a>
   <a href="./queue.html">What's Next</a>
@@ -360,12 +370,36 @@
       d.appendChild(el("span",null,l)); p.appendChild(d);
     }
     item(ev.title,"Event","event name not published to this page");
-    item(ev.tipoff,"Tip-off","tip time not published to this page");
+    // A PLAYED game has a score, not a tip time. The tip time only renders while the
+    // bake carries no result — once it does, showing a future tip is the defect.
+    if(has(ev.final_score)){
+      item(ev.final_score,"Final score");
+      if(has(ev.played)) item(ev.played,"Played");
+    } else {
+      item(ev.tipoff,"Tip-off","tip time not published to this page");
+    }
     item(ev.venue,"Venue","venue not published to this page");
     item(ev.broadcast,"Broadcast","broadcast not published to this page");
     if(has(ev.format)) item(ev.format,"Format");
     c.appendChild(p);
     if(has(ev.note)) { var n=el("div","pad"); n.appendChild(el("div","note",ev.note)); c.appendChild(n); }
+  }
+
+  // THE GAME IS OVER, so the result leads. This renders FIRST — above the correction, the
+  // headline and every distribution — because the page's whole job changed the moment the
+  // final buzzer went: it is now a record of what we said and what happened, not a forecast.
+  // Renders only when the bake carries a graded result, so an unplayed game degrades to the
+  // pre-game read rather than showing an empty score.
+  function renderResult(main){
+    var r=DATA.result;
+    if(!r || !has(r.headline)) return;
+    var b=el("div","final");
+    b.appendChild(el("span","tag",r.label||"Final"));
+    b.appendChild(el("div","score",String(r.headline)));
+    if(has(r.played)) b.appendChild(el("div","when",String(r.played)));
+    (r.lines||[]).forEach(function(t){ if(has(t)) b.appendChild(el("p",null,String(t))); });
+    if(has(r.reference)){ var rf=el("div","ref"); rf.appendChild(el("b",null,"Basis: ")); rf.appendChild(document.createTextNode(r.reference)); b.appendChild(rf); }
+    main.appendChild(b);
   }
 
   // A retracted finding is announced, never quietly deleted. This sits above the
@@ -387,6 +421,12 @@
     b.appendChild(el("h3",null,"How to read this page"));
     var ul=el("ul");
     var lines=(DATA.read_me && DATA.read_me.length) ? DATA.read_me : [
+      // The FIRST thing a reader is told once the game is played: everything below the
+      // result is the pre-game read, kept as published rather than re-run against the
+      // outcome. Drops back to the pure pre-game wording if a bake carries no result.
+      (DATA.result && has(DATA.result.headline))
+        ? "The game has been PLAYED. The result is at the top of this page; everything below it is the read we published beforehand, kept exactly as published and not re-run against the outcome."
+        : "Everything below is a projection of a game that has not been played yet.",
       "Everything here is a RANGE. The width of the range is the finding — a narrow number for an exhibition would be a bug, not skill.",
       "The sample is thin: roughly 25 All-Star Games exist, and the format has changed repeatedly, so the effective sample inside any one format is single digits.",
       "Player ratings were fit on regular-season basketball and are being applied OUTSIDE that regime. Treat every player line as directional.",
@@ -399,11 +439,17 @@
   }
 
   function renderTotal(main){
-    section("Total points — the whole distribution");
+    // Titled by whether the game has been played. Presenting a beaten projection under a
+    // live-sounding heading is the thing that made this page lie.
+    section(has((DATA.result||{}).headline)
+      ? "Total points — the range we published before the game"
+      : "Total points — the whole distribution");
     var t=DATA.total||{};
     var c=cardIn(main);
     var qs=qlist(t.quantiles);
     if(!qs.length){ var p=el("div","pad"); p.appendChild(unknown(t.unavailable_reason || "the total-points distribution was not produced in time for tip-off")); c.appendChild(p); return; }
+    // The post-game line goes ABOVE the chart, so the actual is read before the median.
+    if(has(t.postgame)){ var pg=el("div","pad"); pg.appendChild(el("div","note",String(t.postgame))); c.appendChild(pg); }
     fanBlock(c,{title:t.label||"Combined final score",quantiles:qs,units:"points",dec:0,
       note:t.note||"The bands are the 5-95, 10-90 and 25-75 intervals; the tick is the median. Read the band, not the tick.",
       reference:t.reference});
@@ -460,7 +506,7 @@
       if(has(wt.plain)) wb.appendChild(el("div","hlp",wt.plain));
       var wl=el("ul");
       if(has(wt.share_of_total_variance_from_efficiency))
-        wl.appendChild(el("li",null,"Share of tonight's total-points uncertainty coming from how EFFICIENT the game is: "+Math.round(wt.share_of_total_variance_from_efficiency*100)+"%."));
+        wl.appendChild(el("li",null,"Share of the total-points uncertainty coming from how EFFICIENT the game is: "+Math.round(wt.share_of_total_variance_from_efficiency*100)+"%."));
       if(has(wt.share_of_total_variance_from_pace))
         wl.appendChild(el("li",null,"Share coming from how FAST it is: "+Math.round(wt.share_of_total_variance_from_pace*100)+"%."));
       if(has(wt.pace_cv)&&has(wt.efficiency_cv))
@@ -1129,7 +1175,9 @@
   }
 
   function renderProps(main){
-    section("Player props — every number, all of it, no clicks");
+    section(has((DATA.result||{}).headline)
+      ? "Player props — the ladder we published before the game"
+      : "Player props — every number, all of it, no clicks");
     var pr=DATA.props;
     if(!pr || pr.available!==true || !((pr.players||[]).length)){
       var c0=cardIn(main); var p0=el("div","pad");
@@ -1167,6 +1215,10 @@
     var saysMin=false;
     rtf.forEach(function(t){ if(String(t).indexOf("1999-2017")>=0) saysMin=true; });
     if(!saysMin) rtf.push("The minutes shape in use was fitted on the 1999-2017 games and the starter/reserve split is asserted, not fitted. The 2018 onward minutes have since been recovered, so that fuller record is what the range above is measured on.");
+    // FIRST line of the honesty block once the game is played: this ladder is a record, not
+    // a live price. It goes at the front because a reader who stops after one line must
+    // still learn the game is decided.
+    if(has(pr.postgame)) rtf.unshift(String(pr.postgame));
     {
       var b=el("div","banner");
       b.appendChild(el("h3",null,"Read this first"));
@@ -1450,6 +1502,7 @@
       c.appendChild(p); main.appendChild(c); return;
     }
     renderEvent(main);
+    renderResult(main);
     renderRetraction(main);
     renderHeadline(main);
     renderBanner(main);
@@ -1472,6 +1525,13 @@
     renderFun(main);
     renderAssumptions(main);
     renderSample(main);
+
+    // The standing subtitle promises a forecast. Once the game is played the page is a
+    // record of one, and the line above the fold has to say so.
+    var sub=document.getElementById("sub");
+    if(sub && has((DATA.result||{}).headline)){
+      sub.textContent="The 2026 All-Star Game has been played. This page leads with the result, then keeps the read we published before it — the ranges, the assumptions and the prop ladder exactly as they went out, so what we said can be checked against what happened.";
+    }
 
     var foot=document.getElementById("foot");
     foot.textContent="";
