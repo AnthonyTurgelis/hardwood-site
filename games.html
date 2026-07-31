@@ -396,7 +396,13 @@
       if(rows.length){
         rows.forEach(function(p){
           var r=el("div","rotrow");
-          var nmtxt=p.name + (p.updated ? " (status changed since we set this projection)" : "");
+          // A RESCUED player (tagged out when we set the projection, since cleared) now SHOWS her
+          // projection, so she must not wear the same sentence as one whose projection is hidden.
+          // Both used to read "status changed since we set this projection", which is why a shown
+          // number and a dash were indistinguishable to a reader.
+          var nmtxt=p.name;
+          if(p.updated){ nmtxt += p.rescued ? " (cleared to play since we set this projection)"
+                                            : " (status changed since we set this projection)"; }
           r.appendChild(el("span","rotname", nmtxt));
           if(p.status==="limited"){
             r.appendChild(el("span","rotlim", p.play_pct!=null ? (p.play_pct+"% to play") : "limited"));
