@@ -270,23 +270,48 @@
     return s;
   }
 
+  // Stated absence for the zone board. The rim board is independent and still renders, but a
+  // reader is TOLD the zone board is missing rather than being served a page that is quietly
+  // shorter - an absent section that says nothing is indistinguishable from a section that was
+  // never built.
+  function zoneAbsentSection(){
+    var s=el("section");
+    s.appendChild(el("h2",null,"Shot-making by zone"));
+    s.appendChild(el("p","empty","This board is not loading right now, so it is not shown. The rim-protection numbers above are unaffected."));
+    return s;
+  }
+
   function render(d){
     curData=d;
     var main=document.getElementById("main"); main.innerHTML="";
     document.getElementById("foot").textContent="Updated "+(d.generated_et||d.generated_utc||"")+". Descriptive scouting stats — refreshed daily, not a betting line.";
     main.appendChild(rimSection(d));
     if(zoneData){ main.appendChild(zoneSpatialSection(zoneData)); }
+    else if(zoneMissing){ main.appendChild(zoneAbsentSection()); }
     flash();
   }
 
   /* ---------- shared live runtime ---------- */
-  var curData=null, zoneData=null, etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
-  // Static career zone-spatial feed: fetched once. Graceful — if it 404s, the rim board still
+  var curData=null, zoneData=null, zoneMissing=false, etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
+  // Static career zone-spatial feed: fetched once. Graceful — if it fails, the rim board still
   // renders; if it lands after the first rim render, we re-render to inject the zone section.
+  //
+  // WHY THIS NO LONGER ENDS IN AN EMPTY .catch(){}. It used to, and that is how this board went
+  // unnoticed for its entire life: the payload was baked and committed but never added to the
+  // publisher's allowlist, so it 404'd on the public site, this handler swallowed the failure, and
+  // the page rendered as though the zone section had never been designed. No error, no gap, no
+  // signal to anyone. Graceful degradation is still right — one dead feed must not take the page
+  // down — but degrading has to be VISIBLE, so both failure paths (a non-ok response and a thrown
+  // fetch/parse) now record the absence and re-render to disclose it.
   function loadZone(){
     fetch("./scouting_zone.json",{cache:"no-cache"}).then(function(r){
       return r.ok ? r.json() : null;
-    }).then(function(z){ if(z){ zoneData=z; if(curData){ render(curData); } } }).catch(function(){});
+    }).then(function(z){
+      if(z){ zoneData=z; } else { zoneMissing=true; }
+      if(curData){ render(curData); }
+    }).catch(function(){
+      zoneMissing=true; if(curData){ render(curData); }
+    });
   }
   function updAgo(){
     var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
