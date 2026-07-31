@@ -555,6 +555,11 @@
       seg.appendChild(b);
     });
     s.appendChild(seg);
+    /* A family with no range for THIS slate's games is absent, not borrowed from another night.
+       Say why, so a missing tab reads as a stated absence rather than an oversight. */
+    if(rm.suppressed && rm.suppressed.length && rm.suppressed_note){
+      s.appendChild(el("p","note", rm.suppressed_note));
+    }
     var rows=rm.stats[curStat]||[];
     var hi=0; rows.forEach(function(r){ var v=Math.max(r.hi90||0,r.point||0); if(v>hi)hi=v; }); hi=hi||1;
     var card=el("div","card"); var sc=el("div","scroll"); var t=el("table");
