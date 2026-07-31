@@ -241,12 +241,14 @@
     // threshold it distinguishes a FOURTH state: we are not entitled to an opinion (see staleUnknown).
     renderCoordinator(status ? status.coordinator : null, invalid);
 
-    /* The work line is degraded the same way, for the same reason - "Nothing is paused" read off a
-       two-hour-old file is the same class of confident wrong answer as "Work is being run right now".
-       The staleness banner still outranks it and is what actually appears at the top of the page. */
-    renderWork(invalid ? { level: "warn", paused: false,
-                           short: "We cannot tell what is paused",
-                           text: "" } : work, invalid ? false : workLoud);
+    /* THE WORK/PAUSE LINE IS DELIBERATELY *NOT* DEGRADED, and that is a correction: my first version
+       degraded it too, and `tests/test_hardwood_chrome_copy.js` caught it on the STALE-WHILE-PAUSED
+       case. It was right and the change was wrong. A pause is not a decaying now-fact like "someone is
+       running the work" - it is the EXPLANATION for an ageing page, and `staleView` reads
+       `work.paused` to decide whether staleness is a broken publisher or the expected result of a
+       pause we filed on purpose. Retiring it would delete the reason for the very banner above it and
+       leave a reader with a stale page and no account of why. The existing contract keeps one owner. */
+    renderWork(work, workLoud);
     renderFresh(freshLoud ? fresh : { level: "ok", text: "" });
   }
 
