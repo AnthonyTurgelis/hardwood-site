@@ -2023,7 +2023,7 @@
          other tabs' banner already use. The age comes from sinceIso(), so this sentence and the
          header freshness chip can never quote two different numbers.
        * pause: the `pause` block of ./status.json — the single published pause reading (the same one
-         the spawn gate itself consults), already polled by the other 22 tabs. We RENDER its state;
+         the spawn gate itself consults), already polled by every other tab. We RENDER its state;
          we never derive one. A read that did not land says so instead of implying "running".
      Recomputed in the browser once a second, deliberately: a board that stops being republished
      never re-renders, so a staleness sentence baked server-side would freeze at "fresh" exactly when
@@ -2192,8 +2192,13 @@
      duplication the two-banner split was introduced to kill and then reintroduced by always
      painting both. Nothing is lost: the freshness line still fires on its own whenever work is
      healthy and the board has genuinely gone stale.
-     TWO RULES, the same pair site/hardwood.js applies to the other 22 tabs, so the board and every
-     other page cannot describe the same machine differently:
+     TWO RULES, the same pair site/hardwood.js applies to every other tab, so the board and every
+     other page cannot describe the same machine differently. (Both places here used to say "the
+     other 22 tabs" - true when written, wrong within days, because the tab count only ever grows.
+     site/hardwood.js corrected its own copy of that tally on 2026-07-31 for the same reason. The
+     count is a grep, never prose: this particular tally was quoted back at us in a queue item
+     asserting the board had no status strip at all - work raised against the very comment that
+     documents the strip it says is missing. "Every other tab" cannot go stale.):
        1. A LINE IS FOR WORK THAT HAS ACTUALLY STOPPED - paused by us, stopped from outside, or an
           unreadable pause note that we fail closed and treat as stopped. "We cannot tell whether
           work is paused, that reading did not load" is an operator diagnostic he cannot act on; it
