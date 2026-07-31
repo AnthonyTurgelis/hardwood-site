@@ -1423,9 +1423,13 @@
           "Read from tonight's predicted-margin range, next to a typical league night.";
         c.appendChild(ts);
       }
-      // one-line HONEST "why we favor them" — the driver behind the pick (our full-roster rating
-      // edge, plus an availability or pace note when the row carries one). Reuses the range row's
-      // classes (no new CSS); wraps on a phone; graceful-null — rendered only when a driver is baked.
+      // The ONE line under the pick, and ONLY when it says something the rest of the card cannot:
+      // which way the injuries cut, or (from the baked edge decomposition) that a favorite we rate
+      // the WEAKER side is carried by the venue. It is baked EMPTY the rest of the time and this
+      // renders nothing — the old "our full-roster ratings give X a strong edge" copy, and the
+      // slate-quartile scoring line that replaced it, were both deleted for restating the number
+      // two rows above (CEO 20260730). Reuses the range row's classes (no new CSS); wraps on a
+      // phone; graceful-null — rendered only when a driver is baked.
       if(g.driver){
         var wy=el("div","range"); wy.style.flexWrap="wrap"; wy.style.color="var(--ink)";
         wy.appendChild(el("span","rlab","Why"));
