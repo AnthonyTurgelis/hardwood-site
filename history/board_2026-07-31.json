@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-07-31T12:40:22+00:00",
+ "generated_utc": "2026-07-31T12:45:07+00:00",
  "freshness": {
-  "baked_utc": "2026-07-31T12:40:22+00:00",
-  "baked_et": "Jul 31, 8:40am ET",
-  "revalidated_utc": "2026-07-31T12:40:22+00:00",
+  "baked_utc": "2026-07-31T12:45:07+00:00",
+  "baked_et": "Jul 31, 8:45am ET",
+  "revalidated_utc": "2026-07-31T12:45:07+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-07-31",
@@ -11,10 +11,10 @@
  "counts": {
   "running": 2,
   "done_today": 40,
-  "maintenance": 6,
+  "maintenance": 7,
   "needs_anthony": 0,
-  "lanes_today": 41,
-  "upcoming": 118
+  "lanes_today": 42,
+  "upcoming": 120
  },
  "sections": {
   "agent_updates": [
@@ -963,6 +963,17 @@
     "passes": 2
    },
    {
+    "name": "Qa pid recorder never recorded a pid",
+    "one_liner": "The pid recorder never recorded a pid — and dropped the heartbeat with it",
+    "chip": "DONE",
+    "team": "",
+    "time": "8:40am",
+    "at_iso": "2026-07-31T08:40:00-04:00",
+    "link": "https://drive.google.com/file/d/1Nsl6p3sZGxkp38Thq6qci6GUjK42vkzu/view?usp=drivesdk",
+    "impact": 1,
+    "maint": true
+   },
+   {
     "name": "Qa crisis lint allowlist outlived its crisis",
     "one_liner": "QA — a crisis lint allowlist outlived its crisis and hid a live red",
     "chip": "DONE",
@@ -1352,15 +1363,6 @@
     "link": "https://drive.google.com/file/d/19yyPF0yJamDa3H4ld1zFWcZB05iSPYsV/view?usp=drivesdk",
     "impact": 3,
     "headline": true
-   },
-   {
-    "name": "Gameday faces for everyone",
-    "one_liner": "Completed and recorded.",
-    "chip": "DONE",
-    "team": "Site",
-    "time": "8:10pm",
-    "at_iso": "2026-07-30T20:10:00-04:00",
-    "impact": 1
    }
   ],
   "upcoming": {
@@ -1885,7 +1887,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "CEO ask",
-      "rank": 52,
+      "rank": 54,
       "actions": [
        {
         "verb": "top",
@@ -1921,7 +1923,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 53,
+      "rank": 55,
       "actions": [
        {
         "verb": "top",
@@ -1957,7 +1959,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 61,
+      "rank": 63,
       "actions": [
        {
         "verb": "top",
@@ -1993,7 +1995,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 67,
+      "rank": 69,
       "actions": [
        {
         "verb": "top",
@@ -2029,7 +2031,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 70,
+      "rank": 72,
       "actions": [
        {
         "verb": "top",
@@ -2065,7 +2067,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 77,
+      "rank": 79,
       "actions": [
        {
         "verb": "top",
@@ -2101,7 +2103,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 90,
+      "rank": 92,
       "actions": [
        {
         "verb": "top",
@@ -2137,7 +2139,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 91,
+      "rank": 93,
       "actions": [
        {
         "verb": "top",
@@ -2173,7 +2175,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 104,
+      "rank": 106,
       "actions": [
        {
         "verb": "top",
@@ -2209,7 +2211,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 115,
+      "rank": 117,
       "actions": [
        {
         "verb": "top",
@@ -2524,6 +2526,42 @@
       ]
      },
      {
+      "task_id": "the-counter-truth-writer-reports-lanes-orphaned",
+      "family": "infra",
+      "name": "The reaper logs lanes as orphaned, fails to write it, and returns them as orphaned anyway",
+      "header": "The reaper logs lanes as orphaned, fails to write it, and returns them as orphaned anyway",
+      "why": "Found while regression-testing the pid recorder and reproduced against unmodified code so it is not that lane's doing. On Windows the ledger's atomic write does an os.replace which raises ...",
+      "priority": 1,
+      "seat": "qa",
+      "status": "READY",
+      "state": "ready now",
+      "pm_authored": false,
+      "impact": "",
+      "rank": 27,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-counter-truth-writer-reports-lanes-orphaned%3A%20top&body=The%20reaper%20logs%20lanes%20as%20orphaned%2C%20fails%20to%20write%20it%2C%20and%20returns%20them%20as%20orphaned%20anyway%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-31%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-counter-truth-writer-reports-lanes-orphaned%3A%20bump&body=The%20reaper%20logs%20lanes%20as%20orphaned%2C%20fails%20to%20write%20it%2C%20and%20returns%20them%20as%20orphaned%20anyway%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-31%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-counter-truth-writer-reports-lanes-orphaned%3A%20demote&body=The%20reaper%20logs%20lanes%20as%20orphaned%2C%20fails%20to%20write%20it%2C%20and%20returns%20them%20as%20orphaned%20anyway%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-31%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-counter-truth-writer-reports-lanes-orphaned%3A%20shelve&body=The%20reaper%20logs%20lanes%20as%20orphaned%2C%20fails%20to%20write%20it%2C%20and%20returns%20them%20as%20orphaned%20anyway%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-31%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "starting-the-watcher-task-reports-success-withou",
       "family": "infra",
       "name": "The restart command returns success and the keeps running the old code",
@@ -2535,7 +2573,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 27,
+      "rank": 28,
       "actions": [
        {
         "verb": "top",
@@ -2571,7 +2609,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 28,
+      "rank": 29,
       "actions": [
        {
         "verb": "top",
@@ -2607,7 +2645,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 29,
+      "rank": 30,
       "actions": [
        {
         "verb": "top",
@@ -2643,7 +2681,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 30,
+      "rank": 31,
       "actions": [
        {
         "verb": "top",
@@ -2679,7 +2717,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 31,
+      "rank": 32,
       "actions": [
        {
         "verb": "top",
@@ -2715,7 +2753,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 32,
+      "rank": 33,
       "actions": [
        {
         "verb": "top",
@@ -2751,7 +2789,7 @@
       "state": "ready now",
       "pm_authored": true,
       "impact": "CEO-visible",
-      "rank": 33,
+      "rank": 34,
       "actions": [
        {
         "verb": "top",
@@ -2787,7 +2825,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 34,
+      "rank": 35,
       "actions": [
        {
         "verb": "top",
@@ -2823,7 +2861,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 35,
+      "rank": 36,
       "actions": [
        {
         "verb": "top",
@@ -2859,7 +2897,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 36,
+      "rank": 37,
       "actions": [
        {
         "verb": "top",
@@ -2884,6 +2922,42 @@
       ]
      },
      {
+      "task_id": "a-guard-shaped-function-that-nothing-calls",
+      "family": "infra",
+      "name": "A function that reads as active protection is defined and never called",
+      "header": "A function that reads as active protection is defined and never called",
+      "why": "Found width tripwire. cannot prove dead by silence is defined and has zero call sites. Its name states a real and important rule - that silence is not proof of death which is the doctrine the whole ...",
+      "priority": 2,
+      "seat": "qa",
+      "status": "READY",
+      "state": "ready now",
+      "pm_authored": false,
+      "impact": "",
+      "rank": 38,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-guard-shaped-function-that-nothing-calls%3A%20top&body=A%20function%20that%20reads%20as%20active%20protection%20is%20defined%20and%20never%20called%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-31%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-guard-shaped-function-that-nothing-calls%3A%20bump&body=A%20function%20that%20reads%20as%20active%20protection%20is%20defined%20and%20never%20called%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-31%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-guard-shaped-function-that-nothing-calls%3A%20demote&body=A%20function%20that%20reads%20as%20active%20protection%20is%20defined%20and%20never%20called%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-31%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-guard-shaped-function-that-nothing-calls%3A%20shelve&body=A%20function%20that%20reads%20as%20active%20protection%20is%20defined%20and%20never%20called%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-07-31%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "shadow-guards-can-never-graduate-because-their-e",
       "family": "infra",
       "name": "A guard on probation can never earn promotion because its evidence is written where it ...",
@@ -2895,7 +2969,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 37,
+      "rank": 39,
       "actions": [
        {
         "verb": "top",
@@ -2931,7 +3005,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 38,
+      "rank": 40,
       "actions": [
        {
         "verb": "top",
@@ -2967,7 +3041,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 39,
+      "rank": 41,
       "actions": [
        {
         "verb": "top",
@@ -3003,7 +3077,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 40,
+      "rank": 42,
       "actions": [
        {
         "verb": "top",
@@ -3039,7 +3113,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 41,
+      "rank": 43,
       "actions": [
        {
         "verb": "top",
@@ -3075,7 +3149,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 45,
+      "rank": 47,
       "actions": [
        {
         "verb": "top",
@@ -3111,7 +3185,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 46,
+      "rank": 48,
       "actions": [
        {
         "verb": "top",
@@ -3147,7 +3221,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 54,
+      "rank": 56,
       "actions": [
        {
         "verb": "top",
@@ -3183,7 +3257,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 55,
+      "rank": 57,
       "actions": [
        {
         "verb": "top",
@@ -3219,7 +3293,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 56,
+      "rank": 58,
       "actions": [
        {
         "verb": "top",
@@ -3255,7 +3329,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 57,
+      "rank": 59,
       "actions": [
        {
         "verb": "top",
@@ -3291,7 +3365,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 58,
+      "rank": 60,
       "actions": [
        {
         "verb": "top",
@@ -3327,7 +3401,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 59,
+      "rank": 61,
       "actions": [
        {
         "verb": "top",
@@ -3363,7 +3437,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 60,
+      "rank": 62,
       "actions": [
        {
         "verb": "top",
@@ -3399,7 +3473,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 62,
+      "rank": 64,
       "actions": [
        {
         "verb": "top",
@@ -3435,7 +3509,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 64,
+      "rank": 66,
       "actions": [
        {
         "verb": "top",
@@ -3471,7 +3545,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 65,
+      "rank": 67,
       "actions": [
        {
         "verb": "top",
@@ -3507,7 +3581,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 69,
+      "rank": 71,
       "actions": [
        {
         "verb": "top",
@@ -3543,7 +3617,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 71,
+      "rank": 73,
       "actions": [
        {
         "verb": "top",
@@ -3579,7 +3653,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 72,
+      "rank": 74,
       "actions": [
        {
         "verb": "top",
@@ -3615,7 +3689,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 73,
+      "rank": 75,
       "actions": [
        {
         "verb": "top",
@@ -3651,7 +3725,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 74,
+      "rank": 76,
       "actions": [
        {
         "verb": "top",
@@ -3687,7 +3761,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 75,
+      "rank": 77,
       "actions": [
        {
         "verb": "top",
@@ -3723,7 +3797,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "CEO ask",
-      "rank": 76,
+      "rank": 78,
       "actions": [
        {
         "verb": "top",
@@ -3759,7 +3833,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 78,
+      "rank": 80,
       "actions": [
        {
         "verb": "top",
@@ -3795,7 +3869,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 79,
+      "rank": 81,
       "actions": [
        {
         "verb": "top",
@@ -3831,7 +3905,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 80,
+      "rank": 82,
       "actions": [
        {
         "verb": "top",
@@ -3867,7 +3941,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 81,
+      "rank": 83,
       "actions": [
        {
         "verb": "top",
@@ -3903,7 +3977,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 82,
+      "rank": 84,
       "actions": [
        {
         "verb": "top",
@@ -3939,7 +4013,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "reliability",
-      "rank": 83,
+      "rank": 85,
       "actions": [
        {
         "verb": "top",
@@ -3975,7 +4049,7 @@
       "state": "blocked",
       "pm_authored": true,
       "impact": "",
-      "rank": 87,
+      "rank": 89,
       "actions": [
        {
         "verb": "top",
@@ -4011,7 +4085,7 @@
       "state": "blocked",
       "pm_authored": false,
       "impact": "",
-      "rank": 99,
+      "rank": 101,
       "actions": [
        {
         "verb": "top",
@@ -4047,7 +4121,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 114,
+      "rank": 116,
       "actions": [
        {
         "verb": "top",
@@ -4083,7 +4157,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 116,
+      "rank": 118,
       "actions": [
        {
         "verb": "top",
@@ -4119,7 +4193,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 117,
+      "rank": 119,
       "actions": [
        {
         "verb": "top",
@@ -4155,7 +4229,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 118,
+      "rank": 120,
       "actions": [
        {
         "verb": "top",
@@ -4337,7 +4411,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 42,
+      "rank": 44,
       "actions": [
        {
         "verb": "top",
@@ -4373,7 +4447,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 43,
+      "rank": 45,
       "actions": [
        {
         "verb": "top",
@@ -4409,7 +4483,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 44,
+      "rank": 46,
       "actions": [
        {
         "verb": "top",
@@ -4445,7 +4519,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 47,
+      "rank": 49,
       "actions": [
        {
         "verb": "top",
@@ -4481,7 +4555,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 48,
+      "rank": 50,
       "actions": [
        {
         "verb": "top",
@@ -4517,7 +4591,7 @@
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
-      "rank": 49,
+      "rank": 51,
       "actions": [
        {
         "verb": "top",
@@ -4553,7 +4627,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 50,
+      "rank": 52,
       "actions": [
        {
         "verb": "top",
@@ -4589,7 +4663,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 51,
+      "rank": 53,
       "actions": [
        {
         "verb": "top",
@@ -4625,7 +4699,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 63,
+      "rank": 65,
       "actions": [
        {
         "verb": "top",
@@ -4661,7 +4735,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 66,
+      "rank": 68,
       "actions": [
        {
         "verb": "top",
@@ -4697,7 +4771,7 @@
       "state": "blocked",
       "pm_authored": false,
       "impact": "",
-      "rank": 68,
+      "rank": 70,
       "actions": [
        {
         "verb": "top",
@@ -4733,7 +4807,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 84,
+      "rank": 86,
       "actions": [
        {
         "verb": "top",
@@ -4769,7 +4843,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "High Impact",
-      "rank": 85,
+      "rank": 87,
       "actions": [
        {
         "verb": "top",
@@ -4805,7 +4879,7 @@
       "state": "gated",
       "pm_authored": true,
       "impact": "High Impact",
-      "rank": 86,
+      "rank": 88,
       "actions": [
        {
         "verb": "top",
@@ -4841,7 +4915,7 @@
       "state": "gated",
       "pm_authored": true,
       "impact": "",
-      "rank": 89,
+      "rank": 91,
       "actions": [
        {
         "verb": "top",
@@ -4877,7 +4951,7 @@
       "state": "gated",
       "pm_authored": true,
       "impact": "",
-      "rank": 92,
+      "rank": 94,
       "actions": [
        {
         "verb": "top",
@@ -4913,7 +4987,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 93,
+      "rank": 95,
       "actions": [
        {
         "verb": "top",
@@ -4949,7 +5023,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 94,
+      "rank": 96,
       "actions": [
        {
         "verb": "top",
@@ -4985,7 +5059,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 95,
+      "rank": 97,
       "actions": [
        {
         "verb": "top",
@@ -5021,7 +5095,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 97,
+      "rank": 99,
       "actions": [
        {
         "verb": "top",
@@ -5057,7 +5131,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 102,
+      "rank": 104,
       "actions": [
        {
         "verb": "top",
@@ -5093,7 +5167,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 103,
+      "rank": 105,
       "actions": [
        {
         "verb": "top",
@@ -5129,7 +5203,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 105,
+      "rank": 107,
       "actions": [
        {
         "verb": "top",
@@ -5165,7 +5239,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 106,
+      "rank": 108,
       "actions": [
        {
         "verb": "top",
@@ -5201,7 +5275,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 107,
+      "rank": 109,
       "actions": [
        {
         "verb": "top",
@@ -5237,7 +5311,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 108,
+      "rank": 110,
       "actions": [
        {
         "verb": "top",
@@ -5273,7 +5347,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 109,
+      "rank": 111,
       "actions": [
        {
         "verb": "top",
@@ -5309,7 +5383,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 110,
+      "rank": 112,
       "actions": [
        {
         "verb": "top",
@@ -5345,7 +5419,7 @@
       "state": "gated",
       "pm_authored": false,
       "impact": "",
-      "rank": 111,
+      "rank": 113,
       "actions": [
        {
         "verb": "top",
@@ -5381,7 +5455,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 112,
+      "rank": 114,
       "actions": [
        {
         "verb": "top",
@@ -5417,7 +5491,7 @@
       "state": "",
       "pm_authored": false,
       "impact": "",
-      "rank": 113,
+      "rank": 115,
       "actions": [
        {
         "verb": "top",
@@ -5455,7 +5529,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 88,
+      "rank": 90,
       "actions": [
        {
         "verb": "top",
@@ -5491,7 +5565,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 96,
+      "rank": 98,
       "actions": [
        {
         "verb": "top",
@@ -5527,7 +5601,7 @@
       "state": "part done",
       "pm_authored": true,
       "impact": "",
-      "rank": 98,
+      "rank": 100,
       "actions": [
        {
         "verb": "top",
@@ -5563,7 +5637,7 @@
       "state": "blocked",
       "pm_authored": false,
       "impact": "",
-      "rank": 100,
+      "rank": 102,
       "actions": [
        {
         "verb": "top",
@@ -5599,7 +5673,7 @@
       "state": "",
       "pm_authored": true,
       "impact": "",
-      "rank": 101,
+      "rank": 103,
       "actions": [
        {
         "verb": "top",
@@ -5625,14 +5699,14 @@
      }
     ]
    },
-   "more_count": 108,
+   "more_count": 110,
    "floor": {
     "target": 40,
-    "count": 118,
+    "count": 120,
     "ok": true,
-    "label": "118 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 11m ago.)",
-    "as_of_utc": "2026-07-31T12:28:50Z",
-    "age_secs": 698,
+    "label": "120 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
+    "as_of_utc": "2026-07-31T12:45:05Z",
+    "age_secs": 9,
     "stale": false
    },
    "source": "dispatch queue",
@@ -6065,67 +6139,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-07-31T12:39:49Z",
-  "age_s": 37,
-  "cycles": 18,
+  "last_poll_utc": "2026-07-31T12:44:11Z",
+  "age_s": 59,
+  "cycles": 22,
   "known": true,
-  "label": "scout: alive, last poll 37s ago",
+  "label": "scout: alive, last poll 59s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "8:36am",
+   "time": "8:40am",
+   "text": "poll #19 · nothing new",
+   "detail": "poll cycle=19 ok directives_new=0"
+  },
+  {
+   "time": "8:41am",
+   "text": "divergence alarm: clean (build code matches the shared branch",
+   "detail": "divergence_alarm: clean (build code matches the shared branch)"
+  },
+  {
+   "time": "8:41am",
    "text": "publish-health: clean (public board is fresh",
    "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "8:36am",
+   "time": "8:41am",
    "text": "chain-health: clean (all four legs healthy",
    "detail": "chain-health: clean (all four legs healthy)"
   },
   {
-   "time": "8:36am",
+   "time": "8:41am",
    "text": "slate-refresh: slate ok (today populated",
    "detail": "slate-refresh: slate ok (today populated)"
   },
   {
-   "time": "8:36am",
-   "text": "poll #15 · nothing new",
-   "detail": "poll cycle=15 ok directives_new=0"
+   "time": "8:42am",
+   "text": "poll #20 · nothing new",
+   "detail": "poll cycle=20 ok directives_new=0"
   },
   {
-   "time": "8:36am",
+   "time": "8:42am",
    "text": "publish-health: clean (public board is fresh",
    "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "8:36am",
+   "time": "8:42am",
    "text": "feed-streak alarm: RED=2 ['HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
    "detail": "feed-streak alarm: RED=2 ['HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing pa"
   },
   {
-   "time": "8:37am",
-   "text": "poll #16 · nothing new",
-   "detail": "poll cycle=16 ok directives_new=0"
+   "time": "8:43am",
+   "text": "poll #21 · nothing new",
+   "detail": "poll cycle=21 ok directives_new=0"
   },
   {
-   "time": "8:38am",
-   "text": "poll #17 · nothing new",
-   "detail": "poll cycle=17 ok directives_new=0"
-  },
-  {
-   "time": "8:39am",
-   "text": "poll #18 · nothing new",
-   "detail": "poll cycle=18 ok directives_new=0"
-  },
-  {
-   "time": "8:40am",
-   "text": "board-selfpolice: clean (live board matches repo truth",
-   "detail": "board-selfpolice: clean (live board matches repo truth)"
+   "time": "8:44am",
+   "text": "poll #22 · nothing new",
+   "detail": "poll cycle=22 ok directives_new=0"
   }
  ],
  "helpers": {
-  "as_of": "2026-07-31T12:40:13.857171+00:00",
+  "as_of": "2026-07-31T12:45:02Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -6134,16 +6208,16 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "37s",
-    "state_text": "on · seen 37s ago"
+    "age_label": "59s",
+    "state_text": "on · seen 59s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "12s",
-    "state_text": "on · seen 12s ago"
+    "age_label": "10s",
+    "state_text": "on · seen 10s ago"
    },
    {
     "name": "Status-page baker",
@@ -6158,8 +6232,8 @@
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "37s",
-    "state_text": "on · seen 37s ago"
+    "age_label": "8s",
+    "state_text": "on · seen 8s ago"
    },
    {
     "name": "Inbox triage",
@@ -6371,9 +6445,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-07-31T12:40:17Z",
-  "session_age_secs": 15316,
-  "last_progress_age_secs": 9,
+  "last_heartbeat_utc": "2026-07-31T12:45:05Z",
+  "session_age_secs": 15600,
+  "last_progress_age_secs": 5,
   "last_spawn_attempt": "2026-07-31T08:25:08Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -6405,25 +6479,25 @@
    "source": "live lane ledger",
    "as_of": "2026-07-31T12:32:46Z",
    "stale": false,
-   "revalidated": "2026-07-31T12:40:22+00:00",
+   "revalidated": "2026-07-31T12:45:07+00:00",
    "stale_reason": "",
-   "age_label": "7m",
+   "age_label": "12m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-07-31T12:40:22+00:00",
+   "as_of": "2026-07-31T12:45:07+00:00",
    "stale": false,
-   "revalidated": "2026-07-31T12:40:22+00:00",
+   "revalidated": "2026-07-31T12:45:07+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-07-31T12:40:22+00:00",
+   "as_of": "2026-07-31T12:45:07+00:00",
    "stale": false,
-   "revalidated": "2026-07-31T12:40:22+00:00",
+   "revalidated": "2026-07-31T12:45:07+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -6432,25 +6506,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-31T12:40:22+00:00",
+   "revalidated": "2026-07-31T12:45:07+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-07-31T12:28:50Z",
+   "as_of": "2026-07-31T12:45:05Z",
    "stale": false,
-   "revalidated": "2026-07-31T12:40:22+00:00",
+   "revalidated": "2026-07-31T12:45:07+00:00",
    "stale_reason": "",
-   "age_label": "11m",
+   "age_label": "2s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-07-31T12:40:22+00:00",
+   "revalidated": "2026-07-31T12:45:07+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -6459,39 +6533,39 @@
    "source": "director inbox",
    "as_of": "2026-07-31T11:55:24Z",
    "stale": false,
-   "revalidated": "2026-07-31T12:40:22+00:00",
+   "revalidated": "2026-07-31T12:45:07+00:00",
    "stale_reason": "",
-   "age_label": "44m",
+   "age_label": "49m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-07-31T07:12:00-04:00",
    "stale": false,
-   "revalidated": "2026-07-31T12:40:22+00:00",
+   "revalidated": "2026-07-31T12:45:07+00:00",
    "stale_reason": "",
-   "age_label": "88m",
+   "age_label": "1h",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-07-31T12:35:09+00:00",
+   "as_of": "2026-07-31T12:40:22+00:00",
    "stale": false,
-   "revalidated": "2026-07-31T12:40:22+00:00",
+   "revalidated": "2026-07-31T12:45:07+00:00",
    "stale_reason": "",
-   "age_label": "5m",
+   "age_label": "4m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-07-31T12:40:13.857171+00:00",
+   "as_of": "2026-07-31T12:45:02Z",
    "stale": false,
-   "revalidated": "2026-07-31T12:40:22+00:00",
+   "revalidated": "2026-07-31T12:45:07+00:00",
    "stale_reason": "",
-   "age_label": "12s",
+   "age_label": "8s",
    "stale_after": 900
   }
  },
- "generated_et": "Jul 31, 8:40am ET"
+ "generated_et": "Jul 31, 8:45am ET"
 }
