@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-01T17:15:26+00:00",
+ "generated_utc": "2026-08-01T17:20:18+00:00",
  "freshness": {
-  "baked_utc": "2026-08-01T17:15:26+00:00",
-  "baked_et": "Aug 1, 1:15pm ET",
-  "revalidated_utc": "2026-08-01T17:15:26+00:00",
+  "baked_utc": "2026-08-01T17:20:18+00:00",
+  "baked_et": "Aug 1, 1:20pm ET",
+  "revalidated_utc": "2026-08-01T17:20:18+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-01",
@@ -18,6 +18,12 @@
  },
  "sections": {
   "agent_updates": [
+   {
+    "id": "at-88-the-meter-says-park",
+    "title": "At 88% the meter says park and the governor says work — measured, both off the same number",
+    "timestamp": "Jul 31, 2026",
+    "body_markdown": "> **What we found:** Both read the same percent off the same meter and got a different instruction than the governor gives."
+   },
    {
     "id": "the-lock-against-re-dispatching-finished",
     "title": "The lock against re-dispatching finished work was itself never run, and half-blind when it was",
@@ -59,12 +65,6 @@
     "title": "The duplicate-scout detector could never see a scout, so it always said none",
     "timestamp": "Jul 31, 2026",
     "body_markdown": "> **What we found:** The answer was never \"no duplicates\". It was \"I cannot see\", rendered as the healthiest possible number. A detector that cannot read a command line cannot count one scout, let alone two, so it has never fired in its life."
-   },
-   {
-    "id": "a-data-file-grew-past-8",
-    "title": "A data file grew past 8,191 characters and silently disabled the spawner",
-    "timestamp": "Jul 31, 2026",
-    "body_markdown": "> **What we found:** Memory was ruled out on the wrong grounds and the conclusion happened to be right."
    },
    {
     "id": "allstar-2026-read",
@@ -6094,9 +6094,9 @@
     "target": 40,
     "count": 150,
     "ok": true,
-    "label": "150 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
+    "label": "150 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 4m ago.)",
     "as_of_utc": "2026-08-01T17:15:26Z",
-    "age_secs": 8,
+    "age_secs": 298,
     "stale": false
    },
    "source": "dispatch queue",
@@ -6535,67 +6535,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-01T17:15:13Z",
-  "age_s": 17,
-  "cycles": 835,
+  "last_poll_utc": "2026-08-01T17:19:51Z",
+  "age_s": 31,
+  "cycles": 839,
   "known": true,
-  "label": "scout: alive, last poll 17s ago",
+  "label": "scout: alive, last poll 31s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "1:15pm",
-   "text": "unfinished work found — resuming a coordinator",
-   "detail": "ORPHAN-WAKE queue_state: no live coordinator + unfinished work - attempting resume spawn"
-  },
-  {
-   "time": "1:15pm",
+   "time": "1:19pm",
    "text": "no spawn - WEEKLY usage pause active (kind=weekly); clears only on explicit ack.py --resume",
    "detail": "no spawn - WEEKLY usage pause active (kind=weekly); clears only on explicit ack.py --resume"
   },
   {
-   "time": "1:15pm",
+   "time": "1:19pm",
+   "text": "unfinished work found — resuming a coordinator",
+   "detail": "ORPHAN-WAKE queue_state: no live coordinator + unfinished work - attempting resume spawn"
+  },
+  {
+   "time": "1:19pm",
+   "text": "no spawn - WEEKLY usage pause active (kind=weekly); clears only on explicit ack.py --resume",
+   "detail": "no spawn - WEEKLY usage pause active (kind=weekly); clears only on explicit ack.py --resume"
+  },
+  {
+   "time": "1:19pm",
    "text": "no spawn - usage pause active / not-yet-verified-available (verified-probe gate",
    "detail": "no spawn - usage pause active / not-yet-verified-available (verified-probe gate)"
   },
   {
-   "time": "1:15pm",
-   "text": "poll #835 · nothing new",
-   "detail": "poll cycle=835 ok directives_new=0"
+   "time": "1:19pm",
+   "text": "poll #839 · nothing new",
+   "detail": "poll cycle=839 ok directives_new=0"
   },
   {
-   "time": "1:15pm",
+   "time": "1:19pm",
    "text": "width tripwire suppressed - usage pause active (intentional 0-width",
    "detail": "width tripwire suppressed - usage pause active (intentional 0-width)"
   },
   {
-   "time": "1:15pm",
+   "time": "1:19pm",
    "text": "width-fill suppressed - usage pause active (ops/PAUSED UNTIL.json); no fill directive",
    "detail": "width-fill suppressed - usage pause active (ops/PAUSED_UNTIL.json); no fill directive"
   },
   {
-   "time": "1:15pm",
+   "time": "1:19pm",
    "text": "USAGE WALL in force [pause evidence[inferred]]: usage wall INFERRED from a live weekly pause file (no percentage measured -- inference, not a reading) -- stay parked (checkpoint written: True",
    "detail": "USAGE WALL in force [pause_evidence[inferred]]: usage wall INFERRED from a live weekly pause file (no percentage measured -- inference, not "
   },
   {
-   "time": "1:15pm",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
+   "time": "1:20pm",
+   "text": "board-selfpolice: live fetch board.json HTTP 503",
+   "detail": "board-selfpolice: live fetch board.json HTTP 503"
   },
   {
-   "time": "1:15pm",
-   "text": "board-selfpolice: clean (live board matches repo truth",
-   "detail": "board-selfpolice: clean (live board matches repo truth)"
-  },
-  {
-   "time": "1:15pm",
-   "text": "feed-streak alarm: RED=2 ['HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
-   "detail": "feed-streak alarm: RED=2 ['HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing pa"
+   "time": "1:20pm",
+   "text": "board-selfpolice: live URL unreachable this cycle (no alarm on a single miss",
+   "detail": "board-selfpolice: live URL unreachable this cycle (no alarm on a single miss)"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-01T17:15:14Z",
+  "as_of": "2026-08-01T17:20:11.165936+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -6604,32 +6604,32 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "17s",
-    "state_text": "on · seen 17s ago"
+    "age_label": "31s",
+    "state_text": "on · seen 31s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "25s",
-    "state_text": "on · seen 25s ago"
+    "age_label": "10s",
+    "state_text": "on · seen 10s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "16s",
-    "state_text": "on · seen 16s ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "22s",
-    "state_text": "on · seen 22s ago"
+    "age_label": "32s",
+    "state_text": "on · seen 32s ago"
    },
    {
     "name": "Inbox triage",
@@ -6842,8 +6842,8 @@
   "known": true,
   "alive": false,
   "last_heartbeat_utc": "2026-07-31T22:08:02Z",
-  "session_age_secs": 69587,
-  "last_progress_age_secs": 68848,
+  "session_age_secs": 69879,
+  "last_progress_age_secs": 69140,
   "last_spawn_attempt": "2026-07-31T21:36:09Z",
   "blocked_reason": "usage pause (weekly)",
   "state": "DEAD"
@@ -6875,25 +6875,25 @@
    "source": "live lane ledger",
    "as_of": "2026-07-31T22:07:10Z",
    "stale": true,
-   "revalidated": "2026-08-01T17:15:26+00:00",
+   "revalidated": "2026-08-01T17:20:18+00:00",
    "stale_reason": "These readings may be out of date — last updated 19h ago.",
    "age_label": "19h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-01T17:15:26+00:00",
+   "as_of": "2026-08-01T17:20:18+00:00",
    "stale": false,
-   "revalidated": "2026-08-01T17:15:26+00:00",
+   "revalidated": "2026-08-01T17:20:18+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-01T17:15:26+00:00",
+   "as_of": "2026-08-01T17:20:18+00:00",
    "stale": false,
-   "revalidated": "2026-08-01T17:15:26+00:00",
+   "revalidated": "2026-08-01T17:20:18+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -6902,7 +6902,7 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-01T17:15:26+00:00",
+   "revalidated": "2026-08-01T17:20:18+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -6910,17 +6910,17 @@
   "upcoming": {
    "source": "dispatch queue",
    "as_of": "2026-08-01T17:15:26Z",
-   "stale": true,
-   "revalidated": "2026-08-01T17:15:26+00:00",
-   "stale_reason": "A newer update is being re-checked now.",
-   "age_label": "0s",
+   "stale": false,
+   "revalidated": "2026-08-01T17:20:18+00:00",
+   "stale_reason": "",
+   "age_label": "4m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-01T17:15:26+00:00",
+   "revalidated": "2026-08-01T17:20:18+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -6929,39 +6929,39 @@
    "source": "director inbox",
    "as_of": "2026-08-01T00:38:24Z",
    "stale": true,
-   "revalidated": "2026-08-01T17:15:26+00:00",
+   "revalidated": "2026-08-01T17:20:18+00:00",
    "stale_reason": "These readings may be out of date — last updated 16h ago.",
    "age_label": "16h",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
-   "as_of": "2026-07-31T13:30:00Z",
+   "as_of": "2026-07-31T17:15:00Z",
    "stale": false,
-   "revalidated": "2026-08-01T17:15:26+00:00",
+   "revalidated": "2026-08-01T17:20:18+00:00",
    "stale_reason": "",
-   "age_label": "27h",
+   "age_label": "24h",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-01T17:10:41+00:00",
+   "as_of": "2026-08-01T17:15:26+00:00",
    "stale": false,
-   "revalidated": "2026-08-01T17:15:26+00:00",
+   "revalidated": "2026-08-01T17:20:18+00:00",
    "stale_reason": "",
    "age_label": "4m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-01T17:15:14Z",
+   "as_of": "2026-08-01T17:20:11.165936+00:00",
    "stale": false,
-   "revalidated": "2026-08-01T17:15:26+00:00",
+   "revalidated": "2026-08-01T17:20:18+00:00",
    "stale_reason": "",
-   "age_label": "16s",
+   "age_label": "10s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 1, 1:15pm ET"
+ "generated_et": "Aug 1, 1:20pm ET"
 }
