@@ -1,16 +1,16 @@
 {
   "slug": "rest",
-  "generated_utc": "2026-08-02T14:05:35Z",
-  "generated_et": "Aug 2, 10:05am ET",
+  "generated_utc": "2026-08-03T14:05:44Z",
+  "generated_et": "Aug 3, 10:05am ET",
   "question": "How much does a back-to-back cost a WNBA team, and do stars get load-managed on the second night?",
   "source_tables": [
     "game results (schedule + final scores)",
     "player box scores"
   ],
   "script": "scripts/analysis_rest_b2b.py",
-  "generated_at": "2026-08-02T14:05:35Z",
-  "n_played_games": 2547,
-  "n_teamgames_with_rest": 4946,
+  "generated_at": "2026-08-03T14:05:44Z",
+  "n_played_games": 2551,
+  "n_teamgames_with_rest": 4954,
   "definitions": {
     "b2b": "0 days off \u2014 a team playing the very next calendar day (derived rest = 1 day between games).",
     "rest": "days between a team's consecutive games in a season, derived from the game schedule (authoritative).",
@@ -35,7 +35,7 @@
     "question": "How much does a rest edge / a B2B cost?",
     "source_json": "deepdive_rest.json",
     "source_table": "game results + box scores",
-    "n": 2547
+    "n": 2551
   },
   "rest_buckets": [
     {
@@ -46,30 +46,30 @@
     },
     {
       "bucket": "1_day_off",
-      "n": 2396,
-      "avg_margin": -0.208,
-      "winpct": 0.4933
+      "n": 2399,
+      "avg_margin": -0.205,
+      "winpct": 0.4931
     },
     {
       "bucket": "2_days_off",
-      "n": 1219,
-      "avg_margin": 0.3,
-      "winpct": 0.5062
+      "n": 1222,
+      "avg_margin": 0.276,
+      "winpct": 0.5057
     },
     {
       "bucket": "3plus_days_off",
-      "n": 1146,
-      "avg_margin": 0.31,
-      "winpct": 0.5148
+      "n": 1148,
+      "avg_margin": 0.328,
+      "winpct": 0.5157
     }
   ],
   "b2b_by_court": [
     {
       "court": "away",
       "is_b2b": false,
-      "n": 2358,
-      "avg_margin": -1.913,
-      "winpct": 0.4491
+      "n": 2362,
+      "avg_margin": -1.926,
+      "winpct": 0.4488
     },
     {
       "court": "away",
@@ -81,9 +81,9 @@
     {
       "court": "home",
       "is_b2b": false,
-      "n": 2403,
-      "avg_margin": 1.969,
-      "winpct": 0.5535
+      "n": 2407,
+      "avg_margin": 1.983,
+      "winpct": 0.5538
     },
     {
       "court": "home",
@@ -96,9 +96,9 @@
   "rest_differential": [
     {
       "restdiff": -3,
-      "n": 105,
-      "home_margin": 3.057,
-      "home_winpct": 0.5905
+      "n": 106,
+      "home_margin": 2.981,
+      "home_winpct": 0.5849
     },
     {
       "restdiff": -2,
@@ -108,9 +108,9 @@
     },
     {
       "restdiff": -1,
-      "n": 324,
-      "home_margin": 0.676,
-      "home_winpct": 0.5216
+      "n": 325,
+      "home_margin": 0.735,
+      "home_winpct": 0.5231
     },
     {
       "restdiff": 0,
@@ -120,9 +120,9 @@
     },
     {
       "restdiff": 1,
-      "n": 409,
-      "home_margin": 2.545,
-      "home_winpct": 0.5868
+      "n": 411,
+      "home_margin": 2.594,
+      "home_winpct": 0.5888
     },
     {
       "restdiff": 2,
@@ -140,8 +140,8 @@
   "player_fatigue": {
     "all_players": {
       "rested": {
-        "n": 44664,
-        "avg_min": 20.81,
+        "n": 44725,
+        "avg_min": 20.809,
         "avg_pts": 8.427,
         "ts_pct": 0.5355
       },
@@ -154,10 +154,10 @@
     },
     "stars": {
       "rested": {
-        "n": 11185,
-        "avg_min": 31.02,
-        "avg_pts": 15.17,
-        "ts_pct": 0.5562
+        "n": 11198,
+        "avg_min": 31.018,
+        "avg_pts": 15.173,
+        "ts_pct": 0.5564
       },
       "b2b": {
         "n": 424,
