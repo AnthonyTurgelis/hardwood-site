@@ -105,14 +105,6 @@ footer .util a:hover{color:var(--chalk)}
 </footer>
 <script>
 /* ============ COORDINATOR WIRING POINT ============
-<<<<<<< HEAD
-   Set SLATE_FEED to the SAME json the current games.html reads.
-   Expected per-game fields (map from the feed's real names):
-   away, home (abbr or name), tip_et (display string),
-   margin (number, home-positive), lo, hi (honest range bounds),
-   win_prob (0-1 or 0-100, home), avail (availability note string, may be empty)
-   Adjust ONLY the map() below. Everything else is final. */
-=======
    SLATE_FEED is the SAME json games.html reads (its `var URL="./games.json"`).
    The mapping below is the feed's REAL shape, read off site/games.json - the
    template's placeholder names did not match it, so only map() moved:
@@ -134,14 +126,16 @@ footer .util a:hover{color:var(--chalk)}
    a copy drifts from the others or from the table. It names the gap between the simulated number
    and the reference rather than smoothing it - the card's number is NOT adjusted to match. */
 var WINPCT_TIP = "Our win chance comes from simulating the game. For reference, a 3-point favorite wins about 58% of the time, a 6-point favorite about 67%, and a 10-point favorite about 76%. On clear favorites our simulated number can run a few points above that reference - a known gap, written up on the Learn page.";
->>>>>>> c0837842 (the Learn page said a typical game is 162 and this season is 175)
 var SLATE_FEED = "./games.json";
 fetch(SLATE_FEED).then(function(r){return r.json()}).then(function(d){
-  var games=(d.games||d).map(function(g){return{
+  var flat=function(a){if(!a)return"";if(typeof a==="string")return a;
+    var o=[].concat(((a.away||{}).out)||[],((a.home||{}).out)||[]);return o.length?("Out: "+o.join(", ")):""};
+  var games=(d.today||d.games||d).map(function(g){return{
     away:g.away||g.away_team_abbr, home:g.home||g.home_team_abbr,
-    tip:g.tip_et||g.tip||"", margin:+g.margin, lo:+(g.lo!=null?g.lo:g.range_low),
-    hi:+(g.hi!=null?g.hi:g.range_high), wp:+(g.win_prob!=null?g.win_prob:g.home_win_prob),
-    avail:g.avail||g.availability_note||""}});
+    tip:g.tip_et||g.tip||"", margin:+(g.pred_margin!=null?g.pred_margin:g.margin),
+    lo:+(g.range80_lo!=null?g.range80_lo:g.lo), hi:+(g.range80_hi!=null?g.range80_hi:g.hi),
+    wp:+(g.p_home_win!=null?g.p_home_win:g.win_prob),
+    avail:flat(g.avail)||g.availability_note||""}});
   if(!games.length) return;
   var dt=d.date_et||""; if(dt) document.getElementById("today-date").textContent=dt;
   var ext=Math.max.apply(null,games.map(function(g){return Math.max(Math.abs(g.lo),Math.abs(g.hi))}))||15;
