@@ -1,51 +1,51 @@
 {
- "generated_utc": "2026-08-05T19:00:24+00:00",
+ "generated_utc": "2026-08-05T19:05:17+00:00",
  "stale_after_secs": 300,
  "date": "2026-08-05",
  "pipe_health": {
-  "directives_pending": 0,
+  "directives_pending": 1,
   "last_processed_clock": "1:12pm",
   "last_processed_iso": "2026-08-05T17:12:51Z",
   "last_processed_known": true,
   "last_processed_display": "1:12pm",
   "last_processed_source": "directive_ledger.done",
-  "newest_directive_clock": "",
-  "newest_directive_iso": null,
+  "newest_directive_clock": "3:04pm",
+  "newest_directive_iso": "2026-08-05T19:04:31Z",
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-08-05T17:12:51Z",
+  "as_of": "2026-08-05T19:04:31Z",
   "state": "KNOWN",
   "reason": "",
   "known": true
  },
  "scout": {
   "alive": true,
-  "last_poll_utc": "2026-08-05T19:00:06Z",
-  "age_s": 21,
-  "cycles": 84,
+  "last_poll_utc": "2026-08-05T19:04:30Z",
+  "age_s": 51,
+  "cycles": 88,
   "known": true,
-  "label": "scout: alive, last poll 21s ago",
+  "label": "scout: alive, last poll 51s ago",
   "anchor": "heartbeat.json+scout.log",
   "state": "KNOWN",
   "reason": ""
  },
  "coordinator": {
-  "known": false,
-  "alive": false,
-  "last_heartbeat_utc": null,
-  "session_age_secs": null,
-  "last_progress_age_secs": null,
+  "known": true,
+  "alive": true,
+  "last_heartbeat_utc": "2026-08-05T19:05:02Z",
+  "session_age_secs": 295,
+  "last_progress_age_secs": 19,
   "last_spawn_attempt": "2026-08-05T19:00:22Z",
-  "blocked_reason": "no start attempt yet — rate floor holds the next one for up to 294s (one attempt guaranteed every 300s while the chair is empty)",
-  "state": "UNKNOWN",
-  "reason": "coordinator.lock absent or unreadable"
+  "blocked_reason": "",
+  "state": "ALIVE",
+  "reason": ""
  },
  "pause": {
-  "state": "PROVIDER_LIMIT",
-  "label": "PROVIDER LIMIT - the provider refused/limited us",
-  "remedy": "wait for the verified reset at 3:00pm",
-  "as_of": "2026-08-05T18:46:43Z",
-  "as_of_clock": "2:46pm",
+  "state": "NORMAL",
+  "label": "running (no pause of either kind)",
+  "remedy": "",
+  "as_of": "2026-08-05T19:05:21Z",
+  "as_of_clock": "3:05pm",
   "self_pause": {
    "active": false,
    "readable": true,
@@ -57,22 +57,20 @@
    "remedy": ""
   },
   "provider_limit": {
-   "active": true,
-   "evidence": [
-    "usage meter: provider-sourced reading reports EXHAUSTED"
-   ],
-   "observed_clock": "2:46pm",
-   "resets_clock": "3:00pm",
-   "resets_known": true,
-   "remedy": "wait for the verified reset at 3:00pm",
-   "reason": ""
+   "active": false,
+   "evidence": [],
+   "observed_clock": "",
+   "resets_clock": "",
+   "resets_known": false,
+   "remedy": "",
+   "reason": "no provider refusal on record (no rate-limit header rejection, no exhausted provider reading, no probe that observed usage unavailable)"
   },
   "percent": {
    "quality": "MEASURED",
-   "display": "100%",
-   "value": 100.0,
+   "display": "12%",
+   "value": 12.0,
    "reason": "",
-   "reading_clock": "2:46pm",
+   "reading_clock": "3:04pm",
    "last_known_display": "",
    "self_derived": false
   },
@@ -87,5 +85,5 @@
   "known": true,
   "reason": ""
  },
- "generated_et": "Aug 5, 3:00pm ET"
+ "generated_et": "Aug 5, 3:05pm ET"
 }
