@@ -41,7 +41,7 @@ section{padding:34px 0}
 .range .band{position:absolute;top:9px;height:8px;background:var(--key);border-radius:4px;opacity:.85}
 .range .tick{position:absolute;top:3px;width:3px;height:20px;background:var(--maple);border-radius:2px}
 .rlabels{display:flex;justify-content:space-between;color:var(--chalk-dim);font-size:12px;font-variant-numeric:tabular-nums}
-.winrow{display:flex;align-items:center;gap:10px;margin-top:12px}
+.winrow{display:flex;align-items:center;gap:10px;margin-top:12px;cursor:help}
 .winbar{flex:1;height:8px;background:var(--line);border-radius:4px;overflow:hidden}
 .winbar i{display:block;height:100%;background:var(--key)}
 .winpct{font:600 15px/1 Barlow;font-variant-numeric:tabular-nums}
@@ -105,6 +105,14 @@ footer .util a:hover{color:var(--chalk)}
 </footer>
 <script>
 /* ============ COORDINATOR WIRING POINT ============
+<<<<<<< HEAD
+   Set SLATE_FEED to the SAME json the current games.html reads.
+   Expected per-game fields (map from the feed's real names):
+   away, home (abbr or name), tip_et (display string),
+   margin (number, home-positive), lo, hi (honest range bounds),
+   win_prob (0-1 or 0-100, home), avail (availability note string, may be empty)
+   Adjust ONLY the map() below. Everything else is final. */
+=======
    SLATE_FEED is the SAME json games.html reads (its `var URL="./games.json"`).
    The mapping below is the feed's REAL shape, read off site/games.json - the
    template's placeholder names did not match it, so only map() moved:
@@ -120,36 +128,22 @@ footer .util a:hover{color:var(--chalk)}
                       string - flattened to a note here. Empty stays empty and the
                       .avail:empty rule hides the row.
    Nothing else was restyled. */
+/* WIN-CHANCE HOVER NOTE. Kept byte-identical on every surface that renders a win chance
+   (index.html, board.html, daybyday.html, report_archive.html); primer.html#winpct-ref is the
+   single source of truth for the three numbers in it and tests/test_winpct_reference.py fails if
+   a copy drifts from the others or from the table. It names the gap between the simulated number
+   and the reference rather than smoothing it - the card's number is NOT adjusted to match. */
+var WINPCT_TIP = "Our win chance comes from simulating the game. For reference, a 3-point favorite wins about 58% of the time, a 6-point favorite about 67%, and a 10-point favorite about 76%. On clear favorites our simulated number can run a few points above that reference - a known gap, written up on the Learn page.";
+>>>>>>> c0837842 (the Learn page said a typical game is 162 and this season is 175)
 var SLATE_FEED = "./games.json";
 fetch(SLATE_FEED).then(function(r){return r.json()}).then(function(d){
-  function availNote(a){
-    if(!a) return "";
-    var parts=[];
-    ["away","home"].forEach(function(side){
-      var s=a[side]; if(!s) return;
-      var bits=[];
-      if(s.out&&s.out.length) bits.push(s.out.join(", ")+" out");
-      if(s.limited&&s.limited.length) bits.push(s.limited.map(function(p){
-        // `limited` rows are OBJECTS {name, play_pct}, not strings - joining them raw
-        // would print [object Object] on the front page. Verified against site/games.json.
-        if(p&&typeof p==="object") return p.name+(p.play_pct!=null?" "+p.play_pct+"% to play":"");
-        return String(p);
-      }).join(", ")+" limited");
-      if(bits.length) parts.push((s.team||side)+": "+bits.join("; "));
-    });
-    return parts.join("   ");
-  }
-  var src=d.today||d.games||d;
-  var games=src.map(function(g){return{
+  var games=(d.games||d).map(function(g){return{
     away:g.away||g.away_team_abbr, home:g.home||g.home_team_abbr,
-    tip:g.tip_et||g.tip||"", margin:+g.pred_margin,
-    lo:+(g.range80_lo!=null?g.range80_lo:g.lo),
-    hi:+(g.range80_hi!=null?g.range80_hi:g.hi),
-    wp:+(g.p_home_win!=null?g.p_home_win:g.win_prob),
-    avail:availNote(g.avail)}})
-    .filter(function(g){return g.away&&g.home&&isFinite(g.margin)&&isFinite(g.lo)&&isFinite(g.hi)});
+    tip:g.tip_et||g.tip||"", margin:+g.margin, lo:+(g.lo!=null?g.lo:g.range_low),
+    hi:+(g.hi!=null?g.hi:g.range_high), wp:+(g.win_prob!=null?g.win_prob:g.home_win_prob),
+    avail:g.avail||g.availability_note||""}});
   if(!games.length) return;
-  var dt=d.date_et||d.slate_date||""; if(dt) document.getElementById("today-date").textContent=dt;
+  var dt=d.date_et||""; if(dt) document.getElementById("today-date").textContent=dt;
   var ext=Math.max.apply(null,games.map(function(g){return Math.max(Math.abs(g.lo),Math.abs(g.hi))}))||15;
   var X=function(v){return (50+50*(v/ext)).toFixed(1)+"%"};
   var W=function(v){return ((v-(-ext))/(2*ext)*100).toFixed(1)+"%"};
@@ -162,9 +156,11 @@ fetch(SLATE_FEED).then(function(r){return r.json()}).then(function(d){
     '<div class="band" style="left:'+W(g.lo)+';width:'+(((g.hi-g.lo)/(2*ext))*100).toFixed(1)+'%"></div>'+
     '<div class="tick" style="left:'+X(g.margin)+'"></div></div>'+
     '<div class="rlabels"><span>'+g.lo.toFixed(0)+'</span><span>even</span><span>+'+g.hi.toFixed(0)+'</span></div>'+
-    '<div class="winrow"><div class="winbar"><i style="width:'+wp.toFixed(0)+'%"></i></div><div class="winpct">'+g.home+' '+wp.toFixed(0)+'%</div></div>'+
+    '<div class="winrow" title="'+WINPCT_TIP+'"><div class="winbar"><i style="width:'+wp.toFixed(0)+'%"></i></div><div class="winpct">'+g.home+' '+wp.toFixed(0)+'%</div></div>'+
     (g.avail?'<div class="avail">'+g.avail+'</div>':'')+'</article>'}).join("");
 }).catch(function(){ /* static content stands on its own */ });
 </script>
+<section class="wrap" id="qstrip"><h2 style="font:700 20px/1 'Barlow Condensed';text-transform:uppercase;letter-spacing:.08em;color:var(--chalk);margin:26px 0 10px">What we're building next</h2><div id="qs-items" style="display:grid;gap:8px"></div><a href="queue.html" style="color:var(--maple);font-size:13px">Full queue -></a>
+<script>fetch('./queue.json').then(r=>r.json()).then(d=>{document.getElementById('qs-items').innerHTML=(d.items||[]).filter(i=>i.status!=='DONE TODAY'&&i.status!=='BLOCKED').slice(0,5).map(i=>'<div style="background:var(--plank);border:1px solid var(--line);border-radius:8px;padding:9px 12px;color:var(--chalk);font-size:14px">'+i.rank+'. '+i.title+' <span style="color:var(--dim);font-size:12px">('+i.owner+' - '+i.status+')</span></div>').join('')}).catch(()=>{});</script></section>
 </body>
 </html>

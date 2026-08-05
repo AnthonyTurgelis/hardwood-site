@@ -126,10 +126,10 @@
   <div class="banner"><b>The whole thing rests on one honest idea:</b> basketball is mostly signal wrapped in a lot of noise. Good analytics isn't about pretending the noise isn't there — it's about measuring how much is signal, how much is noise, and being honest about which is which. That honesty is the last section, and it's the most important one.</div>
 
   <div class="toc">
-    <div class="toc-h">Eight sections</div>
+    <div class="toc-h">Eight sections and a reference table</div>
     <ol>
       <li><a href="#s1">The scoreboard, quantified</a> — what a WNBA game actually looks like</li>
-      <li><a href="#s2">What a lead is worth</a> — and why leads aren't safe</li>
+      <li><a href="#s2">What a lead is worth</a> — and why leads aren't safe<br><a href="#winpct-ref">Reference: what a projected margin is worth</a> — margin to win chance</li>
       <li><a href="#s3">Team rating</a> — what "strength" really means</li>
       <li><a href="#s4">Home court, rest, and the schedule</a></li>
       <li><a href="#s5">Player value beyond points</a> — impact and minutes</li>
@@ -146,9 +146,11 @@
     <p><span class="concept-lab">The concept</span> Before you can say a team "scored a lot" or "played slow," you need a baseline — the normal shape of a WNBA game. Every number that follows is measured against this baseline.</p>
 
     <div class="fig">
-      <div class="figv">Across every WNBA game from 2015 through 2026, two teams combine for about <b>162 points a night, roughly 81 each</b>. The game isn't evenly paced: the <b>first quarter is the highest-scoring (about 41.8 combined points), drifting down to about 39.5 by the fourth</b> as legs tire and fouls pile up.</div>
-      <div class="figsrc">Measured across 2,600 games · Quarter Scoreline explorer</div>
+      <div class="figv" id="env-now">Across 2015 through 2026 two teams combine for about <b>163 points a night</b> — but the scoring environment moves season to season, and this season is running well above that long-run figure. Read the current season's number off the <a href="./tempo.html">Tempo</a> tab or the pace dive rather than a number you remember.</div>
+      <div class="figsrc" id="env-now-src">Pace and efficiency dive · Quarter Scoreline explorer</div>
     </div>
+
+    <p>The game isn't evenly paced within itself either: the <b>first quarter is the highest-scoring, drifting down by roughly two points a quarter by the fourth</b> as legs tire and fouls pile up. That shape has held steady even while the totals have climbed.</p>
 
     <p><b>Why it matters — the number that runs everything is the noise.</b> In any single quarter, the margin can swing by about <b>7.4 points of pure scoring randomness</b>. That one figure is the hinge of this whole primer. It's why a 4-point lead early means almost nothing, why blowouts happen between evenly-matched teams, and why no model — ours or a Vegas book's — can ever predict a single game precisely. Basketball is a game where the noise is genuinely large relative to the skill gap on any given night.</p>
 
@@ -189,6 +191,43 @@
     <p>You can also see the game "decide itself" gradually: the share of games still within 6 points falls from <b>61% after the first quarter to 33% at the final buzzer</b>.</p>
 
     <div class="board-ptr"><span class="tag">On the board</span> The Quarter Scoreline explorer lets you drop a marker on any lead at any quarter break and read the win probability — with the counted (empirical) line drawn solid and the on-paper model dashed, so the late-game comeback gap is visible, not hidden.</div>
+    <a class="backtop" href="#top">↑ contents</a>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ============ reference table: a projected margin, in win chance ============
+       Section 2 prices a lead a team ALREADY HOLDS. This prices a lead we EXPECT.
+       Every cell is the bell-curve translation of a margin at the margin spread stated
+       on the face of the block, so the numbers are reproducible from the page itself
+       (tests/test_winpct_reference.py recomputes them and fails if a cell drifts). -->
+  <section class="pr" id="winpct-ref">
+    <div class="kicker">Reference</div>
+    <h2>What a projected margin is worth</h2>
+    <p><span class="concept-lab">The concept</span> Section 2 priced a lead a team already holds. This prices a lead we <i>expect</i>. If we call a team by six before tip, how often does a six-point favorite actually win? One number decides it: how far the real final margin typically lands from the number you predicted. On this season's completed games that spread is about <b>14 points</b> — the same size as the end-of-game spread in Section 1, which is the honest reason the table below is as flat as it is.</p>
+
+    <div class="dtwrap">
+      <table class="dt">
+        <thead><tr><th>Favored by…</th><th class="num">Wins about</th><th>Favored by…</th><th class="num">Wins about</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">1 point</td><td class="num">52.8%</td><td class="rowh">7 points</td><td class="num">69.1%</td></tr>
+          <tr><td class="rowh">2 points</td><td class="num">55.7%</td><td class="rowh">8 points</td><td class="num">71.5%</td></tr>
+          <tr><td class="rowh">3 points</td><td class="num">58.5%</td><td class="rowh">9 points</td><td class="num">73.9%</td></tr>
+          <tr><td class="rowh">4 points</td><td class="num">61.2%</td><td class="rowh">10 points</td><td class="num">76.2%</td></tr>
+          <tr><td class="rowh">5 points</td><td class="num">63.9%</td><td class="rowh">12 points</td><td class="num">80.3%</td></tr>
+          <tr><td class="rowh">6 points</td><td class="num">66.5%</td><td class="rowh">15 points</td><td class="num">85.7%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The first thing to take from it is how <i>little</i> a small edge buys. A three-point favorite is barely better than a coin flip. You need to be favored by ten before you are winning three times in four. That is Section 1's noise showing up again in a second currency: when the typical result lands 14 points from the call, being three points better than someone is not much of an advantage on any single night.</p>
+
+    <div class="fig honest">
+      <div class="figv"><b>Read this as a reference, not as our board's method.</b> The table is a clean bell-curve translation of a margin into a win chance. The win chance on a game card is not built this way — it comes from simulating the game — and the two do not fully agree. One recent card called a team by 8.2 points and put its win chance at 76%, where this table says about 72%. That gap of roughly four points is real, we have not explained it yet, and reconciling the two is queued work. Until it is done, trust the simulated number on the card for that game and use this table only to get a feel for what a margin is worth in general.</div>
+      <div class="figsrc">Margin spread measured on this season's completed regular-season games</div>
+    </div>
+
+    <div class="board-ptr"><span class="tag">On the board</span> Every win chance on a game card carries this table as a hover note, including the honest warning that the card's own number can sit a few points above it. The card is the one to act on; this page is where the translation and the gap are written down.</div>
     <a class="backtop" href="#top">↑ contents</a>
   </section>
 
@@ -338,16 +377,72 @@
   <section class="pr" id="tldr">
     <div class="kicker">In one paragraph</div>
     <h2>The whole primer, distilled</h2>
-    <div class="banner">A WNBA game is about 162 points and roughly 7 points of pure quarter-to-quarter noise, which is why early leads are fragile and even teams produce blowouts. A lead is worth more the later you hold it (up 6 climbs from 66% to 76% across the game), but late leads are <i>less</i> safe than the tidy math says. Teams are rated in points-above-average, not records; home court is worth about +2.1 points; players are measured by on-court impact and wins added, not just scoring, and priced in dollars-per-win. Every projection is a calibrated range — our 90% band really does catch 90% of results — and we grade ourselves in public: about an 11-point average margin miss, right winner ~64% of the time, with the gaps we can't yet fill named out loud.</div>
+    <div class="banner"><span id="env-tldr">A WNBA game has averaged about 163 points across 2015 through 2026 and is scoring higher than that this season</span>, with roughly 7 points of pure quarter-to-quarter noise, which is why early leads are fragile and even teams produce blowouts. A lead is worth more the later you hold it (up 6 climbs from 66% to 76% across the game), but late leads are <i>less</i> safe than the tidy math says. Teams are rated in points-above-average, not records; home court is worth about +2.1 points; players are measured by on-court impact and wins added, not just scoring, and priced in dollars-per-win. Every projection is a calibrated range — our 90% band really does catch 90% of results — and we grade ourselves in public: about an 11-point average margin miss, right winner ~64% of the time, with the gaps we can't yet fill named out loud.</div>
   </section>
 
 </main>
 <footer>
-  A ground-floor explainer over the surfaces the platform bakes today. Every quantitative claim is drawn from a live board surface or a published deep dive; where a number isn't shipped yet (the rest / back-to-back point cost), it's flagged rather than invented. The figures quoted here were taken from the numbers as they stood on July 23, so read them for scale rather than as today's - the live pages linked above are the current ones.
+  A ground-floor explainer over the surfaces the platform bakes today. Every quantitative claim is drawn from a live board surface or a published deep dive; where a number isn't shipped yet (the rest / back-to-back point cost), it's flagged rather than invented. Most figures quoted here were taken from the numbers as they stood on July 23, so read them for scale rather than as today's - the live pages linked above are the current ones. Two things are current by construction rather than by typing: the scoring baseline in Section 1 is read from the pace dive each time this page loads, and the margin-to-win-chance table is reproducible from the margin spread printed above it.
 </footer>
 <!-- SHARED STATUS CHROME (2026-07-30). Same gap as the explorer: this page carried no staleness or
      pause signal at all. Note the footer above hard-codes "current to the 2026-07-23 bake", which
      cannot age itself - the strip is the live answer sitting above it. Reused, not reimplemented. -->
 <script src="./hardwood.js?v=1477558b"></script>
+<!-- SCORING BASELINE, DERIVED AT RENDER (2026-08-05).
+     WHY THIS IS NOT TYPED INTO THE PROSE: this page shipped saying "a WNBA game is about 162
+     points". That was the 2015-2026 long-run average and it read to a visitor as today's game.
+     Today's game is running roughly twelve points higher, so the page was quietly telling a
+     reader the board was wrong about every total it published. Typing 175 here instead would
+     re-arm the identical trap one season later, so the current-season figure is READ from a
+     surface that gets re-baked instead of typed.
+     SOURCE: deepdive_pace.json, the same file the Deep Dives pace read draws. Combined points a
+     night = 2 x possessions x points-per-100 / 100, which reproduces the long-run figure to a
+     tenth of a point and the current season to about one point - the pace dive estimates
+     possessions from box scores rather than counting them, and that estimate is disclosed in the
+     source line under the figure rather than hidden.
+     THE YEAR IS NOT HARD-CODED EITHER: the league keys are year-suffixed, so the newest year
+     present is discovered by scanning the keys. A season rollover needs no edit here.
+     FALLBACK IS SAFE BY CONSTRUCTION: if the fetch fails the static prose stands, and the static
+     prose states only the era-scoped historical average with its window named - never a
+     current-season number that could be stale. A failed fetch loses detail, never truth. -->
+<script>
+(function(){
+  var box = document.getElementById("env-now");
+  if (!box || !window.fetch) return;
+  fetch("./deepdive_pace.json", {cache:"no-store"}).then(function(r){
+    return r.ok ? r.json() : null;
+  }).then(function(d){
+    var L = d && d.league; if (!L) return;
+    var year = 0, k, m;
+    for (k in L){ m = /^pace_(\d{4})$/.exec(k); if (m && +m[1] > year) year = +m[1]; }
+    if (!year) return;
+    var pace = L["pace_" + year], per100 = L["points_per_100_" + year];
+    if (pace == null || per100 == null) return;
+    var now = 2 * pace * per100 / 100;
+    var longRun = (L.pace_all_seasons != null && L.points_per_100_all != null)
+      ? 2 * L.pace_all_seasons * L.points_per_100_all / 100 : null;
+    var txt = "This season two teams are combining for about <b>" + Math.round(now) +
+      " points a night, roughly " + Math.round(now / 2) + " each</b>";
+    if (longRun != null) {
+      txt += " — well clear of the <b>" + Math.round(longRun) +
+        "</b> a night the league averaged across 2015 through 2026";
+    }
+    txt += ". The scoring environment moves season to season, so the season's own number is the " +
+      "baseline to judge a total against, never a number you remember from a previous year.";
+    box.innerHTML = txt;
+    var src = document.getElementById("env-now-src");
+    if (src) {
+      src.textContent = "Pace and efficiency dive · " + year + " season" +
+        (L["n_games_" + year] ? ", " + L["n_games_" + year] + " games" : "") +
+        " · combined points estimated from possessions, accurate to about a point";
+    }
+    var tldr = document.getElementById("env-tldr");
+    if (tldr) {
+      tldr.textContent = "A WNBA game this season is about " + Math.round(now) + " points" +
+        (longRun != null ? ", up from about " + Math.round(longRun) + " over the previous decade" : "");
+    }
+  }).catch(function(){ /* static era-scoped prose stands on its own */ });
+})();
+</script>
 </body>
 </html>

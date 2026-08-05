@@ -284,7 +284,7 @@
   .gcard .pick .lab{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
     color:#fff;background:var(--accent);border-radius:5px;padding:1px 6px;flex:0 0 auto}
   .gcard .pick .val{font-size:14px;font-weight:750}
-  .gcard .win{font-size:12px;color:var(--muted);font-weight:600}
+  .gcard .win{font-size:12px;color:var(--muted);font-weight:600;cursor:help}
   .gcard .win b{color:var(--ink);font-variant-numeric:tabular-nums;font-size:13px}
   .gcard .win .wt{font-weight:600}
   .gcard .win .conf{font-weight:700;color:var(--accent)}
@@ -428,6 +428,13 @@
      CDN can never serve a stale board/games/history copy on reload. A fresh token per fetch
      (Date.now, not a per-load constant) keeps live polling truly live. */
   function bust(u){ return u + (u.indexOf("?")<0?"?":"&") + "v=" + Date.now(); }
+
+  /* WIN-CHANCE HOVER NOTE. Kept byte-identical on every surface that renders a win chance
+     (index.html, board.html, daybyday.html, report_archive.html); primer.html#winpct-ref is the
+     single source of truth for the three numbers in it and tests/test_winpct_reference.py fails if
+     a copy drifts from the others or from the table. It names the gap between the simulated number
+     and the reference rather than smoothing it - the card's number is NOT adjusted to match. */
+  var WINPCT_TIP = "Our win chance comes from simulating the game. For reference, a 3-point favorite wins about 58% of the time, a 6-point favorite about 67%, and a 10-point favorite about 76%. On clear favorites our simulated number can run a few points above that reference - a known gap, written up on the Learn page.";
 
   /* plain meanings for every status word — hover/legend (no robotic log-speak) */
   var CHIPMEAN={
@@ -1386,11 +1393,16 @@
       // is this a strong call or a coin-flip?). Falls back to the legacy win_line if win_pct absent.
       if(g.win_pct!=null){
         var w=el("div","win");
+        w.setAttribute("title", WINPCT_TIP);
         w.appendChild(el("b",null, g.win_pct+"%"));
         w.appendChild(el("span","wt"," to win"));
         if(g.confidence){ w.appendChild(el("span","conf"," · "+g.confidence)); }
         c.appendChild(w);
-      } else if(g.win_line){ c.appendChild(el("div","win", g.win_line)); }
+      } else if(g.win_line){
+        var wl=el("div","win", g.win_line);
+        wl.setAttribute("title", WINPCT_TIP);
+        c.appendChild(wl);
+      }
       // honest 80% margin band — the pick is an estimate, so show how wide the likely result is.
       // DRAWN, not narrated, whenever the numeric knots are published for this card (see
       // boardRangeModel above). The pre-formatted sentence remains the FALLBACK, not the default:

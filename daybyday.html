@@ -43,7 +43,7 @@
   .game .mu{font-size:14.5px;font-weight:700}
   .game .tip{color:var(--muted);font-size:11.5px;font-weight:500;margin-left:6px}
   .game .call{font-size:13px;margin-top:6px;font-weight:600}
-  .game .win{color:var(--muted);font-size:12px;margin-top:2px}
+  .game .win{color:var(--muted);font-size:12px;margin-top:2px;cursor:help}
   .game .rng{color:var(--muted);font-size:12px;margin-top:2px}
   /* Margin range, DRAWN — the same .mbar/.mcap dialect the slate list and the game card use for this
      exact quantity, mirrored rather than re-invented. Fallback tokens (var(--x,var(--y))) because
@@ -102,6 +102,12 @@
 <script src="./hardwood.js?v=1477558b"></script>
 <script>
 "use strict";
+/* WIN-CHANCE HOVER NOTE. Kept byte-identical on every surface that renders a win chance
+   (index.html, board.html, daybyday.html, report_archive.html); primer.html#winpct-ref is the
+   single source of truth for the three numbers in it and tests/test_winpct_reference.py fails if
+   a copy drifts from the others or from the table. It names the gap between the simulated number
+   and the reference rather than smoothing it - the card's number is NOT adjusted to match. */
+var WINPCT_TIP = "Our win chance comes from simulating the game. For reference, a 3-point favorite wins about 58% of the time, a 6-point favorite about 67%, and a 10-point favorite about 76%. On clear favorites our simulated number can run a few points above that reference - a known gap, written up on the Learn page.";
 /*__DAYBYDAY_LOGIC_START__ — pure, DOM-free helpers (unit-tested by tests/daybyday_logic.test.js).*/
 function round0(v){ return Math.round(Number(v)); }
 /* Home-centric margin range -> human "AWAY by N to HOME by M" using the same phrasing as the archive. */
@@ -291,7 +297,11 @@ if (typeof module!=="undefined" && module.exports){
     if(g.tip){ mu.appendChild(el("span","tip", g.tip)); }
     c.appendChild(mu);
     if(g.call){ c.appendChild(el("div","call", g.call)); }
-    if(g.win_line){ c.appendChild(el("div","win", g.win_line)); }
+    if(g.win_line){
+      var wl=el("div","win", g.win_line);
+      wl.setAttribute("title", WINPCT_TIP);
+      c.appendChild(wl);
+    }
     // The range is SHOWN when we hold the raw band, and only described when we do not. Archived
     // past rows carry the sentence and nothing else, so they keep the sentence rather than losing
     // the information to a presentation change.

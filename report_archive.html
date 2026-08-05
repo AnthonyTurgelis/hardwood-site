@@ -33,7 +33,7 @@
   .pred .mu{font-weight:640}
   .pred .mu small{display:block;color:var(--muted);font-weight:500;font-size:11px;margin-top:1px}
   .pred .call{font-size:12.5px}
-  .pred .win{color:var(--muted);font-size:11.5px;margin-top:1px}
+  .pred .win{color:var(--muted);font-size:11.5px;margin-top:1px;cursor:help}
   .pred .rng{color:var(--muted);font-size:11.5px;margin-top:1px}
   .norep{color:var(--muted);font-size:11.5px;font-style:italic}
   .empty{color:var(--muted);font-style:italic}
@@ -77,6 +77,13 @@
 (function(){
   "use strict";
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+
+  /* WIN-CHANCE HOVER NOTE. Kept byte-identical on every surface that renders a win chance
+     (index.html, board.html, daybyday.html, report_archive.html); primer.html#winpct-ref is the
+     single source of truth for the three numbers in it and tests/test_winpct_reference.py fails if
+     a copy drifts from the others or from the table. It names the gap between the simulated number
+     and the reference rather than smoothing it - the card's number is NOT adjusted to match. */
+  var WINPCT_TIP = "Our win chance comes from simulating the game. For reference, a 3-point favorite wins about 58% of the time, a 6-point favorite about 67%, and a 10-point favorite about 76%. On clear favorites our simulated number can run a few points above that reference - a known gap, written up on the Learn page.";
   function prettyDate(iso){
     if(!iso) return "";
     var d=new Date(iso+"T12:00:00");
@@ -99,7 +106,11 @@
     row.appendChild(mu);
     var body=el("div");
     if(p.call){ body.appendChild(el("div","call", p.call)); }
-    if(p.win_line){ body.appendChild(el("div","win", p.win_line)); }
+    if(p.win_line){
+      var wl=el("div","win", p.win_line);
+      wl.setAttribute("title", WINPCT_TIP);
+      body.appendChild(wl);
+    }
     if(p.range80){ body.appendChild(el("div","rng","80% range: "+p.range80)); }
     row.appendChild(body);
     return row;
