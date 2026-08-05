@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-08-05T08:01:37+00:00",
+ "generated_utc": "2026-08-05T08:11:42+00:00",
  "stale_after_secs": 300,
  "date": "2026-08-05",
  "pipe_health": {
@@ -20,41 +20,41 @@
  },
  "scout": {
   "alive": true,
-  "last_poll_utc": "2026-08-05T08:00:59Z",
-  "age_s": 44,
-  "cycles": 48,
+  "last_poll_utc": "2026-08-05T08:11:32Z",
+  "age_s": 14,
+  "cycles": 56,
   "known": true,
-  "label": "scout: alive, last poll 44s ago",
+  "label": "scout: alive, last poll 14s ago",
   "anchor": "heartbeat.json+scout.log",
   "state": "KNOWN",
   "reason": ""
  },
  "coordinator": {
   "known": true,
-  "alive": false,
-  "last_heartbeat_utc": "2026-07-31T22:08:02Z",
-  "session_age_secs": 381960,
-  "last_progress_age_secs": 381221,
+  "alive": true,
+  "last_heartbeat_utc": "2026-08-05T08:11:39Z",
+  "session_age_secs": 538,
+  "last_progress_age_secs": 7,
   "last_spawn_attempt": "2026-07-31T21:36:09Z",
   "blocked_reason": "usage pause (weekly)",
-  "state": "DEAD",
+  "state": "ALIVE",
   "reason": ""
  },
  "pause": {
-  "state": "UNKNOWN",
-  "label": "UNKNOWN",
-  "remedy": "",
-  "as_of": null,
-  "as_of_clock": "",
+  "state": "SELF_PAUSE",
+  "label": "SELF-PAUSE - we filed this pause ourselves",
+  "remedy": "python ops/scout/ack.py --resume",
+  "as_of": "2026-07-31T22:07:30Z",
+  "as_of_clock": "6:07pm",
   "self_pause": {
-   "active": false,
+   "active": true,
    "readable": true,
-   "kind": "none",
-   "reason": "",
-   "filed_clock": "",
-   "filed_iso": null,
-   "filed_by": "unknown",
-   "remedy": ""
+   "kind": "weekly",
+   "reason": "usage cap weekly",
+   "filed_clock": "6:07pm",
+   "filed_iso": "2026-07-31T22:07:30Z",
+   "filed_by": "unknown - ack.py does not record who filed a pause",
+   "remedy": "python ops/scout/ack.py --resume"
   },
   "provider_limit": {
    "active": false,
@@ -63,14 +63,14 @@
    "resets_clock": "",
    "resets_known": false,
    "remedy": "",
-   "reason": ""
+   "reason": "no provider refusal on record (no rate-limit header rejection, no exhausted provider reading, no probe that observed usage unavailable)"
   },
   "percent": {
-   "quality": "UNKNOWN",
-   "display": "unknown",
-   "value": null,
+   "quality": "MEASURED",
+   "display": "100%",
+   "value": 100.0,
    "reason": "",
-   "reading_clock": "",
+   "reading_clock": "4:11am",
    "last_known_display": "",
    "self_derived": false
   },
@@ -85,5 +85,5 @@
   "known": true,
   "reason": ""
  },
- "generated_et": "Aug 5, 4:01am ET"
+ "generated_et": "Aug 5, 4:11am ET"
 }
