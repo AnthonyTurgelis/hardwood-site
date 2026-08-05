@@ -129,7 +129,12 @@ fetch(SLATE_FEED).then(function(r){return r.json()}).then(function(d){
       var s=a[side]; if(!s) return;
       var bits=[];
       if(s.out&&s.out.length) bits.push(s.out.join(", ")+" out");
-      if(s.limited&&s.limited.length) bits.push(s.limited.join(", ")+" limited");
+      if(s.limited&&s.limited.length) bits.push(s.limited.map(function(p){
+        // `limited` rows are OBJECTS {name, play_pct}, not strings - joining them raw
+        // would print [object Object] on the front page. Verified against site/games.json.
+        if(p&&typeof p==="object") return p.name+(p.play_pct!=null?" "+p.play_pct+"% to play":"");
+        return String(p);
+      }).join(", ")+" limited");
       if(bits.length) parts.push((s.team||side)+": "+bits.join("; "));
     });
     return parts.join("   ");
