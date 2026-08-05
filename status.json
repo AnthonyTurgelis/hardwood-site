@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-08-05T17:25:14+00:00",
+ "generated_utc": "2026-08-05T17:30:06+00:00",
  "stale_after_secs": 300,
  "date": "2026-08-05",
  "pipe_health": {
@@ -20,32 +20,32 @@
  },
  "scout": {
   "alive": true,
-  "last_poll_utc": "2026-08-05T17:24:53Z",
-  "age_s": 25,
-  "cycles": 5,
+  "last_poll_utc": "2026-08-05T17:29:18Z",
+  "age_s": 51,
+  "cycles": 9,
   "known": true,
-  "label": "scout: alive, last poll 25s ago",
+  "label": "scout: alive, last poll 51s ago",
   "anchor": "heartbeat.json+scout.log",
   "state": "KNOWN",
   "reason": ""
  },
  "coordinator": {
   "known": true,
-  "alive": true,
-  "last_heartbeat_utc": "2026-08-05T17:25:16Z",
-  "session_age_secs": 5386,
-  "last_progress_age_secs": 2,
+  "alive": false,
+  "last_heartbeat_utc": "2026-08-05T17:27:05Z",
+  "session_age_secs": 5677,
+  "last_progress_age_secs": 184,
   "last_spawn_attempt": "2026-08-05T16:22:25Z",
-  "blocked_reason": "",
-  "state": "ALIVE",
+  "blocked_reason": "no coordinator seated and nothing is holding a start — a start is due now",
+  "state": "DEAD",
   "reason": ""
  },
  "pause": {
-  "state": "NORMAL",
-  "label": "running (no pause of either kind)",
-  "remedy": "",
-  "as_of": "2026-08-05T17:25:18Z",
-  "as_of_clock": "1:25pm",
+  "state": "PROVIDER_LIMIT",
+  "label": "PROVIDER LIMIT - the provider refused/limited us",
+  "remedy": "wait for the verified reset at 3:00pm",
+  "as_of": "2026-08-05T17:27:06Z",
+  "as_of_clock": "1:27pm",
   "self_pause": {
    "active": false,
    "readable": true,
@@ -57,20 +57,22 @@
    "remedy": ""
   },
   "provider_limit": {
-   "active": false,
-   "evidence": [],
-   "observed_clock": "",
-   "resets_clock": "",
-   "resets_known": false,
-   "remedy": "",
-   "reason": "no provider refusal on record (no rate-limit header rejection, no exhausted provider reading, no probe that observed usage unavailable)"
+   "active": true,
+   "evidence": [
+    "usage meter: provider-sourced reading reports EXHAUSTED"
+   ],
+   "observed_clock": "1:27pm",
+   "resets_clock": "3:00pm",
+   "resets_known": true,
+   "remedy": "wait for the verified reset at 3:00pm",
+   "reason": ""
   },
   "percent": {
    "quality": "MEASURED",
-   "display": "96%",
-   "value": 96.0,
+   "display": "100%",
+   "value": 100.0,
    "reason": "",
-   "reading_clock": "1:24pm",
+   "reading_clock": "1:27pm",
    "last_known_display": "",
    "self_derived": false
   },
@@ -85,5 +87,5 @@
   "known": true,
   "reason": ""
  },
- "generated_et": "Aug 5, 1:25pm ET"
+ "generated_et": "Aug 5, 1:30pm ET"
 }
