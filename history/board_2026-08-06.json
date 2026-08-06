@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-06T19:06:16+00:00",
+ "generated_utc": "2026-08-06T19:16:07+00:00",
  "freshness": {
-  "baked_utc": "2026-08-06T19:06:16+00:00",
-  "baked_et": "Aug 6, 3:06pm ET",
-  "revalidated_utc": "2026-08-06T19:06:16+00:00",
+  "baked_utc": "2026-08-06T19:16:07+00:00",
+  "baked_et": "Aug 6, 3:16pm ET",
+  "revalidated_utc": "2026-08-06T19:16:07+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-06",
@@ -14,7 +14,7 @@
   "maintenance": 5,
   "needs_anthony": 0,
   "lanes_today": 63,
-  "upcoming": 341
+  "upcoming": 340
  },
  "sections": {
   "agent_updates": [
@@ -1449,96 +1449,6 @@
      ]
     },
     {
-     "task_id": "idle-beacon-fires-when-not-actually-out-of-work",
-     "family": "infra",
-     "name": "Stop reporting idle when the lane is working",
-     "header": "Stop reporting idle when the lane is working",
-     "why": "Coordination: hand off overlapping work so two writers don't clash",
-     "priority": 0,
-     "seat": "Infra",
-     "status": "partial - TWO OF THE BORROWERS REPOINTED, THREE REMAIN (all named below, none silent). watcher._fire_spawn_blocked_push now fires spawn_failed and preflight.fire_page now fires boot_stuck, so a blocked spawn and a refused boot no longer arrive labelled as the machine being idle - which is the substance of what he complained about three times. Guard: tests/test_idle_beacon_not_borrowed.py 7/7, asserting via AST (not text - the new comments deliberately quote the old key, so a grep-based version would fail on its own documentation). No regression: needs_you_gate 9/9, comms_needsyou_truth 19/19, alarm_path_hardening ALL PASS. THE TEST CORRECTED ME TWICE, both recorded in the file: (1) I claimed spawn_failed/boot_stuck were non-FIXED_BODY so the repoint would be free - they ARE pinned, so the caller's exact fix string is DISCARDED on the way out. Accepted deliberately (a pinned line naming the true condition beats an accurate fix string under a false headline, and he has asked not to receive machine detail) and both callers now LOG the fix line locally so it is redirected rather than lost. (2) My hand-grep of ops/ found three borrowers; the AST sweep found TWO MORE in scripts/ that grep missed. STILL BORROWING, tracked in KNOWN_BORROWERS with a test that FAILS if any of them is fixed and left in the list: ops/scout/self_deploy.py:_page (failed self-deploy), scripts/discord_gateway_listener.py:_page, scripts/discord_return.py:poll_replies. Each needs a destination DECISION rather than a mechanical repoint, and the decision is the actor test the comms lane shipped (62f86e01): a failed self-deploy and a gateway fault are machine conditions he cannot clear, so by that test they should probably not carry [NEEDS YOU] at all rather than being repointed to another Tier-1 key. That is a judgement about three alarm classes, not a find-and-replace, which is why it is left open instead of guessed. CORRECTION 2026-07-30T03:48Z - HIS SECOND SENTENCE IS ALREADY DONE and I was wrong to call it untouched; I asserted it without checking, which is the same unverified-claim habit this wake exists to kill. ops/notify.py announce_rest() carries a SELF-RECOVERY FIRST block that quotes his message () verbatim and implements exactly it: it calls idle_guard._independent_waker_live() BEFORE posting anything; if the waker is verifiably live it logs quietly, writes the rest marker and tells him NOTHING (on the stated reasoning that a verified independent waker is a stronger guarantee than a message he might not read); only when self-recovery cannot be PROVEN does it post, and then the wording is 'EMERGENCY - idle and nothing can restart me ... self-recovery unavailable', not 'resting'. It also fails LOUD rather than quiet if the waker check itself raises. So the only genuinely open part of this row is the THREE remaining borrowers above.",
-     "state": "part done",
-     "pm_authored": false,
-     "impact": "",
-     "rank_priority": 0.0,
-     "title": "Stop reporting idle when the lane is working",
-     "unlocks": "",
-     "owner": "MACHINE",
-     "feed_status": "QUEUED",
-     "tier": 0,
-     "group": "",
-     "ceo_ask": true,
-     "p0": false,
-     "rank": 3,
-     "actions": [
-      {
-       "verb": "top",
-       "icon": "⤒",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20idle-beacon-fires-when-not-actually-out-of-work%3A%20top&body=Stop%20reporting%20idle%20when%20the%20lane%20is%20working%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-      },
-      {
-       "verb": "bump",
-       "icon": "⬆",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20idle-beacon-fires-when-not-actually-out-of-work%3A%20bump&body=Stop%20reporting%20idle%20when%20the%20lane%20is%20working%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-      },
-      {
-       "verb": "demote",
-       "icon": "⬇",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20idle-beacon-fires-when-not-actually-out-of-work%3A%20demote&body=Stop%20reporting%20idle%20when%20the%20lane%20is%20working%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-      },
-      {
-       "verb": "shelve",
-       "icon": "🗄",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20idle-beacon-fires-when-not-actually-out-of-work%3A%20shelve&body=Stop%20reporting%20idle%20when%20the%20lane%20is%20working%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-      }
-     ]
-    },
-    {
-     "task_id": "the-mirror-cannot-carry-anything-that-is-not-mar",
-     "family": "infra",
-     "name": "The channel that delivers the orders silently drops the code they depend on",
-     "header": "The channel that delivers the orders silently drops the code they depend on",
-     "why": "Trace a data-integrity question back to its source",
-     "priority": 0,
-     "seat": "infra",
-     "status": "in_progress - CODE FIXED AND PUSHED 2026-08-06 (6cbbb449) BUT NOT LIVE. See why below.",
-     "state": "",
-     "pm_authored": false,
-     "impact": "",
-     "rank_priority": 0.0,
-     "title": "The channel that delivers the orders silently drops the code they depend on",
-     "unlocks": "The harm was live not theoretical Director modules uploaded as existed on this box - (the market-independent margin and ...",
-     "owner": "MACHINE",
-     "feed_status": "QUEUED",
-     "tier": 3,
-     "group": "process",
-     "ceo_ask": false,
-     "p0": false,
-     "rank": 4,
-     "actions": [
-      {
-       "verb": "top",
-       "icon": "⤒",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-mirror-cannot-carry-anything-that-is-not-mar%3A%20top&body=The%20channel%20that%20delivers%20the%20orders%20silently%20drops%20the%20code%20they%20depend%20on%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-      },
-      {
-       "verb": "bump",
-       "icon": "⬆",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-mirror-cannot-carry-anything-that-is-not-mar%3A%20bump&body=The%20channel%20that%20delivers%20the%20orders%20silently%20drops%20the%20code%20they%20depend%20on%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-      },
-      {
-       "verb": "demote",
-       "icon": "⬇",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-mirror-cannot-carry-anything-that-is-not-mar%3A%20demote&body=The%20channel%20that%20delivers%20the%20orders%20silently%20drops%20the%20code%20they%20depend%20on%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-      },
-      {
-       "verb": "shelve",
-       "icon": "🗄",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-mirror-cannot-carry-anything-that-is-not-mar%3A%20shelve&body=The%20channel%20that%20delivers%20the%20orders%20silently%20drops%20the%20code%20they%20depend%20on%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-      }
-     ]
-    },
-    {
      "task_id": "our-published-intervals-are-too-narrow-because-m",
      "family": "modeling",
      "name": "The minutes collapse was a measurement artifact not a league change",
@@ -1559,7 +1469,7 @@
      "group": "",
      "ceo_ask": false,
      "p0": false,
-     "rank": 5,
+     "rank": 3,
      "actions": [
       {
        "verb": "top",
@@ -1604,7 +1514,7 @@
      "group": "",
      "ceo_ask": false,
      "p0": false,
-     "rank": 6,
+     "rank": 4,
      "actions": [
       {
        "verb": "top",
@@ -1650,7 +1560,7 @@
      "ceo_ask": false,
      "p0": false,
      "note": "CEO decision owed on whether the capture is wanted; any re-home also needs the elevated registrar he already owes",
-     "rank": 7,
+     "rank": 5,
      "actions": [
       {
        "verb": "top",
@@ -1695,7 +1605,7 @@
      "group": "",
      "ceo_ask": false,
      "p0": false,
-     "rank": 8,
+     "rank": 6,
      "actions": [
       {
        "verb": "top",
@@ -1740,7 +1650,7 @@
      "group": "process",
      "ceo_ask": false,
      "p0": false,
-     "rank": 9,
+     "rank": 7,
      "actions": [
       {
        "verb": "top",
@@ -1785,7 +1695,7 @@
      "group": "",
      "ceo_ask": false,
      "p0": false,
-     "rank": 10,
+     "rank": 8,
      "actions": [
       {
        "verb": "top",
@@ -1808,100 +1718,100 @@
        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20an-exact-half-margin-loses-its-breakdown%3A%20shelve&body=A%20call%20landing%20on%20an%20exact%20half%20point%20can%20lose%20the%20breakdown%20under%20it%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
       }
      ]
+    },
+    {
+     "task_id": "the-reconcile-check-stopped-a-month-ago",
+     "family": "infra",
+     "name": "A check that compares our scores to the outside world existed, and stopped a month ago",
+     "header": "A check that compares our scores to the outside world existed, and stopped a month ago",
+     "why": "The wrong final we repaired tonight would have been caught on the day it happened. A reconciliation table already compares recorded finals against two independent sources, it holds a hundred and ...",
+     "priority": 1,
+     "seat": "data",
+     "status": "ready",
+     "state": "ready now",
+     "pm_authored": false,
+     "impact": "",
+     "rank_priority": 1.0,
+     "title": "A check that compares our scores to the outside world existed, and stopped a month ago",
+     "unlocks": "The wrong final we repaired tonight would have been caught on the day it happened.",
+     "owner": "DIRECTOR",
+     "feed_status": "QUEUED",
+     "tier": 3,
+     "group": "process",
+     "ceo_ask": false,
+     "p0": false,
+     "rank": 9,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20top&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20bump&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20demote&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20shelve&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+      }
+     ]
+    },
+    {
+     "task_id": "a-liveness-check-that-can-only-pass-while-the-bu",
+     "family": "infra",
+     "name": "A check that proves a rule is alive by counting findings fails the moment the rule is ...",
+     "header": "A check that proves a rule is alive by counting findings fails the moment the rule is ...",
+     "why": "Found by the lane that fixed the git rule and it calls it the finding under the finding. A test asserted the rule had at least one finding somewhere on the real tree as proof the detector was alive ...",
+     "priority": 1,
+     "seat": "qa",
+     "status": "RETIRED-WITH-EVIDENCE 2026-07-31T13:20:50Z - the work this row asks for has already SHIPPED. delta-lane-header: docs/deltas/qa_liveness_check_that_can_only_pass_while_the_bug_exists_.md (lane declaration in the head) | landed-lane-name: lane 'a-liveness-check-that-can-only-pass-while-the-bug-exists' state=landed commit 4d6c9912",
+     "state": "",
+     "pm_authored": false,
+     "impact": "",
+     "rank_priority": 1.0,
+     "title": "A check that proves a rule is alive by counting findings fails the moment the rule is ...",
+     "unlocks": "A test asserted the rule had at least one finding somewhere on the real tree as proof the detector was alive rather ...",
+     "owner": "MACHINE",
+     "feed_status": "DONE TODAY",
+     "tier": 3,
+     "group": "process",
+     "ceo_ask": false,
+     "p0": false,
+     "rank": 10,
+     "actions": [
+      {
+       "verb": "top",
+       "icon": "⤒",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-liveness-check-that-can-only-pass-while-the-bu%3A%20top&body=A%20check%20that%20proves%20a%20rule%20is%20alive%20by%20counting%20findings%20fails%20the%20moment%20the%20rule%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+      },
+      {
+       "verb": "bump",
+       "icon": "⬆",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-liveness-check-that-can-only-pass-while-the-bu%3A%20bump&body=A%20check%20that%20proves%20a%20rule%20is%20alive%20by%20counting%20findings%20fails%20the%20moment%20the%20rule%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+      },
+      {
+       "verb": "demote",
+       "icon": "⬇",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-liveness-check-that-can-only-pass-while-the-bu%3A%20demote&body=A%20check%20that%20proves%20a%20rule%20is%20alive%20by%20counting%20findings%20fails%20the%20moment%20the%20rule%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+      },
+      {
+       "verb": "shelve",
+       "icon": "🗄",
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-liveness-check-that-can-only-pass-while-the-bu%3A%20shelve&body=A%20check%20that%20proves%20a%20rule%20is%20alive%20by%20counting%20findings%20fails%20the%20moment%20the%20rule%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+      }
+     ]
     }
    ],
    "more_by_family": {
     "infra": [
-     {
-      "task_id": "the-reconcile-check-stopped-a-month-ago",
-      "family": "infra",
-      "name": "A check that compares our scores to the outside world existed, and stopped a month ago",
-      "header": "A check that compares our scores to the outside world existed, and stopped a month ago",
-      "why": "The wrong final we repaired tonight would have been caught on the day it happened. A reconciliation table already compares recorded finals against two independent sources, it holds a hundred and ...",
-      "priority": 1,
-      "seat": "data",
-      "status": "ready",
-      "state": "ready now",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "A check that compares our scores to the outside world existed, and stopped a month ago",
-      "unlocks": "The wrong final we repaired tonight would have been caught on the day it happened.",
-      "owner": "DIRECTOR",
-      "feed_status": "QUEUED",
-      "tier": 3,
-      "group": "process",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 11,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20top&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20bump&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20demote&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20shelve&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-       }
-      ]
-     },
-     {
-      "task_id": "a-liveness-check-that-can-only-pass-while-the-bu",
-      "family": "infra",
-      "name": "A check that proves a rule is alive by counting findings fails the moment the rule is ...",
-      "header": "A check that proves a rule is alive by counting findings fails the moment the rule is ...",
-      "why": "Found by the lane that fixed the git rule and it calls it the finding under the finding. A test asserted the rule had at least one finding somewhere on the real tree as proof the detector was alive ...",
-      "priority": 1,
-      "seat": "qa",
-      "status": "RETIRED-WITH-EVIDENCE 2026-07-31T13:20:50Z - the work this row asks for has already SHIPPED. delta-lane-header: docs/deltas/qa_liveness_check_that_can_only_pass_while_the_bug_exists_.md (lane declaration in the head) | landed-lane-name: lane 'a-liveness-check-that-can-only-pass-while-the-bug-exists' state=landed commit 4d6c9912",
-      "state": "",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "A check that proves a rule is alive by counting findings fails the moment the rule is ...",
-      "unlocks": "A test asserted the rule had at least one finding somewhere on the real tree as proof the detector was alive rather ...",
-      "owner": "MACHINE",
-      "feed_status": "DONE TODAY",
-      "tier": 3,
-      "group": "process",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 12,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-liveness-check-that-can-only-pass-while-the-bu%3A%20top&body=A%20check%20that%20proves%20a%20rule%20is%20alive%20by%20counting%20findings%20fails%20the%20moment%20the%20rule%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-liveness-check-that-can-only-pass-while-the-bu%3A%20bump&body=A%20check%20that%20proves%20a%20rule%20is%20alive%20by%20counting%20findings%20fails%20the%20moment%20the%20rule%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-liveness-check-that-can-only-pass-while-the-bu%3A%20demote&body=A%20check%20that%20proves%20a%20rule%20is%20alive%20by%20counting%20findings%20fails%20the%20moment%20the%20rule%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-liveness-check-that-can-only-pass-while-the-bu%3A%20shelve&body=A%20check%20that%20proves%20a%20rule%20is%20alive%20by%20counting%20findings%20fails%20the%20moment%20the%20rule%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
-       }
-      ]
-     },
      {
       "task_id": "ctx-sentinel-grades-green-at-the-moment-of-loss",
       "family": "infra",
@@ -1923,7 +1833,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 13,
+      "rank": 11,
       "actions": [
        {
         "verb": "top",
@@ -1968,7 +1878,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 14,
+      "rank": 12,
       "actions": [
        {
         "verb": "top",
@@ -2013,7 +1923,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 15,
+      "rank": 13,
       "actions": [
        {
         "verb": "top",
@@ -2058,7 +1968,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 18,
+      "rank": 16,
       "actions": [
        {
         "verb": "top",
@@ -2103,7 +2013,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 19,
+      "rank": 17,
       "actions": [
        {
         "verb": "top",
@@ -2148,7 +2058,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 20,
+      "rank": 18,
       "actions": [
        {
         "verb": "top",
@@ -2193,7 +2103,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 21,
+      "rank": 19,
       "actions": [
        {
         "verb": "top",
@@ -2238,7 +2148,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 22,
+      "rank": 20,
       "actions": [
        {
         "verb": "top",
@@ -2283,7 +2193,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 23,
+      "rank": 21,
       "actions": [
        {
         "verb": "top",
@@ -2328,7 +2238,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 24,
+      "rank": 22,
       "actions": [
        {
         "verb": "top",
@@ -2373,7 +2283,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 26,
+      "rank": 24,
       "actions": [
        {
         "verb": "top",
@@ -2398,6 +2308,51 @@
       ]
      },
      {
+      "task_id": "the-blocker-filter-reads-narrative-prose-as-a-bl",
+      "family": "infra",
+      "name": "A row that merely describes a blocked spawn is itself marked blocked",
+      "header": "A row that merely describes a blocked spawn is itself marked blocked",
+      "why": "Measured the sibling of the closed-status defect fixed the same hour and the same one-line shape one function over. width fill. item blocker searches the status prose for blocked gated staged waiting ...",
+      "priority": 1,
+      "seat": "infra",
+      "status": "ready",
+      "state": "ready now",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 1.0,
+      "title": "A row that merely describes a blocked spawn is itself marked blocked",
+      "unlocks": "Item blocker searches the status prose for blocked gated staged waiting owed.",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 3,
+      "group": "process",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 32,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-blocker-filter-reads-narrative-prose-as-a-bl%3A%20top&body=A%20row%20that%20merely%20describes%20a%20blocked%20spawn%20is%20itself%20marked%20blocked%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-blocker-filter-reads-narrative-prose-as-a-bl%3A%20bump&body=A%20row%20that%20merely%20describes%20a%20blocked%20spawn%20is%20itself%20marked%20blocked%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-blocker-filter-reads-narrative-prose-as-a-bl%3A%20demote&body=A%20row%20that%20merely%20describes%20a%20blocked%20spawn%20is%20itself%20marked%20blocked%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-blocker-filter-reads-narrative-prose-as-a-bl%3A%20shelve&body=A%20row%20that%20merely%20describes%20a%20blocked%20spawn%20is%20itself%20marked%20blocked%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "two-core-tasks-can-only-be-repaired-by-an-elevat",
       "family": "infra",
       "name": "A scheduled task here can be created but not repaired, and two of ours are now stuck that ...",
@@ -2418,7 +2373,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 34,
+      "rank": 33,
       "actions": [
        {
         "verb": "top",
@@ -2463,7 +2418,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 35,
+      "rank": 34,
       "actions": [
        {
         "verb": "top",
@@ -2508,7 +2463,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 37,
+      "rank": 36,
       "actions": [
        {
         "verb": "top",
@@ -2553,7 +2508,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 41,
+      "rank": 40,
       "actions": [
        {
         "verb": "top",
@@ -2598,7 +2553,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 42,
+      "rank": 41,
       "actions": [
        {
         "verb": "top",
@@ -2643,7 +2598,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 43,
+      "rank": 42,
       "actions": [
        {
         "verb": "top",
@@ -2688,7 +2643,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 45,
+      "rank": 44,
       "actions": [
        {
         "verb": "top",
@@ -2733,7 +2688,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 52,
+      "rank": 51,
       "actions": [
        {
         "verb": "top",
@@ -2778,7 +2733,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 58,
+      "rank": 57,
       "actions": [
        {
         "verb": "top",
@@ -2823,7 +2778,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 60,
+      "rank": 59,
       "actions": [
        {
         "verb": "top",
@@ -2868,7 +2823,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 61,
+      "rank": 60,
       "actions": [
        {
         "verb": "top",
@@ -2913,7 +2868,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 62,
+      "rank": 61,
       "actions": [
        {
         "verb": "top",
@@ -2958,7 +2913,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 63,
+      "rank": 62,
       "actions": [
        {
         "verb": "top",
@@ -3003,7 +2958,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 66,
+      "rank": 65,
       "actions": [
        {
         "verb": "top",
@@ -3048,7 +3003,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 77,
+      "rank": 76,
       "actions": [
        {
         "verb": "top",
@@ -3093,7 +3048,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 79,
+      "rank": 78,
       "actions": [
        {
         "verb": "top",
@@ -3138,7 +3093,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 80,
+      "rank": 79,
       "actions": [
        {
         "verb": "top",
@@ -3183,7 +3138,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 81,
+      "rank": 80,
       "actions": [
        {
         "verb": "top",
@@ -3228,7 +3183,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 95,
+      "rank": 94,
       "actions": [
        {
         "verb": "top",
@@ -3273,7 +3228,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 98,
+      "rank": 97,
       "actions": [
        {
         "verb": "top",
@@ -3318,7 +3273,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 103,
+      "rank": 102,
       "actions": [
        {
         "verb": "top",
@@ -3363,7 +3318,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 104,
+      "rank": 103,
       "actions": [
        {
         "verb": "top",
@@ -3408,7 +3363,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 107,
+      "rank": 106,
       "actions": [
        {
         "verb": "top",
@@ -3453,7 +3408,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 110,
+      "rank": 109,
       "actions": [
        {
         "verb": "top",
@@ -3498,7 +3453,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 114,
+      "rank": 113,
       "actions": [
        {
         "verb": "top",
@@ -3543,7 +3498,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 115,
+      "rank": 114,
       "actions": [
        {
         "verb": "top",
@@ -3588,7 +3543,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 117,
+      "rank": 116,
       "actions": [
        {
         "verb": "top",
@@ -3633,7 +3588,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 119,
+      "rank": 118,
       "actions": [
        {
         "verb": "top",
@@ -3678,7 +3633,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 120,
+      "rank": 119,
       "actions": [
        {
         "verb": "top",
@@ -3723,7 +3678,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 124,
+      "rank": 123,
       "actions": [
        {
         "verb": "top",
@@ -3768,7 +3723,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 125,
+      "rank": 124,
       "actions": [
        {
         "verb": "top",
@@ -3813,7 +3768,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 130,
+      "rank": 129,
       "actions": [
        {
         "verb": "top",
@@ -3858,7 +3813,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 131,
+      "rank": 130,
       "actions": [
        {
         "verb": "top",
@@ -3903,7 +3858,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 132,
+      "rank": 131,
       "actions": [
        {
         "verb": "top",
@@ -3948,7 +3903,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 133,
+      "rank": 132,
       "actions": [
        {
         "verb": "top",
@@ -3993,7 +3948,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 135,
+      "rank": 134,
       "actions": [
        {
         "verb": "top",
@@ -4038,7 +3993,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 137,
+      "rank": 136,
       "actions": [
        {
         "verb": "top",
@@ -4083,7 +4038,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 140,
+      "rank": 139,
       "actions": [
        {
         "verb": "top",
@@ -4128,7 +4083,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 141,
+      "rank": 140,
       "actions": [
        {
         "verb": "top",
@@ -4173,7 +4128,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 142,
+      "rank": 141,
       "actions": [
        {
         "verb": "top",
@@ -4218,7 +4173,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 149,
+      "rank": 148,
       "actions": [
        {
         "verb": "top",
@@ -4263,7 +4218,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 150,
+      "rank": 149,
       "actions": [
        {
         "verb": "top",
@@ -4308,7 +4263,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 153,
+      "rank": 152,
       "actions": [
        {
         "verb": "top",
@@ -4353,7 +4308,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 157,
+      "rank": 156,
       "actions": [
        {
         "verb": "top",
@@ -4385,8 +4340,8 @@
       "why": "The always-on background monitor that flags anything needing a decision",
       "priority": 1,
       "seat": "infra",
-      "status": "READY",
-      "state": "ready now",
+      "status": "in_progress - THE INVERSE DEFECT FOUND AND FIXED 2026-08-06; the original claim is NOT reproduced. This row says shipped rows are still OFFERED. Measured on the live queue, the opposite was happening and it is worse: genuinely OPEN rows were being SILENTLY DROPPED from the ready-set. CAUSE: _is_closed_status searched the WHOLE status prose for done/shipped/landed/closed. These statuses are written \"<disposition> - <narrative>\" and the narrative routinely describes what was finished, so \"partial - TWO OF THE BORROWERS REPOINTED, THREE REMAIN\" and \"in_progress - MAP GAP CLOSED\" both read as SHIPPED and vanished. A dropped row emits nothing anywhere, so this was invisible - the opposite of the loud defect being hunted. MEASURED: 482 of 544 rows declare no explicit state and so rely on the prose fallback; 4 open rows were being dropped, INCLUDING THE p0 idle-beacon-fires-when-not-actually-out-of-work (three borrowers still outstanding) and a p1 whose status text I had written myself an hour earlier. FIX: the match now reads the LEADING DISPOSITION - whatever precedes the first separator, capped at 48 chars - because a row that IS closed says so in its first words. Ready-set 261 -> 265, all four recovered, and the p0 is back. RED WAS OBSERVED FIRST, per the closure-gate rule added the same day: the four dropped rows were enumerated before the change and re-checked to zero after, and nine cases pin both directions - real closures still close, prose mentions no longer do. STILL OPEN, the ORIGINAL claim: nothing consults a landed-row lock at the moment a row is OFFERED. That half is unproven on today evidence - every row I closed this session correctly disappeared from the ready-set - so re-measure before building it rather than inheriting the premise.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -4398,7 +4353,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 158,
+      "rank": 157,
       "actions": [
        {
         "verb": "top",
@@ -4443,7 +4398,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 159,
+      "rank": 158,
       "actions": [
        {
         "verb": "top",
@@ -4488,7 +4443,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 161,
+      "rank": 160,
       "actions": [
        {
         "verb": "top",
@@ -4533,7 +4488,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 162,
+      "rank": 161,
       "actions": [
        {
         "verb": "top",
@@ -4578,7 +4533,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 164,
+      "rank": 163,
       "actions": [
        {
         "verb": "top",
@@ -4623,7 +4578,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 166,
+      "rank": 165,
       "actions": [
        {
         "verb": "top",
@@ -4668,7 +4623,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 169,
+      "rank": 168,
       "actions": [
        {
         "verb": "top",
@@ -4713,7 +4668,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 172,
+      "rank": 171,
       "actions": [
        {
         "verb": "top",
@@ -4758,7 +4713,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 173,
+      "rank": 172,
       "actions": [
        {
         "verb": "top",
@@ -4803,7 +4758,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 175,
+      "rank": 174,
       "actions": [
        {
         "verb": "top",
@@ -4848,7 +4803,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 177,
+      "rank": 176,
       "actions": [
        {
         "verb": "top",
@@ -4893,7 +4848,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 185,
+      "rank": 184,
       "actions": [
        {
         "verb": "top",
@@ -4938,7 +4893,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 186,
+      "rank": 185,
       "actions": [
        {
         "verb": "top",
@@ -4983,7 +4938,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 192,
+      "rank": 191,
       "actions": [
        {
         "verb": "top",
@@ -5028,7 +4983,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 193,
+      "rank": 192,
       "actions": [
        {
         "verb": "top",
@@ -5073,7 +5028,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 194,
+      "rank": 193,
       "actions": [
        {
         "verb": "top",
@@ -5118,7 +5073,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 196,
+      "rank": 195,
       "actions": [
        {
         "verb": "top",
@@ -5163,7 +5118,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 197,
+      "rank": 196,
       "actions": [
        {
         "verb": "top",
@@ -5208,7 +5163,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 198,
+      "rank": 197,
       "actions": [
        {
         "verb": "top",
@@ -5253,7 +5208,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 199,
+      "rank": 198,
       "actions": [
        {
         "verb": "top",
@@ -5298,7 +5253,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 201,
+      "rank": 200,
       "actions": [
        {
         "verb": "top",
@@ -5343,7 +5298,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 202,
+      "rank": 201,
       "actions": [
        {
         "verb": "top",
@@ -5388,7 +5343,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 203,
+      "rank": 202,
       "actions": [
        {
         "verb": "top",
@@ -5433,7 +5388,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 204,
+      "rank": 203,
       "actions": [
        {
         "verb": "top",
@@ -5478,7 +5433,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 205,
+      "rank": 204,
       "actions": [
        {
         "verb": "top",
@@ -5523,7 +5478,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 206,
+      "rank": 205,
       "actions": [
        {
         "verb": "top",
@@ -5568,7 +5523,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 207,
+      "rank": 206,
       "actions": [
        {
         "verb": "top",
@@ -5613,7 +5568,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 208,
+      "rank": 207,
       "actions": [
        {
         "verb": "top",
@@ -5658,7 +5613,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 209,
+      "rank": 208,
       "actions": [
        {
         "verb": "top",
@@ -5703,7 +5658,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 210,
+      "rank": 209,
       "actions": [
        {
         "verb": "top",
@@ -5748,7 +5703,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 213,
+      "rank": 212,
       "actions": [
        {
         "verb": "top",
@@ -5793,7 +5748,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 214,
+      "rank": 213,
       "actions": [
        {
         "verb": "top",
@@ -5838,7 +5793,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 223,
+      "rank": 222,
       "actions": [
        {
         "verb": "top",
@@ -5883,7 +5838,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 225,
+      "rank": 224,
       "actions": [
        {
         "verb": "top",
@@ -5928,7 +5883,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 228,
+      "rank": 227,
       "actions": [
        {
         "verb": "top",
@@ -5973,7 +5928,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 229,
+      "rank": 228,
       "actions": [
        {
         "verb": "top",
@@ -6018,7 +5973,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 250,
+      "rank": 249,
       "actions": [
        {
         "verb": "top",
@@ -6063,7 +6018,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 252,
+      "rank": 251,
       "actions": [
        {
         "verb": "top",
@@ -6108,7 +6063,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 253,
+      "rank": 252,
       "actions": [
        {
         "verb": "top",
@@ -6153,7 +6108,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 256,
+      "rank": 255,
       "actions": [
        {
         "verb": "top",
@@ -6198,7 +6153,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 257,
+      "rank": 256,
       "actions": [
        {
         "verb": "top",
@@ -6243,7 +6198,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 258,
+      "rank": 257,
       "actions": [
        {
         "verb": "top",
@@ -6288,7 +6243,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 260,
+      "rank": 259,
       "actions": [
        {
         "verb": "top",
@@ -6333,7 +6288,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 261,
+      "rank": 260,
       "actions": [
        {
         "verb": "top",
@@ -6378,7 +6333,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 263,
+      "rank": 262,
       "actions": [
        {
         "verb": "top",
@@ -6423,7 +6378,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 267,
+      "rank": 266,
       "actions": [
        {
         "verb": "top",
@@ -6468,7 +6423,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 270,
+      "rank": 269,
       "actions": [
        {
         "verb": "top",
@@ -6513,7 +6468,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 274,
+      "rank": 273,
       "actions": [
        {
         "verb": "top",
@@ -6558,7 +6513,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 276,
+      "rank": 275,
       "actions": [
        {
         "verb": "top",
@@ -6603,7 +6558,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 278,
+      "rank": 277,
       "actions": [
        {
         "verb": "top",
@@ -6648,7 +6603,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 282,
+      "rank": 281,
       "actions": [
        {
         "verb": "top",
@@ -6693,7 +6648,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 283,
+      "rank": 282,
       "actions": [
        {
         "verb": "top",
@@ -6738,7 +6693,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 288,
+      "rank": 287,
       "actions": [
        {
         "verb": "top",
@@ -6783,7 +6738,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 292,
+      "rank": 291,
       "actions": [
        {
         "verb": "top",
@@ -6828,7 +6783,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 294,
+      "rank": 293,
       "actions": [
        {
         "verb": "top",
@@ -6873,7 +6828,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 295,
+      "rank": 294,
       "actions": [
        {
         "verb": "top",
@@ -6918,7 +6873,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 296,
+      "rank": 295,
       "actions": [
        {
         "verb": "top",
@@ -6963,7 +6918,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 297,
+      "rank": 296,
       "actions": [
        {
         "verb": "top",
@@ -7008,7 +6963,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 298,
+      "rank": 297,
       "actions": [
        {
         "verb": "top",
@@ -7053,7 +7008,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 299,
+      "rank": 298,
       "actions": [
        {
         "verb": "top",
@@ -7098,7 +7053,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 301,
+      "rank": 300,
       "actions": [
        {
         "verb": "top",
@@ -7143,7 +7098,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 302,
+      "rank": 301,
       "actions": [
        {
         "verb": "top",
@@ -7188,7 +7143,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 303,
+      "rank": 302,
       "actions": [
        {
         "verb": "top",
@@ -7233,7 +7188,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 304,
+      "rank": 303,
       "actions": [
        {
         "verb": "top",
@@ -7278,7 +7233,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 305,
+      "rank": 304,
       "actions": [
        {
         "verb": "top",
@@ -7323,7 +7278,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 306,
+      "rank": 305,
       "actions": [
        {
         "verb": "top",
@@ -7369,7 +7324,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs a human sign-in; mostly self-heals now, with a small residual.",
-      "rank": 310,
+      "rank": 309,
       "actions": [
        {
         "verb": "top",
@@ -7415,7 +7370,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs unblocked runner (infra CEO decision).",
-      "rank": 322,
+      "rank": 321,
       "actions": [
        {
         "verb": "top",
@@ -7460,7 +7415,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 337,
+      "rank": 336,
       "actions": [
        {
         "verb": "top",
@@ -7505,7 +7460,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 339,
+      "rank": 338,
       "actions": [
        {
         "verb": "top",
@@ -7551,7 +7506,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 340,
+      "rank": 339,
       "actions": [
        {
         "verb": "top",
@@ -7596,7 +7551,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 341,
+      "rank": 340,
       "actions": [
        {
         "verb": "top",
@@ -7643,7 +7598,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": true,
-      "rank": 16,
+      "rank": 14,
       "actions": [
        {
         "verb": "top",
@@ -7688,7 +7643,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 27,
+      "rank": 25,
       "actions": [
        {
         "verb": "top",
@@ -7733,7 +7688,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 32,
+      "rank": 30,
       "actions": [
        {
         "verb": "top",
@@ -7778,7 +7733,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 38,
+      "rank": 37,
       "actions": [
        {
         "verb": "top",
@@ -7823,7 +7778,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 44,
+      "rank": 43,
       "actions": [
        {
         "verb": "top",
@@ -7868,7 +7823,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 47,
+      "rank": 46,
       "actions": [
        {
         "verb": "top",
@@ -7913,7 +7868,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 50,
+      "rank": 49,
       "actions": [
        {
         "verb": "top",
@@ -7958,7 +7913,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 51,
+      "rank": 50,
       "actions": [
        {
         "verb": "top",
@@ -8003,7 +7958,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 54,
+      "rank": 53,
       "actions": [
        {
         "verb": "top",
@@ -8048,7 +8003,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 56,
+      "rank": 55,
       "actions": [
        {
         "verb": "top",
@@ -8093,7 +8048,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 64,
+      "rank": 63,
       "actions": [
        {
         "verb": "top",
@@ -8138,7 +8093,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 82,
+      "rank": 81,
       "actions": [
        {
         "verb": "top",
@@ -8183,7 +8138,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 83,
+      "rank": 82,
       "actions": [
        {
         "verb": "top",
@@ -8228,7 +8183,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 84,
+      "rank": 83,
       "actions": [
        {
         "verb": "top",
@@ -8273,7 +8228,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 85,
+      "rank": 84,
       "actions": [
        {
         "verb": "top",
@@ -8318,7 +8273,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 88,
+      "rank": 87,
       "actions": [
        {
         "verb": "top",
@@ -8363,7 +8318,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 89,
+      "rank": 88,
       "actions": [
        {
         "verb": "top",
@@ -8409,7 +8364,7 @@
       "ceo_ask": true,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 90,
+      "rank": 89,
       "actions": [
        {
         "verb": "top",
@@ -8454,7 +8409,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 91,
+      "rank": 90,
       "actions": [
        {
         "verb": "top",
@@ -8499,7 +8454,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 92,
+      "rank": 91,
       "actions": [
        {
         "verb": "top",
@@ -8544,7 +8499,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 94,
+      "rank": 93,
       "actions": [
        {
         "verb": "top",
@@ -8589,7 +8544,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 96,
+      "rank": 95,
       "actions": [
        {
         "verb": "top",
@@ -8634,7 +8589,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 97,
+      "rank": 96,
       "actions": [
        {
         "verb": "top",
@@ -8679,7 +8634,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 99,
+      "rank": 98,
       "actions": [
        {
         "verb": "top",
@@ -8724,7 +8679,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 100,
+      "rank": 99,
       "actions": [
        {
         "verb": "top",
@@ -8769,7 +8724,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 105,
+      "rank": 104,
       "actions": [
        {
         "verb": "top",
@@ -8814,7 +8769,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 113,
+      "rank": 112,
       "actions": [
        {
         "verb": "top",
@@ -8859,7 +8814,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": true,
-      "rank": 118,
+      "rank": 117,
       "actions": [
        {
         "verb": "top",
@@ -8904,7 +8859,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 122,
+      "rank": 121,
       "actions": [
        {
         "verb": "top",
@@ -8949,7 +8904,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 126,
+      "rank": 125,
       "actions": [
        {
         "verb": "top",
@@ -8994,7 +8949,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 134,
+      "rank": 133,
       "actions": [
        {
         "verb": "top",
@@ -9039,7 +8994,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 136,
+      "rank": 135,
       "actions": [
        {
         "verb": "top",
@@ -9084,7 +9039,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 143,
+      "rank": 142,
       "actions": [
        {
         "verb": "top",
@@ -9129,7 +9084,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 144,
+      "rank": 143,
       "actions": [
        {
         "verb": "top",
@@ -9174,7 +9129,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 147,
+      "rank": 146,
       "actions": [
        {
         "verb": "top",
@@ -9219,7 +9174,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 154,
+      "rank": 153,
       "actions": [
        {
         "verb": "top",
@@ -9264,7 +9219,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 155,
+      "rank": 154,
       "actions": [
        {
         "verb": "top",
@@ -9309,7 +9264,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 156,
+      "rank": 155,
       "actions": [
        {
         "verb": "top",
@@ -9354,7 +9309,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 165,
+      "rank": 164,
       "actions": [
        {
         "verb": "top",
@@ -9399,7 +9354,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 171,
+      "rank": 170,
       "actions": [
        {
         "verb": "top",
@@ -9444,7 +9399,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 176,
+      "rank": 175,
       "actions": [
        {
         "verb": "top",
@@ -9489,7 +9444,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 179,
+      "rank": 178,
       "actions": [
        {
         "verb": "top",
@@ -9534,7 +9489,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 188,
+      "rank": 187,
       "actions": [
        {
         "verb": "top",
@@ -9579,7 +9534,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 189,
+      "rank": 188,
       "actions": [
        {
         "verb": "top",
@@ -9624,7 +9579,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 191,
+      "rank": 190,
       "actions": [
        {
         "verb": "top",
@@ -9669,7 +9624,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 195,
+      "rank": 194,
       "actions": [
        {
         "verb": "top",
@@ -9714,7 +9669,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 217,
+      "rank": 216,
       "actions": [
        {
         "verb": "top",
@@ -9759,7 +9714,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 218,
+      "rank": 217,
       "actions": [
        {
         "verb": "top",
@@ -9804,7 +9759,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 219,
+      "rank": 218,
       "actions": [
        {
         "verb": "top",
@@ -9849,7 +9804,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 222,
+      "rank": 221,
       "actions": [
        {
         "verb": "top",
@@ -9894,7 +9849,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 227,
+      "rank": 226,
       "actions": [
        {
         "verb": "top",
@@ -9939,7 +9894,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 230,
+      "rank": 229,
       "actions": [
        {
         "verb": "top",
@@ -9984,7 +9939,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 231,
+      "rank": 230,
       "actions": [
        {
         "verb": "top",
@@ -10029,7 +9984,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 232,
+      "rank": 231,
       "actions": [
        {
         "verb": "top",
@@ -10074,7 +10029,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 233,
+      "rank": 232,
       "actions": [
        {
         "verb": "top",
@@ -10119,7 +10074,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 234,
+      "rank": 233,
       "actions": [
        {
         "verb": "top",
@@ -10164,7 +10119,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 237,
+      "rank": 236,
       "actions": [
        {
         "verb": "top",
@@ -10209,7 +10164,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 238,
+      "rank": 237,
       "actions": [
        {
         "verb": "top",
@@ -10254,7 +10209,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 241,
+      "rank": 240,
       "actions": [
        {
         "verb": "top",
@@ -10299,7 +10254,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 242,
+      "rank": 241,
       "actions": [
        {
         "verb": "top",
@@ -10344,7 +10299,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 243,
+      "rank": 242,
       "actions": [
        {
         "verb": "top",
@@ -10389,7 +10344,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 244,
+      "rank": 243,
       "actions": [
        {
         "verb": "top",
@@ -10434,7 +10389,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 245,
+      "rank": 244,
       "actions": [
        {
         "verb": "top",
@@ -10479,7 +10434,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 246,
+      "rank": 245,
       "actions": [
        {
         "verb": "top",
@@ -10524,7 +10479,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 259,
+      "rank": 258,
       "actions": [
        {
         "verb": "top",
@@ -10569,7 +10524,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 264,
+      "rank": 263,
       "actions": [
        {
         "verb": "top",
@@ -10614,7 +10569,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 268,
+      "rank": 267,
       "actions": [
        {
         "verb": "top",
@@ -10659,7 +10614,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 271,
+      "rank": 270,
       "actions": [
        {
         "verb": "top",
@@ -10704,7 +10659,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 272,
+      "rank": 271,
       "actions": [
        {
         "verb": "top",
@@ -10749,7 +10704,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 273,
+      "rank": 272,
       "actions": [
        {
         "verb": "top",
@@ -10794,7 +10749,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 281,
+      "rank": 280,
       "actions": [
        {
         "verb": "top",
@@ -10839,7 +10794,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 284,
+      "rank": 283,
       "actions": [
        {
         "verb": "top",
@@ -10884,7 +10839,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 285,
+      "rank": 284,
       "actions": [
        {
         "verb": "top",
@@ -10929,7 +10884,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 286,
+      "rank": 285,
       "actions": [
        {
         "verb": "top",
@@ -10974,7 +10929,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 289,
+      "rank": 288,
       "actions": [
        {
         "verb": "top",
@@ -11020,7 +10975,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Upstream API returning 529 Overloaded - external, not a repo condition",
-      "rank": 291,
+      "rank": 290,
       "actions": [
        {
         "verb": "top",
@@ -11065,7 +11020,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 307,
+      "rank": 306,
       "actions": [
        {
         "verb": "top",
@@ -11110,7 +11065,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 308,
+      "rank": 307,
       "actions": [
        {
         "verb": "top",
@@ -11156,7 +11111,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Dallas and Las Vegas read too low, Los Angeles too high; extend the shipped fix.",
-      "rank": 309,
+      "rank": 308,
       "actions": [
        {
         "verb": "top",
@@ -11202,7 +11157,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 312,
+      "rank": 311,
       "actions": [
        {
         "verb": "top",
@@ -11248,7 +11203,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Break down offense and defense value by area of the floor for sharper scouting.",
-      "rank": 315,
+      "rank": 314,
       "actions": [
        {
         "verb": "top",
@@ -11293,7 +11248,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 316,
+      "rank": 315,
       "actions": [
        {
         "verb": "top",
@@ -11338,7 +11293,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 317,
+      "rank": 316,
       "actions": [
        {
         "verb": "top",
@@ -11383,7 +11338,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 318,
+      "rank": 317,
       "actions": [
        {
         "verb": "top",
@@ -11428,7 +11383,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 320,
+      "rank": 319,
       "actions": [
        {
         "verb": "top",
@@ -11473,7 +11428,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 325,
+      "rank": 324,
       "actions": [
        {
         "verb": "top",
@@ -11518,7 +11473,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 326,
+      "rank": 325,
       "actions": [
        {
         "verb": "top",
@@ -11563,7 +11518,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 328,
+      "rank": 327,
       "actions": [
        {
         "verb": "top",
@@ -11608,7 +11563,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 329,
+      "rank": 328,
       "actions": [
        {
         "verb": "top",
@@ -11653,7 +11608,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 330,
+      "rank": 329,
       "actions": [
        {
         "verb": "top",
@@ -11699,7 +11654,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 331,
+      "rank": 330,
       "actions": [
        {
         "verb": "top",
@@ -11744,7 +11699,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 332,
+      "rank": 331,
       "actions": [
        {
         "verb": "top",
@@ -11789,7 +11744,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 333,
+      "rank": 332,
       "actions": [
        {
         "verb": "top",
@@ -11835,7 +11790,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 334,
+      "rank": 333,
       "actions": [
        {
         "verb": "top",
@@ -11880,7 +11835,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 335,
+      "rank": 334,
       "actions": [
        {
         "verb": "top",
@@ -11925,7 +11880,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 336,
+      "rank": 335,
       "actions": [
        {
         "verb": "top",
@@ -11972,7 +11927,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 17,
+      "rank": 15,
       "actions": [
        {
         "verb": "top",
@@ -12017,7 +11972,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 28,
+      "rank": 26,
       "actions": [
        {
         "verb": "top",
@@ -12062,7 +12017,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 29,
+      "rank": 27,
       "actions": [
        {
         "verb": "top",
@@ -12107,7 +12062,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 36,
+      "rank": 35,
       "actions": [
        {
         "verb": "top",
@@ -12152,7 +12107,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 46,
+      "rank": 45,
       "actions": [
        {
         "verb": "top",
@@ -12197,7 +12152,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 48,
+      "rank": 47,
       "actions": [
        {
         "verb": "top",
@@ -12242,7 +12197,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 53,
+      "rank": 52,
       "actions": [
        {
         "verb": "top",
@@ -12287,7 +12242,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 55,
+      "rank": 54,
       "actions": [
        {
         "verb": "top",
@@ -12332,7 +12287,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 101,
+      "rank": 100,
       "actions": [
        {
         "verb": "top",
@@ -12377,7 +12332,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 102,
+      "rank": 101,
       "actions": [
        {
         "verb": "top",
@@ -12422,7 +12377,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 106,
+      "rank": 105,
       "actions": [
        {
         "verb": "top",
@@ -12467,7 +12422,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 108,
+      "rank": 107,
       "actions": [
        {
         "verb": "top",
@@ -12512,7 +12467,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 109,
+      "rank": 108,
       "actions": [
        {
         "verb": "top",
@@ -12557,7 +12512,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 116,
+      "rank": 115,
       "actions": [
        {
         "verb": "top",
@@ -12602,7 +12557,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 138,
+      "rank": 137,
       "actions": [
        {
         "verb": "top",
@@ -12647,7 +12602,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 152,
+      "rank": 151,
       "actions": [
        {
         "verb": "top",
@@ -12692,7 +12647,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 160,
+      "rank": 159,
       "actions": [
        {
         "verb": "top",
@@ -12738,7 +12693,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The wave was dispatched as fifteen finished surfaces one bake from the reader.",
-      "rank": 167,
+      "rank": 166,
       "actions": [
        {
         "verb": "top",
@@ -12783,7 +12738,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 168,
+      "rank": 167,
       "actions": [
        {
         "verb": "top",
@@ -12828,7 +12783,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 187,
+      "rank": 186,
       "actions": [
        {
         "verb": "top",
@@ -12873,7 +12828,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 212,
+      "rank": 211,
       "actions": [
        {
         "verb": "top",
@@ -12918,7 +12873,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 215,
+      "rank": 214,
       "actions": [
        {
         "verb": "top",
@@ -12963,7 +12918,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 216,
+      "rank": 215,
       "actions": [
        {
         "verb": "top",
@@ -13008,7 +12963,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 224,
+      "rank": 223,
       "actions": [
        {
         "verb": "top",
@@ -13053,7 +13008,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 235,
+      "rank": 234,
       "actions": [
        {
         "verb": "top",
@@ -13098,7 +13053,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 239,
+      "rank": 238,
       "actions": [
        {
         "verb": "top",
@@ -13143,7 +13098,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 240,
+      "rank": 239,
       "actions": [
        {
         "verb": "top",
@@ -13188,7 +13143,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 247,
+      "rank": 246,
       "actions": [
        {
         "verb": "top",
@@ -13233,7 +13188,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 248,
+      "rank": 247,
       "actions": [
        {
         "verb": "top",
@@ -13278,7 +13233,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 249,
+      "rank": 248,
       "actions": [
        {
         "verb": "top",
@@ -13323,7 +13278,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 251,
+      "rank": 250,
       "actions": [
        {
         "verb": "top",
@@ -13368,7 +13323,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 262,
+      "rank": 261,
       "actions": [
        {
         "verb": "top",
@@ -13413,7 +13368,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 277,
+      "rank": 276,
       "actions": [
        {
         "verb": "top",
@@ -13458,7 +13413,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 279,
+      "rank": 278,
       "actions": [
        {
         "verb": "top",
@@ -13503,7 +13458,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 287,
+      "rank": 286,
       "actions": [
        {
         "verb": "top",
@@ -13548,7 +13503,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 290,
+      "rank": 289,
       "actions": [
        {
         "verb": "top",
@@ -13593,7 +13548,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 293,
+      "rank": 292,
       "actions": [
        {
         "verb": "top",
@@ -13638,7 +13593,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 300,
+      "rank": 299,
       "actions": [
        {
         "verb": "top",
@@ -13683,7 +13638,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 313,
+      "rank": 312,
       "actions": [
        {
         "verb": "top",
@@ -13728,7 +13683,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 314,
+      "rank": 313,
       "actions": [
        {
         "verb": "top",
@@ -13773,7 +13728,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 327,
+      "rank": 326,
       "actions": [
        {
         "verb": "top",
@@ -13818,7 +13773,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 338,
+      "rank": 337,
       "actions": [
        {
         "verb": "top",
@@ -13865,7 +13820,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 25,
+      "rank": 23,
       "actions": [
        {
         "verb": "top",
@@ -13910,7 +13865,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 30,
+      "rank": 28,
       "actions": [
        {
         "verb": "top",
@@ -13955,7 +13910,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 31,
+      "rank": 29,
       "actions": [
        {
         "verb": "top",
@@ -14000,7 +13955,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 33,
+      "rank": 31,
       "actions": [
        {
         "verb": "top",
@@ -14045,7 +14000,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 40,
+      "rank": 39,
       "actions": [
        {
         "verb": "top",
@@ -14090,7 +14045,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 49,
+      "rank": 48,
       "actions": [
        {
         "verb": "top",
@@ -14135,7 +14090,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 57,
+      "rank": 56,
       "actions": [
        {
         "verb": "top",
@@ -14180,7 +14135,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 59,
+      "rank": 58,
       "actions": [
        {
         "verb": "top",
@@ -14225,7 +14180,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 65,
+      "rank": 64,
       "actions": [
        {
         "verb": "top",
@@ -14270,7 +14225,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 67,
+      "rank": 66,
       "actions": [
        {
         "verb": "top",
@@ -14315,7 +14270,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 68,
+      "rank": 67,
       "actions": [
        {
         "verb": "top",
@@ -14360,7 +14315,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 69,
+      "rank": 68,
       "actions": [
        {
         "verb": "top",
@@ -14405,7 +14360,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 70,
+      "rank": 69,
       "actions": [
        {
         "verb": "top",
@@ -14450,7 +14405,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 71,
+      "rank": 70,
       "actions": [
        {
         "verb": "top",
@@ -14495,7 +14450,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 72,
+      "rank": 71,
       "actions": [
        {
         "verb": "top",
@@ -14540,7 +14495,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 73,
+      "rank": 72,
       "actions": [
        {
         "verb": "top",
@@ -14585,7 +14540,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 74,
+      "rank": 73,
       "actions": [
        {
         "verb": "top",
@@ -14630,7 +14585,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 75,
+      "rank": 74,
       "actions": [
        {
         "verb": "top",
@@ -14675,7 +14630,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 76,
+      "rank": 75,
       "actions": [
        {
         "verb": "top",
@@ -14720,7 +14675,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 78,
+      "rank": 77,
       "actions": [
        {
         "verb": "top",
@@ -14765,7 +14720,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 86,
+      "rank": 85,
       "actions": [
        {
         "verb": "top",
@@ -14810,7 +14765,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 87,
+      "rank": 86,
       "actions": [
        {
         "verb": "top",
@@ -14855,7 +14810,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 93,
+      "rank": 92,
       "actions": [
        {
         "verb": "top",
@@ -14900,7 +14855,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 111,
+      "rank": 110,
       "actions": [
        {
         "verb": "top",
@@ -14945,7 +14900,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 112,
+      "rank": 111,
       "actions": [
        {
         "verb": "top",
@@ -14990,7 +14945,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 121,
+      "rank": 120,
       "actions": [
        {
         "verb": "top",
@@ -15035,7 +14990,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 123,
+      "rank": 122,
       "actions": [
        {
         "verb": "top",
@@ -15080,7 +15035,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 127,
+      "rank": 126,
       "actions": [
        {
         "verb": "top",
@@ -15125,7 +15080,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 128,
+      "rank": 127,
       "actions": [
        {
         "verb": "top",
@@ -15170,7 +15125,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 129,
+      "rank": 128,
       "actions": [
        {
         "verb": "top",
@@ -15215,7 +15170,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 139,
+      "rank": 138,
       "actions": [
        {
         "verb": "top",
@@ -15260,7 +15215,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 145,
+      "rank": 144,
       "actions": [
        {
         "verb": "top",
@@ -15305,7 +15260,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 146,
+      "rank": 145,
       "actions": [
        {
         "verb": "top",
@@ -15350,7 +15305,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 148,
+      "rank": 147,
       "actions": [
        {
         "verb": "top",
@@ -15395,7 +15350,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 151,
+      "rank": 150,
       "actions": [
        {
         "verb": "top",
@@ -15440,7 +15395,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 163,
+      "rank": 162,
       "actions": [
        {
         "verb": "top",
@@ -15485,7 +15440,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 170,
+      "rank": 169,
       "actions": [
        {
         "verb": "top",
@@ -15530,7 +15485,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 174,
+      "rank": 173,
       "actions": [
        {
         "verb": "top",
@@ -15575,7 +15530,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 178,
+      "rank": 177,
       "actions": [
        {
         "verb": "top",
@@ -15620,7 +15575,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 180,
+      "rank": 179,
       "actions": [
        {
         "verb": "top",
@@ -15665,7 +15620,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 181,
+      "rank": 180,
       "actions": [
        {
         "verb": "top",
@@ -15710,7 +15665,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 182,
+      "rank": 181,
       "actions": [
        {
         "verb": "top",
@@ -15755,7 +15710,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 183,
+      "rank": 182,
       "actions": [
        {
         "verb": "top",
@@ -15800,7 +15755,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 184,
+      "rank": 183,
       "actions": [
        {
         "verb": "top",
@@ -15845,7 +15800,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 190,
+      "rank": 189,
       "actions": [
        {
         "verb": "top",
@@ -15890,7 +15845,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 200,
+      "rank": 199,
       "actions": [
        {
         "verb": "top",
@@ -15935,7 +15890,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 211,
+      "rank": 210,
       "actions": [
        {
         "verb": "top",
@@ -15980,7 +15935,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 220,
+      "rank": 219,
       "actions": [
        {
         "verb": "top",
@@ -16025,7 +15980,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 221,
+      "rank": 220,
       "actions": [
        {
         "verb": "top",
@@ -16070,7 +16025,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 226,
+      "rank": 225,
       "actions": [
        {
         "verb": "top",
@@ -16115,7 +16070,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": true,
-      "rank": 236,
+      "rank": 235,
       "actions": [
        {
         "verb": "top",
@@ -16160,7 +16115,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 254,
+      "rank": 253,
       "actions": [
        {
         "verb": "top",
@@ -16205,7 +16160,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 255,
+      "rank": 254,
       "actions": [
        {
         "verb": "top",
@@ -16250,7 +16205,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 265,
+      "rank": 264,
       "actions": [
        {
         "verb": "top",
@@ -16295,7 +16250,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 266,
+      "rank": 265,
       "actions": [
        {
         "verb": "top",
@@ -16340,7 +16295,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 269,
+      "rank": 268,
       "actions": [
        {
         "verb": "top",
@@ -16385,7 +16340,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 275,
+      "rank": 274,
       "actions": [
        {
         "verb": "top",
@@ -16430,7 +16385,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 280,
+      "rank": 279,
       "actions": [
        {
         "verb": "top",
@@ -16475,7 +16430,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 311,
+      "rank": 310,
       "actions": [
        {
         "verb": "top",
@@ -16520,7 +16475,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 319,
+      "rank": 318,
       "actions": [
        {
         "verb": "top",
@@ -16565,7 +16520,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 321,
+      "rank": 320,
       "actions": [
        {
         "verb": "top",
@@ -16611,7 +16566,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Lfb recon French box data usr bin bash-reachable from this box (Genius livestats 52 fields).",
-      "rank": 323,
+      "rank": 322,
       "actions": [
        {
         "verb": "top",
@@ -16656,7 +16611,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 324,
+      "rank": 323,
       "actions": [
        {
         "verb": "top",
@@ -16703,7 +16658,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 39,
+      "rank": 38,
       "actions": [
        {
         "verb": "top",
@@ -16729,14 +16684,14 @@
      }
     ]
    },
-   "more_count": 331,
+   "more_count": 330,
    "floor": {
     "target": 40,
-    "count": 341,
+    "count": 340,
     "ok": true,
-    "label": "341 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
+    "label": "340 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 10m ago.)",
     "as_of_utc": "2026-08-06T19:06:12Z",
-    "age_secs": 33,
+    "age_secs": 622,
     "stale": false
    },
    "source": "dispatch queue",
@@ -17265,67 +17220,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-06T19:05:24Z",
-  "age_s": 58,
-  "cycles": 20,
+  "last_poll_utc": "2026-08-06T19:16:08Z",
+  "age_s": 6,
+  "cycles": 29,
   "known": true,
-  "label": "scout: alive, last poll 58s ago",
+  "label": "scout: alive, last poll 6s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "3:03pm",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 12644s newer than live (repo 2026-08-06T19:00:08+00:00 vs live 2026-08-06T15:29:24+00:00) | DATA-SURFACE-LAG: live coach.json is 12585s (3.5h) behind repo (repo 2026-08-06T18:30: vs live 2026-08-06T15:00:) | DATA-SURFACE-LAG: live availability.json is 12672s (3.5h) behind repo (repo 2026-08-06T19:01: vs live 2026-08-06T15:30:) | DATA-SURFACE-LAG: live value spine.json is 12585s (3.5h) behind repo (repo 2026-08-06T18:30: vs live 2026-08-06T15:00",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 12644s newer than live (repo 2026-08-06T19:00:08+00"
+   "time": "3:11pm",
+   "text": "publish-health: PUBLIC BOARD STALE (#49): staleness=13328s threshold=900s live=2026-08-06T15:29:24+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 13012s newer than live",
+   "detail": "publish-health: PUBLIC BOARD STALE (#49): staleness=13328s threshold=900s live=2026-08-06T15:29:24+00:00 | deploy stuck (guard/push failure)"
   },
   {
-   "time": "3:03pm",
-   "text": "board-selfpolice: board-stale alert already open (BOARD STALE ALERT .md) -- refreshing in place (restated 13 times) rather than filing a duplicate",
-   "detail": "board-selfpolice: board-stale alert already open (BOARD_STALE_ALERT_.md) -- refreshing in place (restated 13 times) rather than filing a dup"
-  },
-  {
-   "time": "3:04pm",
-   "text": "poll #19 · nothing new",
-   "detail": "poll cycle=19 ok directives_new=0"
-  },
-  {
-   "time": "3:04pm",
-   "text": "width-fill: UNDER-WIDTH 0/2 persisted 4 cycles (> 2) with 270 claimable (2 rank3, 8 ladder, 260 READY) - injected fill DIRECTOR DIRECTIVE SCOUT FILL 2.md",
-   "detail": "width-fill: UNDER-WIDTH 0/2 persisted 4 cycles (> 2) with 270 claimable (2 rank3, 8 ladder, 260 READY) - injected fill DIRECTOR_DIRECTIVE__S"
-  },
-  {
-   "time": "3:04pm",
-   "text": "width-fill: injected DIRECTOR DIRECTIVE SCOUT FILL 2.md (running 0/2, 2 claimable) - head picks it up",
-   "detail": "width-fill: injected DIRECTOR_DIRECTIVE__SCOUT_FILL_2.md (running 0/2, 2 claimable) - head picks it up"
-  },
-  {
-   "time": "3:05pm",
-   "text": "poll #20 · nothing new",
-   "detail": "poll cycle=20 ok directives_new=0"
-  },
-  {
-   "time": "3:05pm",
-   "text": "publish-health: PUBLIC BOARD STALE (#46): staleness=12964s threshold=900s live=2026-08-06T15:29:24+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 12644s newer than live",
-   "detail": "publish-health: PUBLIC BOARD STALE (#46): staleness=12964s threshold=900s live=2026-08-06T15:29:24+00:00 | deploy stuck (guard/push failure)"
-  },
-  {
-   "time": "3:05pm",
+   "time": "3:11pm",
    "text": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
    "detail": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing "
   },
   {
-   "time": "3:05pm",
-   "text": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 12644s newer than live (repo 2026-08-06T19:00:08+00:00 vs live 2026-08-06T15:29:24+00:00) | DATA-SURFACE-LAG: live coach.json is 14687s (4.1h) behind repo (repo 2026-08-06T19:05: vs live 2026-08-06T15:00:) | DATA-SURFACE-LAG: live availability.json is 12910s (3.6h) behind repo (repo 2026-08-06T19:05: vs live 2026-08-06T15:30:) | DATA-SURFACE-LAG: live value spine.json is 14688s (4.1h) behind repo (repo 2026-08-06T19:05: vs live 2026-08-06T15:00:) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 12644s newer than live (repo 2026-08-06T19:00:08+00:00 vs live 2026-08-06T15:29:24+00:"
+   "time": "3:12pm",
+   "text": "poll #26 · nothing new",
+   "detail": "poll cycle=26 ok directives_new=0"
   },
   {
-   "time": "3:06pm",
-   "text": "poll #21 · nothing new",
-   "detail": "poll cycle=21 ok directives_new=0"
+   "time": "3:12pm",
+   "text": "width-fill: under-width 0/2 streak 3 (> 2) SUPPRESSED - coordinator lock fresh + window within 180s grace (a live head is mid-refill; no stale SCOUT FILL",
+   "detail": "width-fill: under-width 0/2 streak 3 (> 2) SUPPRESSED - coordinator lock fresh + window within 180s grace (a live head is mid-refill; no sta"
+  },
+  {
+   "time": "3:13pm",
+   "text": "poll #27 · nothing new",
+   "detail": "poll cycle=27 ok directives_new=0"
+  },
+  {
+   "time": "3:13pm",
+   "text": "width-fill: UNDER-WIDTH 0/2 persisted 4 cycles (> 2) with 271 claimable (2 rank3, 8 ladder, 261 READY) - injected fill DIRECTOR DIRECTIVE SCOUT FILL 2.md",
+   "detail": "width-fill: UNDER-WIDTH 0/2 persisted 4 cycles (> 2) with 271 claimable (2 rank3, 8 ladder, 261 READY) - injected fill DIRECTOR_DIRECTIVE__S"
+  },
+  {
+   "time": "3:13pm",
+   "text": "width-fill: injected DIRECTOR DIRECTIVE SCOUT FILL 2.md (running 0/2, 2 claimable) - head picks it up",
+   "detail": "width-fill: injected DIRECTOR_DIRECTIVE__SCOUT_FILL_2.md (running 0/2, 2 claimable) - head picks it up"
+  },
+  {
+   "time": "3:14pm",
+   "text": "poll #28 · nothing new",
+   "detail": "poll cycle=28 ok directives_new=0"
+  },
+  {
+   "time": "3:15pm",
+   "text": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 13012s newer than live (repo 2026-08-06T19:06:16+00:00 vs live 2026-08-06T15:29:24+00:00) | DATA-SURFACE-LAG: live coach.json is 14687s (4.1h) behind repo (repo 2026-08-06T19:05: vs live 2026-08-06T15:00:) | DATA-SURFACE-LAG: live availability.json is 13044s (3.6h) behind repo (repo 2026-08-06T19:07: vs live 2026-08-06T15:30:) | DATA-SURFACE-LAG: live value spine.json is 14688s (4.1h) behind repo (repo 2026-08-06T19:05: vs live 2026-08-06T15:00:) -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 13012s newer than live (repo 2026-08-06T19:06:16+00:00 vs live 2026-08-06T15:29:24+00:"
+  },
+  {
+   "time": "3:16pm",
+   "text": "poll #29 · nothing new",
+   "detail": "poll cycle=29 ok directives_new=0"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-06T19:05:43.549943+00:00",
+  "as_of": "2026-08-06T19:16:08Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -17334,40 +17289,40 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "58s",
-    "state_text": "on · seen 58s ago"
+    "age_label": "6s",
+    "state_text": "on · seen 6s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "38s",
-    "state_text": "on · seen 38s ago"
+    "age_label": "29s",
+    "state_text": "on · seen 29s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "53s",
-    "state_text": "on · seen 53s ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "60s",
-    "state_text": "on · seen 60s ago"
+    "age_label": "10s",
+    "state_text": "on · seen 10s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "5m",
-    "state_text": "on · seen 5m ago"
+    "age_label": "6m",
+    "state_text": "on · seen 6m ago"
    }
   ],
   "width": {
@@ -17577,25 +17532,25 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-06T19:06:19Z",
-  "session_age_secs": 5965,
-  "last_progress_age_secs": 3,
+  "last_heartbeat_utc": "2026-08-06T19:15:58Z",
+  "session_age_secs": 6557,
+  "last_progress_age_secs": 16,
   "last_spawn_attempt": "2026-08-06T17:23:34Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
  "pipe_health": {
-  "directives_pending": 0,
-  "last_processed_clock": "3:05pm",
-  "last_processed_iso": "2026-08-06T19:05:26Z",
+  "directives_pending": 1,
+  "last_processed_clock": "3:15pm",
+  "last_processed_iso": "2026-08-06T19:15:26Z",
   "last_processed_known": true,
-  "last_processed_display": "3:05pm",
+  "last_processed_display": "3:15pm",
   "last_processed_source": "directive_ledger.done",
-  "newest_directive_clock": "",
-  "newest_directive_iso": null,
+  "newest_directive_clock": "3:13pm",
+  "newest_directive_iso": "2026-08-06T19:13:52Z",
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-08-06T19:05:26Z",
+  "as_of": "2026-08-06T19:15:26Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -17609,7 +17564,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 2 work lanes have been running for 162 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 2 work lanes have been running for 173 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 2
  },
@@ -17618,25 +17573,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-06T16:11:43Z",
    "stale": true,
-   "revalidated": "2026-08-06T19:06:16+00:00",
-   "stale_reason": "These readings may be out of date — last updated 2h ago.",
-   "age_label": "2h",
+   "revalidated": "2026-08-06T19:16:07+00:00",
+   "stale_reason": "These readings may be out of date — last updated 3h ago.",
+   "age_label": "3h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-06T19:06:16+00:00",
+   "as_of": "2026-08-06T19:16:07+00:00",
    "stale": false,
-   "revalidated": "2026-08-06T19:06:16+00:00",
+   "revalidated": "2026-08-06T19:16:07+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-06T19:06:16+00:00",
+   "as_of": "2026-08-06T19:16:07+00:00",
    "stale": false,
-   "revalidated": "2026-08-06T19:06:16+00:00",
+   "revalidated": "2026-08-06T19:16:07+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -17645,43 +17600,43 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-06T19:06:16+00:00",
+   "revalidated": "2026-08-06T19:16:07+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-06T19:06:12Z",
+   "as_of": "2026-08-06T19:13:58Z",
    "stale": false,
-   "revalidated": "2026-08-06T19:06:16+00:00",
+   "revalidated": "2026-08-06T19:16:07+00:00",
    "stale_reason": "",
-   "age_label": "4s",
+   "age_label": "2m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-06T19:06:16+00:00",
+   "revalidated": "2026-08-06T19:16:07+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-08-06T19:05:26Z",
+   "as_of": "2026-08-06T19:15:26Z",
    "stale": false,
-   "revalidated": "2026-08-06T19:06:16+00:00",
+   "revalidated": "2026-08-06T19:16:07+00:00",
    "stale_reason": "",
-   "age_label": "50s",
+   "age_label": "41s",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-06T08:00:00-04:00",
    "stale": false,
-   "revalidated": "2026-08-06T19:06:16+00:00",
+   "revalidated": "2026-08-06T19:16:07+00:00",
    "stale_reason": "",
    "age_label": "7h",
    "stale_after": 172800,
@@ -17689,22 +17644,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-06T19:00:08+00:00",
+   "as_of": "2026-08-06T19:06:16+00:00",
    "stale": false,
-   "revalidated": "2026-08-06T19:06:16+00:00",
+   "revalidated": "2026-08-06T19:16:07+00:00",
    "stale_reason": "",
-   "age_label": "6m",
+   "age_label": "9m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-06T19:05:43.549943+00:00",
+   "as_of": "2026-08-06T19:16:08Z",
    "stale": false,
-   "revalidated": "2026-08-06T19:06:16+00:00",
+   "revalidated": "2026-08-06T19:16:07+00:00",
    "stale_reason": "",
-   "age_label": "38s",
+   "age_label": "6s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 6, 3:06pm ET"
+ "generated_et": "Aug 6, 3:16pm ET"
 }
