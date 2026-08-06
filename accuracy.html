@@ -89,6 +89,51 @@
   <a href="./explorer.html">Data Explorer</a>
   <a href="./primer.html">Learn</a>
 </nav>
+<section id="gradecopy" style="max-width:70ch;margin:22px auto 8px;padding:0 16px">
+  <h2 style="font:700 22px/1.15 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;margin:22px 0 8px">How we grade ourselves</h2>
+  <p style="margin:0 0 14px">Every night before tip-off, we lock a number for every game: our margin, our total, our win chance. Locked means locked — timestamped before the game, never edited after. The next morning, every one gets graded three ways: against what happened, against the closing market price, and against our own stated confidence.</p>
+
+  <h2 style="font:700 22px/1.15 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;margin:22px 0 8px">The three numbers that matter</h2>
+  <p style="margin:0 0 6px" id="ac-miss"></p>
+  <p style="margin:0 0 6px" id="ac-beat"></p>
+  <p style="margin:0 0 14px" id="ac-cal"></p>
+
+  <h2 style="font:700 22px/1.15 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;margin:22px 0 8px">Why any of this is possible</h2>
+  <p style="margin:0 0 14px" id="ac-why"></p>
+</section>
+<script>
+/* RENDER-TIME BINDINGS. Every number here resolves from the live accuracy feed at render - none is
+   written into the page.
+
+   AN UNRESOLVED BINDING SUPPRESSES ITS OWN SENTENCE. It never prints a placeholder, a zero, or a
+   stale figure. Two of this copy's five bindings - the market's average miss and our beat rate
+   against the closing line - have no fresh source today: the closing-lines table stops a week back
+   behind an odds-feed outage. Rendering them anyway would put a week-old market comparison under a
+   page that opens by promising we grade every game the next morning. So the market sentences hold,
+   and say plainly that they are holding, until the feed is current again. */
+(function(){
+  fetch('./accuracy.json').then(function(r){return r.json()}).then(function(d){
+    var bt=(d.backtest||{}).headline||{}, cal=(d.calibration||[]);
+    var mae=bt.avg_miss, n=bt.n_games;
+    var c90=null; cal.forEach(function(x){ if(x.target===90) c90=x; });
+
+    var miss=document.getElementById('ac-miss');
+    if(mae!=null&&n!=null) miss.innerHTML='<b>Average miss:</b> '+mae+' points per game this season, across '+n+' graded games.';
+    else miss.remove();
+
+    /* market bindings: absent by design until the closing-line feed is fresh */
+    var beat=document.getElementById('ac-beat');
+    beat.innerHTML='<b>Beat rate:</b> how often we land closer than the closing line — held while our closing-line feed catches up. We would rather show nothing than a number from a window that already closed.';
+
+    var c=document.getElementById('ac-cal');
+    if(c90&&c90.actual!=null) c.innerHTML='<b>Calibration:</b> when we say 70%, it should happen about 70% of the time — our ranges have covered at '+c90.actual+'% against a target of '+c90.target+'%.';
+    else c.remove();
+
+    var why=document.getElementById('ac-why');
+    why.textContent='Basketball is predictable — the betting market proves it nightly by pricing every game close. Our job is to be closer than that price, game after game, in public. When we are wrong, the Error Map says exactly where and what we learned. That is the whole deal.';
+  }).catch(function(){ var s=document.getElementById('gradecopy'); if(s) s.remove(); });
+})();
+</script>
 <main id="main"><p class="empty">Loading the scorecard…</p></main>
 <footer id="foot"></footer>
 <script src="./hardwood.js?v=1477558b"></script>
