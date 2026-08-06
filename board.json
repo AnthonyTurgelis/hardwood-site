@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-06T14:35:55+00:00",
+ "generated_utc": "2026-08-06T15:00:45+00:00",
  "freshness": {
-  "baked_utc": "2026-08-06T14:35:55+00:00",
-  "baked_et": "Aug 6, 10:35am ET",
-  "revalidated_utc": "2026-08-06T14:35:55+00:00",
+  "baked_utc": "2026-08-06T15:00:45+00:00",
+  "baked_et": "Aug 6, 11:00am ET",
+  "revalidated_utc": "2026-08-06T15:00:45+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-06",
@@ -13,8 +13,8 @@
   "done_today": 40,
   "maintenance": 7,
   "needs_anthony": 0,
-  "lanes_today": 53,
-  "upcoming": 330
+  "lanes_today": 56,
+  "upcoming": 335
  },
  "sections": {
   "agent_updates": [
@@ -61,6 +61,12 @@
     "body_markdown": "The publish now dies of a ten minute timeout, not of cancellation."
    },
    {
+    "id": "board-deploy-timeout-fix-20260806",
+    "title": "Board deploy timeout fix",
+    "timestamp": "Date not recorded",
+    "body_markdown": "The publish now owns its own workflow, so the deploy wait is ours to set."
+   },
+   {
     "id": "props-interval-stamp-provenance-20260806",
     "title": "Props interval stamp provenance",
     "timestamp": "Date not recorded",
@@ -83,12 +89,6 @@
     "title": "The Dallas record disagreement is five preseason rows, not a wrong score",
     "timestamp": "Aug 5, 2026",
     "body_markdown": "> **What we found:** That is season + scored, with no exhibition exclusion, so all five preseason rows are counted. This is the honest-looking filter that causes the bug: it is correct about every row it reads and wrong about which rows to read."
-   },
-   {
-    "id": "at-88-the-meter-says-park",
-    "title": "At 88% the meter says park and the governor says work — measured, both off the same number",
-    "timestamp": "Jul 31, 2026",
-    "body_markdown": "> **What we found:** Both read the same percent off the same meter and got a different instruction than the governor gives."
    }
   ],
   "today_games": {
@@ -938,23 +938,23 @@
   "running_now": [],
   "running_live": [
    {
-    "name": "Infra restore the front door pages deploy times out",
+    "name": "Infra stop baking when nothing changed",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-06T10:32:50-04:00",
+    "at_iso": "2026-08-06T10:50:03-04:00",
     "start_unknown": true
    },
    {
-    "name": "Data two real players resolve to nothing",
+    "name": "Ops consultant digest due",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
-    "team": "Data",
+    "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-06T10:32:50-04:00",
+    "at_iso": "2026-08-06T10:50:03-04:00",
     "start_unknown": true
    }
   ],
@@ -1274,6 +1274,16 @@
     "impact": 3
    },
    {
+    "name": "Board deploy timeout fix",
+    "one_liner": "The publish now owns its own workflow, so the deploy wait is ours to set",
+    "chip": "DONE",
+    "team": "",
+    "time": "",
+    "at_iso": null,
+    "link": "https://drive.google.com/file/d/16xo5ojjpnXJYi5-5Pn7N1HRDiIeo_9E9/view?usp=drivesdk",
+    "impact": 3
+   },
+   {
     "name": "Freshness player bands stamp",
     "one_liner": "Finished and independently double-checked.",
     "chip": "VERIFIED",
@@ -1366,16 +1376,6 @@
     "at_iso": null,
     "link": "https://drive.google.com/file/d/1KbaHPuwHk5zsrRqExVwAtUoqj3UKvl4M/view?usp=drivesdk",
     "impact": 3
-   },
-   {
-    "name": "Infra deploy push coalescing",
-    "one_liner": "The debounce window is shorter than the publish it triggers",
-    "chip": "DONE",
-    "team": "",
-    "time": "",
-    "at_iso": null,
-    "link": "https://drive.google.com/file/d/1VFaYuccJCs-_6kbJYTYX8Xql84lZvqR1/view?usp=drivesdk",
-    "impact": 1
    }
   ],
   "upcoming": {
@@ -2872,6 +2872,51 @@
       ]
      },
      {
+      "task_id": "the-digest-clock-records-the-bundle-not-the-dige",
+      "family": "infra",
+      "name": "Five scheduled reports were logged as delivered and none of them existed",
+      "header": "Five scheduled reports were logged as delivered and none of them existed",
+      "why": "Verified independently . Evidence bundles exist for 08-01 through 08-06 but docs reports OPS files stop at so five consecutive scheduled digests wrote their inputs and produced no output. Today's ...",
+      "priority": 1,
+      "seat": "infra",
+      "status": "open",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 1.0,
+      "title": "Five scheduled reports were logged as delivered and none of them existed",
+      "unlocks": "Today's fire reported 24.2 hours since the last digest when the true gap was 6.02 days.",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 3,
+      "group": "process",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 58,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-digest-clock-records-the-bundle-not-the-dige%3A%20top&body=Five%20scheduled%20reports%20were%20logged%20as%20delivered%20and%20none%20of%20them%20existed%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-digest-clock-records-the-bundle-not-the-dige%3A%20bump&body=Five%20scheduled%20reports%20were%20logged%20as%20delivered%20and%20none%20of%20them%20existed%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-digest-clock-records-the-bundle-not-the-dige%3A%20demote&body=Five%20scheduled%20reports%20were%20logged%20as%20delivered%20and%20none%20of%20them%20existed%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-digest-clock-records-the-bundle-not-the-dige%3A%20shelve&body=Five%20scheduled%20reports%20were%20logged%20as%20delivered%20and%20none%20of%20them%20existed%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "four-spawners-can-wake-the-machine-without-readi",
       "family": "infra",
       "name": "Four spawners can wake the machine without ever checking whether we are paused",
@@ -2892,7 +2937,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 59,
+      "rank": 60,
       "actions": [
        {
         "verb": "top",
@@ -2937,7 +2982,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 60,
+      "rank": 61,
       "actions": [
        {
         "verb": "top",
@@ -2982,7 +3027,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 61,
+      "rank": 62,
       "actions": [
        {
         "verb": "top",
@@ -3027,7 +3072,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 62,
+      "rank": 63,
       "actions": [
        {
         "verb": "top",
@@ -3072,7 +3117,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 65,
+      "rank": 66,
       "actions": [
        {
         "verb": "top",
@@ -3117,7 +3162,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 75,
+      "rank": 77,
       "actions": [
        {
         "verb": "top",
@@ -3162,7 +3207,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 77,
+      "rank": 79,
       "actions": [
        {
         "verb": "top",
@@ -3207,7 +3252,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 78,
+      "rank": 80,
       "actions": [
        {
         "verb": "top",
@@ -3252,7 +3297,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 91,
+      "rank": 93,
       "actions": [
        {
         "verb": "top",
@@ -3297,7 +3342,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 93,
+      "rank": 95,
       "actions": [
        {
         "verb": "top",
@@ -3342,7 +3387,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 99,
+      "rank": 101,
       "actions": [
        {
         "verb": "top",
@@ -3387,7 +3432,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 100,
+      "rank": 102,
       "actions": [
        {
         "verb": "top",
@@ -3432,7 +3477,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 103,
+      "rank": 105,
       "actions": [
        {
         "verb": "top",
@@ -3477,7 +3522,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 106,
+      "rank": 108,
       "actions": [
        {
         "verb": "top",
@@ -3522,7 +3567,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 110,
+      "rank": 112,
       "actions": [
        {
         "verb": "top",
@@ -3567,7 +3612,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 111,
+      "rank": 113,
       "actions": [
        {
         "verb": "top",
@@ -3612,7 +3657,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 113,
+      "rank": 115,
       "actions": [
        {
         "verb": "top",
@@ -3657,7 +3702,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 114,
+      "rank": 116,
       "actions": [
        {
         "verb": "top",
@@ -3702,7 +3747,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 118,
+      "rank": 120,
       "actions": [
        {
         "verb": "top",
@@ -3747,7 +3792,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 119,
+      "rank": 121,
       "actions": [
        {
         "verb": "top",
@@ -3792,7 +3837,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 124,
+      "rank": 126,
       "actions": [
        {
         "verb": "top",
@@ -3837,7 +3882,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 125,
+      "rank": 127,
       "actions": [
        {
         "verb": "top",
@@ -3882,7 +3927,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 126,
+      "rank": 128,
       "actions": [
        {
         "verb": "top",
@@ -3927,7 +3972,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 127,
+      "rank": 129,
       "actions": [
        {
         "verb": "top",
@@ -3972,7 +4017,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 129,
+      "rank": 131,
       "actions": [
        {
         "verb": "top",
@@ -4017,7 +4062,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 131,
+      "rank": 133,
       "actions": [
        {
         "verb": "top",
@@ -4062,7 +4107,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 134,
+      "rank": 136,
       "actions": [
        {
         "verb": "top",
@@ -4107,7 +4152,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 135,
+      "rank": 137,
       "actions": [
        {
         "verb": "top",
@@ -4152,7 +4197,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 136,
+      "rank": 138,
       "actions": [
        {
         "verb": "top",
@@ -4197,7 +4242,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 142,
+      "rank": 145,
       "actions": [
        {
         "verb": "top",
@@ -4242,7 +4287,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 145,
+      "rank": 148,
       "actions": [
        {
         "verb": "top",
@@ -4287,7 +4332,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 149,
+      "rank": 152,
       "actions": [
        {
         "verb": "top",
@@ -4332,7 +4377,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 150,
+      "rank": 153,
       "actions": [
        {
         "verb": "top",
@@ -4377,7 +4422,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 151,
+      "rank": 154,
       "actions": [
        {
         "verb": "top",
@@ -4422,7 +4467,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 152,
+      "rank": 155,
       "actions": [
        {
         "verb": "top",
@@ -4467,7 +4512,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 153,
+      "rank": 156,
       "actions": [
        {
         "verb": "top",
@@ -4512,7 +4557,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 154,
+      "rank": 157,
       "actions": [
        {
         "verb": "top",
@@ -4557,7 +4602,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 156,
+      "rank": 159,
       "actions": [
        {
         "verb": "top",
@@ -4602,7 +4647,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 158,
+      "rank": 161,
       "actions": [
        {
         "verb": "top",
@@ -4647,7 +4692,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 161,
+      "rank": 164,
       "actions": [
        {
         "verb": "top",
@@ -4692,7 +4737,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 164,
+      "rank": 167,
       "actions": [
        {
         "verb": "top",
@@ -4737,7 +4782,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 165,
+      "rank": 168,
       "actions": [
        {
         "verb": "top",
@@ -4782,7 +4827,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 167,
+      "rank": 170,
       "actions": [
        {
         "verb": "top",
@@ -4827,7 +4872,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 169,
+      "rank": 172,
       "actions": [
        {
         "verb": "top",
@@ -4872,7 +4917,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 176,
+      "rank": 180,
       "actions": [
        {
         "verb": "top",
@@ -4917,7 +4962,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 177,
+      "rank": 181,
       "actions": [
        {
         "verb": "top",
@@ -4962,7 +5007,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 182,
+      "rank": 187,
       "actions": [
        {
         "verb": "top",
@@ -5007,7 +5052,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 183,
+      "rank": 188,
       "actions": [
        {
         "verb": "top",
@@ -5052,7 +5097,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 184,
+      "rank": 189,
       "actions": [
        {
         "verb": "top",
@@ -5097,7 +5142,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 186,
+      "rank": 191,
       "actions": [
        {
         "verb": "top",
@@ -5142,7 +5187,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 187,
+      "rank": 192,
       "actions": [
        {
         "verb": "top",
@@ -5187,7 +5232,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 188,
+      "rank": 193,
       "actions": [
        {
         "verb": "top",
@@ -5232,7 +5277,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 189,
+      "rank": 194,
       "actions": [
        {
         "verb": "top",
@@ -5277,7 +5322,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 191,
+      "rank": 196,
       "actions": [
        {
         "verb": "top",
@@ -5322,7 +5367,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 192,
+      "rank": 197,
       "actions": [
        {
         "verb": "top",
@@ -5367,7 +5412,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 193,
+      "rank": 198,
       "actions": [
        {
         "verb": "top",
@@ -5412,7 +5457,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 194,
+      "rank": 199,
       "actions": [
        {
         "verb": "top",
@@ -5457,7 +5502,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 195,
+      "rank": 200,
       "actions": [
        {
         "verb": "top",
@@ -5502,7 +5547,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 196,
+      "rank": 201,
       "actions": [
        {
         "verb": "top",
@@ -5547,7 +5592,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 197,
+      "rank": 202,
       "actions": [
        {
         "verb": "top",
@@ -5592,7 +5637,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 198,
+      "rank": 203,
       "actions": [
        {
         "verb": "top",
@@ -5637,7 +5682,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 199,
+      "rank": 204,
       "actions": [
        {
         "verb": "top",
@@ -5682,7 +5727,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 200,
+      "rank": 205,
       "actions": [
        {
         "verb": "top",
@@ -5727,7 +5772,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 203,
+      "rank": 208,
       "actions": [
        {
         "verb": "top",
@@ -5772,7 +5817,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 204,
+      "rank": 209,
       "actions": [
        {
         "verb": "top",
@@ -5817,7 +5862,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 213,
+      "rank": 218,
       "actions": [
        {
         "verb": "top",
@@ -5862,7 +5907,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 215,
+      "rank": 220,
       "actions": [
        {
         "verb": "top",
@@ -5907,7 +5952,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 218,
+      "rank": 223,
       "actions": [
        {
         "verb": "top",
@@ -5952,7 +5997,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 219,
+      "rank": 224,
       "actions": [
        {
         "verb": "top",
@@ -5997,7 +6042,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 240,
+      "rank": 245,
       "actions": [
        {
         "verb": "top",
@@ -6042,7 +6087,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 242,
+      "rank": 247,
       "actions": [
        {
         "verb": "top",
@@ -6087,7 +6132,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 243,
+      "rank": 248,
       "actions": [
        {
         "verb": "top",
@@ -6132,7 +6177,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 246,
+      "rank": 251,
       "actions": [
        {
         "verb": "top",
@@ -6177,7 +6222,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 247,
+      "rank": 252,
       "actions": [
        {
         "verb": "top",
@@ -6222,7 +6267,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 248,
+      "rank": 253,
       "actions": [
        {
         "verb": "top",
@@ -6267,7 +6312,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 250,
+      "rank": 255,
       "actions": [
        {
         "verb": "top",
@@ -6312,7 +6357,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 251,
+      "rank": 256,
       "actions": [
        {
         "verb": "top",
@@ -6357,7 +6402,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 253,
+      "rank": 258,
       "actions": [
        {
         "verb": "top",
@@ -6402,7 +6447,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 256,
+      "rank": 261,
       "actions": [
        {
         "verb": "top",
@@ -6447,7 +6492,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 259,
+      "rank": 264,
       "actions": [
        {
         "verb": "top",
@@ -6492,7 +6537,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 263,
+      "rank": 268,
       "actions": [
        {
         "verb": "top",
@@ -6537,7 +6582,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 265,
+      "rank": 270,
       "actions": [
        {
         "verb": "top",
@@ -6582,7 +6627,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 267,
+      "rank": 272,
       "actions": [
        {
         "verb": "top",
@@ -6627,7 +6672,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 271,
+      "rank": 276,
       "actions": [
        {
         "verb": "top",
@@ -6672,7 +6717,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 272,
+      "rank": 277,
       "actions": [
        {
         "verb": "top",
@@ -6717,7 +6762,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 277,
+      "rank": 282,
       "actions": [
        {
         "verb": "top",
@@ -6762,7 +6807,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 281,
+      "rank": 286,
       "actions": [
        {
         "verb": "top",
@@ -6807,7 +6852,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 283,
+      "rank": 288,
       "actions": [
        {
         "verb": "top",
@@ -6852,7 +6897,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 284,
+      "rank": 289,
       "actions": [
        {
         "verb": "top",
@@ -6897,7 +6942,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 285,
+      "rank": 290,
       "actions": [
        {
         "verb": "top",
@@ -6942,7 +6987,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 286,
+      "rank": 291,
       "actions": [
        {
         "verb": "top",
@@ -6987,7 +7032,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 287,
+      "rank": 292,
       "actions": [
        {
         "verb": "top",
@@ -7032,7 +7077,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 288,
+      "rank": 293,
       "actions": [
        {
         "verb": "top",
@@ -7077,7 +7122,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 290,
+      "rank": 295,
       "actions": [
        {
         "verb": "top",
@@ -7122,7 +7167,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 291,
+      "rank": 296,
       "actions": [
        {
         "verb": "top",
@@ -7167,7 +7212,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 292,
+      "rank": 297,
       "actions": [
        {
         "verb": "top",
@@ -7212,7 +7257,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 293,
+      "rank": 298,
       "actions": [
        {
         "verb": "top",
@@ -7257,7 +7302,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 294,
+      "rank": 299,
       "actions": [
        {
         "verb": "top",
@@ -7302,7 +7347,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 295,
+      "rank": 300,
       "actions": [
        {
         "verb": "top",
@@ -7348,7 +7393,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs a human sign-in; mostly self-heals now, with a small residual.",
-      "rank": 299,
+      "rank": 304,
       "actions": [
        {
         "verb": "top",
@@ -7394,7 +7439,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs unblocked runner (infra CEO decision).",
-      "rank": 311,
+      "rank": 316,
       "actions": [
        {
         "verb": "top",
@@ -7439,7 +7484,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 326,
+      "rank": 331,
       "actions": [
        {
         "verb": "top",
@@ -7484,7 +7529,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 328,
+      "rank": 333,
       "actions": [
        {
         "verb": "top",
@@ -7530,7 +7575,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 329,
+      "rank": 334,
       "actions": [
        {
         "verb": "top",
@@ -7575,7 +7620,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 330,
+      "rank": 335,
       "actions": [
        {
         "verb": "top",
@@ -8027,7 +8072,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 63,
+      "rank": 64,
       "actions": [
        {
         "verb": "top",
@@ -8072,7 +8117,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 79,
+      "rank": 81,
       "actions": [
        {
         "verb": "top",
@@ -8117,7 +8162,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 80,
+      "rank": 82,
       "actions": [
        {
         "verb": "top",
@@ -8162,7 +8207,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 81,
+      "rank": 83,
       "actions": [
        {
         "verb": "top",
@@ -8207,7 +8252,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 82,
+      "rank": 84,
       "actions": [
        {
         "verb": "top",
@@ -8252,7 +8297,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 85,
+      "rank": 87,
       "actions": [
        {
         "verb": "top",
@@ -8298,7 +8343,7 @@
       "ceo_ask": true,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 86,
+      "rank": 88,
       "actions": [
        {
         "verb": "top",
@@ -8343,7 +8388,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 87,
+      "rank": 89,
       "actions": [
        {
         "verb": "top",
@@ -8388,7 +8433,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 88,
+      "rank": 90,
       "actions": [
        {
         "verb": "top",
@@ -8433,7 +8478,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 90,
+      "rank": 92,
       "actions": [
        {
         "verb": "top",
@@ -8478,7 +8523,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 92,
+      "rank": 94,
       "actions": [
        {
         "verb": "top",
@@ -8523,7 +8568,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 94,
+      "rank": 96,
       "actions": [
        {
         "verb": "top",
@@ -8568,7 +8613,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 95,
+      "rank": 97,
       "actions": [
        {
         "verb": "top",
@@ -8613,7 +8658,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 101,
+      "rank": 103,
       "actions": [
        {
         "verb": "top",
@@ -8658,7 +8703,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 109,
+      "rank": 111,
       "actions": [
        {
         "verb": "top",
@@ -8703,7 +8748,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": true,
-      "rank": 112,
+      "rank": 114,
       "actions": [
        {
         "verb": "top",
@@ -8748,7 +8793,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 116,
+      "rank": 118,
       "actions": [
        {
         "verb": "top",
@@ -8793,7 +8838,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 120,
+      "rank": 122,
       "actions": [
        {
         "verb": "top",
@@ -8838,7 +8883,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 128,
+      "rank": 130,
       "actions": [
        {
         "verb": "top",
@@ -8883,7 +8928,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 130,
+      "rank": 132,
       "actions": [
        {
         "verb": "top",
@@ -8928,7 +8973,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 137,
+      "rank": 139,
       "actions": [
        {
         "verb": "top",
@@ -8953,6 +8998,51 @@
       ]
      },
      {
+      "task_id": "the-sim-feedback-is-twice-its-fitted-value",
+      "family": "modeling",
+      "name": "The parameter that makes the simulator pass is double what the data says it should be",
+      "header": "The parameter that makes the simulator pass is double what the data says it should be",
+      "why": "Reports the possession simulator passing all four pre-registered gates at a score-state feedback of minus 0.00192 and states plainly that this is exactly twice the minus 0.00096 fitted directly from ...",
+      "priority": 1,
+      "seat": "top",
+      "status": "open",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 1.0,
+      "title": "The parameter that makes the simulator pass is double what the data says it should be",
+      "unlocks": "The gates constrain four moments and say nothing about mechanism so a parameter sitting at double its independently ...",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 140,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sim-feedback-is-twice-its-fitted-value%3A%20top&body=The%20parameter%20that%20makes%20the%20simulator%20pass%20is%20double%20what%20the%20data%20says%20it%20should%20be%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sim-feedback-is-twice-its-fitted-value%3A%20bump&body=The%20parameter%20that%20makes%20the%20simulator%20pass%20is%20double%20what%20the%20data%20says%20it%20should%20be%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sim-feedback-is-twice-its-fitted-value%3A%20demote&body=The%20parameter%20that%20makes%20the%20simulator%20pass%20is%20double%20what%20the%20data%20says%20it%20should%20be%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sim-feedback-is-twice-its-fitted-value%3A%20shelve&body=The%20parameter%20that%20makes%20the%20simulator%20pass%20is%20double%20what%20the%20data%20says%20it%20should%20be%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "seven-games-short-and-the-totals-band-still-miss",
       "family": "modeling",
       "name": "The playoff backfill closed 137 of the 144 game gap and the totals check still fails",
@@ -8973,7 +9063,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 140,
+      "rank": 143,
       "actions": [
        {
         "verb": "top",
@@ -9018,7 +9108,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 146,
+      "rank": 149,
       "actions": [
        {
         "verb": "top",
@@ -9063,7 +9153,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 147,
+      "rank": 150,
       "actions": [
        {
         "verb": "top",
@@ -9108,7 +9198,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 148,
+      "rank": 151,
       "actions": [
        {
         "verb": "top",
@@ -9153,7 +9243,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 157,
+      "rank": 160,
       "actions": [
        {
         "verb": "top",
@@ -9198,7 +9288,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 163,
+      "rank": 166,
       "actions": [
        {
         "verb": "top",
@@ -9243,7 +9333,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 168,
+      "rank": 171,
       "actions": [
        {
         "verb": "top",
@@ -9288,7 +9378,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 171,
+      "rank": 174,
       "actions": [
        {
         "verb": "top",
@@ -9313,6 +9403,51 @@
       ]
      },
      {
+      "task_id": "the-offense-defense-split-is-one-number-written",
+      "family": "modeling",
+      "name": "Two rating tables carry offense and defense as the identical number on every row",
+      "header": "Two rating tables carry offense and defense as the identical number on every row",
+      "why": "Verified by direct query . In both and o equals d on all 81004 rows compared at nine decimal places correlation is exactly 1.0000 and the two sum to total on every row. That is the signature of a ...",
+      "priority": 1,
+      "seat": "top",
+      "status": "open",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 1.0,
+      "title": "Two rating tables carry offense and defense as the identical number on every row",
+      "unlocks": "A Director named one such table there are two and the newer one did not fix it.",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 183,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-offense-defense-split-is-one-number-written%3A%20top&body=Two%20rating%20tables%20carry%20offense%20and%20defense%20as%20the%20identical%20number%20on%20every%20row%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-offense-defense-split-is-one-number-written%3A%20bump&body=Two%20rating%20tables%20carry%20offense%20and%20defense%20as%20the%20identical%20number%20on%20every%20row%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-offense-defense-split-is-one-number-written%3A%20demote&body=Two%20rating%20tables%20carry%20offense%20and%20defense%20as%20the%20identical%20number%20on%20every%20row%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-offense-defense-split-is-one-number-written%3A%20shelve&body=Two%20rating%20tables%20carry%20offense%20and%20defense%20as%20the%20identical%20number%20on%20every%20row%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "reports-guess-starters-from-minutes-instead-of-r",
       "family": "modeling",
       "name": "We guess the starting five from minutes while the real answer sits unused",
@@ -9333,7 +9468,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 179,
+      "rank": 184,
       "actions": [
        {
         "verb": "top",
@@ -9378,7 +9513,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 181,
+      "rank": 186,
       "actions": [
        {
         "verb": "top",
@@ -9423,7 +9558,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 185,
+      "rank": 190,
       "actions": [
        {
         "verb": "top",
@@ -9468,7 +9603,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 207,
+      "rank": 212,
       "actions": [
        {
         "verb": "top",
@@ -9513,7 +9648,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 208,
+      "rank": 213,
       "actions": [
        {
         "verb": "top",
@@ -9558,7 +9693,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 209,
+      "rank": 214,
       "actions": [
        {
         "verb": "top",
@@ -9603,7 +9738,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 212,
+      "rank": 217,
       "actions": [
        {
         "verb": "top",
@@ -9648,7 +9783,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 217,
+      "rank": 222,
       "actions": [
        {
         "verb": "top",
@@ -9693,7 +9828,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 220,
+      "rank": 225,
       "actions": [
        {
         "verb": "top",
@@ -9738,7 +9873,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 221,
+      "rank": 226,
       "actions": [
        {
         "verb": "top",
@@ -9783,7 +9918,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 222,
+      "rank": 227,
       "actions": [
        {
         "verb": "top",
@@ -9828,7 +9963,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 223,
+      "rank": 228,
       "actions": [
        {
         "verb": "top",
@@ -9873,7 +10008,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 224,
+      "rank": 229,
       "actions": [
        {
         "verb": "top",
@@ -9918,7 +10053,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 227,
+      "rank": 232,
       "actions": [
        {
         "verb": "top",
@@ -9963,7 +10098,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 228,
+      "rank": 233,
       "actions": [
        {
         "verb": "top",
@@ -10008,7 +10143,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 231,
+      "rank": 236,
       "actions": [
        {
         "verb": "top",
@@ -10053,7 +10188,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 232,
+      "rank": 237,
       "actions": [
        {
         "verb": "top",
@@ -10098,7 +10233,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 233,
+      "rank": 238,
       "actions": [
        {
         "verb": "top",
@@ -10143,7 +10278,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 234,
+      "rank": 239,
       "actions": [
        {
         "verb": "top",
@@ -10188,7 +10323,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 235,
+      "rank": 240,
       "actions": [
        {
         "verb": "top",
@@ -10233,7 +10368,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 236,
+      "rank": 241,
       "actions": [
        {
         "verb": "top",
@@ -10278,7 +10413,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 249,
+      "rank": 254,
       "actions": [
        {
         "verb": "top",
@@ -10323,7 +10458,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 254,
+      "rank": 259,
       "actions": [
        {
         "verb": "top",
@@ -10368,7 +10503,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 257,
+      "rank": 262,
       "actions": [
        {
         "verb": "top",
@@ -10413,7 +10548,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 260,
+      "rank": 265,
       "actions": [
        {
         "verb": "top",
@@ -10458,7 +10593,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 261,
+      "rank": 266,
       "actions": [
        {
         "verb": "top",
@@ -10503,7 +10638,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 262,
+      "rank": 267,
       "actions": [
        {
         "verb": "top",
@@ -10548,7 +10683,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 270,
+      "rank": 275,
       "actions": [
        {
         "verb": "top",
@@ -10593,7 +10728,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 273,
+      "rank": 278,
       "actions": [
        {
         "verb": "top",
@@ -10638,7 +10773,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 274,
+      "rank": 279,
       "actions": [
        {
         "verb": "top",
@@ -10683,7 +10818,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 275,
+      "rank": 280,
       "actions": [
        {
         "verb": "top",
@@ -10728,7 +10863,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 278,
+      "rank": 283,
       "actions": [
        {
         "verb": "top",
@@ -10774,7 +10909,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Upstream API returning 529 Overloaded - external, not a repo condition",
-      "rank": 280,
+      "rank": 285,
       "actions": [
        {
         "verb": "top",
@@ -10819,7 +10954,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 296,
+      "rank": 301,
       "actions": [
        {
         "verb": "top",
@@ -10864,7 +10999,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 297,
+      "rank": 302,
       "actions": [
        {
         "verb": "top",
@@ -10910,7 +11045,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Dallas and Las Vegas read too low, Los Angeles too high; extend the shipped fix.",
-      "rank": 298,
+      "rank": 303,
       "actions": [
        {
         "verb": "top",
@@ -10956,7 +11091,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 301,
+      "rank": 306,
       "actions": [
        {
         "verb": "top",
@@ -11002,7 +11137,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Break down offense and defense value by area of the floor for sharper scouting.",
-      "rank": 304,
+      "rank": 309,
       "actions": [
        {
         "verb": "top",
@@ -11047,7 +11182,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 305,
+      "rank": 310,
       "actions": [
        {
         "verb": "top",
@@ -11092,7 +11227,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 306,
+      "rank": 311,
       "actions": [
        {
         "verb": "top",
@@ -11137,7 +11272,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 307,
+      "rank": 312,
       "actions": [
        {
         "verb": "top",
@@ -11182,7 +11317,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 309,
+      "rank": 314,
       "actions": [
        {
         "verb": "top",
@@ -11227,7 +11362,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 314,
+      "rank": 319,
       "actions": [
        {
         "verb": "top",
@@ -11272,7 +11407,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 315,
+      "rank": 320,
       "actions": [
        {
         "verb": "top",
@@ -11317,7 +11452,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 317,
+      "rank": 322,
       "actions": [
        {
         "verb": "top",
@@ -11362,7 +11497,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 318,
+      "rank": 323,
       "actions": [
        {
         "verb": "top",
@@ -11407,7 +11542,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 319,
+      "rank": 324,
       "actions": [
        {
         "verb": "top",
@@ -11453,7 +11588,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 320,
+      "rank": 325,
       "actions": [
        {
         "verb": "top",
@@ -11498,7 +11633,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 321,
+      "rank": 326,
       "actions": [
        {
         "verb": "top",
@@ -11543,7 +11678,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 322,
+      "rank": 327,
       "actions": [
        {
         "verb": "top",
@@ -11589,7 +11724,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 323,
+      "rank": 328,
       "actions": [
        {
         "verb": "top",
@@ -11634,7 +11769,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 324,
+      "rank": 329,
       "actions": [
        {
         "verb": "top",
@@ -11679,7 +11814,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 325,
+      "rank": 330,
       "actions": [
        {
         "verb": "top",
@@ -12086,7 +12221,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 97,
+      "rank": 99,
       "actions": [
        {
         "verb": "top",
@@ -12131,7 +12266,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 98,
+      "rank": 100,
       "actions": [
        {
         "verb": "top",
@@ -12176,7 +12311,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 102,
+      "rank": 104,
       "actions": [
        {
         "verb": "top",
@@ -12221,7 +12356,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 104,
+      "rank": 106,
       "actions": [
        {
         "verb": "top",
@@ -12266,7 +12401,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 105,
+      "rank": 107,
       "actions": [
        {
         "verb": "top",
@@ -12311,7 +12446,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 132,
+      "rank": 134,
       "actions": [
        {
         "verb": "top",
@@ -12356,7 +12491,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 144,
+      "rank": 147,
       "actions": [
        {
         "verb": "top",
@@ -12402,7 +12537,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The wave was dispatched as fifteen finished surfaces one bake from the reader.",
-      "rank": 159,
+      "rank": 162,
       "actions": [
        {
         "verb": "top",
@@ -12447,7 +12582,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 160,
+      "rank": 163,
       "actions": [
        {
         "verb": "top",
@@ -12492,7 +12627,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 178,
+      "rank": 182,
       "actions": [
        {
         "verb": "top",
@@ -12537,7 +12672,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 202,
+      "rank": 207,
       "actions": [
        {
         "verb": "top",
@@ -12582,7 +12717,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 205,
+      "rank": 210,
       "actions": [
        {
         "verb": "top",
@@ -12627,7 +12762,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 206,
+      "rank": 211,
       "actions": [
        {
         "verb": "top",
@@ -12672,7 +12807,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 214,
+      "rank": 219,
       "actions": [
        {
         "verb": "top",
@@ -12717,7 +12852,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 225,
+      "rank": 230,
       "actions": [
        {
         "verb": "top",
@@ -12762,7 +12897,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 229,
+      "rank": 234,
       "actions": [
        {
         "verb": "top",
@@ -12807,7 +12942,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 230,
+      "rank": 235,
       "actions": [
        {
         "verb": "top",
@@ -12852,7 +12987,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 237,
+      "rank": 242,
       "actions": [
        {
         "verb": "top",
@@ -12897,7 +13032,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 238,
+      "rank": 243,
       "actions": [
        {
         "verb": "top",
@@ -12942,7 +13077,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 239,
+      "rank": 244,
       "actions": [
        {
         "verb": "top",
@@ -12987,7 +13122,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 241,
+      "rank": 246,
       "actions": [
        {
         "verb": "top",
@@ -13032,7 +13167,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 252,
+      "rank": 257,
       "actions": [
        {
         "verb": "top",
@@ -13077,7 +13212,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 266,
+      "rank": 271,
       "actions": [
        {
         "verb": "top",
@@ -13122,7 +13257,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 268,
+      "rank": 273,
       "actions": [
        {
         "verb": "top",
@@ -13167,7 +13302,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 276,
+      "rank": 281,
       "actions": [
        {
         "verb": "top",
@@ -13212,7 +13347,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 279,
+      "rank": 284,
       "actions": [
        {
         "verb": "top",
@@ -13257,7 +13392,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 282,
+      "rank": 287,
       "actions": [
        {
         "verb": "top",
@@ -13302,7 +13437,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 289,
+      "rank": 294,
       "actions": [
        {
         "verb": "top",
@@ -13347,7 +13482,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 302,
+      "rank": 307,
       "actions": [
        {
         "verb": "top",
@@ -13392,7 +13527,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 303,
+      "rank": 308,
       "actions": [
        {
         "verb": "top",
@@ -13437,7 +13572,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 316,
+      "rank": 321,
       "actions": [
        {
         "verb": "top",
@@ -13482,7 +13617,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 327,
+      "rank": 332,
       "actions": [
        {
         "verb": "top",
@@ -13799,7 +13934,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 58,
+      "rank": 59,
       "actions": [
        {
         "verb": "top",
@@ -13844,7 +13979,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 64,
+      "rank": 65,
       "actions": [
        {
         "verb": "top",
@@ -13889,7 +14024,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 66,
+      "rank": 67,
       "actions": [
        {
         "verb": "top",
@@ -13934,7 +14069,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 67,
+      "rank": 68,
       "actions": [
        {
         "verb": "top",
@@ -13979,7 +14114,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 68,
+      "rank": 69,
       "actions": [
        {
         "verb": "top",
@@ -14024,7 +14159,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 69,
+      "rank": 70,
       "actions": [
        {
         "verb": "top",
@@ -14069,7 +14204,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 70,
+      "rank": 71,
       "actions": [
        {
         "verb": "top",
@@ -14114,7 +14249,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 71,
+      "rank": 72,
       "actions": [
        {
         "verb": "top",
@@ -14159,7 +14294,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 72,
+      "rank": 73,
       "actions": [
        {
         "verb": "top",
@@ -14204,7 +14339,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 73,
+      "rank": 74,
       "actions": [
        {
         "verb": "top",
@@ -14249,7 +14384,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 74,
+      "rank": 75,
       "actions": [
        {
         "verb": "top",
@@ -14274,6 +14409,51 @@
       ]
      },
      {
+      "task_id": "an-ascii-fold-that-already-belongs-to-a-differen",
+      "family": "data",
+      "name": "One player's unaccented spelling is already taken by someone with another id",
+      "header": "One player's unaccented spelling is already taken by someone with another id",
+      "why": "Found while declaring play-by-play spellings as aliases. Nine were written safely. One was refused loudly by the identity guard the unaccented form of Azura Stevens already exists as its own row ...",
+      "priority": 1,
+      "seat": "data",
+      "status": "open",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 1.0,
+      "title": "One player's unaccented spelling is already taken by someone with another id",
+      "unlocks": "One was refused loudly by the identity guard the unaccented form of Azura Stevens already exists as its own row ...",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 76,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20an-ascii-fold-that-already-belongs-to-a-differen%3A%20top&body=One%20player%27s%20unaccented%20spelling%20is%20already%20taken%20by%20someone%20with%20another%20id%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20an-ascii-fold-that-already-belongs-to-a-differen%3A%20bump&body=One%20player%27s%20unaccented%20spelling%20is%20already%20taken%20by%20someone%20with%20another%20id%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20an-ascii-fold-that-already-belongs-to-a-differen%3A%20demote&body=One%20player%27s%20unaccented%20spelling%20is%20already%20taken%20by%20someone%20with%20another%20id%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20an-ascii-fold-that-already-belongs-to-a-differen%3A%20shelve&body=One%20player%27s%20unaccented%20spelling%20is%20already%20taken%20by%20someone%20with%20another%20id%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "the-roster-table-puts-a-player-on-the-wrong-team",
       "family": "data",
       "name": "One table puts a player in Portland while everything else, including the game she played ...",
@@ -14294,7 +14474,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 76,
+      "rank": 78,
       "actions": [
        {
         "verb": "top",
@@ -14339,7 +14519,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 83,
+      "rank": 85,
       "actions": [
        {
         "verb": "top",
@@ -14384,7 +14564,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 84,
+      "rank": 86,
       "actions": [
        {
         "verb": "top",
@@ -14429,7 +14609,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 89,
+      "rank": 91,
       "actions": [
        {
         "verb": "top",
@@ -14474,7 +14654,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 96,
+      "rank": 98,
       "actions": [
        {
         "verb": "top",
@@ -14519,7 +14699,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 107,
+      "rank": 109,
       "actions": [
        {
         "verb": "top",
@@ -14564,7 +14744,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 108,
+      "rank": 110,
       "actions": [
        {
         "verb": "top",
@@ -14609,7 +14789,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 115,
+      "rank": 117,
       "actions": [
        {
         "verb": "top",
@@ -14654,7 +14834,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 117,
+      "rank": 119,
       "actions": [
        {
         "verb": "top",
@@ -14699,7 +14879,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 121,
+      "rank": 123,
       "actions": [
        {
         "verb": "top",
@@ -14744,7 +14924,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 122,
+      "rank": 124,
       "actions": [
        {
         "verb": "top",
@@ -14789,7 +14969,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 123,
+      "rank": 125,
       "actions": [
        {
         "verb": "top",
@@ -14834,7 +15014,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 133,
+      "rank": 135,
       "actions": [
        {
         "verb": "top",
@@ -14879,7 +15059,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 138,
+      "rank": 141,
       "actions": [
        {
         "verb": "top",
@@ -14924,7 +15104,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 139,
+      "rank": 142,
       "actions": [
        {
         "verb": "top",
@@ -14969,7 +15149,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 141,
+      "rank": 144,
       "actions": [
        {
         "verb": "top",
@@ -15014,7 +15194,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 143,
+      "rank": 146,
       "actions": [
        {
         "verb": "top",
@@ -15059,7 +15239,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 155,
+      "rank": 158,
       "actions": [
        {
         "verb": "top",
@@ -15104,7 +15284,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 162,
+      "rank": 165,
       "actions": [
        {
         "verb": "top",
@@ -15149,7 +15329,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 166,
+      "rank": 169,
       "actions": [
        {
         "verb": "top",
@@ -15194,7 +15374,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 170,
+      "rank": 173,
       "actions": [
        {
         "verb": "top",
@@ -15239,7 +15419,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 172,
+      "rank": 175,
       "actions": [
        {
         "verb": "top",
@@ -15284,7 +15464,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 173,
+      "rank": 176,
       "actions": [
        {
         "verb": "top",
@@ -15329,7 +15509,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 174,
+      "rank": 177,
       "actions": [
        {
         "verb": "top",
@@ -15374,7 +15554,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 175,
+      "rank": 178,
       "actions": [
        {
         "verb": "top",
@@ -15399,6 +15579,51 @@
       ]
      },
      {
+      "task_id": "one-franchise-two-canonical-spellings-in-opposit",
+      "family": "data",
+      "name": "Two canonicalizers fold Phoenix opposite ways and a live report path uses the odd one",
+      "header": "Two canonicalizers fold Phoenix opposite ways and a live report path uses the odd one",
+      "why": "Verified by reading both assertions and the table . tests test team line 85 asserts canonical team or none of PHX equals PHO while tests test starter fact .py line 107 asserts canon team of both PHO ...",
+      "priority": 1,
+      "seat": "data",
+      "status": "open",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 1.0,
+      "title": "Two canonicalizers fold Phoenix opposite ways and a live report path uses the odd one",
+      "unlocks": "One franchise two rules pointing opposite ways and both are asserted as correct by their own tests so neither test can ...",
+      "owner": "DIRECTOR",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 179,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20one-franchise-two-canonical-spellings-in-opposit%3A%20top&body=Two%20canonicalizers%20fold%20Phoenix%20opposite%20ways%20and%20a%20live%20report%20path%20uses%20the%20odd%20one%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20one-franchise-two-canonical-spellings-in-opposit%3A%20bump&body=Two%20canonicalizers%20fold%20Phoenix%20opposite%20ways%20and%20a%20live%20report%20path%20uses%20the%20odd%20one%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20one-franchise-two-canonical-spellings-in-opposit%3A%20demote&body=Two%20canonicalizers%20fold%20Phoenix%20opposite%20ways%20and%20a%20live%20report%20path%20uses%20the%20odd%20one%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20one-franchise-two-canonical-spellings-in-opposit%3A%20shelve&body=Two%20canonicalizers%20fold%20Phoenix%20opposite%20ways%20and%20a%20live%20report%20path%20uses%20the%20odd%20one%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-06%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "which-grade-row-survives-depends-on-the-query-pl",
       "family": "data",
       "name": "When two grade rows tie, which one survives depends on how the query is written",
@@ -15419,7 +15644,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 180,
+      "rank": 185,
       "actions": [
        {
         "verb": "top",
@@ -15464,7 +15689,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 190,
+      "rank": 195,
       "actions": [
        {
         "verb": "top",
@@ -15509,7 +15734,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 201,
+      "rank": 206,
       "actions": [
        {
         "verb": "top",
@@ -15554,7 +15779,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 210,
+      "rank": 215,
       "actions": [
        {
         "verb": "top",
@@ -15599,7 +15824,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 211,
+      "rank": 216,
       "actions": [
        {
         "verb": "top",
@@ -15644,7 +15869,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 216,
+      "rank": 221,
       "actions": [
        {
         "verb": "top",
@@ -15689,7 +15914,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": true,
-      "rank": 226,
+      "rank": 231,
       "actions": [
        {
         "verb": "top",
@@ -15734,7 +15959,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 244,
+      "rank": 249,
       "actions": [
        {
         "verb": "top",
@@ -15779,7 +16004,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 245,
+      "rank": 250,
       "actions": [
        {
         "verb": "top",
@@ -15824,7 +16049,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 255,
+      "rank": 260,
       "actions": [
        {
         "verb": "top",
@@ -15869,7 +16094,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 258,
+      "rank": 263,
       "actions": [
        {
         "verb": "top",
@@ -15914,7 +16139,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 264,
+      "rank": 269,
       "actions": [
        {
         "verb": "top",
@@ -15959,7 +16184,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 269,
+      "rank": 274,
       "actions": [
        {
         "verb": "top",
@@ -16004,7 +16229,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 300,
+      "rank": 305,
       "actions": [
        {
         "verb": "top",
@@ -16049,7 +16274,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 308,
+      "rank": 313,
       "actions": [
        {
         "verb": "top",
@@ -16094,7 +16319,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 310,
+      "rank": 315,
       "actions": [
        {
         "verb": "top",
@@ -16140,7 +16365,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Lfb recon French box data usr bin bash-reachable from this box (Genius livestats 52 fields).",
-      "rank": 312,
+      "rank": 317,
       "actions": [
        {
         "verb": "top",
@@ -16185,7 +16410,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 313,
+      "rank": 318,
       "actions": [
        {
         "verb": "top",
@@ -16258,14 +16483,14 @@
      }
     ]
    },
-   "more_count": 320,
+   "more_count": 325,
    "floor": {
     "target": 40,
-    "count": 330,
+    "count": 335,
     "ok": true,
-    "label": "330 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
-    "as_of_utc": "2026-08-06T14:36:19Z",
-    "age_secs": 22,
+    "label": "335 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 2m ago.)",
+    "as_of_utc": "2026-08-06T14:58:57Z",
+    "age_secs": 142,
     "stale": false
    },
    "source": "dispatch queue",
@@ -16794,67 +17019,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-06T14:35:06Z",
-  "age_s": 61,
-  "cycles": 15,
+  "last_poll_utc": "2026-08-06T14:59:56Z",
+  "age_s": 56,
+  "cycles": 33,
   "known": true,
-  "label": "scout: alive, last poll 61s ago",
+  "label": "scout: alive, last poll 56s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "10:35am",
-   "text": "feed-streak alarm: RED=1 ['HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
-   "detail": "feed-streak alarm: RED=1 ['HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scou"
+   "time": "10:58am",
+   "text": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session",
+   "detail": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session"
   },
   {
-   "time": "10:35am",
-   "text": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 7644s newer than live (repo 2026-08-06T14:13:56+00:00 vs live 2026-08-06T12:06:32+00:00) | DATA-SURFACE-LAG: live coach.json is 8697s (2.4h) behind repo (repo 2026-08-06T14:30: vs live 2026-08-06T12:05:) | DATA-SURFACE-LAG: live availability.json is 8553s (2.4h) behind repo (repo 2026-08-06T14:30: vs live 2026-08-06T12:07:) | DATA-SURFACE-LAG: live value spine.json is 8699s (2.4h) behind repo (repo 2026-08-06T14:30: vs live 2026-08-06T12:05:) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 7644s newer than live (repo 2026-08-06T14:13:56+00:00 vs live 2026-08-06T12:06:32+00:0"
+   "time": "10:58am",
+   "text": "poll #32 · 1 new instruction(s)",
+   "detail": "poll cycle=32 ok directives_new=1"
   },
   {
-   "time": "10:36am",
-   "text": "divergence alarm: clean (build code matches the shared branch",
-   "detail": "divergence_alarm: clean (build code matches the shared branch)"
+   "time": "10:59am",
+   "text": "board-selfpolice: still lagging but a deployment is STILL running (Pages run is in progress (1133s in) — this push would CANCEL it) — leaving it alone this cycle; the next cycle re-checks. Pushing now would cancel it.",
+   "detail": "board-selfpolice: still lagging but a deployment is STILL running (Pages run is in_progress (1133s in) — this push would CANCEL it) — leavin"
   },
   {
-   "time": "10:36am",
-   "text": "publish-health: PUBLIC BOARD STALE (#43): staleness=8970s threshold=900s live=2026-08-06T12:06:32+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 7644s newer than live",
-   "detail": "publish-health: PUBLIC BOARD STALE (#43): staleness=8970s threshold=900s live=2026-08-06T12:06:32+00:00 | deploy stuck (guard/push failure):"
+   "time": "10:59am",
+   "text": "new instruction received into the inbox",
+   "detail": "HIT: delivered DIRECTOR_DIRECTIVE__P0_full_reliability_table_minutes_weakest.md -> inbox/ (ts=)"
   },
   {
-   "time": "10:36am",
-   "text": "chain-health: CHAIN DOWN (#19): broken=board paged=True",
-   "detail": "chain-health: CHAIN DOWN (#19): broken=board paged=True"
+   "time": "10:59am",
+   "text": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session",
+   "detail": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session"
   },
   {
-   "time": "10:36am",
-   "text": "slate-refresh: slate ok (today populated",
-   "detail": "slate-refresh: slate ok (today populated)"
+   "time": "10:59am",
+   "text": "poll #33 · 1 new instruction(s)",
+   "detail": "poll cycle=33 ok directives_new=1"
   },
   {
-   "time": "10:36am",
-   "text": "MIRROR SKIP: RECEIPT .md - scout's own mirror artifact (ACK/receipt/status/diagnostic",
-   "detail": "MIRROR SKIP: RECEIPT_.md - scout's own mirror artifact (ACK/receipt/status/diagnostic)"
+   "time": "11:00am",
+   "text": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 8963s newer than live (repo 2026-08-06T14:35:55+00:00 vs live 2026-08-06T12:06:32+00:00) | DATA-SURFACE-LAG: live coach.json is 8697s (2.4h) behind repo (repo 2026-08-06T14:30: vs live 2026-08-06T12:05:) | DATA-SURFACE-LAG: live availability.json is 10357s (2.9h) behind repo (repo 2026-08-06T15:00: vs live 2026-08-06T12:07:) | DATA-SURFACE-LAG: live value spine.json is 10494s (2.9h) behind repo (repo 2026-08-06T15:00: vs live 2026-08-06T12:05:) -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 8963s newer than live (repo 2026-08-06T14:35:55+00:00 vs live 2026-08-06T12:06:32+00:0"
   },
   {
-   "time": "10:36am",
-   "text": "poll #16 · nothing new",
-   "detail": "poll cycle=16 ok directives_new=0"
+   "time": "11:01am",
+   "text": "new instruction received into the inbox",
+   "detail": "HIT: delivered DIRECTOR_DIRECTIVE__P0_reliability_replicates_minutes_collapsed.md -> inbox/ (ts=)"
   },
   {
-   "time": "10:36am",
-   "text": "inbox-unread: RED DEFECT - 24 filed directive(s) unread, oldest DIRECTOR DIRECTIVE P0 availability engine shipped code.md (4231s > 120s) - wrote inbox unread defect.json + ledger",
-   "detail": "inbox-unread: RED DEFECT - 24 filed directive(s) unread, oldest DIRECTOR_DIRECTIVE__P0_availability_engine_shipped_code.md (4231s > 120s) - "
+   "time": "11:01am",
+   "text": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session",
+   "detail": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session"
   },
   {
-   "time": "10:36am",
-   "text": "inbox-unread: RED DEFECT - 24 filed directive(s) unread, oldest DIRECTOR DIRECTIVE P0 availability engine shipped code.md (4231s) - inbox unread defect.json + ledger written",
-   "detail": "inbox-unread: RED DEFECT - 24 filed directive(s) unread, oldest DIRECTOR_DIRECTIVE__P0_availability_engine_shipped_code.md (4231s) - inbox_u"
+   "time": "11:01am",
+   "text": "poll #34 · 1 new instruction(s)",
+   "detail": "poll cycle=34 ok directives_new=1"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-06T14:36:06Z",
+  "as_of": "2026-08-06T15:00:52.040578+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -16863,47 +17088,47 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "61s",
-    "state_text": "on · seen 61s ago"
+    "age_label": "56s",
+    "state_text": "on · seen 56s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "66s",
-    "state_text": "on · seen 66s ago"
+    "age_label": "0s",
+    "state_text": "on · seen 0s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "4s",
-    "state_text": "on · seen 4s ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "43s",
-    "state_text": "on · seen 43s ago"
+    "age_label": "57s",
+    "state_text": "on · seen 57s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "1s",
-    "state_text": "on · seen 1s ago"
+    "age_label": "9m",
+    "state_text": "on · seen 9m ago"
    }
   ],
   "width": {
    "running": 2,
-   "target": 2,
+   "target": 1,
    "empty": 0,
-   "line": "2 of 2 jobs running.",
+   "line": "2 of 1 jobs running.",
    "reason": "Enough jobs are running for the work waiting.",
    "stale": false
   },
@@ -17018,7 +17243,7 @@
    },
    {
     "label": "Deep scouting 7am",
-    "ran_et": "10:30am",
+    "ran_et": "11:00am",
     "next_et": "7:10am",
     "result": "needs a look"
    },
@@ -17106,25 +17331,25 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-06T14:35:39Z",
-  "session_age_secs": 4792,
-  "last_progress_age_secs": 28,
+  "last_heartbeat_utc": "2026-08-06T15:00:39Z",
+  "session_age_secs": 6277,
+  "last_progress_age_secs": 13,
   "last_spawn_attempt": "2026-08-06T13:16:10Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
  "pipe_health": {
-  "directives_pending": 0,
-  "last_processed_clock": "10:35am",
-  "last_processed_iso": "2026-08-06T14:35:36Z",
+  "directives_pending": 1,
+  "last_processed_clock": "10:51am",
+  "last_processed_iso": "2026-08-06T14:51:55Z",
   "last_processed_known": true,
-  "last_processed_display": "10:35am",
+  "last_processed_display": "10:51am",
   "last_processed_source": "directive_ledger.done",
-  "newest_directive_clock": "",
-  "newest_directive_iso": null,
+  "newest_directive_clock": "10:41am",
+  "newest_directive_iso": "2026-08-06T14:41:48Z",
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-08-06T14:35:36Z",
+  "as_of": "2026-08-06T14:51:55Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -17138,27 +17363,27 @@
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-08-06T14:32:50Z",
+   "as_of": "2026-08-06T14:50:03Z",
    "stale": false,
-   "revalidated": "2026-08-06T14:35:55+00:00",
+   "revalidated": "2026-08-06T15:00:45+00:00",
    "stale_reason": "",
-   "age_label": "3m",
+   "age_label": "10m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-06T14:35:55+00:00",
+   "as_of": "2026-08-06T15:00:45+00:00",
    "stale": false,
-   "revalidated": "2026-08-06T14:35:55+00:00",
+   "revalidated": "2026-08-06T15:00:45+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-06T14:35:55+00:00",
+   "as_of": "2026-08-06T15:00:45+00:00",
    "stale": false,
-   "revalidated": "2026-08-06T14:35:55+00:00",
+   "revalidated": "2026-08-06T15:00:45+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -17167,66 +17392,66 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-06T14:35:55+00:00",
+   "revalidated": "2026-08-06T15:00:45+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-06T14:36:19Z",
-   "stale": true,
-   "revalidated": "2026-08-06T14:35:55+00:00",
-   "stale_reason": "A newer update is being re-checked now.",
-   "age_label": "0s",
+   "as_of": "2026-08-06T14:58:57Z",
+   "stale": false,
+   "revalidated": "2026-08-06T15:00:45+00:00",
+   "stale_reason": "",
+   "age_label": "1m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-06T14:35:55+00:00",
+   "revalidated": "2026-08-06T15:00:45+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-08-06T14:35:36Z",
+   "as_of": "2026-08-06T14:51:55Z",
    "stale": false,
-   "revalidated": "2026-08-06T14:35:55+00:00",
+   "revalidated": "2026-08-06T15:00:45+00:00",
    "stale_reason": "",
-   "age_label": "19s",
+   "age_label": "8m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-05T22:36:04-04:00",
    "stale": false,
-   "revalidated": "2026-08-06T14:35:55+00:00",
+   "revalidated": "2026-08-06T15:00:45+00:00",
    "stale_reason": "",
-   "age_label": "11h",
+   "age_label": "12h",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-06T14:13:56+00:00",
+   "as_of": "2026-08-06T14:35:55+00:00",
    "stale": false,
-   "revalidated": "2026-08-06T14:35:55+00:00",
+   "revalidated": "2026-08-06T15:00:45+00:00",
    "stale_reason": "",
-   "age_label": "22m",
+   "age_label": "24m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-06T14:36:06Z",
+   "as_of": "2026-08-06T15:00:52.040578+00:00",
    "stale": false,
-   "revalidated": "2026-08-06T14:35:55+00:00",
+   "revalidated": "2026-08-06T15:00:45+00:00",
    "stale_reason": "",
-   "age_label": "1s",
+   "age_label": "0s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 6, 10:35am ET"
+ "generated_et": "Aug 6, 11:00am ET"
 }
