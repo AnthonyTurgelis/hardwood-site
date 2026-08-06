@@ -135,16 +135,23 @@
           '% of '+M.n_graded+' graded games. Our average miss on those games is '+M.our_mae.toFixed(2)+
           ' points against the market’s '+M.market_mae.toFixed(2)+
           ' — we are running about level with the price, a shade behind.';
-        /* WHAT WE LEFT OUT. The graded count moves when a game's price turns out not to have been a
-           closing price, and a count that drops with no reason given is the opposite of showing our
-           work. The sentence is the feed's own — SHOWN AS SERVED, never rebuilt here and never
-           retyped, so it cannot drift from the number it explains.
+        /* WHAT WE LEFT OUT, AND WHY — ALL OF IT. A graded count that sits below the number of games
+           played, with no reason given, is the opposite of showing our work. This line gives the
+           reasons in descending size: the games from the season's opening stretch that came before
+           our model could make a call worth grading, the recent ones whose closing prices landed
+           after the current model was built, and the ones with no usable closing price. It also
+           states what the left-out games looked like, so the reader can judge whether the graded
+           set is a flattering slice rather than take our word for it.
 
-           It appears ONLY when something was actually left out. A feed with nothing excluded still
-           carries a note (it reads "No games left out"), so the count is what gates the line, not
-           the presence of the text — announcing an empty exclusion on the ordinary night would be
-           noise. An older feed with none of these fields takes the same path and the page reads
-           exactly as it did before they existed. */
+           This line USED to name only the last and smallest of those reasons, because the grader
+           counted only that one. A true sentence about the small cause reads as the whole cause.
+
+           The sentence is the feed's own — SHOWN AS SERVED, never rebuilt here and never retyped,
+           so it cannot drift from the numbers it explains. It appears ONLY when something was
+           actually left out. A feed with nothing excluded still carries a note (it reads "No games
+           left out"), so the COUNT gates the line, not the presence of the text — announcing an
+           empty exclusion on the ordinary night would be noise. An older feed with none of these
+           fields takes the same path and the page reads exactly as it did before they existed. */
         if(M.n_excluded>0&&M.excluded_note){ exc.textContent=M.excluded_note; } else { dropExcluded(); }
       } else { beat.remove(); dropExcluded(); }
     }).catch(function(){ beat.remove(); dropExcluded(); });
