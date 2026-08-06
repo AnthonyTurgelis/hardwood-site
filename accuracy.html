@@ -121,9 +121,18 @@
     if(mae!=null&&n!=null) miss.innerHTML='<b>Average miss:</b> '+mae+' points per game this season, across '+n+' graded games.';
     else miss.remove();
 
-    /* market bindings: absent by design until the closing-line feed is fresh */
+    /* Market bindings, live since the closing-line backfill closed the outage gap. Still suppresses
+       its own sentence if the feed is missing — the rule does not relax just because it resolved
+       once. Reported whichever way the numbers fall. */
     var beat=document.getElementById('ac-beat');
-    beat.innerHTML='<b>Beat rate:</b> how often we land closer than the closing line — held while our closing-line feed catches up. We would rather show nothing than a number from a window that already closed.';
+    fetch('./market_grade.json').then(function(r){return r.json()}).then(function(M){
+      if(M&&M.n_graded){
+        beat.innerHTML='<b>Beat rate:</b> we were closer than the closing line in '+M.beat_rate+
+          '% of '+M.n_graded+' graded games. Our average miss on those games is '+M.our_mae.toFixed(2)+
+          ' points against the market’s '+M.market_mae.toFixed(2)+
+          ' — we are running about level with the price, a shade behind.';
+      } else { beat.remove(); }
+    }).catch(function(){ beat.remove(); });
 
     var c=document.getElementById('ac-cal');
     if(c90&&c90.actual!=null) c.innerHTML='<b>Calibration:</b> when we say 70%, it should happen about 70% of the time — our ranges have covered at '+c90.actual+'% against a target of '+c90.target+'%.';
