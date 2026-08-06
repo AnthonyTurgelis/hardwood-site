@@ -200,31 +200,40 @@
        Section 2 prices a lead a team ALREADY HOLDS. This prices a lead we EXPECT.
        Every cell is the bell-curve translation of a margin at the margin spread stated
        on the face of the block, so the numbers are reproducible from the page itself
-       (tests/test_winpct_reference.py recomputes them and fails if a cell drifts). -->
+       (tests/test_winpct_reference.py recomputes them and fails if a cell drifts).
+
+       WHICH SPREAD: the spread on the face of this block is how far a final margin lands
+       from OUR PREDICTED margin (data/calibration_constants.json -> step3_sd, pooled and
+       walk-forward held out, n=1403), NOT the raw spread of final margins around zero.
+       The question "a team favored by X wins Y% of the time" is conditional on the call,
+       so it takes the spread that remains AFTER the call is made. The raw spread of
+       margins is wider because it still contains the real strength gaps that being a
+       favorite is measuring; pricing this table with it understates every favorite.
+       This block shipped once at the raw 14.05 and every cell was too low. -->
   <section class="pr" id="winpct-ref">
     <div class="kicker">Reference</div>
     <h2>What a projected margin is worth</h2>
-    <p><span class="concept-lab">The concept</span> Section 2 priced a lead a team already holds. This prices a lead we <i>expect</i>. If we call a team by six before tip, how often does a six-point favorite actually win? One number decides it: how far the real final margin typically lands from the number you predicted. On this season's completed games that spread is about <b>14 points</b> — the same size as the end-of-game spread in Section 1, which is the honest reason the table below is as flat as it is.</p>
+    <p><span class="concept-lab">The concept</span> Section 2 priced a lead a team already holds. This prices a lead we <i>expect</i>. If we call a team by six before tip, how often does a six-point favorite actually win? One number decides it: how far the real final margin typically lands from the number we called. Measured against our own completed calls — 1,403 games we predicted before they were played — that spread is about <b>13 points</b>. That is the part of a game we cannot predict, and it is the right number here: the raw spread of final margins is wider, but it also contains the real strength gaps that being a favorite is measuring, so using it would price a favorite as worth less than it is.</p>
 
     <div class="dtwrap">
       <table class="dt">
         <thead><tr><th>Favored by…</th><th class="num">Wins about</th><th>Favored by…</th><th class="num">Wins about</th></tr></thead>
         <tbody>
-          <tr><td class="rowh">1 point</td><td class="num">52.8%</td><td class="rowh">7 points</td><td class="num">69.1%</td></tr>
-          <tr><td class="rowh">2 points</td><td class="num">55.7%</td><td class="rowh">8 points</td><td class="num">71.5%</td></tr>
-          <tr><td class="rowh">3 points</td><td class="num">58.5%</td><td class="rowh">9 points</td><td class="num">73.9%</td></tr>
-          <tr><td class="rowh">4 points</td><td class="num">61.2%</td><td class="rowh">10 points</td><td class="num">76.2%</td></tr>
-          <tr><td class="rowh">5 points</td><td class="num">63.9%</td><td class="rowh">12 points</td><td class="num">80.3%</td></tr>
-          <tr><td class="rowh">6 points</td><td class="num">66.5%</td><td class="rowh">15 points</td><td class="num">85.7%</td></tr>
+          <tr><td class="rowh">1 point</td><td class="num">53.2%</td><td class="rowh">7 points</td><td class="num">71.2%</td></tr>
+          <tr><td class="rowh">2 points</td><td class="num">56.3%</td><td class="rowh">8 points</td><td class="num">73.8%</td></tr>
+          <tr><td class="rowh">3 points</td><td class="num">59.5%</td><td class="rowh">9 points</td><td class="num">76.4%</td></tr>
+          <tr><td class="rowh">4 points</td><td class="num">62.5%</td><td class="rowh">10 points</td><td class="num">78.8%</td></tr>
+          <tr><td class="rowh">5 points</td><td class="num">65.5%</td><td class="rowh">12 points</td><td class="num">83.1%</td></tr>
+          <tr><td class="rowh">6 points</td><td class="num">68.4%</td><td class="rowh">15 points</td><td class="num">88.4%</td></tr>
         </tbody>
       </table>
     </div>
 
-    <p>The first thing to take from it is how <i>little</i> a small edge buys. A three-point favorite is barely better than a coin flip. You need to be favored by ten before you are winning three times in four. That is Section 1's noise showing up again in a second currency: when the typical result lands 14 points from the call, being three points better than someone is not much of an advantage on any single night.</p>
+    <p>The first thing to take from it is how <i>little</i> a small edge buys. A three-point favorite is still close to a coin flip. You need to be favored by nine before you are winning three times in four. That is Section 1's noise showing up again in a second currency: when the typical result lands 13 points from the call, being three points better than someone is not much of an advantage on any single night.</p>
 
     <div class="fig honest">
-      <div class="figv"><b>Read this as a reference, not as our board's method.</b> The table is a clean bell-curve translation of a margin into a win chance. The win chance on a game card is not built this way — it comes from simulating the game — and the two do not fully agree. One recent card called a team by 8.2 points and put its win chance at 76%, where this table says about 72%. That gap of roughly four points is real, we have not explained it yet, and reconciling the two is queued work. Until it is done, trust the simulated number on the card for that game and use this table only to get a feel for what a margin is worth in general.</div>
-      <div class="figsrc">Margin spread measured on this season's completed regular-season games</div>
+      <div class="figv"><b>Read this as a reference, not as our board's method.</b> The table is a clean bell-curve translation of a margin into a win chance. The win chance on a game card is not built this way — it comes from simulating the game — and the two do not fully agree. One recent card called a team by 8.2 points and put its win chance at 76%, where this table says about 74%. That gap of roughly two points is real, we have not explained it yet, and reconciling the two is queued work. Until it is done, trust the simulated number on the card for that game and use this table only to get a feel for what a margin is worth in general.</div>
+      <div class="figsrc">Measured against our own completed calls: how far a final margin lands from the margin we predicted</div>
     </div>
 
     <div class="board-ptr"><span class="tag">On the board</span> Every win chance on a game card carries this table as a hover note, including the honest warning that the card's own number can sit a few points above it. The card is the one to act on; this page is where the translation and the gap are written down.</div>
