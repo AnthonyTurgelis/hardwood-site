@@ -90,6 +90,26 @@ footer .util a:hover{color:var(--chalk)}
     <div class="eyebrow">The record</div>
     <p class="sub" style="margin-top:8px">We grade every call the morning after and publish the running record - hits, misses, and what we learned. <a href="accuracy.html">See our accuracy</a> or read the <a href="review.html" style="color:var(--maple)">daily review</a>.</p>
   </section>
+<section class="wrap" id="qstrip"><h2 style="font:700 20px/1 'Barlow Condensed';text-transform:uppercase;letter-spacing:.08em;color:var(--chalk);margin:26px 0 10px">What we're building next</h2><div id="qs-items" style="display:grid;gap:8px"></div><a href="queue.html" style="color:var(--maple);font-size:13px">Full queue -></a>
+<script>
+/* PUBLIC PROJECTION of the ranked queue. Two things this must never do, both shipped once and both
+   caught by the CEO on the live page:
+   1. Print the internal owner/status tag - "(MACHINE - NEXT)" is a record-internal identifier and
+      has no meaning to a reader.
+   2. Show OPERATIONS rows. The queue is one canonical list, but the front door is a product surface:
+      a reader wants what we are building, not our plumbing. Family is the filter, so a mis-filed row
+      lands here - that is how "Stop telling him we are idle when we are not" reached the front page. */
+fetch('./queue.json').then(r=>r.json()).then(d=>{
+  var rows=(d.items||[]).filter(function(i){
+    return i.status!=='DONE TODAY' && i.status!=='BLOCKED'
+        && String(i.family||'').toLowerCase()!=='operations';
+  }).slice(0,5);
+  document.getElementById('qs-items').innerHTML=rows.map(function(i,n){
+    return '<div style="background:var(--plank);border:1px solid var(--line);border-radius:8px;padding:9px 12px;color:var(--chalk);font-size:14px">'
+      +(n+1)+'. '+i.title+'</div>';
+  }).join('');
+}).catch(function(){});
+</script></section>
 </main>
 <footer class="wrap">
   <div class="util">
@@ -148,7 +168,5 @@ fetch(SLATE_FEED).then(function(r){return r.json()}).then(function(d){
     (g.avail?'<div class="avail">'+g.avail+'</div>':'')+'</article>'}).join("");
 }).catch(function(){ /* static content stands on its own */ });
 </script>
-<section class="wrap" id="qstrip"><h2 style="font:700 20px/1 'Barlow Condensed';text-transform:uppercase;letter-spacing:.08em;color:var(--chalk);margin:26px 0 10px">What we're building next</h2><div id="qs-items" style="display:grid;gap:8px"></div><a href="queue.html" style="color:var(--maple);font-size:13px">Full queue -></a>
-<script>fetch('./queue.json').then(r=>r.json()).then(d=>{document.getElementById('qs-items').innerHTML=(d.items||[]).filter(i=>i.status!=='DONE TODAY'&&i.status!=='BLOCKED').slice(0,5).map(i=>'<div style="background:var(--plank);border:1px solid var(--line);border-radius:8px;padding:9px 12px;color:var(--chalk);font-size:14px">'+i.rank+'. '+i.title+' <span style="color:var(--dim);font-size:12px">('+i.owner+' - '+i.status+')</span></div>').join('')}).catch(()=>{});</script></section>
 </body>
 </html>
