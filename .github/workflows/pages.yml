@@ -1,0 +1,55 @@
+name: Deploy static site to Pages
+
+# Replaces the GitHub-generated legacy "pages build and deployment" pipeline.
+# The legacy deploy step used actions/deploy-pages with its built-in 600000ms
+# timeout, and this repo's Pages deployments were sitting in deployment_queued
+# for longer than that, so every publish aborted itself with
+# "Timeout reached, aborting!" and the live board froze. The only thing this
+# workflow changes about the deploy is the wait budget.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a publish finish. Never cancel one in flight - a cancelled deploy is the
+# failure mode a previous fix already had to remove.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # The pack is ~450 MiB against a ~23 MB tree. Only the tip is needed.
+          fetch-depth: 1
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        # Tars the working tree; .git and .github are excluded by the action.
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          # 30 minutes. The default is 600000ms, which is the wall the legacy
+          # pipeline kept hitting while GitHub held the deployment queued.
+          timeout: 1800000
