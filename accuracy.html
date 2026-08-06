@@ -97,6 +97,7 @@
   <h2 style="font:700 22px/1.15 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;margin:22px 0 8px">The three numbers that matter</h2>
   <p style="margin:0 0 6px" id="ac-miss"></p>
   <p style="margin:0 0 6px" id="ac-beat"></p>
+  <p style="margin:0 0 6px;color:var(--muted)" id="ac-excluded"></p>
   <p style="margin:0 0 14px" id="ac-cal"></p>
 
   <h2 style="font:700 22px/1.15 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;margin:22px 0 8px">Why any of this is possible</h2>
@@ -126,14 +127,27 @@
        its own sentence if the feed is missing — the rule does not relax just because it resolved
        once. Reported whichever way the numbers fall. */
     var beat=document.getElementById('ac-beat');
+    var exc=document.getElementById('ac-excluded');
+    function dropExcluded(){ if(exc&&exc.parentNode) exc.remove(); }
     fetch('./market_grade.json').then(function(r){return r.json()}).then(function(M){
       if(M&&M.n_graded){
         beat.innerHTML='<b>Beat rate:</b> we were closer than the closing line in '+M.beat_rate+
           '% of '+M.n_graded+' graded games. Our average miss on those games is '+M.our_mae.toFixed(2)+
           ' points against the market’s '+M.market_mae.toFixed(2)+
           ' — we are running about level with the price, a shade behind.';
-      } else { beat.remove(); }
-    }).catch(function(){ beat.remove(); });
+        /* WHAT WE LEFT OUT. The graded count moves when a game's price turns out not to have been a
+           closing price, and a count that drops with no reason given is the opposite of showing our
+           work. The sentence is the feed's own — SHOWN AS SERVED, never rebuilt here and never
+           retyped, so it cannot drift from the number it explains.
+
+           It appears ONLY when something was actually left out. A feed with nothing excluded still
+           carries a note (it reads "No games left out"), so the count is what gates the line, not
+           the presence of the text — announcing an empty exclusion on the ordinary night would be
+           noise. An older feed with none of these fields takes the same path and the page reads
+           exactly as it did before they existed. */
+        if(M.n_excluded>0&&M.excluded_note){ exc.textContent=M.excluded_note; } else { dropExcluded(); }
+      } else { beat.remove(); dropExcluded(); }
+    }).catch(function(){ beat.remove(); dropExcluded(); });
 
     var c=document.getElementById('ac-cal');
     if(c90&&c90.actual!=null) c.innerHTML='<b>Calibration:</b> when we say 70%, it should happen about 70% of the time — our ranges have covered at '+c90.actual+'% against a target of '+c90.target+'%.';
