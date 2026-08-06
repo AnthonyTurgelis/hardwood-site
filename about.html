@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — What This Site Is</title>
+<style>
+  /* Fallback tokens (hardwood.css wins the cascade when it loads; these keep the
+     page legible if it ever fails). */
+  :root{ --bg:#f4f6fa; --card:#fff; --card2:#f5f8fc; --chip:#eef2f8; --ink:#15181f;
+    --muted:#586074; --dim:#8993a6; --line:#e6eaf1; --line2:#d6dce6;
+    --acc:#2f6fed; --accent:#2f6fed; --accent-weak:rgba(47,111,237,.10);
+    --good:#1f8f3d; --bad:#c62828; --home:#2f6fed; --away:#b4530a;
+    --radius:10px; --shadow:0 1px 2px rgba(16,24,40,.06); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0b0e13; --card:#151a21; --card2:#1b212b;
+    --chip:#20293a; --ink:#e8edf4; --muted:#9aa6b4; --dim:#6b7684; --line:#232b37; --line2:#38424f;
+    --acc:#6ea8fe; --accent:#6ea8fe; --accent-weak:rgba(110,168,254,.16);
+    --good:#3fb950; --bad:#ff7b72; --home:#4a8cf0; --away:#c98209; --shadow:none; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;overflow-x:hidden}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:18px;margin:0;font-weight:750;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto;padding:0 14px}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--muted);border:1px solid var(--line);background:var(--card);padding:6px 11px;border-radius:999px;font-weight:600}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
+  main{max-width:820px;margin:0 auto;padding:8px 14px 72px}
+
+  /* --- intro / lede --- */
+  .lede{font-size:15px;line-height:1.6;color:var(--ink);margin:16px 0 8px;font-weight:500}
+  .lede-sub{font-size:13.5px;line-height:1.6;color:var(--muted);margin:8px 0 4px}
+
+  /* --- one-idea banner --- */
+  .banner{margin:16px 0;padding:14px 16px;background:var(--accent-weak);border-left:3px solid var(--acc);border-radius:8px;font-size:14px;line-height:1.55;color:var(--ink)}
+  .banner b{font-weight:750}
+
+  /* --- table of contents --- */
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:14px 16px;margin:18px 0 26px}
+  .toc-h{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px}
+  .toc ol{margin:0;padding-left:22px}
+  .toc li{margin:5px 0;font-size:13.5px;line-height:1.4}
+  .toc a{color:var(--acc);text-decoration:none;font-weight:600}
+  .toc a:hover{text-decoration:underline}
+
+  /* --- a section --- */
+  section.pr{margin:34px 0;scroll-margin-top:16px}
+  .kicker{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--acc);margin:0 0 4px}
+  h2{font-size:21px;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin:0 0 12px}
+  section.pr p{font-size:14px;line-height:1.65;color:var(--ink);margin:12px 0}
+  section.pr p b{font-weight:700}
+  .concept-lab{font-weight:800;color:var(--muted);text-transform:uppercase;font-size:10px;letter-spacing:.05em;margin-right:6px}
+
+  /* --- figure callout (the headline number of a section) --- */
+  .fig{margin:16px 0;padding:13px 15px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:9px;box-shadow:var(--shadow)}
+  .fig .figv{font-size:15px;line-height:1.55;color:var(--ink)}
+  .fig .figv b{font-weight:750}
+  .fig .figsrc{margin-top:6px;font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.03em;font-variant-numeric:tabular-nums}
+
+  /* --- stat tiles --- */
+  .tiles{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:flex-end;margin:16px 0 6px}
+  .tile{display:flex;flex-direction:column;line-height:1.05}
+  .tile .tv{font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .tile .tl{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;margin-top:4px;max-width:150px}
+
+  /* --- small data table --- */
+  .dtwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 0;border:1px solid var(--line);border-radius:9px}
+  table.dt{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+  .dt th,.dt td{padding:7px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  .dt th{background:var(--card2);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+  .dt th.num,.dt td.num{text-align:right}
+  .dt tbody tr:last-child td{border-bottom:none}
+  .dt td.rowh{font-weight:700;color:var(--ink)}
+
+  /* --- on-the-board pointer strip --- */
+  .board-ptr{margin:16px 0 2px;padding:11px 14px;background:var(--card2);border:1px solid var(--line);border-radius:9px;font-size:12.5px;line-height:1.55;color:var(--muted)}
+  .board-ptr b{color:var(--ink);font-weight:700}
+  .board-ptr .tag{display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--acc);margin-right:7px;vertical-align:1px}
+
+  /* --- honest-gaps list --- */
+  .gaps{margin:14px 0;padding:0}
+  .gaps li{list-style:none;margin:12px 0;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:9px;font-size:13.5px;line-height:1.6}
+  .gaps li b{font-weight:750;color:var(--ink)}
+
+  /* --- honest / caveat emphasis --- */
+  .honest{border-left:3px solid var(--away)}
+
+  hr.rule{border:none;border-top:1px solid var(--line);margin:30px 0}
+  .backtop{font-size:11px;color:var(--dim);text-decoration:none;margin-left:10px}
+  .backtop:hover{color:var(--acc)}
+  footer{max-width:820px;margin:0 auto;padding:20px 14px 40px;color:var(--dim);font-size:11px;line-height:1.6}
+</style>
+<link rel="stylesheet" href="./hardwood.css?v=04e913ef">
+<style>
+  /* Glossary — definition list rather than a table: it is prose, it wraps on a phone, and a table
+     would imply a comparison between rows that does not exist. */
+  dl.glossary{margin:0;display:grid;grid-template-columns:minmax(9rem,auto) 1fr;gap:6px 18px}
+  dl.glossary dt{font-weight:600;color:var(--ink)}
+  dl.glossary dd{margin:0;color:var(--muted)}
+  @media(max-width:560px){dl.glossary{grid-template-columns:1fr;gap:2px}
+    dl.glossary dd{margin-bottom:8px}}
+</style>
+
+</head>
+<body>
+<header id="top">
+  <h1>The Hardwood — What This Site Is</h1>
+</header>
+<div class="sub">The number, the inputs, the grade.</div>
+<nav>
+  <a href="./index.html">Board</a>
+  <a href="./queue.html">What's Next</a>
+  <a href="./games.html">Games</a>
+  <a href="./standings.html">Standings</a>
+  <a href="./availability.html">Injuries</a>
+  <a href="./teams.html">Teams</a>
+  <a href="./coach.html">Coach</a>
+  <a href="./tempo.html">Tempo</a>
+  <a href="./gm.html">GM</a>
+  <a href="./players.html">Players</a>
+  <a href="./compare.html">Compare</a>
+  <a href="./situation.html">Situations</a>
+  <a href="./review.html">Daily Review</a>
+  <a href="./accuracy.html">Our Accuracy</a>
+  <a href="./ledger.html">Error Map</a>
+  <a href="./report_archive.html">Report Archive</a>
+  <a href="./org.html">The Team</a>
+  <a href="./scouting.html">Scouting</a>
+  <a href="./deepdive.html">Deep Dives</a>
+  <a href="./explorer.html">Data Explorer</a>
+  <a href="./primer.html">Learn</a>
+  <a class="active" href="./about.html">About</a>
+</nav>
+<main>
+
+  <p class="lede">The Hardwood projects every WNBA game, player, and season — and shows its work. Every number we publish comes with its inputs visible: how much is team quality, how much is the schedule, how much is who is playing tonight. Every projection is locked before tip-off, timestamped, and graded the next morning against what happened and against the betting market's closing price — the strongest public benchmark that exists. When we beat it, the scoreboard says so. When we miss, the Error Map says exactly where and what we learned. Basketball is predictable; the market proves it nightly by pricing every game. Our job is to be closer than that price, in public, game after game — and to build the kind of analysis a front office could run on. That is the whole site. No picks-tout mystery, no black box: the number, the inputs, the grade.</p>
+
+  <h2 id="glossary">Glossary</h2>
+  <p class="sub" style="margin-bottom:10px">The eight terms the rest of the site assumes.</p>
+  <dl class="glossary">
+    <dt>The Call</dt><dd>Our locked pre-tip projection — spread, total, win chance.</dd>
+    <dt>Line Impact</dt><dd>How many points a player moves the spread at her projected minutes.</dd>
+    <dt>Deserved record</dt><dd>The record a team's schedule-adjusted play has earned, coin flips removed.</dd>
+    <dt>Leverage</dt><dd>How much a game can swing the playoff picture, measured in probability.</dd>
+    <dt>Coverage</dt><dd>How often results land inside our stated range — said 90, should be 90.</dd>
+    <dt>Beat rate</dt><dd>The share of games our call was closer than the closing line.</dd>
+    <dt>Confirmed vs projected</dt><dd>Whether a lineup is announced, or our model's expectation.</dd>
+    <dt>The breakdown</dt><dd>The visible inputs that sum exactly to every call.</dd>
+  </dl>
+
+  <p class="sub" style="margin-top:18px">Every one of these is measured on a page you can open:
+  <a href="./accuracy.html">our accuracy</a> grades the calls,
+  <a href="./ledger.html">the Error Map</a> says where we missed, and
+  <a href="./primer.html">Learn</a> walks through the reasoning from the ground up.</p>
+
+</main>
+<footer>
+  A ground-floor explainer over the surfaces the platform bakes today. Every quantitative claim is drawn from a live board surface or a published deep dive; where a number isn't shipped yet (the rest / back-to-back point cost), it's flagged rather than invented. Most figures quoted here were taken from the numbers as they stood on July 23, so read them for scale rather than as today's - the live pages linked above are the current ones. Two things are current by construction rather than by typing: the scoring baseline in Section 1 is read from the pace dive each time this page loads, and the margin-to-win-chance table is reproducible from the margin spread printed above it.
+</footer>
+<!-- SHARED STATUS CHROME (2026-07-30). Same gap as the explorer: this page carried no staleness or
+     pause signal at all. Note the footer above hard-codes "current to the 2026-07-23 bake", which
+     cannot age itself - the strip is the live answer sitting above it. Reused, not reimplemented. -->
+<script src="./hardwood.js?v=1477558b"></script>
+<!-- SCORING BASELINE, DERIVED AT RENDER (2026-08-05).
+     WHY THIS IS NOT TYPED INTO THE PROSE: this page shipped saying "a WNBA game is about 162
+     points". That was the 2015-2026 long-run average and it read to a visitor as today's game.
+     Today's game is running roughly twelve points higher, so the page was quietly telling a
+     reader the board was wrong about every total it published. Typing 175 here instead would
+     re-arm the identical trap one season later, so the current-season figure is READ from a
+     surface that gets re-baked instead of typed.
+     SOURCE: deepdive_pace.json, the same file the Deep Dives pace read draws. Combined points a
+     night = 2 x possessions x points-per-100 / 100, which reproduces the long-run figure to a
+     tenth of a point and the current season to about one point - the pace dive estimates
+     possessions from box scores rather than counting them, and that estimate is disclosed in the
+     source line under the figure rather than hidden.
+     THE YEAR IS NOT HARD-CODED EITHER: the league keys are year-suffixed, so the newest year
+     present is discovered by scanning the keys. A season rollover needs no edit here.
+     FALLBACK IS SAFE BY CONSTRUCTION: if the fetch fails the static prose stands, and the static
+     prose states only the era-scoped historical average with its window named - never a
+     current-season number that could be stale. A failed fetch loses detail, never truth. -->
+<script>
+(function(){
+  var box = document.getElementById("env-now");
+  if (!box || !window.fetch) return;
+  fetch("./deepdive_pace.json", {cache:"no-store"}).then(function(r){
+    return r.ok ? r.json() : null;
+  }).then(function(d){
+    var L = d && d.league; if (!L) return;
+    var year = 0, k, m;
+    for (k in L){ m = /^pace_(\d{4})$/.exec(k); if (m && +m[1] > year) year = +m[1]; }
+    if (!year) return;
+    var pace = L["pace_" + year], per100 = L["points_per_100_" + year];
+    if (pace == null || per100 == null) return;
+    var now = 2 * pace * per100 / 100;
+    var longRun = (L.pace_all_seasons != null && L.points_per_100_all != null)
+      ? 2 * L.pace_all_seasons * L.points_per_100_all / 100 : null;
+    var txt = "This season two teams are combining for about <b>" + Math.round(now) +
+      " points a night, roughly " + Math.round(now / 2) + " each</b>";
+    if (longRun != null) {
+      txt += " — well clear of the <b>" + Math.round(longRun) +
+        "</b> a night the league averaged across 2015 through 2026";
+    }
+    txt += ". The scoring environment moves season to season, so the season's own number is the " +
+      "baseline to judge a total against, never a number you remember from a previous year.";
+    box.innerHTML = txt;
+    var src = document.getElementById("env-now-src");
+    if (src) {
+      src.textContent = "Pace and efficiency dive · " + year + " season" +
+        (L["n_games_" + year] ? ", " + L["n_games_" + year] + " games" : "") +
+        " · combined points estimated from possessions, accurate to about a point";
+    }
+    var tldr = document.getElementById("env-tldr");
+    if (tldr) {
+      tldr.textContent = "A WNBA game this season is about " + Math.round(now) + " points" +
+        (longRun != null ? ", up from about " + Math.round(longRun) + " over the previous decade" : "");
+    }
+  }).catch(function(){ /* static era-scoped prose stands on its own */ });
+})();
+</script>
+</body>
+</html>
