@@ -1,11 +1,23 @@
 name: Deploy static site to Pages
 
-# Replaces the GitHub-generated legacy "pages build and deployment" pipeline.
-# The legacy deploy step used actions/deploy-pages with its built-in 600000ms
-# timeout, and this repo's Pages deployments were sitting in deployment_queued
-# for longer than that, so every publish aborted itself with
-# "Timeout reached, aborting!" and the live board froze. The only thing this
-# workflow changes about the deploy is the wait budget.
+# Why this does not just use actions/deploy-pages:
+#
+# Every publish since 12:19Z on 2026-08-06 died with "Timeout reached, aborting!"
+# after ten minutes, and the action's very next act is "Canceling Pages
+# deployment...". The wait budget is NOT raisable - passing timeout: 1800000
+# gets you:
+#
+#   Warning: timeout value is greater than the allowed maximum -
+#            timeout set to the maximum of 600000 milliseconds.
+#
+# So 600s is a hard ceiling in the action, and GitHub's Pages backend is
+# currently taking longer than that for this repo. The deployment is not
+# failing - it is being KILLED by its own client while still in progress.
+#
+# This workflow creates the deployment with the same API call the action makes,
+# then waits with a loop that has no cancel path at all. If the wait runs out,
+# the deployment is left alive to finish on GitHub's side; nothing here ever
+# cancels it.
 
 on:
   push:
@@ -27,9 +39,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,10 +55,47 @@ jobs:
         with:
           path: '.'
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          # 30 minutes. The default is 600000ms, which is the wall the legacy
-          # pipeline kept hitting while GitHub held the deployment queued.
-          timeout: 1800000
+      - name: Create the Pages deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          artifact_id=$(gh api \
+            "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" \
+            --jq '[.artifacts[] | select(.name=="github-pages")][0].id')
+          echo "artifact_id=$artifact_id"
+          # Same OIDC token actions/deploy-pages requests: default audience.
+          oidc=$(curl -sS \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r '.value')
+          gh api -X POST "repos/$GITHUB_REPOSITORY/pages/deployments" \
+            -F "artifact_id=$artifact_id" \
+            -f "pages_build_version=$GITHUB_SHA" \
+            -f "oidc_token=$oidc"
+
+      - name: Wait for it to publish - never cancels it
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          for i in $(seq 1 160); do
+            status=$(gh api \
+              "repos/$GITHUB_REPOSITORY/pages/deployments/$GITHUB_SHA" \
+              --jq '.status' 2>/dev/null || echo unknown)
+            echo "poll $i: $status"
+            case "$status" in
+              succeed|success)
+                echo "published."
+                exit 0
+                ;;
+              *error*|*failed*|*failure*)
+                echo "::error::Pages reported $status"
+                exit 1
+                ;;
+            esac
+            sleep 15
+          done
+          echo "::warning::still not published after 40 minutes."
+          echo "The deployment is LEFT RUNNING on purpose - cancelling it is the"
+          echo "defect this workflow exists to remove."
+          exit 1
