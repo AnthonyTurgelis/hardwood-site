@@ -67,7 +67,12 @@
   <h1>The Hardwood — Error Map</h1>
   <span class="ago" id="ago"></span>
 </header>
-<div class="sub">Where we miss, and where we beat the market.</div>
+<!-- This subtitle is HARD-CODED and therefore cannot self-heal, so it must never carry a claim the
+     page might not be entitled to make. It used to read "and where we beat the market" — a market
+     claim frozen into the markup, which stayed true-looking after the builder withdrew the table
+     underneath it. The live, conditional version of this sentence is the lede, which is bound to
+     the feed's own `source` field and changes with the gate. -->
+<div class="sub">Where we miss.</div>
 <nav>
   <a href="./index.html">Board</a>
   <a href="./queue.html">What's Next</a>
@@ -143,6 +148,20 @@
     return tbl.rows.filter(function(r){ return r["Broken down by"]==="Overall" && r["Slice"]==="ALL"; });
   }
   function readingCard(dataK){ var c=el("div","reading"); c.setAttribute("data-k",dataK); return c; }
+
+  // The withdrawn market comparison, rendered in the table's place. It states what came down, why,
+  // and what brings it back — the same "show the work" standard we hold every published number to,
+  // applied to a number we took away. Every string here is the feed's own, shown as served and
+  // never retyped, so the page and the gate that withheld it cannot drift apart.
+  function withdrawnSection(w){
+    var sec=el("section");
+    sec.appendChild(el("h2",null,"Where we beat the market — withdrawn"));
+    var c=readingCard("marketwithdrawn");
+    if(w.withdrawn_reason) c.appendChild(el("div",null,w.withdrawn_reason));
+    if(w.withdrawn_returns_when){ var r=el("div",null,w.withdrawn_returns_when); r.style.marginTop="3px"; c.appendChild(r); }
+    sec.appendChild(c);
+    return sec;
+  }
 
   // Player box-score projection accuracy — the error-ledger's unique content (the game-call miss is
   // already read at the top of the page). Presents each surface's own average miss in its own unit,
@@ -561,6 +580,12 @@
       main.appendChild(makeTable("Where we miss most (error ledger)", d.error_ledger, ledgerReading(d.error_ledger))); shown=true;
     }
     if(d.market_relative && d.market_relative.rows && d.market_relative.rows.length){ main.appendChild(makeTable("Where we beat the market", d.market_relative, marketReading(d.market_relative))); shown=true; }
+    /* WITHDRAWN, NOT MISSING — the "Where we beat the market" table comes down whenever the served
+       margin model carries a market-derived input, because comparing a line-fitted number to the
+       line is circular. The withdrawal is RENDERED rather than the table simply disappearing: a
+       claim we took down and a claim we never made must not look alike. Returns automatically when
+       a clean model is served; nothing was deleted. */
+    else if(d.market_relative_withdrawn){ main.appendChild(withdrawnSection(d.market_relative_withdrawn)); shown=true; }
     if(!shown){
       var ph=el("div","placeholder");
       ph.appendChild(el("div","big", d.message || "Map being built — first version landing today."));

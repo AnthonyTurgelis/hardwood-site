@@ -130,7 +130,24 @@
     var exc=document.getElementById('ac-excluded');
     function dropExcluded(){ if(exc&&exc.parentNode) exc.remove(); }
     fetch('./market_grade.json').then(function(r){return r.json()}).then(function(M){
-      if(M&&M.n_graded){
+      /* WITHDRAWN, NOT MISSING. When the served margin model carries a market-derived input, the
+         comparison against the market is circular and the grader publishes a withdrawal instead of
+         a beat rate. Rendering that withdrawal is the whole point: dropping the sentence silently
+         would make a claim we took down look identical to one we never made, and a reader diffing
+         the page later would find a number that quietly vanished. We found this ourselves and we
+         say so on the page. It returns automatically when a clean model is served — see
+         ops/analytics/market_input_registry.py. */
+      if(M&&M.withdrawn){
+        /* Deliberately the MINIMUM honest form: what was withdrawn, why, and when it returns.
+           The fuller public correction — that the affected model did not beat the market anyway,
+           and that we caught it in our own audit — is written and ready in the filed delta as two
+           copy variants. Which one goes up is the CEO's call on loudness, and it is the only part
+           of this he was asked to decide. Both variants require the number to be gone, which is
+           what this line does; neither is being pre-empted here. */
+        beat.innerHTML='<b>Beat rate: withdrawn.</b> '+M.withdrawn_reason+
+          (M.withdrawn_returns_when?' '+M.withdrawn_returns_when:'');
+        dropExcluded();
+      } else if(M&&M.n_graded){
         beat.innerHTML='<b>Beat rate:</b> we were closer than the closing line in '+M.beat_rate+
           '% of '+M.n_graded+' graded games. Our average miss on those games is '+M.our_mae.toFixed(2)+
           ' points against the market’s '+M.market_mae.toFixed(2)+
