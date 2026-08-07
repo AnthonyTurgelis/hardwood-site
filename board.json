@@ -1,19 +1,19 @@
 {
- "generated_utc": "2026-08-07T08:55:36+00:00",
+ "generated_utc": "2026-08-07T09:05:58+00:00",
  "freshness": {
-  "baked_utc": "2026-08-07T08:55:36+00:00",
-  "baked_et": "Aug 7, 4:55am ET",
-  "revalidated_utc": "2026-08-07T08:55:36+00:00",
+  "baked_utc": "2026-08-07T09:05:58+00:00",
+  "baked_et": "Aug 7, 5:05am ET",
+  "revalidated_utc": "2026-08-07T09:05:58+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-07",
  "day_summary": "Atlanta Dream by 2.0 over Washington Mystics is our strongest pick of tonight's 3 games - a 57% chance to win. Full game reports are ready.",
  "counts": {
   "running": 0,
-  "done_today": 19,
+  "done_today": 20,
   "maintenance": 0,
   "needs_anthony": 0,
-  "lanes_today": 20,
+  "lanes_today": 21,
   "upcoming": 362
  },
  "sections": {
@@ -959,6 +959,16 @@
     "headline": true
    },
    {
+    "name": "The spine gap was a stubbed write path and the player-impact bar that catches a wrong alpha was never computed",
+    "one_liner": "Finished and independently double-checked.",
+    "chip": "VERIFIED",
+    "team": "",
+    "time": "5:15am",
+    "at_iso": "2026-08-07T05:15:00-04:00",
+    "link": "https://drive.google.com/file/d/1Bd9C7chXXr_EQNNAT61xq8Xg7YUFEMZ_/view?usp=drivesdk",
+    "impact": 2
+   },
+   {
     "name": "Recorded update",
     "one_liner": "Completed and recorded.",
     "chip": "DONE",
@@ -1333,8 +1343,8 @@
      "why": "Measured on the live warehouse. season 2026 holds 159 distinct games and 6 429 stints while and each hold 214 games for 2026. So the spine is 74.3 percent of the season we actually have. same session ...",
      "priority": 0,
      "seat": "data",
-     "status": "ready",
-     "state": "ready now",
+     "status": "partial - THE DATA IS RECOVERED IN A NEW TABLE AND THE INCUMBENT IS STILL STALE ON PURPOSE, 2026-08-07 by coord--visible. Re-measured first: the gap is 60 games not 55 and it GROWS, because nothing in the repo appends to . The premise that the missing games were unwalkable is REFUTED - all 219 seed from the database with no parquet fallback. The blocker was never a missing builder: scripts/build_stints_v2_port_v1.py already reproduced the incumbent exactly, but its --write printed 'gated and deliberately not exercised' and returned 1, so there was nowhere to put the result. SHIPPED 349b01a1 + 4662f30a, pushed. The write now appends to a NEW table under , mirroring the incumbent's columns so a consumer swaps a table name and nothing else. VERIFIED BY DIRECT DB READ, not by the script's own report: 2026 8731 rows / 219 of 219 pbp games, BAR-1 159 of 159 matched with 0 mismatched and 6429 == 6429 on the shared set, 60 games and 2302 stints new; 2024 8334 rows / 264 of 264 games, 240 of 240 matched, 7555 == 7555, 24 games new. Zero non-5v5 rows and min plays 2 in both, matching the incumbent's own two invariants. read back at 159/6429 and 240/7555 AFTER the writes - untouched, and non-mutation is proven per run by input row counts taken before and after rather than asserted. WHY THIS IS PARTIAL AND NOT DONE: nothing reads the new table yet. The ten consumers in DEPENDENCY_MAP section 8 all still read the stale incumbent, so the served 2026 rating still covers a fraction of the season. Repointing is per-consumer and deliberate, never a sweep. DIRECTOR_QUESTION_ stands answered by evidence: append-only coexistence, never mutate an unversioned production input.",
+     "state": "part done",
      "pm_authored": false,
      "impact": "",
      "rank_priority": 0.0,
@@ -1468,7 +1478,7 @@
      "why": "Measured . holds 2026 under three .1-family versions - plus its scalematched and scalematched named siblings - at 197 players each. Every one carries a build stamp. The season has since run to 08-06 ...",
      "priority": 0,
      "seat": "top",
-     "status": "ready - SCOPE SHARPENED AND PREREG FILED 2026-08-07T05:15Z, and it is now BLOCKED ON A ROW THAT DID NOT EXIST. BAR-3 reconfirmed exactly against the live warehouse: 26,380 against 10 x 6,429 = 41.0 percent. BUT the spine it measures against holds only 159 of 214 available 2026 games, so the served rating covers 63 of 214 = 29.4 percent of the season. Filed as the-stint-spine-is-55-games-behind-the-play-by-play (p0), which GATES this row: re-fitting on today spine reaches 74.3 percent and flips the wired check GREEN with a quarter of the season dark. REPRODUCTION TEST IS NOW UNBLOCKED: the exact 2026-06-01 input set is recovered - the first 63 game ids ascending hold exactly 2,638 stints, matching the served fit with no tolerance. Bars fixed BEFORE any fit in docs/prereg/PREREG_rapm_v51_fit_repo_residency_v1.md. METHOD RECOVERED FROM THE RECORD, not re-derived: per-season single-coefficient symmetric ridge, alpha 1000, per the v145 master doc. That also DISSOLVES the standing o_rapm == d_rapm == total/2 suspicion - it is a symmetric ridge by construction, a product question about those two columns, not an integrity bug. Evidence: docs/deltas/the_rapm_staleness_is_two_gaps_stacked_and_the_wired_check_can_only_see_one_.md",
+     "status": "ready - THE METHOD IS REPRODUCED AND THE REMAINING STEP IS ONE APPEND, 2026-08-07 by coord--visible. Commits 949fe590 + 1ab42c5a, pushed. Delta docs/deltas/the_spine_gap_was_a_stubbed_write_path_and_the_rapm_bar_that_catches_a_wrong_alpha_was_never_computed_.md. THE PORT ALREADY EXISTED AND ALREADY WORKED - scripts/build_rapm_fit_port_v1.py reproduces the served rating with an identical 197-player set, exact per-player stint counts and Pearson 0.. It reported FAIL only because its verdict keyed on max_abs_delta under 1e-6, a criterion no prereg registered, so a float64 ridge solve was failed for not matching another solver's last bits on values whose own spread is 0.0142. The verdict now keys on the four bars the prereg actually fixed and NOTHING REGISTERED WAS WIDENED - BAR-3 stays 0.99, BAR-4 stays 0.99, and the 1e-6 check is kept and still printed as an exactness diagnostic. All four now PASS, exit 0. THE REAL FINDING: BAR-4 rank agreement was registered and had NEVER been computed, and it is the ONLY registered bar that catches a wrong hyperparameter - under mutate alpha2 the wrong alpha still passes Pearson at r above 0.99 and is caught solely by BAR-4 losing one player from the top ten. Proven both directions: unmutated exits 0, mutated exits 2 naming BAR-4. COVERAGE, same method and same alpha on three inputs: served June build 2638 stints / 63 games / 197 players; incumbent spine full season 6429 stints / 159 of 219 games / 211 players; PORT spine full season 8731 stints / 219 of 219 games / 223 players. The port-spine fit correlates 0.591 with the rating we serve, Spearman 0.574, and fits 26 players the served set does not have. That is a distance and not an error - more data legitimately moves ratings - but it sizes the staleness of the impact number that leads every CEO-facing surface. WHAT IS LEFT AND THE TENSION TO RESOLVE FIRST: append the port-spine fit to as a NEW , coexisting, never overwriting. The prereg authorizes exactly that and authorizes neither pointing a surface at it nor wiring a cadence. BUT the fit script carries its own registered write discipline stating it writes NOTHING to the database and has no write path at all, so the append belongs in a separate writer or needs that discipline deliberately amended - do not quietly bolt a write onto a script whose contract forbids one. Scale stays unresolved by prereg: the alpha 1000 ridge is compressed to about 60 percent of stored v5.1 magnitude and both surviving bars are correlation bars that do not test scale.",
      "state": "ready now",
      "pm_authored": false,
      "impact": "",
@@ -17466,9 +17476,9 @@
     "target": 40,
     "count": 362,
     "ok": true,
-    "label": "362 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 19m ago.)",
-    "as_of_utc": "2026-08-07T08:36:08Z",
-    "age_secs": 1192,
+    "label": "362 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
+    "as_of_utc": "2026-08-07T09:06:09Z",
+    "age_secs": 14,
     "stale": false
    },
    "source": "dispatch queue",
@@ -18021,67 +18031,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-07T08:55:07Z",
-  "age_s": 34,
-  "cycles": 131,
+  "last_poll_utc": "2026-08-07T09:05:31Z",
+  "age_s": 32,
+  "cycles": 140,
   "known": true,
-  "label": "scout: alive, last poll 34s ago",
+  "label": "scout: alive, last poll 32s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "4:52am",
-   "text": "slate-refresh: STALE (#148): season impact feed is 179h old paged=True",
-   "detail": "slate-refresh: STALE (#148): season impact feed is 179h old paged=True"
+   "time": "5:05am",
+   "text": "chain-health: CHAIN DOWN (#1): broken=board paged=False",
+   "detail": "chain-health: CHAIN DOWN (#1): broken=board paged=False"
   },
   {
-   "time": "4:52am",
-   "text": "poll #129 · nothing new",
-   "detail": "poll cycle=129 ok directives_new=0"
+   "time": "5:05am",
+   "text": "chain-health: chain DEGRADED — unknown legs: inbound (no confirmed break; not paged",
+   "detail": "chain-health: chain DEGRADED — unknown legs: inbound (no confirmed break; not paged)"
   },
   {
-   "time": "4:52am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
+   "time": "5:05am",
+   "text": "chain-health: CHAIN DOWN (#1): broken=outbound paged=False",
+   "detail": "chain-health: CHAIN DOWN (#1): broken=outbound paged=False"
   },
   {
-   "time": "4:53am",
-   "text": "poll #130 · nothing new",
-   "detail": "poll cycle=130 ok directives_new=0"
+   "time": "5:05am",
+   "text": "chain-health: CHAIN DOWN (#2): broken=outbound paged=True",
+   "detail": "chain-health: CHAIN DOWN (#2): broken=outbound paged=True"
   },
   {
-   "time": "4:53am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
+   "time": "5:05am",
+   "text": "chain-health: CHAIN DOWN (#3): broken=outbound paged=True",
+   "detail": "chain-health: CHAIN DOWN (#3): broken=outbound paged=True"
   },
   {
-   "time": "4:53am",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
+   "time": "5:05am",
+   "text": "chain-health: CHAIN DOWN (#1): broken=drive paged=False",
+   "detail": "chain-health: CHAIN DOWN (#1): broken=drive paged=False"
   },
   {
-   "time": "4:54am",
-   "text": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
-   "detail": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing "
+   "time": "5:05am",
+   "text": "chain-health: CHAIN DOWN (#2): broken=inbound,drive paged=True",
+   "detail": "chain-health: CHAIN DOWN (#2): broken=inbound,drive paged=True"
   },
   {
-   "time": "4:55am",
-   "text": "poll #131 · nothing new",
-   "detail": "poll cycle=131 ok directives_new=0"
+   "time": "5:05am",
+   "text": "chain-health: chain HEALTHY again — flag cleared",
+   "detail": "chain-health: chain HEALTHY again — flag cleared"
   },
   {
-   "time": "4:55am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
+   "time": "5:05am",
+   "text": "chain-health: CHAIN DOWN (#1): broken=inbound,board paged=False",
+   "detail": "chain-health: CHAIN DOWN (#1): broken=inbound,board paged=False"
   },
   {
-   "time": "4:55am",
-   "text": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 302s newer than live (repo 2026-08-07T08:50:31+00:00 vs live 2026-08-07T08:45:29+00:00) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 302s newer than live (repo 2026-08-07T08:50:31+00:00 vs live 2026-08-07T08:45:29+00:00"
+   "time": "5:05am",
+   "text": "chain-health: CHAIN DOWN (#2): broken=inbound,board paged=True",
+   "detail": "chain-health: CHAIN DOWN (#2): broken=inbound,board paged=True"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-07T08:55:23.792273+00:00",
+  "as_of": "2026-08-07T09:05:33Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -18090,32 +18100,32 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "34s",
-    "state_text": "on · seen 34s ago"
+    "age_label": "32s",
+    "state_text": "on · seen 32s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "17s",
-    "state_text": "on · seen 17s ago"
+    "age_label": "29s",
+    "state_text": "on · seen 29s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "1m",
-    "state_text": "on · seen 1m ago"
+    "age_label": "30s",
+    "state_text": "on · seen 30s ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "21s",
-    "state_text": "on · seen 21s ago"
+    "age_label": "34s",
+    "state_text": "on · seen 34s ago"
    },
    {
     "name": "Inbox triage",
@@ -18333,9 +18343,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-07T08:55:36Z",
-  "session_age_secs": 373,
-  "last_progress_age_secs": 5,
+  "last_heartbeat_utc": "2026-08-07T09:05:55Z",
+  "session_age_secs": 995,
+  "last_progress_age_secs": 8,
   "last_spawn_attempt": "2026-08-07T04:46:10Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -18365,7 +18375,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 2 work lanes have been running for 992 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 2 work lanes have been running for 1002 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 2
  },
@@ -18374,25 +18384,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T08:14:24Z",
    "stale": true,
-   "revalidated": "2026-08-07T08:55:36+00:00",
-   "stale_reason": "These readings may be out of date — last updated 41m ago.",
-   "age_label": "41m",
+   "revalidated": "2026-08-07T09:05:58+00:00",
+   "stale_reason": "These readings may be out of date — last updated 51m ago.",
+   "age_label": "51m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-07T08:55:36+00:00",
+   "as_of": "2026-08-07T09:05:58+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T08:55:36+00:00",
+   "revalidated": "2026-08-07T09:05:58+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T08:55:36+00:00",
+   "as_of": "2026-08-07T09:05:58+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T08:55:36+00:00",
+   "revalidated": "2026-08-07T09:05:58+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -18401,25 +18411,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T08:55:36+00:00",
+   "revalidated": "2026-08-07T09:05:58+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-07T08:36:08Z",
-   "stale": false,
-   "revalidated": "2026-08-07T08:55:36+00:00",
-   "stale_reason": "",
-   "age_label": "19m",
+   "as_of": "2026-08-07T09:06:09Z",
+   "stale": true,
+   "revalidated": "2026-08-07T09:05:58+00:00",
+   "stale_reason": "A newer update is being re-checked now.",
+   "age_label": "0s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T08:55:36+00:00",
+   "revalidated": "2026-08-07T09:05:58+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -18428,7 +18438,7 @@
    "source": "director inbox",
    "as_of": "2026-08-07T06:46:02Z",
    "stale": false,
-   "revalidated": "2026-08-07T08:55:36+00:00",
+   "revalidated": "2026-08-07T09:05:58+00:00",
    "stale_reason": "",
    "age_label": "2h",
    "stale_after": 28800
@@ -18437,7 +18447,7 @@
    "source": "the team's updates feed",
    "as_of": "2026-08-07T06:20:00-04:00",
    "stale": false,
-   "revalidated": "2026-08-07T08:55:36+00:00",
+   "revalidated": "2026-08-07T09:05:58+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 172800,
@@ -18445,22 +18455,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T08:50:31+00:00",
+   "as_of": "2026-08-07T09:00:36+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T08:55:36+00:00",
+   "revalidated": "2026-08-07T09:05:58+00:00",
    "stale_reason": "",
    "age_label": "5m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-07T08:55:23.792273+00:00",
+   "as_of": "2026-08-07T09:05:33Z",
    "stale": false,
-   "revalidated": "2026-08-07T08:55:36+00:00",
+   "revalidated": "2026-08-07T09:05:58+00:00",
    "stale_reason": "",
-   "age_label": "17s",
+   "age_label": "30s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 7, 4:55am ET"
+ "generated_et": "Aug 7, 5:05am ET"
 }
