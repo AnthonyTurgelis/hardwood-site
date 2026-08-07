@@ -367,7 +367,13 @@
     var teams=PLAYOFF.teams.slice().sort(function(a,b){
       var pa=a.p_top_2==null?-1:a.p_top_2, pb=b.p_top_2==null?-1:b.p_top_2;
       if(pb!==pa) return pb-pa;
-      var wa=a.mean_wins==null?-1:a.mean_wins, wb=b.mean_wins==null?-1:b.mean_wins;
+      // MEDIAN, not mean. One label must never carry two quantities: standings serves
+      // proj_median_wins and this table served mean_wins under the same "Proj. wins" heading,
+      // 31.6 against 31.1 for the same team on the same day. Median is the honest centre of a
+      // skewed simulation and it is what a reader assumes from a single number - and this page's
+      // own copy already says the value sits in the middle, which describes a median while it
+      // was rendering a mean. The tie-break sorts on the same quantity it prints, deliberately.
+      var wa=a.median_wins==null?-1:a.median_wins, wb=b.median_wins==null?-1:b.median_wins;
       return wb-wa;
     });
     var sec=el("section"); sec.id="playoffpic";
@@ -382,7 +388,7 @@
       var name=el("td","tm"); name.appendChild(document.createTextNode((r.team||"—")+" "));
       if(full[r.team]) name.appendChild(el("span","full", full[r.team]));
       tr.appendChild(name);
-      tr.appendChild(td(null, r.mean_wins==null?"—":r.mean_wins.toFixed(1)));
+      tr.appendChild(td(null, r.median_wins==null?"—":r.median_wins.toFixed(1)));
       var band="—", wr=r.wins_range_80;
       if(wr && wr.length===2 && wr[0]!=null && wr[1]!=null){ band=wr[0].toFixed(1)+"-"+wr[1].toFixed(1); }
       tr.appendChild(td("full", band));
