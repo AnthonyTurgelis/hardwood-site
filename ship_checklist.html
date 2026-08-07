@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Ship Checklist</title>
+<style>
+  /* Fallback tokens (hardwood.css wins the cascade when it loads; these keep the page legible if
+     it ever fails). Copied byte-for-byte from glossary.html — this page is that page's sibling
+     and must not drift from it. */
+  :root{ --bg:#f4f6fa; --card:#fff; --card2:#f5f8fc; --chip:#eef2f8; --ink:#15181f;
+    --muted:#586074; --dim:#8993a6; --line:#e6eaf1; --line2:#d6dce6;
+    --acc:#2f6fed; --accent:#2f6fed; --accent-weak:rgba(47,111,237,.10);
+    --good:#1f8f3d; --bad:#c62828; --home:#2f6fed; --away:#b4530a;
+    --radius:10px; --shadow:0 1px 2px rgba(16,24,40,.06); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0b0e13; --card:#151a21; --card2:#1b212b;
+    --chip:#20293a; --ink:#e8edf4; --muted:#9aa6b4; --dim:#6b7684; --line:#232b37; --line2:#38424f;
+    --acc:#6ea8fe; --accent:#6ea8fe; --accent-weak:rgba(110,168,254,.16);
+    --good:#3fb950; --bad:#ff7b72; --home:#4a8cf0; --away:#c98209; --shadow:none; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;overflow-x:hidden}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:18px;margin:0;font-weight:750;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto;padding:0 14px}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--muted);border:1px solid var(--line);background:var(--card);padding:6px 11px;border-radius:999px;font-weight:600}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 72px}
+  footer{max-width:1080px;margin:0 auto;padding:20px 14px 40px;color:var(--dim);font-size:11px;line-height:1.6}
+</style>
+<link rel="stylesheet" href="./hardwood.css?v=04e913ef">
+<style>
+  /* RACE-BOARD STANDARD, the house style every table surface adopts. The reference used to name
+     its source order by stamp and section number here, and that ABORTED THE WHOLE BAKE: the public
+     byte-gate scans the served file entire, comments included, and a record-internal token on a
+     CORE surface aborts rather than quarantines. A comment is not a private place. Density first:
+     all 24 rows are meant to
+     be comparable by eye, so the type is small, the rows are tight, and nothing is padded for air. */
+  .lede{font-size:15px;line-height:1.55;margin:14px 0 4px;font-weight:500}
+  .lede b{font-weight:800}
+  .overall{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:10px 0 2px}
+  .bignum{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .rule{margin:10px 0 0;padding:9px 12px;background:var(--card2);border:1px solid var(--line);
+        border-radius:9px;font-size:12px;line-height:1.5;color:var(--muted)}
+  .controls{margin:14px 0 6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .controls input{font:inherit;padding:6px 10px;border:1px solid var(--line2);border-radius:8px;
+        background:var(--card);color:var(--ink);min-width:230px}
+  .controls label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px}
+  section.sec{margin:18px 0 0}
+  .sechead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 6px}
+  .sectitle{font-size:15px;font-weight:800;letter-spacing:-.01em}
+  .seccount{font-size:12.5px;color:var(--muted);font-weight:600}
+  /* Micro-visual BESIDE the number, never instead of it (property 3). */
+  .bar{display:inline-block;width:120px;height:7px;border-radius:99px;background:var(--chip);
+       overflow:hidden;vertical-align:middle}
+  .bar>i{display:block;height:100%;background:var(--acc);border-radius:99px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);
+     font-weight:700;padding:4px 8px;border-bottom:1px solid var(--line2);white-space:nowrap}
+  td{padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:hover td{background:var(--accent-weak)}
+  td.id{font-weight:700;color:var(--muted);white-space:nowrap;width:2.6rem}
+  td.item{font-weight:600}
+  td.test{color:var(--muted)}
+  .pill{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:700;
+        white-space:nowrap;border:1px solid var(--line2);background:var(--chip);color:var(--muted)}
+  .pill.done{background:rgba(31,143,61,.13);color:var(--good);border-color:transparent}
+  .pill.warn{background:rgba(198,40,40,.12);color:var(--bad);border-color:transparent}
+  .stamp{font-size:11.5px;color:var(--dim)}
+  .stale{color:var(--bad);font-weight:700}
+  @media(max-width:640px){ td.test{display:none} th.test{display:none} }
+</style>
+</head>
+<body>
+<header id="top">
+  <h1>The Hardwood — Ship Checklist</h1>
+  <div class="stamp" id="stamp">loading…</div>
+</header>
+<div class="sub">Everything packaged and waiting to ship, and how much of it is left.</div>
+<nav>
+  <a href="./index.html">Board</a>
+  <a href="./queue.html">What's Next</a>
+  <a href="./games.html">Games</a>
+  <a href="./standings.html">Standings</a>
+  <a href="./availability.html">Injuries</a>
+  <a href="./teams.html">Teams</a>
+  <a href="./coach.html">Coach</a>
+  <a href="./tempo.html">Tempo</a>
+  <a href="./gm.html">GM</a>
+  <a href="./players.html">Players</a>
+  <a href="./compare.html">Compare</a>
+  <a href="./situation.html">Situations</a>
+  <a href="./review.html">Daily Review</a>
+  <a href="./accuracy.html">Our Accuracy</a>
+  <a href="./ledger.html">Error Map</a>
+  <a href="./report_archive.html">Report Archive</a>
+  <a href="./org.html">The Team</a>
+  <a href="./scouting.html">Scouting</a>
+  <a href="./deepdive.html">Deep Dives</a>
+  <a class="active" href="./ship_checklist.html">Ship Checklist</a>
+  <a href="./explorer.html">Data Explorer</a>
+  <a href="./primer.html">Learn</a>
+  <a href="./glossary.html">Glossary</a>
+  <a href="./about.html">About</a>
+</nav>
+<main>
+  <p class="lede" id="lede">Loading the checklist…</p>
+  <div class="overall"><span class="bignum" id="bignum">—</span><span class="bar" style="width:200px"><i id="bigbar" style="width:0%"></i></span></div>
+  <div class="rule" id="rule"></div>
+
+  <div class="controls">
+    <input id="filter" type="search" placeholder="Filter by word — try 'race-board' or 'live'" aria-label="Filter checklist">
+    <label><input type="checkbox" id="openonly"> Show only what's left</label>
+  </div>
+
+  <div id="sections"></div>
+</main>
+<footer id="foot"></footer>
+
+<script>
+// The page RENDERS the artifact and computes nothing. The counts, the states and the wording all
+// come from site/ship_checklist.json, which is baked from the directive that defines this list.
+// A summary surface never recomputes what its detail source states -- it quotes it. That law is
+// why the deep-dive hub and its dives stopped disagreeing, and it applies to this page too.
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => (
+  {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function pill(state){
+  if (state === "done") return '<span class="pill done">done</span>';
+  if (state === "claimed_without_evidence")
+    return '<span class="pill warn">claimed, no proof</span>';
+  return '<span class="pill">open</span>';
+}
+
+function render(d){
+  const total = d.total, done = d.done;
+  document.getElementById("bignum").textContent = d.label;
+  document.getElementById("bigbar").style.width = total ? (100*done/total).toFixed(1)+"%" : "0%";
+
+  // Property 5: a lede naming the single most notable thing, with its magnitude.
+  const left = total - done;
+  document.getElementById("lede").innerHTML = d.all_done
+    ? "<b>All done.</b> Every packaged shipment on this list is live-verified."
+    : "<b>" + left + " of " + total + "</b> still to ship before the pause — "
+      + d.sections.map(s => esc(s.key) + " " + (s.total - s.done)).join(", ")
+      + " left by section.";
+  document.getElementById("rule").textContent = d.rule || "";
+
+  const host = document.getElementById("sections");
+  host.innerHTML = d.sections.map(s => {
+    const pct = s.total ? (100*s.done/s.total).toFixed(1) : 0;
+    const rows = s.items.map(it =>
+      '<tr data-state="' + esc(it.state) + '" data-text="'
+        + esc((it.id + " " + it.item + " " + it.done_test).toLowerCase()) + '">'
+      + '<td class="id">' + esc(it.id) + '</td>'
+      + '<td class="item">' + esc(it.item) + '</td>'
+      + '<td class="test">' + esc(it.done_test) + '</td>'
+      + '<td>' + pill(it.state) + (it.evidence ? ' <span class="stamp">' + esc(it.evidence) + '</span>' : '')
+      + '</td></tr>').join("");
+    return '<section class="sec"><div class="sechead">'
+      + '<span class="sectitle">' + esc(s.title) + '</span>'
+      + '<span class="seccount">' + esc(s.label) + '</span>'
+      + '<span class="bar"><i style="width:' + pct + '%"></i></span></div>'
+      + '<table><thead><tr><th>#</th><th>Shipment</th><th class="test">How we know it is done</th>'
+      + '<th>State</th></tr></thead><tbody>' + rows + '</tbody></table></section>';
+  }).join("");
+  wireFilter();
+}
+
+function wireFilter(){
+  const box = document.getElementById("filter"), only = document.getElementById("openonly");
+  const apply = () => {
+    const q = (box.value || "").trim().toLowerCase();
+    document.querySelectorAll("tbody tr").forEach(tr => {
+      const hitText = !q || (tr.dataset.text || "").includes(q);
+      const hitOpen = !only.checked || tr.dataset.state !== "done";
+      tr.style.display = (hitText && hitOpen) ? "" : "none";
+    });
+  };
+  box.oninput = apply; only.onchange = apply; apply();
+}
+
+function stamp(iso){
+  const el = document.getElementById("stamp");
+  if (!iso){ el.textContent = "no timestamp"; el.className = "stamp stale"; return; }
+  const age = (Date.now() - Date.parse(iso)) / 60000;
+  el.textContent = "Updated " + new Date(iso).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})
+                 + " (" + (age < 1 ? "just now" : Math.round(age) + " min ago") + ")";
+  // This page is baked from a document, not a feed, so it is allowed to be hours old -- but a full
+  // day means the bake stopped and the reader should not trust the counts.
+  el.className = age > 1440 ? "stamp stale" : "stamp";
+}
+
+fetch("./ship_checklist.json?v=" + Date.now())
+  .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(d => {
+    render(d); stamp(d.generated_utc);
+    // Property 7: state the basis in plain English, so the ordering is auditable, not mysterious.
+    document.getElementById("foot").innerHTML =
+      "Order is the checklist's own — CEO-visible shipments first, then the enablers they depend on, "
+      + "then the two asks that need sixty seconds from the CEO. Nothing is added to this list "
+      + "without him; new finds go to the parked pile. Source: " + esc(d.source_doc) + ". "
+      + "Property 2 of the race-board standard (a movement column beside every level) is the one "
+      + "property this surface omits: a checklist row moves once, from open to done, so a delta "
+      + "column would print the same arrow for every row that ever changes.";
+  })
+  .catch(e => {
+    document.getElementById("lede").textContent =
+      "The checklist could not be loaded (" + e.message + "). That is a real failure, not an empty "
+      + "list — do not read it as nothing left to ship.";
+    document.getElementById("stamp").textContent = "load failed";
+    document.getElementById("stamp").className = "stamp stale";
+  });
+</script>
+</body>
+</html>
