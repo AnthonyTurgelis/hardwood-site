@@ -55,14 +55,37 @@ section{padding:16px 0}
 .legend h2{font:700 20px/1 "Barlow Condensed";text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
 .legend p{color:var(--chalk-dim);font-size:14px;margin-top:6px}
 .legend b{color:var(--chalk)}
-#best{padding:14px 0 2px}
-#best .bn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(176px,1fr));gap:9px;margin-top:10px}
-.bn{background:var(--plank);border:1px solid var(--line);border-radius:8px;padding:10px 11px 9px}
-.bn .v{font:700 28px/1 "Barlow Condensed";font-variant-numeric:tabular-nums;color:var(--chalk)}
-.bn .v small{font:600 13px/1 Barlow;color:var(--chalk-dim);margin-left:4px}
-.bn .v.pending{font:600 15px/1.2 Barlow;color:var(--chalk-dim)}
-.bn .l{color:var(--chalk);font-size:12.5px;line-height:1.32;margin-top:7px}
-.bn .n{color:var(--chalk-dim);font-size:11px;font-variant-numeric:tabular-nums;margin-top:4px}
+/* BEST NUMBERS - demoted to the bottom of main and set in SMALL type by CEO order 2026-08-07
+   ("bury that towards the bottom in tinier numbers, that isn't the first thing we need to see").
+   Only size, spacing and position changed; the block's data path is untouched. */
+#best{padding:12px 0 2px;border-top:1px solid var(--line);margin-top:8px}
+#best .bn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:7px;margin-top:8px}
+.bn{background:var(--plank);border:1px solid var(--line);border-radius:8px;padding:7px 9px 6px}
+.bn .v{font:700 17px/1 "Barlow Condensed";font-variant-numeric:tabular-nums;color:var(--chalk)}
+.bn .v small{font:600 10px/1 Barlow;color:var(--chalk-dim);margin-left:3px}
+.bn .v.pending{font:600 11.5px/1.2 Barlow;color:var(--chalk-dim)}
+.bn .l{color:var(--chalk);font-size:11px;line-height:1.28;margin-top:5px}
+.bn .n{color:var(--chalk-dim);font-size:10px;font-variant-numeric:tabular-nums;margin-top:3px}
+/* MACHINE BAND - status + queue + completed, dense enough to read in one screen (CEO order
+   2026-08-07: "everything should be visible all at once on the front page, especially status
+   and the q and everything and completed tasks"). Compact beats spacious here by instruction. */
+#machine{padding:12px 0 4px}
+.mstrip{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:var(--plank);border:1px solid var(--line);border-radius:6px;padding:5px 9px;line-height:1.25}
+.chip .k{color:var(--chalk-dim);font:600 9.5px/1 "Barlow Condensed";letter-spacing:.16em;text-transform:uppercase;display:block}
+.chip .val{color:var(--chalk);font-size:12.5px;font-variant-numeric:tabular-nums;margin-top:3px}
+.chip .val.warn{color:var(--flag)}
+.mcols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:720px){.mcols{grid-template-columns:1fr}}
+.mcol h2{font:700 14px/1 "Barlow Condensed";text-transform:uppercase;letter-spacing:.1em;color:var(--chalk);margin:0 0 6px}
+.mcol h2 span{color:var(--chalk-dim);font:400 11px/1 Barlow;letter-spacing:0;margin-left:6px}
+.mlist{display:grid;gap:4px;max-height:186px;overflow:auto}
+.mrow{background:var(--plank);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:12.5px;line-height:1.3;color:var(--chalk);display:flex;gap:7px;align-items:baseline}
+.mrow i{color:var(--chalk-dim);font-style:normal;font-variant-numeric:tabular-nums}
+.mrow .t{flex:1;min-width:0}
+.mrow .fam{color:var(--chalk-dim);font-size:10.5px;white-space:nowrap}
+.mnote{color:var(--chalk-dim);font-size:11px;margin-top:6px}
+.mnote a{color:var(--maple);font-weight:600}
 .acc{border-top:1px solid var(--line)}
 .acc a{color:var(--maple);font-weight:600}
 footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--chalk-dim);font-size:13px}
@@ -86,47 +109,110 @@ footer .util a:hover{color:var(--chalk)}
   </nav>
 </header>
 <main class="wrap">
-  <section id="best" hidden>
-    <div class="eyebrow">Best numbers</div>
-    <div class="bn-grid" id="bn-grid"></div>
+  <section id="machine">
+    <div class="eyebrow">Where the machine is right now</div>
+    <div class="mstrip" id="m-strip"></div>
+    <div class="mcols">
+      <div class="mcol">
+        <h2>Working next<span id="m-qcount"></span></h2>
+        <div class="mlist" id="m-queue"></div>
+      </div>
+      <div class="mcol">
+        <h2>Finished today<span id="m-dcount"></span></h2>
+        <div class="mlist" id="m-done"></div>
+      </div>
+    </div>
+    <p class="mnote" id="m-note"><a href="queue.html">Full queue -&gt;</a></p>
   </section>
   <script>
-/* BEST NUMBERS hero. EVERY figure here is read from ./accuracy.json AT RENDER TIME - there is not a
-   single literal number in this block, by order. A hand-typed accuracy figure goes stale the next
-   morning the grader runs and then the front door is lying; that is the defect class this block
-   exists to avoid. Same feed accuracy.html reads, so the two surfaces cannot disagree.
-   NULL RULE: a surface with no graded sample carries value null at n 0 - the combined-total row is
-   null today. A null renders as "not yet graded", never as a dash, a zero, or a blank tile: an
-   absent number stated plainly beats a number-shaped hole. Applies to any future null, not just
-   this one. The sample size rides with every figure because n is part of the claim.
-   Fail-soft: no feed, no surfaces, or a bad parse leaves the section hidden rather than empty. */
+/* MACHINE BAND. Status, the ranked queue and the finished work, side by side and above the fold,
+   by CEO order 2026-08-07: "everything should be visible all at once on the front page, especially
+   status and the q and everything and completed tasks".
+   EVERY value below is read from ./status.json or ./queue.json AT RENDER TIME. There is not one
+   literal figure, label or row title in this block - the same law the accuracy block at the bottom
+   of this page is built on, and for the same reason: a hand-typed status line on the front door is
+   a lie the moment the machine moves.
+   NULL RULE: nothing renders as null, undefined, NaN or a blank tile. An absent value renders the
+   honest words "not reported" (or, for a whole feed, the section degrades rather than showing a
+   number-shaped hole) - the same discipline as "not yet graded" below.
+   STALENESS: status.json ships its own contract (stale_after_secs). We compare it against the
+   clock at render and mark the timestamp chip rather than quietly serving an old reading as fresh.
+   OPERATIONS FILTER on "Working next" is UNCHANGED and deliberate - see the note on that list. */
 (function(){
   function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n;}
-  fetch('./accuracy.json').then(function(r){return r.json()}).then(function(a){
-    var rows=(a&&a.surfaces)||[];
-    if(!rows.length) return;
-    var g=document.getElementById('bn-grid');
-    rows.forEach(function(m){
-      var card=el('div','bn'), v;
-      if(m.value==null){
-        v=el('div','v pending','not yet graded');
-      }else{
-        v=el('div','v', m.unit==='%' ? (m.value+'%') : String(m.value));
-        if(m.unit && m.unit!=='%') v.appendChild(el('small',null,m.unit));
-      }
-      card.appendChild(v);
-      card.appendChild(el('div','l', m.surface||''));
-      /* the n line belongs to a CLAIM: a null row makes none, so it gets no sample line either -
-         "n = 0 - lower is better" under "not yet graded" is clutter dressed as evidence. */
-      if(m.value!=null){
-        var bits=[];
-        if(m.n!=null) bits.push('n = '+m.n);
-        if(m.direction) bits.push(m.direction);
-        if(bits.length) card.appendChild(el('div','n', bits.join(' · ')));
-      }
-      g.appendChild(card);
+  function has(v){return v!==null&&v!==undefined&&v!=='';}
+  var MISSING='not reported';
+  function chip(k,v,warn){
+    var c=el('div','chip');
+    c.appendChild(el('span','k',k));
+    /* an unreadable value is flagged exactly like a bad one - unknown is never shown as fine */
+    c.appendChild(el('div','val'+((warn||!has(v))?' warn':''), has(v)?String(v):MISSING));
+    return c;
+  }
+  /* STATUS. Booleans in the feed are turned into words here (alive / down); every number, clock
+     and phrase is the feed's own. `known:false` on a block means the machine could not read its
+     own state - that renders as "not reported", never as a confident green. */
+  fetch('./status.json').then(function(r){return r.json()}).then(function(s){
+    if(!s) return;
+    var strip=document.getElementById('m-strip');
+    var sc=s.scout||{}, co=s.coordinator||{}, pa=s.pause||{}, ph=s.pipe_health||{};
+    var pct=pa.percent||{};
+    var scv=sc.known===false?null:(sc.alive===true?'alive':(sc.alive===false?'down':null));
+    if(has(scv)&&has(sc.age_s)) scv=scv+' - '+sc.age_s+'s ago';
+    strip.appendChild(chip('Monitor',scv,scv&&scv.indexOf('down')===0));
+    var cov=co.known===false?null:(has(co.state)?String(co.state).toLowerCase():(co.alive===true?'alive':null));
+    strip.appendChild(chip('Worker',cov,cov==='dead'||cov==='blocked'));
+    strip.appendChild(chip('Run state',has(pa.label)?pa.label:(has(pa.state)?pa.state:null),has(pa.state)&&pa.state!=='NORMAL'));
+    var usage=has(pct.display)?pct.display:(has(pct.value)?pct.value+'%':null);
+    if(has(usage)&&has(pct.quality)&&pct.quality!=='MEASURED') usage=usage+' ('+String(pct.quality).toLowerCase()+')';
+    strip.appendChild(chip('Plan used',usage,!has(pct.display)));
+    var dp=has(ph.directives_pending)?ph.directives_pending:null;
+    if(has(dp)&&has(ph.last_processed_display)) dp=dp+' - last '+ph.last_processed_display;
+    strip.appendChild(chip('Requests waiting',dp));
+    /* the freshness chip states the reading's age against the feed's OWN staleness contract */
+    var stamp=has(s.generated_et)?s.generated_et:(has(s.generated_utc)?s.generated_utc:null), stale=false;
+    if(has(s.generated_utc)&&has(s.stale_after_secs)){
+      var age=(Date.now()-Date.parse(s.generated_utc))/1000;
+      if(isFinite(age)&&age>s.stale_after_secs){stale=true;stamp=stamp+' - stale';}
+    }
+    strip.appendChild(chip('Reading taken',stamp,stale));
+  }).catch(function(){});
+  /* QUEUE + FINISHED, one feed, one fetch. */
+  fetch('./queue.json').then(function(r){return r.json()}).then(function(d){
+    var items=(d&&d.items)||[];
+    if(!items.length) return;
+    function paint(id,rows,countId,count,word){
+      var box=document.getElementById(id);
+      if(!rows.length){box.appendChild(el('div','mrow','nothing on this list right now'));}
+      rows.forEach(function(i,n){
+        var row=el('div','mrow');
+        row.appendChild(el('i',null,(n+1)+'.'));
+        row.appendChild(el('div','t', has(i.title)?i.title:'untitled item'));
+        if(has(i.family)) row.appendChild(el('div','fam',i.family));
+        box.appendChild(row);
+      });
+      /* the heading counts the WHOLE filtered set, not the rows that fit on screen */
+      document.getElementById(countId).textContent=' - '+count+' '+word;
+    }
+    /* PUBLIC PROJECTION of the ranked queue - filter unchanged from the strip this replaced. Two
+       things it must never do, both shipped once and both caught by the CEO on the live page:
+       1. Print the internal owner/status tag - "(MACHINE - NEXT)" is a record-internal identifier
+          and has no meaning to a reader.
+       2. Show OPERATIONS rows. The queue is one canonical list, but this list is the product
+          roadmap: a reader wants what we are building, not our plumbing. Family is the filter, so
+          a mis-filed row lands here - that is how "Stop telling him we are idle when we are not"
+          reached the front page. Plumbing has its own home now: the status chips above. */
+    var next=items.filter(function(i){
+      return i.status!=='DONE TODAY' && i.status!=='BLOCKED'
+          && String(i.family||'').toLowerCase()!=='operations';
     });
-    document.getElementById('best').hidden=false;
+    /* FINISHED shows every family, ops included - the CEO asked for completed tasks and the
+       machine's own work is the bulk of them. The list scrolls in place so the band stays one
+       screen tall; the heading carries the true total, not the visible count. */
+    var done=items.filter(function(i){return i.status==='DONE TODAY';});
+    paint('m-queue',next.slice(0,12),'m-qcount',next.length,'waiting');
+    paint('m-done',done,'m-dcount',done.length,'done');
+    if(has(d.as_of_et)) document.getElementById('m-note').appendChild(el('span',null,' Queue as of '+d.as_of_et+'.'));
   }).catch(function(){});
 })();
   </script>

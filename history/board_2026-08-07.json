@@ -1,15 +1,15 @@
 {
- "generated_utc": "2026-08-07T16:07:07+00:00",
+ "generated_utc": "2026-08-07T16:26:58+00:00",
  "freshness": {
-  "baked_utc": "2026-08-07T16:07:07+00:00",
-  "baked_et": "Aug 7, 12:07pm ET",
-  "revalidated_utc": "2026-08-07T16:07:07+00:00",
+  "baked_utc": "2026-08-07T16:26:58+00:00",
+  "baked_et": "Aug 7, 12:26pm ET",
+  "revalidated_utc": "2026-08-07T16:26:58+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-07",
  "day_summary": "Atlanta Dream by 2.0 over Washington Mystics is our strongest pick of tonight's 3 games - a 57% chance to win. Full game reports are ready.",
  "counts": {
-  "running": 2,
+  "running": 1,
   "done_today": 24,
   "maintenance": 0,
   "needs_anthony": 0,
@@ -945,23 +945,13 @@
   "running_now": [],
   "running_live": [
    {
-    "name": "Producer tier for the unwired check",
-    "one_liner": "Running now.",
-    "chip": "IN-FLIGHT",
-    "team": "",
-    "kind": "lane",
-    "time": "",
-    "at_iso": "2026-08-07T12:04:05-04:00",
-    "start_unknown": true
-   },
-   {
-    "name": "One chart best numbers hero",
+    "name": "Front page layout status queue completed",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
     "team": "Site",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-07T12:04:05-04:00",
+    "at_iso": "2026-08-07T12:25:41-04:00",
     "start_unknown": true
    }
   ],
@@ -1950,7 +1940,7 @@
       "why": "Approve switching on the always-on monitor so it can run without a person watching",
       "priority": 1,
       "seat": "Modeling",
-      "status": "open - BLOCKER LIFTED, IT WAS STALE, measured 2026-08-07T09:55Z by coord--visible. This row carried BLOCKED ON A BLIND SCAN, saying ops/scout/unwired_capability_check.py cannot see scheduled-task invocations at all. THAT WAS REPAIRED THE SAME DAY BY COMMITS b323380d AND 455ef1af, before this blocker text was ever re-read. Ran the checker live: it now reports watchers per task, for example HardwoodTestSweep watched by scripts/sentinel_sweep.py, so schedules ARE visible as callers and the Hardwood task folder is read. THE NUMBERS THE ROW QUOTES ARE ALSO STALE: untriaged is 41, not 60. Notify events are 4 of 29 with ZERO undecided, most now DECIDED SUPERSEDED with a named replacement channel, so the 5 sanctioned dark events this row was filed about are largely resolved. WHAT IS GENUINELY LEFT AND IS THE REAL WORK: three scheduled tasks are in no FEEDS entry and no watcher names them - SeasonStatsRefresh, SentinelSweep and TrackingTripwire. Those are unwatched for real, not blind-scan artifacts. Triage those three first, then the remaining machinery rows. STANDING LESSON: a blocker written before its own repair reads exactly like a live one. Re-run the checker before believing a blocker that names a tool. ||| TRIAGE STARTED 09:57Z: the three genuinely unwatched tasks are ALL FAILING - SeasonStatsRefresh rc=0xC0000374 heap corruption, SentinelSweep rc=2, TrackingTripwire rc=1 on a monthly trigger so it stays broken for 30 days. Split to its own row three-unwatched-scheduled-tasks-are-all-failing at p1. This VINDICATES the detector: unwatched really did mean failing-and-unseen, in all three cases, which is the pattern the row was filed to catch. ||| I CREATED AN INSTANCE OF THIS VERY DEFECT AND THE DETECTOR CAUGHT ME, 11:00Z. After building ops/read_sentinel_red_list.py I ran this checker against my own work and it flagged it: ops/read_sentinel_red_list.py capability-named, ready or parked. Untriaged went 41 to 42. DECIDING IT NOW rather than leaving it: the reader is READY, not parked - it is proven on all four paths and it reads the live log correctly - but it is invoked by nothing, so it is genuinely unwired and the flag is CORRECT. The wire is a job entry in ops/local_runner/dispatch.ps1 plus a schedule, which I deliberately did not add because that file dispatches roughly fifty jobs and a ValidateSet error there breaks all of them - not a change to make at the end of a long session. That is the next concrete step for this row. ||| DO NOT DRIVE THIS LIST TO ZERO YET - THE LIST ITSELF UNDERSTATES, measured 15:34Z. Before triaging the 38 I tested the detector against a known positive from earlier today, scripts/build_homerecenter_board.py, which feeds the live board and sits in zero runners. The checker does not report it, because it counts a mention from any file as a caller and the two files naming it are themselves unwired - one of them appears on this very list. Triaging a list that omits the worst instance would have produced a confident zero over a real hole. Filed as the-unwired-detector-accepts-a-caller-that-is-itself-unwired, which should land before this row is worked. ||| INPUT REPAIRED AND PARTIALLY TRIAGED, 15:58Z. The blind-scan blocker on this row was already stale; the REAL problem was that the detector accepted a caller that was itself unwired. Fixed in 90cc2725 - reachability is now a fixpoint - and the untriaged count rose 38 to 42, which is the correct direction for an additive change. The six newly visible modules are triaged in row six-guards-and-bridges-surfaced-the-moment-reachability-became-a-graph. ONE KNOWN GAP REMAINS BEFORE THIS LIST CAN BE DRIVEN TO ZERO: the tiering, not the reachability. scripts/build_homerecenter_board.py is still absent because tier_of sends any scripts/ file without a guard-shaped word in its name to analysis_oneshot, a bucket that is counted and never listed on the stated grounds that a backtest is not supposed to be in anyone's path. That is right for a backtest and wrong for a PRODUCER whose output a live surface serves, and the two are indistinguishable by name - the docstring itself cites build_m12_player_aging_curves as a legitimate one-shot. The discriminator has to be whether the output is SERVED, which is substance rather than form and is the whole thesis of that file. Filed separately rather than guessed at. ||| STATE MOVED TO BLOCKED WITH THE BLOCKER NAMED, 16:07Z. This row's acceptance is DRIVE THIS TO ZERO, and doing that now would certify a green over a producer the live board serves. Blocker: the-unwired-tiering-has-no-category-for-a-data-producer, whose discriminator is designed and validated against both controls. The reachability half is already repaired and six newly visible modules are triaged, so this row resumes the moment the tier lands rather than waiting on anything else.",
+      "status": "open - BLOCKER LIFTED, IT WAS STALE, measured 2026-08-07T09:55Z by coord--visible. This row carried BLOCKED ON A BLIND SCAN, saying ops/scout/unwired_capability_check.py cannot see scheduled-task invocations at all. THAT WAS REPAIRED THE SAME DAY BY COMMITS b323380d AND 455ef1af, before this blocker text was ever re-read. Ran the checker live: it now reports watchers per task, for example HardwoodTestSweep watched by scripts/sentinel_sweep.py, so schedules ARE visible as callers and the Hardwood task folder is read. THE NUMBERS THE ROW QUOTES ARE ALSO STALE: untriaged is 41, not 60. Notify events are 4 of 29 with ZERO undecided, most now DECIDED SUPERSEDED with a named replacement channel, so the 5 sanctioned dark events this row was filed about are largely resolved. WHAT IS GENUINELY LEFT AND IS THE REAL WORK: three scheduled tasks are in no FEEDS entry and no watcher names them - SeasonStatsRefresh, SentinelSweep and TrackingTripwire. Those are unwatched for real, not blind-scan artifacts. Triage those three first, then the remaining machinery rows. STANDING LESSON: a blocker written before its own repair reads exactly like a live one. Re-run the checker before believing a blocker that names a tool. ||| TRIAGE STARTED 09:57Z: the three genuinely unwatched tasks are ALL FAILING - SeasonStatsRefresh rc=0xC0000374 heap corruption, SentinelSweep rc=2, TrackingTripwire rc=1 on a monthly trigger so it stays broken for 30 days. Split to its own row three-unwatched-scheduled-tasks-are-all-failing at p1. This VINDICATES the detector: unwatched really did mean failing-and-unseen, in all three cases, which is the pattern the row was filed to catch. ||| I CREATED AN INSTANCE OF THIS VERY DEFECT AND THE DETECTOR CAUGHT ME, 11:00Z. After building ops/read_sentinel_red_list.py I ran this checker against my own work and it flagged it: ops/read_sentinel_red_list.py capability-named, ready or parked. Untriaged went 41 to 42. DECIDING IT NOW rather than leaving it: the reader is READY, not parked - it is proven on all four paths and it reads the live log correctly - but it is invoked by nothing, so it is genuinely unwired and the flag is CORRECT. The wire is a job entry in ops/local_runner/dispatch.ps1 plus a schedule, which I deliberately did not add because that file dispatches roughly fifty jobs and a ValidateSet error there breaks all of them - not a change to make at the end of a long session. That is the next concrete step for this row. ||| DO NOT DRIVE THIS LIST TO ZERO YET - THE LIST ITSELF UNDERSTATES, measured 15:34Z. Before triaging the 38 I tested the detector against a known positive from earlier today, scripts/build_homerecenter_board.py, which feeds the live board and sits in zero runners. The checker does not report it, because it counts a mention from any file as a caller and the two files naming it are themselves unwired - one of them appears on this very list. Triaging a list that omits the worst instance would have produced a confident zero over a real hole. Filed as the-unwired-detector-accepts-a-caller-that-is-itself-unwired, which should land before this row is worked. ||| INPUT REPAIRED AND PARTIALLY TRIAGED, 15:58Z. The blind-scan blocker on this row was already stale; the REAL problem was that the detector accepted a caller that was itself unwired. Fixed in 90cc2725 - reachability is now a fixpoint - and the untriaged count rose 38 to 42, which is the correct direction for an additive change. The six newly visible modules are triaged in row six-guards-and-bridges-surfaced-the-moment-reachability-became-a-graph. ONE KNOWN GAP REMAINS BEFORE THIS LIST CAN BE DRIVEN TO ZERO: the tiering, not the reachability. scripts/build_homerecenter_board.py is still absent because tier_of sends any scripts/ file without a guard-shaped word in its name to analysis_oneshot, a bucket that is counted and never listed on the stated grounds that a backtest is not supposed to be in anyone's path. That is right for a backtest and wrong for a PRODUCER whose output a live surface serves, and the two are indistinguishable by name - the docstring itself cites build_m12_player_aging_curves as a legitimate one-shot. The discriminator has to be whether the output is SERVED, which is substance rather than form and is the whole thesis of that file. Filed separately rather than guessed at. ||| STATE MOVED TO BLOCKED WITH THE BLOCKER NAMED, 16:07Z. This row's acceptance is DRIVE THIS TO ZERO, and doing that now would certify a green over a producer the live board serves. Blocker: the-unwired-tiering-has-no-category-for-a-data-producer, whose discriminator is designed and validated against both controls. The reachability half is already repaired and six newly visible modules are triaged, so this row resumes the moment the tier lands rather than waiting on anything else. ||| INPUT IS NOW TRUSTWORTHY - UNBLOCKED, 2026-08-07T16:24Z. Both defects that made this list a floor rather than a count are fixed: one-hop reachability in 90cc2725 and the missing producer tier in a3b6ccd4. The count went 38 to 42 to 70 across the two, rising each time, which is the only direction an additive fix can move it. The list now includes the instance that mattered most - the builder feeding the live public board. Six of the newly visible modules are already triaged in row six-guards-and-bridges-surfaced-the-moment-reachability-became-a-graph. State back to ready at p1: driving this to zero is now a genuine triage rather than a certification over a hole.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -6145,7 +6135,7 @@
       "why": "Tier of sends any scripts/ file whose name lacks a guard-shaped word to analysis oneshot, a bucket that is counted and never listed because a backtest is not supposed to be in anyone's path. That is ...",
       "priority": 1,
       "seat": "qa",
-      "status": "ready - DISCRIMINATOR DESIGNED AND VALIDATED AGAINST BOTH A POSITIVE AND A NEGATIVE CONTROL, 2026-08-07T16:07Z coord--visible. This is the SECOND defect hiding scripts/build_homerecenter_board.py; the first was one-hop reachability, fixed in 90cc2725, and the builder stayed invisible afterwards because of TIERING. CAPABILITY_WORDS are all guard-shaped - guard, alarm, probe, lint, monitor, check, gate, watchdog, police, sentinel, tripwire, fuse, pager, alert - so a data producer scores capability_named False and lands in the counted-but-never-listed bucket with the backtests. NAME-BASED FIXES ARE RULED OUT, and by the file's own words: its docstring cites build_m12_player_aging_curves.py as a LEGITIMATE one-shot, so build- prefixes cannot separate the classes. WRITE-DETECTION IS ALSO RULED OUT, MEASURED: both scripts INSERT, the one-shot at line 422 and the producer at line 207, so does-it-write does not discriminate either. WHAT DOES WORK, measured on both controls: DOES THE SCRIPT WRITE A TABLE THAT A SERVED-SURFACE BUILDER READS. Intersecting each script's wnba_ table names with the 46 that scripts/build_site.py names - the producer shares , which is ITS OWN OUTPUT by name, while the legitimate one-shot shares only and , which are INPUTS to both. Served output versus shared input is the line, and it is substance rather than form, which is this module's entire thesis. THE REMAINING IMPLEMENTATION DIFFICULTY IS NAMED HONESTLY: table names live in variables at the write site, HR_TABLE at line 207 and TABLE at line 422, so a correct version resolves the module-level constant rather than pattern-matching the literal. A new tier - producer, listed and strict-counted - then falls out of it. UNTIL THIS LANDS the untriaged count is a floor and driving the list to zero would certify a green over the most consequential instance on the box.",
+      "status": "ready - DISCRIMINATOR DESIGNED AND VALIDATED AGAINST BOTH A POSITIVE AND A NEGATIVE CONTROL, 2026-08-07T16:07Z coord--visible. This is the SECOND defect hiding scripts/build_homerecenter_board.py; the first was one-hop reachability, fixed in 90cc2725, and the builder stayed invisible afterwards because of TIERING. CAPABILITY_WORDS are all guard-shaped - guard, alarm, probe, lint, monitor, check, gate, watchdog, police, sentinel, tripwire, fuse, pager, alert - so a data producer scores capability_named False and lands in the counted-but-never-listed bucket with the backtests. NAME-BASED FIXES ARE RULED OUT, and by the file's own words: its docstring cites build_m12_player_aging_curves.py as a LEGITIMATE one-shot, so build- prefixes cannot separate the classes. WRITE-DETECTION IS ALSO RULED OUT, MEASURED: both scripts INSERT, the one-shot at line 422 and the producer at line 207, so does-it-write does not discriminate either. WHAT DOES WORK, measured on both controls: DOES THE SCRIPT WRITE A TABLE THAT A SERVED-SURFACE BUILDER READS. Intersecting each script's wnba_ table names with the 46 that scripts/build_site.py names - the producer shares , which is ITS OWN OUTPUT by name, while the legitimate one-shot shares only and , which are INPUTS to both. Served output versus shared input is the line, and it is substance rather than form, which is this module's entire thesis. THE REMAINING IMPLEMENTATION DIFFICULTY IS NAMED HONESTLY: table names live in variables at the write site, HR_TABLE at line 207 and TABLE at line 422, so a correct version resolves the module-level constant rather than pattern-matching the literal. A new tier - producer, listed and strict-counted - then falls out of it. UNTIL THIS LANDS the untriaged count is a floor and driving the list to zero would certify a green over the most consequential instance on the box. ||| FIXED - CLOSING, 2026-08-07T16:24Z, commit a3b6ccd4, and the acceptance oracle passes on MY OWN run rather than on the lane's report: the default report now prints '! scripts/build_homerecenter_board.py serves: ready, or parked?'. Untriaged 42 to 70, the REQUIRED direction - a falling count would have meant the change was wrong. The discriminator is the one I validated against both controls: does the script WRITE a table a served-surface builder READS. Table names are resolved through ast against module-level assignments, and an unresolvable placeholder becomes a NUL sentinel that cannot match an identifier - so an f-string it cannot resolve credits NOTHING and the failure direction is the old behaviour, never a false producer. Both mutations killed; 12 tests. TWO PREMISE CORRECTIONS FROM THE LANE, both accepted: CAPABILITY_WORDS is longer than I quoted - it also carries sweep, audit, verify, enforce, health, reconcile - though still entirely guard-shaped so the conclusion holds; and the producer was not literally NOWHERE, it appeared in the --all dump at line 118 and was absent from the DEFAULT report, which is the operative claim. HONEST PRECISION COST, recorded not hidden: about a third of the 28 producers are dated surgical one-offs that genuinely wrote a served table once. They are producers by the discriminator and are answered by parking them. A date-suffix filter was DECLINED because that is a name check, and name checks were measured dead here.",
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
@@ -6325,7 +6315,7 @@
       "why": "The always-on background monitor that flags anything needing a decision",
       "priority": 1,
       "seat": "qa",
-      "status": "ready - FOUND BY TESTING THE DETECTOR AGAINST A KNOWN POSITIVE, 2026-08-07T15:34Z coord--visible. I had a confirmed unwired producer from earlier today, so rather than hand-triage the detector's list I checked whether it catches the one instance I already knew about. IT DOES NOT. scripts/build_homerecenter_board.py writes the margin model the LIVE PUBLIC BOARD serves, it appears in ZERO runners, its served build is 44 hours stale, and it is the root cause of a 42-run red monitor streak - and it appears NOWHERE in the checker's output, not in the 26 untriaged, not in the 30 capability-named, nowhere. THE MECHANISM, measured: it is referenced by exactly two files, scripts/hca_autofirm_guard.py and scripts/homerecenter_reconcile_v1.py, and the checker counts those references as CALLERS. Both are themselves in zero runners. One of them, homerecenter_reconcile_v1.py, is ITSELF on the checker's own unwired list at line 53, so the detector is simultaneously reporting a script as unreachable AND accepting that same script as proof that something else IS reachable. The other is not flagged at all. THE GENERAL SHAPE: reachability is evaluated one hop deep and against any mention, rather than transitively from the set of things that actually execute - the scheduled tasks, the dispatch job table, the nightly stage list. A dark cluster vouches for itself and the whole cluster disappears from the report. THE FIX IS A GRAPH, NOT A GREP: root the search at the real runners and mark reachable only what is transitively reached; anything else is unwired no matter how many siblings name it. UNTIL THEN THE LIST UNDERSTATES ITSELF and its 38 untriaged is a floor rather than a count, which is why this outranks working through that list. This is the same class as a check that reports healthy while the thing is wrong, and here it hid the most consequential instance on the box. ||| THE TOOL INDICTS ITSELF, AND THE CORRECT PRINCIPLE IS ALREADY WRITTEN IN THIS SAME FILE, 15:41Z. Ran its own probe: --callers-of scripts/build_homerecenter_board.py answers '1 non-test caller: scripts/homerecenter_reconcile_v1.py (string literal)' - one caller, a string literal, in a file the same tool lists as unwired. PRECEDENT, and it is the decisive part: at line 216 this module records A REGISTRY ROW IS NOT A CALL SITE, measured 2026-07-30, where a phantom string-literal caller kept TEN dive generators that were on NO schedule out of the report for THIRTEEN DAYS. Its stated correction is exactly the rule this case needs - declaration plus a runner means the RUNNER is the caller, declaration with NO runner is not a caller at all. That principle was applied to registry values and never generalised, so the identical defect returned one level further out. THE FIX IS THEREFORE NOT NEW DESIGN, it is extending a rule this file already argues for: resolve a string-literal caller transitively and iterate to a fixpoint, so a mention inside an unreachable file stops conferring reachability. ACCEPTANCE ORACLE IS FREE: build_homerecenter_board.py must appear in the report after the change, and the 38 untriaged should rise rather than fall.",
+      "status": "ready - FOUND BY TESTING THE DETECTOR AGAINST A KNOWN POSITIVE, 2026-08-07T15:34Z coord--visible. I had a confirmed unwired producer from earlier today, so rather than hand-triage the detector's list I checked whether it catches the one instance I already knew about. IT DOES NOT. scripts/build_homerecenter_board.py writes the margin model the LIVE PUBLIC BOARD serves, it appears in ZERO runners, its served build is 44 hours stale, and it is the root cause of a 42-run red monitor streak - and it appears NOWHERE in the checker's output, not in the 26 untriaged, not in the 30 capability-named, nowhere. THE MECHANISM, measured: it is referenced by exactly two files, scripts/hca_autofirm_guard.py and scripts/homerecenter_reconcile_v1.py, and the checker counts those references as CALLERS. Both are themselves in zero runners. One of them, homerecenter_reconcile_v1.py, is ITSELF on the checker's own unwired list at line 53, so the detector is simultaneously reporting a script as unreachable AND accepting that same script as proof that something else IS reachable. The other is not flagged at all. THE GENERAL SHAPE: reachability is evaluated one hop deep and against any mention, rather than transitively from the set of things that actually execute - the scheduled tasks, the dispatch job table, the nightly stage list. A dark cluster vouches for itself and the whole cluster disappears from the report. THE FIX IS A GRAPH, NOT A GREP: root the search at the real runners and mark reachable only what is transitively reached; anything else is unwired no matter how many siblings name it. UNTIL THEN THE LIST UNDERSTATES ITSELF and its 38 untriaged is a floor rather than a count, which is why this outranks working through that list. This is the same class as a check that reports healthy while the thing is wrong, and here it hid the most consequential instance on the box. ||| THE TOOL INDICTS ITSELF, AND THE CORRECT PRINCIPLE IS ALREADY WRITTEN IN THIS SAME FILE, 15:41Z. Ran its own probe: --callers-of scripts/build_homerecenter_board.py answers '1 non-test caller: scripts/homerecenter_reconcile_v1.py (string literal)' - one caller, a string literal, in a file the same tool lists as unwired. PRECEDENT, and it is the decisive part: at line 216 this module records A REGISTRY ROW IS NOT A CALL SITE, measured 2026-07-30, where a phantom string-literal caller kept TEN dive generators that were on NO schedule out of the report for THIRTEEN DAYS. Its stated correction is exactly the rule this case needs - declaration plus a runner means the RUNNER is the caller, declaration with NO runner is not a caller at all. That principle was applied to registry values and never generalised, so the identical defect returned one level further out. THE FIX IS THEREFORE NOT NEW DESIGN, it is extending a rule this file already argues for: resolve a string-literal caller transitively and iterate to a fixpoint, so a mention inside an unreachable file stops conferring reachability. ACCEPTANCE ORACLE IS FREE: build_homerecenter_board.py must appear in the report after the change, and the 38 untriaged should rise rather than fall. ||| FIXED - CLOSING, 2026-08-07T16:24Z coord--visible, commit 90cc2725. Reachability is a fixpoint now: a candidate is unwired when every one of its machine callers is itself unwired, iterated until stable. A caller that is NOT a candidate - a dispatch table, a scheduled-task command line, an ordinary module - stays a live root, so the change is purely additive and cannot hide a finding. The oracle was chosen so it could fail and it did the right thing: untriaged ROSE 38 to 42. It surfaced six modules a one-hop scan had called wired, including hca_autofirm_guard.py, which was one of the two files vouching for the hidden live-board builder.",
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
@@ -6370,7 +6360,7 @@
       "why": "Measured 2026-07-31T15 on the live box. A transient claude daemon pid 9732 whose --spawned-by names coordinator pid 10248 that had already exited auto-resumed the killed coordinator session into a ...",
       "priority": 1,
       "seat": "infra",
-      "status": "READY ||| RE-MEASURED CLEAN, BUT NOT RETIRED - THE MECHANISM IS UNPROVEN, ONLY UNFIRED, 2026-08-07T16:46Z coord--visible. Measured on the live box: exactly ONE node/claude process exists, none of them matching bg-pty-host, spawned-by or --resume, so there is no resurrected headless head right now and the visibility invariant holds - one live coordinator, one visible window. THE QUERY WAS NOT BLIND, and I checked that explicitly because a blank read is the failure mode that would fake this exact answer: ZERO processes returned an unreadable CommandLine, so the empty result is a real absence rather than an unelevated shell reporting nothing. WHY THIS STAYS OPEN ANYWAY: this daemon fires AFTER a head is reaped, and no head has been reaped during this session, so a clean reading now is consistent with the mechanism being entirely intact. Absence of the symptom is not evidence the cause is gone, and the only test that would settle it is reaping a head, which I will not do to a live seat. A NEW VECTOR FOR THE SAME CLASS LANDED TODAY AND BELONGS ON THIS ROW: HardwoodCoordinatorWatchdog now runs as S4U rather than Interactive - measured this session while retiring coordinator-recovery-is-refused-while-no-one-is-logged-in - and an S4U principal is precisely the shape that can spawn without an interactive desktop. That conversion fixed a refusal and may have bought an invisible spawn, which is the same law this row protects. Couple the two: any fix here must also prove the watchdog's spawn draws a window. ||| THE GUARD EXISTS AND IS WIRED - measured 2026-08-07T17:14Z coord--visible, which narrows this row rather than closing it. watcher._illegally_headless is DEFINED at ops/scout/watcher.py:893 and CALLED at two production sites, 968 and 1075, so it is not another built-but-never-wired case; the first call sits inside coordinator_alive(). Its test at ops/scout/tests/test_legal_seat_rule.py records that until 2026-08-07 the two liveness gates DISAGREED - coordinator_lock.live_owner() disqualified a session-0 holder while watcher.coordinator_alive() did not - so the spawn gate read HELD while the claim gate read FREE and at 00:56Z that produced two live coordinators, one invisible. THAT DISAGREEMENT IS FIXED, and the rule is correctly CONDITIONAL on a desktop existing rather than an unconditional session-0 ban, which the test names as the over-strict trap that would respawn forever when nobody is logged in. WHAT IS STILL NOT ANSWERED, and it is the whole of what remains: the guard makes an illegally headless holder read NOT ALIVE, so the watcher will spawn a legal head - but reading a head as dead is not the same as REAPING it. If the illegal one keeps running and keeps its lock, the outcome is still two heads, which is the exact condition this row was filed about. Someone must trace whether an illegally-headless head is killed or merely out-voted. I DID NOT EDIT watcher.py: Lane D owns that file in the width-4 window that opened at 15:20Z, and the isolation law says a lane that needs another lane's path stops and says so rather than reaching into it. ||| THE OPEN QUESTION IS ANSWERED BY READING THE CODE: OUT-VOTED, NEVER REAPED, 2026-08-07T15:36Z coord--visible. I left this row asking whether an illegally headless head is killed or merely out-voted, and deferred because Lane D owned watcher.py. Lane D landed, so I read it. THE KILL PATH IS _kill_session_pid and it has exactly THREE triggers: a STRAGGLER at line 1378, a released session whose lock and marker session_id match and whose heartbeat is older than the release; an UNKILLABLE ZOMBIE at 2057 that is already in the recently-killed set, re-reaped best-effort; and a FORCE-RESTART at 2072 when inbox directives sit unprocessed. NOT ONE OF THE THREE CONSULTS _illegally_headless. That predicate feeds only the two DETECTION functions, coordinator_alive and claude_process_running, so headlessness changes whether a coordinator is judged to EXIST and never whether one is killed. CONSEQUENCE, stated plainly: an illegal headless head is excluded from the exists-probe, a legal successor is therefore spawned, and the headless one KEEPS RUNNING with no lock until it exits on its own. Two heads, one invisible, which is exactly what this row was filed about - the 00:56Z incident is reachable again by a different route than the one that was fixed. AND THE REAPER ITSELF CAN FAIL THE SAME WAY: line 1264 records that a taskkill can return access-denied on an unkillable tree child, and I REPRODUCED THAT TODAY on an unrelated process - Stop-Process on the hung bake pid 11032 returned Access is denied because it runs above this shell's privilege. So even a headless-triggered reap would not be guaranteed to succeed. THE ROW STANDS with a complete diagnosis: the fix is a kill trigger on the headless condition PLUS an escalation path that works against a higher-privilege process, and the second half is the harder one.",
+      "status": "READY ||| RE-MEASURED CLEAN, BUT NOT RETIRED - THE MECHANISM IS UNPROVEN, ONLY UNFIRED, 2026-08-07T16:46Z coord--visible. Measured on the live box: exactly ONE node/claude process exists, none of them matching bg-pty-host, spawned-by or --resume, so there is no resurrected headless head right now and the visibility invariant holds - one live coordinator, one visible window. THE QUERY WAS NOT BLIND, and I checked that explicitly because a blank read is the failure mode that would fake this exact answer: ZERO processes returned an unreadable CommandLine, so the empty result is a real absence rather than an unelevated shell reporting nothing. WHY THIS STAYS OPEN ANYWAY: this daemon fires AFTER a head is reaped, and no head has been reaped during this session, so a clean reading now is consistent with the mechanism being entirely intact. Absence of the symptom is not evidence the cause is gone, and the only test that would settle it is reaping a head, which I will not do to a live seat. A NEW VECTOR FOR THE SAME CLASS LANDED TODAY AND BELONGS ON THIS ROW: HardwoodCoordinatorWatchdog now runs as S4U rather than Interactive - measured this session while retiring coordinator-recovery-is-refused-while-no-one-is-logged-in - and an S4U principal is precisely the shape that can spawn without an interactive desktop. That conversion fixed a refusal and may have bought an invisible spawn, which is the same law this row protects. Couple the two: any fix here must also prove the watchdog's spawn draws a window. ||| THE GUARD EXISTS AND IS WIRED - measured 2026-08-07T17:14Z coord--visible, which narrows this row rather than closing it. watcher._illegally_headless is DEFINED at ops/scout/watcher.py:893 and CALLED at two production sites, 968 and 1075, so it is not another built-but-never-wired case; the first call sits inside coordinator_alive(). Its test at ops/scout/tests/test_legal_seat_rule.py records that until 2026-08-07 the two liveness gates DISAGREED - coordinator_lock.live_owner() disqualified a session-0 holder while watcher.coordinator_alive() did not - so the spawn gate read HELD while the claim gate read FREE and at 00:56Z that produced two live coordinators, one invisible. THAT DISAGREEMENT IS FIXED, and the rule is correctly CONDITIONAL on a desktop existing rather than an unconditional session-0 ban, which the test names as the over-strict trap that would respawn forever when nobody is logged in. WHAT IS STILL NOT ANSWERED, and it is the whole of what remains: the guard makes an illegally headless holder read NOT ALIVE, so the watcher will spawn a legal head - but reading a head as dead is not the same as REAPING it. If the illegal one keeps running and keeps its lock, the outcome is still two heads, which is the exact condition this row was filed about. Someone must trace whether an illegally-headless head is killed or merely out-voted. I DID NOT EDIT watcher.py: Lane D owns that file in the width-4 window that opened at 15:20Z, and the isolation law says a lane that needs another lane's path stops and says so rather than reaching into it. ||| THE OPEN QUESTION IS ANSWERED BY READING THE CODE: OUT-VOTED, NEVER REAPED, 2026-08-07T15:36Z coord--visible. I left this row asking whether an illegally headless head is killed or merely out-voted, and deferred because Lane D owned watcher.py. Lane D landed, so I read it. THE KILL PATH IS _kill_session_pid and it has exactly THREE triggers: a STRAGGLER at line 1378, a released session whose lock and marker session_id match and whose heartbeat is older than the release; an UNKILLABLE ZOMBIE at 2057 that is already in the recently-killed set, re-reaped best-effort; and a FORCE-RESTART at 2072 when inbox directives sit unprocessed. NOT ONE OF THE THREE CONSULTS _illegally_headless. That predicate feeds only the two DETECTION functions, coordinator_alive and claude_process_running, so headlessness changes whether a coordinator is judged to EXIST and never whether one is killed. CONSEQUENCE, stated plainly: an illegal headless head is excluded from the exists-probe, a legal successor is therefore spawned, and the headless one KEEPS RUNNING with no lock until it exits on its own. Two heads, one invisible, which is exactly what this row was filed about - the 00:56Z incident is reachable again by a different route than the one that was fixed. AND THE REAPER ITSELF CAN FAIL THE SAME WAY: line 1264 records that a taskkill can return access-denied on an unkillable tree child, and I REPRODUCED THAT TODAY on an unrelated process - Stop-Process on the hung bake pid 11032 returned Access is denied because it runs above this shell's privilege. So even a headless-triggered reap would not be guaranteed to succeed. THE ROW STANDS with a complete diagnosis: the fix is a kill trigger on the headless condition PLUS an escalation path that works against a higher-privilege process, and the second half is the harder one. ||| FIXED AND LOADED - CLOSING, 2026-08-07T16:15Z coord--visible, commit b67ee392. The question this row carried all day - reaped or merely out-voted - was answered by reading the code, and the answer was OUT-VOTED: _kill_session_pid had three triggers and none consulted headlessness, so a head that could never draw a window was excluded from every probe and killed by nothing. _reap_illegally_headless_seat now runs every poll cycle in run_loop. Its guards are ordered so a LIVE VISIBLE HEAD IS STRUCTURALLY UNKILLABLE - its session is nonzero, so the predicate is False before any kill API is touched - and the over-strict trap is out of reach by construction: no login means no desktop means the predicate is False, so a session-0 head is legal-by-necessity and untouched. 16 tests, proven able to fail in BOTH directions by mutation before being trusted, and 378 in the surrounding suite pass. LOADED: the scout was restarted at 16:11:11Z, after this landed, and is alive with status.json 4s old. TWO RESIDUALS, NAMED NOT HIDDEN, and neither reopens this row. The kill can still be DENIED - _kill_session_pid returns access-denied on a higher-privilege tree child, which I reproduced today on the hung bake pid 11032 - and the lane made that degrade to exactly the pre-change behaviour: the pid is still recorded as killed so the exclusion window holds, the successor still spawns, and two tests pin it. And the reaper targets the LOCK's durable session_pid rather than enumerating session-0 claude.exe processes, deliberately: this box spawns 'claude -p' usage probes, and an enumerating reaper would kill its own probes - worse than the bug it fixes.",
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
@@ -9520,7 +9510,7 @@
       "why": "Measured 2026-07-31T15 . hardwood supervisor. decides visible capable purely by SessionId not equal to 0. A --bg-pty-host coordinator runs in session 1 and renders to a named pipe so it passes that ...",
       "priority": 1,
       "seat": "infra",
-      "status": "READY ||| SWEEP FALSE POSITIVE, decided by reading the citation 2026-08-07 (lane-d-sweep-and-echo-generator-fix). The cited artifact is second_head_is_a_session_0_process_the_visible_seat_cannot_kill_.md, whose own headline reads \"the visibility law remedy is NOT executable from the visible seat\". That is a finding that NAMES the defect, not a delta that fixes it - the dominant false-positive class of this sweep, where a delta confirming a finding reads identically to a delta closing one. Row stands open.",
+      "status": "READY ||| SWEEP FALSE POSITIVE, decided by reading the citation 2026-08-07 (lane-d-sweep-and-echo-generator-fix). The cited artifact is second_head_is_a_session_0_process_the_visible_seat_cannot_kill_.md, whose own headline reads \"the visibility law remedy is NOT executable from the visible seat\". That is a finding that NAMES the defect, not a delta that fixes it - the dominant false-positive class of this sweep, where a delta confirming a finding reads identically to a delta closing one. Row stands open. ||| THE REMEDY IS NOW EXECUTABLE - A WORKING PROBE, MEASURED FROM THIS SEAT, 2026-08-07T16:19Z coord--visible. This row's cited delta said the visibility law's remedy is NOT executable from the visible seat. That has changed. WHY THIS ROW SURVIVES THE REAPER SHIPPED AT b67ee392: _illegally_headless requires SESSION 0 plus a desktop. A PIPE-BACKED HEAD IN SESSION 1 passes that test - it is in an interactive session - while still having NO WINDOW the CEO can see. It is now the LAST uncovered visibility case, and the reaper deliberately does not touch it. THE PROBE, and it works: AttachConsole(pid) then GetConsoleWindow(), run in a SUBPROCESS that calls FreeConsole FIRST. Measured against this coordinator's own session_pid 12808: attached=True, hwnd=2097290 - a real console window, so this seat is compliant. A pipe-backed head returns hwnd=0. THE SEQUENCE IS NOT OPTIONAL AND I PROVED IT BY GETTING IT WRONG FIRST: my first attempt ran in a shell that already owned a console, so AttachConsole returned FALSE and GetConsoleWindow handed back MY OWN window - a plausible nonzero handle that measured the wrong process entirely. Calling FreeConsole before attaching is what makes the answer about the target. THE FIX PATH: gate on console-window presence rather than on session number, so visibility is tested by what the CEO can actually see. KEEP THE EXISTING GUARDS AROUND IT - a probe fault must read as NO EVIDENCE and never as a kill, exactly as the reaper treats an unknowable liveness probe.",
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
@@ -18621,9 +18611,9 @@
     "target": 40,
     "count": 386,
     "ok": true,
-    "label": "386 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 30m ago.)",
-    "as_of_utc": "2026-08-07T15:36:59Z",
-    "age_secs": 1849,
+    "label": "386 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 13m ago.)",
+    "as_of_utc": "2026-08-07T16:13:50Z",
+    "age_secs": 829,
     "stale": false
    },
    "source": "dispatch queue",
@@ -19176,67 +19166,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-07T16:06:18Z",
-  "age_s": 57,
-  "cycles": 4,
+  "last_poll_utc": "2026-08-07T16:26:17Z",
+  "age_s": 49,
+  "cycles": 8,
   "known": true,
-  "label": "scout: alive, last poll 57s ago",
+  "label": "scout: alive, last poll 49s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "11:59am",
-   "text": "publish-health: public board FRESH again — flag cleared",
-   "detail": "publish-health: public board FRESH again — flag cleared"
-  },
-  {
-   "time": "11:59am",
-   "text": "chain-health: chain HEALTHY again — flag cleared",
-   "detail": "chain-health: chain HEALTHY again — flag cleared"
-  },
-  {
-   "time": "11:59am",
-   "text": "slate-refresh: slate ok (today populated",
-   "detail": "slate-refresh: slate ok (today populated)"
-  },
-  {
-   "time": "12:00pm",
-   "text": "new instruction received into the inbox",
-   "detail": "HIT: delivered DIRECTOR_DIRECTIVE__P0_one_chart_law_append_only_law_gate_fix.md -> inbox/ (ts=)"
-  },
-  {
-   "time": "12:01pm",
-   "text": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session",
-   "detail": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session"
-  },
-  {
-   "time": "12:01pm",
+   "time": "12:22pm",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
   },
   {
-   "time": "12:01pm",
-   "text": "poll #3 · 1 new instruction(s)",
-   "detail": "poll cycle=3 ok directives_new=1"
+   "time": "12:22pm",
+   "text": "CPU-PROBE READABLE again for session pid 12808 after 2 unreadable poll(s) - the 180s and 600s rescues are reachable again",
+   "detail": "CPU-PROBE READABLE again for session_pid 12808 after 2 unreadable poll(s) - the 180s and 600s rescues are reachable again"
   },
   {
-   "time": "12:01pm",
-   "text": "dead-crew: all-clear ['Status-page baker'] - recovered",
-   "detail": "dead-crew: all-clear ['Status-page baker'] - recovered"
+   "time": "12:22pm",
+   "text": "poll #6 · nothing new",
+   "detail": "poll cycle=6 ok directives_new=0"
   },
   {
-   "time": "12:05pm",
-   "text": "coordinator alive: liveness probe for session pid 12808 is UNKNOWABLE - falling back to the heartbeat signal (never dead on a failed probe",
-   "detail": "coordinator_alive: liveness probe for session_pid 12808 is UNKNOWABLE - falling back to the heartbeat signal (never dead on a failed probe)"
+   "time": "12:24pm",
+   "text": "poll #7 · nothing new",
+   "detail": "poll cycle=7 ok directives_new=0"
   },
   {
-   "time": "12:06pm",
-   "text": "poll #4 · nothing new",
-   "detail": "poll cycle=4 ok directives_new=0"
+   "time": "12:26pm",
+   "text": "poll #8 · nothing new",
+   "detail": "poll cycle=8 ok directives_new=0"
+  },
+  {
+   "time": "12:26pm",
+   "text": "width-tripwire: RECOVERED - under-width defect/refill cleared (running 1/1",
+   "detail": "width-tripwire: RECOVERED - under-width defect/refill cleared (running 1/1)"
+  },
+  {
+   "time": "12:26pm",
+   "text": "width-tripwire: CEO WIDTH-POKE defect - msg ('We're only on one lane and have a ton of shipments to make, ') matched /\\b(0|zero|no|one|only one|single)\\s+lanes?\\b/; post-mortem stub written (enforcer silent under-width window unknown (tripwire state carried no open window at poke time",
+   "detail": "width-tripwire: CEO WIDTH-POKE defect - msg ('We're only on one lane and have a ton of shipments to make, ') matched /\\b(0|zero|no|one|only "
+  },
+  {
+   "time": "12:26pm",
+   "text": "width-tripwire: CEO WIDTH-POKE defect(s) [''] - prima-facie proof the enforcer was silent; post-mortem stub(s) written",
+   "detail": "width-tripwire: CEO WIDTH-POKE defect(s) [''] - prima-facie proof the enforcer was silent; post-mortem stub(s) written"
+  },
+  {
+   "time": "12:26pm",
+   "text": "board-selfpolice: clean (live board matches repo truth",
+   "detail": "board-selfpolice: clean (live board matches repo truth)"
+  },
+  {
+   "time": "12:27pm",
+   "text": "poll #9 · nothing new",
+   "detail": "poll cycle=9 ok directives_new=0"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-07T16:06:38Z",
+  "as_of": "2026-08-07T16:26:40.891655+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -19245,16 +19235,16 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "57s",
-    "state_text": "on · seen 57s ago"
+    "age_label": "49s",
+    "state_text": "on · seen 49s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "83s",
-    "state_text": "on · seen 83s ago"
+    "age_label": "25s",
+    "state_text": "on · seen 25s ago"
    },
    {
     "name": "Status-page baker",
@@ -19269,8 +19259,8 @@
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "37s",
-    "state_text": "on · seen 37s ago"
+    "age_label": "63s",
+    "state_text": "on · seen 63s ago"
    },
    {
     "name": "Inbox triage",
@@ -19282,10 +19272,10 @@
    }
   ],
   "width": {
-   "running": 2,
+   "running": 1,
    "target": 1,
    "empty": 0,
-   "line": "2 of 1 jobs running.",
+   "line": "1 of 1 jobs running.",
    "reason": "Enough jobs are running for the work waiting.",
    "stale": false
   },
@@ -19488,25 +19478,25 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-07T16:07:13Z",
-  "session_age_secs": 24963,
-  "last_progress_age_secs": 2,
+  "last_heartbeat_utc": "2026-08-07T16:27:05Z",
+  "session_age_secs": 26154,
+  "last_progress_age_secs": 1,
   "last_spawn_attempt": "2026-08-07T09:38:41Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
  "pipe_health": {
-  "directives_pending": 0,
-  "last_processed_clock": "12:03pm",
-  "last_processed_iso": "2026-08-07T16:03:08Z",
+  "directives_pending": 1,
+  "last_processed_clock": "12:24pm",
+  "last_processed_iso": "2026-08-07T16:24:55Z",
   "last_processed_known": true,
-  "last_processed_display": "12:03pm",
+  "last_processed_display": "12:24pm",
   "last_processed_source": "directive_ledger.done",
-  "newest_directive_clock": "",
-  "newest_directive_iso": null,
+  "newest_directive_clock": "12:25pm",
+  "newest_directive_iso": "2026-08-07T16:25:18Z",
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-08-07T16:03:08Z",
+  "as_of": "2026-08-07T16:25:18Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -19520,27 +19510,27 @@
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-08-07T16:04:05Z",
+   "as_of": "2026-08-07T16:26:58+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T16:07:07+00:00",
+   "revalidated": "2026-08-07T16:26:58+00:00",
    "stale_reason": "",
-   "age_label": "3m",
+   "age_label": "0s",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-07T16:07:07+00:00",
+   "as_of": "2026-08-07T16:26:58+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T16:07:07+00:00",
+   "revalidated": "2026-08-07T16:26:58+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T16:07:07+00:00",
+   "as_of": "2026-08-07T16:26:58+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T16:07:07+00:00",
+   "revalidated": "2026-08-07T16:26:58+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -19549,66 +19539,66 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T16:07:07+00:00",
+   "revalidated": "2026-08-07T16:26:58+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-07T16:05:23Z",
+   "as_of": "2026-08-07T16:22:23Z",
    "stale": false,
-   "revalidated": "2026-08-07T16:07:07+00:00",
+   "revalidated": "2026-08-07T16:26:58+00:00",
    "stale_reason": "",
-   "age_label": "1m",
+   "age_label": "4m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T16:07:07+00:00",
+   "revalidated": "2026-08-07T16:26:58+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-08-07T16:03:08Z",
+   "as_of": "2026-08-07T16:25:18Z",
    "stale": false,
-   "revalidated": "2026-08-07T16:07:07+00:00",
+   "revalidated": "2026-08-07T16:26:58+00:00",
    "stale_reason": "",
-   "age_label": "3m",
+   "age_label": "1m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-07T06:20:00-04:00",
    "stale": false,
-   "revalidated": "2026-08-07T16:07:07+00:00",
+   "revalidated": "2026-08-07T16:26:58+00:00",
    "stale_reason": "",
-   "age_label": "5h",
+   "age_label": "6h",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T15:55:02+00:00",
+   "as_of": "2026-08-07T16:07:07+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T16:07:07+00:00",
+   "revalidated": "2026-08-07T16:26:58+00:00",
    "stale_reason": "",
-   "age_label": "12m",
+   "age_label": "19m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-07T16:06:38Z",
+   "as_of": "2026-08-07T16:26:40.891655+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T16:07:07+00:00",
+   "revalidated": "2026-08-07T16:26:58+00:00",
    "stale_reason": "",
-   "age_label": "37s",
+   "age_label": "25s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 7, 12:07pm ET"
+ "generated_et": "Aug 7, 12:26pm ET"
 }
