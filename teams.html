@@ -30,6 +30,14 @@
   th,td{padding:5px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
   th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
   th{color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;background:var(--card2)}
+  /* A sortable heading has to LOOK clickable or nobody clicks it, and the control may as well not
+     exist. The active column is the only one that carries an arrow, so the current ordering is
+     readable from the header without consulting the footer. */
+  th.sortable{cursor:pointer;user-select:none}
+  th.sortable:hover{color:var(--ink)}
+  th.sortable:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+  th.sorted{color:var(--ink)}
+  th .arrow{font-size:9px}
   tr[data-k]{transition:background .3s}
   tr.flash td{animation:fl 1.1s ease}
   @keyframes fl{0%{background:var(--flash)}100%{background:transparent}}
@@ -128,6 +136,43 @@
 (function(){
   "use strict";
   var URL="./teams.json", curData=null, teamFilter="", STANDINGS=null;
+  // SORT STATE. Null = the page's own default, which is strength order inside each tier.
+  // Sorting reorders WITHIN the tiers and never dissolves them: the plain-language grouping is
+  // itself part of what makes this board readable, and a click that scattered "title contenders"
+  // across the table would trade one property for another rather than adding one.
+  var sortKey=null, sortDesc=true;
+  // Each column's sort value. Text sorts ascending by default, numbers descending, because the
+  // useful first click on a number is "who is highest" and on a name is "A first".
+  var SORTERS={
+    "#":                 { num:true,  get:function(r,std){ return r.rank; }, desc:false },
+    "Team":              { num:false, get:function(r,std){ return (r.team_full||r.team||"").toLowerCase(); }, desc:false },
+    "Record":            { num:true,  get:function(r,std){ var s=std[r.team]; return s&&s.win_pct!=null?s.win_pct:null; } },
+    "Strength":          { num:true,  get:function(r,std){ return r.strength; } },
+    "Momentum":          { num:true,  get:function(r,std){ return r.churn; } },
+    "Title %":           { num:true,  get:function(r,std){ return r.title_pct; } },
+    "1-day move":        { num:true,  get:function(r,std){ return r.title_delta; } },
+    "2-wk title trend":  { num:true,  get:function(r,std){ return r.trend&&r.trend.title_move!=null?r.trend.title_move:null; } },
+    "Playoffs %":        { num:true,  get:function(r,std){ return r.playoff_pct; } }
+  };
+  // A team with no value for the sorted column always sinks, in BOTH directions. Floating a blank
+  // to the top on a reversed sort would read as "lowest", which is a claim the data does not make.
+  function sortRows(rows, std){
+    if(!sortKey || !SORTERS[sortKey]) return rows;
+    var S=SORTERS[sortKey], dir=sortDesc?-1:1;
+    return rows.slice().sort(function(a,b){
+      var va=S.get(a,std), vb=S.get(b,std);
+      var na=(va==null||va===""), nb=(vb==null||vb==="");
+      if(na&&nb) return 0;
+      if(na) return 1;
+      if(nb) return -1;
+      if(S.num) return (va-vb)*dir;
+      // The text branch shipped inverted in my first pass and a live test caught it: with dir=1
+      // meaning ascending, a<b must return NEGATIVE to put a first, and returning dir put it last,
+      // so clicking Team gave Washington-first. The numeric branch was always right because
+      // (va-vb)*dir already carries the sign.
+      return va<vb?-dir:(va>vb?dir:0);
+    });
+  }
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function td(c,x){ return el("td",c,x); }
   // Render an ISO date (YYYY-MM-DD) as plain "Jul 15" — no timezone jargon, no Date() TZ shift.
@@ -517,7 +562,26 @@
     var t=el("table");
     var thead=el("thead"); var hr=el("tr");
     var std=stdMap();
-    ["#","Team","Record","Strength","Momentum","Title %","1-day move","2-wk title trend","Playoffs %"].forEach(function(h){ hr.appendChild(el("th",null,h)); });
+    ["#","Team","Record","Strength","Momentum","Title %","1-day move","2-wk title trend","Playoffs %"].forEach(function(h){
+      var th=el("th",null,h);
+      if(SORTERS[h]){
+        th.className="sortable"+(sortKey===h?" sorted":"");
+        th.setAttribute("role","button");
+        th.setAttribute("tabindex","0");
+        th.setAttribute("aria-label","Sort by "+h);
+        if(sortKey===h) th.appendChild(el("span","arrow", sortDesc?" ▼":" ▲"));
+        var pick=function(){
+          // Re-clicking the active column flips it; a new column starts in the direction that
+          // answers the obvious first question for that kind of value.
+          if(sortKey===h){ sortDesc=!sortDesc; }
+          else { sortKey=h; sortDesc=(SORTERS[h].desc!==undefined)?SORTERS[h].desc:SORTERS[h].num; }
+          render(curData);
+        };
+        th.onclick=pick;
+        th.onkeydown=function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); pick(); } };
+      }
+      hr.appendChild(th);
+    });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
     function buildRow(r){
@@ -538,7 +602,7 @@
     var rows=d.teams.filter(function(r){ return !q || (r.team||"").toLowerCase().indexOf(q)>=0 || (r.team_full||"").toLowerCase().indexOf(q)>=0; });
     // Group the field into coach tiers (impact-first), keeping strength order within each tier.
     TIERS.forEach(function(tier){
-      var group=rows.filter(function(r){ return tierOf(r)===tier[0]; });
+      var group=sortRows(rows.filter(function(r){ return tierOf(r)===tier[0]; }), std);
       if(!group.length) return;
       var hrow=el("tr","tier"); var hc=el("td"); hc.colSpan=9;
       hc.innerHTML='<span class="tlabel">'+tier[1]+'</span><span class="tmeaning">'+tier[2]+'</span>'+
@@ -548,7 +612,12 @@
     });
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); main.appendChild(card);
     main.appendChild(el("div","note",
-      "Teams are grouped by how the end-of-season simulation sees them — title contenders, in the mix, on the bubble, and out of the race — then ordered by roster strength within each group. "+
+      // The footer states the ordering that is ACTUALLY in force, not the default one. A page that
+      // lets a reader re-sort and then describes a different order in its own footnote is telling
+      // them something untrue about what they are looking at.
+      "Teams are grouped by how the end-of-season simulation sees them — title contenders, in the mix, on the bubble, and out of the race — then ordered "+
+      (sortKey ? ("by "+sortKey.toLowerCase()+", "+(sortDesc?"highest first":"lowest first")+", within each group (click any column heading to change it; click it again to reverse). ")
+               : "by roster strength within each group — click any column heading to sort by it instead. ")+
       "Record is each team's current won-lost mark (with win% beside it), straight from the season standings. "+
       "Strength = our on-court team-strength index (higher is better), carried to today; the bar shows each team's spot on the field from weakest to strongest. "+
       "Momentum = how the team's recent-form rating has moved over its last few games (▲ heating up, ▼ cooling) — a form read, not the ranking. "+
