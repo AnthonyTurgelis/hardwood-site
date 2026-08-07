@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-07T14:15:51+00:00",
+ "generated_utc": "2026-08-07T14:25:42+00:00",
  "freshness": {
-  "baked_utc": "2026-08-07T14:15:51+00:00",
-  "baked_et": "Aug 7, 10:15am ET",
-  "revalidated_utc": "2026-08-07T14:15:51+00:00",
+  "baked_utc": "2026-08-07T14:25:42+00:00",
+  "baked_et": "Aug 7, 10:25am ET",
+  "revalidated_utc": "2026-08-07T14:25:42+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-07",
@@ -8131,7 +8131,7 @@
       "why": "The always-on background monitor that flags anything needing a decision",
       "priority": 1,
       "seat": "qa",
-      "status": "ready - FOUND BY TESTING THE DETECTOR AGAINST A KNOWN POSITIVE, 2026-08-07T15:34Z coord--visible. I had a confirmed unwired producer from earlier today, so rather than hand-triage the detector's list I checked whether it catches the one instance I already knew about. IT DOES NOT. scripts/build_homerecenter_board.py writes the margin model the LIVE PUBLIC BOARD serves, it appears in ZERO runners, its served build is 44 hours stale, and it is the root cause of a 42-run red monitor streak - and it appears NOWHERE in the checker's output, not in the 26 untriaged, not in the 30 capability-named, nowhere. THE MECHANISM, measured: it is referenced by exactly two files, scripts/hca_autofirm_guard.py and scripts/homerecenter_reconcile_v1.py, and the checker counts those references as CALLERS. Both are themselves in zero runners. One of them, homerecenter_reconcile_v1.py, is ITSELF on the checker's own unwired list at line 53, so the detector is simultaneously reporting a script as unreachable AND accepting that same script as proof that something else IS reachable. The other is not flagged at all. THE GENERAL SHAPE: reachability is evaluated one hop deep and against any mention, rather than transitively from the set of things that actually execute - the scheduled tasks, the dispatch job table, the nightly stage list. A dark cluster vouches for itself and the whole cluster disappears from the report. THE FIX IS A GRAPH, NOT A GREP: root the search at the real runners and mark reachable only what is transitively reached; anything else is unwired no matter how many siblings name it. UNTIL THEN THE LIST UNDERSTATES ITSELF and its 38 untriaged is a floor rather than a count, which is why this outranks working through that list. This is the same class as a check that reports healthy while the thing is wrong, and here it hid the most consequential instance on the box.",
+      "status": "ready - FOUND BY TESTING THE DETECTOR AGAINST A KNOWN POSITIVE, 2026-08-07T15:34Z coord--visible. I had a confirmed unwired producer from earlier today, so rather than hand-triage the detector's list I checked whether it catches the one instance I already knew about. IT DOES NOT. scripts/build_homerecenter_board.py writes the margin model the LIVE PUBLIC BOARD serves, it appears in ZERO runners, its served build is 44 hours stale, and it is the root cause of a 42-run red monitor streak - and it appears NOWHERE in the checker's output, not in the 26 untriaged, not in the 30 capability-named, nowhere. THE MECHANISM, measured: it is referenced by exactly two files, scripts/hca_autofirm_guard.py and scripts/homerecenter_reconcile_v1.py, and the checker counts those references as CALLERS. Both are themselves in zero runners. One of them, homerecenter_reconcile_v1.py, is ITSELF on the checker's own unwired list at line 53, so the detector is simultaneously reporting a script as unreachable AND accepting that same script as proof that something else IS reachable. The other is not flagged at all. THE GENERAL SHAPE: reachability is evaluated one hop deep and against any mention, rather than transitively from the set of things that actually execute - the scheduled tasks, the dispatch job table, the nightly stage list. A dark cluster vouches for itself and the whole cluster disappears from the report. THE FIX IS A GRAPH, NOT A GREP: root the search at the real runners and mark reachable only what is transitively reached; anything else is unwired no matter how many siblings name it. UNTIL THEN THE LIST UNDERSTATES ITSELF and its 38 untriaged is a floor rather than a count, which is why this outranks working through that list. This is the same class as a check that reports healthy while the thing is wrong, and here it hid the most consequential instance on the box. ||| THE TOOL INDICTS ITSELF, AND THE CORRECT PRINCIPLE IS ALREADY WRITTEN IN THIS SAME FILE, 15:41Z. Ran its own probe: --callers-of scripts/build_homerecenter_board.py answers '1 non-test caller: scripts/homerecenter_reconcile_v1.py (string literal)' - one caller, a string literal, in a file the same tool lists as unwired. PRECEDENT, and it is the decisive part: at line 216 this module records A REGISTRY ROW IS NOT A CALL SITE, measured 2026-07-30, where a phantom string-literal caller kept TEN dive generators that were on NO schedule out of the report for THIRTEEN DAYS. Its stated correction is exactly the rule this case needs - declaration plus a runner means the RUNNER is the caller, declaration with NO runner is not a caller at all. That principle was applied to registry values and never generalised, so the identical defect returned one level further out. THE FIX IS THEREFORE NOT NEW DESIGN, it is extending a rule this file already argues for: resolve a string-literal caller transitively and iterate to a fixpoint, so a mention inside an unreachable file stops conferring reachability. ACCEPTANCE ORACLE IS FREE: build_homerecenter_board.py must appear in the report after the change, and the 38 untriaged should rise rather than fall.",
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
@@ -18219,9 +18219,9 @@
     "target": 40,
     "count": 378,
     "ok": true,
-    "label": "378 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 10m ago.)",
+    "label": "378 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 20m ago.)",
     "as_of_utc": "2026-08-07T14:06:08Z",
-    "age_secs": 613,
+    "age_secs": 1205,
     "stale": false
    },
    "source": "dispatch queue",
@@ -18774,67 +18774,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-07T14:15:11Z",
-  "age_s": 47,
-  "cycles": 396,
+  "last_poll_utc": "2026-08-07T14:25:41Z",
+  "age_s": 8,
+  "cycles": 404,
   "known": true,
-  "label": "scout: alive, last poll 47s ago",
+  "label": "scout: alive, last poll 8s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "10:12am",
-   "text": "slate-refresh: slate ok (today populated",
-   "detail": "slate-refresh: slate ok (today populated)"
+   "time": "10:24am",
+   "text": "inbox-unread: RED DEFECT - 1 filed directive(s) unread, oldest DIRECTOR DIRECTIVE P0 process changes made MECHANICAL.md (187s) - inbox unread defect.json + ledger written",
+   "detail": "inbox-unread: RED DEFECT - 1 filed directive(s) unread, oldest DIRECTOR_DIRECTIVE__P0_process_changes_made_MECHANICAL.md (187s) - inbox_unre"
   },
   {
-   "time": "10:12am",
-   "text": "poll #394 · nothing new",
-   "detail": "poll cycle=394 ok directives_new=0"
-  },
-  {
-   "time": "10:12am",
+   "time": "10:24am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   },
   {
-   "time": "10:13am",
-   "text": "poll #395 · nothing new",
-   "detail": "poll cycle=395 ok directives_new=0"
+   "time": "10:25am",
+   "text": "divergence alarm: clean (build code matches the shared branch",
+   "detail": "divergence_alarm: clean (build code matches the shared branch)"
   },
   {
-   "time": "10:14am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
-  },
-  {
-   "time": "10:14am",
+   "time": "10:25am",
    "text": "publish-health: clean (public board is fresh",
    "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "10:14am",
-   "text": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
-   "detail": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing "
+   "time": "10:25am",
+   "text": "chain-health: clean (all four legs healthy",
+   "detail": "chain-health: clean (all four legs healthy)"
   },
   {
-   "time": "10:15am",
-   "text": "poll #396 · nothing new",
-   "detail": "poll cycle=396 ok directives_new=0"
+   "time": "10:25am",
+   "text": "slate-refresh: slate ok (today populated",
+   "detail": "slate-refresh: slate ok (today populated)"
   },
   {
-   "time": "10:15am",
+   "time": "10:25am",
+   "text": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 309s newer than live (repo 2026-08-07T14:21:00+00:00 vs live 2026-08-07T14:15:51+00:00) -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 309s newer than live (repo 2026-08-07T14:21:00+00:00 vs live 2026-08-07T14:15:51+00:00"
+  },
+  {
+   "time": "10:25am",
+   "text": "FORCE-RESTART SKIPPED: session pid 12808 heartbeat stale 312s but the process is CPU-ACTIVE (BUSY, not hung) - not killing [defect-1b/3]",
+   "detail": "FORCE-RESTART SKIPPED: session_pid 12808 heartbeat stale 312s but the process is CPU-ACTIVE (BUSY, not hung) - not killing [defect-1b/3]"
+  },
+  {
+   "time": "10:25am",
+   "text": "poll #404 · nothing new",
+   "detail": "poll cycle=404 ok directives_new=0"
+  },
+  {
+   "time": "10:25am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
-  },
-  {
-   "time": "10:15am",
-   "text": "board-selfpolice: clean (live board matches repo truth",
-   "detail": "board-selfpolice: clean (live board matches repo truth)"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-07T14:15:26.125206+00:00",
+  "as_of": "2026-08-07T14:25:41Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -18843,40 +18843,40 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "47s",
-    "state_text": "on · seen 47s ago"
+    "age_label": "8s",
+    "state_text": "on · seen 8s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "32s",
-    "state_text": "on · seen 32s ago"
+    "age_label": "40s",
+    "state_text": "on · seen 40s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "1m",
-    "state_text": "on · seen 1m ago"
+    "age_label": "48s",
+    "state_text": "on · seen 48s ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "35s",
-    "state_text": "on · seen 35s ago"
+    "age_label": "12s",
+    "state_text": "on · seen 12s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "48s",
+    "state_text": "on · seen 48s ago"
    }
   ],
   "width": {
@@ -19085,26 +19085,26 @@
  },
  "coordinator_heartbeat": {
   "known": true,
-  "alive": true,
-  "last_heartbeat_utc": "2026-08-07T14:15:50Z",
-  "session_age_secs": 18286,
-  "last_progress_age_secs": 8,
+  "alive": false,
+  "last_heartbeat_utc": "2026-08-07T14:20:26Z",
+  "session_age_secs": 18877,
+  "last_progress_age_secs": 323,
   "last_spawn_attempt": "2026-08-07T09:38:41Z",
-  "blocked_reason": "",
-  "state": "ALIVE"
+  "blocked_reason": "no coordinator seated and nothing is holding a start — a start is due now",
+  "state": "DEAD"
  },
  "pipe_health": {
-  "directives_pending": 0,
+  "directives_pending": 1,
   "last_processed_clock": "10:01am",
   "last_processed_iso": "2026-08-07T14:01:59Z",
   "last_processed_known": true,
   "last_processed_display": "10:01am",
   "last_processed_source": "directive_ledger.done",
-  "newest_directive_clock": "",
-  "newest_directive_iso": null,
+  "newest_directive_clock": "10:21am",
+  "newest_directive_iso": "2026-08-07T14:21:21Z",
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-08-07T14:01:59Z",
+  "as_of": "2026-08-07T14:21:21Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -19118,7 +19118,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 2 work lanes have been running for 1312 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 2 work lanes have been running for 1322 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 2
  },
@@ -19127,25 +19127,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T08:14:24Z",
    "stale": true,
-   "revalidated": "2026-08-07T14:15:51+00:00",
+   "revalidated": "2026-08-07T14:25:42+00:00",
    "stale_reason": "These readings may be out of date — last updated 6h ago.",
    "age_label": "6h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-07T14:15:51+00:00",
+   "as_of": "2026-08-07T14:25:42+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T14:15:51+00:00",
+   "revalidated": "2026-08-07T14:25:42+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T14:15:51+00:00",
+   "as_of": "2026-08-07T14:25:42+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T14:15:51+00:00",
+   "revalidated": "2026-08-07T14:25:42+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -19154,66 +19154,66 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T14:15:51+00:00",
+   "revalidated": "2026-08-07T14:25:42+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-07T14:14:03Z",
+   "as_of": "2026-08-07T14:16:45Z",
    "stale": false,
-   "revalidated": "2026-08-07T14:15:51+00:00",
+   "revalidated": "2026-08-07T14:25:42+00:00",
    "stale_reason": "",
-   "age_label": "1m",
+   "age_label": "8m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T14:15:51+00:00",
+   "revalidated": "2026-08-07T14:25:42+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-08-07T14:01:59Z",
+   "as_of": "2026-08-07T14:21:21Z",
    "stale": false,
-   "revalidated": "2026-08-07T14:15:51+00:00",
+   "revalidated": "2026-08-07T14:25:42+00:00",
    "stale_reason": "",
-   "age_label": "13m",
+   "age_label": "4m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-07T06:20:00-04:00",
    "stale": false,
-   "revalidated": "2026-08-07T14:15:51+00:00",
+   "revalidated": "2026-08-07T14:25:42+00:00",
    "stale_reason": "",
-   "age_label": "3h",
+   "age_label": "4h",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T14:10:38+00:00",
+   "as_of": "2026-08-07T14:21:00+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T14:15:51+00:00",
+   "revalidated": "2026-08-07T14:25:42+00:00",
    "stale_reason": "",
-   "age_label": "5m",
+   "age_label": "4m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-07T14:15:26.125206+00:00",
+   "as_of": "2026-08-07T14:25:41Z",
    "stale": false,
-   "revalidated": "2026-08-07T14:15:51+00:00",
+   "revalidated": "2026-08-07T14:25:42+00:00",
    "stale_reason": "",
-   "age_label": "32s",
+   "age_label": "8s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 7, 10:15am ET"
+ "generated_et": "Aug 7, 10:25am ET"
 }
