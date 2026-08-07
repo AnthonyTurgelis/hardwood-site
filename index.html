@@ -55,6 +55,14 @@ section{padding:16px 0}
 .legend h2{font:700 20px/1 "Barlow Condensed";text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
 .legend p{color:var(--chalk-dim);font-size:14px;margin-top:6px}
 .legend b{color:var(--chalk)}
+#best{padding:14px 0 2px}
+#best .bn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(176px,1fr));gap:9px;margin-top:10px}
+.bn{background:var(--plank);border:1px solid var(--line);border-radius:8px;padding:10px 11px 9px}
+.bn .v{font:700 28px/1 "Barlow Condensed";font-variant-numeric:tabular-nums;color:var(--chalk)}
+.bn .v small{font:600 13px/1 Barlow;color:var(--chalk-dim);margin-left:4px}
+.bn .v.pending{font:600 15px/1.2 Barlow;color:var(--chalk-dim)}
+.bn .l{color:var(--chalk);font-size:12.5px;line-height:1.32;margin-top:7px}
+.bn .n{color:var(--chalk-dim);font-size:11px;font-variant-numeric:tabular-nums;margin-top:4px}
 .acc{border-top:1px solid var(--line)}
 .acc a{color:var(--maple);font-weight:600}
 footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--chalk-dim);font-size:13px}
@@ -78,6 +86,50 @@ footer .util a:hover{color:var(--chalk)}
   </nav>
 </header>
 <main class="wrap">
+  <section id="best" hidden>
+    <div class="eyebrow">Best numbers</div>
+    <div class="bn-grid" id="bn-grid"></div>
+  </section>
+  <script>
+/* BEST NUMBERS hero. EVERY figure here is read from ./accuracy.json AT RENDER TIME - there is not a
+   single literal number in this block, by order. A hand-typed accuracy figure goes stale the next
+   morning the grader runs and then the front door is lying; that is the defect class this block
+   exists to avoid. Same feed accuracy.html reads, so the two surfaces cannot disagree.
+   NULL RULE: a surface with no graded sample carries value null at n 0 - the combined-total row is
+   null today. A null renders as "not yet graded", never as a dash, a zero, or a blank tile: an
+   absent number stated plainly beats a number-shaped hole. Applies to any future null, not just
+   this one. The sample size rides with every figure because n is part of the claim.
+   Fail-soft: no feed, no surfaces, or a bad parse leaves the section hidden rather than empty. */
+(function(){
+  function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n;}
+  fetch('./accuracy.json').then(function(r){return r.json()}).then(function(a){
+    var rows=(a&&a.surfaces)||[];
+    if(!rows.length) return;
+    var g=document.getElementById('bn-grid');
+    rows.forEach(function(m){
+      var card=el('div','bn'), v;
+      if(m.value==null){
+        v=el('div','v pending','not yet graded');
+      }else{
+        v=el('div','v', m.unit==='%' ? (m.value+'%') : String(m.value));
+        if(m.unit && m.unit!=='%') v.appendChild(el('small',null,m.unit));
+      }
+      card.appendChild(v);
+      card.appendChild(el('div','l', m.surface||''));
+      /* the n line belongs to a CLAIM: a null row makes none, so it gets no sample line either -
+         "n = 0 - lower is better" under "not yet graded" is clutter dressed as evidence. */
+      if(m.value!=null){
+        var bits=[];
+        if(m.n!=null) bits.push('n = '+m.n);
+        if(m.direction) bits.push(m.direction);
+        if(bits.length) card.appendChild(el('div','n', bits.join(' · ')));
+      }
+      g.appendChild(card);
+    });
+    document.getElementById('best').hidden=false;
+  }).catch(function(){});
+})();
+  </script>
   <section id="slate">
     <div class="eyebrow" id="today-date">Today</div>
     <h1>Today's slate</h1>

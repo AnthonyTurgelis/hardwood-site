@@ -1,15 +1,15 @@
 {
- "generated_utc": "2026-08-07T15:53:19+00:00",
+ "generated_utc": "2026-08-07T16:07:07+00:00",
  "freshness": {
-  "baked_utc": "2026-08-07T15:53:19+00:00",
-  "baked_et": "Aug 7, 11:53am ET",
-  "revalidated_utc": "2026-08-07T15:53:19+00:00",
+  "baked_utc": "2026-08-07T16:07:07+00:00",
+  "baked_et": "Aug 7, 12:07pm ET",
+  "revalidated_utc": "2026-08-07T16:07:07+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-07",
  "day_summary": "Atlanta Dream by 2.0 over Washington Mystics is our strongest pick of tonight's 3 games - a 57% chance to win. Full game reports are ready.",
  "counts": {
-  "running": 0,
+  "running": 2,
   "done_today": 24,
   "maintenance": 0,
   "needs_anthony": 0,
@@ -943,7 +943,28 @@
    "note": ""
   },
   "running_now": [],
-  "running_live": [],
+  "running_live": [
+   {
+    "name": "Producer tier for the unwired check",
+    "one_liner": "Running now.",
+    "chip": "IN-FLIGHT",
+    "team": "",
+    "kind": "lane",
+    "time": "",
+    "at_iso": "2026-08-07T12:04:05-04:00",
+    "start_unknown": true
+   },
+   {
+    "name": "One chart best numbers hero",
+    "one_liner": "Running now.",
+    "chip": "IN-FLIGHT",
+    "team": "Site",
+    "kind": "lane",
+    "time": "",
+    "at_iso": "2026-08-07T12:04:05-04:00",
+    "start_unknown": true
+   }
+  ],
   "running_plain": [],
   "needs_anthony": [],
   "done_today": [
@@ -1294,7 +1315,7 @@
      "why": "The always-on background monitor that flags anything needing a decision",
      "priority": 0,
      "seat": "pm",
-     "status": "ready - ROOT-CAUSED WITH NUMBERS ON THE DIRECTOR'S TOP PROCESS ITEM, 2026-08-07T16:58Z coord--visible. THE MEASUREMENT: ops/scout/state/delivered.json carries a top-level any_md map with 2,251 entries and a baseline of 2026-08-05T21:45:30Z, and 104 of the 310 files now in ops/scout/inbox/processed are recorded in it. THE MECHANISM: the scout delivers any markdown it finds in the mirror, our deltas are mirrored OUTWARD to that same mirror, and the rule has NO ORIGIN FILTER - so a document we publish comes back to us as though it arrived from outside. It is a round trip, not a duplicate writer, which is why searching for a rogue copier would have found nothing. THE COST, measured this morning: the inbox stood at 48 items of which 46 were echoes, 96 percent noise, and BOTH real items were buried under it - the Director's v8-to-v9 handoff and a finished P1 drop-in that had been sitting unread. It also trains exactly the skim that drops the one real alarm, which is a failure this session has already recorded once. THE FIX PREDICATE IS ALREADY PROVEN: refuse delivery of any .md whose basename already exists under docs/deltas, docs/reports or docs/content/directives. That exact test separated 46 echoes from 2 real items with zero errors when I triaged the inbox. Stamping outbound-mirrored files and excluding them by identity would be stronger than matching on name, and should be preferred if the mirror write path can carry a marker. NOT PATCHED IN THAT TURN, deliberately: the scout is an always-on process, so the change needs its own stop-start and a new-pid verify to count as done, and half-fixing a running daemon is worse than filing the mechanism precisely.",
+     "status": "ready - ROOT-CAUSED WITH NUMBERS ON THE DIRECTOR'S TOP PROCESS ITEM, 2026-08-07T16:58Z coord--visible. THE MEASUREMENT: ops/scout/state/delivered.json carries a top-level any_md map with 2,251 entries and a baseline of 2026-08-05T21:45:30Z, and 104 of the 310 files now in ops/scout/inbox/processed are recorded in it. THE MECHANISM: the scout delivers any markdown it finds in the mirror, our deltas are mirrored OUTWARD to that same mirror, and the rule has NO ORIGIN FILTER - so a document we publish comes back to us as though it arrived from outside. It is a round trip, not a duplicate writer, which is why searching for a rogue copier would have found nothing. THE COST, measured this morning: the inbox stood at 48 items of which 46 were echoes, 96 percent noise, and BOTH real items were buried under it - the Director's v8-to-v9 handoff and a finished P1 drop-in that had been sitting unread. It also trains exactly the skim that drops the one real alarm, which is a failure this session has already recorded once. THE FIX PREDICATE IS ALREADY PROVEN: refuse delivery of any .md whose basename already exists under docs/deltas, docs/reports or docs/content/directives. That exact test separated 46 echoes from 2 real items with zero errors when I triaged the inbox. Stamping outbound-mirrored files and excluding them by identity would be stronger than matching on name, and should be preferred if the mirror write path can carry a marker. NOT PATCHED IN THAT TURN, deliberately: the scout is an always-on process, so the change needs its own stop-start and a new-pid verify to count as done, and half-fixing a running daemon is worse than filing the mechanism precisely. ||| RESTART PROVEN, FILTER NOT YET LOG-PROVEN - stating both precisely, 2026-08-07T16:07Z coord--visible. THE RESTART IS VERIFIED, and by a route that works on this box where the usual one does not: the scout's POLL CYCLE COUNTER RESET FROM 429 TO 3. Both lanes asked for a new-pid verify, and pid reads are BLIND from this shell - 11 of 12 python processes return an unreadable CommandLine because they run at higher privilege - so the cycle counter is the available proof that a new instance is running the new code, and it is a positive observation rather than an absence. WHAT IS NOT YET PROVEN: the filter has logged ZERO skips. The inbox is EMPTY and has stayed empty across several deltas I committed after the restart, where before it the round trip took about two minutes - Lane C's delta came back at 15:07:34Z. That is consistent with the filter working and is NOT proof of it: a mirror scan may simply not have run against those files yet. The filter logs only when it skips something, so silence is ambiguous by construction. LIVE-PROVEN requires one MIRROR ECHO SKIP line naming a file we authored. Until that appears this stays committed-and-loaded rather than verified, which is the same distinction that kept me from claiming the standings fix before I fetched the page.",
      "state": "ready now",
      "pm_authored": false,
      "impact": "",
@@ -1762,7 +1783,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 38,
+      "rank": 37,
       "actions": [
        {
         "verb": "top",
@@ -1807,7 +1828,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 45,
+      "rank": 44,
       "actions": [
        {
         "verb": "top",
@@ -1852,7 +1873,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 51,
+      "rank": 50,
       "actions": [
        {
         "verb": "top",
@@ -1897,7 +1918,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 55,
+      "rank": 54,
       "actions": [
        {
         "verb": "top",
@@ -1942,7 +1963,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 58,
+      "rank": 57,
       "actions": [
        {
         "verb": "top",
@@ -1987,7 +2008,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 62,
+      "rank": 61,
       "actions": [
        {
         "verb": "top",
@@ -2032,7 +2053,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 66,
+      "rank": 65,
       "actions": [
        {
         "verb": "top",
@@ -2077,7 +2098,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 74,
+      "rank": 73,
       "actions": [
        {
         "verb": "top",
@@ -2122,7 +2143,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 76,
+      "rank": 75,
       "actions": [
        {
         "verb": "top",
@@ -2167,7 +2188,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 78,
+      "rank": 77,
       "actions": [
        {
         "verb": "top",
@@ -2212,7 +2233,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 91,
+      "rank": 90,
       "actions": [
        {
         "verb": "top",
@@ -2257,7 +2278,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 92,
+      "rank": 91,
       "actions": [
        {
         "verb": "top",
@@ -2302,7 +2323,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 93,
+      "rank": 92,
       "actions": [
        {
         "verb": "top",
@@ -2347,7 +2368,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 94,
+      "rank": 93,
       "actions": [
        {
         "verb": "top",
@@ -2392,7 +2413,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 96,
+      "rank": 95,
       "actions": [
        {
         "verb": "top",
@@ -2438,7 +2459,7 @@
       "ceo_ask": true,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 99,
+      "rank": 98,
       "actions": [
        {
         "verb": "top",
@@ -2483,7 +2504,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 100,
+      "rank": 99,
       "actions": [
        {
         "verb": "top",
@@ -2528,7 +2549,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 101,
+      "rank": 100,
       "actions": [
        {
         "verb": "top",
@@ -2573,7 +2594,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 103,
+      "rank": 102,
       "actions": [
        {
         "verb": "top",
@@ -2618,7 +2639,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 105,
+      "rank": 104,
       "actions": [
        {
         "verb": "top",
@@ -2663,7 +2684,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 107,
+      "rank": 106,
       "actions": [
        {
         "verb": "top",
@@ -2708,7 +2729,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 108,
+      "rank": 107,
       "actions": [
        {
         "verb": "top",
@@ -2753,7 +2774,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 120,
+      "rank": 119,
       "actions": [
        {
         "verb": "top",
@@ -2798,7 +2819,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 122,
+      "rank": 121,
       "actions": [
        {
         "verb": "top",
@@ -2843,7 +2864,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": true,
-      "rank": 127,
+      "rank": 126,
       "actions": [
        {
         "verb": "top",
@@ -2888,7 +2909,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 131,
+      "rank": 130,
       "actions": [
        {
         "verb": "top",
@@ -2934,7 +2955,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Drop-in replacing p home = Phi(margin 12.65) with a two-parameter map fitted .",
-      "rank": 134,
+      "rank": 133,
       "actions": [
        {
         "verb": "top",
@@ -2979,7 +3000,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 137,
+      "rank": 136,
       "actions": [
        {
         "verb": "top",
@@ -3024,7 +3045,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 138,
+      "rank": 137,
       "actions": [
        {
         "verb": "top",
@@ -3069,7 +3090,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 147,
+      "rank": 146,
       "actions": [
        {
         "verb": "top",
@@ -3114,7 +3135,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 157,
+      "rank": 156,
       "actions": [
        {
         "verb": "top",
@@ -3159,7 +3180,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 158,
+      "rank": 157,
       "actions": [
        {
         "verb": "top",
@@ -3204,7 +3225,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 162,
+      "rank": 161,
       "actions": [
        {
         "verb": "top",
@@ -3249,7 +3270,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 169,
+      "rank": 168,
       "actions": [
        {
         "verb": "top",
@@ -3294,7 +3315,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 170,
+      "rank": 169,
       "actions": [
        {
         "verb": "top",
@@ -3339,7 +3360,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 172,
+      "rank": 171,
       "actions": [
        {
         "verb": "top",
@@ -3384,7 +3405,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 179,
+      "rank": 178,
       "actions": [
        {
         "verb": "top",
@@ -3429,7 +3450,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 186,
+      "rank": 185,
       "actions": [
        {
         "verb": "top",
@@ -3474,7 +3495,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 192,
+      "rank": 191,
       "actions": [
        {
         "verb": "top",
@@ -3519,7 +3540,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 195,
+      "rank": 194,
       "actions": [
        {
         "verb": "top",
@@ -3564,7 +3585,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 203,
+      "rank": 202,
       "actions": [
        {
         "verb": "top",
@@ -3609,7 +3630,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 205,
+      "rank": 204,
       "actions": [
        {
         "verb": "top",
@@ -3654,7 +3675,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 208,
+      "rank": 207,
       "actions": [
        {
         "verb": "top",
@@ -3699,7 +3720,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 220,
+      "rank": 219,
       "actions": [
        {
         "verb": "top",
@@ -6034,7 +6055,7 @@
       "why": "Ops admission is a pure counting semaphore with no per-label exclusion so two build site processes can each take a slot race on the single publish clone's git index hang in push and hold both until ...",
       "priority": 0,
       "seat": "pm",
-      "status": "ready - ONE DEFECT BEHIND THREE ROWS I FILED SEPARATELY TODAY, caught live at 2026-08-07T15:42Z coord--visible. OBSERVED, not theorised: both tokens held by the SAME job - heavy.0.lock pid 11568 build_site acquired 15:31:25Z, heavy.1.lock pid 4064 build_site acquired 15:34:45Z - while the bake log recorded a THIRD, pid 9096, dead mid-flight in phase push. Board lag 507s. AND ONLY ONE LIGHT LANE WAS RUNNING, which finally kills the load explanation for good. THE MECHANISM IN THE CODE: admit() runs for i in range(n) and takes the first free slot, with no check that another slot already holds the same label. There is not one occurrence of singleton, duplicate or dedup in the file. So build_site has no mutual exclusion against ITSELF, while every instance writes the SAME clone at C:/Users/antho/hardwood-site - one git index, several writers. THIS UNIFIES THREE OPEN ROWS: the-publish-clone-has-concurrent-writers-and-no-lock-discipline is the collision; the-admission-gate-has-no-timeout-for-a-hung-slot-holder is how long the wreckage sits, since the TTL is 1800s against a 179s job; and width-taper-does-not-protect-the-publisher-from-lanes is the symptom I twice misattributed to load. One cause, three symptoms, and the load reading was a coincidence of timing throughout. THE FIX: build_site must be admitted AT MOST ONCE - a per-label mutex rather than an anonymous counting semaphore. The label is already threaded through admit() and exported to children via the HELD env var, so the concept exists and is simply not used for exclusion. That is a smaller change than any of the three symptom rows implies.",
+      "status": "ready - ONE DEFECT BEHIND THREE ROWS I FILED SEPARATELY TODAY, caught live at 2026-08-07T15:42Z coord--visible. OBSERVED, not theorised: both tokens held by the SAME job - heavy.0.lock pid 11568 build_site acquired 15:31:25Z, heavy.1.lock pid 4064 build_site acquired 15:34:45Z - while the bake log recorded a THIRD, pid 9096, dead mid-flight in phase push. Board lag 507s. AND ONLY ONE LIGHT LANE WAS RUNNING, which finally kills the load explanation for good. THE MECHANISM IN THE CODE: admit() runs for i in range(n) and takes the first free slot, with no check that another slot already holds the same label. There is not one occurrence of singleton, duplicate or dedup in the file. So build_site has no mutual exclusion against ITSELF, while every instance writes the SAME clone at C:/Users/antho/hardwood-site - one git index, several writers. THIS UNIFIES THREE OPEN ROWS: the-publish-clone-has-concurrent-writers-and-no-lock-discipline is the collision; the-admission-gate-has-no-timeout-for-a-hung-slot-holder is how long the wreckage sits, since the TTL is 1800s against a 179s job; and width-taper-does-not-protect-the-publisher-from-lanes is the symptom I twice misattributed to load. One cause, three symptoms, and the load reading was a coincidence of timing throughout. THE FIX: build_site must be admitted AT MOST ONCE - a per-label mutex rather than an anonymous counting semaphore. The label is already threaded through admit() and exported to children via the HELD env var, so the concept exists and is simply not used for exclusion. That is a smaller change than any of the three symptom rows implies. ||| done - FIXED AND LIVE-VERIFIED, 2026-08-07T16:00Z coord--visible, commit b1455772. same_label_holder() now refuses a second instance of the same label before it can take a slot, reusing token_is_stale so there is still ONE staleness rule here and a dead or timed-out holder never locks its own job out; an unreadable token fails OPEN toward admitting, matching this module's stated posture. Five tests, and I proved them able to fail in BOTH directions by mutation before trusting green - disabling the mutex reddens the refusal test, ignoring the label reddens the different-label test. There was no existing admission test file; this is the first. IT IS LIVE NOW WITHOUT A RESTART, and that distinction matters: admission_gate is imported per-run by build_site rather than held by a daemon, so the next bake picks it up - unlike the watcher and echo fixes, which are import-time in an always-on process and still owe a new-pid verify. BOARD RECOVERED: live and repo both 15:53:19Z, lag 0s, from 1292s and growing.",
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
@@ -6857,7 +6878,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 40,
+      "rank": 39,
       "actions": [
        {
         "verb": "top",
@@ -6902,7 +6923,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 41,
+      "rank": 40,
       "actions": [
        {
         "verb": "top",
@@ -6947,7 +6968,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 42,
+      "rank": 41,
       "actions": [
        {
         "verb": "top",
@@ -6992,7 +7013,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 44,
+      "rank": 43,
       "actions": [
        {
         "verb": "top",
@@ -7037,7 +7058,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 48,
+      "rank": 47,
       "actions": [
        {
         "verb": "top",
@@ -7082,7 +7103,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 49,
+      "rank": 48,
       "actions": [
        {
         "verb": "top",
@@ -7127,7 +7148,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 50,
+      "rank": 49,
       "actions": [
        {
         "verb": "top",
@@ -7172,7 +7193,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 52,
+      "rank": 51,
       "actions": [
        {
         "verb": "top",
@@ -7217,7 +7238,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 53,
+      "rank": 52,
       "actions": [
        {
         "verb": "top",
@@ -7262,7 +7283,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 59,
+      "rank": 58,
       "actions": [
        {
         "verb": "top",
@@ -7307,7 +7328,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 60,
+      "rank": 59,
       "actions": [
        {
         "verb": "top",
@@ -7352,7 +7373,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 63,
+      "rank": 62,
       "actions": [
        {
         "verb": "top",
@@ -7397,7 +7418,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 65,
+      "rank": 64,
       "actions": [
        {
         "verb": "top",
@@ -7442,7 +7463,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 68,
+      "rank": 67,
       "actions": [
        {
         "verb": "top",
@@ -7487,7 +7508,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 70,
+      "rank": 69,
       "actions": [
        {
         "verb": "top",
@@ -7532,7 +7553,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 71,
+      "rank": 70,
       "actions": [
        {
         "verb": "top",
@@ -7577,7 +7598,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 72,
+      "rank": 71,
       "actions": [
        {
         "verb": "top",
@@ -7622,7 +7643,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 73,
+      "rank": 72,
       "actions": [
        {
         "verb": "top",
@@ -7667,7 +7688,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 75,
+      "rank": 74,
       "actions": [
        {
         "verb": "top",
@@ -7712,7 +7733,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 86,
+      "rank": 85,
       "actions": [
        {
         "verb": "top",
@@ -7757,7 +7778,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 88,
+      "rank": 87,
       "actions": [
        {
         "verb": "top",
@@ -7802,7 +7823,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 89,
+      "rank": 88,
       "actions": [
        {
         "verb": "top",
@@ -7847,7 +7868,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 90,
+      "rank": 89,
       "actions": [
        {
         "verb": "top",
@@ -7892,7 +7913,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 98,
+      "rank": 97,
       "actions": [
        {
         "verb": "top",
@@ -7937,7 +7958,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 104,
+      "rank": 103,
       "actions": [
        {
         "verb": "top",
@@ -7982,7 +8003,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 106,
+      "rank": 105,
       "actions": [
        {
         "verb": "top",
@@ -8027,7 +8048,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 110,
+      "rank": 109,
       "actions": [
        {
         "verb": "top",
@@ -8072,7 +8093,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 111,
+      "rank": 110,
       "actions": [
        {
         "verb": "top",
@@ -8117,7 +8138,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 112,
+      "rank": 111,
       "actions": [
        {
         "verb": "top",
@@ -8162,7 +8183,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 113,
+      "rank": 112,
       "actions": [
        {
         "verb": "top",
@@ -8207,7 +8228,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 117,
+      "rank": 116,
       "actions": [
        {
         "verb": "top",
@@ -8252,7 +8273,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 121,
+      "rank": 120,
       "actions": [
        {
         "verb": "top",
@@ -8297,7 +8318,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 123,
+      "rank": 122,
       "actions": [
        {
         "verb": "top",
@@ -8342,7 +8363,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 125,
+      "rank": 124,
       "actions": [
        {
         "verb": "top",
@@ -8387,7 +8408,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 126,
+      "rank": 125,
       "actions": [
        {
         "verb": "top",
@@ -8432,7 +8453,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 128,
+      "rank": 127,
       "actions": [
        {
         "verb": "top",
@@ -8477,7 +8498,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 129,
+      "rank": 128,
       "actions": [
        {
         "verb": "top",
@@ -8522,7 +8543,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 133,
+      "rank": 132,
       "actions": [
        {
         "verb": "top",
@@ -8567,7 +8588,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 135,
+      "rank": 134,
       "actions": [
        {
         "verb": "top",
@@ -8612,7 +8633,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 136,
+      "rank": 135,
       "actions": [
        {
         "verb": "top",
@@ -8657,7 +8678,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 142,
+      "rank": 141,
       "actions": [
        {
         "verb": "top",
@@ -8702,7 +8723,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 143,
+      "rank": 142,
       "actions": [
        {
         "verb": "top",
@@ -8747,7 +8768,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 144,
+      "rank": 143,
       "actions": [
        {
         "verb": "top",
@@ -8779,7 +8800,7 @@
       "why": "Ops admission reclaims a heavy slot only when its holder's pid is . A process that is alive and permanently blocked keeps the token indefinitely so every later bake is deferred and the live board ...",
       "priority": 1,
       "seat": "pm",
-      "status": "ready - DIAGNOSED ON A LIVE INCIDENT AND RESOLVED BY HAND, 2026-08-07T15:26Z coord--visible. THE INCIDENT: logs/admission/heavy.1.lock held pid 11032, label build_site, acquired 14:55:49Z. That process BAKED SUCCESSFULLY - site/board.json carries exactly that stamp and the publish clone held 243 modified files from the run - then blocked in its PUSH phase and never released the token. Measured ALIVE with ZERO cpu across a 5-second sample and a 27MB working set, for twenty-five minutes, while the live board sat 607 seconds behind and the gap stopped closing. THE BOX WAS NOT BUSY: per-process sampling over 4 seconds totalled about 16 percent - claude 6.3, powershell 4.8, the rest noise - against a perf counter reading 100 percent, and the gate consults NEITHER because it is a counting semaphore rather than a load reading. So the deferral message, the box is busy, was actively misleading: it named load when the cause was a token. THE DEFECT IN ONE LINE: _pid_alive is the only reclaim condition, so DEAD is recoverable and HUNG is not - which makes a hang strictly worse than a crash, the inverse of what anyone would assume. RULED OUT BY MEASUREMENT rather than by reasoning: auth works, GIT_TERMINAL_PROMPT=0 ls-remote returned refs at exit 0; no stale index.lock existed; git status in the clone ran clean. RESOLUTION AND ITS OWN LESSON: Stop-Process on 11032 returned ACCESS IS DENIED because it runs above this shell's privilege - the same reason 11 of 12 python command lines read blank from here, so an empty process query is a blind answer wearing a clean one. I released the token FILE instead, which this account does own, and the publish completed within one cycle: live and repo both 2026-08-07T14:55:49+00:00, LAG 0s. THE FIX: a maximum hold time, after which the slot is reclaimed and the holder NAMED in the log. A heavy job holding a slot for several multiples of its normal runtime is hung by definition, and the current design cannot tell that from healthy work. Full evidence: docs/deltas/width_four_reproduced_the_publisher_starvation_.md addendum 1523Z. ||| I FILED THIS P0 WITH A WRONG PREMISE 15 MINUTES AGO AND AM CORRECTING IT - RERANKED p0 TO p1 AND RESCOPED, 2026-08-07T15:38Z coord--visible. I wrote that the gate has NO timeout for a live-but-hung holder. FALSE. ops/admission_gate.py:211 already breaks on age - if age > ttl: return True - and its own comment calls it THE HUNG-HOLDER KILLER. The mechanism is not missing and I was one step from implementing a duplicate of it, which is the exact defect this repo keeps producing. WHAT IS ACTUALLY WRONG IS THE VALUE, and that is still worth fixing: DEFAULT_TTL_SECS is 1800.0 - THIRTY MINUTES - against a measured normal bake of 179 SECONDS. That is roughly TEN TIMES the job's own runtime, so a hung publisher can freeze the public board for half an hour before the gate reclaims anything. Today's holder had been stuck 25 minutes when I released its token by hand; it would have self-healed at 30. AND THE HISTORIC INCIDENT FITS EXACTLY: the 07-31 holders were measured at 964s and then 1364s, BOTH COMFORTABLY UNDER 1800, which is precisely why nothing reclaimed them and why that row records the board sitting at one stamp for 25 minutes until the CEO was paged. So the correct fix is a TTL proportional to the JOB's own runtime rather than one global half-hour - build_site at 179s does not deserve the same ceiling as a 1,000,000-sim refresh - plus naming the reclaimed holder loudly, which the gate already does at line 312. WHAT STANDS UNCHANGED: the deferral message says the box is busy when the cause is a token, and that wording sent me to load twice today.",
+      "status": "ready - DIAGNOSED ON A LIVE INCIDENT AND RESOLVED BY HAND, 2026-08-07T15:26Z coord--visible. THE INCIDENT: logs/admission/heavy.1.lock held pid 11032, label build_site, acquired 14:55:49Z. That process BAKED SUCCESSFULLY - site/board.json carries exactly that stamp and the publish clone held 243 modified files from the run - then blocked in its PUSH phase and never released the token. Measured ALIVE with ZERO cpu across a 5-second sample and a 27MB working set, for twenty-five minutes, while the live board sat 607 seconds behind and the gap stopped closing. THE BOX WAS NOT BUSY: per-process sampling over 4 seconds totalled about 16 percent - claude 6.3, powershell 4.8, the rest noise - against a perf counter reading 100 percent, and the gate consults NEITHER because it is a counting semaphore rather than a load reading. So the deferral message, the box is busy, was actively misleading: it named load when the cause was a token. THE DEFECT IN ONE LINE: _pid_alive is the only reclaim condition, so DEAD is recoverable and HUNG is not - which makes a hang strictly worse than a crash, the inverse of what anyone would assume. RULED OUT BY MEASUREMENT rather than by reasoning: auth works, GIT_TERMINAL_PROMPT=0 ls-remote returned refs at exit 0; no stale index.lock existed; git status in the clone ran clean. RESOLUTION AND ITS OWN LESSON: Stop-Process on 11032 returned ACCESS IS DENIED because it runs above this shell's privilege - the same reason 11 of 12 python command lines read blank from here, so an empty process query is a blind answer wearing a clean one. I released the token FILE instead, which this account does own, and the publish completed within one cycle: live and repo both 2026-08-07T14:55:49+00:00, LAG 0s. THE FIX: a maximum hold time, after which the slot is reclaimed and the holder NAMED in the log. A heavy job holding a slot for several multiples of its normal runtime is hung by definition, and the current design cannot tell that from healthy work. Full evidence: docs/deltas/width_four_reproduced_the_publisher_starvation_.md addendum 1523Z. ||| I FILED THIS P0 WITH A WRONG PREMISE 15 MINUTES AGO AND AM CORRECTING IT - RERANKED p0 TO p1 AND RESCOPED, 2026-08-07T15:38Z coord--visible. I wrote that the gate has NO timeout for a live-but-hung holder. FALSE. ops/admission_gate.py:211 already breaks on age - if age > ttl: return True - and its own comment calls it THE HUNG-HOLDER KILLER. The mechanism is not missing and I was one step from implementing a duplicate of it, which is the exact defect this repo keeps producing. WHAT IS ACTUALLY WRONG IS THE VALUE, and that is still worth fixing: DEFAULT_TTL_SECS is 1800.0 - THIRTY MINUTES - against a measured normal bake of 179 SECONDS. That is roughly TEN TIMES the job's own runtime, so a hung publisher can freeze the public board for half an hour before the gate reclaims anything. Today's holder had been stuck 25 minutes when I released its token by hand; it would have self-healed at 30. AND THE HISTORIC INCIDENT FITS EXACTLY: the 07-31 holders were measured at 964s and then 1364s, BOTH COMFORTABLY UNDER 1800, which is precisely why nothing reclaimed them and why that row records the board sitting at one stamp for 25 minutes until the CEO was paged. So the correct fix is a TTL proportional to the JOB's own runtime rather than one global half-hour - build_site at 179s does not deserve the same ceiling as a 1,000,000-sim refresh - plus naming the reclaimed holder loudly, which the gate already does at line 312. WHAT STANDS UNCHANGED: the deferral message says the box is busy when the cause is a token, and that wording sent me to load twice today. ||| MUCH LESS URGENT NOW THE CAUSE IS FIXED, 16:00Z. The 1800s TTL against a 179s bake is still ten times the job's runtime and still worth tightening, but its consequence has changed: it used to be how long a self-inflicted duplicate held the box, and duplicates are now refused at the door by commit b1455772. What remains is a genuine single hang, which is rarer and no longer self-amplifying. Keeping it open at p1 because the Director asked for a heartbeat plus a hard ceiling and that is still the right shape; it simply is not the fire any more.",
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
@@ -8792,7 +8813,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 145,
+      "rank": 144,
       "actions": [
        {
         "verb": "top",
@@ -8837,7 +8858,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 146,
+      "rank": 145,
       "actions": [
        {
         "verb": "top",
@@ -8882,7 +8903,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 148,
+      "rank": 147,
       "actions": [
        {
         "verb": "top",
@@ -8927,7 +8948,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 150,
+      "rank": 149,
       "actions": [
        {
         "verb": "top",
@@ -8972,7 +8993,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 154,
+      "rank": 153,
       "actions": [
        {
         "verb": "top",
@@ -9017,7 +9038,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 155,
+      "rank": 154,
       "actions": [
        {
         "verb": "top",
@@ -9062,7 +9083,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 156,
+      "rank": 155,
       "actions": [
        {
         "verb": "top",
@@ -9107,7 +9128,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 164,
+      "rank": 163,
       "actions": [
        {
         "verb": "top",
@@ -9152,7 +9173,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 165,
+      "rank": 164,
       "actions": [
        {
         "verb": "top",
@@ -9197,7 +9218,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 168,
+      "rank": 167,
       "actions": [
        {
         "verb": "top",
@@ -9242,7 +9263,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 171,
+      "rank": 170,
       "actions": [
        {
         "verb": "top",
@@ -9287,7 +9308,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 173,
+      "rank": 172,
       "actions": [
        {
         "verb": "top",
@@ -9332,7 +9353,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 175,
+      "rank": 174,
       "actions": [
        {
         "verb": "top",
@@ -9377,7 +9398,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 176,
+      "rank": 175,
       "actions": [
        {
         "verb": "top",
@@ -9422,7 +9443,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 178,
+      "rank": 177,
       "actions": [
        {
         "verb": "top",
@@ -9467,7 +9488,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 180,
+      "rank": 179,
       "actions": [
        {
         "verb": "top",
@@ -9512,7 +9533,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 184,
+      "rank": 183,
       "actions": [
        {
         "verb": "top",
@@ -9557,7 +9578,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 187,
+      "rank": 186,
       "actions": [
        {
         "verb": "top",
@@ -9602,7 +9623,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 188,
+      "rank": 187,
       "actions": [
        {
         "verb": "top",
@@ -9647,7 +9668,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 190,
+      "rank": 189,
       "actions": [
        {
         "verb": "top",
@@ -9692,7 +9713,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 191,
+      "rank": 190,
       "actions": [
        {
         "verb": "top",
@@ -9737,7 +9758,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 193,
+      "rank": 192,
       "actions": [
        {
         "verb": "top",
@@ -9782,7 +9803,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 199,
+      "rank": 198,
       "actions": [
        {
         "verb": "top",
@@ -9827,7 +9848,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 200,
+      "rank": 199,
       "actions": [
        {
         "verb": "top",
@@ -9872,7 +9893,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 206,
+      "rank": 205,
       "actions": [
        {
         "verb": "top",
@@ -9917,7 +9938,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 207,
+      "rank": 206,
       "actions": [
        {
         "verb": "top",
@@ -9962,7 +9983,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 209,
+      "rank": 208,
       "actions": [
        {
         "verb": "top",
@@ -10007,7 +10028,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 210,
+      "rank": 209,
       "actions": [
        {
         "verb": "top",
@@ -10052,7 +10073,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 211,
+      "rank": 210,
       "actions": [
        {
         "verb": "top",
@@ -10097,7 +10118,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 212,
+      "rank": 211,
       "actions": [
        {
         "verb": "top",
@@ -10142,7 +10163,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 214,
+      "rank": 213,
       "actions": [
        {
         "verb": "top",
@@ -10187,7 +10208,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 215,
+      "rank": 214,
       "actions": [
        {
         "verb": "top",
@@ -10232,7 +10253,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 216,
+      "rank": 215,
       "actions": [
        {
         "verb": "top",
@@ -10277,7 +10298,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 217,
+      "rank": 216,
       "actions": [
        {
         "verb": "top",
@@ -10322,7 +10343,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 218,
+      "rank": 217,
       "actions": [
        {
         "verb": "top",
@@ -10367,7 +10388,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 219,
+      "rank": 218,
       "actions": [
        {
         "verb": "top",
@@ -11119,7 +11140,7 @@
       "why": "Measured across three consecutive failures. The bake logs it plainly by the heavy-job admission gate the box is busy no bake this tick. Two earlier passes had already died mid-flight in their push ...",
       "priority": 2,
       "seat": "infra",
-      "status": "READY ||| RE-MEASURED AND THE SYMPTOM HAS NOT RECURRED IN SIX DAYS, 16:31Z. The bake log holds SIX deferral lines in total, three events, all on 2026-07-31 and 2026-08-01, and ZERO on 2026-08-07 - including through my own 1,000,000-sim cell_v7_refresh at 13:41Z, which is the very job that held a heavy slot during the 08-01 deferral. The load axis reads 40 percent today. SHARPER DIAGNOSIS THAN THIS ROW CARRIES, from the three events: bluesky_extract held a heavy slot in ALL THREE, so the trigger is the SECOND heavy job rather than the box being busy in general; and in two of them the other slot was held by build_site ITSELF for 964 and then 1364 seconds, meaning the publisher blocked its own next tick. Kept open because the structural gap is unfixed - the admission gate and the width governor still do not know about each other - but reranked to p2, because a symptom last seen six days ago should not outrank the live publish race this re-measurement uncovered, filed as the-publish-clone-has-concurrent-writers-and-no-lock-discipline. ||| LIVE EVIDENCE, RERANKED p2 BACK TO p1, 15:18Z. I downgraded this to p2 at 16:31Z on the measurement that its symptom had not recurred in six days. It recurred within FIFTEEN MINUTES of width 4. Measured: cpu 35.7 before dispatch, 68.7 with four lanes, 99.8 at 15:10:11Z; a bake DIED MID-FLIGHT in phase push recording no outcome at 15:09:16Z; the dead-man's-switch raised at staleness 1481s against a 900s threshold; and the live board sat at 14:45:42Z while the repo reached 14:55:49Z, a lag that stopped closing. THE ROW WAS NEVER DORMANT, IT WAS UNTRIGGERED - its trigger is a SECOND heavy job, which a box running one lane cannot supply, and all three recorded deferrals had bluesky_extract holding the other slot. Full evidence: docs/deltas/width_four_reproduced_the_publisher_starvation_.md. The finding also UPGRADED: deferral is the admission gate working, but a pass that starts, runs 13 minutes and dies in push is a job starved AFTER admission - the gate protects the start of a bake and nothing protects the rest. ||| THIS ROW HAS BEEN MISDIAGNOSING ITS OWN EVIDENCE SINCE 07-31, and re-reading the deferral records against a measured baseline settles it, 2026-08-07T15:31Z coord--visible. A NORMAL BAKE TAKES 179 SECONDS - measured today, start 14:50:41Z to rc=0 at 14:53:40Z. Now the holders named in every deferral this row rests on: build_site pid 9420 at 964s then the SAME pid at 1364s; build_site pid 11032 at 1079s, which is today's incident; and cell_v7_refresh pid 7012 at 264s. THREE OF THE FOUR ARE A build_site HOLDING ITS TOKEN FIVE TO SEVEN TIMES ITS OWN RUNTIME - that is hung, not busy. Only the cell_v7_refresh entry at 264s is a genuinely long-running job. SO THE PREMISE IS WRONG FOR ITS OWN INSTANCES: this row says our work crowds out the publisher, and the record says THE PUBLISHER STARVES ITSELF - a bake hangs in its push phase, keeps a heavy slot the gate cannot reclaim from a live holder, and every later bake is deferred. Width made it more FREQUENT by supplying a second occupant, so the width observation was a real correlation attached to the wrong cause. SUBSUMED BY the-admission-gate-has-no-timeout-for-a-hung-slot-holder, filed p0 at 15:26Z, which names the mechanism and the fix. WHAT SURVIVES HERE AND SHOULD NOT BE LOST: the admission gate and the width governor genuinely do not know about each other, and a taper computed from load will never see a token held by a blocked process - so even a perfect governor would not have prevented any of these four. Reranked p1 to p2 and pointed at the p0, rather than retired, because that coupling gap is real and unfixed.",
+      "status": "READY ||| RE-MEASURED AND THE SYMPTOM HAS NOT RECURRED IN SIX DAYS, 16:31Z. The bake log holds SIX deferral lines in total, three events, all on 2026-07-31 and 2026-08-01, and ZERO on 2026-08-07 - including through my own 1,000,000-sim cell_v7_refresh at 13:41Z, which is the very job that held a heavy slot during the 08-01 deferral. The load axis reads 40 percent today. SHARPER DIAGNOSIS THAN THIS ROW CARRIES, from the three events: bluesky_extract held a heavy slot in ALL THREE, so the trigger is the SECOND heavy job rather than the box being busy in general; and in two of them the other slot was held by build_site ITSELF for 964 and then 1364 seconds, meaning the publisher blocked its own next tick. Kept open because the structural gap is unfixed - the admission gate and the width governor still do not know about each other - but reranked to p2, because a symptom last seen six days ago should not outrank the live publish race this re-measurement uncovered, filed as the-publish-clone-has-concurrent-writers-and-no-lock-discipline. ||| LIVE EVIDENCE, RERANKED p2 BACK TO p1, 15:18Z. I downgraded this to p2 at 16:31Z on the measurement that its symptom had not recurred in six days. It recurred within FIFTEEN MINUTES of width 4. Measured: cpu 35.7 before dispatch, 68.7 with four lanes, 99.8 at 15:10:11Z; a bake DIED MID-FLIGHT in phase push recording no outcome at 15:09:16Z; the dead-man's-switch raised at staleness 1481s against a 900s threshold; and the live board sat at 14:45:42Z while the repo reached 14:55:49Z, a lag that stopped closing. THE ROW WAS NEVER DORMANT, IT WAS UNTRIGGERED - its trigger is a SECOND heavy job, which a box running one lane cannot supply, and all three recorded deferrals had bluesky_extract holding the other slot. Full evidence: docs/deltas/width_four_reproduced_the_publisher_starvation_.md. The finding also UPGRADED: deferral is the admission gate working, but a pass that starts, runs 13 minutes and dies in push is a job starved AFTER admission - the gate protects the start of a bake and nothing protects the rest. ||| THIS ROW HAS BEEN MISDIAGNOSING ITS OWN EVIDENCE SINCE 07-31, and re-reading the deferral records against a measured baseline settles it, 2026-08-07T15:31Z coord--visible. A NORMAL BAKE TAKES 179 SECONDS - measured today, start 14:50:41Z to rc=0 at 14:53:40Z. Now the holders named in every deferral this row rests on: build_site pid 9420 at 964s then the SAME pid at 1364s; build_site pid 11032 at 1079s, which is today's incident; and cell_v7_refresh pid 7012 at 264s. THREE OF THE FOUR ARE A build_site HOLDING ITS TOKEN FIVE TO SEVEN TIMES ITS OWN RUNTIME - that is hung, not busy. Only the cell_v7_refresh entry at 264s is a genuinely long-running job. SO THE PREMISE IS WRONG FOR ITS OWN INSTANCES: this row says our work crowds out the publisher, and the record says THE PUBLISHER STARVES ITSELF - a bake hangs in its push phase, keeps a heavy slot the gate cannot reclaim from a live holder, and every later bake is deferred. Width made it more FREQUENT by supplying a second occupant, so the width observation was a real correlation attached to the wrong cause. SUBSUMED BY the-admission-gate-has-no-timeout-for-a-hung-slot-holder, filed p0 at 15:26Z, which names the mechanism and the fix. WHAT SURVIVES HERE AND SHOULD NOT BE LOST: the admission gate and the width governor genuinely do not know about each other, and a taper computed from load will never see a token held by a blocked process - so even a perfect governor would not have prevented any of these four. Reranked p1 to p2 and pointed at the p0, rather than retired, because that coupling gap is real and unfixed. ||| THE CAUSE THIS ROW MISREAD IS NOW FIXED, 16:00Z, commit b1455772. Three of its four deferral events were build_site holding its own token 5 to 7 times its 179s runtime, and the gate now refuses a second instance of the same label outright. Board live-verified at lag 0s. The one thing this row still owns and should NOT be closed on: the admission gate and the width governor still do not know about each other, and a taper computed from LOAD can never see a token held by a BLOCKED process - so a future non-duplicate hang is still invisible to the governor.",
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
@@ -13502,51 +13523,6 @@
       ]
      },
      {
-      "task_id": "the-publish-clone-has-concurrent-writers-and-no",
-      "family": "site",
-      "name": "A public push aborted on the index lock while another commit landed one second later",
-      "header": "A public push aborted on the index lock while another commit landed one second later",
-      "why": "The site clone at C Users antho hardwood-site is written by the scheduled bake by the floor re-stamp bake and now by the single-payload publish path and none of them takes a shared lock. On a bake ...",
-      "priority": 1,
-      "seat": "pm",
-      "status": "ready - FOUND WHILE RE-MEASURING THE 07-31 WIDTH-TAPER ROW, 2026-08-07T16:31Z coord--visible. That row's own symptom did NOT reproduce - the bake log holds SIX deferral lines total, all on 07-31 and 08-01, and ZERO today - but reading today's log for them surfaced a live failure instead. THE EVENT, verbatim: 13:58:03Z bake+push ABORTED rc=2, PUBLIC PUSH DID NOT HAPPEN, fatal: Unable to create C:/Users/antho/hardwood-site/.git/index.lock: File exists. Another git process seems to be running in this repository. THE PROOF THAT IT WAS A RACE RATHER THAN A STALE LOCK: commit landed in that same clone at 13:58:04Z, ONE SECOND after the abort, so a second writer held the index at that moment and finished. The tick that died had started at 13:55:31Z, triggered at 13:55:20Z by floor: ACTIVE re-stamp bake because the board was 70 SECONDS OLD - so the re-stamp path can launch a bake into one already in flight. I CHECKED MY OWN HANDS FIRST and the timing clears me on the commit: my single-payload standings commit is stamped 14:01:32Z, three and a half minutes AFTER the abort. What I cannot exclude is my read of that clone - I ran git status --porcelain against it in the same window, and git status TAKES THE INDEX LOCK while refreshing, so an inspection that looks read-only is a third writer. That is worth knowing regardless of who caused this one. SELF-HEALED, so this is a defect and not an outage: the 14:07:29Z tick pushed at 14:09:53Z and the live page carried the standings fix at 14:02Z. CONSEQUENCE FOR THE DIRECTOR'S CLOG-4 ITEM: the single-payload publish path he asked for is now a THIRD uncoordinated writer on that clone, so it should take the same lock the bake takes rather than racing it. FIX DIRECTION: one named lock around every mutation of the publish clone, held by the scheduled bake, the floor re-stamp and any manual publish alike, plus a guard on the re-stamp path so it cannot launch into an in-flight bake.",
-      "state": "ready now",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "A public push aborted on the index lock while another commit landed one second later",
-      "unlocks": "The site clone at C Users antho hardwood-site is written by the scheduled bake by the floor re-stamp bake and now by ...",
-      "owner": "MACHINE",
-      "feed_status": "QUEUED",
-      "tier": 2,
-      "group": "",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 37,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-publish-clone-has-concurrent-writers-and-no%3A%20top&body=A%20public%20push%20aborted%20on%20the%20index%20lock%20while%20another%20commit%20landed%20one%20second%20later%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-publish-clone-has-concurrent-writers-and-no%3A%20bump&body=A%20public%20push%20aborted%20on%20the%20index%20lock%20while%20another%20commit%20landed%20one%20second%20later%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-publish-clone-has-concurrent-writers-and-no%3A%20demote&body=A%20public%20push%20aborted%20on%20the%20index%20lock%20while%20another%20commit%20landed%20one%20second%20later%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-publish-clone-has-concurrent-writers-and-no%3A%20shelve&body=A%20public%20push%20aborted%20on%20the%20index%20lock%20while%20another%20commit%20landed%20one%20second%20later%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "impact-thin-rides-a-hard-80-minute-cliff-across",
       "family": "site",
       "name": "A tenth of a minute can flip a player's public thin verdict",
@@ -13567,7 +13543,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 43,
+      "rank": 42,
       "actions": [
        {
         "verb": "top",
@@ -13612,7 +13588,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 54,
+      "rank": 53,
       "actions": [
        {
         "verb": "top",
@@ -13657,7 +13633,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 56,
+      "rank": 55,
       "actions": [
        {
         "verb": "top",
@@ -13702,7 +13678,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 61,
+      "rank": 60,
       "actions": [
        {
         "verb": "top",
@@ -13747,7 +13723,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 64,
+      "rank": 63,
       "actions": [
        {
         "verb": "top",
@@ -13792,7 +13768,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 97,
+      "rank": 96,
       "actions": [
        {
         "verb": "top",
@@ -13837,7 +13813,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 109,
+      "rank": 108,
       "actions": [
        {
         "verb": "top",
@@ -13882,7 +13858,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 114,
+      "rank": 113,
       "actions": [
        {
         "verb": "top",
@@ -13927,7 +13903,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 115,
+      "rank": 114,
       "actions": [
        {
         "verb": "top",
@@ -13972,7 +13948,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 116,
+      "rank": 115,
       "actions": [
        {
         "verb": "top",
@@ -14017,7 +13993,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 124,
+      "rank": 123,
       "actions": [
        {
         "verb": "top",
@@ -14062,7 +14038,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 151,
+      "rank": 150,
       "actions": [
        {
         "verb": "top",
@@ -14107,7 +14083,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 167,
+      "rank": 166,
       "actions": [
        {
         "verb": "top",
@@ -14152,7 +14128,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 174,
+      "rank": 173,
       "actions": [
        {
         "verb": "top",
@@ -14198,7 +14174,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The wave was dispatched as fifteen finished surfaces one bake from the reader.",
-      "rank": 182,
+      "rank": 181,
       "actions": [
        {
         "verb": "top",
@@ -14243,7 +14219,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 183,
+      "rank": 182,
       "actions": [
        {
         "verb": "top",
@@ -14288,7 +14264,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 201,
+      "rank": 200,
       "actions": [
        {
         "verb": "top",
@@ -14309,6 +14285,51 @@
         "verb": "shelve",
         "icon": "🗄",
         "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20report-density-contract-is-unsatisfiable-as-writ%3A%20shelve&body=Two%20pages%20needs%20a%205.5x%20squeeze%2C%20so%20the%20contract%20needs%20a%20ruling%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
+       }
+      ]
+     },
+     {
+      "task_id": "the-publish-clone-has-concurrent-writers-and-no",
+      "family": "site",
+      "name": "A public push aborted on the index lock while another commit landed one second later",
+      "header": "A public push aborted on the index lock while another commit landed one second later",
+      "why": "The site clone at C Users antho hardwood-site is written by the scheduled bake by the floor re-stamp bake and now by the single-payload publish path and none of them takes a shared lock. On a bake ...",
+      "priority": 2,
+      "seat": "pm",
+      "status": "ready - FOUND WHILE RE-MEASURING THE 07-31 WIDTH-TAPER ROW, 2026-08-07T16:31Z coord--visible. That row's own symptom did NOT reproduce - the bake log holds SIX deferral lines total, all on 07-31 and 08-01, and ZERO today - but reading today's log for them surfaced a live failure instead. THE EVENT, verbatim: 13:58:03Z bake+push ABORTED rc=2, PUBLIC PUSH DID NOT HAPPEN, fatal: Unable to create C:/Users/antho/hardwood-site/.git/index.lock: File exists. Another git process seems to be running in this repository. THE PROOF THAT IT WAS A RACE RATHER THAN A STALE LOCK: commit landed in that same clone at 13:58:04Z, ONE SECOND after the abort, so a second writer held the index at that moment and finished. The tick that died had started at 13:55:31Z, triggered at 13:55:20Z by floor: ACTIVE re-stamp bake because the board was 70 SECONDS OLD - so the re-stamp path can launch a bake into one already in flight. I CHECKED MY OWN HANDS FIRST and the timing clears me on the commit: my single-payload standings commit is stamped 14:01:32Z, three and a half minutes AFTER the abort. What I cannot exclude is my read of that clone - I ran git status --porcelain against it in the same window, and git status TAKES THE INDEX LOCK while refreshing, so an inspection that looks read-only is a third writer. That is worth knowing regardless of who caused this one. SELF-HEALED, so this is a defect and not an outage: the 14:07:29Z tick pushed at 14:09:53Z and the live page carried the standings fix at 14:02Z. CONSEQUENCE FOR THE DIRECTOR'S CLOG-4 ITEM: the single-payload publish path he asked for is now a THIRD uncoordinated writer on that clone, so it should take the same lock the bake takes rather than racing it. FIX DIRECTION: one named lock around every mutation of the publish clone, held by the scheduled bake, the floor re-stamp and any manual publish alike, plus a guard on the re-stamp path so it cannot launch into an in-flight bake. ||| CAUSE FIXED, ROW NARROWED RATHER THAN CLOSED, 16:00Z. The concurrent writers were build_site racing ITSELF, and commit b1455772 makes that impossible - one instance per label. What this row still covers is the remaining writer that the gate cannot see: a MANUAL publish. I ran one today with HARDWOOD_ADMISSION_GATE=0 to break the loop, which is exactly a second writer entering by the door the mutex does not guard. Also unchanged: git status TAKES the index lock while refreshing, so even inspecting that clone is a write. Narrowed to those two, and both are human-initiated rather than scheduled, so the frequency drops from every few minutes to rarely.",
+      "state": "ready now",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 2.0,
+      "title": "A public push aborted on the index lock while another commit landed one second later",
+      "unlocks": "The site clone at C Users antho hardwood-site is written by the scheduled bake by the floor re-stamp bake and now by ...",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 2,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 220,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-publish-clone-has-concurrent-writers-and-no%3A%20top&body=A%20public%20push%20aborted%20on%20the%20index%20lock%20while%20another%20commit%20landed%20one%20second%20later%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-publish-clone-has-concurrent-writers-and-no%3A%20bump&body=A%20public%20push%20aborted%20on%20the%20index%20lock%20while%20another%20commit%20landed%20one%20second%20later%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-publish-clone-has-concurrent-writers-and-no%3A%20demote&body=A%20public%20push%20aborted%20on%20the%20index%20lock%20while%20another%20commit%20landed%20one%20second%20later%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-publish-clone-has-concurrent-writers-and-no%3A%20shelve&body=A%20public%20push%20aborted%20on%20the%20index%20lock%20while%20another%20commit%20landed%20one%20second%20later%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
        }
       ]
      },
@@ -15505,7 +15526,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 39,
+      "rank": 38,
       "actions": [
        {
         "verb": "top",
@@ -15550,7 +15571,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 47,
+      "rank": 46,
       "actions": [
        {
         "verb": "top",
@@ -15595,7 +15616,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 57,
+      "rank": 56,
       "actions": [
        {
         "verb": "top",
@@ -15640,7 +15661,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 67,
+      "rank": 66,
       "actions": [
        {
         "verb": "top",
@@ -15685,7 +15706,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 69,
+      "rank": 68,
       "actions": [
        {
         "verb": "top",
@@ -15730,7 +15751,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 77,
+      "rank": 76,
       "actions": [
        {
         "verb": "top",
@@ -15775,7 +15796,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 79,
+      "rank": 78,
       "actions": [
        {
         "verb": "top",
@@ -15820,7 +15841,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 80,
+      "rank": 79,
       "actions": [
        {
         "verb": "top",
@@ -15865,7 +15886,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 81,
+      "rank": 80,
       "actions": [
        {
         "verb": "top",
@@ -15910,7 +15931,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 82,
+      "rank": 81,
       "actions": [
        {
         "verb": "top",
@@ -15955,7 +15976,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 83,
+      "rank": 82,
       "actions": [
        {
         "verb": "top",
@@ -16000,7 +16021,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 84,
+      "rank": 83,
       "actions": [
        {
         "verb": "top",
@@ -16045,7 +16066,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 85,
+      "rank": 84,
       "actions": [
        {
         "verb": "top",
@@ -16090,7 +16111,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 87,
+      "rank": 86,
       "actions": [
        {
         "verb": "top",
@@ -16135,7 +16156,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 95,
+      "rank": 94,
       "actions": [
        {
         "verb": "top",
@@ -16180,7 +16201,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 102,
+      "rank": 101,
       "actions": [
        {
         "verb": "top",
@@ -16225,7 +16246,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 118,
+      "rank": 117,
       "actions": [
        {
         "verb": "top",
@@ -16270,7 +16291,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 119,
+      "rank": 118,
       "actions": [
        {
         "verb": "top",
@@ -16315,7 +16336,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 130,
+      "rank": 129,
       "actions": [
        {
         "verb": "top",
@@ -16360,7 +16381,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 132,
+      "rank": 131,
       "actions": [
        {
         "verb": "top",
@@ -16405,7 +16426,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 139,
+      "rank": 138,
       "actions": [
        {
         "verb": "top",
@@ -16450,7 +16471,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 140,
+      "rank": 139,
       "actions": [
        {
         "verb": "top",
@@ -16495,7 +16516,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 141,
+      "rank": 140,
       "actions": [
        {
         "verb": "top",
@@ -16540,7 +16561,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 149,
+      "rank": 148,
       "actions": [
        {
         "verb": "top",
@@ -16585,7 +16606,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 152,
+      "rank": 151,
       "actions": [
        {
         "verb": "top",
@@ -16630,7 +16651,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 153,
+      "rank": 152,
       "actions": [
        {
         "verb": "top",
@@ -16675,7 +16696,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 159,
+      "rank": 158,
       "actions": [
        {
         "verb": "top",
@@ -16720,7 +16741,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 160,
+      "rank": 159,
       "actions": [
        {
         "verb": "top",
@@ -16765,7 +16786,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 161,
+      "rank": 160,
       "actions": [
        {
         "verb": "top",
@@ -16810,7 +16831,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 163,
+      "rank": 162,
       "actions": [
        {
         "verb": "top",
@@ -16855,7 +16876,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 166,
+      "rank": 165,
       "actions": [
        {
         "verb": "top",
@@ -16900,7 +16921,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 177,
+      "rank": 176,
       "actions": [
        {
         "verb": "top",
@@ -16945,7 +16966,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 181,
+      "rank": 180,
       "actions": [
        {
         "verb": "top",
@@ -16990,7 +17011,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 185,
+      "rank": 184,
       "actions": [
        {
         "verb": "top",
@@ -17035,7 +17056,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 189,
+      "rank": 188,
       "actions": [
        {
         "verb": "top",
@@ -17080,7 +17101,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 194,
+      "rank": 193,
       "actions": [
        {
         "verb": "top",
@@ -17125,7 +17146,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 196,
+      "rank": 195,
       "actions": [
        {
         "verb": "top",
@@ -17170,7 +17191,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 197,
+      "rank": 196,
       "actions": [
        {
         "verb": "top",
@@ -17215,7 +17236,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 198,
+      "rank": 197,
       "actions": [
        {
         "verb": "top",
@@ -17260,7 +17281,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 202,
+      "rank": 201,
       "actions": [
        {
         "verb": "top",
@@ -17305,7 +17326,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 204,
+      "rank": 203,
       "actions": [
        {
         "verb": "top",
@@ -17350,7 +17371,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 213,
+      "rank": 212,
       "actions": [
        {
         "verb": "top",
@@ -18569,7 +18590,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 46,
+      "rank": 45,
       "actions": [
        {
         "verb": "top",
@@ -18600,9 +18621,9 @@
     "target": 40,
     "count": 386,
     "ok": true,
-    "label": "386 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 16m ago.)",
+    "label": "386 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 30m ago.)",
     "as_of_utc": "2026-08-07T15:36:59Z",
-    "age_secs": 1013,
+    "age_secs": 1849,
     "stale": false
    },
    "source": "dispatch queue",
@@ -19155,67 +19176,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-07T15:51:03Z",
-  "age_s": 142,
-  "cycles": 1,
+  "last_poll_utc": "2026-08-07T16:06:18Z",
+  "age_s": 57,
+  "cycles": 4,
   "known": true,
-  "label": "scout: alive, last poll 142s ago",
+  "label": "scout: alive, last poll 57s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "11:46am",
-   "text": "poll #9 · 1 new instruction(s)",
-   "detail": "poll cycle=9 ok directives_new=1"
+   "time": "11:59am",
+   "text": "publish-health: public board FRESH again — flag cleared",
+   "detail": "publish-health: public board FRESH again — flag cleared"
   },
   {
-   "time": "11:49am",
-   "text": "poll #10 · nothing new",
-   "detail": "poll cycle=10 ok directives_new=0"
+   "time": "11:59am",
+   "text": "chain-health: chain HEALTHY again — flag cleared",
+   "detail": "chain-health: chain HEALTHY again — flag cleared"
   },
   {
-   "time": "11:49am",
-   "text": "board-selfpolice: auto-repair bake launch FAILED: TimeoutExpired: Command '['C:\\\\Python314\\\\python.exe', 'C:\\\\Users\\\\antho\\\\hardwood-cron\\\\scripts\\\\build site.py', '--date', '2026-08-07', '--push']' timed out after 300 seconds",
-   "detail": "board-selfpolice: auto-repair bake launch FAILED: TimeoutExpired: Command '['C:\\\\Python314\\\\python.exe', 'C:\\\\Users\\\\antho\\\\hardwood-cron\\\\s"
+   "time": "11:59am",
+   "text": "slate-refresh: slate ok (today populated",
+   "detail": "slate-refresh: slate ok (today populated)"
   },
   {
-   "time": "11:49am",
-   "text": "monitor started",
-   "detail": "scout watcher START pid=10232 poll=60s folder=1wFZtN61Ze5EaUv9ia7rJ8LjHQByhIMOj inbox=C:\\Users\\antho\\hardwood-cron\\ops\\scout\\inbox"
+   "time": "12:00pm",
+   "text": "new instruction received into the inbox",
+   "detail": "HIT: delivered DIRECTOR_DIRECTIVE__P0_one_chart_law_append_only_law_gate_fix.md -> inbox/ (ts=)"
   },
   {
-   "time": "11:51am",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 1292s newer than live (repo 2026-08-07T15:44:30+00:00 vs live 2026-08-07T15:22:58+00:00",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 1292s newer than live (repo 2026-08-07T15:44:30+00:"
+   "time": "12:01pm",
+   "text": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session",
+   "detail": "no spawn - live coordinator / pending-confirm / failed-stop; 1 directive(s) queued in inbox for the live/next session"
   },
   {
-   "time": "11:51am",
-   "text": "board-selfpolice: board-stale alert already open (BOARD STALE ALERT .md) -- refreshing in place (restated 2 times) rather than filing a duplicate",
-   "detail": "board-selfpolice: board-stale alert already open (BOARD_STALE_ALERT_.md) -- refreshing in place (restated 2 times) rather than filing a dupl"
+   "time": "12:01pm",
+   "text": "board-selfpolice: clean (live board matches repo truth",
+   "detail": "board-selfpolice: clean (live board matches repo truth)"
   },
   {
-   "time": "11:51am",
-   "text": "poll #1 · nothing new",
-   "detail": "poll cycle=1 ok directives_new=0"
+   "time": "12:01pm",
+   "text": "poll #3 · 1 new instruction(s)",
+   "detail": "poll cycle=3 ok directives_new=1"
   },
   {
-   "time": "11:52am",
+   "time": "12:01pm",
+   "text": "dead-crew: all-clear ['Status-page baker'] - recovered",
+   "detail": "dead-crew: all-clear ['Status-page baker'] - recovered"
+  },
+  {
+   "time": "12:05pm",
    "text": "coordinator alive: liveness probe for session pid 12808 is UNKNOWABLE - falling back to the heartbeat signal (never dead on a failed probe",
    "detail": "coordinator_alive: liveness probe for session_pid 12808 is UNKNOWABLE - falling back to the heartbeat signal (never dead on a failed probe)"
   },
   {
-   "time": "11:52am",
-   "text": "width-tripwire: CRITICAL DEFECT [enforcer silent] under-width 0/1 for 267s (> 180s), injected in window=False, head dead=False - wrote width defect log.jsonl + width defect.json",
-   "detail": "width-tripwire: CRITICAL DEFECT [enforcer_silent] under-width 0/1 for 267s (> 180s), injected_in_window=False, head_dead=False - wrote width"
-  },
-  {
-   "time": "11:52am",
-   "text": "width-tripwire: CRITICAL DEFECT [enforcer silent] under-width 0/1 for 267.1s (head dead=False) - width defect.json + ledger written",
-   "detail": "width-tripwire: CRITICAL DEFECT [enforcer_silent] under-width 0/1 for 267.1s (head_dead=False) - width_defect.json + ledger written"
+   "time": "12:06pm",
+   "text": "poll #4 · nothing new",
+   "detail": "poll cycle=4 ok directives_new=0"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-07T15:52:31Z",
+  "as_of": "2026-08-07T16:06:38Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -19224,47 +19245,47 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "2m",
-    "state_text": "on · seen 2m ago"
+    "age_label": "57s",
+    "state_text": "on · seen 57s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "11m",
-    "state_text": "on · seen 11m ago"
+    "age_label": "83s",
+    "state_text": "on · seen 83s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
-    "active": false,
-    "stale": true,
-    "age_label": "21m",
-    "state_text": "quiet · last seen 21m ago"
+    "active": true,
+    "stale": false,
+    "age_label": "7m",
+    "state_text": "on · seen 7m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "54s",
-    "state_text": "on · seen 54s ago"
+    "age_label": "37s",
+    "state_text": "on · seen 37s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
-    "active": false,
-    "stale": true,
-    "age_label": "15m",
-    "state_text": "quiet · last seen 15m ago"
+    "active": true,
+    "stale": false,
+    "age_label": "7m",
+    "state_text": "on · seen 7m ago"
    }
   ],
   "width": {
-   "running": 1,
+   "running": 2,
    "target": 1,
    "empty": 0,
-   "line": "1 of 1 jobs running.",
+   "line": "2 of 1 jobs running.",
    "reason": "Enough jobs are running for the work waiting.",
    "stale": false
   },
@@ -19467,25 +19488,25 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-07T15:53:18Z",
-  "session_age_secs": 24133,
-  "last_progress_age_secs": 7,
+  "last_heartbeat_utc": "2026-08-07T16:07:13Z",
+  "session_age_secs": 24963,
+  "last_progress_age_secs": 2,
   "last_spawn_attempt": "2026-08-07T09:38:41Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
  "pipe_health": {
   "directives_pending": 0,
-  "last_processed_clock": "11:48am",
-  "last_processed_iso": "2026-08-07T15:48:10Z",
+  "last_processed_clock": "12:03pm",
+  "last_processed_iso": "2026-08-07T16:03:08Z",
   "last_processed_known": true,
-  "last_processed_display": "11:48am",
+  "last_processed_display": "12:03pm",
   "last_processed_source": "directive_ledger.done",
   "newest_directive_clock": "",
   "newest_directive_iso": null,
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-08-07T15:48:10Z",
+  "as_of": "2026-08-07T16:03:08Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -19495,38 +19516,31 @@
   "usage_resets_clock": "",
   "note": ""
  },
- "width_defect": {
-  "active": true,
-  "state": "defect",
-  "reader_facing": false,
-  "text": "Only 0 of 1 work lanes have been running for 4 min while jobs wait to start — being looked into.",
-  "running": 0,
-  "target": 1
- },
+ "width_defect": {},
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-08-07T15:45:55Z",
+   "as_of": "2026-08-07T16:04:05Z",
    "stale": false,
-   "revalidated": "2026-08-07T15:53:19+00:00",
+   "revalidated": "2026-08-07T16:07:07+00:00",
    "stale_reason": "",
-   "age_label": "7m",
+   "age_label": "3m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-07T15:53:19+00:00",
+   "as_of": "2026-08-07T16:07:07+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T15:53:19+00:00",
+   "revalidated": "2026-08-07T16:07:07+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T15:53:19+00:00",
+   "as_of": "2026-08-07T16:07:07+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T15:53:19+00:00",
+   "revalidated": "2026-08-07T16:07:07+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -19535,43 +19549,43 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T15:53:19+00:00",
+   "revalidated": "2026-08-07T16:07:07+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-07T15:41:36Z",
+   "as_of": "2026-08-07T16:05:23Z",
    "stale": false,
-   "revalidated": "2026-08-07T15:53:19+00:00",
+   "revalidated": "2026-08-07T16:07:07+00:00",
    "stale_reason": "",
-   "age_label": "11m",
+   "age_label": "1m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T15:53:19+00:00",
+   "revalidated": "2026-08-07T16:07:07+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-08-07T15:48:10Z",
+   "as_of": "2026-08-07T16:03:08Z",
    "stale": false,
-   "revalidated": "2026-08-07T15:53:19+00:00",
+   "revalidated": "2026-08-07T16:07:07+00:00",
    "stale_reason": "",
-   "age_label": "5m",
+   "age_label": "3m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-07T06:20:00-04:00",
    "stale": false,
-   "revalidated": "2026-08-07T15:53:19+00:00",
+   "revalidated": "2026-08-07T16:07:07+00:00",
    "stale_reason": "",
    "age_label": "5h",
    "stale_after": 172800,
@@ -19579,22 +19593,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T15:51:08+00:00",
+   "as_of": "2026-08-07T15:55:02+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T15:53:19+00:00",
+   "revalidated": "2026-08-07T16:07:07+00:00",
    "stale_reason": "",
-   "age_label": "2m",
+   "age_label": "12m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-07T15:52:31Z",
+   "as_of": "2026-08-07T16:06:38Z",
    "stale": false,
-   "revalidated": "2026-08-07T15:53:19+00:00",
+   "revalidated": "2026-08-07T16:07:07+00:00",
    "stale_reason": "",
-   "age_label": "54s",
+   "age_label": "37s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 7, 11:53am ET"
+ "generated_et": "Aug 7, 12:07pm ET"
 }
