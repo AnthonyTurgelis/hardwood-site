@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-07T11:55:32+00:00",
+ "generated_utc": "2026-08-07T12:06:00+00:00",
  "freshness": {
-  "baked_utc": "2026-08-07T11:55:32+00:00",
-  "baked_et": "Aug 7, 7:55am ET",
-  "revalidated_utc": "2026-08-07T11:55:32+00:00",
+  "baked_utc": "2026-08-07T12:06:00+00:00",
+  "baked_et": "Aug 7, 8:06am ET",
+  "revalidated_utc": "2026-08-07T12:06:00+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-07",
@@ -14,7 +14,7 @@
   "maintenance": 0,
   "needs_anthony": 0,
   "lanes_today": 23,
-  "upcoming": 378
+  "upcoming": 379
  },
  "sections": {
   "agent_updates": [
@@ -43,6 +43,36 @@
     "body_markdown": "Improved and recorded."
    },
    {
+    "id": "the-accuracy-note-named-the-smallest",
+    "title": "The accuracy note named the smallest reason",
+    "timestamp": "Aug 6, 2026",
+    "body_markdown": "> **What we found:** The accuracy page graded 157 games and told the reader that 7 were left out because their market price was captured too long before tip-off. True, and the smallest of four reasons."
+   },
+   {
+    "id": "the-publish-now-owns-its-own",
+    "title": "The publish now owns its own workflow, so the deploy wait is ours to set",
+    "timestamp": "Aug 6, 2026",
+    "body_markdown": "> **What we found:** If that is right, no workflow change can fix this — the fix is to stop deploying 11 times an hour, which is exactly the content-hash skip. It was ranked as the durable follow-on. It is the binding fix."
+   },
+   {
+    "id": "the-debounce-window-is-shorter-than",
+    "title": "The debounce window is shorter than the publish it triggers",
+    "timestamp": "Aug 6, 2026",
+    "body_markdown": "> **What we found:** The debounce window is structurally shorter than the publish it triggers. Coalescing already existed — it coalesced against the wrong clock."
+   },
+   {
+    "id": "the-playoffs-are-missing-from-every",
+    "title": "The playoffs are missing from every game table we hold",
+    "timestamp": "Aug 6, 2026",
+    "body_markdown": "> **What we found:** Every model that trains on game results trains without the playoffs. That is not a random 8% of the sample: it is the highest-leverage games of every season, the ones between the best teams, under the conditions the product most wants to be right about."
+   },
+   {
+    "id": "a-rename-read-as-a-departure",
+    "title": "A rename read as a departure and killed the gameday report",
+    "timestamp": "Aug 6, 2026",
+    "body_markdown": "> **What we found:** So the id fallback was never a bridge — it passed the 54 players who needed no bridging and was inert for the 72% who did. It happened to look correct because a name match covers everyone except the rename case, which is exactly the case the id path was added to catch."
+   },
+   {
     "id": "mirror-boundary-guards-a-cancelling-change",
     "title": "Mirror boundary guards: a cancelling change was invisible",
     "timestamp": "Aug 6, 2026",
@@ -59,36 +89,6 @@
     "title": "Market grade now excludes prices that were never closes",
     "timestamp": "Aug 6, 2026",
     "body_markdown": "> **What we found:** Grading a four-day-old quote as a close does not make the answer noisy — it makes the question meaningless."
-   },
-   {
-    "id": "the-scout-delivers-any-new-mirror",
-    "title": "The scout delivers any new mirror .md, and a filter can no longer discard input in silence",
-    "timestamp": "Aug 5, 2026",
-    "body_markdown": "> **What we found:** The scout was not broken. The naming drifted and the filter ate the difference."
-   },
-   {
-    "id": "the-dallas-record-disagreement-is-five",
-    "title": "The Dallas record disagreement is five preseason rows, not a wrong score",
-    "timestamp": "Aug 5, 2026",
-    "body_markdown": "> **What we found:** That is season + scored, with no exhibition exclusion, so all five preseason rows are counted. This is the honest-looking filter that causes the bug: it is correct about every row it reads and wrong about which rows to read."
-   },
-   {
-    "id": "at-88-the-meter-says-park",
-    "title": "At 88% the meter says park and the governor says work — measured, both off the same number",
-    "timestamp": "Jul 31, 2026",
-    "body_markdown": "> **What we found:** Both read the same percent off the same meter and got a different instruction than the governor gives."
-   },
-   {
-    "id": "the-lock-against-re-dispatching-finished",
-    "title": "The lock against re-dispatching finished work was itself never run, and half-blind when it was",
-    "timestamp": "Jul 31, 2026",
-    "body_markdown": "> **What we found:** Three of the six priority-1 rows had already shipped. A fourth was answered by a refusal."
-   },
-   {
-    "id": "the-pid-recorder-never-recorded-a",
-    "title": "The pid recorder never recorded a pid — and dropped the heartbeat with it",
-    "timestamp": "Jul 31, 2026",
-    "body_markdown": "> **What we found:** The silent drop is the worse half. The missing pid cost a capability nobody used. The swallowed raise cost the mandatory liveness stamp every time the optional provenance field was requested."
    }
   ],
   "today_games": {
@@ -7166,6 +7166,51 @@
       ]
      },
      {
+      "task_id": "a-sweep-for-producers-whose-consumer-was-never-w",
+      "family": "infra",
+      "name": "Two alerting health files carry the board-read marker and no board reads them",
+      "header": "Two alerting health files carry the board-read marker and no board reads them",
+      "why": "The always-on background monitor that flags anything needing a decision",
+      "priority": 2,
+      "seat": "ops_monitor",
+      "status": "open - CANDIDATES CONFIRMED, and I tested my own over-reading first, 2026-08-07T12:20Z. I filed these as candidates because I might have been reading proximity as a claim - the comment says every state file THE BOARD READS carries a guarantee field, which is a general statement and does not by itself say these two are among them. THE DISCRIMINATING TEST IS THE MARKER ITSELF, AND BOTH FILES CARRY IT. alert_canary.json holds checked_utc, GUARANTEE, enabled_channels, results, degraded, healthy. alert_channel_health.json holds checked_utc, GUARANTEE, channels. So both are SHAPED for board consumption by the codebase own convention. BOTH ARE ALSO LIVE, not abandoned: each was written 4.4 hours before this check, so notify.py is actively producing them. AND NOTHING READS THEM. The filenames appear ONLY at their constant definitions, ops/notify.py lines 1527 and 1529, and no builder globs the state directory - the two glob possibilities I named as the reason not to claim this were both checked and both are absent. SO THIS IS THE SUPERVISOR SHAPE ON THE ALERTING PATH: a producer writing board-marked health state, on schedule, into files no board consumes. It matters more than its size because alerting is the machinery that makes every OTHER failure visible - the same reason the unread nightly red list cost this project a day of rediscovering a crash by hand. STILL NOT CLAIMED: whether the board ever DID read them, or whether the guarantee convention predates a board rewrite. That is history, not blocking - the current state is established. ||| WHAT THE UNREAD CANARY IS ACTUALLY REPORTING, and it is LESS alarming than unread-alerting sounds, 12:00Z. alert_canary.json checked 07:31:15Z today and says healthy is EMPTY and degraded is discord, the only enabled channel. That reads like an alerting outage. IT IS NOT ONE. Its own result detail says the credential WORKS and a real prior message READS BACK, and that the degradation is only this: no self-check channel is configured, so a FRESH end-to-end send was not proven today, and setting COMMS_SELFCHECK_CHANNEL_ID would make it green. That is a MONITORING GAP, not a broken channel. AND THE CHANNEL IS DEMONSTRABLY LIVE: ops/scout/state/comms_sent_log.json holds about eighty entries and was modified 11:36:15Z, twenty-two minutes before this check. Messages are going out. A PARSE ERROR OF MINE, CAUGHT BEFORE IT BECAME A CLAIM: my first read of that log reported ZERO entries, which would have made this look like total comms failure. The file is a DICT KEYED BY CONTENT HASH, not a list under a sent or entries key, so my key guess found nothing. The size on disk, 33KB, is what prompted the recheck - a 33KB file with zero entries is not a thing. NET: the unread-file finding STANDS - a producer writing board-marked health state nothing consumes - but its CONTENT is a config gap rather than an outage, and this row should not be read as alerting is down. Setting COMMS_SELFCHECK_CHANNEL_ID is the cheap half and is independent of wiring a reader.",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 2.0,
+      "title": "Two alerting health files carry the board-read marker and no board reads them",
+      "unlocks": "THE a producer whose output has a - grep that destination name across the tree and count the hits because ONE hit means ...",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 3,
+      "group": "process",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 299,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-sweep-for-producers-whose-consumer-was-never-w%3A%20top&body=Two%20alerting%20health%20files%20carry%20the%20board-read%20marker%20and%20no%20board%20reads%20them%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-sweep-for-producers-whose-consumer-was-never-w%3A%20bump&body=Two%20alerting%20health%20files%20carry%20the%20board-read%20marker%20and%20no%20board%20reads%20them%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-sweep-for-producers-whose-consumer-was-never-w%3A%20demote&body=Two%20alerting%20health%20files%20carry%20the%20board-read%20marker%20and%20no%20board%20reads%20them%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20a-sweep-for-producers-whose-consumer-was-never-w%3A%20shelve&body=Two%20alerting%20health%20files%20carry%20the%20board-read%20marker%20and%20no%20board%20reads%20them%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-07%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "the-allowlist-is-the-one-register-that-never-exp",
       "family": "infra",
       "name": "Two of three amnesty registers shrink on their own and the third only grows",
@@ -7186,7 +7231,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 301,
+      "rank": 302,
       "actions": [
        {
         "verb": "top",
@@ -7231,7 +7276,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 306,
+      "rank": 307,
       "actions": [
        {
         "verb": "top",
@@ -7276,7 +7321,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 308,
+      "rank": 309,
       "actions": [
        {
         "verb": "top",
@@ -7321,7 +7366,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 309,
+      "rank": 310,
       "actions": [
        {
         "verb": "top",
@@ -7366,7 +7411,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 315,
+      "rank": 316,
       "actions": [
        {
         "verb": "top",
@@ -7411,7 +7456,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 318,
+      "rank": 319,
       "actions": [
        {
         "verb": "top",
@@ -7456,7 +7501,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 320,
+      "rank": 321,
       "actions": [
        {
         "verb": "top",
@@ -7501,7 +7546,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 323,
+      "rank": 324,
       "actions": [
        {
         "verb": "top",
@@ -7546,7 +7591,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 324,
+      "rank": 325,
       "actions": [
        {
         "verb": "top",
@@ -7591,7 +7636,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 326,
+      "rank": 327,
       "actions": [
        {
         "verb": "top",
@@ -7636,7 +7681,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 328,
+      "rank": 329,
       "actions": [
        {
         "verb": "top",
@@ -7681,7 +7726,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 330,
+      "rank": 331,
       "actions": [
        {
         "verb": "top",
@@ -7726,7 +7771,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 331,
+      "rank": 332,
       "actions": [
        {
         "verb": "top",
@@ -7771,7 +7816,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 332,
+      "rank": 333,
       "actions": [
        {
         "verb": "top",
@@ -7816,7 +7861,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 333,
+      "rank": 334,
       "actions": [
        {
         "verb": "top",
@@ -7861,7 +7906,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 334,
+      "rank": 335,
       "actions": [
        {
         "verb": "top",
@@ -7906,7 +7951,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 335,
+      "rank": 336,
       "actions": [
        {
         "verb": "top",
@@ -7951,7 +7996,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 338,
+      "rank": 339,
       "actions": [
        {
         "verb": "top",
@@ -7996,7 +8041,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 339,
+      "rank": 340,
       "actions": [
        {
         "verb": "top",
@@ -8041,7 +8086,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 340,
+      "rank": 341,
       "actions": [
        {
         "verb": "top",
@@ -8086,7 +8131,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 341,
+      "rank": 342,
       "actions": [
        {
         "verb": "top",
@@ -8131,7 +8176,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 342,
+      "rank": 343,
       "actions": [
        {
         "verb": "top",
@@ -8176,7 +8221,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 343,
+      "rank": 344,
       "actions": [
        {
         "verb": "top",
@@ -8222,7 +8267,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs a human sign-in; mostly self-heals now, with a small residual.",
-      "rank": 347,
+      "rank": 348,
       "actions": [
        {
         "verb": "top",
@@ -8268,7 +8313,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs unblocked runner (infra CEO decision).",
-      "rank": 359,
+      "rank": 360,
       "actions": [
        {
         "verb": "top",
@@ -8313,7 +8358,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 374,
+      "rank": 375,
       "actions": [
        {
         "verb": "top",
@@ -8358,7 +8403,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 376,
+      "rank": 377,
       "actions": [
        {
         "verb": "top",
@@ -8404,7 +8449,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 377,
+      "rank": 378,
       "actions": [
        {
         "verb": "top",
@@ -8449,7 +8494,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 378,
+      "rank": 379,
       "actions": [
        {
         "verb": "top",
@@ -11692,7 +11737,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 305,
+      "rank": 306,
       "actions": [
        {
         "verb": "top",
@@ -11737,7 +11782,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 311,
+      "rank": 312,
       "actions": [
        {
         "verb": "top",
@@ -11782,7 +11827,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 312,
+      "rank": 313,
       "actions": [
        {
         "verb": "top",
@@ -11827,7 +11872,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 316,
+      "rank": 317,
       "actions": [
        {
         "verb": "top",
@@ -11872,7 +11917,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 321,
+      "rank": 322,
       "actions": [
        {
         "verb": "top",
@@ -11917,7 +11962,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 325,
+      "rank": 326,
       "actions": [
        {
         "verb": "top",
@@ -11963,7 +12008,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Upstream API returning 529 Overloaded - external, not a repo condition",
-      "rank": 327,
+      "rank": 328,
       "actions": [
        {
         "verb": "top",
@@ -12008,7 +12053,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 344,
+      "rank": 345,
       "actions": [
        {
         "verb": "top",
@@ -12053,7 +12098,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 345,
+      "rank": 346,
       "actions": [
        {
         "verb": "top",
@@ -12099,7 +12144,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Dallas and Las Vegas read too low, Los Angeles too high; extend the shipped fix.",
-      "rank": 346,
+      "rank": 347,
       "actions": [
        {
         "verb": "top",
@@ -12145,7 +12190,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 349,
+      "rank": 350,
       "actions": [
        {
         "verb": "top",
@@ -12191,7 +12236,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Break down offense and defense value by area of the floor for sharper scouting.",
-      "rank": 352,
+      "rank": 353,
       "actions": [
        {
         "verb": "top",
@@ -12236,7 +12281,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 353,
+      "rank": 354,
       "actions": [
        {
         "verb": "top",
@@ -12281,7 +12326,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 354,
+      "rank": 355,
       "actions": [
        {
         "verb": "top",
@@ -12326,7 +12371,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 355,
+      "rank": 356,
       "actions": [
        {
         "verb": "top",
@@ -12371,7 +12416,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 357,
+      "rank": 358,
       "actions": [
        {
         "verb": "top",
@@ -12416,7 +12461,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 362,
+      "rank": 363,
       "actions": [
        {
         "verb": "top",
@@ -12461,7 +12506,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 363,
+      "rank": 364,
       "actions": [
        {
         "verb": "top",
@@ -12506,7 +12551,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 365,
+      "rank": 366,
       "actions": [
        {
         "verb": "top",
@@ -12551,7 +12596,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 366,
+      "rank": 367,
       "actions": [
        {
         "verb": "top",
@@ -12596,7 +12641,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 367,
+      "rank": 368,
       "actions": [
        {
         "verb": "top",
@@ -12642,7 +12687,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 368,
+      "rank": 369,
       "actions": [
        {
         "verb": "top",
@@ -12687,7 +12732,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 369,
+      "rank": 370,
       "actions": [
        {
         "verb": "top",
@@ -12732,7 +12777,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 370,
+      "rank": 371,
       "actions": [
        {
         "verb": "top",
@@ -12778,7 +12823,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 371,
+      "rank": 372,
       "actions": [
        {
         "verb": "top",
@@ -12823,7 +12868,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 372,
+      "rank": 373,
       "actions": [
        {
         "verb": "top",
@@ -12868,7 +12913,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 373,
+      "rank": 374,
       "actions": [
        {
         "verb": "top",
@@ -14446,7 +14491,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 299,
+      "rank": 300,
       "actions": [
        {
         "verb": "top",
@@ -14491,7 +14536,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 302,
+      "rank": 303,
       "actions": [
        {
         "verb": "top",
@@ -14536,7 +14581,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 303,
+      "rank": 304,
       "actions": [
        {
         "verb": "top",
@@ -14581,7 +14626,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 314,
+      "rank": 315,
       "actions": [
        {
         "verb": "top",
@@ -14626,7 +14671,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 317,
+      "rank": 318,
       "actions": [
        {
         "verb": "top",
@@ -14671,7 +14716,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 319,
+      "rank": 320,
       "actions": [
        {
         "verb": "top",
@@ -14716,7 +14761,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 322,
+      "rank": 323,
       "actions": [
        {
         "verb": "top",
@@ -14761,7 +14806,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 329,
+      "rank": 330,
       "actions": [
        {
         "verb": "top",
@@ -14806,7 +14851,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 336,
+      "rank": 337,
       "actions": [
        {
         "verb": "top",
@@ -14851,7 +14896,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 350,
+      "rank": 351,
       "actions": [
        {
         "verb": "top",
@@ -14896,7 +14941,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 351,
+      "rank": 352,
       "actions": [
        {
         "verb": "top",
@@ -14941,7 +14986,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 364,
+      "rank": 365,
       "actions": [
        {
         "verb": "top",
@@ -14986,7 +15031,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 375,
+      "rank": 376,
       "actions": [
        {
         "verb": "top",
@@ -17688,7 +17733,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 300,
+      "rank": 301,
       "actions": [
        {
         "verb": "top",
@@ -17733,7 +17778,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 304,
+      "rank": 305,
       "actions": [
        {
         "verb": "top",
@@ -17779,7 +17824,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The evidence is already gathered and it is unambiguous.",
-      "rank": 307,
+      "rank": 308,
       "actions": [
        {
         "verb": "top",
@@ -17824,7 +17869,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 310,
+      "rank": 311,
       "actions": [
        {
         "verb": "top",
@@ -17869,7 +17914,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 313,
+      "rank": 314,
       "actions": [
        {
         "verb": "top",
@@ -17914,7 +17959,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 337,
+      "rank": 338,
       "actions": [
        {
         "verb": "top",
@@ -17959,7 +18004,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 348,
+      "rank": 349,
       "actions": [
        {
         "verb": "top",
@@ -18004,7 +18049,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 356,
+      "rank": 357,
       "actions": [
        {
         "verb": "top",
@@ -18049,7 +18094,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 358,
+      "rank": 359,
       "actions": [
        {
         "verb": "top",
@@ -18095,7 +18140,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Lfb recon French box data usr bin bash-reachable from this box (Genius livestats 52 fields).",
-      "rank": 360,
+      "rank": 361,
       "actions": [
        {
         "verb": "top",
@@ -18140,7 +18185,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 361,
+      "rank": 362,
       "actions": [
        {
         "verb": "top",
@@ -18213,14 +18258,14 @@
      }
     ]
    },
-   "more_count": 368,
+   "more_count": 369,
    "floor": {
     "target": 40,
-    "count": 378,
+    "count": 379,
     "ok": true,
-    "label": "378 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 4m ago.)",
-    "as_of_utc": "2026-08-07T11:51:38Z",
-    "age_secs": 254,
+    "label": "379 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
+    "as_of_utc": "2026-08-07T12:06:08Z",
+    "age_secs": 8,
     "stale": false
    },
    "source": "dispatch queue",
@@ -18773,67 +18818,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-07T11:54:33Z",
-  "age_s": 63,
-  "cycles": 278,
+  "last_poll_utc": "2026-08-07T12:05:57Z",
+  "age_s": 7,
+  "cycles": 288,
   "known": true,
-  "label": "scout: alive, last poll 63s ago",
+  "label": "scout: alive, last poll 7s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "7:52am",
+   "time": "8:02am",
+   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
+   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
+  },
+  {
+   "time": "8:02am",
    "text": "publish-health: clean (public board is fresh",
    "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "7:52am",
-   "text": "chain-health: clean (all four legs healthy",
-   "detail": "chain-health: clean (all four legs healthy)"
+   "time": "8:02am",
+   "text": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
+   "detail": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing "
   },
   {
-   "time": "7:52am",
-   "text": "slate-refresh: STALE (#181): season impact feed is 182h old paged=True",
-   "detail": "slate-refresh: STALE (#181): season impact feed is 182h old paged=True"
+   "time": "8:03am",
+   "text": "poll #286 · nothing new",
+   "detail": "poll cycle=286 ok directives_new=0"
   },
   {
-   "time": "7:53am",
-   "text": "poll #277 · nothing new",
-   "detail": "poll cycle=277 ok directives_new=0"
-  },
-  {
-   "time": "7:53am",
+   "time": "8:03am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   },
   {
-   "time": "7:54am",
-   "text": "poll #278 · nothing new",
-   "detail": "poll cycle=278 ok directives_new=0"
+   "time": "8:04am",
+   "text": "poll #287 · nothing new",
+   "detail": "poll cycle=287 ok directives_new=0"
   },
   {
-   "time": "7:54am",
+   "time": "8:04am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   },
   {
-   "time": "7:55am",
+   "time": "8:05am",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
   },
   {
-   "time": "7:55am",
-   "text": "poll #279 · nothing new",
-   "detail": "poll cycle=279 ok directives_new=0"
+   "time": "8:05am",
+   "text": "poll #288 · nothing new",
+   "detail": "poll cycle=288 ok directives_new=0"
   },
   {
-   "time": "7:55am",
+   "time": "8:05am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-07T11:55:21Z",
+  "as_of": "2026-08-07T12:05:57Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -18842,16 +18887,16 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "63s",
-    "state_text": "on · seen 63s ago"
+    "age_label": "7s",
+    "state_text": "on · seen 7s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "16s",
-    "state_text": "on · seen 16s ago"
+    "age_label": "20s",
+    "state_text": "on · seen 20s ago"
    },
    {
     "name": "Status-page baker",
@@ -18866,16 +18911,16 @@
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "15s",
-    "state_text": "on · seen 15s ago"
+    "age_label": "8s",
+    "state_text": "on · seen 8s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "8m",
+    "state_text": "on · seen 8m ago"
    }
   ],
   "width": {
@@ -19085,9 +19130,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-07T11:55:26Z",
-  "session_age_secs": 9864,
-  "last_progress_age_secs": 10,
+  "last_heartbeat_utc": "2026-08-07T12:06:02Z",
+  "session_age_secs": 10492,
+  "last_progress_age_secs": 2,
   "last_spawn_attempt": "2026-08-07T09:38:41Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -19117,7 +19162,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 2 work lanes have been running for 1171 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 2 work lanes have been running for 1183 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 2
  },
@@ -19126,25 +19171,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T08:14:24Z",
    "stale": true,
-   "revalidated": "2026-08-07T11:55:32+00:00",
+   "revalidated": "2026-08-07T12:06:00+00:00",
    "stale_reason": "These readings may be out of date — last updated 3h ago.",
    "age_label": "3h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-07T11:55:32+00:00",
+   "as_of": "2026-08-07T12:06:00+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T11:55:32+00:00",
+   "revalidated": "2026-08-07T12:06:00+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T11:55:32+00:00",
+   "as_of": "2026-08-07T12:06:00+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T11:55:32+00:00",
+   "revalidated": "2026-08-07T12:06:00+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -19153,25 +19198,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T11:55:32+00:00",
+   "revalidated": "2026-08-07T12:06:00+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-07T11:52:31Z",
-   "stale": false,
-   "revalidated": "2026-08-07T11:55:32+00:00",
-   "stale_reason": "",
-   "age_label": "3m",
+   "as_of": "2026-08-07T12:06:08Z",
+   "stale": true,
+   "revalidated": "2026-08-07T12:06:00+00:00",
+   "stale_reason": "A newer update is being re-checked now.",
+   "age_label": "0s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T11:55:32+00:00",
+   "revalidated": "2026-08-07T12:06:00+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -19180,16 +19225,16 @@
    "source": "director inbox",
    "as_of": "2026-08-07T11:04:13Z",
    "stale": false,
-   "revalidated": "2026-08-07T11:55:32+00:00",
+   "revalidated": "2026-08-07T12:06:00+00:00",
    "stale_reason": "",
-   "age_label": "51m",
+   "age_label": "61m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-07T06:20:00-04:00",
    "stale": false,
-   "revalidated": "2026-08-07T11:55:32+00:00",
+   "revalidated": "2026-08-07T12:06:00+00:00",
    "stale_reason": "",
    "age_label": "1h",
    "stale_after": 172800,
@@ -19197,22 +19242,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T11:50:31+00:00",
+   "as_of": "2026-08-07T11:55:32+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T11:55:32+00:00",
+   "revalidated": "2026-08-07T12:06:00+00:00",
    "stale_reason": "",
-   "age_label": "5m",
+   "age_label": "10m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-07T11:55:21Z",
+   "as_of": "2026-08-07T12:05:57Z",
    "stale": false,
-   "revalidated": "2026-08-07T11:55:32+00:00",
+   "revalidated": "2026-08-07T12:06:00+00:00",
    "stale_reason": "",
-   "age_label": "15s",
+   "age_label": "7s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 7, 7:55am ET"
+ "generated_et": "Aug 7, 8:06am ET"
 }
