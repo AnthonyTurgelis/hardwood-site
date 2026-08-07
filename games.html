@@ -274,6 +274,60 @@
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function num(v,u){ return v==null?"—":(v + (u||"")); }
 
+  /* ============ ONE QUANTITY, ONE SOURCE — the win chance (fixed 2026-08-07) ============
+     A card used to print the win chance TWICE from TWO different sources: the Win-chance pill read
+     g.p_home_win (the served recalibrated win probability, the number that also propagates to the
+     front page), while the caption under the margin-distribution strip re-derived one from
+     g.density.p_home — the AREA of the drawn shape right of the pick'em line. That area inherits
+     the plot's binning and its linear-taper tails, so it is a PICTURE of a number, not the number.
+     Live sweep: 23 of 24 cards disagreed by 1-3 pts, always low for the favourite.
+
+     winSplit() is now the ONLY producer of a rendered win percentage on this page. It rounds the
+     home side ONCE and takes the away side as its COMPLEMENT, so the printed pair sums to exactly
+     100 by construction — the old code rounded each side from its own float and printed
+     "CON 44% / 57% PHO". No win probability => NO percentage anywhere on the card (omit-not-invent),
+     never a second number invented from the drawn shape. Mirrors _win_chance_split in
+     scripts/build_site.py; the two must stay in lockstep. */
+  function winSplit(g){
+    if(!g || g.p_home_win==null) return null;
+    var hp=Math.max(0,Math.min(100,g.p_home_win));
+    var home=Math.round(hp);
+    return {raw:hp, home:home, away:100-home};
+  }
+  /* RENDER-TIME ASSERT: fails LOUDLY rather than quietly shipping a two-truths card. Every rendered
+     win-chance pair is registered here; a pair that does not sum to 100, or two pairs on the SAME
+     card that disagree, throws a visible banner onto the page and a console.error. In the spirit of
+     the components-must-sum-exactly rule that blocks the bake. */
+  var WIN_SEEN={}, WIN_FAULTS=[];
+  function winAssert(key, s, where){
+    if(!s) return s;
+    if(s.home+s.away!==100){
+      winFault(key+": "+where+" prints "+s.home+"% / "+s.away+"% — sums to "+(s.home+s.away)+", not 100");
+    }
+    var prev=WIN_SEEN[key];
+    if(prev && (prev.s.home!==s.home || prev.s.away!==s.away)){
+      winFault(key+": "+prev.where+" prints "+prev.s.home+"% but "+where+" prints "+s.home+"% — "
+        +"one quantity, two answers");
+    } else if(!prev){ WIN_SEEN[key]={s:s, where:where}; }
+    return s;
+  }
+  function winFault(msg){
+    WIN_FAULTS.push(msg);
+    try{ console.error("[win-chance render check] "+msg); }catch(e){}
+    var b=document.getElementById("winfault");
+    if(!b){
+      b=el("div","stale"); b.id="winfault";
+      b.style.background="#7f1d1d"; b.style.color="#fff"; b.style.padding="10px";
+      b.style.margin="8px 0"; b.style.fontWeight="700";
+      var host=document.querySelector("main")||document.body;
+      host.insertBefore(b, host.firstChild);
+    }
+    b.textContent="RENDER CHECK FAILED — a game card is showing two different win chances for the "
+      +"same game. Do not trust the win chance on this page until it is fixed. ("+WIN_FAULTS.length
+      +" fault"+(WIN_FAULTS.length===1?"":"s")+": "+WIN_FAULTS[0]+")";
+  }
+  function gkey(g){ return (g&&g.date? g.date:"?")+"|"+(g&&g.away? g.away:"?")+"@"+(g&&g.home? g.home:"?"); }
+
   function marginBar(g){
     var lo=g.range90_lo, hi=g.range90_hi, l80=g.range80_lo, h80=g.range80_hi, pt=g.pred_margin;
     if(lo==null||hi==null) return el("div","note","range not available");
@@ -330,10 +384,13 @@
     var m=el("div","dmed"); m.style.left="calc("+mpos.toFixed(1)+"% - 4px)"; box.appendChild(m);
     wrap.appendChild(box);
     var cap=el("div","mcap");
-    var hp=(d.p_home!=null)?Math.round(d.p_home*100):null;
-    cap.appendChild(el("span",null, g.away + (hp!=null?(" "+(100-hp)+"%"):"")));
+    // SAME source as the Win-chance pill (winSplit -> g.p_home_win). It used to read the density
+    // payload's own area field, which disagreed with the pill on 23 of 24 live cards. No win
+    // probability => the caption names the teams and prints no percentage at all.
+    var s=winAssert(gkey(g), winSplit(g), "distribution caption");
+    cap.appendChild(el("span",null, g.away + (s?(" "+s.away+"%"):"")));
     cap.appendChild(el("span",null,"pick'em"));
-    cap.appendChild(el("span",null, g.home + (hp!=null?(" "+hp+"%"):"")));
+    cap.appendChild(el("span",null, g.home + (s?(" "+s.home+"%"):"")));
     wrap.appendChild(cap);
     return wrap;
   }
@@ -447,8 +504,11 @@
   // NO new margin number (single canonical margin preserved). Graceful: renders nothing if
   // win chance isn't available for this game.
   function confChip(g){
-    if(g.p_home_win==null) return null;
-    var fav=Math.max(g.p_home_win, 100-g.p_home_win);
+    var cs=winSplit(g);
+    if(!cs) return null;
+    // read the PRINTED pair, not the underlying float: a 54.6% float printed as "55%" beside a
+    // "Coin flip" chip (bucket edge at 55) is the same one-fact-two-rules defect in miniature.
+    var fav=Math.max(cs.home, cs.away);
     var label, cls;
     if(fav<55){ label="Coin flip"; cls="toss"; }
     else if(fav<62){ label="Slight edge"; cls="lean"; }
@@ -481,11 +541,14 @@
     if(g.total_lo!=null) k1.appendChild(el("div","note","range "+g.total_lo+"–"+g.total_hi));
     kv.appendChild(k1);
     var k2=el("div","k"); k2.appendChild(el("div","kl","Win chance"));
-    if(g.p_home_win!=null){
+    var ws=winAssert(gkey(g), winSplit(g), "win-chance pill");
+    if(ws){
       var wpbox=el("div"); var wp=el("div","wp");
-      var hp=Math.max(0,Math.min(100,g.p_home_win)), ap=100-hp;
-      var hh=el("div","h"); hh.style.width=hp+"%"; hh.textContent=g.home+" "+Math.round(hp)+"%";
-      var aa=el("div","a"); aa.textContent=Math.round(ap)+"% "+g.away;
+      // BAR WIDTH keeps the unrounded value (the picture stays smooth); the LABELS print the
+      // rounded pair, which sums to exactly 100 because away is the complement of a single
+      // rounding. The old code rounded each side from its own float and could print 101%.
+      var hh=el("div","h"); hh.style.width=ws.raw+"%"; hh.textContent=g.home+" "+ws.home+"%";
+      var aa=el("div","a"); aa.textContent=ws.away+"% "+g.away;
       wp.appendChild(hh); wp.appendChild(aa); wpbox.appendChild(wp); k2.appendChild(wpbox);
     } else { k2.appendChild(el("div","kvv","—")); }
     kv.appendChild(k2);
@@ -497,7 +560,10 @@
 
     var hasDist=!!(g.density && g.density.dens && g.density.dens.length);
     c.appendChild(el("div","note", hasDist
-      ? "How the final margin could land — taller bars are more likely, and each shaded side is that team's win chance:"
+      // the shading marks WHICH SIDE OF PICK'EM each bar falls on. It no longer claims to BE the
+      // win chance: the printed percentages come from the win-chance model (the same number the
+      // pill shows), and the drawn area is a picture of the margin, not a second answer.
+      ? "How the final margin could land — taller bars are more likely, and the shading splits at pick'em (left of the line the visitor wins, right of it the host does):"
       : "Margin range (how much the result could swing):"));
     c.appendChild(densityStrip(g));
 
