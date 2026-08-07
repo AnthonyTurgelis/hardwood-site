@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-07T07:05:34+00:00",
+ "generated_utc": "2026-08-07T07:15:30+00:00",
  "freshness": {
-  "baked_utc": "2026-08-07T07:05:34+00:00",
-  "baked_et": "Aug 7, 3:05am ET",
-  "revalidated_utc": "2026-08-07T07:05:34+00:00",
+  "baked_utc": "2026-08-07T07:15:30+00:00",
+  "baked_et": "Aug 7, 3:15am ET",
+  "revalidated_utc": "2026-08-07T07:15:30+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-07",
@@ -1364,7 +1364,7 @@
      "family": "infra",
      "name": "The done-detection chain is complete for future dispatches; the nine were pre-link",
      "header": "The done-detection chain is complete for future dispatches; the nine were pre-link",
-     "why": "Approve switching on the always-on monitor so it can run without a person watching",
+     "why": "Trace a data-integrity question back to its source",
      "priority": 0,
      "seat": "infra",
      "status": "in_progress - THE INVERSE DEFECT FOUND AND FIXED 2026-08-06; the original claim is NOT reproduced. This row says shipped rows are still OFFERED. Measured on the live queue, the opposite was happening and it is worse: genuinely OPEN rows were being SILENTLY DROPPED from the ready-set. CAUSE: _is_closed_status searched the WHOLE status prose for done/shipped/landed/closed. These statuses are written \"<disposition> - <narrative>\" and the narrative routinely describes what was finished, so \"partial - TWO OF THE BORROWERS REPOINTED, THREE REMAIN\" and \"in_progress - MAP GAP CLOSED\" both read as SHIPPED and vanished. A dropped row emits nothing anywhere, so this was invisible - the opposite of the loud defect being hunted. MEASURED: 482 of 544 rows declare no explicit state and so rely on the prose fallback; 4 open rows were being dropped, INCLUDING THE p0 idle-beacon-fires-when-not-actually-out-of-work (three borrowers still outstanding) and a p1 whose status text I had written myself an hour earlier. FIX: the match now reads the LEADING DISPOSITION - whatever precedes the first separator, capped at 48 chars - because a row that IS closed says so in its first words. Ready-set 261 -> 265, all four recovered, and the p0 is back. RED WAS OBSERVED FIRST, per the closure-gate rule added the same day: the four dropped rows were enumerated before the change and re-checked to zero after, and nine cases pin both directions - real closures still close, prose mentions no longer do. STILL OPEN, the ORIGINAL claim: nothing consults a landed-row lock at the moment a row is OFFERED. That half is unproven on today evidence - every row I closed this session correctly disappeared from the ready-set - so re-measure before building it rather than inheriting the premise.",
@@ -3306,15 +3306,15 @@
       "why": "Probe boot tax (enforcement matrix row 13) is RED is 28 663B against an 8 000B ceiling. The file is auto-injected into context including every subagent dispatch so at B token it costs 165 tokens per ...",
       "priority": 1,
       "seat": "Infra",
-      "status": "partial (STILL OPEN) - THE ROW'S PROPOSED FIX IS NOW APPLIED AND IT DOES NOT REACH THE CEILING. 28,663B -> 27113B, so ~1,550B of the ~20,663B overage is gone. Provenance relocated verbatim into a new 's0 PROVENANCE' section of docs/BOOT_DOC.md (append-only, never deleted, because a replaced ruling explains why the active one reads as it does): order #3 (498 chars), order #8 (1,226 chars - the row's predicted biggest win, and it was), order #2 (223 chars). Each verified the same way: parser self-test 3/3, all 10 orders still parse, the ACTIVE ruling still recited verbatim, the relocated text absent from the recitation and present in BOOT_DOC. THE HONEST CONCLUSION, which the row could not have known: inline provenance was NOT most of the overage. Measured now - order rows 11109B, above-table header 2213B, below-table content 13349B. Order #10's 'that finding is DEAD, do not recite it' is ACTIVE guidance rather than provenance (it stops a future session repeating a dead claim - exactly the defect I found in order #2 tonight), so it stays. What remains is the orders' ACTIVE text, the 10-point operating model, and the WATCH/INFRA sections below the table. SO THE NEXT STEP IS A DECISION, NOT MORE RELOCATION: getting near 8,000B means moving ACTIVE content out of the auto-injected file, which changes what every agent sees at boot. That is a governance call about what must be in front of every subagent versus what a coordinator reads from BOOT_DOC - and the cover page already asserts the intended split, so the question is whether the WATCH list, the INFRA STATUS block and the 10-point model belong in the injected half at all. Do not quietly trim them; propose the split. ALSO STILL TRUE from the earlier pass: order #2 was reciting a claim order #10 declares dead, which was a CORRECTNESS defect rather than a size one and is fixed. GATED 2026-07-30T05:05Z: the mechanical half is exhausted and the rest is a governance call, so it is written up as a decision brief rather than left as an open build. The brief carries the measurements (order rows 11,109B, header 2,213B, below-table 13,349B), names the three blocks that are neither cover page nor s0 orders (the 10-point model with its boot recite-gate, the WATCH list, the INFRA STATUS block), gives four options with the risk on each, and recommends moving the WATCH list first because it duplicates ops/upcoming.json and has rotted before. The recite-gate is the load-bearing constraint: a coordinator that boots without emitting the model is supposed to be BLOCKED, so the gate must keep working from wherever the model lives (LAW A). Nothing is deleted by any option.",
-      "state": "part done",
+      "status": "retired-with-evidence: THE PROBE IS GREEN and this row is open on a stale premise. Run 2026-08-07T08:25Z: probe_boot_tax returns GREEN - 'cover 936B (~234 tok) outside sec-0, sec-0 49419B mandated verbatim, total 50355B'. The row measures CLAUDE.md against an 8000B whole-file ceiling; the probe was RE-BASED on BOOT_TAX_COVER_MAX=4000 for the CONTROLLABLE part only, everything outside sec-0, and the controllable cover is 936B - under a quarter of its budget. I derived the same conclusion independently before finding the fix: the CEO verbatim fenced block alone is 21,975 bytes, 2.7 times the old whole-file ceiling, and it is hard-coded BY CEO ORDER with an explicit do-not-paraphrase-summarize-reorder-or-trim, so a whole-file ceiling was unreachable BY CONSTRUCTION and re-basing the probe was the right fix. HONEST CAVEAT, so nobody reads this as the cost vanishing: the file is still 50,355B injected into every context including every subagent dispatch, roughly 12,600 tokens per lane. That cost is REAL - it is simply not a defect anyone may fix without the CEO, since 49,419B of it is mandated verbatim. If the token cost is ever to come down, that is a CEO decision about relocating his own standing-orders block, not a machine cleanup.",
+      "state": "",
       "pm_authored": false,
       "impact": "efficiency - compounds on every dispatch",
       "rank_priority": 1.0,
       "title": "Shrink the file that gets injected into every single agent",
       "unlocks": "Probe boot tax (enforcement matrix row 13) is RED is 28 663B against an 8 000B ceiling.",
       "owner": "MACHINE",
-      "feed_status": "QUEUED",
+      "feed_status": "DONE TODAY",
       "tier": 3,
       "group": "process",
       "ceo_ask": false,
@@ -7988,7 +7988,7 @@
       "family": "modeling",
       "name": "A newly registered lane can be invisible to the width meter",
       "header": "A newly registered lane can be invisible to the width meter",
-      "why": "",
+      "why": "2026-08-07T08 and it is the root of a loop the CEO already caught once. The never-idle hook counts . Agent dispatch is unauthorized in this harness session so the coordinator works the ranked queue ...",
       "priority": 1,
       "seat": "Modeling",
       "status": "open - FOUND BY DEMONSTRATING IT ON MYSELF at 05:52Z, so this is a live instance and not a theory. `ops/lane_claims.normalize_fields` folds the one known drift (`status` -> canonical `state`) and its own docstring calls itself 'the single choke point every mutating write should pass through so no writer can ever again put a dead key where the width truth cannot see it'. `update_lane` DOES pass through it (strict, raises on an unknown key). `add_lane` DOES NOT - verified: 'normalize_fields' does not appear in its source. CONSEQUENCE: `add_lane` is the REGISTRATION path, so a lane registered with `status='running'` lands with canonical `state` UNSET. ops_monitor counts `l.get('state')=='running'` in four places (lines ~1265, 1281, 1311, 1386), so that lane is a genuinely running lane the width meter scores as ZERO. It fails toward OVER-dispatch: the meter reads under-width, the scout fires another fill directive, and the box can exceed the cap while every artifact reports compliance. I did exactly this registering a lane tonight, then repaired it via update_lane(state='running'), which is why running went 1 -> 2 and matched the governed target. SECOND DRIFT INSTANCE, same root: `started_utc` is NOT in _ALLOWED_FIELDS either, yet live rows carry it - so strict update_lane would REJECT a key the existing corpus already uses. The allowlist and the corpus disagree; reconcile them, do not just add one key. FIX: route add_lane through normalize_fields. CHOOSE THE STRICTNESS DELIBERATELY - strict=True raises, and a raise on the REGISTRATION path means the lane does not get registered at all, which is worse than the bug. strict=False warns to stderr and drops. Neither is obviously right; the alias FOLD is the part that fixes visibility, so folding always + warning on unknown is the likely answer. ALSO NOTE the third row observed: comms-needsyou-truth-and-no-silent-drop carries status='running' AND state='landed' simultaneously - contradictory, and it reads as landed (correct) only because the meter happens to use the canonical key. A human or any status-keyed reader sees a finished lane as running. NOT FIXED TONIGHT ON PURPOSE: two lanes were actively registering and updating THROUGH this module, and editing live registration code underneath them is the same restraint I applied to the watcher. Do it at a quiet boundary. There is NO own-suite (no tests/test_lane_claims.py, no ops/test_lane_claims.py) - write one, and note tests/ may be claimed, so a sibling ops/test_lane_claims_*.py may be needed. REPRODUCE: add_lane({'lane':'probe','status':'running'}) then assert read_lanes() shows state unset while ops_monitor counts it as not-running. SECOND, DISTINCT CAUSE FOUND LIVE AT 13:12Z, and it is worse than the alias drift: a lane can run having never been registered AT ALL. The board-range lane was dispatched as an agent and no row was ever written for it, confirmed because the late add_lane call reported appended-new rather than upserted. Consequences all landed for real: the width meter read zero running while a lane worked, the scout fill whistle fired twice on that phantom emptiness and listed slots to fill on a write-set already being edited, and the durable wake request covered an empty lane list, so a stop would have killed the lane with nothing scheduled to bring it back. Note the asymmetry that makes this the harder half: the alias-drift cause writes a row with the wrong key and is therefore detectable by reading the ledger, whereas this cause writes NOTHING, so no amount of ledger validation can see it. The detector has to compare live agent children against the ledger, which is knowledge only the head process holds. Fix belongs at dispatch, making registration structurally inseparable from the spawn, which is the same seam as dispatch-path-bypassable-isolation-never-applied.",
@@ -7997,7 +7997,7 @@
       "impact": "",
       "rank_priority": 1.0,
       "title": "A newly registered lane can be invisible to the width meter",
-      "unlocks": "",
+      "unlocks": "The hook therefore fires every cycle forever it blocked consecutive times for the same reason tonight and its own ...",
       "owner": "MACHINE",
       "feed_status": "QUEUED",
       "tier": 1,
@@ -16960,9 +16960,9 @@
     "target": 40,
     "count": 351,
     "ok": true,
-    "label": "351 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 17m ago.)",
-    "as_of_utc": "2026-08-07T06:48:45Z",
-    "age_secs": 1031,
+    "label": "351 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 9m ago.)",
+    "as_of_utc": "2026-08-07T07:06:10Z",
+    "age_secs": 580,
     "stale": false
    },
    "source": "dispatch queue",
@@ -17515,67 +17515,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-07T07:05:37Z",
-  "age_s": 3,
-  "cycles": 38,
+  "last_poll_utc": "2026-08-07T07:14:49Z",
+  "age_s": 47,
+  "cycles": 46,
   "known": true,
-  "label": "scout: alive, last poll 3s ago",
+  "label": "scout: alive, last poll 47s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "3:02am",
-   "text": "chain-health: clean (all four legs healthy",
-   "detail": "chain-health: clean (all four legs healthy)"
+   "time": "3:12am",
+   "text": "slate-refresh: STALE (#128): season impact feed is 178h old paged=True",
+   "detail": "slate-refresh: STALE (#128): season impact feed is 178h old paged=True"
   },
   {
-   "time": "3:02am",
-   "text": "slate-refresh: STALE (#126): season impact feed is 178h old paged=True",
-   "detail": "slate-refresh: STALE (#126): season impact feed is 178h old paged=True"
+   "time": "3:12am",
+   "text": "poll #44 · nothing new",
+   "detail": "poll cycle=44 ok directives_new=0"
   },
   {
-   "time": "3:03am",
-   "text": "poll #36 · nothing new",
-   "detail": "poll cycle=36 ok directives_new=0"
-  },
-  {
-   "time": "3:03am",
-   "text": "lane-reconcile: orphaned=[] landed=[] purged=['data-one-person-served-as-two'] running after=0",
-   "detail": "lane-reconcile: orphaned=[] landed=[] purged=['data-one-person-served-as-two'] running_after=0"
-  },
-  {
-   "time": "3:03am",
+   "time": "3:12am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   },
   {
-   "time": "3:04am",
-   "text": "poll #37 · nothing new",
-   "detail": "poll cycle=37 ok directives_new=0"
+   "time": "3:13am",
+   "text": "poll #45 · nothing new",
+   "detail": "poll cycle=45 ok directives_new=0"
   },
   {
-   "time": "3:04am",
+   "time": "3:13am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   },
   {
-   "time": "3:05am",
+   "time": "3:13am",
+   "text": "publish-health: clean (public board is fresh",
+   "detail": "publish-health: clean (public board is fresh)"
+  },
+  {
+   "time": "3:13am",
+   "text": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
+   "detail": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing "
+  },
+  {
+   "time": "3:14am",
+   "text": "poll #46 · nothing new",
+   "detail": "poll cycle=46 ok directives_new=0"
+  },
+  {
+   "time": "3:14am",
+   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
+   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
+  },
+  {
+   "time": "3:15am",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
-  },
-  {
-   "time": "3:05am",
-   "text": "poll #38 · nothing new",
-   "detail": "poll cycle=38 ok directives_new=0"
-  },
-  {
-   "time": "3:05am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-07T07:05:37Z",
+  "as_of": "2026-08-07T07:15:21Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -17584,32 +17584,32 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "3s",
-    "state_text": "on · seen 3s ago"
+    "age_label": "47s",
+    "state_text": "on · seen 47s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "20s",
-    "state_text": "on · seen 20s ago"
+    "age_label": "15s",
+    "state_text": "on · seen 15s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "1m",
+    "state_text": "on · seen 1m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "5s",
-    "state_text": "on · seen 5s ago"
+    "age_label": "15s",
+    "state_text": "on · seen 15s ago"
    },
    {
     "name": "Inbox triage",
@@ -17827,9 +17827,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-07T07:05:31Z",
-  "session_age_secs": 6882,
-  "last_progress_age_secs": 9,
+  "last_heartbeat_utc": "2026-08-07T07:15:02Z",
+  "session_age_secs": 7478,
+  "last_progress_age_secs": 34,
   "last_spawn_attempt": "2026-08-07T04:46:10Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -17859,7 +17859,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 2 work lanes have been running for 882 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 2 work lanes have been running for 891 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 2
  },
@@ -17868,25 +17868,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T01:01:16Z",
    "stale": true,
-   "revalidated": "2026-08-07T07:05:34+00:00",
+   "revalidated": "2026-08-07T07:15:30+00:00",
    "stale_reason": "These readings may be out of date — last updated 6h ago.",
    "age_label": "6h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-07T07:05:34+00:00",
+   "as_of": "2026-08-07T07:15:30+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T07:05:34+00:00",
+   "revalidated": "2026-08-07T07:15:30+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T07:05:34+00:00",
+   "as_of": "2026-08-07T07:15:30+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T07:05:34+00:00",
+   "revalidated": "2026-08-07T07:15:30+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -17895,25 +17895,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T07:05:34+00:00",
+   "revalidated": "2026-08-07T07:15:30+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-07T07:04:13Z",
-   "stale": false,
-   "revalidated": "2026-08-07T07:05:34+00:00",
-   "stale_reason": "",
-   "age_label": "81s",
+   "as_of": "2026-08-07T07:15:32Z",
+   "stale": true,
+   "revalidated": "2026-08-07T07:15:30+00:00",
+   "stale_reason": "A newer update is being re-checked now.",
+   "age_label": "0s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T07:05:34+00:00",
+   "revalidated": "2026-08-07T07:15:30+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -17922,39 +17922,39 @@
    "source": "director inbox",
    "as_of": "2026-08-07T06:46:02Z",
    "stale": false,
-   "revalidated": "2026-08-07T07:05:34+00:00",
+   "revalidated": "2026-08-07T07:15:30+00:00",
    "stale_reason": "",
-   "age_label": "19m",
+   "age_label": "29m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-07T01:45:00-04:00",
    "stale": false,
-   "revalidated": "2026-08-07T07:05:34+00:00",
+   "revalidated": "2026-08-07T07:15:30+00:00",
    "stale_reason": "",
-   "age_label": "80m",
+   "age_label": "1h",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T07:00:44+00:00",
+   "as_of": "2026-08-07T07:10:31+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T07:05:34+00:00",
+   "revalidated": "2026-08-07T07:15:30+00:00",
    "stale_reason": "",
-   "age_label": "4m",
+   "age_label": "5m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-07T07:05:37Z",
+   "as_of": "2026-08-07T07:15:21Z",
    "stale": false,
-   "revalidated": "2026-08-07T07:05:34+00:00",
+   "revalidated": "2026-08-07T07:15:30+00:00",
    "stale_reason": "",
-   "age_label": "3s",
+   "age_label": "15s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 7, 3:05am ET"
+ "generated_et": "Aug 7, 3:15am ET"
 }
