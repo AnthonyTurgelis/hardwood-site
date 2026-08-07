@@ -231,26 +231,52 @@ footer .util a:hover{color:var(--chalk)}
     <div class="eyebrow">The record</div>
     <p class="sub" style="margin-top:8px">We grade every call the morning after and publish the running record - hits, misses, and what we learned. <a href="accuracy.html">See our accuracy</a> or read the <a href="review.html" style="color:var(--maple)">daily review</a>.</p>
   </section>
-<section class="wrap" id="qstrip"><h2 style="font:700 20px/1 'Barlow Condensed';text-transform:uppercase;letter-spacing:.08em;color:var(--chalk);margin:26px 0 10px">What we're building next</h2><div id="qs-items" style="display:grid;gap:8px"></div><a href="queue.html" style="color:var(--maple);font-size:13px">Full queue -></a>
-<script>
-/* PUBLIC PROJECTION of the ranked queue. Two things this must never do, both shipped once and both
-   caught by the CEO on the live page:
-   1. Print the internal owner/status tag - "(MACHINE - NEXT)" is a record-internal identifier and
-      has no meaning to a reader.
-   2. Show OPERATIONS rows. The queue is one canonical list, but the front door is a product surface:
-      a reader wants what we are building, not our plumbing. Family is the filter, so a mis-filed row
-      lands here - that is how "Stop telling him we are idle when we are not" reached the front page. */
-fetch('./queue.json').then(r=>r.json()).then(d=>{
-  var rows=(d.items||[]).filter(function(i){
-    return i.status!=='DONE TODAY' && i.status!=='BLOCKED'
-        && String(i.family||'').toLowerCase()!=='operations';
-  }).slice(0,5);
-  document.getElementById('qs-items').innerHTML=rows.map(function(i,n){
-    return '<div style="background:var(--plank);border:1px solid var(--line);border-radius:8px;padding:9px 12px;color:var(--chalk);font-size:14px">'
-      +(n+1)+'. '+i.title+'</div>';
-  }).join('');
-}).catch(function(){});
-</script></section>
+  <section id="best" hidden>
+    <div class="eyebrow">Best numbers</div>
+    <div class="bn-grid" id="bn-grid"></div>
+  </section>
+  <script>
+/* BEST NUMBERS. POSITION AND SIZE CHANGED 2026-08-07 BY CEO ORDER - it opened the page and he said
+   it "isn't the first thing we need to see", so it sits at the FOOT of main in small type now. The
+   DATA PATH BELOW IS UNTOUCHED: every figure is still read from ./accuracy.json AT RENDER TIME -
+   there is not a single literal number in this block, by order. A hand-typed accuracy figure goes
+   stale the next morning the grader runs and then the front door is lying; that is the defect class
+   this block exists to avoid. Same feed accuracy.html reads, so the two surfaces cannot disagree.
+   NULL RULE: a surface with no graded sample carries value null at n 0 - the combined-total row is
+   null today. A null renders as "not yet graded", never as a dash, a zero, or a blank tile: an
+   absent number stated plainly beats a number-shaped hole. Applies to any future null, not just
+   this one. The sample size rides with every figure because n is part of the claim.
+   Fail-soft: no feed, no surfaces, or a bad parse leaves the section hidden rather than empty. */
+(function(){
+  function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n;}
+  fetch('./accuracy.json').then(function(r){return r.json()}).then(function(a){
+    var rows=(a&&a.surfaces)||[];
+    if(!rows.length) return;
+    var g=document.getElementById('bn-grid');
+    rows.forEach(function(m){
+      var card=el('div','bn'), v;
+      if(m.value==null){
+        v=el('div','v pending','not yet graded');
+      }else{
+        v=el('div','v', m.unit==='%' ? (m.value+'%') : String(m.value));
+        if(m.unit && m.unit!=='%') v.appendChild(el('small',null,m.unit));
+      }
+      card.appendChild(v);
+      card.appendChild(el('div','l', m.surface||''));
+      /* the n line belongs to a CLAIM: a null row makes none, so it gets no sample line either -
+         "n = 0 - lower is better" under "not yet graded" is clutter dressed as evidence. */
+      if(m.value!=null){
+        var bits=[];
+        if(m.n!=null) bits.push('n = '+m.n);
+        if(m.direction) bits.push(m.direction);
+        if(bits.length) card.appendChild(el('div','n', bits.join(' · ')));
+      }
+      g.appendChild(card);
+    });
+    document.getElementById('best').hidden=false;
+  }).catch(function(){});
+})();
+  </script>
 </main>
 <footer class="wrap">
   <div class="util">
