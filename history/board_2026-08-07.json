@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-07T11:36:01+00:00",
+ "generated_utc": "2026-08-07T11:45:38+00:00",
  "freshness": {
-  "baked_utc": "2026-08-07T11:36:01+00:00",
-  "baked_et": "Aug 7, 7:36am ET",
-  "revalidated_utc": "2026-08-07T11:36:01+00:00",
+  "baked_utc": "2026-08-07T11:45:38+00:00",
+  "baked_et": "Aug 7, 7:45am ET",
+  "revalidated_utc": "2026-08-07T11:45:38+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-07",
@@ -11370,7 +11370,7 @@
       "why": "Measured 2026-08-07T09 30 to 09 on the live box. coordinator --release-confirm ran with a 480s timeout and returned release confirm= then correctly re-claimed the seat so the chair was never empty. ...",
       "priority": 1,
       "seat": "ops_monitor",
-      "status": "open - hypothesis stated and NOT yet proven; verify the watchdog reads the spawn signal before changing either side",
+      "status": "open - hypothesis stated and NOT yet proven; verify the watchdog reads the spawn signal before changing either side ||| THE ADDED KEY IS NAMED AND IT HAS NO PATH TO THE CRASH - closed properly 11:52Z, not just chronologically. An env pre-image survives from 2026-08-05T15:45Z, predating both the 08-06 09:30 crash and the 08-06 13:48 edit. Diffing KEY NAMES ONLY, never values: the pre-image holds 16 keys, the current file holds 17, and the single addition is SCOUT_SINGLETON_REAP. THAT KEY IS REFERENCED ONLY IN ops/ops_monitor.py, where it gates scout singleton reaping and defaults OFF. scripts/season_stats_refresh.py NEVER READS IT - zero references. So the 16 versus 17 is not merely a timing artifact; the key that appeared has NO CAUSAL PATH to the crashing script. WHY THIS MATTERS FOR THE NEXT RUN: today 13:30 UTC run will load 17 keys. IF IT SUCCEEDS, IT WILL NOT BE BECAUSE OF THAT KEY, and concluding otherwise is the obvious wrong inference sitting right there. The crash still has one observation and no established cause. INCIDENTAL, FLAGGED NOT CLAIMED: SCOUT_SINGLETON_REAP gates whether the scout KILLS non-owner coordinator processes, it was added 08-06, and it sits in the machinery around the succession failure this session could not resolve. No connection is asserted - but anyone working succession should know a singleton-reap gate was recently introduced and defaults OFF. ||| A COMPELLING REAP HYPOTHESIS, REFUTED BY ITS OWN ARTIFACT 11:56Z. I found SCOUT_SINGLETON_REAP=1, ENABLED despite ops_monitor documenting it as default OFF, and it gates a real mechanism: every cycle the monitor counts coordinator claude.exe against the lock owner and REAPS the non-owner pids. Since --release-confirm HOLDS the lock while waiting, a spawning successor would be a non-owner and could be killed before it declares. That fits the observed failure exactly - watchdogs healthy and ticking, rc 0, no successor ever declaring. THE ARTIFACT SAYS NO. ops/scout/state/singleton_defect.json records detected_utc 2026-08-07T05:25:57Z, owner pid 10472, duplicate 11388, kill_enabled true. That is BEFORE this session claimed the seat at 09:11Z, and it belongs to the previous coordinator. The file is rewritten per detection, so a reap during my release-confirm window would have replaced it. It did not. NO DUPLICATE WAS DETECTED IN THAT WINDOW, which means NO SUCCESSOR EVER SPAWNED - and that supports the ORIGINAL hypothesis, that the watchdog skips because the lock is still held, rather than the reap story. The reap did not cause this failure. WHAT IS NEWLY OPEN AND IS NOT MINE TO CLOSE: the reap is ARMED and HAS KILLED A COORDINATOR - pid 11388 at 05:25:57Z. Establish whether 11388 was a legitimate successor mid-handoff. If it was, an armed reap and a lock-holding handoff are in direct conflict and the reap will keep killing successors. The 05:25Z kill is one measurement, not a pattern - do not scope it as one without checking whether other kills happened before this file was last overwritten.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -11505,7 +11505,7 @@
       "why": "Run the daily data-integrity check",
       "priority": 1,
       "seat": "ops_monitor",
-      "status": "open - I MISLABELLED SENTINELSWEEP AND THE CORRECTION IS BIGGER THAN THE ORIGINAL CLAIM, 2026-08-07T10:10Z coord--visible. I filed all three as failing on their non-zero exit codes. SENTINELSWEEP IS NOT FAILING. Its own docstring line 48 defines the contract: exit 0 = all green, 1 = config or DB error, 2 = ONE OR MORE RED. It exits 2 because it is WORKING - it runs to completion nightly and writes a 99KB log. Reading an exit code without reading the contract that defines it is the error, and it is the same shape as everything else found today. THE ACTUAL DEFECT IS WORSE THAN A CRASHED TASK: the nightly full-DB invariant sweep is finding 17 RED items across 11 distinct checks every night and NOBODY READS THEM, because the task is unwatched so its verdict reaches no one. That is a detector with no disposition, at full DB scope. THE 17, from the 06 August sweep: 7 freshness targets STALE - predictions_live 2,043h, props 1,849h, season_wins 1,742h, totals 1,739h, power_rankings 588h, bdl_active 36h - plus scheduled_task_health, feed_failure_streak, one_person_served_as_two, id_space_join_coverage, membership_pool_eq_roster, membership_no_ghost_team, projection_coverage_missing, gameday_box, gameday_box_rate, interval_family_reach. NOTE scheduled_task_health and feed_failure_streak are in that list, so the sweep was ALREADY REPORTING the season_stats breakage I diagnosed separately an hour ago. TREAT THE STALE HOURS AS UNVERIFIED: a freshness checker reading the wrong column is a known failure mode here, and 85 days stale on predictions_live while the season is being served is exactly the kind of number that is wrong for a boring reason. Verify one target against the live surface before acting on any of them. STILL GENUINELY UNDIAGNOSED: TrackingTripwire rc=1, which for that script may or may not mean the same thing - read ITS contract first. ||| VERIFICATION ATTEMPT 10:12Z, PARTIAL - I DID NOT MANAGE TO VERIFY THE STALE HOURS AND AM SAYING SO RATHER THAN IMPLYING I DID. My check was malformed twice: has no computed_at column, and the follow-up created_at query returned InternalError only because the first error had already aborted the transaction - a psycopg artifact of my own making, not a second finding. The caution on the 17 RED items therefore STANDS UNVERIFIED exactly as written. WHAT I DID ESTABLISH, and it makes the freshness claim MORE suspicious not less: the live board is healthy. site/board.json baked 2026-08-07T10:00:40Z, twelve minutes before the check, with today_games populated, 22 done_today and 365 upcoming. A served surface that fresh sitting alongside a sweep claiming predictions_live is 2,043 hours stale is a contradiction, and the two-truths rule says one of them is wrong. Measure the freshness checker against the column it actually reads before trusting any of the 7 freshness REDs. ALSO: my first read of board.json reported zero games. That was MY WRONG KEY - games live under sections.today_games, not a top-level games list. No board defect exists. Recorded so nobody chases it. ||| TRIAGE COMPLETE 2026-08-07T10:40Z. TRACKINGTRIPWIRE IS ALSO WORKING, NOT BROKEN - AND MY CAUTION TO READ ITS CONTRACT FIRST WAS RIGHT, BECAUSE ITS EXIT 1 MEANS SOMETHING DIFFERENT FROM SENTINEL EXIT 1. scripts/tracking_tripwire.py line 35: 0 = all-empty baseline, 1 = config, DB, or ALL-PROBES-BLIND error, 2 = TRIPWIRE FIRED. Its 01 August log shows all 10 of 10 probes returning ERROR_ReadTimeout or ERROR_ConnectionError - ptstats PaintTouch, ptstats Defense, ptdefend Overall, ptshot VeryTight and the rest - so it took the all-probes-blind branch and reported it correctly. It also APPENDED all 10 blind rows to before exiting, so the blindness is on the record. THE FINDING IS A DATA-ACQUISITION ONE, NOT A BROKEN SCRIPT: the tracking-stats endpoints are unreachable from this box. Note dispatch.ps1 describes this machine as the residential-IP box chosen precisely because those endpoints are datacenter-blocked, so if they are now blind from HERE too, the workaround has stopped working. IT IS ON A MONTHLY TRIGGER AND ONLY ONE LOG EXISTS, from 01 August, so it does not retry until 01 September - a thirty-day blind window nobody would see. FINAL SCORE ON THIS ROW: of three tasks I filed as failing, ONE was genuinely crashing (season_stats, now fixed and the table refreshed) and TWO were working correctly and reporting real problems that nobody read. The header is corrected to say so. Reading an exit code without its contract was my error, twice. ||| IN FLIGHT 2026-08-07T10:45Z: re-running scripts/tracking_tripwire.py by hand to answer whether the tracking endpoints are blind NOW or were only transiently blind on 01 August - its monthly trigger means nothing else answers that until 01 September. PRELIMINARY AND NOT A CONCLUSION: the run exceeded 120 seconds and went to the background, which is weak evidence for still-blind, since a reachable endpoint returns fast while timeouts burn the clock. DO NOT record that as the answer - read the run exit code. Contract: 0 all-empty baseline, 1 config or DB or all-probes-blind, 2 tripwire fired. The run appends to by design, append-only. ||| TRIPWIRE RE-RUN IS INCONCLUSIVE, 2026-08-07T11:00Z - REPORTING A NON-RESULT AS ONE. It TIMED OUT after 380 seconds without completing, so there is NO exit code and therefore NO answer on whether the endpoints are blind now. The background notification said exit 0; that was MY WRAPPER handling its own timeout, NOT the tripwire verdict - do not read it as a pass. My 380s budget was simply too short for 10 probes that each carry their own connect and read timeout. THE EARLIER WEAK SIGNAL IS STILL ONLY WEAK: a long runtime is consistent with timeouts but also with slow-but-working probes, so it does not decide anything. TO ACTUALLY ANSWER IT: re-run with a budget over 900 seconds, or probe ONE endpoint directly instead of the full sweep of ten. The 01 August evidence stands unchanged as the only real data point - all 10 probes ERROR_ReadTimeout or ERROR_ConnectionError. ||| ANSWERED 2026-08-07T11:05Z AND IT CORRECTS ME: THE ENDPOINTS ARE REACHABLE FROM THIS BOX RIGHT NOW. Probed one tracking endpoint directly instead of the sweep of ten, which is what I said the fix was: stats.wnba.com leaguedashptstats, LeagueID 10, Season 2026, PtMeasureType SpeedDistance, with the usual browser and x-nba-stats headers. HTTP 200 in 0.9 SECONDS, 805 bytes. SO MY SPECULATION THAT THE RESIDENTIAL-IP WORKAROUND HAS STOPPED WORKING IS WRONG - the network path is fine and that line should not be carried forward. WHAT THAT LEAVES, and it is a better lead: the 01 August all-probes-blind was either TRANSIENT, or the tripwire own request shape differs from mine in headers, timeout or retry policy. Compare scripts/tracking_tripwire.py request construction against a working probe before assuming an outage. ONE NUANCE, NOT SWEPT UNDER: 805 bytes is SMALL and may well be an empty resultSet, so REACHABLE IS NOT THE SAME AS HAS-DATA. The tripwire distinguishes EMPTY, LIVE and ZERO_PAYLOAD precisely because that difference matters, and this probe only establishes the first of the three. Do not upgrade this to the endpoints are healthy. ||| ELIMINATED 2026-08-07T11:20Z - THE ENV KEY COUNT IS A RED HERRING AND THE LEAD IS DEAD. The dispatch.ps1 loader logic run against the live file counts SEVENTEEN right now, and .env was last modified 08/06 at 13:48 local. The failing season_stats run was 08/06 at 09:30 local, BEFORE that edit. So env_keys_loaded=16 on the failing run and 17 on later runs is purely CHRONOLOGICAL - the seventeenth key was added afterwards. No key is being dropped, the loader is correct, and the file is well formed. THE EDIT CANNOT HAVE CAUSED THE CRASH EITHER, because the crash at 09:30 PRECEDED the edit at 13:48 by four hours. Both directions are closed. WHERE THAT LEAVES THE CRASH: one observed failure, on 08-06, exit 0xC0000374 STATUS_HEAP_CORRUPTION with zero python output, and NO established cause. The manual run I did today exits 0 and did real work, so it is not reproducible on demand. NOTE the next scheduled run is 08-07 at 09:30 local and had not fired when this was written - read its log before theorising further, because a second data point is worth more than any hypothesis built on one. ||| CLOCK PINNED 2026-08-07T11:18Z, AND A FALSE ALARM AVOIDED. I was about to file that SeasonStatsRefresh had silently SKIPPED its 08-07 run, because LastRunTime still read 08-06 and NextRunTime read 08-07 09:30 while my UTC clock said 11:18. MEASURED FIRST AND IT IS WRONG: this box is UTC MINUS FIVE. Local now is 07:18 against UTC 11:18, so the 09:30 LOCAL trigger is 14:30 UTC - two hours and twelve minutes in the FUTURE. The scheduler agrees, reporting next-is-in-past as False, and the task state is Ready. THERE IS NO MISSED RUN AND NO DEFECT HERE. THE EARLIER ELIMINATION STILL STANDS because it did not mix clocks: the crash at 09:30 and the .env edit at 13:48 both came from PowerShell and are both LOCAL, so the crash still precedes the edit by four hours. STANDING CAUTION: task LastRunTime, NextRunTime and file mtimes are LOCAL; log filename stamps and every state file are UTC. Never compare one against the other without converting - a five-hour offset turns a healthy schedule into a missed run. THE SECOND DATA POINT ON THE CRASH ARRIVES AT 14:30 UTC TODAY - read logs/local_runner for a season_stats file dated 08-07. ||| CORRECTING MY OWN SENTENCE ABOVE, 11:22Z: I wrote that this box is UTC MINUS FIVE. THAT IS WRONG and it contradicts the numbers in the same sentence. I quoted TimeZoneInfo Local BaseUtcOffset, which is the STANDARD offset and ignores daylight time. The LIVE offset is UTC MINUS FOUR: local 07:18:05 against UTC 11:18:05 is exactly four hours. EVERY CONCLUSION IS UNCHANGED because the arithmetic used the real clocks, not the label - 09:30 local is 13:30 UTC, which was two hours and twelve minutes ahead of 11:18 UTC, exactly as stated. So there is still no missed run, and the crash still precedes the .env edit. THE TRAP WORTH KEEPING: BaseUtcOffset is the STANDARD offset, not the current one. In summer it is an hour off. Derive the offset by SUBTRACTING two measured clocks - Get-Date and its ToUniversalTime - never by reading a timezone property.",
+      "status": "open - I MISLABELLED SENTINELSWEEP AND THE CORRECTION IS BIGGER THAN THE ORIGINAL CLAIM, 2026-08-07T10:10Z coord--visible. I filed all three as failing on their non-zero exit codes. SENTINELSWEEP IS NOT FAILING. Its own docstring line 48 defines the contract: exit 0 = all green, 1 = config or DB error, 2 = ONE OR MORE RED. It exits 2 because it is WORKING - it runs to completion nightly and writes a 99KB log. Reading an exit code without reading the contract that defines it is the error, and it is the same shape as everything else found today. THE ACTUAL DEFECT IS WORSE THAN A CRASHED TASK: the nightly full-DB invariant sweep is finding 17 RED items across 11 distinct checks every night and NOBODY READS THEM, because the task is unwatched so its verdict reaches no one. That is a detector with no disposition, at full DB scope. THE 17, from the 06 August sweep: 7 freshness targets STALE - predictions_live 2,043h, props 1,849h, season_wins 1,742h, totals 1,739h, power_rankings 588h, bdl_active 36h - plus scheduled_task_health, feed_failure_streak, one_person_served_as_two, id_space_join_coverage, membership_pool_eq_roster, membership_no_ghost_team, projection_coverage_missing, gameday_box, gameday_box_rate, interval_family_reach. NOTE scheduled_task_health and feed_failure_streak are in that list, so the sweep was ALREADY REPORTING the season_stats breakage I diagnosed separately an hour ago. TREAT THE STALE HOURS AS UNVERIFIED: a freshness checker reading the wrong column is a known failure mode here, and 85 days stale on predictions_live while the season is being served is exactly the kind of number that is wrong for a boring reason. Verify one target against the live surface before acting on any of them. STILL GENUINELY UNDIAGNOSED: TrackingTripwire rc=1, which for that script may or may not mean the same thing - read ITS contract first. ||| VERIFICATION ATTEMPT 10:12Z, PARTIAL - I DID NOT MANAGE TO VERIFY THE STALE HOURS AND AM SAYING SO RATHER THAN IMPLYING I DID. My check was malformed twice: has no computed_at column, and the follow-up created_at query returned InternalError only because the first error had already aborted the transaction - a psycopg artifact of my own making, not a second finding. The caution on the 17 RED items therefore STANDS UNVERIFIED exactly as written. WHAT I DID ESTABLISH, and it makes the freshness claim MORE suspicious not less: the live board is healthy. site/board.json baked 2026-08-07T10:00:40Z, twelve minutes before the check, with today_games populated, 22 done_today and 365 upcoming. A served surface that fresh sitting alongside a sweep claiming predictions_live is 2,043 hours stale is a contradiction, and the two-truths rule says one of them is wrong. Measure the freshness checker against the column it actually reads before trusting any of the 7 freshness REDs. ALSO: my first read of board.json reported zero games. That was MY WRONG KEY - games live under sections.today_games, not a top-level games list. No board defect exists. Recorded so nobody chases it. ||| TRIAGE COMPLETE 2026-08-07T10:40Z. TRACKINGTRIPWIRE IS ALSO WORKING, NOT BROKEN - AND MY CAUTION TO READ ITS CONTRACT FIRST WAS RIGHT, BECAUSE ITS EXIT 1 MEANS SOMETHING DIFFERENT FROM SENTINEL EXIT 1. scripts/tracking_tripwire.py line 35: 0 = all-empty baseline, 1 = config, DB, or ALL-PROBES-BLIND error, 2 = TRIPWIRE FIRED. Its 01 August log shows all 10 of 10 probes returning ERROR_ReadTimeout or ERROR_ConnectionError - ptstats PaintTouch, ptstats Defense, ptdefend Overall, ptshot VeryTight and the rest - so it took the all-probes-blind branch and reported it correctly. It also APPENDED all 10 blind rows to before exiting, so the blindness is on the record. THE FINDING IS A DATA-ACQUISITION ONE, NOT A BROKEN SCRIPT: the tracking-stats endpoints are unreachable from this box. Note dispatch.ps1 describes this machine as the residential-IP box chosen precisely because those endpoints are datacenter-blocked, so if they are now blind from HERE too, the workaround has stopped working. IT IS ON A MONTHLY TRIGGER AND ONLY ONE LOG EXISTS, from 01 August, so it does not retry until 01 September - a thirty-day blind window nobody would see. FINAL SCORE ON THIS ROW: of three tasks I filed as failing, ONE was genuinely crashing (season_stats, now fixed and the table refreshed) and TWO were working correctly and reporting real problems that nobody read. The header is corrected to say so. Reading an exit code without its contract was my error, twice. ||| IN FLIGHT 2026-08-07T10:45Z: re-running scripts/tracking_tripwire.py by hand to answer whether the tracking endpoints are blind NOW or were only transiently blind on 01 August - its monthly trigger means nothing else answers that until 01 September. PRELIMINARY AND NOT A CONCLUSION: the run exceeded 120 seconds and went to the background, which is weak evidence for still-blind, since a reachable endpoint returns fast while timeouts burn the clock. DO NOT record that as the answer - read the run exit code. Contract: 0 all-empty baseline, 1 config or DB or all-probes-blind, 2 tripwire fired. The run appends to by design, append-only. ||| TRIPWIRE RE-RUN IS INCONCLUSIVE, 2026-08-07T11:00Z - REPORTING A NON-RESULT AS ONE. It TIMED OUT after 380 seconds without completing, so there is NO exit code and therefore NO answer on whether the endpoints are blind now. The background notification said exit 0; that was MY WRAPPER handling its own timeout, NOT the tripwire verdict - do not read it as a pass. My 380s budget was simply too short for 10 probes that each carry their own connect and read timeout. THE EARLIER WEAK SIGNAL IS STILL ONLY WEAK: a long runtime is consistent with timeouts but also with slow-but-working probes, so it does not decide anything. TO ACTUALLY ANSWER IT: re-run with a budget over 900 seconds, or probe ONE endpoint directly instead of the full sweep of ten. The 01 August evidence stands unchanged as the only real data point - all 10 probes ERROR_ReadTimeout or ERROR_ConnectionError. ||| ANSWERED 2026-08-07T11:05Z AND IT CORRECTS ME: THE ENDPOINTS ARE REACHABLE FROM THIS BOX RIGHT NOW. Probed one tracking endpoint directly instead of the sweep of ten, which is what I said the fix was: stats.wnba.com leaguedashptstats, LeagueID 10, Season 2026, PtMeasureType SpeedDistance, with the usual browser and x-nba-stats headers. HTTP 200 in 0.9 SECONDS, 805 bytes. SO MY SPECULATION THAT THE RESIDENTIAL-IP WORKAROUND HAS STOPPED WORKING IS WRONG - the network path is fine and that line should not be carried forward. WHAT THAT LEAVES, and it is a better lead: the 01 August all-probes-blind was either TRANSIENT, or the tripwire own request shape differs from mine in headers, timeout or retry policy. Compare scripts/tracking_tripwire.py request construction against a working probe before assuming an outage. ONE NUANCE, NOT SWEPT UNDER: 805 bytes is SMALL and may well be an empty resultSet, so REACHABLE IS NOT THE SAME AS HAS-DATA. The tripwire distinguishes EMPTY, LIVE and ZERO_PAYLOAD precisely because that difference matters, and this probe only establishes the first of the three. Do not upgrade this to the endpoints are healthy. ||| ELIMINATED 2026-08-07T11:20Z - THE ENV KEY COUNT IS A RED HERRING AND THE LEAD IS DEAD. The dispatch.ps1 loader logic run against the live file counts SEVENTEEN right now, and .env was last modified 08/06 at 13:48 local. The failing season_stats run was 08/06 at 09:30 local, BEFORE that edit. So env_keys_loaded=16 on the failing run and 17 on later runs is purely CHRONOLOGICAL - the seventeenth key was added afterwards. No key is being dropped, the loader is correct, and the file is well formed. THE EDIT CANNOT HAVE CAUSED THE CRASH EITHER, because the crash at 09:30 PRECEDED the edit at 13:48 by four hours. Both directions are closed. WHERE THAT LEAVES THE CRASH: one observed failure, on 08-06, exit 0xC0000374 STATUS_HEAP_CORRUPTION with zero python output, and NO established cause. The manual run I did today exits 0 and did real work, so it is not reproducible on demand. NOTE the next scheduled run is 08-07 at 09:30 local and had not fired when this was written - read its log before theorising further, because a second data point is worth more than any hypothesis built on one. ||| CLOCK PINNED 2026-08-07T11:18Z, AND A FALSE ALARM AVOIDED. I was about to file that SeasonStatsRefresh had silently SKIPPED its 08-07 run, because LastRunTime still read 08-06 and NextRunTime read 08-07 09:30 while my UTC clock said 11:18. MEASURED FIRST AND IT IS WRONG: this box is UTC MINUS FIVE. Local now is 07:18 against UTC 11:18, so the 09:30 LOCAL trigger is 14:30 UTC - two hours and twelve minutes in the FUTURE. The scheduler agrees, reporting next-is-in-past as False, and the task state is Ready. THERE IS NO MISSED RUN AND NO DEFECT HERE. THE EARLIER ELIMINATION STILL STANDS because it did not mix clocks: the crash at 09:30 and the .env edit at 13:48 both came from PowerShell and are both LOCAL, so the crash still precedes the edit by four hours. STANDING CAUTION: task LastRunTime, NextRunTime and file mtimes are LOCAL; log filename stamps and every state file are UTC. Never compare one against the other without converting - a five-hour offset turns a healthy schedule into a missed run. THE SECOND DATA POINT ON THE CRASH ARRIVES AT 14:30 UTC TODAY - read logs/local_runner for a season_stats file dated 08-07. ||| CORRECTING MY OWN SENTENCE ABOVE, 11:22Z: I wrote that this box is UTC MINUS FIVE. THAT IS WRONG and it contradicts the numbers in the same sentence. I quoted TimeZoneInfo Local BaseUtcOffset, which is the STANDARD offset and ignores daylight time. The LIVE offset is UTC MINUS FOUR: local 07:18:05 against UTC 11:18:05 is exactly four hours. EVERY CONCLUSION IS UNCHANGED because the arithmetic used the real clocks, not the label - 09:30 local is 13:30 UTC, which was two hours and twelve minutes ahead of 11:18 UTC, exactly as stated. So there is still no missed run, and the crash still precedes the .env edit. THE TRAP WORTH KEEPING: BaseUtcOffset is the STANDARD offset, not the current one. In summer it is an hour off. Derive the offset by SUBTRACTING two measured clocks - Get-Date and its ToUniversalTime - never by reading a timezone property. ||| THE ADDED KEY IS NAMED AND IT HAS NO PATH TO THE CRASH - closed properly 11:52Z, not just chronologically. An env pre-image survives from 2026-08-05T15:45Z, predating both the 08-06 09:30 crash and the 08-06 13:48 edit. Diffing KEY NAMES ONLY, never values: the pre-image holds 16 keys, the current file holds 17, and the single addition is SCOUT_SINGLETON_REAP. THAT KEY IS REFERENCED ONLY IN ops/ops_monitor.py, where it gates scout singleton reaping and defaults OFF. scripts/season_stats_refresh.py NEVER READS IT - zero references. So the 16 versus 17 is not merely a timing artifact; the key that appeared has NO CAUSAL PATH to the crashing script. WHY THIS MATTERS FOR THE NEXT RUN: today 13:30 UTC run will load 17 keys. IF IT SUCCEEDS, IT WILL NOT BE BECAUSE OF THAT KEY, and concluding otherwise is the obvious wrong inference sitting right there. The crash still has one observation and no established cause. INCIDENTAL, FLAGGED NOT CLAIMED: SCOUT_SINGLETON_REAP gates whether the scout KILLS non-owner coordinator processes, it was added 08-06, and it sits in the machinery around the succession failure this session could not resolve. No connection is asserted - but anyone working succession should know a singleton-reap gate was recently introduced and defaults OFF.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -13215,7 +13215,7 @@
       "why": "Measured 2026-08-07T11 . GamedayReport last ran at 21 57 local and returned which is hex - a specified session does not exist it may already have been terminated. The task state reads Ready so ...",
       "priority": 2,
       "seat": "ops_monitor",
-      "status": "open - SEVERITY DOWNGRADED BY MY OWN CHECK, p1 to p2, 2026-08-07T11:33Z coord--visible. I FILED THIS AS PRODUCT-FACING AND THE PRODUCT IS FINE. I wrote a caution on this row to verify whether reports actually landed before assuming missing output. Verified, and it changed the answer: site/pdfs/2026-08-07 holds three PDFs for ATL at WAS, GSV at DAL and PHO at CON, all written 2026-08-07 07:30:43 local, which was minutes before this check. site/pdfs/2026-08-06 holds three more. So the 0x80070520 logon-session failure at 21:57 on 08-06 did NOT stop the reports being produced - another path does it. HardwoodDeployWatch ran at 07:30:30, thirteen seconds before every one of those files was written, which is the likely producer. WHAT REMAINS TRUE AND IS STILL WORTH FIXING: a registered task is failing every run and nothing watches it, so if the OTHER path ever stops, the failure is already invisible. That is a real defect, it is just not an outage, and calling it product-facing overstated it. AN INCIDENTAL FACT WORTH HAVING: the 08-06 PDFs also carry TODAY at 07:30:43 as their mtime, so the bake REWRITES prior-day PDFs rather than leaving them. Never read a gameday PDF mtime as its authoring time - it is the time of the most recent bake that touched it.",
+      "status": "open - SEVERITY DOWNGRADED BY MY OWN CHECK, p1 to p2, 2026-08-07T11:33Z coord--visible. I FILED THIS AS PRODUCT-FACING AND THE PRODUCT IS FINE. I wrote a caution on this row to verify whether reports actually landed before assuming missing output. Verified, and it changed the answer: site/pdfs/2026-08-07 holds three PDFs for ATL at WAS, GSV at DAL and PHO at CON, all written 2026-08-07 07:30:43 local, which was minutes before this check. site/pdfs/2026-08-06 holds three more. So the 0x80070520 logon-session failure at 21:57 on 08-06 did NOT stop the reports being produced - another path does it. HardwoodDeployWatch ran at 07:30:30, thirteen seconds before every one of those files was written, which is the likely producer. WHAT REMAINS TRUE AND IS STILL WORTH FIXING: a registered task is failing every run and nothing watches it, so if the OTHER path ever stops, the failure is already invisible. That is a real defect, it is just not an outage, and calling it product-facing overstated it. AN INCIDENTAL FACT WORTH HAVING: the 08-06 PDFs also carry TODAY at 07:30:43 as their mtime, so the bake REWRITES prior-day PDFs rather than leaving them. Never read a gameday PDF mtime as its authoring time - it is the time of the most recent bake that touched it. ||| THE REMEDY THIS ROW SUGGESTED IS ALREADY APPLIED AND DOES NOT WORK - DO NOT ATTEMPT IT, measured 11:36Z. GamedayReport is ALREADY S4U: userId antho, logonType S4U, runLevel Limited. So the documented convert-headless-jobs-to-S4U fix has been done and the task STILL returns 0x80070520. AND THE PRINCIPAL IS NOT THE DISCRIMINATOR: HardwoodDeployWatch, which WORKS and is the task that produced today gameday PDFs at 07:30:43, carries an IDENTICAL principal - antho, S4U, Limited. Same configuration, opposite outcomes, so the principal cannot explain the failure. ONE VISIBLE DIFFERENCE, STATED AS AN OBSERVATION AND NOT A CAUSE: the working task invokes pythonw.exe DIRECTLY while GamedayReport invokes a .cmd wrapper, run_gameday.cmd. A cmd wrapper allocates a console and a logon-session error is console-shaped. BUT THE WRAPPER ALONE CANNOT BE THE ANSWER: SentinelSweep also runs through a .cmd wrapper, run_sentinel.cmd, and it completes normally every night writing a 99KB log. So cmd-versus-direct correlates but does not yet explain. WHAT TO DO NEXT: compare run_gameday.cmd against run_sentinel.cmd, since one fails and one works under the same principal and the same wrapper style. That is a two-file diff, not an investigation. ||| AND THE TWO-FILE DIFF I JUST PRESCRIBED IS THE WRONG INVESTIGATION - corrected 11:40Z, third time today I have had to withdraw my own next step. I did the diff. The wrappers DO differ: run_gameday.cmd calls a separate run_gameday.ps1 via a relative %~dp0 path and omits exit /b ERRORLEVEL, while run_sentinel.cmd calls the shared dispatch.ps1 by absolute path and propagates its exit code. NONE OF THAT CAN MATTER HERE. 0x80070520 is ERROR_NO_SUCH_LOGON_SESSION returned by the TASK SCHEDULER when it cannot establish the logon session to launch the action. THE ACTION NEVER EXECUTES, so the contents of the .cmd are irrelevant to this failure and diffing them explains nothing. THE FAILURE IS AT REGISTRATION OR CREDENTIAL LEVEL, NOT IN THE SCRIPT. The task is S4U like its working neighbours, so the likely difference is a stale or broken stored credential on THIS task registration specifically - something that differs between how this task was registered and how HardwoodDeployWatch was. WHAT TO ACTUALLY LOOK AT: compare the task XML of GamedayReport against HardwoodDeployWatch with schtasks /query /XML, and check whether re-registering the task clears it. DO NOT edit the .cmd or .ps1 files chasing this - they are innocent and the change would be pure churn. THE WRAPPER FINDINGS ARE STILL WORTH KEEPING as ordinary hygiene, unrelated to this failure: the missing exit /b means the .cmd swallows its child exit code, so even when it DOES run, the scheduler cannot see a failure inside it. ||| REGISTRATION DIFFERENCES MEASURED 11:44Z, CAUSE STILL NOT ESTABLISHED - I am recording these as DIFFERENCES, not as the answer. GamedayReport versus the working HardwoodDeployWatch, same principal on both: folder is backslash-Hardwood versus root, author is TURGETABPC-backslash-antho versus EMPTY, DisallowStartIfOnBatteries is TRUE versus False, StartWhenAvailable is FALSE versus True, time limit PT72H versus PT20M, daily trigger versus time trigger. THE BATTERY SETTING IS THE MOST TESTABLE AND IT TIES TO SOMETHING ALREADY IN THE RECORD: this box has NO battery, but it exposes THREE ACPI bays reporting PowerOnline False and RemainingCapacity 0, which Windows may read as discharged batteries. DisallowStartIfOnBatteries True against phantom discharged bays would refuse to start the task. BUT I AM NOT CLAIMING THAT IS THE CAUSE, and the reason is specific: a power-condition refusal reports a condition-not-met result, whereas 0x80070520 is ERROR_NO_SUCH_LOGON_SESSION, which is a credential and session failure. The codes do not match, so the battery setting is a real anomaly that probably explains something ELSE. StartWhenAvailable False is the same shape - it explains a MISSED catch-up run, not a logon error. HOW TO SETTLE IT CHEAPLY AND REVERSIBLY: flip DisallowStartIfOnBatteries to False on GamedayReport and run the task on demand. If it still returns 0x80070520 the setting is exonerated and the credential path is the remaining suspect. One setting, one on-demand run, fully reversible, and it eliminates a whole branch either way. ||| FOLDER AND REGISTRATION-BATCH HYPOTHESES ELIMINATED 11:46Z, by a control sitting right next to it. All five tasks in the backslash-Hardwood folder, which is the complete folder: SeasonStatsRefresh rc heap corruption, GamedayReport rc logon session, SentinelSweep rc 2 which is RED by its own contract and healthy, TrackingTripwire rc 1 which is all-probes-blind and healthy, and GAMEDAYGRADE RC 0, A CLEAN SUCCESS. GamedayGrade is the control I needed and it was already there: SAME folder, SAME principal of antho with S4U and Limited, SAME .cmd wrapper style, and it exits ZERO. So the folder cannot be the discriminator, a shared stale registration batch cannot be it, and the S4U principal cannot be it. Three branches closed by one query. WHAT IS LEFT IS GAMEDAYREPORT SPECIFICALLY - its own stored credential or its own registration, not anything it shares with neighbours. The reversible test already named stands: flip DisallowStartIfOnBatteries, run on demand, see whether the code changes; and if it does not, re-register the task. ALSO WORTH HAVING: none of the five has run yet on 08-07 because their triggers are daily and local is UTC minus four, so every LastRunTime here is 08-06 or earlier and that is NORMAL, not evidence of a stalled folder.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -18218,9 +18218,9 @@
     "target": 40,
     "count": 378,
     "ok": true,
-    "label": "378 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
+    "label": "378 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 9m ago.)",
     "as_of_utc": "2026-08-07T11:36:14Z",
-    "age_secs": 21,
+    "age_secs": 582,
     "stale": false
    },
    "source": "dispatch queue",
@@ -18773,67 +18773,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-07T11:36:02Z",
-  "age_s": 11,
-  "cycles": 263,
+  "last_poll_utc": "2026-08-07T11:44:25Z",
+  "age_s": 78,
+  "cycles": 270,
   "known": true,
-  "label": "scout: alive, last poll 11s ago",
+  "label": "scout: alive, last poll 78s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "7:32am",
+   "time": "7:42am",
    "text": "publish-health: clean (public board is fresh",
    "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "7:32am",
+   "time": "7:42am",
    "text": "chain-health: clean (all four legs healthy",
    "detail": "chain-health: clean (all four legs healthy)"
   },
   {
-   "time": "7:32am",
-   "text": "slate-refresh: STALE (#177): season impact feed is 182h old paged=True",
-   "detail": "slate-refresh: STALE (#177): season impact feed is 182h old paged=True"
+   "time": "7:42am",
+   "text": "slate-refresh: STALE (#179): season impact feed is 182h old paged=True",
+   "detail": "slate-refresh: STALE (#179): season impact feed is 182h old paged=True"
   },
   {
-   "time": "7:33am",
-   "text": "poll #261 · nothing new",
-   "detail": "poll cycle=261 ok directives_new=0"
+   "time": "7:43am",
+   "text": "poll #269 · nothing new",
+   "detail": "poll cycle=269 ok directives_new=0"
   },
   {
-   "time": "7:33am",
+   "time": "7:43am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   },
   {
-   "time": "7:34am",
-   "text": "poll #262 · nothing new",
-   "detail": "poll cycle=262 ok directives_new=0"
+   "time": "7:44am",
+   "text": "poll #270 · nothing new",
+   "detail": "poll cycle=270 ok directives_new=0"
   },
   {
-   "time": "7:34am",
+   "time": "7:44am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   },
   {
-   "time": "7:35am",
-   "text": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 306s newer than live (repo 2026-08-07T11:30:43+00:00 vs live 2026-08-07T11:25:37+00:00) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 306s newer than live (repo 2026-08-07T11:30:43+00:00 vs live 2026-08-07T11:25:37+00:00"
+   "time": "7:45am",
+   "text": "publish-health: clean (public board is fresh",
+   "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "7:36am",
-   "text": "poll #263 · nothing new",
-   "detail": "poll cycle=263 ok directives_new=0"
+   "time": "7:45am",
+   "text": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
+   "detail": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing "
   },
   {
-   "time": "7:36am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
+   "time": "7:45am",
+   "text": "board-selfpolice: clean (live board matches repo truth",
+   "detail": "board-selfpolice: clean (live board matches repo truth)"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-07T11:36:02Z",
+  "as_of": "2026-08-07T11:45:29Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -18842,32 +18842,32 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "11s",
-    "state_text": "on · seen 11s ago"
+    "age_label": "78s",
+    "state_text": "on · seen 78s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "38s",
-    "state_text": "on · seen 38s ago"
+    "age_label": "19s",
+    "state_text": "on · seen 19s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "14s",
+    "state_text": "on · seen 14s ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "19s",
-    "state_text": "on · seen 19s ago"
+    "age_label": "22s",
+    "state_text": "on · seen 22s ago"
    },
    {
     "name": "Inbox triage",
@@ -19085,9 +19085,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-07T11:36:11Z",
-  "session_age_secs": 8701,
-  "last_progress_age_secs": 2,
+  "last_heartbeat_utc": "2026-08-07T11:44:52Z",
+  "session_age_secs": 9271,
+  "last_progress_age_secs": 51,
   "last_spawn_attempt": "2026-08-07T09:38:41Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -19117,7 +19117,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 2 work lanes have been running for 1153 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 2 work lanes have been running for 1161 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 2
  },
@@ -19126,25 +19126,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T08:14:24Z",
    "stale": true,
-   "revalidated": "2026-08-07T11:36:01+00:00",
+   "revalidated": "2026-08-07T11:45:38+00:00",
    "stale_reason": "These readings may be out of date — last updated 3h ago.",
    "age_label": "3h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-07T11:36:01+00:00",
+   "as_of": "2026-08-07T11:45:38+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T11:36:01+00:00",
+   "revalidated": "2026-08-07T11:45:38+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T11:36:01+00:00",
+   "as_of": "2026-08-07T11:45:38+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T11:36:01+00:00",
+   "revalidated": "2026-08-07T11:45:38+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -19153,25 +19153,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T11:36:01+00:00",
+   "revalidated": "2026-08-07T11:45:38+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-07T11:36:14Z",
-   "stale": true,
-   "revalidated": "2026-08-07T11:36:01+00:00",
-   "stale_reason": "A newer update is being re-checked now.",
-   "age_label": "0s",
+   "as_of": "2026-08-07T11:45:32Z",
+   "stale": false,
+   "revalidated": "2026-08-07T11:45:38+00:00",
+   "stale_reason": "",
+   "age_label": "6s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T11:36:01+00:00",
+   "revalidated": "2026-08-07T11:45:38+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -19180,39 +19180,39 @@
    "source": "director inbox",
    "as_of": "2026-08-07T11:04:13Z",
    "stale": false,
-   "revalidated": "2026-08-07T11:36:01+00:00",
+   "revalidated": "2026-08-07T11:45:38+00:00",
    "stale_reason": "",
-   "age_label": "31m",
+   "age_label": "41m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-07T06:20:00-04:00",
    "stale": false,
-   "revalidated": "2026-08-07T11:36:01+00:00",
+   "revalidated": "2026-08-07T11:45:38+00:00",
    "stale_reason": "",
-   "age_label": "76m",
+   "age_label": "85m",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T11:30:43+00:00",
+   "as_of": "2026-08-07T11:40:30+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T11:36:01+00:00",
+   "revalidated": "2026-08-07T11:45:38+00:00",
    "stale_reason": "",
    "age_label": "5m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-07T11:36:02Z",
+   "as_of": "2026-08-07T11:45:29Z",
    "stale": false,
-   "revalidated": "2026-08-07T11:36:01+00:00",
+   "revalidated": "2026-08-07T11:45:38+00:00",
    "stale_reason": "",
-   "age_label": "11s",
+   "age_label": "14s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 7, 7:36am ET"
+ "generated_et": "Aug 7, 7:45am ET"
 }
