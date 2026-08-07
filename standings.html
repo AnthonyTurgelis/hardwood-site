@@ -38,6 +38,12 @@
   td.proj{font-variant-numeric:tabular-nums;color:var(--ink)}
   td.proj .band{color:var(--dim);font-size:11.5px;margin-left:3px}
   td.pct{font-variant-numeric:tabular-nums}
+  /* The move sits BESIDE the level, smaller and coloured, never replacing it — a reader should get
+     the value and the direction in one glance without reading two columns. */
+  td.pct .mv{font-size:10.5px;font-weight:600;font-variant-numeric:tabular-nums}
+  td.pct .mv.up{color:var(--good,#1f8f3d)}
+  td.pct .mv.dn{color:var(--bad,#c62828)}
+  td.pct .mv.flat{color:var(--dim,#8993a6)}
   td.pct.hi{color:var(--good);font-weight:660}
   td.pct.lo{color:var(--dim)}
   td.na{color:var(--dim)}
@@ -94,6 +100,14 @@
   // Playoff seed distribution (./playoff_odds.json) — read for STAKES, not outcome. Held here and
   // re-rendered after the standings table so the Seeding-Leverage element survives the 5-min poll.
   var PLAYOFF=null, lastData=null;
+  // ONE-DAY MOVE IN TITLE ODDS, QUOTED FROM THE TEAMS BOARD — never recomputed here.
+  // This page rendered title odds as a bare level while the teams board, from the same simulation,
+  // already carried a one-day move for the SAME number. The house standard is that a bare level is
+  // the least useful form of a number, so the move belongs beside it. It is READ from teams.json
+  // rather than derived, because a summary surface quotes its detail page: two pages computing
+  // their own version of one quantity is how they end up disagreeing, which is a defect this
+  // record has already paid for more than once today.
+  var TMOVE=null;
 
   // leverageRows(pj): per team, how much its FINAL SEED is still undecided, straight from the baked
   // seed distribution — NO sim re-run, NO fabricated per-game swing. leverage = 1 - (probability of
@@ -259,11 +273,21 @@
       else po.className="pct na";
       tr.appendChild(po);
 
-      // title odds
+      // title odds, with the one-day move beside the level when we hold one
       var to=el("td","pct");
       to.textContent=fmtPct(r.p_title);
       if(r.p_title!=null){ to.className="pct "+(r.p_title>=0.10?"hi":(r.p_title<0.05?"lo":"")); }
       else to.className="pct na";
+      // OMIT, NEVER ZERO. A team missing from the move map has no measured change, which is not the
+      // same claim as "did not move" — the teams board draws a literal 0 only where it HAS the
+      // number and it is zero, and inventing that here would put a fact on the page we do not hold.
+      var mv = (TMOVE && r.team!=null) ? TMOVE[r.team] : undefined;
+      if(mv!=null && r.p_title!=null){
+        var sp=el("span", "mv "+(mv>0?"up":(mv<0?"dn":"flat")));
+        sp.textContent = " " + (mv>0?"+":"") + mv.toFixed(1);
+        sp.title = "change in title odds since yesterday, in points";
+        to.appendChild(sp);
+      }
       tr.appendChild(to);
 
       // NOTE: market/futures column intentionally omitted — F24 futures seam is r.market
@@ -278,7 +302,10 @@
       "Record and games-back are today's actual standings. Proj. wins is the median final-win "+
       "total across the simulations, with the [p5–p95] band showing where the total lands in 9 of "+
       "every 10 runs. Playoff and Title are the share of simulations in which a team makes the "+
-      "league-wide top-8 and wins the championship. Teams are ordered by current win%; the line "+
+      "league-wide top-8 and wins the championship. The small figure beside Title is how much "+
+      "those title odds moved since yesterday, in points, and it is the same number the Teams "+
+      "page shows; a team with no measured move shows none rather than a zero. "+
+      "Teams are ordered by current win%; the line "+
       "after the 8th team marks today's playoff cut. Projections update when the nightly "+
       "simulation re-runs — they describe a range of outcomes, not a prediction of the exact finish."));
     main.appendChild(note);
@@ -303,6 +330,17 @@
   // Seed distribution (stakes overlay) — fetched once; re-renders the last standings when it lands.
   fetch("./playoff_odds.json?v="+Date.now(),{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; })
     .then(function(j){ if(j&&j.teams&&j.teams.length){ PLAYOFF=j; if(lastData) render(lastData); } })
+    .catch(function(){});
+  // One-day title move, quoted from the teams board. Same shape as the seed overlay above: fetched
+  // once, re-renders the last standings when it lands, and FAILS SILENT. If this file never arrives
+  // the column simply is not drawn — the page must not degrade because an enrichment is missing,
+  // and an omitted move is honest where a zero would assert "nothing changed".
+  fetch("./teams.json?v="+Date.now(),{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; })
+    .then(function(j){
+      if(!j||!j.teams||!j.teams.length) return;
+      var m={}; j.teams.forEach(function(r){ if(r.team && r.title_delta!=null) m[r.team]=r.title_delta; });
+      if(Object.keys(m).length){ TMOVE=m; if(lastData) render(lastData); }
+    })
     .catch(function(){});
 })();
 </script>
