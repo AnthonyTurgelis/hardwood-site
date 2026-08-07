@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-07T09:25:41+00:00",
+ "generated_utc": "2026-08-07T09:35:47+00:00",
  "freshness": {
-  "baked_utc": "2026-08-07T09:25:41+00:00",
-  "baked_et": "Aug 7, 5:25am ET",
-  "revalidated_utc": "2026-08-07T09:25:41+00:00",
+  "baked_utc": "2026-08-07T09:35:47+00:00",
+  "baked_et": "Aug 7, 5:35am ET",
+  "revalidated_utc": "2026-08-07T09:35:47+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-07",
@@ -41,6 +41,12 @@
     "title": "Trace a data-integrity question back to its source",
     "timestamp": "Aug 6, 2026",
     "body_markdown": "Improved and recorded."
+   },
+   {
+    "id": "the-guard-clause-that-could-not",
+    "title": "The guard clause that could not fire, and what replaced it",
+    "timestamp": "Aug 6, 2026",
+    "body_markdown": "> **What we found:** The clause is reachable for exactly one shape — one id, two teams, two names, one date — and nothing else. It is kept, two lines, explicitly labelled not-the-discriminator."
    },
    {
     "id": "market-grade-now-excludes-prices-that",
@@ -83,12 +89,6 @@
     "title": "The allowlist is the one register that never expires",
     "timestamp": "Jul 31, 2026",
     "body_markdown": "> **What we found:** The sweep applied its own doctrine to two registers out of three, and the exception was the one holding the permanent exemptions. A row survived forever after the condition that justified it was gone."
-   },
-   {
-    "id": "infra-a-red-probe-now-names",
-    "title": "Infra — a red probe now names itself on the strip and reaches the one door",
-    "timestamp": "Jul 31, 2026",
-    "body_markdown": "> **What we found:** So the audience of the alarm was a human who happened to open a console and then go and read a jsonl."
    }
   ],
   "today_games": {
@@ -965,6 +965,7 @@
     "team": "",
     "time": "5:25am",
     "at_iso": "2026-08-07T05:25:00-04:00",
+    "link": "https://drive.google.com/file/d/1Iu15pPVcLlDZFhi7f3z2tCu0QZQv2VlP/view?usp=drivesdk",
     "impact": 3,
     "headline": true
    },
@@ -1408,7 +1409,7 @@
      "why": "Trace a data-integrity question back to its source",
      "priority": 0,
      "seat": "infra",
-     "status": "in_progress - THE INVERSE DEFECT FOUND AND FIXED 2026-08-06; the original claim is NOT reproduced. This row says shipped rows are still OFFERED. Measured on the live queue, the opposite was happening and it is worse: genuinely OPEN rows were being SILENTLY DROPPED from the ready-set. CAUSE: _is_closed_status searched the WHOLE status prose for done/shipped/landed/closed. These statuses are written \"<disposition> - <narrative>\" and the narrative routinely describes what was finished, so \"partial - TWO OF THE BORROWERS REPOINTED, THREE REMAIN\" and \"in_progress - MAP GAP CLOSED\" both read as SHIPPED and vanished. A dropped row emits nothing anywhere, so this was invisible - the opposite of the loud defect being hunted. MEASURED: 482 of 544 rows declare no explicit state and so rely on the prose fallback; 4 open rows were being dropped, INCLUDING THE p0 idle-beacon-fires-when-not-actually-out-of-work (three borrowers still outstanding) and a p1 whose status text I had written myself an hour earlier. FIX: the match now reads the LEADING DISPOSITION - whatever precedes the first separator, capped at 48 chars - because a row that IS closed says so in its first words. Ready-set 261 -> 265, all four recovered, and the p0 is back. RED WAS OBSERVED FIRST, per the closure-gate rule added the same day: the four dropped rows were enumerated before the change and re-checked to zero after, and nine cases pin both directions - real closures still close, prose mentions no longer do. STILL OPEN, the ORIGINAL claim: nothing consults a landed-row lock at the moment a row is OFFERED. That half is unproven on today evidence - every row I closed this session correctly disappeared from the ready-set - so re-measure before building it rather than inheriting the premise.",
+     "status": "in_progress - THE INVERSE DEFECT FOUND AND FIXED 2026-08-06; the original claim is NOT reproduced. This row says shipped rows are still OFFERED. Measured on the live queue, the opposite was happening and it is worse: genuinely OPEN rows were being SILENTLY DROPPED from the ready-set. CAUSE: _is_closed_status searched the WHOLE status prose for done/shipped/landed/closed. These statuses are written \"<disposition> - <narrative>\" and the narrative routinely describes what was finished, so \"partial - TWO OF THE BORROWERS REPOINTED, THREE REMAIN\" and \"in_progress - MAP GAP CLOSED\" both read as SHIPPED and vanished. A dropped row emits nothing anywhere, so this was invisible - the opposite of the loud defect being hunted. MEASURED: 482 of 544 rows declare no explicit state and so rely on the prose fallback; 4 open rows were being dropped, INCLUDING THE p0 idle-beacon-fires-when-not-actually-out-of-work (three borrowers still outstanding) and a p1 whose status text I had written myself an hour earlier. FIX: the match now reads the LEADING DISPOSITION - whatever precedes the first separator, capped at 48 chars - because a row that IS closed says so in its first words. Ready-set 261 -> 265, all four recovered, and the p0 is back. RED WAS OBSERVED FIRST, per the closure-gate rule added the same day: the four dropped rows were enumerated before the change and re-checked to zero after, and nine cases pin both directions - real closures still close, prose mentions no longer do. STILL OPEN, the ORIGINAL claim: nothing consults a landed-row lock at the moment a row is OFFERED. That half is unproven on today evidence - every row I closed this session correctly disappeared from the ready-set - so re-measure before building it rather than inheriting the premise. ||| 2026-08-07 coord--visible, commit 97603417 pushed, delta docs/deltas/nine_open_rows_were_dropped_from_the_ready_set_by_their_own_honest_prose_.md. THE SAME DEFECT CLASS WAS STILL LIVE IN THE BLOCKER HALF: 37 open rows were excluded from the ready-set as blocked, 18 of them by a word inside the narrative rather than any declared blocker - rows whose leading disposition read ready were dropped for containing needs or decision, including the p1 filed this session that GATES a p0. MY FIRST DIAGNOSIS WAS WRONG AND IS CORRECTED IN THE DELTA: item_blocker does prefer the declared state, symmetrically with item_is_closed - the machinery is complete. The real cause is that these rows declare NO state, so they fall back to the prose sniffer the escape hatch exists to bypass. Reading each matched word in context changed half the answer: five rows that looked like false positives are correctly blocked and name real blockers, and this row's sibling spine row matched on a QUOTATION of an old error message. 10 rows now declare state where the context was read and confirmed; exclusions 37 to 26. State vocabulary grew by closed, retired and duplicate after eight more rows declared outside it, with all eight verdicts measured identical before and after so nothing live moves. test_row_state_property 11 passed, 50 subtests. REMAINING: three rows with narrative heads are still unclassified and need reading - three-womens-careers-are-split-across-two-spellings, the-float-check-can-hide-a-change-as-well-as-invent-one, two-players-left-with-no-paperwork-and-a-third-is-two-people. AND THE STANDING GAP: declaring state is opt-in and nobody opts in, so the queue write gate should require it at filing time.",
      "state": "",
      "pm_authored": false,
      "impact": "",
@@ -1907,7 +1908,7 @@
       "why": "The independent check went further than the lane and the result is worse in the direction that matters. On twelve thousand rows that did not move at all, five different orderings of the same ...",
       "priority": 1,
       "seat": "qa",
-      "status": "OVERTURNED BY MEASUREMENT 2026-08-06T11:15Z, and the correction is mine. The masking claim in this row title is practically empty: the ordering spread is four ten-billionths, and injected changes of a half, a thousandth and a ten-millionth were every one detected. Only a change of one ten-billionth disappears, and nothing meaningful is that small. So this is a false alarm defect, not a masking one, and I escalated the wrong half. The REAL masking mode is not about floats at all and the exact cast does not touch it: adding a half to one row and subtracting a half from another gives zero in both types, because a total is a lossy summary. Two guards make it worse by folding nine to eleven columns into a single number before adding, so a change that cancels across columns disappears too. That needs a row by row comparison, not a cast. Filed separately. Three guards were repaired, and the finding worth more than the arithmetic is that the correct pattern already existed in this repository and had not spread.",
+      "status": "OVERTURNED BY MEASUREMENT 2026-08-06T11:15Z, and the correction is mine. The masking claim in this row title is practically empty: the ordering spread is four ten-billionths, and injected changes of a half, a thousandth and a ten-millionth were every one detected. Only a change of one ten-billionth disappears, and nothing meaningful is that small. So this is a false alarm defect, not a masking one, and I escalated the wrong half. The REAL masking mode is not about floats at all and the exact cast does not touch it: adding a half to one row and subtracting a half from another gives zero in both types, because a total is a lossy summary. Two guards make it worse by folding nine to eleven columns into a single number before adding, so a change that cancels across columns disappears too. That needs a row by row comparison, not a cast. Filed separately. Three guards were repaired, and the finding worth more than the arithmetic is that the correct pattern already existed in this repository and had not spread. ||| 2026-08-07 coord--visible: state declared partial. This row was excluded from the ready-set as BLOCKED by its narrative prose, and it is waiting on nothing. Residual work: the real masking mode named in this status - offsetting changes cancelling inside a total - is still unfixed.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -15469,7 +15470,7 @@
       "why": "Measured on the live database while chasing why today's report died. The roster resolver already has a departure guard and it works: twenty two players who appear only in game history are dropped ...",
       "priority": 1,
       "seat": "data",
-      "status": "RETRACTED 2026-08-06T12:50Z - I had the central fact backwards. Megan Gustafson did not leave Portland. She changed her name. Same player id, 3934218, serving two names in the season: Megan Gustafson through 14 July and Megan DiLeo from 22 July, four games since, most recently 2 August. She is on the current active roster under the new name and she is a starter tonight. The evidence I called corroboration was one source counted twice. I said the roster feed and the game logs independently agreed she was gone. They key on the NAME, so they lost her at the same instant for the same reason - a rename reads exactly like a departure to both. That is a single failure wearing two faces, and I presented it as two witnesses. The rule I proposed on the strength of it, dropping a player on weeks of feed absence plus no appearances, would have deleted an active starter from tonight lineup. Do not build it. What is real: three player ids serve two names each this season - 3934218 Gustafson to DiLeo, 5349415 Florez and Florez Getino, 5107404 Sha Carter and Quionche Carter, the last genuinely departed under both spellings. The defect is that a rename is not bridged: the projection pool carries the retired name, the roster carries the new one, and the id cascade meant to rescue exactly this case does not fire because the two sides hold ids from different schemes. Bridge the rename and the report stops dying. Kayla Alexander remains genuinely unexplained and is the only name of the three that may really be a departure.",
+      "status": "RETRACTED 2026-08-06T12:50Z - I had the central fact backwards. Megan Gustafson did not leave Portland. She changed her name. Same player id, 3934218, serving two names in the season: Megan Gustafson through 14 July and Megan DiLeo from 22 July, four games since, most recently 2 August. She is on the current active roster under the new name and she is a starter tonight. The evidence I called corroboration was one source counted twice. I said the roster feed and the game logs independently agreed she was gone. They key on the NAME, so they lost her at the same instant for the same reason - a rename reads exactly like a departure to both. That is a single failure wearing two faces, and I presented it as two witnesses. The rule I proposed on the strength of it, dropping a player on weeks of feed absence plus no appearances, would have deleted an active starter from tonight lineup. Do not build it. What is real: three player ids serve two names each this season - 3934218 Gustafson to DiLeo, 5349415 Florez and Florez Getino, 5107404 Sha Carter and Quionche Carter, the last genuinely departed under both spellings. The defect is that a rename is not bridged: the projection pool carries the retired name, the roster carries the new one, and the id cascade meant to rescue exactly this case does not fire because the two sides hold ids from different schemes. Bridge the rename and the report stops dying. Kayla Alexander remains genuinely unexplained and is the only name of the three that may really be a departure. ||| 2026-08-07 coord--visible: state declared partial. This row was excluded from the ready-set as BLOCKED by its narrative prose, and it is waiting on nothing. Residual work: the premise is retracted but the finding underneath is live: the roster feed and the game logs both key on NAME, so a rename reads as a departure to both.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -16189,7 +16190,7 @@
       "why": "Measured league wide. Both spellings of the same woman exist as separate rows in production: the canonical rating table holds thirteen rows under the plain spelling and one under the accented one for ...",
       "priority": 1,
       "seat": "data",
-      "status": "MEASURED AND LARGELY REASSURING 2026-08-06T07:20Z - docs/reports/SPLIT_CAREER_IMPACT_20260806.md. No number a reader can see today is computed on half a career: the served career path bridges both keys and sums them, shown on a live player file at 286 games and 7,012 minutes, which is exactly the two halves added. My framing was wrong in two ways. The cause is not accents, it is the identifier boundary between the two id schemes: 157 of 559 players in the game logs carry two identifiers by design, and for 151 of them the name string matches on both sides so the bridge joins them automatically. Only 6 have a spelling that differs. The accent is not the disease, it is the thing that disables the cure. And the class is six, not the three I named - two of the three I listed have no game logs at all and one of them is a display inconsistency under a single identifier. Also worth knowing: the name map does NOT hold one row per woman, and the minority key is consistently EMPTY rather than wrong, which is why the served side reads correctly. One near miss to keep an eye on: a player whose served rating is fitted on a single stint under her current-season key while her earlier career sits under the other one. Her page carries the provisional flag and no rank, so the hedge is doing the protective work rather than the data being right.",
+      "status": "MEASURED AND LARGELY REASSURING 2026-08-06T07:20Z - docs/reports/SPLIT_CAREER_IMPACT_20260806.md. No number a reader can see today is computed on half a career: the served career path bridges both keys and sums them, shown on a live player file at 286 games and 7,012 minutes, which is exactly the two halves added. My framing was wrong in two ways. The cause is not accents, it is the identifier boundary between the two id schemes: 157 of 559 players in the game logs carry two identifiers by design, and for 151 of them the name string matches on both sides so the bridge joins them automatically. Only 6 have a spelling that differs. The accent is not the disease, it is the thing that disables the cure. And the class is six, not the three I named - two of the three I listed have no game logs at all and one of them is a display inconsistency under a single identifier. Also worth knowing: the name map does NOT hold one row per woman, and the minority key is consistently EMPTY rather than wrong, which is why the served side reads correctly. One near miss to keep an eye on: a player whose served rating is fitted on a single stint under her current-season key while her earlier career sits under the other one. Her page carries the provisional flag and no rank, so the hedge is doing the protective work rather than the data being right. ||| 2026-08-07 coord--visible: state declared partial. This row was excluded from the ready-set as BLOCKED by its narrative prose, and it is waiting on nothing. Residual work: 6 of 157 dual-identifier players still carry a spelling the bridge cannot join.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -17541,9 +17542,9 @@
     "target": 40,
     "count": 363,
     "ok": true,
-    "label": "363 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 7m ago.)",
-    "as_of_utc": "2026-08-07T09:19:07Z",
-    "age_secs": 423,
+    "label": "363 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
+    "as_of_utc": "2026-08-07T09:36:09Z",
+    "age_secs": 1,
     "stale": false
    },
    "source": "dispatch queue",
@@ -18096,67 +18097,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-07T09:24:41Z",
-  "age_s": 65,
-  "cycles": 155,
+  "last_poll_utc": "2026-08-07T09:35:15Z",
+  "age_s": 38,
+  "cycles": 164,
   "known": true,
-  "label": "scout: alive, last poll 65s ago",
+  "label": "scout: alive, last poll 38s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "5:22am",
+   "time": "5:34am",
+   "text": "unfinished work found — resuming a coordinator",
+   "detail": "ORPHAN-WAKE queue_state: no live coordinator + unfinished work - attempting resume spawn"
+  },
+  {
+   "time": "5:34am",
+   "text": "no spawn yet - EMPTY-CHAIR backoff (115s of 120s, failures=1); retrying indefinitely, gap capped at 300s",
+   "detail": "no spawn yet - EMPTY-CHAIR backoff (115s of 120s, failures=1); retrying indefinitely, gap capped at 300s"
+  },
+  {
+   "time": "5:34am",
+   "text": "poll #163 · nothing new",
+   "detail": "poll cycle=163 ok directives_new=0"
+  },
+  {
+   "time": "5:34am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   },
   {
-   "time": "5:23am",
-   "text": "poll #154 · nothing new",
-   "detail": "poll cycle=154 ok directives_new=0"
+   "time": "5:35am",
+   "text": "no spawn yet - EMPTY-CHAIR backoff (53s of 120s, failures=1); retrying indefinitely, gap capped at 300s",
+   "detail": "no spawn yet - EMPTY-CHAIR backoff (53s of 120s, failures=1); retrying indefinitely, gap capped at 300s"
   },
   {
-   "time": "5:23am",
+   "time": "5:35am",
+   "text": "unfinished work found — resuming a coordinator",
+   "detail": "ORPHAN-WAKE queue_state: no live coordinator + unfinished work - attempting resume spawn"
+  },
+  {
+   "time": "5:35am",
+   "text": "no spawn yet - EMPTY-CHAIR backoff (49s of 120s, failures=1); retrying indefinitely, gap capped at 300s",
+   "detail": "no spawn yet - EMPTY-CHAIR backoff (49s of 120s, failures=1); retrying indefinitely, gap capped at 300s"
+  },
+  {
+   "time": "5:35am",
+   "text": "poll #164 · nothing new",
+   "detail": "poll cycle=164 ok directives_new=0"
+  },
+  {
+   "time": "5:35am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   },
   {
-   "time": "5:24am",
-   "text": "poll #155 · nothing new",
-   "detail": "poll cycle=155 ok directives_new=0"
-  },
-  {
-   "time": "5:24am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
-  },
-  {
-   "time": "5:24am",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
-  },
-  {
-   "time": "5:24am",
-   "text": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
-   "detail": "feed-streak alarm: RED=2 ['HardwoodBuildFreshness', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing "
-  },
-  {
-   "time": "5:25am",
+   "time": "5:35am",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
-  },
-  {
-   "time": "5:25am",
-   "text": "poll #156 · nothing new",
-   "detail": "poll cycle=156 ok directives_new=0"
-  },
-  {
-   "time": "5:25am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:: Agent dispatch is not authorized in this harness session, so no fill directive can raise width; recorded across 12 consecutive sessions and ruled CORRECT by directive section 3. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-07T05:45:37Z: Agent dispatch is not authorized in this harness session, so no fill di"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-07T09:25:26.298348+00:00",
+  "as_of": "2026-08-07T09:35:32.469963+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -18165,8 +18166,8 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "65s",
-    "state_text": "on · seen 65s ago"
+    "age_label": "38s",
+    "state_text": "on · seen 38s ago"
    },
    {
     "name": "Floor manager",
@@ -18181,24 +18182,24 @@
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "64s",
-    "state_text": "on · seen 64s ago"
+    "age_label": "2m",
+    "state_text": "on · seen 2m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "25s",
-    "state_text": "on · seen 25s ago"
+    "age_label": "33s",
+    "state_text": "on · seen 33s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "5m",
-    "state_text": "on · seen 5m ago"
+    "age_label": "2m",
+    "state_text": "on · seen 2m ago"
    }
   ],
   "width": {
@@ -18407,13 +18408,13 @@
  },
  "coordinator_heartbeat": {
   "known": true,
-  "alive": true,
-  "last_heartbeat_utc": "2026-08-07T09:25:32Z",
-  "session_age_secs": 874,
-  "last_progress_age_secs": 14,
-  "last_spawn_attempt": "2026-08-07T09:11:20Z",
-  "blocked_reason": "",
-  "state": "ALIVE"
+  "alive": false,
+  "last_heartbeat_utc": "2026-08-07T09:30:52Z",
+  "session_age_secs": 1481,
+  "last_progress_age_secs": 301,
+  "last_spawn_attempt": "2026-08-07T09:34:05Z",
+  "blocked_reason": "no start attempt yet — rate floor holds the next one for up to 191s (one attempt guaranteed every 300s while the chair is empty)",
+  "state": "DEAD"
  },
  "pipe_health": {
   "directives_pending": 0,
@@ -18440,7 +18441,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 2 work lanes have been running for 1021 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 2 work lanes have been running for 1032 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 2
  },
@@ -18449,25 +18450,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T08:14:24Z",
    "stale": true,
-   "revalidated": "2026-08-07T09:25:41+00:00",
-   "stale_reason": "These readings may be out of date — last updated 71m ago.",
-   "age_label": "71m",
+   "revalidated": "2026-08-07T09:35:47+00:00",
+   "stale_reason": "These readings may be out of date — last updated 81m ago.",
+   "age_label": "81m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-07T09:25:41+00:00",
+   "as_of": "2026-08-07T09:35:47+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T09:25:41+00:00",
+   "revalidated": "2026-08-07T09:35:47+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T09:25:41+00:00",
+   "as_of": "2026-08-07T09:35:47+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T09:25:41+00:00",
+   "revalidated": "2026-08-07T09:35:47+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -18476,16 +18477,16 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T09:25:41+00:00",
+   "revalidated": "2026-08-07T09:35:47+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-07T09:25:48Z",
+   "as_of": "2026-08-07T09:36:09Z",
    "stale": true,
-   "revalidated": "2026-08-07T09:25:41+00:00",
+   "revalidated": "2026-08-07T09:35:47+00:00",
    "stale_reason": "A newer update is being re-checked now.",
    "age_label": "0s",
    "stale_after": 3600
@@ -18494,7 +18495,7 @@
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-07T09:25:41+00:00",
+   "revalidated": "2026-08-07T09:35:47+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -18503,16 +18504,16 @@
    "source": "director inbox",
    "as_of": "2026-08-07T09:15:54Z",
    "stale": false,
-   "revalidated": "2026-08-07T09:25:41+00:00",
+   "revalidated": "2026-08-07T09:35:47+00:00",
    "stale_reason": "",
-   "age_label": "9m",
+   "age_label": "19m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-07T06:20:00-04:00",
    "stale": false,
-   "revalidated": "2026-08-07T09:25:41+00:00",
+   "revalidated": "2026-08-07T09:35:47+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 172800,
@@ -18520,22 +18521,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-07T09:15:45+00:00",
+   "as_of": "2026-08-07T09:30:40+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T09:25:41+00:00",
+   "revalidated": "2026-08-07T09:35:47+00:00",
    "stale_reason": "",
-   "age_label": "10m",
+   "age_label": "5m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-07T09:25:26.298348+00:00",
+   "as_of": "2026-08-07T09:35:32.469963+00:00",
    "stale": false,
-   "revalidated": "2026-08-07T09:25:41+00:00",
+   "revalidated": "2026-08-07T09:35:47+00:00",
    "stale_reason": "",
    "age_label": "20s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 7, 5:25am ET"
+ "generated_et": "Aug 7, 5:35am ET"
 }
