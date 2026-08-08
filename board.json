@@ -1,19 +1,19 @@
 {
- "generated_utc": "2026-08-08T19:57:42+00:00",
+ "generated_utc": "2026-08-08T20:21:41+00:00",
  "freshness": {
-  "baked_utc": "2026-08-08T19:57:42+00:00",
-  "baked_et": "Aug 8, 3:57pm ET",
-  "revalidated_utc": "2026-08-08T19:57:42+00:00",
+  "baked_utc": "2026-08-08T20:21:41+00:00",
+  "baked_et": "Aug 8, 4:21pm ET",
+  "revalidated_utc": "2026-08-08T20:21:41+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-08",
  "day_summary": "Indiana Fever by 3.8 over Chicago Sky is our strongest pick of tonight's 2 games - a 62% chance to win. Full game reports are ready.",
  "counts": {
   "running": 0,
-  "done_today": 11,
+  "done_today": 12,
   "maintenance": 1,
   "needs_anthony": 0,
-  "lanes_today": 11,
+  "lanes_today": 12,
   "upcoming": 427
  },
  "ship_checklist": {
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "7 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-08T19:57:42+00:00",
+  "generated_utc": "2026-08-08T20:21:40+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -793,6 +793,15 @@
   "running_plain": [],
   "needs_anthony": [],
   "done_today": [
+   {
+    "name": "I measured the state right and judged it against the wrong contract",
+    "one_liner": "I measured the state correctly and judged it against the wrong contract",
+    "chip": "DONE",
+    "team": "",
+    "time": "4:05pm",
+    "at_iso": "2026-08-08T16:05:00-04:00",
+    "impact": 1
+   },
    {
     "name": "The launcher fired two rungs of its resume ladder",
     "one_liner": "The launcher fired two rungs of its resume ladder and produced two coordinators",
@@ -4658,7 +4667,7 @@
       "why": "HardwoodCoordinatorWatchdog and HardwoodCoordinatorWatchdog2 both read State=Disabled. Their task files were last written 2026-08-07T17:36:, which is 66 seconds after this seat was claimed, and no ...",
       "priority": 0,
       "seat": "MACHINE",
-      "status": "RETIRED-WITH-EVIDENCE 2026-08-08T19:15Z. Premise no longer holds and respawn is RESTORED, measured not assumed: HardwoodCoordinatorWatchdog reads State=Ready, HardwoodSupervisorVisible reads Running with one live supervisor process, and the spawn freeze that was suppressing them was cleared earlier today. A crashed coordinator IS respawned again - this session is itself a successor that came back carrying its conversation. RESIDUAL, split out honestly rather than closed over: HardwoodCoordinatorWatchdog2, the REDUNDANT twin, is still Disabled and refuses Enable-ScheduledTask with Access is denied; its principal reads 'antho Limited', so it needs an elevated hand. That is a redundancy gap, not a respawn gap - one watchdog plus the supervisor is a working chain, which is why this row retires rather than staying open on its original claim.",
+      "status": "CORRECTED 2026-08-08T20:05Z - THE ROW RETIRES, BUT NOT FOR THE REASON I GAVE AT 19:15Z. I measured the state right and judged it against the wrong contract. Watchdog reading Ready and the supervisor reading Running is NOT respawn healthily restored - it is two CEO orders not in effect. Section 0's 1815Z addendum makes HardwoodSupervisorVisible a PERMANENT ordered disable, and today's P0 says disable every automatic respawner, crashes tolerated. Both were live anyway. RESTORED AND READ BACK 2026-08-08T20:0xZ: Watchdog Disabled, Watchdog2 Disabled, SupervisorVisible Disabled - the in-flight supervisor instance had to be stopped separately, because disabling a task does not stop the copy already running, and it had been up over an hour. SO NOTHING RESPAWNING THE SEAT IS THE ORDERED STATE, NOT A DEFECT, and the row is closed on that basis. The earlier evidence is left below rather than deleted. WHAT A FUTURE SESSION MUST NOT DO: read these three tasks as enabled and conclude respawn was fixed. Check section 0 before treating a running respawner as health. ||| RETIRED-WITH-EVIDENCE 2026-08-08T19:15Z. Premise no longer holds and respawn is RESTORED, measured not assumed: HardwoodCoordinatorWatchdog reads State=Ready, HardwoodSupervisorVisible reads Running with one live supervisor process, and the spawn freeze that was suppressing them was cleared earlier today. A crashed coordinator IS respawned again - this session is itself a successor that came back carrying its conversation. RESIDUAL, split out honestly rather than closed over: HardwoodCoordinatorWatchdog2, the REDUNDANT twin, is still Disabled and refuses Enable-ScheduledTask with Access is denied; its principal reads 'antho Limited', so it needs an elevated hand. That is a redundancy gap, not a respawn gap - one watchdog plus the supervisor is a working chain, which is why this row retires rather than staying open on its original claim.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -4666,7 +4675,7 @@
       "title": "Both coordinator watchdogs sit disabled, so no session can be replaced if it dies",
       "unlocks": "HardwoodCoordinatorWatchdog and HardwoodCoordinatorWatchdog2 both read State=Disabled.",
       "owner": "MACHINE",
-      "feed_status": "DONE TODAY",
+      "feed_status": "QUEUED",
       "tier": 3,
       "group": "process",
       "ceo_ask": false,
@@ -8393,8 +8402,8 @@
       "why": "Measured 2026-07-31T15 . hardwood supervisor. decides visible capable purely by SessionId not equal to 0. A --bg-pty-host coordinator runs in session 1 and renders to a named pipe so it passes that ...",
       "priority": 1,
       "seat": "infra",
-      "status": "READY ||| SWEEP FALSE POSITIVE, decided by reading the citation 2026-08-07 (lane-d-sweep-and-echo-generator-fix). The cited artifact is second_head_is_a_session_0_process_the_visible_seat_cannot_kill_.md, whose own headline reads \"the visibility law remedy is NOT executable from the visible seat\". That is a finding that NAMES the defect, not a delta that fixes it - the dominant false-positive class of this sweep, where a delta confirming a finding reads identically to a delta closing one. Row stands open. ||| THE REMEDY IS NOW EXECUTABLE - A WORKING PROBE, MEASURED FROM THIS SEAT, 2026-08-07T16:19Z coord--visible. This row's cited delta said the visibility law's remedy is NOT executable from the visible seat. That has changed. WHY THIS ROW SURVIVES THE REAPER SHIPPED AT b67ee392: _illegally_headless requires SESSION 0 plus a desktop. A PIPE-BACKED HEAD IN SESSION 1 passes that test - it is in an interactive session - while still having NO WINDOW the CEO can see. It is now the LAST uncovered visibility case, and the reaper deliberately does not touch it. THE PROBE, and it works: AttachConsole(pid) then GetConsoleWindow(), run in a SUBPROCESS that calls FreeConsole FIRST. Measured against this coordinator's own session_pid 12808: attached=True, hwnd=2097290 - a real console window, so this seat is compliant. A pipe-backed head returns hwnd=0. THE SEQUENCE IS NOT OPTIONAL AND I PROVED IT BY GETTING IT WRONG FIRST: my first attempt ran in a shell that already owned a console, so AttachConsole returned FALSE and GetConsoleWindow handed back MY OWN window - a plausible nonzero handle that measured the wrong process entirely. Calling FreeConsole before attaching is what makes the answer about the target. THE FIX PATH: gate on console-window presence rather than on session number, so visibility is tested by what the CEO can actually see. KEEP THE EXISTING GUARDS AROUND IT - a probe fault must read as NO EVIDENCE and never as a kill, exactly as the reaper treats an unknowable liveness probe.",
-      "state": "ready now",
+      "status": "SHELVED WITH A LADDER 2026-08-08T20:10Z, and the instrument is BUILT AND PROVEN rather than merely designed. ops/visibility_probe.py ships the discriminator this row asked for, with both controls run: the live seat pid 9784 reads VISIBLE hwnd=919018, and a deliberately console-less process reads False, so the check can fail and is not one of the tests here that cannot. It also reproduces this row's second half exactly - the same healthy seat reports hasWindow=False with an EMPTY title under process-level inspection, confirming that instrument is simply wrong. WHY IT IS NOT WIRED INTO THE VERDICT: _illegally_headless states its own precondition - a holder is illegal only when it can never have a window AND a legal spawner is available to replace it. Every spawner is now disabled, SupervisorVisible under the permanent section 0 order and both watchdogs under today's P0 with crashes explicitly tolerated. So half that precondition is FALSE, and a stricter test wired in today would evict live seats nothing is permitted to refill - strictly worse than the blind spot it closes. UNLOCK LADDER: rung 1, this probe exists and is control-proven (DONE); rung 2, a spawner is re-enabled by the CEO; rung 3, wire has_console_window into _illegally_headless keeping the fail-safe that a probe fault reads as NO EVIDENCE and never as a kill. REVIVAL TRIGGER: any respawner returning to Ready. ||| READY ||| SWEEP FALSE POSITIVE, decided by reading the citation 2026-08-07 (lane-d-sweep-and-echo-generator-fix). The cited artifact is second_head_is_a_session_0_process_the_visible_seat_cannot_kill_.md, whose own headline reads \"the visibility law remedy is NOT executable from the visible seat\". That is a finding that NAMES the defect, not a delta that fixes it - the dominant false-positive class of this sweep, where a delta confirming a finding reads identically to a delta closing one. Row stands open. ||| THE REMEDY IS NOW EXECUTABLE - A WORKING PROBE, MEASURED FROM THIS SEAT, 2026-08-07T16:19Z coord--visible. This row's cited delta said the visibility law's remedy is NOT executable from the visible seat. That has changed. WHY THIS ROW SURVIVES THE REAPER SHIPPED AT b67ee392: _illegally_headless requires SESSION 0 plus a desktop. A PIPE-BACKED HEAD IN SESSION 1 passes that test - it is in an interactive session - while still having NO WINDOW the CEO can see. It is now the LAST uncovered visibility case, and the reaper deliberately does not touch it. THE PROBE, and it works: AttachConsole(pid) then GetConsoleWindow(), run in a SUBPROCESS that calls FreeConsole FIRST. Measured against this coordinator's own session_pid 12808: attached=True, hwnd=2097290 - a real console window, so this seat is compliant. A pipe-backed head returns hwnd=0. THE SEQUENCE IS NOT OPTIONAL AND I PROVED IT BY GETTING IT WRONG FIRST: my first attempt ran in a shell that already owned a console, so AttachConsole returned FALSE and GetConsoleWindow handed back MY OWN window - a plausible nonzero handle that measured the wrong process entirely. Calling FreeConsole before attaching is what makes the answer about the target. THE FIX PATH: gate on console-window presence rather than on session number, so visibility is tested by what the CEO can actually see. KEEP THE EXISTING GUARDS AROUND IT - a probe fault must read as NO EVIDENCE and never as a kill, exactly as the reaper treats an unknowable liveness probe.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -17315,8 +17324,8 @@
       "why": "Measured by the lab-kit harness lane. Points carry a marginal SD of 7.24 on the exported data. A model each player actual realized minutes and applying their own rolling per-minute rate - which is ...",
       "priority": 1,
       "seat": "bottom",
-      "status": "ready",
-      "state": "ready now",
+      "status": "RESOLVED 2026-08-08T20:20Z - THE NUMBER IS REAL, THE LABEL WAS WRONG, AND THE ROW'S SUSPICION WAS EXACTLY RIGHT. 2.4534 is not a points baseline. It is the unweighted mean of THREE per-stat walk-forward MAEs, and the arithmetic closes to the digit: points 4.2699, rebounds 1.8409, assists 1.2494 average to 2.4534, and the opponent variant reproduces the same way at 2.4605 against a published 2.4606. Source, cited by the shelf row itself: docs/deltas/HARDWOOD_DELTA__BOTTOM_player_proj_step2_phaseC_opp_signalcheck_NULL.md lines 25-28. SO NOTHING IS MISMODELLED. Points alone is 4.2699, which sits just beside this row's own rolling-ten figure of 4.1334, and the minutes-given oracle at 3.40 correctly beats both - every quantity is coherent once the pooling is known. FIXED: both shelf copies now say AVERAGED ACROSS pts/reb/ast, NOT a points baseline, and carry the three per-stat numbers so the next reader cannot make the same inference. WHY IT MISLED: the row sat beside a feature named allowed_{pts,reb,ast}, so a pooled figure printed bare reads as the first stat named.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -20158,9 +20167,9 @@
     "target": 40,
     "count": 427,
     "ok": true,
-    "label": "427 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 21m ago.)",
-    "as_of_utc": "2026-08-08T19:37:31Z",
-    "age_secs": 1262,
+    "label": "427 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 19m ago.)",
+    "as_of_utc": "2026-08-08T20:07:29Z",
+    "age_secs": 1165,
     "stale": false
    },
    "source": "dispatch queue",
@@ -20731,67 +20740,67 @@
  },
  "scout_heartbeat": {
   "alive": false,
-  "last_poll_utc": "2026-08-08T19:49:09Z",
-  "age_s": 521,
-  "cycles": 6,
+  "last_poll_utc": "2026-08-08T20:05:27Z",
+  "age_s": 1024,
+  "cycles": 7,
   "known": true,
-  "label": "scout: no poll for 521s",
+  "label": "scout: no poll for 1024s",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "3:49pm",
-   "text": "USAGE TAPER in force [plan pct bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 85% >= taper band 85% -- narrow to 1 lane(s) and keep working. A threshold is not exhaustion: the only s",
-   "detail": "USAGE TAPER in force [plan_pct_bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 85% >= taper band 85% -- narrow to 1 l"
+   "time": "4:23pm",
+   "text": "coordinator alive: liveness probe for session pid 9784 is UNKNOWABLE - falling back to the heartbeat signal (never dead on a failed probe",
+   "detail": "coordinator_alive: liveness probe for session_pid 9784 is UNKNOWABLE - falling back to the heartbeat signal (never dead on a failed probe)"
   },
   {
-   "time": "3:49pm",
-   "text": "orphan-merge guard error UnboundLocalError: cannot access local variable 'sys' where it is not associated with a value",
-   "detail": "orphan-merge guard error UnboundLocalError: cannot access local variable 'sys' where it is not associated with a value"
+   "time": "4:23pm",
+   "text": "connection hiccup — backing off and retrying",
+   "detail": "poll cycle=8 ERROR RuntimeError: OAuth token cache at C:\\Users\\antho\\.hardwood\\token.json is unreadable (JSONDecodeError) - it is present bu"
   },
   {
-   "time": "3:49pm",
-   "text": "alarm-redrive error UnboundLocalError: cannot access local variable 'sys' where it is not associated with a value",
-   "detail": "alarm-redrive error UnboundLocalError: cannot access local variable 'sys' where it is not associated with a value"
-  },
-  {
-   "time": "3:52pm",
-   "text": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 344s newer than live (repo 2026-08-08T19:40:52+00:00 vs live 2026-08-08T19:35:08+00:00) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: DEPLOY-LAG: repo board is 344s newer than live (repo 2026-08-08T19:40:52+00:00 vs live 2026-08-08T19:35:08+00:00"
-  },
-  {
-   "time": "3:53pm",
+   "time": "4:24pm",
    "text": "board-selfpolice: auto-repair rc=75 (publish gate abort",
    "detail": "board-selfpolice: auto-repair rc=75 (publish gate abort) ::"
   },
   {
-   "time": "3:54pm",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 949s newer than live (repo 2026-08-08T19:50:57+00:00 vs live 2026-08-08T19:35:08+00:00",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 949s newer than live (repo 2026-08-08T19:50:57+00:0"
+   "time": "4:25pm",
+   "text": "width-fill: UNDER-WIDTH 0/1 persisted 3 cycles (> 2) with 335 claimable (1 rank3, 8 ladder, 326 READY) - injected fill DIRECTOR DIRECTIVE SCOUT FILL 1.md",
+   "detail": "width-fill: UNDER-WIDTH 0/1 persisted 3 cycles (> 2) with 335 claimable (1 rank3, 8 ladder, 326 READY) - injected fill DIRECTOR_DIRECTIVE__S"
   },
   {
-   "time": "3:54pm",
-   "text": "board-selfpolice: board-stale alert already open (BOARD STALE ALERT .md) -- refreshing in place (restated 2 times) rather than filing a duplicate",
-   "detail": "board-selfpolice: board-stale alert already open (BOARD_STALE_ALERT_.md) -- refreshing in place (restated 2 times) rather than filing a dupl"
+   "time": "4:25pm",
+   "text": "width-fill: injected DIRECTOR DIRECTIVE SCOUT FILL 1.md (running 0/1, 1 claimable) - head picks it up",
+   "detail": "width-fill: injected DIRECTOR_DIRECTIVE__SCOUT_FILL_1.md (running 0/1, 1 claimable) - head picks it up"
   },
   {
-   "time": "3:55pm",
-   "text": "board-selfpolice: board fresh again — interrupt flag cleared",
-   "detail": "board-selfpolice: board fresh again — interrupt flag cleared"
+   "time": "4:25pm",
+   "text": "USAGE TAPER in force [plan pct bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 85% >= taper band 85% -- narrow to 1 lane(s) and keep working. A threshold is not exhaustion: the only s",
+   "detail": "USAGE TAPER in force [plan_pct_bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 85% >= taper band 85% -- narrow to 1 l"
   },
   {
-   "time": "3:55pm",
-   "text": "board-selfpolice: board-stale alert BOARD STALE ALERT .md RETIRED to inbox/processed (the board is clean; the episode record is preserved, not deleted",
-   "detail": "board-selfpolice: board-stale alert BOARD_STALE_ALERT_.md RETIRED to inbox/processed (the board is clean; the episode record is preserved, n"
+   "time": "4:25pm",
+   "text": "orphan-merge guard error UnboundLocalError: cannot access local variable 'sys' where it is not associated with a value",
+   "detail": "orphan-merge guard error UnboundLocalError: cannot access local variable 'sys' where it is not associated with a value"
   },
   {
-   "time": "3:55pm",
-   "text": "board-selfpolice: clean (live board matches repo truth",
-   "detail": "board-selfpolice: clean (live board matches repo truth)"
+   "time": "4:25pm",
+   "text": "alarm-redrive error UnboundLocalError: cannot access local variable 'sys' where it is not associated with a value",
+   "detail": "alarm-redrive error UnboundLocalError: cannot access local variable 'sys' where it is not associated with a value"
+  },
+  {
+   "time": "4:26pm",
+   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 405s newer than live (repo 2026-08-08T19:57:42+00:00 vs live 2026-08-08T19:50:57+00:00",
+   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 405s newer than live (repo 2026-08-08T19:57:42+00:0"
+  },
+  {
+   "time": "4:26pm",
+   "text": "board-selfpolice: board-stale alert already open (BOARD STALE ALERT .md) -- refreshing in place (restated 3 times) rather than filing a duplicate",
+   "detail": "board-selfpolice: board-stale alert already open (BOARD_STALE_ALERT_.md) -- refreshing in place (restated 3 times) rather than filing a dupl"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-08T19:57:28Z",
+  "as_of": "2026-08-08T20:22:13Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -20800,40 +20809,40 @@
     "does": "watches for your instructions",
     "active": false,
     "stale": true,
-    "age_label": "8m",
-    "state_text": "quiet · last seen 8m ago"
+    "age_label": "17m",
+    "state_text": "quiet · last seen 17m ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "52s",
-    "state_text": "on · seen 52s ago"
+    "age_label": "10m",
+    "state_text": "on · seen 10m ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "12m",
-    "state_text": "on · seen 12m ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "22s",
-    "state_text": "on · seen 22s ago"
+    "age_label": "18s",
+    "state_text": "on · seen 18s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "12m",
-    "state_text": "on · seen 12m ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    }
   ],
   "width": {
@@ -21042,13 +21051,13 @@
  },
  "coordinator_heartbeat": {
   "known": true,
-  "alive": true,
-  "last_heartbeat_utc": "2026-08-08T19:57:42Z",
-  "session_age_secs": 2963,
-  "last_progress_age_secs": 8,
+  "alive": false,
+  "last_heartbeat_utc": "2026-08-08T20:15:24Z",
+  "session_age_secs": 4444,
+  "last_progress_age_secs": 427,
   "last_spawn_attempt": "2026-08-08T18:40:06Z",
-  "blocked_reason": "",
-  "state": "ALIVE"
+  "blocked_reason": "no coordinator seated and nothing is holding a start — a start is due now",
+  "state": "DEAD"
  },
  "pipe_health": {
   "directives_pending": 0,
@@ -21077,25 +21086,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-08T19:57:42+00:00",
+   "revalidated": "2026-08-08T20:21:41+00:00",
    "stale_reason": "These readings may be out of date — last updated 27h ago.",
    "age_label": "27h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-08T19:57:42+00:00",
+   "as_of": "2026-08-08T20:21:41+00:00",
    "stale": false,
-   "revalidated": "2026-08-08T19:57:42+00:00",
+   "revalidated": "2026-08-08T20:21:41+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-08T19:57:42+00:00",
+   "as_of": "2026-08-08T20:21:41+00:00",
    "stale": false,
-   "revalidated": "2026-08-08T19:57:42+00:00",
+   "revalidated": "2026-08-08T20:21:41+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -21104,25 +21113,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-08T19:57:42+00:00",
+   "revalidated": "2026-08-08T20:21:41+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-08T19:56:34Z",
+   "as_of": "2026-08-08T20:14:04Z",
    "stale": false,
-   "revalidated": "2026-08-08T19:57:42+00:00",
+   "revalidated": "2026-08-08T20:21:41+00:00",
    "stale_reason": "",
-   "age_label": "68s",
+   "age_label": "7m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-08T19:57:42+00:00",
+   "revalidated": "2026-08-08T20:21:41+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -21131,16 +21140,16 @@
    "source": "director inbox",
    "as_of": "2026-08-08T19:54:40Z",
    "stale": false,
-   "revalidated": "2026-08-08T19:57:42+00:00",
+   "revalidated": "2026-08-08T20:21:41+00:00",
    "stale_reason": "",
-   "age_label": "3m",
+   "age_label": "27m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-07T18:40:00Z",
    "stale": false,
-   "revalidated": "2026-08-08T19:57:42+00:00",
+   "revalidated": "2026-08-08T20:21:41+00:00",
    "stale_reason": "",
    "age_label": "25h",
    "stale_after": 172800,
@@ -21148,22 +21157,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-08T19:50:57+00:00",
+   "as_of": "2026-08-08T19:57:42+00:00",
    "stale": false,
-   "revalidated": "2026-08-08T19:57:42+00:00",
+   "revalidated": "2026-08-08T20:21:41+00:00",
    "stale_reason": "",
-   "age_label": "6m",
+   "age_label": "24m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-08T19:57:28Z",
+   "as_of": "2026-08-08T20:22:13Z",
    "stale": false,
-   "revalidated": "2026-08-08T19:57:42+00:00",
+   "revalidated": "2026-08-08T20:21:41+00:00",
    "stale_reason": "",
-   "age_label": "22s",
+   "age_label": "18s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 8, 3:57pm ET"
+ "generated_et": "Aug 8, 4:21pm ET"
 }
