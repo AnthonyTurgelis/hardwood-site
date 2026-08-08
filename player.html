@@ -67,6 +67,10 @@
   .statline{margin-top:10px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
   .statline b{color:var(--ink);font-weight:640}
   .empty{color:var(--dim);font-style:italic}
+  /* two-truths banner: the hero KPI and the trajectory's last dot are ONE quantity. If they ever
+     print differently the page says so in red rather than letting a reader pick a number. */
+  .twotruths{margin-top:8px;padding:8px 10px;border:1px solid var(--bad);border-radius:6px;
+             background:rgba(198,40,40,.10);color:var(--bad);font-size:11.5px;font-weight:600;line-height:1.5}
   .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
   .biowrap{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
   .headshot{width:66px;height:66px;border-radius:50%;object-fit:cover;background:var(--card2);border:1px solid var(--line);flex:none}
@@ -479,6 +483,21 @@
 
     var s1=el("section"); s1.appendChild(el("h2",null,"Rating trajectory"));
     var c1=el("div","card"), p1=el("div","pad"); p1.appendChild(trajSvg(d.trajectory, d.impact_trend)); c1.appendChild(p1); s1.appendChild(c1);
+    // RENDER-TIME TWO-TRUTHS GUARD (lane viz-impact-two-truths) — the mirror of the bake-blocking
+    // _assert_player_trajectory_endpoint in build_site.py. The hero KPI above and the last dot on
+    // this line are the SAME dated quantity; they diverged silently (hero +1.2, endpoint 1.6) once
+    // because the board shrank the rating for sample size and the trajectory shipped it raw. If a
+    // future payload ever re-parts them, the page says so loudly instead of printing both.
+    (function(){
+      var t=(d.trajectory||[]).filter(function(p){ return p && p.rating!=null && (!d.date || p.date<=d.date); });
+      if(!t.length || d.rating==null) return;
+      var endv=t[t.length-1].rating;
+      if(Math.round(endv*10)===Math.round(d.rating*10)) return;
+      s1.appendChild(el("div","twotruths","Two-truths fault: this card is printing two different "+
+        "impact ratings for the same date — "+(d.rating>0?"+":"")+d.rating.toFixed(1)+" above and "+
+        (endv>0?"+":"")+endv.toFixed(1)+" at the end of this line. Treat neither as our number "+
+        "until it is fixed."));
+    })();
     s1.appendChild(el("div","note","How her on-court impact rating has moved across the season (higher is better). The dot marks the latest value, labelled with its recent change when the rating has moved materially. Early-season values rest on a small on-court sample and are provisional."));
     main.appendChild(s1);
 

@@ -1,19 +1,19 @@
 {
- "generated_utc": "2026-08-08T16:48:18+00:00",
+ "generated_utc": "2026-08-08T17:31:28+00:00",
  "freshness": {
-  "baked_utc": "2026-08-08T16:48:18+00:00",
-  "baked_et": "Aug 8, 12:48pm ET",
-  "revalidated_utc": "2026-08-08T16:48:18+00:00",
+  "baked_utc": "2026-08-08T17:31:28+00:00",
+  "baked_et": "Aug 8, 1:31pm ET",
+  "revalidated_utc": "2026-08-08T17:31:28+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-08",
- "day_summary": "Minnesota Lynx by 7.9 over Las Vegas Aces is our strongest pick of tonight's 3 games - a 76% chance to win. Full game reports are ready.",
+ "day_summary": "Minnesota Lynx by 7.9 over Las Vegas Aces is our strongest pick of tonight's 3 games - a 74% chance to win. Full game reports are ready.",
  "counts": {
   "running": 0,
-  "done_today": 1,
+  "done_today": 5,
   "maintenance": 0,
   "needs_anthony": 0,
-  "lanes_today": 1,
+  "lanes_today": 5,
   "upcoming": 425
  },
  "actions_minutes": {
@@ -54,6 +54,18 @@
  },
  "sections": {
   "agent_updates": [
+   {
+    "id": "one-win-probability-everywhere-the-sigma-is-pinn",
+    "title": "Verified improvement",
+    "timestamp": "Date not recorded",
+    "body_markdown": "Finished and independently double checked."
+   },
+   {
+    "id": "the-alert-state-file-has-a-writer-and-hand-edits",
+    "title": "The alert state file has a writer and hand edits do not survive",
+    "timestamp": "Date not recorded",
+    "body_markdown": "The alert state file has a live writer, so retiring a key by hand does not stick."
+   },
    {
     "id": "width-4-reproduced-the-publisher-starvation",
     "title": "Width 4 reproduced the publisher starvation within fifteen minutes",
@@ -113,18 +125,6 @@
     "title": "We were mispricing questionable players - in both directions at once",
     "timestamp": "Jul 25, 2026",
     "body_markdown": "> **The finding:** When a player was listed as probable, we treated that as a 95% chance she takes the floor. Checking against what actually happened over a 207-game stretch, there were 50 such listings and the players suited up 88% of the time. We were too optimistic.\n\n**The surprise:** investigating it turned up a second, opposite error hiding underneath. Only about half of those listings were ever getting the 95% figure. The other half were being priced at 55% - against a real play rate of 92%. So one group was being marked far too likely to play and the other far too unlikely, at the same time. Both halves are now corrected.\n\n**Why it matters:** whether a player is on the floor is the input almost everything else depends on, so an error here quietly leaks into projections and game previews. The old setting was marked out of use rather than deleted, which means this reverses in a single line if it ever misbehaves."
-   },
-   {
-    "id": "three-season-projection-base",
-    "title": "Sharper projections for players we have barely seen this season",
-    "timestamp": "Jul 25, 2026",
-    "body_markdown": "> **The finding:** For a player with only a handful of games behind her, we were building her projection off her most recent season alone - discarding what we already knew about her from the two seasons before that.\n\n**The fix:** her starting point now blends her last three seasons, weighting the recent ones more heavily. Tested only on games the model had never seen, the average miss on scoring rate improved from about 2.06 to about 1.87 points per 36 minutes. Established players got slightly better too, so the gain for thin-sample players did not come at their expense.\n\n**The honest part, which is easy to oversell:** most of that improvement - roughly 0.16 of the 0.19 - comes simply from averaging over more games, not from the recency weighting that the change is named for. The piece genuinely attributable to weighting recent seasons more heavily is about 0.05, it shows up early in a season, and it shrinks as games accumulate. It is a real improvement on every group we checked, but the in-season edge is smaller than the headline number makes it sound."
-   },
-   {
-    "id": "rebound-matchup-model",
-    "title": "Rebound Matchup Adjustments Implemented",
-    "timestamp": "Jul 13, 2026",
-    "body_markdown": "> **The Finding:** We were missing the mark on rebounds because we were completely ignoring head-to-head size differences and who is actually boxing out who.\n\n**The Fix:** I built the **Rebound Matchup Model**. It uses the new matchups feed feed to dynamically fetch the expected defender for every player on the slate. It scales each player's proj_reb based on two things: 1) the defender's historical rebound rate, and 2) the height advantage/disadvantage (in inches).\n\n**Impact:** This dynamically shifts rebounds from players guarded by elite rebounders (like A'ja Wilson) to players guarded by weak rebounders, and rewards size mismatches, making our prop lines way sharper!"
    }
   ],
   "today_games": {
@@ -135,8 +135,8 @@
      "abbr": "LVA @ MIN",
      "tip": "1:00pm ET",
      "call": "Minnesota Lynx by 7.9",
-     "win_line": "Minnesota Lynx to win — 76% chance",
-     "win_pct": 76,
+     "win_line": "Minnesota Lynx to win — 74% chance",
+     "win_pct": 74,
      "confidence": "strong favorite",
      "range80": "LVA by 8 to MIN by 24",
      "driver": "",
@@ -147,10 +147,10 @@
       "blow_base_pct": 15.4
      },
      "venue_note": "",
-     "awaiting_final": false,
+     "awaiting_final": true,
      "movers_out": [],
      "movers_steps": [],
-     "movers_more": 5,
+     "movers_more": 4,
      "home_depth": [
       {
        "player": "Kayla McBride",
@@ -330,7 +330,7 @@
        "group": "G",
        "base": 5,
        "effective": 5,
-       "out": true,
+       "out": false,
        "susp": false,
        "promoted": false
       },
@@ -413,9 +413,9 @@
      "abbr": "IND @ CHI",
      "tip": "3:30pm ET",
      "call": "Indiana Fever by 3.8",
-     "win_line": "Indiana Fever to win — 63% chance",
-     "win_pct": 63,
-     "confidence": "clear favorite",
+     "win_line": "Indiana Fever to win — 62% chance",
+     "win_pct": 62,
+     "confidence": "slight lean",
      "range80": "IND by 20 to CHI by 12",
      "driver": "",
      "tails": {
@@ -704,8 +704,8 @@
      "abbr": "SEA @ POR",
      "tip": "8:30pm ET",
      "call": "Portland Fire by 1.9",
-     "win_line": "Portland Fire to win — 57% chance",
-     "win_pct": 57,
+     "win_line": "Portland Fire to win — 56% chance",
+     "win_pct": 56,
      "confidence": "slight lean",
      "range80": "SEA by 14 to POR by 18",
      "driver": "Portland Fire are down 1 rotation player; Seattle Storm have their rotation intact.",
@@ -978,6 +978,48 @@
   "running_plain": [],
   "needs_anthony": [],
   "done_today": [
+   {
+    "name": "Rating forward fill froze the chain",
+    "one_liner": "Why the player impact rating has not moved in a month",
+    "chip": "DONE",
+    "team": "",
+    "time": "",
+    "at_iso": null,
+    "link": "https://drive.google.com/file/d/1DvHPe9jEHsXUUn8T1a-S3hIRz3rSiurK/view?usp=drivesdk",
+    "impact": 1
+   },
+   {
+    "name": "Verified improvement",
+    "one_liner": "Finished and independently double-checked.",
+    "chip": "VERIFIED",
+    "team": "",
+    "time": "",
+    "at_iso": null,
+    "link": "https://drive.google.com/file/d/1_0Cy0-EUdVEeKVbp5fv8quTayv8bGdzZ/view?usp=drivesdk",
+    "impact": 3,
+    "headline": true
+   },
+   {
+    "name": "The alert state file has a writer and hand edits do not survive",
+    "one_liner": "The alert-state file has a live writer, so retiring a key by hand does not stick",
+    "chip": "DONE",
+    "team": "",
+    "time": "",
+    "at_iso": null,
+    "link": "https://drive.google.com/file/d/1aftTQGNqdehGFmFKBdFiPzkijCAhYhsz/view?usp=drivesdk",
+    "impact": 3,
+    "headline": true
+   },
+   {
+    "name": "The sessions were not ending the box was bugchecking",
+    "one_liner": "The sessions were not ending after a work block — the box was rebooting",
+    "chip": "DONE",
+    "team": "",
+    "time": "",
+    "at_iso": null,
+    "link": "https://drive.google.com/file/d/1qOEiLbspuUT0czW2dENwVuA6tx2f-KEa/view?usp=drivesdk",
+    "impact": 1
+   },
    {
     "name": "Correctly size the combined-score ranges",
     "one_liner": "Completed and recorded.",
@@ -20151,9 +20193,9 @@
     "target": 40,
     "count": 425,
     "ok": true,
-    "label": "425 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 13m ago.)",
-    "as_of_utc": "2026-08-08T16:36:10Z",
-    "age_secs": 832,
+    "label": "425 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 25m ago.)",
+    "as_of_utc": "2026-08-08T17:06:26Z",
+    "age_secs": 1545,
     "stale": false
    },
    "source": "dispatch queue",
@@ -20724,67 +20766,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-08T16:47:54Z",
-  "age_s": 33,
-  "cycles": 1149,
+  "last_poll_utc": "2026-08-08T17:30:12Z",
+  "age_s": 86,
+  "cycles": 5,
   "known": true,
-  "label": "scout: alive, last poll 33s ago",
+  "label": "scout: alive, last poll 86s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "12:43pm",
-   "text": "poll #1147 · nothing new",
-   "detail": "poll cycle=1147 ok directives_new=0"
+   "time": "1:25pm",
+   "text": "board-selfpolice: live fetch failed (ConnectionError) gm.json",
+   "detail": "board-selfpolice: live fetch failed (ConnectionError) gm.json"
   },
   {
-   "time": "12:45pm",
-   "text": "poll #1148 · nothing new",
-   "detail": "poll cycle=1148 ok directives_new=0"
+   "time": "1:25pm",
+   "text": "board-selfpolice: A3 coverage: gm.json live fetch miss — skipped (no page on a miss",
+   "detail": "board-selfpolice: A3 coverage: gm.json live fetch miss — skipped (no page on a miss)"
   },
   {
-   "time": "12:46pm",
-   "text": "width-fill: UNDER-WIDTH 0/1 persisted 3 cycles (> 2) with 337 claimable (1 rank3, 8 ladder, 328 READY) - injected fill DIRECTOR DIRECTIVE SCOUT FILL 1.md",
-   "detail": "width-fill: UNDER-WIDTH 0/1 persisted 3 cycles (> 2) with 337 claimable (1 rank3, 8 ladder, 328 READY) - injected fill DIRECTOR_DIRECTIVE__S"
+   "time": "1:25pm",
+   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 1858s newer than live (repo 2026-08-08T17:19:16+00:00 vs live 2026-08-08T16:48:18+00:00",
+   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): DEPLOY-LAG: repo board is 1858s newer than live (repo 2026-08-08T17:19:16+00:"
   },
   {
-   "time": "12:46pm",
-   "text": "width-fill: injected DIRECTOR DIRECTIVE SCOUT FILL 1.md (running 0/1, 1 claimable) - head picks it up",
-   "detail": "width-fill: injected DIRECTOR_DIRECTIVE__SCOUT_FILL_1.md (running 0/1, 1 claimable) - head picks it up"
+   "time": "1:25pm",
+   "text": "board-selfpolice: board-stale alert already open (BOARD STALE ALERT .md) -- refreshing in place (restated 2 times) rather than filing a duplicate",
+   "detail": "board-selfpolice: board-stale alert already open (BOARD_STALE_ALERT_.md) -- refreshing in place (restated 2 times) rather than filing a dupl"
   },
   {
-   "time": "12:46pm",
-   "text": "board-selfpolice: board fresh again — interrupt flag cleared",
-   "detail": "board-selfpolice: board fresh again — interrupt flag cleared"
+   "time": "1:26pm",
+   "text": "EMPTY-CHAIR EMERGENCY: no live coordinator while actionable work waits - engaging recovery (exponential backoff, an attempt at least every 300s, indefinitely",
+   "detail": "EMPTY-CHAIR EMERGENCY: no live coordinator while actionable work waits - engaging recovery (exponential backoff, an attempt at least every 3"
   },
   {
-   "time": "12:46pm",
-   "text": "board-selfpolice: board-stale alert BOARD STALE ALERT .md RETIRED to inbox/processed (the board is clean; the episode record is preserved, not deleted",
-   "detail": "board-selfpolice: board-stale alert BOARD_STALE_ALERT_.md RETIRED to inbox/processed (the board is clean; the episode record is preserved, n"
+   "time": "1:29pm",
+   "text": "coordinator alive: liveness probe for session pid 14032 is UNKNOWABLE - falling back to the heartbeat signal (never dead on a failed probe",
+   "detail": "coordinator_alive: liveness probe for session_pid 14032 is UNKNOWABLE - falling back to the heartbeat signal (never dead on a failed probe)"
   },
   {
-   "time": "12:46pm",
-   "text": "board-selfpolice: clean (live board matches repo truth",
-   "detail": "board-selfpolice: clean (live board matches repo truth)"
+   "time": "1:29pm",
+   "text": "board-selfpolice: live fetch failed (SSLError) value spine.json",
+   "detail": "board-selfpolice: live fetch failed (SSLError) value_spine.json"
   },
   {
-   "time": "12:47pm",
-   "text": "poll #1149 · nothing new",
-   "detail": "poll cycle=1149 ok directives_new=0"
+   "time": "1:29pm",
+   "text": "board-selfpolice: data-surface value spine.json live fetch miss — skipped (no alarm on a miss",
+   "detail": "board-selfpolice: data-surface value_spine.json live fetch miss — skipped (no alarm on a miss)"
   },
   {
-   "time": "12:49pm",
-   "text": "poll #1150 · nothing new",
-   "detail": "poll cycle=1150 ok directives_new=0"
+   "time": "1:30pm",
+   "text": "poll #5 · nothing new",
+   "detail": "poll cycle=5 ok directives_new=0"
   },
   {
-   "time": "12:49pm",
-   "text": "publish-health: public board FRESH again — flag cleared",
-   "detail": "publish-health: public board FRESH again — flag cleared"
+   "time": "1:30pm",
+   "text": "lane-reconcile error FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\antho\\\\hardwood-cron\\\\ops\\\\scou",
+   "detail": "lane-reconcile error FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\antho\\\\hardwood-cron\\\\ops\\\\scou"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-08T16:47:54Z",
+  "as_of": "2026-08-08T17:30:12Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -20793,40 +20835,40 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "33s",
-    "state_text": "on · seen 33s ago"
+    "age_label": "86s",
+    "state_text": "on · seen 86s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "56s",
-    "state_text": "on · seen 56s ago"
+    "age_label": "13m",
+    "state_text": "on · seen 13m ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
-    "active": true,
-    "stale": false,
-    "age_label": "7m",
-    "state_text": "on · seen 7m ago"
+    "active": false,
+    "stale": true,
+    "age_label": "21m",
+    "state_text": "quiet · last seen 21m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "40s",
-    "state_text": "on · seen 40s ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
-    "active": true,
-    "stale": false,
-    "age_label": "7m",
-    "state_text": "on · seen 7m ago"
+    "active": false,
+    "stale": true,
+    "age_label": "21m",
+    "state_text": "quiet · last seen 21m ago"
    }
   ],
   "width": {
@@ -21036,25 +21078,25 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-08T16:48:24Z",
-  "session_age_secs": 65230,
+  "last_heartbeat_utc": "2026-08-08T17:31:35Z",
+  "session_age_secs": 67821,
   "last_progress_age_secs": 3,
   "last_spawn_attempt": "2026-08-07T17:59:25Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
  "pipe_health": {
-  "directives_pending": 4,
-  "last_processed_clock": "12:42pm",
-  "last_processed_iso": "2026-08-08T16:42:01Z",
+  "directives_pending": 3,
+  "last_processed_clock": "1:17pm",
+  "last_processed_iso": "2026-08-08T17:17:11Z",
   "last_processed_known": true,
-  "last_processed_display": "12:42pm",
-  "last_processed_source": "inbox/processed archive mtime",
+  "last_processed_display": "1:17pm",
+  "last_processed_source": "directive_ledger.done",
   "newest_directive_clock": "12:46pm",
   "newest_directive_iso": "2026-08-08T16:46:15Z",
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-08-08T16:46:15Z",
+  "as_of": "2026-08-08T17:17:11Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -21064,38 +21106,31 @@
   "usage_resets_clock": "",
   "note": ""
  },
- "width_defect": {
-  "active": true,
-  "state": "defect",
-  "reader_facing": false,
-  "text": "Only 0 of 1 work lanes have been running for 1447 min while jobs wait to start — being looked into.",
-  "running": 0,
-  "target": 1
- },
+ "width_defect": {},
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-08T16:48:18+00:00",
+   "revalidated": "2026-08-08T17:31:28+00:00",
    "stale_reason": "These readings may be out of date — last updated 24h ago.",
    "age_label": "24h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-08T16:48:18+00:00",
+   "as_of": "2026-08-08T17:31:28+00:00",
    "stale": false,
-   "revalidated": "2026-08-08T16:48:18+00:00",
+   "revalidated": "2026-08-08T17:31:28+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-08T16:48:18+00:00",
+   "as_of": "2026-08-08T17:31:28+00:00",
    "stale": false,
-   "revalidated": "2026-08-08T16:48:18+00:00",
+   "revalidated": "2026-08-08T17:31:28+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -21104,66 +21139,66 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-08T16:48:18+00:00",
+   "revalidated": "2026-08-08T17:31:28+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-08T16:36:10Z",
+   "as_of": "2026-08-08T17:06:27Z",
    "stale": false,
-   "revalidated": "2026-08-08T16:48:18+00:00",
+   "revalidated": "2026-08-08T17:31:28+00:00",
    "stale_reason": "",
-   "age_label": "12m",
+   "age_label": "25m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-08T16:48:18+00:00",
+   "revalidated": "2026-08-08T17:31:28+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-08-08T16:46:15Z",
+   "as_of": "2026-08-08T17:17:11Z",
    "stale": false,
-   "revalidated": "2026-08-08T16:48:18+00:00",
+   "revalidated": "2026-08-08T17:31:28+00:00",
    "stale_reason": "",
-   "age_label": "2m",
+   "age_label": "14m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-07T15:10:00Z",
    "stale": false,
-   "revalidated": "2026-08-08T16:48:18+00:00",
+   "revalidated": "2026-08-08T17:31:28+00:00",
    "stale_reason": "",
-   "age_label": "25h",
+   "age_label": "26h",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-08T16:35:47+00:00",
+   "as_of": "2026-08-08T17:22:43+00:00",
    "stale": false,
-   "revalidated": "2026-08-08T16:48:18+00:00",
+   "revalidated": "2026-08-08T17:31:28+00:00",
    "stale_reason": "",
-   "age_label": "12m",
+   "age_label": "8m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-08T16:47:54Z",
+   "as_of": "2026-08-08T17:30:12Z",
    "stale": false,
-   "revalidated": "2026-08-08T16:48:18+00:00",
+   "revalidated": "2026-08-08T17:31:28+00:00",
    "stale_reason": "",
-   "age_label": "33s",
+   "age_label": "86s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 8, 12:48pm ET"
+ "generated_et": "Aug 8, 1:31pm ET"
 }

@@ -110,13 +110,47 @@
   .rnglegend{font-size:10px;color:var(--dim);margin:4px 0 2px;line-height:1.5}
   @media (max-width:560px){ .rngrow .bl{flex:0 1 128px;min-width:0} .rngrow .bv{min-width:0} }
 
-  /* --- contents strip: what is inside this page, ABOVE the first card ---------------------------
+  /* --- the hub board: what is inside this page, ABOVE the first card ---------------------------
      The dives are long, so the breadth of the page was only discoverable by scrolling all of it.
-     One tap-row of the real dive titles, built from the same index rows the cards are built from. */
-  .dvidx{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 2px}
-  .dvidx a{font-size:11.5px;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-weight:600;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
-  .dvidx a:hover{border-color:var(--acc);color:var(--acc)}
-  .dvidx a .ct{color:var(--dim);font-weight:600;font-size:10.5px;margin-left:6px;font-variant-numeric:tabular-nums}
+     This was a one-tap-row strip of pill links; it is now the same board the teams and players
+     pages run — one dense row per dive, every number carrying its movement, banded into
+     plain-English tiers with a count, filterable and sortable, with a footer that states the sort
+     logic and the basis in words. Built from the SAME index rows the cards are built from, and the
+     figures are lifted (never recomputed here) — see the hub-drift note in refresh_deep_dives.py. */
+  .dvbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0 4px}
+  .dvbar input{flex:0 1 250px;font:inherit;font-size:12px;padding:5px 9px;border:1px solid var(--line2);border-radius:8px;background:var(--card);color:var(--ink)}
+  .dvbar .cnt{font-size:11px;color:var(--dim)}
+  .dvlede{font-size:12.5px;color:var(--ink);background:var(--accent-weak);border-left:3px solid var(--acc);border-radius:7px;padding:8px 11px;margin:6px 0 2px;line-height:1.5}
+  .dvlede b{font-weight:750}
+  .dvwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);box-shadow:var(--shadow)}
+  table.dvboard{border-collapse:collapse;width:100%;font-size:12px;font-variant-numeric:tabular-nums}
+  .dvboard th,.dvboard td{padding:4px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:middle}
+  .dvboard th{background:var(--card2);color:var(--muted);font-size:9.5px;text-transform:uppercase;letter-spacing:.03em;font-weight:800;position:sticky;top:0;z-index:1}
+  .dvboard th.sortable{cursor:pointer;user-select:none}
+  .dvboard th.sortable:hover{color:var(--ink)}
+  .dvboard th.sorted{color:var(--acc)}
+  .dvboard td.num,.dvboard th.num{text-align:right}
+  .dvboard tbody tr:hover{background:var(--card2)}
+  .dvboard tr:last-child td{border-bottom:none}
+  .dvboard .rk{color:var(--dim);width:1.6em;text-align:right}
+  .dvboard .dvt{font-weight:650;color:var(--ink);text-decoration:none;max-width:330px;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:bottom}
+  .dvboard .dvt:hover{color:var(--acc)}
+  .dvboard .dvq{display:block;color:var(--dim);font-weight:400;font-size:10.5px;max-width:330px;overflow:hidden;text-overflow:ellipsis}
+  .dvboard .nbarwrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+  .dvboard .nbar{flex:0 0 46px;height:6px;border-radius:3px;background:var(--line2);overflow:hidden}
+  .dvboard .nbar>i{display:block;height:100%;background:var(--acc);opacity:.55}
+  .dvboard .up{color:var(--good);font-weight:700}
+  .dvboard .down{color:var(--bad);font-weight:700}
+  .dvboard .flat{color:var(--dim)}
+  .dvboard .sparkwrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+  .dvboard svg.nspark{width:58px;height:16px;overflow:visible;display:block}
+  .dvboard svg.nspark path{fill:none;stroke:var(--acc);stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+  .dvboard svg.nspark circle{fill:var(--acc)}
+  .dvboard tr.tier td{background:var(--chip);border-bottom:1px solid var(--line2);padding:5px 9px;white-space:normal}
+  .dvboard .tlabel{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink)}
+  .dvboard .tmeaning{font-size:10.5px;color:var(--muted);margin-left:8px}
+  .dvboard .tcount{font-size:10px;color:var(--dim);float:right;font-weight:700}
+  .dvfoot{font-size:10.5px;color:var(--dim);line-height:1.6;margin:7px 0 2px;max-width:1080px}
 
   /* --- plain-English read strip --- */
   .read{margin:13px 0 2px}
@@ -241,7 +275,7 @@
     <div class="sec-h" id="hub-h">Deep Dives</div>
     <div class="sec-lede" id="hub-lede"></div>
   </div>
-  <div class="dvidx" id="hub-index"></div>
+  <div id="hub-board"></div>
   <div id="hub"><p class="empty">Loading deep dives…</p></div>
 
   <div class="sec" style="margin-top:26px">
@@ -737,7 +771,10 @@
     var best=teams[0]||{};
     f.appendChild(tiles([
       {v:num(d.reliability_split_half_ts_r,2), l:"split-half reliability (r)"},
-      {v:num(d.reliability_n_players), l:"players measured", sm:true},
+      // Names its OWN population. This is the split-half subset the r beside it is computed on
+      // (players with shots in both the odd- and even-game halves) — not the riser/fader pool, and
+      // not "everyone measured". Labelled "players measured" it read as both.
+      {v:num(d.reliability_n_players), l:"players the r is measured on", sm:true},
       {v:best.team||"—", l:"best clutch net", sm:true},
       {v:sign(best.clutch_net_per_game,2), l:"net pts / clutch game", sm:true}
     ]));
@@ -1231,6 +1268,235 @@
     return c;
   }
 
+  /* ============================ the hub board ============================
+     One dense row per dive. EVERY figure here is LIFTED, never recomputed: the sample size and its
+     history come from the index rows, which refresh_deep_dives.py carries from each dive's own
+     `index_row` (the 2026-08-07 defect was the hub keeping its own copy of a dive's numbers and
+     letting them drift — six of thirteen rows disagreed with the dive they linked to). The build
+     date comes from the dive payload's own generated_utc, the same stamp the card below prints.
+     A dive that publishes no movement gets a dash, never a fabricated "held". */
+  // Default sort names itself in the footer, so it has to be a real sort and not the order the
+  // index happens to be written in — the band a dive sits in is cut on evidence, so the rows inside
+  // it are ranked on evidence too.
+  var hubRows=[], hubFilter="", hubSort="Evidence", hubDesc=true;
+
+  function fmtN(v){ return (v==null||!isFinite(v))?"—":Number(v).toLocaleString("en-US"); }
+  function daysSince(iso){
+    if(!iso) return null;
+    var t=new Date(String(iso).length===10?(String(iso)+"T00:00:00Z"):String(iso));
+    if(isNaN(t.getTime())) return null;
+    return Math.max(0, Math.floor((Date.now()-t.getTime())/86400000));
+  }
+  function agoWords(d){ return d==null?"—":(d===0?"today":(d===1?"yesterday":d+" days ago")); }
+
+  // Plain-English bands. The sample size is what a reader is really weighing when they choose which
+  // dive to trust, so the bands are cut on it, and each band SAYS what it means and how many dives
+  // sit in it.
+  var DVTIERS=[
+    ["wide",    "League-wide evidence", "thousands of games of play-by-play — the whole league, several seasons"],
+    ["season",  "Season-scale evidence", "hundreds of games — this season and the ones around it"],
+    ["focused", "Focused sample",       "under 200 games — read these as a direction, not a decimal"],
+    ["tool",    "Interactive tool",     "you choose the query, so there is no one fixed sample"]
+  ];
+  function dvTier(r){ if(r.n==null) return "tool"; if(r.n>=2000) return "wide"; if(r.n>=200) return "season"; return "focused"; }
+
+  // A movement figure and the day it happened, from two successive lifts of the dive's own n.
+  function deltaCellN(r){
+    var td=el("td","num");
+    if(r.delta==null){ td.appendChild(el("span","flat","—")); td.title="No earlier sample size is on record for this dive yet, so its move is unknown — which is not the same as no move."; return td; }
+    var s=el("span", r.delta>0?"up":(r.delta<0?"down":"flat"),
+             (r.delta>0?"▲ +":(r.delta<0?"▼ −":"→ "))+fmtN(Math.abs(r.delta)));
+    s.title="Games added to this dive's evidence at its last rebuild"+(r.stepDate?(", "+fmtDate(r.stepDate)):"")+".";
+    td.appendChild(s); return td;
+  }
+  function nspark(pts){
+    if(!pts||pts.length<2) return null;
+    var svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.setAttribute("class","nspark"); svg.setAttribute("viewBox","0 0 58 16"); svg.setAttribute("preserveAspectRatio","none");
+    var lo=Math.min.apply(null,pts), hi=Math.max.apply(null,pts), rng=(hi-lo)||1, d="";
+    for(var i=0;i<pts.length;i++){
+      var x=(58*i)/(pts.length-1), y=14-((pts[i]-lo)/rng)*12;
+      d+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1);
+    }
+    var p=document.createElementNS("http://www.w3.org/2000/svg","path"); p.setAttribute("d",d); svg.appendChild(p);
+    var c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    c.setAttribute("cx","58"); c.setAttribute("cy",(14-((pts[pts.length-1]-lo)/rng)*12).toFixed(1)); c.setAttribute("r","1.7");
+    svg.appendChild(c);
+    return svg;
+  }
+  function growthCell(r){
+    var td=el("td","num");
+    if(!r.hist||r.hist.length<2){ td.appendChild(el("span","flat","—")); td.title="We hold only one recorded sample size for this dive, so there is no line to draw yet."; return td; }
+    var wrap=el("div","sparkwrap");
+    var sp=nspark(r.hist.map(function(p){ return p[1]; })); if(sp) wrap.appendChild(sp);
+    var mv=r.growth;
+    var lab=el("span", mv>0?"up":(mv<0?"down":"flat"), (mv>0?"+":(mv<0?"−":""))+fmtN(Math.abs(mv)));
+    lab.title="Change in this dive's evidence across the "+r.hist.length+" rebuilds we have on record, "
+             +fmtDate(r.hist[0][0])+" to "+fmtDate(r.hist[r.hist.length-1][0])+".";
+    wrap.appendChild(lab); td.appendChild(wrap); return td;
+  }
+  function evidenceCell(r, maxN){
+    var td=el("td","num");
+    if(r.n==null){ td.appendChild(el("span","flat","—")); td.title="This card is an interactive tool — the sample is whatever you ask it for."; return td; }
+    var wrap=el("div","nbarwrap");
+    var bar=el("div","nbar"); var fill=document.createElement("i");
+    fill.style.width=Math.max(3, Math.round(100*r.n/(maxN||1)))+"%"; bar.appendChild(fill);
+    wrap.appendChild(bar); wrap.appendChild(el("span",null,fmtN(r.n)));
+    td.appendChild(wrap);
+    td.title=fmtN(r.n)+" games behind this answer; the bar is its share of the biggest dive on the page.";
+    return td;
+  }
+  function ageCell(days, iso, what){
+    var td=el("td","num");
+    if(days==null){ td.appendChild(el("span","flat","—")); td.title="Not recorded for this dive."; return td; }
+    var s=el("span", days<=2?"up":(days>=14?"down":null), agoWords(days));
+    s.title=what+(iso?(" "+fmtDate(iso)):"")+".";
+    td.appendChild(s); return td;
+  }
+
+  var DV_SORT={
+    "Dive":         {num:false, get:function(r){ return (r.row.title||r.row.slug||"").toLowerCase(); }},
+    "Evidence":     {num:true,  get:function(r){ return r.n; }},
+    "Last rebuild": {num:true,  get:function(r){ return r.delta; }},
+    "Since we started tracking": {num:true, get:function(r){ return r.hist&&r.hist.length>1?r.growth:null; }},
+    "Answer moved": {num:true,  get:function(r){ return r.answerDays==null?null:-r.answerDays; }},
+    "Built":        {num:true,  get:function(r){ return r.builtDays==null?null:-r.builtDays; }}
+  };
+  // A dive with no value for the sorted column always sinks, in BOTH directions — floating a blank
+  // to the top of a reversed sort would read as "smallest", a claim the data does not make.
+  function dvSorted(list){
+    var s=DV_SORT[hubSort];
+    var out=list.slice();
+    if(!s) return out;
+    out.sort(function(a,b){
+      var x=s.get(a), y=s.get(b);
+      if(x==null&&y==null) return 0;
+      if(x==null) return 1;
+      if(y==null) return -1;
+      if(!s.num){ return hubDesc?(x<y?1:(x>y?-1:0)):(x>y?1:(x<y?-1:0)); }
+      return hubDesc?(y-x):(x-y);
+    });
+    return out;
+  }
+
+  function hubLede(rows){
+    // The single biggest mover, with its magnitude. Movers are ranked on the size of the last
+    // recorded change in evidence; ties break to the bigger dive, then to the slug, so the sentence
+    // is the same on every bake with the same data.
+    var m=rows.filter(function(r){ return r.delta!=null&&r.delta!==0; })
+              .sort(function(a,b){ return Math.abs(b.delta)-Math.abs(a.delta) || (b.n||0)-(a.n||0)
+                                          || String(a.row.slug).localeCompare(String(b.row.slug)); })[0];
+    var p=el("div","dvlede");
+    if(!m){
+      p.appendChild(document.createTextNode("No dive has changed its evidence base since we began recording it — every answer below still rests on the sample it was built on."));
+      return p;
+    }
+    p.appendChild(document.createTextNode("Biggest mover: "));
+    p.appendChild(el("b", null, m.row.title||m.row.slug));
+    p.appendChild(document.createTextNode(" — "+(m.delta>0?"+":"−")+fmtN(Math.abs(m.delta))
+      +" games of evidence at its last rebuild"+(m.stepDate?(" on "+fmtDate(m.stepDate)):"")
+      +", now "+fmtN(m.n)+" in all"
+      +(m.growth&&m.hist&&m.hist.length>1?("; "+(m.growth>0?"+":"−")+fmtN(Math.abs(m.growth))+" since "+fmtDate(m.hist[0][0])):"")+"."));
+    return p;
+  }
+
+  function buildHubBoard(){
+    var host=document.getElementById("hub-board");
+    if(!host) return;
+    host.innerHTML="";
+    if(!hubRows.length) return;
+    host.appendChild(hubLede(hubRows));
+
+    var bar=el("div","dvbar");
+    var inp=document.createElement("input");
+    inp.type="search"; inp.placeholder="Filter dives — title, question or source"; inp.value=hubFilter;
+    inp.setAttribute("aria-label","Filter deep dives");
+    var cnt=el("span","cnt");
+    inp.addEventListener("input", function(){ hubFilter=inp.value; buildHubBoard(); var f=document.querySelector(".dvbar input"); if(f){ f.focus(); f.setSelectionRange(f.value.length,f.value.length); } });
+    bar.appendChild(inp); bar.appendChild(cnt); host.appendChild(bar);
+
+    var q=hubFilter.trim().toLowerCase();
+    var shown=hubRows.filter(function(r){
+      if(!q) return true;
+      return [r.row.title,r.row.question,r.row.one_line,r.row.source_table,r.row.slug]
+        .join(" ").toLowerCase().indexOf(q)>=0;
+    });
+    cnt.textContent=shown.length+" of "+hubRows.length+" dives"+(q?" match":" on the page");
+
+    var maxN=0; hubRows.forEach(function(r){ if(r.n!=null&&r.n>maxN) maxN=r.n; });
+    var wrap=el("div","dvwrap"); var t=el("table","dvboard");
+    var thead=el("thead"), hr=el("tr");
+    var HEADS=["#","Dive","Evidence","Last rebuild","Since we started tracking","Answer moved","Built","Source"];
+    HEADS.forEach(function(h){
+      var th=el("th",null,h);
+      if(h==="Evidence"||h==="Last rebuild"||h==="Since we started tracking"||h==="Answer moved"||h==="Built") th.className="num";
+      if(DV_SORT[h]){
+        th.className=(th.className?th.className+" ":"")+"sortable"+(hubSort===h?" sorted":"");
+        th.title="Sort by "+h.toLowerCase();
+        th.addEventListener("click", function(){
+          // First click on a name column reads A to Z, which is what a reader expects of a name;
+          // first click on a number or a date reads biggest / most recent first.
+          if(hubSort===h){ hubDesc=!hubDesc; } else { hubSort=h; hubDesc=(h!=="Dive"); }
+          buildHubBoard();
+        });
+      }
+      hr.appendChild(th);
+    });
+    thead.appendChild(hr); t.appendChild(thead);
+
+    var tb=el("tbody"), rank=0, drew=false;
+    DVTIERS.forEach(function(tier){
+      var group=dvSorted(shown.filter(function(r){ return dvTier(r)===tier[0]; }));
+      if(!group.length) return;
+      drew=true;
+      var hrow=el("tr","tier"); var hc=el("td"); hc.colSpan=HEADS.length;
+      var lab=el("span","tlabel",tier[1]), mean=el("span","tmeaning",tier[2]),
+          c=el("span","tcount",group.length+(group.length===1?" dive":" dives"));
+      hc.appendChild(lab); hc.appendChild(mean); hc.appendChild(c);
+      hrow.appendChild(hc); tb.appendChild(hrow);
+      group.forEach(function(r){
+        rank+=1;
+        var tr=el("tr");
+        tr.appendChild(el("td","rk",String(rank)));
+        var name=el("td");
+        var a=document.createElement("a");
+        a.className="dvt"; a.href="#"+diveAnchor(r.row.slug); a.textContent=r.row.title||r.row.slug;
+        if(r.row.one_line) a.title=r.row.one_line;
+        name.appendChild(a);
+        if(r.row.question) name.appendChild(el("span","dvq", r.row.question));
+        tr.appendChild(name);
+        tr.appendChild(evidenceCell(r, maxN));
+        tr.appendChild(deltaCellN(r));
+        tr.appendChild(growthCell(r));
+        tr.appendChild(ageCell(r.answerDays, r.row.one_line_changed, "This dive's headline finding last read differently on"));
+        tr.appendChild(ageCell(r.builtDays, r.builtIso, "This dive was last rebuilt on"));
+        tr.appendChild(el("td",null, r.row.source_table||"—"));
+        tb.appendChild(tr);
+      });
+    });
+    if(!drew){
+      var er=el("tr"); var ec=el("td"); ec.colSpan=HEADS.length;
+      ec.appendChild(el("span","flat","No dive matches that filter."));
+      er.appendChild(ec); tb.appendChild(er);
+    }
+    t.appendChild(tb); wrap.appendChild(t); host.appendChild(wrap);
+
+    host.appendChild(el("div","dvfoot",
+      // A date column sorted "biggest first" would be a lie about what the reader is looking at, so
+      // the recency columns name their direction in their own words.
+      "Sorted "+(hubSort?("by "+hubSort.toLowerCase()+", "
+                 +((hubSort==="Answer moved"||hubSort==="Built")?(hubDesc?"most recent first":"oldest first")
+                   :(hubSort==="Dive"?(hubDesc?"Z to A":"A to Z"):(hubDesc?"biggest first":"smallest first")))
+                 +", within each band (click any heading to change it; click again to reverse). ")
+                       :"by weight of evidence within each band — click any column heading to sort by it instead. ")
+      +"Bands are cut on how many games each answer rests on, and a dive with no fixed sample sits in its own band. "
+      +"Evidence is the number of games behind the dive, taken from the dive itself and never recounted here — the bar is that dive's share of the largest on the page. "
+      +"Last rebuild is how much evidence the dive gained the last time it was rebuilt, and the line beside it traces every rebuild we have on record, with the change across the whole line printed next to it. "
+      +"Answer moved is the day the dive's own headline sentence last read differently; Built is the day the dive itself was last rebuilt — dives are rebuilt on demand, not on a daily schedule. "
+      +"Anything we do not hold shows a dash rather than a zero: an unknown move is not a flat one. "
+      +"Every row links to the full dive further down this page."));
+  }
+
   /* ============================ hub loader ============================ */
   function loadHub(){
     var hub=document.getElementById("hub");
@@ -1247,22 +1513,26 @@
       })).then(function(datas){
         hub.innerHTML="";
         dives.forEach(function(row,i){ hub.appendChild(renderDiveCard(row, datas[i])); });
-        // Contents strip, ABOVE the first card. The dives are long, so the breadth of this page used
-        // to be discoverable only by scrolling all of it. Built from the SAME index rows the cards
-        // are built from, and only for rows that actually rendered a card.
-        var strip=document.getElementById("hub-index");
-        if(strip){
-          strip.innerHTML="";
-          dives.forEach(function(row){
-            if(!row.slug) return;
-            var a=document.createElement("a");
-            a.href="#"+diveAnchor(row.slug);
-            a.appendChild(document.createTextNode(row.title||row.slug));
-            if(row.n!=null){ var c2=el("span","ct","n = "+row.n); a.appendChild(c2); }
-            if(row.one_line) a.title=row.one_line;
-            strip.appendChild(a);
-          });
-        }
+        // The board, ABOVE the first card. The dives are long, so the breadth of this page used to
+        // be discoverable only by scrolling all of it. Built from the SAME index rows the cards are
+        // built from, and only for rows that actually rendered a card.
+        hubRows=dives.filter(function(row){ return row&&row.slug; }).map(function(row,i){
+          var data=datas[dives.indexOf(row)];
+          var hist=(row.n_history||[]).filter(function(p){ return p&&p.length===2&&p[1]!=null; });
+          var builtIso=data&&(data.generated_utc||data.as_of_utc||data.as_of||data.generated_at)||null;
+          return {
+            row: row,
+            n: (typeof row.n==="number")?row.n:null,
+            delta: (typeof row.n_delta==="number")?row.n_delta:null,
+            stepDate: hist.length?hist[hist.length-1][0]:null,
+            hist: hist,
+            growth: hist.length>1?(hist[hist.length-1][1]-hist[0][1]):null,
+            answerDays: daysSince(row.one_line_changed),
+            builtIso: builtIso,
+            builtDays: daysSince(builtIso)
+          };
+        });
+        buildHubBoard();
       });
     }).catch(function(e){
       hub.innerHTML=""; hub.appendChild(el("div","soon","Could not load the deep dives. "+(e&&e.message?e.message:"")));
