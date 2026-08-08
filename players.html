@@ -157,7 +157,7 @@
 </nav>
 <main id="main"><p class="empty">Loading player boards…</p></main>
 <footer id="foot"></footer>
-<script src="./hardwood.js?v=1477558b"></script>
+<script src="./hardwood.js?v=b9559cd9"></script>
 <script>
 (function(){
   "use strict";
@@ -395,7 +395,16 @@
     s.appendChild(fbox);
     var card=el("div","card"); var sc=el("div","scroll"); var t=el("table");
     var thead=el("thead"), hr=el("tr");
-    ["#","Player","Team","Impact","% of team min","GP","PTS","REB","AST","MIN"].forEach(function(x){
+    // EVERY RANK NAMES WHAT IT RANKS (CEO: "still showing that she's both 1st and 15th in impact").
+    // The rank column silently changed QUANTITY with the sort mode: sorted by points it printed the
+    // scoring rank, sorted by impact it printed the impact rank, under the same bare "#" heading and
+    // with nothing on the row saying which was in force. A'ja Wilson is genuinely #1 by scoring and
+    // #15 by on-court impact — both true, different questions — so a reader meeting a bare "#1" on a
+    // platform whose promise is that impact leads reasonably reads it as her impact rank.
+    // The number was never wrong. The heading was silent, which is the same defect as one label
+    // carrying two quantities, and the fix is the same: say which.
+    var rankHead = byImpact ? "# by impact" : "# by points";
+    [rankHead,"Player","Team","Impact","% of team min","GP","PTS","REB","AST","MIN"].forEach(function(x){
       var active = (byImpact && x==="Impact") || (!byImpact && x==="PTS");
       hr.appendChild(el("th", active?"sortcol":null, active ? (x+" ▾") : x));
     });

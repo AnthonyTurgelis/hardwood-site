@@ -37,14 +37,19 @@
   th,td{padding:5px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
   th:first-child,td:first-child{text-align:left}
   th{color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;background:var(--card2)}
-  .traj{width:100%;height:96px;display:block}
+  .traj{width:100%;height:auto;display:block}
+  .traj .axis{font-size:10px;fill:var(--dim);font-variant-numeric:tabular-nums}
+  .traj .frozenlbl{font-size:10px;fill:var(--warn);font-weight:600}
+  /* SOFT BENCHMARK WASH: a light tint BEHIND the digit, never instead of it. The digit keeps its
+     own colour and every shaded tile also prints its percentile in words, so the colour is a
+     second reading of a stated fact rather than the only carrier of it. */
+  .kpi.b-hi{background:rgba(31,136,61,.11);border-color:rgba(31,136,61,.34)}
+  .kpi.b-lo{background:rgba(198,40,40,.09);border-color:rgba(198,40,40,.30)}
+  .kpi .bench{font-size:9.5px;color:var(--muted);margin-top:3px;letter-spacing:.2px}
+  .benchnote{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.5}
   /* sparkline endpoint delta (A++-rung): the baked impact_trend.delta annotated on the last dot, so
      the number sits on the line it derives from; direction color matches the arrow (good up/warn down). */
   .trajend{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
-  .rbar{position:relative;height:15px;min-width:130px;background:var(--card2);border:1px solid var(--line);border-radius:4px}
-  .rbar .b90{position:absolute;top:5px;height:5px;background:var(--band);border-radius:3px}
-  .rbar .b50{position:absolute;top:3px;height:9px;background:var(--acc);opacity:.6;border-radius:3px}
-  .rbar .p{position:absolute;top:1px;width:3px;height:13px;background:var(--pt);transform:translateX(-1px)}
   .comps{display:flex;gap:7px;flex-wrap:wrap}
   .comp{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px}
   .comp b{font-weight:640}.comp span{color:var(--dim);font-size:11px}
@@ -114,7 +119,7 @@
 </nav>
 <main id="main"><p class="empty">Loading player…</p></main>
 <footer id="foot"></footer>
-<script src="./hardwood.js?v=1477558b"></script>
+<script src="./hardwood.js?v=b9559cd9"></script>
 <script>
 (function(){
   "use strict";
@@ -170,21 +175,69 @@
     hero.parentNode.insertBefore(sec, hero.nextSibling);
   }
 
+  var SVGNS="http://www.w3.org/2000/svg";
+  function svgEl(t,attrs,txt){ var e=document.createElementNS(SVGNS,t);
+    for(var k in attrs){ if(attrs[k]!=null) e.setAttribute(k,attrs[k]); }
+    if(txt!=null) e.textContent=txt; return e; }
+  function shortDate(iso){
+    var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||""); if(!m) return iso||"";
+    return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m[2]-1]+" "+(+m[3]);
+  }
+  // FLAT TAIL — how long the published rating has been unchanged at the right-hand end of the
+  // series. The production rating has not moved since 2026-07-09, so the line ends in a long
+  // straight run. Drawing that as a confident solid line reads as "measured and steady" when the
+  // truth is "not re-published since". Measured from the data itself (never a hardcoded date), so
+  // the moment the rating starts moving again the annotation disappears on its own.
+  function flatTailStart(pts){
+    var last=pts[pts.length-1].rating, i=pts.length-1;
+    while(i>0 && pts[i-1].rating===last) i--;
+    return (pts.length-i) >= 3 ? i : -1;    // a 3+ point run is a freeze; 2 points is just a flat day
+  }
+
   function trajSvg(pts, trend){
     if(!pts || pts.length<2) return el("p","empty","Not enough history yet for a trajectory.");
-    var w=680, h=96, pad=6;
+    // AXES (CEO: "missing axis labels"). The plot area is inset inside a left gutter for the
+    // rating scale and a bottom gutter for the dates, so both axes are readable numbers rather
+    // than an unlabelled squiggle. preserveAspectRatio is NOT disabled any more — stretching the
+    // viewBox to the container was also stretching every glyph.
+    var w=680, h=150, gl=44, gr=14, gt=12, gb=30;
+    var x0=gl, x1=w-gr, y0=gt, y1=h-gb;
     var vals=pts.map(function(p){return p.rating;});
     var mn=Math.min.apply(null,vals), mx=Math.max.apply(null,vals); if(mx===mn){mx+=1;mn-=1;}
+    var padv=(mx-mn)*0.12; mn-=padv; mx+=padv;
     var n=pts.length;
-    var xf=function(i){ return pad + (i/(n-1))*(w-2*pad); };
-    var yf=function(v){ return pad + (1-(v-mn)/(mx-mn))*(h-2*pad); };
-    var d=""; pts.forEach(function(p,i){ d += (i?" L":"M")+xf(i).toFixed(1)+" "+yf(p.rating).toFixed(1); });
-    var svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
-    svg.setAttribute("viewBox","0 0 "+w+" "+h); svg.setAttribute("class","traj"); svg.setAttribute("preserveAspectRatio","none");
-    var path=document.createElementNS("http://www.w3.org/2000/svg","path");
-    path.setAttribute("d",d); path.setAttribute("fill","none");
-    path.setAttribute("stroke","var(--acc)"); path.setAttribute("stroke-width","2");
-    svg.appendChild(path);
+    var xf=function(i){ return x0 + (i/(n-1))*(x1-x0); };
+    var yf=function(v){ return y0 + (1-(v-mn)/(mx-mn))*(y1-y0); };
+    var svg=svgEl("svg",{viewBox:"0 0 "+w+" "+h,"class":"traj",role:"img",
+      "aria-label":"On-court impact rating from "+shortDate(pts[0].date)+" to "+shortDate(pts[n-1].date)});
+    // y axis: three labelled gridlines (low / mid / high) — the reader can read a value off the line
+    [mn,(mn+mx)/2,mx].forEach(function(v){
+      var y=yf(v);
+      svg.appendChild(svgEl("line",{x1:x0,x2:x1,y1:y.toFixed(1),y2:y.toFixed(1),
+        stroke:"var(--line)","stroke-width":1}));
+      svg.appendChild(svgEl("text",{x:x0-6,y:(y+3.5).toFixed(1),"text-anchor":"end","class":"axis"},
+        (v>0?"+":"")+v.toFixed(1)));
+    });
+    // zero line, only when the series actually crosses league average
+    if(mn<0 && mx>0){
+      svg.appendChild(svgEl("line",{x1:x0,x2:x1,y1:yf(0).toFixed(1),y2:yf(0).toFixed(1),
+        stroke:"var(--line2)","stroke-width":1,"stroke-dasharray":"4 3"}));
+    }
+    svg.appendChild(svgEl("text",{x:4,y:gt-2,"class":"axis"},"Rating"));
+    // x axis: first and last dated game-day of the drawn series
+    svg.appendChild(svgEl("line",{x1:x0,x2:x1,y1:y1,y2:y1,stroke:"var(--line2)","stroke-width":1}));
+    svg.appendChild(svgEl("text",{x:x0,y:y1+14,"class":"axis"},shortDate(pts[0].date)));
+    svg.appendChild(svgEl("text",{x:x1,y:y1+14,"text-anchor":"end","class":"axis"},shortDate(pts[n-1].date)));
+    var ft=flatTailStart(pts);
+    function seg(a,b,dash){
+      var d=""; for(var i=a;i<=b;i++){ d += (i===a?"M":" L")+xf(i).toFixed(1)+" "+yf(pts[i].rating).toFixed(1); }
+      svg.appendChild(svgEl("path",{d:d,fill:"none",stroke:dash?"var(--dim)":"var(--acc)",
+        "stroke-width":2,"stroke-dasharray":dash?"5 4":null}));
+    }
+    if(ft>0){ seg(0,ft,false); seg(ft,n-1,true);
+      svg.appendChild(svgEl("text",{x:((xf(ft)+xf(n-1))/2).toFixed(1),y:(yf(pts[n-1].rating)-9).toFixed(1),
+        "text-anchor":"middle","class":"frozenlbl"},"unchanged since "+shortDate(pts[ft].date)));
+    } else { seg(0,n-1,false); }
     var lx=xf(n-1), ly=yf(pts[n-1].rating);
     var last=document.createElementNS("http://www.w3.org/2000/svg","circle");
     last.setAttribute("cx",lx); last.setAttribute("cy",ly);
@@ -195,7 +248,7 @@
     // omit guards); a flat/short/stale/provisional history carries none -> no label (never a fake 0).
     if(trend && trend.delta!=null && trend.days){
       var up=trend.delta>0;
-      var ty=Math.max(11, Math.min(h-3, ly + (up? -7 : 15)));           // clamp inside the frame
+      var ty=Math.max(y0+10, Math.min(y1-3, ly + (up? -7 : 15)));       // clamp inside the plot area
       var lbl=document.createElementNS("http://www.w3.org/2000/svg","text");
       lbl.setAttribute("x",(lx-5).toFixed(1)); lbl.setAttribute("y",ty.toFixed(1));
       lbl.setAttribute("text-anchor","end"); lbl.setAttribute("class","trajend "+(up?"up":"down"));
@@ -206,30 +259,38 @@
     return svg;
   }
 
+  // REDUNDANCY CUT (CEO: "realm of outcomes is still redundant"). The panel used to state one
+  // distribution FOUR times per row: the point, the 50% range, the 90% range, and then an
+  // unlabelled bar that re-drew all three with no scale on it. The bar was the copy that carried
+  // no derivation — no axis, no units, no way to read a value off it — so it is the copy that
+  // goes. The numbers stay, each column now naming the confidence it represents.
   function realmTable(realm, order){
     var stats=(order||[]).filter(function(s){return realm[s];});
     if(!stats.length) return el("p","empty","No upcoming-slate outcome ranges for this player yet.");
-    var hi=0; stats.forEach(function(s){ var r=realm[s]; hi=Math.max(hi, r.hi90||0, r.point||0); }); hi=hi||1;
     var sc=el("div","scroll"), t=el("table");
     var thead=el("thead"),hr=el("tr");
-    ["Stat","Proj","Likely range","Wide range","Outcome band"].forEach(function(x){ hr.appendChild(el("th",null,x)); });
+    ["Stat","Projected","Likely (50 in 100)","Wide (90 in 100)"].forEach(function(x){ hr.appendChild(el("th",null,x)); });
     thead.appendChild(hr); t.appendChild(thead); var tb=el("tbody");
     var lbl={PTS:"Points",REB:"Rebounds",AST:"Assists","3PM":"3-pointers",MIN:"Minutes"};
     stats.forEach(function(s){
       var r=realm[s], tr=el("tr");
       tr.appendChild(el("td",null,lbl[s]||s));
       tr.appendChild(el("td",null, r.point==null?"—":r.point.toFixed(1)));
-      tr.appendChild(el("td",null, (r.lo==null?"—":r.lo.toFixed(1))+"–"+(r.hi==null?"—":r.hi.toFixed(1))));
+      var c50=el("td",null, (r.lo==null?"—":r.lo.toFixed(1))+"–"+(r.hi==null?"—":r.hi.toFixed(1)));
+      if(r.low_conf){ c50.className="thin"; c50.title="Wider than usual — a thinner basis behind this range."; }
+      tr.appendChild(c50);
       tr.appendChild(el("td",null, (r.lo90==null?"—":r.lo90.toFixed(1))+"–"+(r.hi90==null?"—":r.hi90.toFixed(1))));
-      var bc=el("td",null), bar=el("div","rbar");
-      var bx=function(v){ return v==null?null:Math.max(0,Math.min(100,(v/hi)*100)); };
-      var l90=bx(r.lo90),h90=bx(r.hi90),l=bx(r.lo),h2=bx(r.hi),pp=bx(r.point);
-      if(l90!=null&&h90!=null){ var e90=el("div","b90"); e90.style.left=l90.toFixed(1)+"%"; e90.style.width=(h90-l90).toFixed(1)+"%"; bar.appendChild(e90); }
-      if(l!=null&&h2!=null){ var e50=el("div","b50"); e50.style.left=l.toFixed(1)+"%"; e50.style.width=(h2-l).toFixed(1)+"%"; if(r.low_conf)e50.style.background="var(--warn)"; bar.appendChild(e50); }
-      if(pp!=null){ var ep=el("div","p"); ep.style.left=pp.toFixed(1)+"%"; bar.appendChild(ep); }
-      bc.appendChild(bar); tr.appendChild(bc); tb.appendChild(tr);
+      tb.appendChild(tr);
     });
     t.appendChild(tb); sc.appendChild(t); return sc;
+  }
+  // the next-game context that makes this panel its own read rather than a second copy of the
+  // season averages above: these are projections for ONE upcoming game, against a named opponent.
+  function realmContext(realm, order){
+    var s=(order||[]).filter(function(x){return realm[x];})[0];
+    var r=s?realm[s]:null;
+    if(!r || !r.opp) return null;
+    return "Next game: "+(r.is_home?"vs ":"at ")+r.opp;
   }
 
   // IMPACT-vs-SCORING DIVERGENCE (A+-rung element 2): a plain-English one-liner reading the two
@@ -241,11 +302,15 @@
   function divergenceLine(d){
     var ir=d&&d.impact_rank, sr=d&&d.scoring_rank;
     if(ir==null || sr==null) return null;                   // both ranks required — else omit
-    var s="#"+ir+" by on-court impact · #"+sr+" by scoring";
+    // The two ranks themselves are printed once, on the chips beside her name. This line's job is
+    // the GAP between them — the read the two numbers alone do not give you — so it no longer
+    // repeats them.
     var gap=sr-ir;
-    if(gap>0){ s+=" — a "+gap+"-spot lift the box score misses"; }
-    else if(gap<0){ s+=" — "+(-gap)+" spots higher by scoring than on-court impact"; }
-    return s;
+    if(gap>0) return "Our impact rating places her "+gap+" spot"+(gap===1?"":"s")+
+      " higher than her scoring rank — value the box score alone misses.";
+    if(gap<0) return "Her scoring rank sits "+(-gap)+" spot"+(gap===-1?"":"s")+
+      " above her on-court impact rank — the points come at a bigger share of the offence than the on-court margin reflects.";
+    return "Scoring and on-court impact place her in the same spot.";
   }
   // RISING/FALLING IMPACT (A+-rung element 3): the recent direction of THIS player's on-court
   // rating, read from the baked impact_trend {delta, days} — the honest slope of the SAME dated
@@ -279,10 +344,28 @@
     var nb = d.n_basis;   // on-court stint count backing the impact rating (the "basis" the read cites) — was undefined -> ReferenceError crashed every profile (VZ-1 live-outage fix)
     var si0=d.season_impact;   // availability + minutes context live here
 
-    // NAME ROW — the scan line: who + impact rank + is she available for the next game.
+    // NAME ROW — the scan line: who + where she ranks + is she available for the next game.
     var nmrow=el("div","nmrow");
     nmrow.appendChild(el("div","nm", d.name||"Player"));
-    if(d.rank!=null){ var rc=el("span","rankchip","#"+d.rank+" by impact"); rc.title="Rank among rated players by on-court impact"; nmrow.appendChild(rc); }
+    // EVERY RANK NAMES WHAT IT RANKS (CEO: "still showing that she's both 1st and 15th in impact").
+    // The payload's bare `rank` IS the season-SCORING board rank — build_site.py bakes it straight
+    // into `scoring_rank` — and this chip printed it as "#1 by impact" while the divergence line
+    // below correctly read "#15 by on-court impact". One label was simply wrong: both numbers are
+    // right and they measure different things. The bare `rank` is retired from this page in favour
+    // of the two qualified fields, so no rank can ever render without saying what it ranks.
+    (function(){
+      if(d.impact_rank!=null){
+        var ri=el("span","rankchip","#"+d.impact_rank+" by on-court impact");
+        ri.title="Rank among rated players by our on-court impact rating — how much better the team plays with her on the floor.";
+        nmrow.appendChild(ri);
+      }
+      var sr=(d.scoring_rank!=null?d.scoring_rank:d.rank);
+      if(sr!=null){
+        var rs=el("span","rankchip","#"+sr+" by scoring");
+        rs.title="Rank among rated players by points per game this season.";
+        nmrow.appendChild(rs);
+      }
+    })();
     // availability pill — a coach's first question is "can I use her next game?"
     (function(){
       if(!si0) return;
@@ -299,14 +382,17 @@
     })();
     hero.appendChild(nmrow);
 
+    // share of minutes moved OUT of this grey line and into its own benchmarked tile below — it
+    // was printing on the same screen three times (here, on the impact tile, and in Season Impact).
     hero.appendChild(el("div","sub", (d.team||"—") + " · " + (d.gp!=null?d.gp:"—") + " games this season" +
-      (d.min_share_pct!=null?("  · "+d.min_share_pct+"% of team minutes"):"") +
       (d.thin?"  · thin sample":"")));
 
     // WHY-LINE — one scannable, jargon-free sentence: who is she + why she matters.
     (function(){
+      // The ranks now live on the chips above and in the divergence line below, each named. This
+      // sentence used to open "Ranked #N by on-court impact" off the bare `rank` — the scoring
+      // rank under an impact label, the third copy of a rank on one card and the wrong one twice.
       var bits=[];
-      if(d.rank!=null) bits.push("Ranked #"+d.rank+" by on-court impact");
       var box=[];
       if(d.pts!=null) box.push(d.pts.toFixed(1)+" pts");
       if(d.reb!=null) box.push(d.reb.toFixed(1)+" reb");
@@ -361,13 +447,31 @@
     function kpi(l,v,u,uc){ var k=el("div","kpi"); k.appendChild(el("div","kl",l));
       var kv=el("div","kv"); kv.textContent=(v==null?"—":v); if(u){ var s=el("small",uc||null); s.textContent=" "+u; kv.appendChild(s);} k.appendChild(kv); return k; }
     var pg=function(v){ return v==null?null:v.toFixed(1); };
+    // SOFT BENCHMARK (CEO: "stuff should probs be soft benchmarked with light reds and greens
+    // behind the numbers ... to show that she's among the top in the league at that"). The tint
+    // sits BEHIND the digit and never replaces it, and every shaded tile prints its standing in
+    // words underneath — so the colour is a second reading of a stated fact, never the only
+    // carrier of it, and never an unexplained claim. `pctl` is baked in build_site.py against the
+    // published players board, and the tile names that population by size.
+    var PCTL=d.pctl||{}, benchUsed=false;
+    function bench(k, key){
+      var pc=PCTL[key];
+      if(!pc || pc.pct==null) return k;                 // no benchmark baked -> no shade, no claim
+      var p=pc.pct;
+      if(p>=67) k.className+=" b-hi"; else if(p<=33) k.className+=" b-lo";
+      var words = p>=50 ? ("top "+Math.max(1,100-p)+"%") : ("bottom "+Math.max(1,p)+"%");
+      k.appendChild(el("div","bench", words+" of "+pc.n+" rated players"));
+      k.title="She is at or above "+p+"% of the "+pc.n+" rated players on our board for this number. "
+        + "Green = top third, red = bottom third, no tint = the middle.";
+      benchUsed=true;
+      return k;
+    }
     // IMPACT-FIRST: the descriptive Season Impact leads the hero when the feed has landed — a
     // results measure (what happened), weighted by floor time, with its %-of-minutes + provisional
     // flags riding alongside so a near-zero early-season value never reads as precise.
     var si=d.season_impact;
     if(si && si.rate!=null){
       var siUnit=[];
-      if(si.min_share_pct!=null) siUnit.push(si.min_share_pct+"% of min");
       if(si.thin) siUnit.push("provisional");
       kpis.appendChild(kpi("Season Impact", si.rate.toFixed(3), siUnit.length?("· "+siUnit.join(" · ")):null));
     }
@@ -375,19 +479,31 @@
     // its %-of-team-minutes flag AND an honest "provisional" note when the on-court basis is thin,
     // so a regressed near-zero rating never reads as a firm 0.0 (Order 2, Director v6 0740Z).
     var impUnit=[];
-    if(d.min_share_pct!=null) impUnit.push(d.min_share_pct+"% of min");
     if(d.impact_provisional) impUnit.push(held ? "provisional — short season read" : "provisional — thin basis");
-    kpis.appendChild(kpi("Impact rating", d.rating==null?null:((d.rating>0?"+":"")+d.rating.toFixed(1)),
-      impUnit.length?("· "+impUnit.join(" · ")):null));
+    kpis.appendChild(bench(kpi("Impact rating", d.rating==null?null:((d.rating>0?"+":"")+d.rating.toFixed(1)),
+      impUnit.length?("· "+impUnit.join(" · ")):null), "rating"));
     // Minutes tile: a live next-game projection when we have one; otherwise fall back to the honest
     // season average (clearly labelled) so this tile is never a dead "—" when we do know her workload.
     if(d.minutes!=null){ kpis.appendChild(kpi("Proj. next game", d.minutes.toFixed(1), "min")); }
     else if(d.min_avg!=null){ kpis.appendChild(kpi("Minutes", d.min_avg.toFixed(1), "mpg · season avg")); }
     else { kpis.appendChild(kpi("Proj. next game", null, "min")); }
-    kpis.appendChild(kpi("Points", pg(d.pts), "per game"));
-    kpis.appendChild(kpi("Rebounds", pg(d.reb), "per game"));
-    kpis.appendChild(kpi("Assists", pg(d.ast), "per game"));
+    // SHARE OF MINUTES gets its own tile: the CEO named it as the context number a reader should
+    // be able to place at a glance ("she's among the top in the league at that ... a point in her
+    // favour on context / usage"). It was buried in the grey sub-line before.
+    if(d.min_share_pct!=null){
+      kpis.appendChild(bench(kpi("Share of minutes", d.min_share_pct, "% of team minutes"), "min_share_pct"));
+    }
+    kpis.appendChild(bench(kpi("Points", pg(d.pts), "per game"), "pts"));
+    kpis.appendChild(bench(kpi("Rebounds", pg(d.reb), "per game"), "reb"));
+    kpis.appendChild(bench(kpi("Assists", pg(d.ast), "per game"), "ast"));
     hero.appendChild(kpis);
+    // The benchmark stated once, in words, wherever any shading was actually drawn.
+    if(benchUsed){
+      hero.appendChild(el("div","benchnote",
+        "Shaded numbers are benchmarked against every rated player on our board this season — "
+        + "a green wash is a top-third number, red is a bottom-third one, and no wash is the "
+        + "middle. Each tile prints where she sits, so the colour never stands on its own."));
+    }
     // secondary box — completes the counting-stat read (defensive line) without crowding the KPI tiles.
     (function(){
       var extra=[];
@@ -414,7 +530,7 @@
         var kv=el("div","kv"); kv.textContent=(v==null?"—":v); if(u){ var s=el("small",null); s.textContent=" "+u; kv.appendChild(s);} k.appendChild(kv); return k; }
       siK.appendChild(sikpi("Per game", si.rate==null?null:si.rate.toFixed(3)));
       siK.appendChild(sikpi("Season total", si.volume==null?null:si.volume.toFixed(2)));
-      siK.appendChild(sikpi("Share of minutes", si.min_share_pct==null?null:si.min_share_pct, "%"));
+      // share of minutes is NOT repeated here — it is a benchmarked tile in the hero above.
       siK.appendChild(sikpi("Games", si.gp==null?null:si.gp));
       siCard.appendChild(siK);
       if(si.thin){
@@ -502,8 +618,11 @@
     main.appendChild(s1);
 
     var s2=el("section"); s2.appendChild(el("h2",null,"Realm of outcomes"));
-    var c2=el("div","card"); c2.appendChild(realmTable(d.realm||{}, d.realm_order||[])); s2.appendChild(c2);
-    s2.appendChild(el("div","note","The spread of plausible box-score outcomes, built from how far our past projections for similar players actually missed. A range, not a betting line."));
+    var c2=el("div","card");
+    var rctx=realmContext(d.realm||{}, d.realm_order||[]);
+    if(rctx){ var rc2=el("div","pad"); rc2.appendChild(el("div","note",rctx)); c2.appendChild(rc2); }
+    c2.appendChild(realmTable(d.realm||{}, d.realm_order||[])); s2.appendChild(c2);
+    s2.appendChild(el("div","note","Projections for her next game, not her season averages above. The ranges are built from how far our past projections for similar players actually missed: the likely range covers about 50 games in 100, the wide range about 90. A range, not a betting line."));
     main.appendChild(s2);
 
     var s3=el("section"); s3.appendChild(el("h2",null,"Closest rating comps"));
