@@ -114,6 +114,24 @@ footer .util a:hover{color:var(--chalk)}
        shipments landed overnight and the checklist the CEO was asked to watch scrolled out of the
        window entirely. A fixed set of rows that must stay legible until every one is done cannot
        live in a surface built to forget, so it sits here and does not move. -->
+  <!-- THE PRODUCT LEADS. Moved above the status panels 2026-08-08 on the CEO's instruction,
+       given three times: the page "puts a whole bunch of info about how to read it front and
+       center, not what i asked for at all", it is "a tiny amount of info in a large amount of
+       space", and "everything should be visible all at once on the front page". Measured
+       before the change: 9,404 characters of ship checklist and machine state rendered ABOVE
+       406 characters of actual predictions. The status panels are not removed - he asked for
+       the checklist - they simply stop outranking the thing the site is for. -->
+  <section id="slate">
+    <div class="eyebrow" id="today-date">Today</div>
+    <h1>Today's slate</h1>
+    <p class="sub">Who wins, by how much, and how sure we are.</p>
+    <div class="grid" id="cards">
+      <div class="card" id="loading-card">
+        <div class="teams">Loading today's games&hellip;</div>
+        <p class="note">If this doesn't fill in, tonight's slate may not be posted yet - yesterday's grades are on the <a href="review.html" style="color:var(--maple)">Daily Review</a>.</p>
+      </div>
+    </div>
+  </section>
   <section id="shipcheck" hidden>
     <div class="eyebrow">Ship checklist<span id="sc-count"></span></div>
     <div class="mlist" id="sc-rows"></div>
@@ -227,17 +245,6 @@ footer .util a:hover{color:var(--chalk)}
   }).catch(function(){});
 })();
   </script>
-  <section id="slate">
-    <div class="eyebrow" id="today-date">Today</div>
-    <h1>Today's slate</h1>
-    <p class="sub">Who wins, by how much, and how sure we are. <a href="primer.html" style="color:var(--maple)">How to read this</a></p>
-    <div class="grid" id="cards">
-      <div class="card" id="loading-card">
-        <div class="teams">Loading today's games&hellip;</div>
-        <p class="note">If this doesn't fill in, tonight's slate may not be posted yet - yesterday's grades are on the <a href="review.html" style="color:var(--maple)">Daily Review</a>.</p>
-      </div>
-    </div>
-  </section>
   <section class="acc">
     <div class="eyebrow">The record</div>
     <p class="sub" style="margin-top:8px">We grade every call the morning after and publish the running record - hits, misses, and what we learned. <a href="accuracy.html">See our accuracy</a> or read the <a href="review.html" style="color:var(--maple)">daily review</a>.</p>
