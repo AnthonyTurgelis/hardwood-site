@@ -1,39 +1,56 @@
 {
- "generated_utc": "2026-08-08T19:05:40Z",
- "as_of": "2026-08-08T19:05:40Z",
- "driver": "scout",
+ "generated_utc": "2026-08-08T19:23:16Z",
+ "as_of": "2026-08-08T19:23:16Z",
+ "driver": "coordinator",
  "scout_state": {
-  "state": "live",
-  "label": "scout: alive, last check 15s ago (check #2)",
-  "reason": "The background monitor is running and checking every minute.",
-  "last_poll_utc": "2026-08-08T19:05:25Z",
-  "age_s": 15,
-  "cycles": 2
+  "state": "down",
+  "label": "scout: not reporting in — needs a restart",
+  "reason": "The background monitor has not reported in for a while and likely needs a restart.",
+  "last_poll_utc": "2026-08-08T19:18:08Z",
+  "age_s": 308,
+  "cycles": 4
  },
- "why_quiet": "Quiet because there is nothing new to act on — checked and all clear. background monitor refreshed this every minute",
+ "why_quiet": "The background monitor has not reported in for a while and likely needs a restart.",
  "quiet": true,
  "cycle": {
-  "as_of": "2026-08-08T19:05:40Z",
-  "checked": [],
-  "found_any": false,
-  "face": "checked for new work - nothing new"
+  "as_of": "2026-08-08T19:23:16Z",
+  "checked": [
+   {
+    "checked": "new final games",
+    "found": "none"
+   },
+   {
+    "checked": "injury news",
+    "found": "none"
+   },
+   {
+    "checked": "instructions from you",
+    "found": "0 new"
+   },
+   {
+    "checked": "work queue",
+    "found": "5 lanes running"
+   }
+  ],
+  "found_any": true,
+  "face": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running"
  },
  "usage": {
-  "as_of": "2026-08-08T19:05:40Z",
-  "reading_utc": "2026-08-08T18:32:58Z",
-  "age_s": 1962,
-  "stale": true,
-  "fresh_label": "STALE 32m",
-  "pct": 82.0,
-  "band": "amber",
-  "label": "Plan getting full (82% used) - easing off the pace, and still building. (last read 32m ago - may be out of date)",
+  "as_of": "2026-08-08T19:23:16Z",
+  "reading_utc": "2026-08-08T19:23:11Z",
+  "age_s": 5,
+  "stale": false,
+  "fresh_label": "5s",
+  "pct": 85.0,
+  "band": "red",
+  "label": "Plan almost full (85% used) - down to one lane at a time, and still building.",
   "meter": "████████··",
   "source": "usage_state.json",
   "no_live_reading": false,
   "governing_axis": "plan_pct_bands",
   "plan_pct_source": "statusline_rate_limits:seven_day",
-  "context_pct": 93.1,
-  "context_label": "Context window 93% full (auto-compacts; does not stop work).",
+  "context_pct": 95.9,
+  "context_label": "Context window 96% full (auto-compacts; does not stop work).",
   "amber_at": 70.0,
   "red_at": 85.0,
   "winddown_at": 85.0
@@ -41,11 +58,11 @@
  "coordinator": {
   "state": "working",
   "working": true,
-  "label": "Coordinator: working, last progress 1s ago.",
-  "age_s": 1,
+  "label": "Coordinator: working, last progress 4s ago.",
+  "age_s": 4,
   "stale": false,
-  "age_label": "1s",
-  "fresh_label": "1s"
+  "age_label": "4s",
+  "fresh_label": "4s"
  },
  "task_state": {
   "running": 0,
@@ -56,14 +73,14 @@
   {
    "key": "scout",
    "name": "Scout",
-   "state": "active",
-   "active": true,
+   "state": "idle",
+   "active": false,
    "does": "watches for your instructions",
-   "label": "Scout: active, last beat 15s ago",
-   "age_s": 15,
-   "stale": false,
-   "age_label": "15s",
-   "fresh_label": "15s"
+   "label": "Scout: STALE - last beat 5m ago",
+   "age_s": 308,
+   "stale": true,
+   "age_label": "5m",
+   "fresh_label": "STALE 5m"
   },
   {
    "key": "floor_manager",
@@ -71,23 +88,23 @@
    "state": "active",
    "active": true,
    "does": "counts running jobs and refills empty slots",
-   "label": "Floor manager: active, last beat 34s ago",
-   "age_s": 34,
+   "label": "Floor manager: active, last beat 72s ago",
+   "age_s": 72,
    "stale": false,
-   "age_label": "34s",
-   "fresh_label": "34s"
+   "age_label": "72s",
+   "fresh_label": "72s"
   },
   {
    "key": "board_baker",
    "name": "Status-page baker",
-   "state": "active",
-   "active": true,
+   "state": "idle",
+   "active": false,
    "does": "rebuilds the live status page",
-   "label": "Status-page baker: active, last beat 52s ago",
-   "age_s": 52,
-   "stale": false,
-   "age_label": "52s",
-   "fresh_label": "52s"
+   "label": "Status-page baker: STALE - last beat 18m ago",
+   "age_s": 1108,
+   "stale": true,
+   "age_label": "18m",
+   "fresh_label": "STALE 18m"
   },
   {
    "key": "discord_replies",
@@ -95,11 +112,11 @@
    "state": "active",
    "active": true,
    "does": "routes your chat replies back in",
-   "label": "Two-way replies: active, last beat 13s ago",
-   "age_s": 13,
+   "label": "Two-way replies: active, last beat 1m ago",
+   "age_s": 108,
    "stale": false,
-   "age_label": "13s",
-   "fresh_label": "13s"
+   "age_label": "1m",
+   "fresh_label": "1m"
   },
   {
    "key": "inbox_triage",
@@ -107,11 +124,11 @@
    "state": "active",
    "active": true,
    "does": "reads new instructions the instant they land",
-   "label": "Inbox triage: active, last beat 8m ago",
-   "age_s": 518,
+   "label": "Inbox triage: active, last beat 11m ago",
+   "age_s": 666,
    "stale": false,
-   "age_label": "8m",
-   "fresh_label": "8m"
+   "age_label": "11m",
+   "fresh_label": "11m"
   },
   {
    "key": "test_sweep",
@@ -120,7 +137,7 @@
    "active": false,
    "does": "runs every test each night and flags any that fail",
    "label": "Test sweep: 72 tests FAILING - last run 9h ago",
-   "age_s": 34408,
+   "age_s": 35464,
    "stale": false,
    "age_label": "9h",
    "fresh_label": "9h",
@@ -135,39 +152,19 @@
   "empty": 1,
   "line": "0 of 1 jobs running.",
   "reason": "1 slot open - filling from the priority list. Running up to 1 at a time on purpose (of 4) to stay under the usage limit.",
-  "age_s": 34,
+  "age_s": 72,
   "stale": false,
-  "fresh_label": "34s"
+  "fresh_label": "72s"
  },
  "scout_heartbeat": {
-  "alive": true,
-  "last_poll_utc": "2026-08-08T19:05:25Z",
-  "age_s": 15,
-  "cycles": 2,
-  "label": "scout: alive, last check 15s ago (check #2)",
+  "alive": false,
+  "last_poll_utc": "2026-08-08T19:18:08Z",
+  "age_s": 308,
+  "cycles": 4,
+  "label": "scout: not reporting in — needs a restart",
   "anchor": "scout_activity.py"
  },
  "scout_activity": [
-  {
-   "time": "1:12pm",
-   "text": "checked for new work - nothing new",
-   "detail": "checked for new work - nothing new"
-  },
-  {
-   "time": "1:15pm",
-   "text": "checked for new work - nothing new",
-   "detail": "checked for new work - nothing new"
-  },
-  {
-   "time": "1:22pm",
-   "text": "checked for new work - nothing new",
-   "detail": "checked for new work - nothing new"
-  },
-  {
-   "time": "1:35pm",
-   "text": "checked for new work - nothing new",
-   "detail": "checked for new work - nothing new"
-  },
   {
    "time": "1:48pm",
    "text": "checked for new work - nothing new",
@@ -207,6 +204,26 @@
    "time": "3:05pm",
    "text": "checked for new work - nothing new",
    "detail": "checked for new work - nothing new"
+  },
+  {
+   "time": "3:06pm",
+   "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
+   "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
+  },
+  {
+   "time": "3:10pm",
+   "text": "checked for new work - nothing new",
+   "detail": "checked for new work - nothing new"
+  },
+  {
+   "time": "3:18pm",
+   "text": "checked for new work - nothing new",
+   "detail": "checked for new work - nothing new"
+  },
+  {
+   "time": "3:23pm",
+   "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
+   "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   }
  ]
 }
