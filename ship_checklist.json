@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-08-08T19:35:08+00:00",
+ "generated_utc": "2026-08-08T19:50:57+00:00",
  "title": "Ship checklist — the target set before the pause",
  "source_doc": "docs/SHIP_CHECKLIST_20260807.md",
  "rule": "An item is DONE only on live-verified evidence with a picture. Committed, pushed and wired all count as NOT DONE.",
@@ -127,7 +127,7 @@
      "item": "Launcher --continue on every path incl. worktree copies",
      "done_test": "forced restart returns a session carrying its conversation",
      "state": "open",
-     "evidence": ""
+     "evidence": "Both launch paths now resume by default instead of only when asked, and every one of the worktree copies carries the same change. Not done: the test is a forced restart coming back with its conversation intact, and no restart has been made to happen on purpose yet."
     },
     {
      "id": "B2",
@@ -135,7 +135,7 @@
      "item": "the width authorization file and its reader, checked every boot",
      "done_test": "same restart climbs back to 4 lanes unprompted",
      "state": "open",
-     "evidence": ""
+     "evidence": "The authorisation now lives in a file the machine reads at every start, and all six cases behave: a missing or damaged file refuses loudly rather than quietly settling for one lane. Not done: the test is a restart climbing back to four lanes on its own, and that has not been watched happen."
     },
     {
      "id": "B3",
@@ -143,15 +143,15 @@
      "item": "Worktree staleness report + refresh-or-refuse",
      "done_test": "per-worktree distance behind the current code reported; policy live",
      "state": "open",
-     "evidence": ""
+     "evidence": "Measured today: all one hundred and twenty worktree copies were behind, not the five first believed, and each one's distance was reported. Not done: the refuse-to-use-a-stale-copy rule is not live, so nothing yet stops a stale copy being used."
     },
     {
      "id": "B4",
      "section": "B",
      "item": "Acceptance bars recomputed at regular-season grain",
      "done_test": "gate re-run against correctly-grained bars — unblocks line A 1",
-     "state": "open",
-     "evidence": ""
+     "state": "done",
+     "evidence": "The old bars were retired as mistakenly measured across two kinds of game, every bar was recomputed on regular-season games only, and the gate was re-run against them. It failed, honestly, which is the answer rather than the hoped-for unblock, and no band was widened to make it pass."
     },
     {
      "id": "B5",
@@ -191,12 +191,12 @@
      "item": "the market grading feed carries a generated stamp",
      "done_test": "every feed stamped",
      "state": "open",
-     "evidence": ""
+     "evidence": "Measured today: the market grading feed still carries no stamp of its own, so a reader cannot tell how old it is."
     }
    ],
-   "done": 0,
+   "done": 1,
    "total": 9,
-   "label": "0 of 9"
+   "label": "1 of 9"
   },
   {
    "key": "C",
@@ -207,25 +207,25 @@
      "section": "C",
      "item": "A spare Discord channel id",
      "done_test": "the alert canary cannot self-check on his own channel without creating false alarms",
-     "state": "open",
-     "evidence": ""
+     "state": "done",
+     "evidence": "The CEO handed over the spare channel and it is wired in. Proven the same minute: the daily self-check posted through the real message path and was then read back independently, so the alarm can now prove itself every day without ringing on the channel he actually reads."
     },
     {
      "id": "C2",
      "section": "C",
      "item": "gh auth login",
      "done_test": "token died in a crash; consumer degrades to an anonymous path, so nothing is broken today",
-     "state": "open",
-     "evidence": ""
+     "state": "done",
+     "evidence": "Measured today: the account is logged in again and the token is live, so the consumer no longer falls back to an anonymous path. The CEO restored it himself."
     }
    ],
-   "done": 0,
+   "done": 2,
    "total": 2,
-   "label": "0 of 2"
+   "label": "2 of 2"
   }
  ],
- "done": 7,
+ "done": 10,
  "total": 24,
- "label": "7 of 24",
+ "label": "10 of 24",
  "all_done": false
 }
