@@ -289,13 +289,27 @@ footer .util a:hover{color:var(--chalk)}
         rows.appendChild(el('div','mnote','The checklist could not be read ('+(sc.reason||'no reason given')+'). This is not an empty list.'));
       }else{
         document.getElementById('sc-count').textContent=' '+sc.label+(sc.stopped?' · '+sc.stopped+' stopped':'');
+        /* ONE LINE PER ROW. The evidence paragraph used to render in full under every item, so
+           THREE rows filled the panel and the other ten were below the fold - a tiny amount of
+           information in a large amount of space, which is the CEO's exact complaint. All
+           thirteen now fit in less height than three used to take. The evidence is not lost: it
+           is on the full checklist page, one click away, where a reader who wants the proof goes.
+           STOPPED rows keep a short clause, because "stopped" without a reason is a status word
+           pretending to be an answer, and those are the rows a reader actually stops on. */
         sc.rows.forEach(function(r){
           var line=el('div','mrow');
           var mark=r.state==='done'?'done':(r.state==='stopped'?'stopped':'open');
           line.appendChild(el('b',null,r.id+' '));
           line.appendChild(el('span',null,r.item||''));
           line.appendChild(el('span','tag '+mark,' '+(r.state==='done'&&!r.evidence?'claimed, no proof':mark)));
-          if(r.evidence) line.appendChild(el('div','mnote',r.evidence));
+          if(r.state==='stopped'&&r.evidence){
+            /* first sentence, without a lookbehind - Safari below 16.4 throws on those and the
+               whole panel would die at parse time, on a phone, silently. */
+            var ev=String(r.evidence), dot=ev.indexOf('. ');
+            var why=dot>0?ev.slice(0,dot+1):ev;
+            if(why.length>120) why=why.slice(0,117).replace(/\s\S*$/,'')+'...';
+            line.appendChild(el('span','mnote',' '+why));
+          }
           rows.appendChild(line);
         });
         document.getElementById('sc-note').appendChild(el('a',null,'Full checklist ->')).href=sc.href||'./ship_checklist.html';
