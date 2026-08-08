@@ -102,6 +102,19 @@
   .rbar .p{position:absolute;top:1px;width:3px;height:13px;background:var(--pt);transform:translateX(-1px)}
   .empty{color:var(--dim);font-style:italic}
   .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
+  /* plain-language tier bands (the same component the teams power board uses, carried across rather
+     than a second style): a label, what it MEANS in words, and how many players are in it. A board
+     of 194 undifferentiated rows makes a reader do the grouping in their head. */
+  .tier td{background:var(--card2);border-top:2px solid var(--line2);text-align:left;padding:7px 9px}
+  .tlabel{font-weight:700;color:var(--ink);font-size:12px}
+  .tmeaning{color:var(--muted);font-weight:400;font-size:11px;margin-left:6px}
+  .tcount{color:var(--dim);font-weight:600;font-size:11px;float:right}
+  /* micro-visual beside a digit, never instead of it — the impact bar and the minutes-share bar both
+     keep the number and add a position on the field next to it (teams.html .sbar, same geometry). */
+  .scell{display:flex;align-items:center;justify-content:flex-end;gap:7px}
+  .sbar{position:relative;width:46px;height:6px;border-radius:3px;background:var(--line2);overflow:hidden;flex:none}
+  .sbar>i{position:absolute;top:0;bottom:0;background:var(--acc);border-radius:3px}
+  .sbar>i.neg{background:var(--bad)}
   .filt{width:100%;max-width:320px;margin:0 0 8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:12.5px}
   .plink{color:var(--acc);text-decoration:none}
   .plink:hover{text-decoration:underline}
@@ -399,7 +412,38 @@
       });
     }
     var shown = ratShowAll ? matched : matched.slice(0, RAT_PAGE);
-    shown.forEach(function(r){
+    // PLAIN-LANGUAGE TIERS. Cuts are stated on the page and chosen off the live distribution of firm
+    // ratings (181 firm players, min −1.7, median 0.1, max 2.7), so each band is a group a coach
+    // would actually name rather than an even slicing of the list. A provisional rating is its own
+    // band because it is a different KIND of number, not a worse one. On the scoring axis the bands
+    // are per-game points, which need no translation.
+    var TIERS_IMPACT=[
+      ["diff", "Difference makers", "team plays more than a point better per 100 with her on", function(r){ return !r.impact_provisional && r.rating!=null && r.rating>=1.0; }],
+      ["plus", "Clear positives",   "a real, if smaller, on-court gain",                        function(r){ return !r.impact_provisional && r.rating!=null && r.rating>=0.3 && r.rating<1.0; }],
+      ["even", "Around even",       "the team plays about the same with her on the floor",      function(r){ return !r.impact_provisional && r.rating!=null && r.rating>-0.3 && r.rating<0.3; }],
+      ["neg",  "Costing minutes",   "the team has played worse with her on so far",             function(r){ return !r.impact_provisional && r.rating!=null && r.rating<=-0.3; }],
+      ["prov", "Provisional read",  "sample too thin to rank — regressed toward league average", function(r){ return r.impact_provisional || r.rating==null; }]
+    ];
+    var TIERS_SCORING=[
+      ["p1", "Primary scorers",     "18 or more points a game",            function(r){ return r.pts!=null && r.pts>=18; }],
+      ["p2", "Secondary scorers",   "12 to 18 points a game",              function(r){ return r.pts!=null && r.pts>=12 && r.pts<18; }],
+      ["p3", "Rotation scorers",    "6 to 12 points a game",               function(r){ return r.pts!=null && r.pts>=6 && r.pts<12; }],
+      ["p4", "Limited scoring role","under 6 points a game",               function(r){ return r.pts==null || r.pts<6; }]
+    ];
+    // Impact bar: a signed position on the field the board itself is showing (zero sits where zero
+    // sits), drawn from the SAME r.rating the digit prints — never a second derivation of it.
+    var rvals=matched.map(function(r){ return r.rating; }).filter(function(x){ return x!=null; });
+    var rlo=rvals.length?Math.min.apply(null,rvals):0, rhi=rvals.length?Math.max.apply(null,rvals):1;
+    var rspan=(rhi-rlo)||1, zero=Math.max(0,Math.min(1,(0-rlo)/rspan));
+    function impactBar(v){
+      var bar=el("span","sbar"); var f=el("i");
+      var x=Math.max(0,Math.min(1,(v-rlo)/rspan));
+      var a=Math.min(x,zero), b=Math.max(x,zero);
+      f.style.left=(a*100).toFixed(1)+"%"; f.style.width=Math.max(2,(b-a)*100).toFixed(1)+"%";
+      if(v<0) f.className="neg";
+      bar.appendChild(f); return bar;
+    }
+    function renderRow(r){
       var tr=el("tr"); tr.setAttribute("data-k","rt|"+r.name);
       var rkVal = byImpact ? (impRank[pkey(r)]!=null ? impRank[pkey(r)] : "—") : r.rank;
       tr.appendChild(td("rk", rkVal));
@@ -516,6 +560,13 @@
         }
       }
       var ta=trendArrow(r.impact_trend); if(ta) impCell.appendChild(ta);   // A+ element 3: rising/falling arrow
+      // MICRO-VISUAL beside the digit (not instead of it): where this rating sits on the board's own
+      // spread, with zero marked. Reads r.rating, the value the cell already printed.
+      if(r.rating!=null){
+        var iw=el("div","scell"); iw.appendChild(impactBar(r.rating));
+        while(impCell.firstChild) iw.appendChild(impCell.firstChild);
+        impCell.appendChild(iw);
+      }
       tr.appendChild(impCell);
       tr.appendChild(td("thin", r.min_share_pct==null?"—":(r.min_share_pct+"%")));
       tr.appendChild(td("thin", r.gp==null?"—":String(r.gp)));
@@ -525,7 +576,18 @@
       tr.appendChild(td(null, num(r.min_avg)));
       // (The redundant trailing "deep dive →" column was removed — the player name is already a
       //  link to the same card, so the extra column was pure wasted horizontal space.)
-      tb.appendChild(tr);
+      return tr;
+    }
+    // Group the shown rows into the tier bands, keeping the ranking order INSIDE each band. An empty
+    // band is omitted entirely rather than printed as a heading over nothing.
+    (byImpact ? TIERS_IMPACT : TIERS_SCORING).forEach(function(tier){
+      var group=shown.filter(tier[3]);
+      if(!group.length) return;
+      var hrow=el("tr","tier"); var hc=el("td"); hc.colSpan=10;
+      hc.innerHTML='<span class="tlabel">'+tier[1]+'</span><span class="tmeaning">'+tier[2]+'</span>'+
+        '<span class="tcount">'+group.length+(group.length===1?' player':' players')+'</span>';
+      hrow.appendChild(hc); tb.appendChild(hrow);
+      group.forEach(function(r){ tb.appendChild(renderRow(r)); });
     });
     t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); s.appendChild(card);
     if(matched.length > RAT_PAGE){
@@ -534,8 +596,8 @@
       s.appendChild(tog);
     }
     var note=el("div","note"); note.appendChild(document.createTextNode(byImpact
-      ? "This is the on-court-impact ranking, and the board's default: our plus-minus rating of how much better the team plays with her on the floor, biggest first — a different order from season scoring (the “#… by scoring” cue on each row shows the gap). Only firm on-court samples are ranked; a “prov” tag means a thin sample with no firm read yet, listed after the ranked group — never given a rank its sample can't support. Flip to “Season scoring” for the box-score-volume board; the points, rebounds, assists and minutes columns are on every row either way. % of team min is her share of the team's floor time. Tap a name for projected minutes and outcome ranges."
-      : "You are on the season-scoring view — points per game from the official box scores. Flip back to “On-court impact” above, the board's default, to re-rank by who moves the game most (often not the top scorers). Impact is our on-court rating (plus-minus style); a “prov” tag beside it means the rating still rests on a thin on-court sample, so it is regressed toward league average and reads near zero — provisional, not a firm read. % of team min is her share of the team's floor time, so thin-minutes vs full-time reads at a glance. Per-game averages are this season's official box scores. Tap a name for projected minutes and outcome ranges."));
+      ? "Players are grouped into plain bands — difference makers, clear positives, around even, costing minutes, and provisional reads — and ranked by impact inside each band; the cut for each band is printed beside its name and the count of players in it sits on the right. The bar beside each impact number shows where she sits on the board's own spread, with zero marked, and it is drawn from the same number printed next to it. This is the on-court-impact ranking, and the board's default:our plus-minus rating of how much better the team plays with her on the floor, biggest first — a different order from season scoring (the “#… by scoring” cue on each row shows the gap). Only firm on-court samples are ranked; a “prov” tag means a thin sample with no firm read yet, listed after the ranked group — never given a rank its sample can't support. Flip to “Season scoring” for the box-score-volume board; the points, rebounds, assists and minutes columns are on every row either way. % of team min is her share of the team's floor time. Tap a name for projected minutes and outcome ranges."
+      : "You are on the season-scoring view — points per game from the official box scores, grouped into scoring roles (primary, secondary, rotation, limited) with the points-per-game cut and the player count printed beside each band, and ranked by scoring inside each one. Flip back to “On-court impact” above, the board's default, to re-rank by who moves the game most (often not the top scorers). Impact is our on-court rating (plus-minus style); a “prov” tag beside it means the rating still rests on a thin on-court sample, so it is regressed toward league average and reads near zero — provisional, not a firm read. % of team min is her share of the team's floor time, so thin-minutes vs full-time reads at a glance. Per-game averages are this season's official box scores. Tap a name for projected minutes and outcome ranges."));
     s.appendChild(note);
     // ---------------------------------------------------------------------------------------
     // F3 — WHO THE ENTRY REQUIREMENT LEAVES OUT, NAMED. The board ranks players with at least

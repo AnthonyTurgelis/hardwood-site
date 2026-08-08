@@ -42,6 +42,11 @@
   tr.flash td{animation:fl 1.1s ease}
   @keyframes fl{0%{background:var(--flash)}100%{background:transparent}}
   .rk{color:var(--dim);width:1.6em}
+  /* rank movement beside the rank digit — the power ranking itself is a number that moves, and it
+     was the only column on the board carrying a level with no movement beside it. Read from the
+     already-baked trend.rank_move (+ = climbed); a team with no saved prior rank shows nothing at
+     all rather than a fabricated "held". */
+  .rkmv{font-size:9.5px;font-weight:700;margin-left:3px;font-variant-numeric:tabular-nums}
   .tm{font-weight:640}
   .full{color:var(--muted);font-weight:400;font-size:11px}
   /* current won-lost RECORD cell (viz-teams-record-col) — the mainstream team-page fact the rating
@@ -148,11 +153,15 @@
     "Team":              { num:false, get:function(r,std){ return (r.team_full||r.team||"").toLowerCase(); }, desc:false },
     "Record":            { num:true,  get:function(r,std){ var s=std[r.team]; return s&&s.win_pct!=null?s.win_pct:null; } },
     "Strength":          { num:true,  get:function(r,std){ return r.strength; } },
+    "Strength trend":    { num:true,  get:function(r,std){
+        var p=r.trend&&r.trend.strength?r.trend.strength.filter(function(x){return x!=null;}):[];
+        return p.length<2?null:(r.strength!=null?r.strength:p[p.length-1])-p[0]; } },
     "Momentum":          { num:true,  get:function(r,std){ return r.churn; } },
     "Title %":           { num:true,  get:function(r,std){ return r.title_pct; } },
     "1-day move":        { num:true,  get:function(r,std){ return r.title_delta; } },
     "2-wk title trend":  { num:true,  get:function(r,std){ return r.trend&&r.trend.title_move!=null?r.trend.title_move:null; } },
-    "Playoffs %":        { num:true,  get:function(r,std){ return r.playoff_pct; } }
+    "Playoffs %":        { num:true,  get:function(r,std){ return r.playoff_pct; } },
+    "1-day playoff move":{ num:true,  get:function(r,std){ return r.playoff_delta==null?null:r.playoff_delta; } }
   };
   // A team with no value for the sorted column always sinks, in BOTH directions. Floating a blank
   // to the top on a reversed sort would read as "lowest", which is a claim the data does not make.
@@ -371,6 +380,53 @@
     wrap.appendChild(el("span","sval", s.toFixed(1)));
     cell.appendChild(wrap); return cell;
   }
+  // STRENGTH MOVEMENT (this lane). Strength was the board's headline number and its ranking key and
+  // it carried no movement at all — a level with no direction, which is the one thing this board is
+  // not supposed to ship. The saved daily series is ALREADY baked (trend.strength, one point per
+  // saved snapshot day, oldest -> newest); it was simply never rendered.
+  // TWO-TRUTHS PIN: the drawn line's last point is FORCED to the value the Strength column prints,
+  // so the digit and the picture beside it can never be two numbers. Measured on the live bake
+  // before wiring: displayed strength == trend.strength[-1] on 15 of 15 teams, so the pin is a
+  // guard against future drift, not a correction being applied today.
+  // The arrow is the move ACROSS THE DRAWN LINE (last minus first) — the same series, so the arrow
+  // can never point somewhere the line does not go — and it names how many saved days that spans
+  // rather than asserting a calendar week the store may not hold.
+  function strengthSeries(tr, shown){
+    var v=(tr && tr.strength) || [];
+    var pts=v.filter(function(x){ return x!=null; });
+    if(pts.length<2) return null;
+    pts=pts.slice(); if(shown!=null) pts[pts.length-1]=shown;   // the printed digit wins
+    return pts;
+  }
+  function strengthMoveCell(tr, shown){
+    var cell=el("td");
+    var pts=strengthSeries(tr, shown);
+    if(!pts){ cell.appendChild(el("span","flat","—")); return cell; }
+    var wrap=el("div","sparkwrap");
+    var sp=sparkline(pts); if(sp) wrap.appendChild(sp);
+    var mv=pts[pts.length-1]-pts[0];
+    var days=pts.length;
+    var lbl;
+    if(mv>=0.05){ lbl=el("span","up tarr","▲ "+mv.toFixed(1)); }
+    else if(mv<=-0.05){ lbl=el("span","down tarr","▼ "+Math.abs(mv).toFixed(1)); }
+    else { lbl=el("span","flat tarr","→ 0"); }
+    lbl.title="Change in team strength across the "+days+" saved days this line draws.";
+    wrap.appendChild(lbl);
+    cell.appendChild(wrap); return cell;
+  }
+  // Rank movement: + = climbed the power ranking (the rank number fell). Nothing is drawn when the
+  // store holds no earlier rank for this team — an unknown move is not a flat one.
+  function rankMoveMark(tr){
+    if(!tr || tr.rank_move==null) return null;
+    var m=tr.rank_move;
+    if(m>0) return el("span","rkmv up","▲"+m);
+    if(m<0) return el("span","rkmv down","▼"+Math.abs(m));
+    return el("span","rkmv flat","–");
+  }
+  // Playoff-odds movement, day over day, in points — the same shape and the same 0.05-pt floor the
+  // title column uses. Baked as playoff_delta beside title_delta; renders a plain dash on any bake
+  // that predates the field, so the column degrades rather than fabricating a no-move claim.
+  function playoffDeltaCell(v){ return deltaCell(v); }
   function playoffCell(v){
     if(v==null) return td("flat","—");
     if(v>=90) return td("lock", v.toFixed(0)+"%");
@@ -562,7 +618,7 @@
     var t=el("table");
     var thead=el("thead"); var hr=el("tr");
     var std=stdMap();
-    ["#","Team","Record","Strength","Momentum","Title %","1-day move","2-wk title trend","Playoffs %"].forEach(function(h){
+    ["#","Team","Record","Strength","Strength trend","Momentum","Title %","1-day move","2-wk title trend","Playoffs %","1-day playoff move"].forEach(function(h){
       var th=el("th",null,h);
       if(SORTERS[h]){
         th.className="sortable"+(sortKey===h?" sorted":"");
@@ -586,16 +642,20 @@
     var tb=el("tbody");
     function buildRow(r){
       var tr=el("tr"); tr.setAttribute("data-k", r.team);
-      tr.appendChild(td("rk", r.rank));
+      var rkc=td("rk", r.rank);
+      var rm=rankMoveMark(r.trend); if(rm) rkc.appendChild(rm);
+      tr.appendChild(rkc);
       var name=el("td","tm"); name.appendChild(document.createTextNode(r.team+" "));
       name.appendChild(el("span","full", r.team_full)); tr.appendChild(name);
       tr.appendChild(recordCell(std[r.team]));
       tr.appendChild(strengthCell(r.strength, sfrac(r.strength)));
+      tr.appendChild(strengthMoveCell(r.trend, r.strength));
       tr.appendChild(churnCell(r.churn));
       tr.appendChild(td(r.title_pct!=null&&r.title_pct>=10?"strong":null, r.title_pct==null?"—":r.title_pct.toFixed(1)+"%"));
       tr.appendChild(deltaCell(r.title_delta));
       tr.appendChild(trendCell(r.trend));
       tr.appendChild(playoffCell(r.playoff_pct));
+      tr.appendChild(playoffDeltaCell(r.playoff_delta));
       return tr;
     }
     var q=teamFilter.trim().toLowerCase();
@@ -604,7 +664,7 @@
     TIERS.forEach(function(tier){
       var group=sortRows(rows.filter(function(r){ return tierOf(r)===tier[0]; }), std);
       if(!group.length) return;
-      var hrow=el("tr","tier"); var hc=el("td"); hc.colSpan=9;
+      var hrow=el("tr","tier"); var hc=el("td"); hc.colSpan=11;
       hc.innerHTML='<span class="tlabel">'+tier[1]+'</span><span class="tmeaning">'+tier[2]+'</span>'+
         '<span class="tcount">'+group.length+(group.length===1?' team':' teams')+'</span>';
       hrow.appendChild(hc); tb.appendChild(hrow);
@@ -619,9 +679,10 @@
       (sortKey ? ("by "+sortKey.toLowerCase()+", "+(sortDesc?"highest first":"lowest first")+", within each group (click any column heading to change it; click it again to reverse). ")
                : "by roster strength within each group — click any column heading to sort by it instead. ")+
       "Record is each team's current won-lost mark (with win% beside it), straight from the season standings. "+
-      "Strength = our on-court team-strength index (higher is better), carried to today; the bar shows each team's spot on the field from weakest to strongest. "+
+      "The mark beside each rank is how far the team has climbed or slipped in this ranking over the same saved window (nothing shown when we hold no earlier rank). "+
+      "Strength = our on-court team-strength index (higher is better), carried to today; the bar shows each team's spot on the field from weakest to strongest, and the strength-trend line beside it traces that same index over the saved days we hold, with the change across the line printed next to it. "+
       "Momentum = how the team's recent-form rating has moved over its last few games (▲ heating up, ▼ cooling) — a form read, not the ranking. "+
-      "Title % and Playoffs % are from our end-of-season simulation" + (d.title_as_of?(" (current through "+plainDate(d.title_as_of)+")"):"") + "; the one-day move is the change in title odds since yesterday. "+
+      "Title % and Playoffs % are from our end-of-season simulation" + (d.title_as_of?(" (current through "+plainDate(d.title_as_of)+")"):"") + "; the one-day moves are the change in title odds and in playoff odds since yesterday, each a dash when we hold no earlier day rather than a made-up zero. "+
       "The 2-week title trend sparkline traces each team's title odds over the last couple of weeks (the dot marks today, green if up over the window, red if down), and the arrow beside it is the roughly one-week change in points; a team without enough saved days shows a dash instead of a made-up trend."));
     flash();
     insertPlayoff();
