@@ -1,0 +1,93 @@
+{
+ "generated_utc": "2026-08-08T04:00:34+00:00",
+ "date": "2026-08-16",
+ "home": "SEA",
+ "away": "CHI",
+ "home_full": "Seattle Storm",
+ "away_full": "Chicago Sky",
+ "call": "Seattle Storm by 2.0",
+ "factors": [
+  {
+   "label": "Predicted winning margin",
+   "value": "Seattle Storm by 2.0",
+   "detail": "Our pre-game model's point estimate on current, complete rosters."
+  },
+  {
+   "label": "Likely margin range (80%)",
+   "value": "-13.9 to 17.9",
+   "detail": "Calibrated from how far our past margin calls actually missed."
+  },
+  {
+   "label": "Wider margin range (90%)",
+   "value": "-17.6 to 23.1",
+   "detail": "The outer band — a single game's margin swings a lot."
+  },
+  {
+   "label": "Combined total (points)",
+   "value": "181.2 (range 150.1–212.3)",
+   "detail": "Our total-points projection with its empirical range."
+  },
+  {
+   "label": "Home win chance",
+   "value": "57.2%",
+   "detail": "Recalibrated win probability for the home side."
+  }
+ ],
+ "margin": {
+  "point": 2.0,
+  "lo80": -13.9,
+  "hi80": 17.9,
+  "lo90": -17.6,
+  "hi90": 23.1
+ },
+ "total": {
+  "point": 181.2,
+  "lo": 150.1,
+  "hi": 212.3
+ },
+ "p_home_win": 57.2,
+ "why": {
+  "as_of": "2026-08-05",
+  "precision": 3,
+  "published": 2.0,
+  "total": "2.041",
+  "neutral": "-1.192",
+  "steps": [
+   {
+    "label": "Neutral-court strength edge",
+    "value": "-1.192",
+    "detail": "On a neutral floor we make CHI the better side of this matchup by 1.192 points over SEA, before anything about tonight is applied.",
+    "sub": [
+     {
+      "label": "Roster talent",
+      "value": "-0.205",
+      "detail": "Minutes-weighted strength of who is actually available to play."
+     },
+     {
+      "label": "Season results form",
+      "value": "-0.987",
+      "detail": "How each side has actually performed, rated strictly before this game."
+     }
+    ]
+   },
+   {
+    "label": "Home court",
+    "value": "+1.347",
+    "detail": "The home edge our model carries league-wide. It is the same for every team; we do not claim a venue-specific edge we have not measured."
+   },
+   {
+    "label": "Calibration to results",
+    "value": "+1.886",
+    "detail": "A standing correction for the model's average miss against actual finals, re-fit when the margin model is rebuilt."
+   },
+   {
+    "label": "Projected margin",
+    "value": "+2.041",
+    "detail": "The three lines above, added. This is the published number — nothing is applied after this point."
+   }
+  ],
+  "omitted": "Rest, travel, pace and matchup carry no separate weight in this margin — they are not part of the published number. Availability enters only inside roster talent and cannot be split out of it."
+ },
+ "note": "Every figure is read from a core pipeline table — the deep page renders, it never computes.",
+ "generated_et": "Aug 8, 12:00am ET"
+}
