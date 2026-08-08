@@ -224,35 +224,6 @@ footer .util a:hover{color:var(--chalk)}
     paint('m-done',done,'m-dcount',done.length,'done');
     if(has(d.as_of_et)) document.getElementById('m-note').appendChild(el('span',null,' Queue as of '+d.as_of_et+'.'));
 
-    /* SHIP CHECKLIST. Painted from board.json's own persistent key, never from the feed.
-       UNKNOWN IS NOT EMPTY: if the payload could not be read the baker sends known:false with no
-       counts, and this panel then says so rather than staying hidden — a hidden panel and a panel
-       with nothing left to show are opposite statements, and the second one is a lie when the
-       truth is that we could not read it.
-       A row marked done with no evidence renders as claimed-without-proof, never as a tick: the
-       rule this list exists to enforce is that live-verified WITH A PICTURE is the only done. */
-    var sc=d.ship_checklist;
-    if(sc){
-      var host=document.getElementById('shipcheck');
-      var rows=document.getElementById('sc-rows');
-      host.hidden=false;
-      if(!sc.known){
-        document.getElementById('sc-count').textContent=' — unknown';
-        rows.appendChild(el('div','mnote','The checklist could not be read ('+(sc.reason||'no reason given')+'). This is not an empty list.'));
-      }else{
-        document.getElementById('sc-count').textContent=' '+sc.label+(sc.stopped?' · '+sc.stopped+' stopped':'');
-        sc.rows.forEach(function(r){
-          var line=el('div','mrow');
-          var mark=r.state==='done'?'done':(r.state==='stopped'?'stopped':'open');
-          line.appendChild(el('b',null,r.id+' '));
-          line.appendChild(el('span',null,r.item||''));
-          line.appendChild(el('span','tag '+mark,' '+(r.state==='done'&&!r.evidence?'claimed, no proof':mark)));
-          if(r.evidence) line.appendChild(el('div','mnote',r.evidence));
-          rows.appendChild(line);
-        });
-        document.getElementById('sc-note').appendChild(el('a',null,'Full checklist ->')).href=sc.href||'./ship_checklist.html';
-      }
-    }
   }).catch(function(){});
 })();
   </script>
@@ -289,6 +260,41 @@ footer .util a:hover{color:var(--chalk)}
    Fail-soft: no feed, no surfaces, or a bad parse leaves the section hidden rather than empty. */
 (function(){
   function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n;}
+  /* The checklist lives in board.json, so it gets its OWN fetch. My first version painted it
+     inside the queue.json handler, where `d` is the queue and `d.ship_checklist` is forever
+     undefined -- so the branch skipped in silence and the panel stayed hidden while the data sat
+     live one file away. A read against the wrong object fails exactly like a missing feature. */
+  fetch('./board.json').then(function(r){return r.json()}).then(function(b){
+    /* SHIP CHECKLIST. Painted from board.json's own persistent key, never from the feed.
+       UNKNOWN IS NOT EMPTY: if the payload could not be read the baker sends known:false with no
+       counts, and this panel then says so rather than staying hidden — a hidden panel and a panel
+       with nothing left to show are opposite statements, and the second one is a lie when the
+       truth is that we could not read it.
+       A row marked done with no evidence renders as claimed-without-proof, never as a tick: the
+       rule this list exists to enforce is that live-verified WITH A PICTURE is the only done. */
+    var sc=b.ship_checklist;
+    if(sc){
+      var host=document.getElementById('shipcheck');
+      var rows=document.getElementById('sc-rows');
+      host.hidden=false;
+      if(!sc.known){
+        document.getElementById('sc-count').textContent=' — unknown';
+        rows.appendChild(el('div','mnote','The checklist could not be read ('+(sc.reason||'no reason given')+'). This is not an empty list.'));
+      }else{
+        document.getElementById('sc-count').textContent=' '+sc.label+(sc.stopped?' · '+sc.stopped+' stopped':'');
+        sc.rows.forEach(function(r){
+          var line=el('div','mrow');
+          var mark=r.state==='done'?'done':(r.state==='stopped'?'stopped':'open');
+          line.appendChild(el('b',null,r.id+' '));
+          line.appendChild(el('span',null,r.item||''));
+          line.appendChild(el('span','tag '+mark,' '+(r.state==='done'&&!r.evidence?'claimed, no proof':mark)));
+          if(r.evidence) line.appendChild(el('div','mnote',r.evidence));
+          rows.appendChild(line);
+        });
+        document.getElementById('sc-note').appendChild(el('a',null,'Full checklist ->')).href=sc.href||'./ship_checklist.html';
+      }
+    }
+  }).catch(function(){});
   fetch('./accuracy.json').then(function(r){return r.json()}).then(function(a){
     var rows=(a&&a.surfaces)||[];
     if(!rows.length) return;
