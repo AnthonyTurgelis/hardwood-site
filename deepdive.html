@@ -778,11 +778,23 @@
       {v:best.team||"—", l:"best clutch net", sm:true},
       {v:sign(best.clutch_net_per_game,2), l:"net pts / clutch game", sm:true}
     ]));
+    // The stored riser/fader lists are the 12 EXTREMES of a much larger qualifying pool, so their
+    // LENGTH is not a population. The old caption read it as one — "top 8 of 12 measured", beside a
+    // tile saying 113 players were measured — which is a list length wearing a sample size. Name
+    // the real pool when the payload publishes it; otherwise say "stored" and claim nothing.
+    var pool=(typeof d.player_pool_n==="number" && d.player_pool_n>0)?d.player_pool_n:null;
+    var minShots=(d.thresholds&&d.thresholds.min_clutch_shots)||null;
     function playerTable(label, arr){
       if(!arr||!arr.length) return;
-      // Reader-value gate: the panel says how deep the cut goes ("top 8 of N measured") — never a
-      // silent slice that hides real rows behind an unexplained cap.
-      f.appendChild(plab(label+(arr.length>8?(" — top 8 of "+arr.length+" measured"):"")));
+      // Reader-value gate: the panel says how deep the cut goes — never a silent slice that hides
+      // real rows behind an unexplained cap.
+      var shown=Math.min(8,arr.length), tail="";
+      if(arr.length>8){
+        tail=pool?(" — the "+shown+" largest gaps among "+num(pool)+" players with "
+                   +(minShots?(minShots+"+ "):"")+"clutch shots")
+                 :(" — the "+shown+" largest gaps of the "+arr.length+" stored");
+      }
+      f.appendChild(plab(label+tail));
       var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
       ["Player","Team","Shots","Clutch TS%","Base TS%","Δ TS%"].forEach(function(x,i){ hd.appendChild(el("th",i>1?"num":null,x)); });
       var th=el("thead"); th.appendChild(hd); t.appendChild(th); var tb=el("tbody");
