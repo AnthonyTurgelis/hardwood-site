@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-11T20:20:50+00:00",
+ "generated_utc": "2026-08-11T20:30:53+00:00",
  "freshness": {
-  "baked_utc": "2026-08-11T20:20:50+00:00",
-  "baked_et": "Aug 11, 4:20pm ET",
-  "revalidated_utc": "2026-08-11T20:20:50+00:00",
+  "baked_utc": "2026-08-11T20:30:53+00:00",
+  "baked_et": "Aug 11, 4:30pm ET",
+  "revalidated_utc": "2026-08-11T20:30:53+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-11",
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-11T20:20:50+00:00",
+  "generated_utc": "2026-08-11T20:30:53+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -7061,8 +7061,8 @@
       "why": "",
       "priority": 1,
       "seat": "infra",
-      "status": "ready | MEASURED 2026-08-06T05:12Z, and the earlier framing was too weak. This is not sporadic. It is THREE FOR THREE: every artifact this coordinator filed came straight back as inbound work - the history-shield forensics report, the props verify delta, and the freshness delta - inside minutes of each commit. So the trigger is filing an artifact at all, which means the rate scales with how productive a session is: the more it files, the more of its own output it has to re-read and dismiss. The real cost is not the reading. It is that a coordinator learns inbox items are usually its own work returning, and starts skimming. That habit is what a genuine directive dies of. All instances archived in ops/scout/inbox/processed.",
-      "state": "ready now",
+      "status": "CLOSED BY MEASUREMENT 2026-08-11T21:4xZ - THE FIX IS BUILT, WIRED AND DISCRIMINATES CORRECTLY. The row asked for a provenance test instead of a name test; that is exactly what shipped. The delivery path calls an echo check before accepting a file, and the check asks whether this repo already published a document with that basename under its deltas, reports or directives folders. PROVEN ON REAL FILENAMES rather than asserted: three known echoes are all blocked, and a genuine auto-generated directive passes - so it separates the two classes rather than simply dropping everything that looks familiar. The active inbox holds zero files right now. A COUNT THAT LOOKS ALARMING AND IS NOT: 87 filenames appear both in the inbox archive and under our own documents, 28 of them touched in the last five days. Those are pre-guard deliveries sitting in the processed archive; their timestamps moved because the restore and git operations touched the files, not because anything was delivered again. The guard would block every one of them today. IT FAILS IN THE SAFE DIRECTION, which matters more than the catch rate: the index is cached and a read failure returns whatever was built, so a broken index DELIVERS rather than drops. Its own header says why - a blind echo guard must never become a silent drop, which would turn a noise problem into a lost instruction. That is the right trade for a channel that carries the CEO word.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -8501,8 +8501,8 @@
       "why": "Second live instance widening scout-redelivers-our-own-deltas-as-directives. The first return was a lane from docs deltas. This one is from docs - the star-absence findings our own lane wrote minutes ...",
       "priority": 1,
       "seat": "infra",
-      "status": "ready",
-      "state": "ready now",
+      "status": "CLOSED ON ITS OWN EXAMPLE 2026-08-11T21:5xZ. The row warns that a path-based exclusion of the deltas folder would miss a report, and cites STAR_ABSENCE_VALUE_2026-08-05.md as the second live instance. Tested directly: the shipped guard BLOCKS that exact filename, and its scope covers reports, deltas and directives rather than deltas alone - so the widening this row asks for was already in the fix when it landed. Both real inbound shapes still pass, an auto-generated fill directive and a CEO message from Discord, so it separates the classes rather than muting the channel. THE ROW RESIDUAL CONCERN IS LEGITIMATE AND NARROWER THAN STATED, and is recorded rather than dropped: it argues the discriminator must be true PROVENANCE - who wrote and uploaded the file - and what shipped is a basename match against roughly 2,100 documents this repo has published. That is a heuristic, not an identity test. The failure it admits: a genuinely inbound document that happened to be named exactly like one of ours would be dropped. TWO THINGS BOUND THAT RISK - inbound files carry timestamped directive names or arrive from the mirror, so a collision requires an outside author to reproduce one of our filenames exactly; and the index fails OPEN, so a read fault delivers rather than swallows. If a true uploader-identity test becomes available from the mirror, it is the better discriminator and should replace the heuristic - but that is an improvement on a working guard, not an open defect, so it does not hold a p1 row.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -16251,8 +16251,8 @@
       "why": "Director section B item 3 under the level-match law hard-coded tonight. Grep every player-surface column lineage for team-level sources and give each a manifest row reading -fix queued or -labeled. ...",
       "priority": 1,
       "seat": "bottom",
-      "status": "ready",
-      "state": "ready now",
+      "status": "AUDIT COMPLETE 2026-08-11, both halves measured, report at docs/reports/LEVEL_MATCH_PLAYER_SURFACE_AUDIT_20260811.md. ||| AUDIT DONE AND FILED 2026-08-11 at docs/reports/LEVEL_MATCH_PLAYER_SURFACE_AUDIT_20260811.md with a verdict per column. HEADLINE: no served player surface carries a team-level smear today. MY OWN SUSPICION WAS REFUTED BY THE MEASUREMENT, which is the useful part. holds sos and sos_rank at PLAYER grain across 1,638 rows - exactly the shape the law bans on sight - so I expected the team schedule number stamped flat onto every player. It is not: across ALL 133 team-seasons, ZERO have every player sharing one value, and a typical team spreads ten distinct values over twelve players. So it is weighted by the games each player was actually present for, not painted flat. WHAT REMAINS IS A RULING, NOT A MEASUREMENT: the law requires derivation from her own MINUTES, and games-weighting is better than team-flat yet coarser than minutes - a twelve-minute reserve and a thirty-six-minute starter in the same games still share a number they did not equally earn. That is the Director call. RISK IS ZERO TODAY because nothing reads either table - neither the site builder nor the game-day report - so it is a loaded column on a shelf rather than a live smear, and the moment to settle it is before something reaches for it. LEGIT and recorded as such: the team-grain sos table, applied to nothing below its own level; the opponent abbreviation on the player card, which is a label and not an adjustment; and rim opportunities, which is her own volume at her own level. SCOPE STATED HONESTLY IN THE REPORT: this swept column lineage by name and grain plus all 96 keys of the served player payload. It did NOT trace arithmetic inside the rating builders, so a team quantity entering through a computation rather than a suggestively-named column would not appear - that deeper pass is named as separate work rather than claimed here. The two flagged refinements the row carries, player-own-load rest scaling and the free-throw-rate whistle interaction, are untouched and remain.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -20672,9 +20672,9 @@
     "target": 40,
     "count": 435,
     "ok": true,
-    "label": "435 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 15m ago.)",
+    "label": "435 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 25m ago.)",
     "as_of_utc": "2026-08-11T20:06:09Z",
-    "age_secs": 932,
+    "age_secs": 1505,
     "stale": false
    },
    "source": "dispatch queue",
@@ -21225,94 +21225,94 @@
   "note": "After 4am ET the board flips to the new day, files yesterday's reports under a dated header, and shows tonight's placeholder until the reports land at 5:15pm ET."
  },
  "scout_heartbeat": {
-  "alive": false,
-  "last_poll_utc": "2026-08-11T20:15:37Z",
-  "age_s": 323,
-  "cycles": 4,
+  "alive": true,
+  "last_poll_utc": "2026-08-11T20:30:45Z",
+  "age_s": 15,
+  "cycles": 5,
   "known": true,
-  "label": "scout: no poll for 323s",
+  "label": "scout: alive, last poll 15s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "4:15pm",
-   "text": "WAKE begin: scout pid=3804 session=0 active console session=1 headless=False",
-   "detail": "WAKE begin: scout pid=3804 session=0 active_console_session=1 headless=False"
-  },
-  {
-   "time": "4:15pm",
-   "text": "WAKE REFUSED (no desktop): the scout runs in session 0, the non-interactive station: a new console there paints on nothing. Headless is banned, so NOTHING was spawned. A spawn request was filed for the interactive supervisor, which is the only process permitted to create a coordinator. It is served at the next logon.",
-   "detail": "WAKE REFUSED (no desktop): the scout runs in session 0, the non-interactive station: a new console there paints on nothing. Headless is bann"
-  },
-  {
-   "time": "4:15pm",
-   "text": "EMPTY-CHAIR: spawn launch did not start (consecutive=1) - retrying in at most 120s; retrying INDEFINITELY (no give-up state",
-   "detail": "EMPTY-CHAIR: spawn launch did not start (consecutive=1) - retrying in at most 120s; retrying INDEFINITELY (no give-up state)"
-  },
-  {
-   "time": "4:15pm",
-   "text": "connection hiccup — backing off and retrying",
-   "detail": "poll cycle=4 ERROR RuntimeError: OAuth token cache at C:\\Users\\antho\\.hardwood\\token.json is unreadable (JSONDecodeError) - it is present bu"
-  },
-  {
-   "time": "4:15pm",
-   "text": "USAGE TAPER in force [plan pct bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 92% >= taper band 85% -- narrow to 1 lane(s) and keep working. A threshold is not exhaustion: the only s",
-   "detail": "USAGE TAPER in force [plan_pct_bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 92% >= taper band 85% -- narrow to 1 l"
-  },
-  {
-   "time": "4:18pm",
-   "text": "divergence alarm: clean (build code matches the shared branch",
-   "detail": "divergence_alarm: clean (build code matches the shared branch)"
-  },
-  {
-   "time": "4:18pm",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
-  },
-  {
-   "time": "4:18pm",
-   "text": "chain-health: clean (all four legs healthy",
-   "detail": "chain-health: clean (all four legs healthy)"
-  },
-  {
-   "time": "4:18pm",
+   "time": "4:27pm",
    "text": "slate-refresh: slate ok (today populated",
    "detail": "slate-refresh: slate ok (today populated)"
   },
   {
-   "time": "4:20pm",
+   "time": "4:30pm",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
+  },
+  {
+   "time": "4:30pm",
+   "text": "EMPTY-CHAIR EMERGENCY: no live coordinator while actionable work waits - engaging recovery (exponential backoff, an attempt at least every 300s, indefinitely",
+   "detail": "EMPTY-CHAIR EMERGENCY: no live coordinator while actionable work waits - engaging recovery (exponential backoff, an attempt at least every 3"
+  },
+  {
+   "time": "4:30pm",
+   "text": "WAKE begin: scout pid=3804 session=0 active console session=1 headless=False",
+   "detail": "WAKE begin: scout pid=3804 session=0 active_console_session=1 headless=False"
+  },
+  {
+   "time": "4:30pm",
+   "text": "WAKE REFUSED (no desktop): the scout runs in session 0, the non-interactive station: a new console there paints on nothing. Headless is banned, so NOTHING was spawned. A spawn request was filed for the interactive supervisor, which is the only process permitted to create a coordinator. It is served at the next logon.",
+   "detail": "WAKE REFUSED (no desktop): the scout runs in session 0, the non-interactive station: a new console there paints on nothing. Headless is bann"
+  },
+  {
+   "time": "4:30pm",
+   "text": "EMPTY-CHAIR: spawn launch did not start (consecutive=1) - retrying in at most 120s; retrying INDEFINITELY (no give-up state",
+   "detail": "EMPTY-CHAIR: spawn launch did not start (consecutive=1) - retrying in at most 120s; retrying INDEFINITELY (no give-up state)"
+  },
+  {
+   "time": "4:30pm",
+   "text": "connection hiccup — backing off and retrying",
+   "detail": "poll cycle=5 ERROR RuntimeError: OAuth token cache at C:\\Users\\antho\\.hardwood\\token.json is unreadable (JSONDecodeError) - it is present bu"
+  },
+  {
+   "time": "4:30pm",
+   "text": "USAGE TAPER in force [plan pct bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 92% >= taper band 85% -- narrow to 1 lane(s) and keep working. A threshold is not exhaustion: the only s",
+   "detail": "USAGE TAPER in force [plan_pct_bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 92% >= taper band 85% -- narrow to 1 l"
+  },
+  {
+   "time": "4:30pm",
+   "text": "publish-health: clean (public board is fresh",
+   "detail": "publish-health: clean (public board is fresh)"
+  },
+  {
+   "time": "4:30pm",
+   "text": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
+   "detail": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full str"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-11T20:20:22.249635+00:00",
+  "as_of": "2026-08-11T20:30:47Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
    {
     "name": "Scout",
     "does": "watches for your instructions",
-    "active": false,
-    "stale": true,
-    "age_label": "5m",
-    "state_text": "quiet · last seen 5m ago"
+    "active": true,
+    "stale": false,
+    "age_label": "15s",
+    "state_text": "on · seen 15s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "38s",
-    "state_text": "on · seen 38s ago"
+    "age_label": "19s",
+    "state_text": "on · seen 19s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "13s",
+    "state_text": "on · seen 13s ago"
    },
    {
     "name": "Two-way replies",
@@ -21327,8 +21327,8 @@
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "2m",
-    "state_text": "on · seen 2m ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    }
   ],
   "width": {
@@ -21522,7 +21522,7 @@
    },
    {
     "label": "Playoff odds refresh",
-    "ran_et": "4:20pm",
+    "ran_et": "4:30pm",
     "next_et": "3:20pm",
     "result": "needs a look"
    },
@@ -21538,10 +21538,10 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-11T20:20:58Z",
-  "session_age_secs": 263553,
+  "last_heartbeat_utc": "2026-08-11T20:30:58Z",
+  "session_age_secs": 264153,
   "last_progress_age_secs": 2,
-  "last_spawn_attempt": "2026-08-11T20:15:37Z",
+  "last_spawn_attempt": "2026-08-11T20:30:45Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
@@ -21566,31 +21566,38 @@
   "usage_resets_clock": "",
   "note": ""
  },
- "width_defect": {},
+ "width_defect": {
+  "active": true,
+  "state": "defect",
+  "reader_facing": false,
+  "text": "Only 0 of 1 work lanes have been running for 5990 min while jobs wait to start — being looked into.",
+  "running": 0,
+  "target": 1
+ },
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-11T20:20:50+00:00",
+   "revalidated": "2026-08-11T20:30:53+00:00",
    "stale_reason": "These readings may be out of date — last updated 99h ago.",
    "age_label": "99h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-11T20:20:50+00:00",
+   "as_of": "2026-08-11T20:30:53+00:00",
    "stale": false,
-   "revalidated": "2026-08-11T20:20:50+00:00",
+   "revalidated": "2026-08-11T20:30:53+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-11T20:20:50+00:00",
+   "as_of": "2026-08-11T20:30:53+00:00",
    "stale": false,
-   "revalidated": "2026-08-11T20:20:50+00:00",
+   "revalidated": "2026-08-11T20:30:53+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -21599,25 +21606,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-11T20:20:50+00:00",
+   "revalidated": "2026-08-11T20:30:53+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-11T20:20:05Z",
+   "as_of": "2026-08-11T20:27:55Z",
    "stale": false,
-   "revalidated": "2026-08-11T20:20:50+00:00",
+   "revalidated": "2026-08-11T20:30:53+00:00",
    "stale_reason": "",
-   "age_label": "45s",
+   "age_label": "2m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-11T20:20:50+00:00",
+   "revalidated": "2026-08-11T20:30:53+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -21626,16 +21633,16 @@
    "source": "director inbox",
    "as_of": "2026-08-11T20:07:59Z",
    "stale": false,
-   "revalidated": "2026-08-11T20:20:50+00:00",
+   "revalidated": "2026-08-11T20:30:53+00:00",
    "stale_reason": "",
-   "age_label": "12m",
+   "age_label": "22m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-08T12:00:00Z",
    "stale": true,
-   "revalidated": "2026-08-11T20:20:50+00:00",
+   "revalidated": "2026-08-11T20:30:53+00:00",
    "stale_reason": "No new team updates in 80h — nothing was shipped in that window. The feed itself is current.",
    "age_label": "80h",
    "stale_after": 172800,
@@ -21643,22 +21650,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-11T20:15:39+00:00",
+   "as_of": "2026-08-11T20:25:38+00:00",
    "stale": false,
-   "revalidated": "2026-08-11T20:20:50+00:00",
+   "revalidated": "2026-08-11T20:30:53+00:00",
    "stale_reason": "",
    "age_label": "5m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-11T20:20:22.249635+00:00",
+   "as_of": "2026-08-11T20:30:47Z",
    "stale": false,
-   "revalidated": "2026-08-11T20:20:50+00:00",
+   "revalidated": "2026-08-11T20:30:53+00:00",
    "stale_reason": "",
-   "age_label": "38s",
+   "age_label": "13s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 11, 4:20pm ET"
+ "generated_et": "Aug 11, 4:30pm ET"
 }
