@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-11T20:10:35+00:00",
+ "generated_utc": "2026-08-11T20:20:50+00:00",
  "freshness": {
-  "baked_utc": "2026-08-11T20:10:35+00:00",
-  "baked_et": "Aug 11, 4:10pm ET",
-  "revalidated_utc": "2026-08-11T20:10:35+00:00",
+  "baked_utc": "2026-08-11T20:20:50+00:00",
+  "baked_et": "Aug 11, 4:20pm ET",
+  "revalidated_utc": "2026-08-11T20:20:50+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-11",
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-11T20:10:35+00:00",
+  "generated_utc": "2026-08-11T20:20:50+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -5171,8 +5171,8 @@
       "why": "Run the daily data-integrity check",
       "priority": 1,
       "seat": "infra",
-      "status": "ready | NOTE 2026-08-06T10:55Z: a lane measured the build freshness task as State Ready today, so any reasoning in this row that rests on it being disabled needs re-checking before it is worked.",
-      "state": "ready now",
+      "status": "FIXED AND CONTROL-PROVEN 2026-08-11T20:4xZ. The uncovered-forward branch now grades REVIEW and names the remedy; four tests pin it, and restoring the old grade turns three of them red, so they can fail. TWO CORRECTIONS TO THE ROW, both from measuring rather than reading. FIRST, the sharper shape of the defect is the ORDERING, not the wording: an overlay that still covers the slate but was built too long ago grades review, while one covering NOTHING graded green - the worse state graded better, so the check improved as the thing it watches died. SECOND, the row says every player has fallen back to raw v8 since 08-07; that has LAPSED. Measured today the latest sig covers 910 rows reaching 2026-08-25, so the overlay is live and this branch is not the one firing. What IS firing is the sibling: the build is 19 days old against a 3-day threshold while still covering, which is exactly the review the code intends. So the fixed branch was a TRAP ARMED FOR LATER rather than a live lie - still worth closing, because it would have gone quiet at the moment coverage rolled past. ALSO STALE IN THE ROW: it says the freshness task is disabled with every other scheduled task; measured today it is registered and running, and is one of three feeds currently reporting red.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -5936,8 +5936,8 @@
       "why": "Set up the alert notifications",
       "priority": 1,
       "seat": "infra",
-      "status": "ready",
-      "state": "ready now",
+      "status": "CONFLICT FOUND, NOT RESOLVED BY ME, 2026-08-11T21:2xZ. THE FAILURE CLASS IS REAL AND WORTH FIXING: an ask about a broken machine must never travel only through that machine. But the instrument this row names is banned. The send door was deliberately narrowed by an earlier standing order which RETIRED the raw webhook, because it posted under a different display name and the CEO could not tell which of two identities was speaking. The gate says so in its own header, the URL was stripped from every send path, and a hardened detector now flags ANY value-read of that variable as a potential send target - so building this row as written would both reverse that order and trip the guard written to enforce it. WHAT TODAY MEASURED, and it narrows the problem a lot: the bot path is ALREADY independent of the rest of the machine. Through this session the scout failed eight consecutive cycles on a broken credential and the Drive channel was dead, while the gateway stayed connected from 18:21:45Z and every card sent returned a message id. So the send door survived a restore that killed two other channels. The 08-06 incident was not the bot being coupled to the scout - it was the GATEWAY TASK itself being swept up in a bulk disable. RECOMMENDED INSTEAD, and it fixes the class without resurrecting a retired identity: (1) exclude the gateway from any bulk disable sweep, since the thing that carries the ask must never be collateral of the thing being asked about; (2) when the gate genuinely cannot send, write the ask durably and raise it loudly on the local surface, then re-fire through the one door on recovery so the record stays single-door. Proven with a real card either way, never asserted.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -14266,8 +14266,8 @@
       "why": "Director section B. One row per -relevant star status in skip-risk out source date captured at. National coverage already reads post-All-Star rest quotes as a few big names likely skipping so the ...",
       "priority": 1,
       "seat": "data",
-      "status": "ready",
-      "state": "ready now",
+      "status": "BUILT 2026-08-11T21:1xZ at data/world_cup_participation.json - twelve players IN, two OUT, every one of the fourteen resolved to a real roster id and team, none unmatched. THE ROW PREMISE WAS OVERTAKEN BY EVENTS AND THE RESULT IS FAR BETTER THAN IT ASKED FOR. It expected to infer skip-risk from post-All-Star rest quotes; in fact the squad was ANNOUNCED on 2026-08-06 and the announcement is sitting in our own stored corpus with the twelve names listed verbatim. So this is a record of fact, not a guess about intent. CORROBORATED TWICE inside the same corpus rather than trusted once: a team account names three of the twelve, and two separate posts name a player left off. ONE DELIBERATE RESTRAINT: only players explicitly reported as left off are recorded OUT. Absence from the list is NOT recorded as out, because a player nobody wrote about is unknown rather than excluded, and a tracker that silently converts silence into a status would feed the re-entry study a fact nobody established. ANNOTATION-ONLY, as the row requires - nothing here may move a projection until the news-layer pre-registration passes. It is ready for its three consumers: the World Cup sim rosters, pre-break rest expectations, and participant tagging. The break window re-confirmed on the schedule: last game 08-30, resume 09-17, 18 days, the only gap over three days left this season.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -17918,8 +17918,8 @@
       "why": "Correctly size the combined-score ranges",
       "priority": 1,
       "seat": "top",
-      "status": "ready",
-      "state": "ready now",
+      "status": "RE-MEASURED 2026-08-11T20:5xZ AND THE ROW IS OVER-BLOCKED WHILE ALSO CARRYING A NUMBER THAT DOES NOT REPRODUCE. ON THE BLOCKER, TWO PARTS AND BOTH ARE WRONG AS WRITTEN. First, it says all 23 scheduled tasks are disabled after the spawn storm; measured today there are 30 registered, most running, and only six disabled - every one of those deliberately. Second, and more useful: THE ODDS FEED DOES NOT GATE THIS WORK. The row own gate is that the model must beat the season-constant version on CRPS AND hold coverage between 86 and 94 - neither needs the market, and the row itself says the market gap is the scoreboard rather than the promotion bar, which is also what the market-as-measure-only law requires. So the promotion arm can run today on our own data; only the scoreboard arm waits on the feed, and that feed is dead for a spend reason the CEO owns. THE REAL BLOCKER IS A NUMBER. Its basis correction withdrew an earlier contaminated pull and replaced it with clean 2026 reads: mean 174.5, total SD 21.84, margin SD 14.01, correlation 0.417 on 230 games. THREE OF THOSE FOUR REPRODUCE on the clean regular-season table, now n=244: mean 175.10, total SD 21.26, margin SD 13.96. THE CORRELATION DOES NOT, under either reading - signed margin gives 0.024 and absolute margin gives -0.075, and across all regular seasons -0.027 and -0.052. Nothing near 0.417. This matters more than a stray digit because the interval width is the deliverable: an EMOS dispersion fitted to a joint correlation of 0.4 when the truth is about zero would be wrong in exactly the place the model is meant to be right. Resolve what quantity 0.417 measured - it may be a different pair entirely - before fitting anything.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -20672,9 +20672,9 @@
     "target": 40,
     "count": 435,
     "ok": true,
-    "label": "435 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 4m ago.)",
+    "label": "435 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 15m ago.)",
     "as_of_utc": "2026-08-11T20:06:09Z",
-    "age_secs": 285,
+    "age_secs": 932,
     "stale": false
    },
    "source": "dispatch queue",
@@ -21225,102 +21225,102 @@
   "note": "After 4am ET the board flips to the new day, files yesterday's reports under a dated header, and shows tonight's placeholder until the reports land at 5:15pm ET."
  },
  "scout_heartbeat": {
-  "alive": true,
-  "last_poll_utc": "2026-08-11T20:07:30Z",
-  "age_s": 189,
-  "cycles": 3,
+  "alive": false,
+  "last_poll_utc": "2026-08-11T20:15:37Z",
+  "age_s": 323,
+  "cycles": 4,
   "known": true,
-  "label": "scout: alive, last poll 189s ago",
+  "label": "scout: no poll for 323s",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "4:07pm",
+   "time": "4:15pm",
+   "text": "WAKE begin: scout pid=3804 session=0 active console session=1 headless=False",
+   "detail": "WAKE begin: scout pid=3804 session=0 active_console_session=1 headless=False"
+  },
+  {
+   "time": "4:15pm",
+   "text": "WAKE REFUSED (no desktop): the scout runs in session 0, the non-interactive station: a new console there paints on nothing. Headless is banned, so NOTHING was spawned. A spawn request was filed for the interactive supervisor, which is the only process permitted to create a coordinator. It is served at the next logon.",
+   "detail": "WAKE REFUSED (no desktop): the scout runs in session 0, the non-interactive station: a new console there paints on nothing. Headless is bann"
+  },
+  {
+   "time": "4:15pm",
    "text": "EMPTY-CHAIR: spawn launch did not start (consecutive=1) - retrying in at most 120s; retrying INDEFINITELY (no give-up state",
    "detail": "EMPTY-CHAIR: spawn launch did not start (consecutive=1) - retrying in at most 120s; retrying INDEFINITELY (no give-up state)"
   },
   {
-   "time": "4:07pm",
+   "time": "4:15pm",
    "text": "connection hiccup — backing off and retrying",
-   "detail": "poll cycle=3 ERROR RuntimeError: OAuth token cache at C:\\Users\\antho\\.hardwood\\token.json is unreadable (JSONDecodeError) - it is present bu"
+   "detail": "poll cycle=4 ERROR RuntimeError: OAuth token cache at C:\\Users\\antho\\.hardwood\\token.json is unreadable (JSONDecodeError) - it is present bu"
   },
   {
-   "time": "4:07pm",
-   "text": "width-fill: UNDER-WIDTH 0/1 persisted 3 cycles (> 2) with 334 claimable (1 rank3, 8 ladder, 325 READY) - injected fill DIRECTOR DIRECTIVE SCOUT FILL 1.md",
-   "detail": "width-fill: UNDER-WIDTH 0/1 persisted 3 cycles (> 2) with 334 claimable (1 rank3, 8 ladder, 325 READY) - injected fill DIRECTOR_DIRECTIVE__S"
-  },
-  {
-   "time": "4:07pm",
-   "text": "width-fill: injected DIRECTOR DIRECTIVE SCOUT FILL 1.md (running 0/1, 1 claimable) - head picks it up",
-   "detail": "width-fill: injected DIRECTOR_DIRECTIVE__SCOUT_FILL_1.md (running 0/1, 1 claimable) - head picks it up"
-  },
-  {
-   "time": "4:07pm",
+   "time": "4:15pm",
    "text": "USAGE TAPER in force [plan pct bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 92% >= taper band 85% -- narrow to 1 lane(s) and keep working. A threshold is not exhaustion: the only s",
    "detail": "USAGE TAPER in force [plan_pct_bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 92% >= taper band 85% -- narrow to 1 l"
   },
   {
-   "time": "4:07pm",
+   "time": "4:18pm",
    "text": "divergence alarm: clean (build code matches the shared branch",
    "detail": "divergence_alarm: clean (build code matches the shared branch)"
   },
   {
-   "time": "4:07pm",
+   "time": "4:18pm",
    "text": "publish-health: clean (public board is fresh",
    "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "4:07pm",
+   "time": "4:18pm",
    "text": "chain-health: clean (all four legs healthy",
    "detail": "chain-health: clean (all four legs healthy)"
   },
   {
-   "time": "4:07pm",
+   "time": "4:18pm",
    "text": "slate-refresh: slate ok (today populated",
    "detail": "slate-refresh: slate ok (today populated)"
   },
   {
-   "time": "4:10pm",
+   "time": "4:20pm",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-11T20:10:22.237497+00:00",
+  "as_of": "2026-08-11T20:20:22.249635+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
    {
     "name": "Scout",
     "does": "watches for your instructions",
-    "active": true,
-    "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "active": false,
+    "stale": true,
+    "age_label": "5m",
+    "state_text": "quiet · last seen 5m ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "17s",
-    "state_text": "on · seen 17s ago"
+    "age_label": "38s",
+    "state_text": "on · seen 38s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "2m",
-    "state_text": "on · seen 2m ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "79s",
-    "state_text": "on · seen 79s ago"
+    "age_label": "1m",
+    "state_text": "on · seen 1m ago"
    },
    {
     "name": "Inbox triage",
@@ -21522,7 +21522,7 @@
    },
    {
     "label": "Playoff odds refresh",
-    "ran_et": "4:10pm",
+    "ran_et": "4:20pm",
     "next_et": "3:20pm",
     "result": "needs a look"
    },
@@ -21538,10 +21538,10 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-11T20:10:32Z",
-  "session_age_secs": 262932,
-  "last_progress_age_secs": 7,
-  "last_spawn_attempt": "2026-08-11T20:07:30Z",
+  "last_heartbeat_utc": "2026-08-11T20:20:58Z",
+  "session_age_secs": 263553,
+  "last_progress_age_secs": 2,
+  "last_spawn_attempt": "2026-08-11T20:15:37Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
@@ -21566,38 +21566,31 @@
   "usage_resets_clock": "",
   "note": ""
  },
- "width_defect": {
-  "active": true,
-  "state": "defect",
-  "reader_facing": false,
-  "text": "Only 0 of 1 work lanes have been running for 5966 min while jobs wait to start — being looked into.",
-  "running": 0,
-  "target": 1
- },
+ "width_defect": {},
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-11T20:10:35+00:00",
+   "revalidated": "2026-08-11T20:20:50+00:00",
    "stale_reason": "These readings may be out of date — last updated 99h ago.",
    "age_label": "99h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-11T20:10:35+00:00",
+   "as_of": "2026-08-11T20:20:50+00:00",
    "stale": false,
-   "revalidated": "2026-08-11T20:10:35+00:00",
+   "revalidated": "2026-08-11T20:20:50+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-11T20:10:35+00:00",
+   "as_of": "2026-08-11T20:20:50+00:00",
    "stale": false,
-   "revalidated": "2026-08-11T20:10:35+00:00",
+   "revalidated": "2026-08-11T20:20:50+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -21606,25 +21599,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-11T20:10:35+00:00",
+   "revalidated": "2026-08-11T20:20:50+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-11T20:07:41Z",
+   "as_of": "2026-08-11T20:20:05Z",
    "stale": false,
-   "revalidated": "2026-08-11T20:10:35+00:00",
+   "revalidated": "2026-08-11T20:20:50+00:00",
    "stale_reason": "",
-   "age_label": "2m",
+   "age_label": "45s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-11T20:10:35+00:00",
+   "revalidated": "2026-08-11T20:20:50+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -21633,16 +21626,16 @@
    "source": "director inbox",
    "as_of": "2026-08-11T20:07:59Z",
    "stale": false,
-   "revalidated": "2026-08-11T20:10:35+00:00",
+   "revalidated": "2026-08-11T20:20:50+00:00",
    "stale_reason": "",
-   "age_label": "2m",
+   "age_label": "12m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-08T12:00:00Z",
    "stale": true,
-   "revalidated": "2026-08-11T20:10:35+00:00",
+   "revalidated": "2026-08-11T20:20:50+00:00",
    "stale_reason": "No new team updates in 80h — nothing was shipped in that window. The feed itself is current.",
    "age_label": "80h",
    "stale_after": 172800,
@@ -21650,22 +21643,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-11T20:05:38+00:00",
+   "as_of": "2026-08-11T20:15:39+00:00",
    "stale": false,
-   "revalidated": "2026-08-11T20:10:35+00:00",
+   "revalidated": "2026-08-11T20:20:50+00:00",
    "stale_reason": "",
    "age_label": "5m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-11T20:10:22.237497+00:00",
+   "as_of": "2026-08-11T20:20:22.249635+00:00",
    "stale": false,
-   "revalidated": "2026-08-11T20:10:35+00:00",
+   "revalidated": "2026-08-11T20:20:50+00:00",
    "stale_reason": "",
-   "age_label": "17s",
+   "age_label": "38s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 11, 4:10pm ET"
+ "generated_et": "Aug 11, 4:20pm ET"
 }
