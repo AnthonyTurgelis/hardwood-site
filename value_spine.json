@@ -1,7 +1,7 @@
 {
   "stat": "value_spine",
   "kind": "shared_currency_read",
-  "generated_utc": "2026-08-08T21:16:08Z",
+  "generated_utc": "2026-08-11T18:24:53Z",
   "season": 2026,
   "about": {
     "title": "The Value Spine",
@@ -39,10 +39,10 @@
     ]
   },
   "coverage": {
-    "players_total": 206,
-    "with_war_projection": 142,
-    "without_war_projection": 64,
-    "with_skill_archetype": 127,
+    "players_total": 207,
+    "with_war_projection": 144,
+    "without_war_projection": 63,
+    "with_skill_archetype": 128,
     "with_base_salary_2026": 120,
     "with_pp_rating_active": 186,
     "skill_archetype_season": 2025,
@@ -84,8 +84,8 @@
     ],
     "expansion_no_roster_yet": [],
     "pp_rating_active_provenance": {
-      "latest_played": "2026-08-08",
-      "rating_as_of": "2026-08-08",
+      "latest_played": "2026-08-10",
+      "rating_as_of": "2026-08-09",
       "n_rating_names_at_asof": 221,
       "n_rating_names_with_stints": 212,
       "n_active_2026_gamelog_names": 227,
@@ -93,11 +93,11 @@
     },
     "notes": [
       "Player value currency = WAR (Wins Above Replacement). proj_war_2026 is the age-adjusted forecast; war_2025 is realized.",
-      "pp_rating_active is the ACTIVE-ONLY per-possession on-court rating (RAPM-scale, 186 of 206 players). It is shown ONLY for players who are genuinely active in 2026 (>=1 game log with minutes) AND whose rating is computed from real 2026 on-court possessions (not a carried-forward prior). Retired players, coaches, and prior-only/out-all-season players get null -- omit, never a misleading number. This is the honest fix for the v1-dropped raw rating (a naive 'latest rating per player' pull resurfaced Kara Lawson's 2015 and Sylvia Fowles's 2022 ratings). WAR stays the primary currency; the rating is a second, complementary face.",
+      "pp_rating_active is the ACTIVE-ONLY per-possession on-court rating (RAPM-scale, 186 of 207 players). It is shown ONLY for players who are genuinely active in 2026 (>=1 game log with minutes) AND whose rating is computed from real 2026 on-court possessions (not a carried-forward prior). Retired players, coaches, and prior-only/out-all-season players get null -- omit, never a misleading number. This is the honest fix for the v1-dropped raw rating (a naive 'latest rating per player' pull resurfaced Kara Lawson's 2015 and Sylvia Fowles's 2022 ratings). WAR stays the primary currency; the rating is a second, complementary face.",
       "Team proj_wins is the MEDIAN projected final regular-season win total from the live season simulation -- the same number and the same simulation the standings page shows, so the two surfaces cannot disagree. win_band is that simulation's [p5, p95]: 9 of 10 simulated seasons finish inside it. Every team's projection is checked at bake time against wins already banked and games still on the schedule; a projection outside that range blocks the bake.",
       "Skill archetypes + component bars come from a 2025 skillset decomposition; players with no 2025 minutes (rookies, some newcomers) show no archetype/bars.",
       "Base salary known for 120 of the ~180 league roster spots; $/WAR shown only where salary and a positive WAR projection both exist. Full multi-year contract structure is a v2 data acquisition.",
-      "Roster membership + each player's current team come from the LIVE daily roster feed (all 15 teams, including the 2026 expansion clubs POR/TOR). WAR / skills / salary / rating are joined onto that roster; 142 of 206 rostered players have a 2026 WAR projection. The remaining 64 (expansion newcomers, rookies, players with no 2026 projection yet) are listed with an HONEST null value face -- never a fabricated 0, never silently dropped."
+      "Roster membership + each player's current team come from the LIVE daily roster feed (all 15 teams, including the 2026 expansion clubs POR/TOR). WAR / skills / salary / rating are joined onto that roster; 144 of 207 rostered players have a 2026 WAR projection. The remaining 63 (expansion newcomers, rookies, players with no 2026 projection yet) are listed with an HONEST null value face -- never a fabricated 0, never silently dropped."
     ]
   },
   "players": [
@@ -1207,6 +1207,21 @@
       "salary_2026": 600000,
       "dollar_per_war": 315789,
       "pp_rating_active": -0.0047
+    },
+    {
+      "key": "betnijah laneyhamilton",
+      "name": "Betnijah Laney-Hamilton",
+      "team": "WAS",
+      "war_2025": 0.0,
+      "proj_war_2026": 1.9,
+      "age_2026": 33,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null,
+      "pp_rating_active": 0.0034
     },
     {
       "key": "leonie fiebich",
@@ -2916,6 +2931,27 @@
       "pp_rating_active": -0.002
     },
     {
+      "key": "mercedes russell",
+      "name": "Mercedes Russell",
+      "team": "IND",
+      "war_2025": 0.1,
+      "proj_war_2026": 0.0,
+      "age_2026": 31,
+      "archetype": "Balanced",
+      "archetype_matchup": "Role player",
+      "primary_style": "usage",
+      "skills_pct": {
+        "scoring": 0.081,
+        "playmaking": 0.459,
+        "rebounding": 0.486,
+        "defense": 0.466,
+        "ball_security": 0.858
+      },
+      "salary_2026": null,
+      "dollar_per_war": null,
+      "pp_rating_active": null
+    },
+    {
       "key": "brianna turner",
       "name": "Brianna Turner",
       "team": "LVA",
@@ -3254,7 +3290,7 @@
       "team": "IND",
       "war_2025": null,
       "proj_war_2026": null,
-      "age_2026": 22,
+      "age_2026": 23,
       "archetype": null,
       "archetype_matchup": null,
       "primary_style": null,
@@ -3849,27 +3885,12 @@
       "pp_rating_active": -0.011
     },
     {
-      "key": "rori harmon",
-      "name": "Rori Harmon",
-      "team": "WAS",
-      "war_2025": null,
-      "proj_war_2026": null,
-      "age_2026": 23,
-      "archetype": null,
-      "archetype_matchup": null,
-      "primary_style": null,
-      "skills_pct": null,
-      "salary_2026": null,
-      "dollar_per_war": null,
-      "pp_rating_active": -0.0061
-    },
-    {
       "key": "cotie mcmahon",
       "name": "Cotie McMahon",
       "team": "WAS",
       "war_2025": null,
       "proj_war_2026": null,
-      "age_2026": 23,
+      "age_2026": 22,
       "archetype": null,
       "archetype_matchup": null,
       "primary_style": null,
@@ -4022,7 +4043,7 @@
         "fg_pct": 0.451,
         "win_pct": 0.545
       },
-      "roster_rated_n": 14
+      "roster_rated_n": 15
     },
     "LVA": {
       "team_full": "Las Vegas Aces",

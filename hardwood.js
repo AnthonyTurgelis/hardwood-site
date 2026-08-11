@@ -67,8 +67,7 @@
   var STATUS_URL = "./status.json";
   var lastFetch = 0;          // ms epoch of last status.json poll
   var polled = false;         // has ANY poll resolved? "not asked yet" is not "asked and cannot tell"
-  var genIso = null;          // status.json generated_utc (the OPERATOR heartbeat's own stamp)
-  var dataIso = null;         // THIS page's own payload stamp, when the page bakes on its own clock
+  var genIso = null;          // status.json generated_utc (the freshness basis)
   var status = null;
 
   // ---- tiny helpers ----
@@ -109,15 +108,7 @@
       return (h === 1 ? "an hour" : h + " hours") +
              (rm ? (" and " + (rm === 1 ? "a minute" : rm + " minutes")) : "") + " ago";
     }
-    /* THE DAY BAND CARRIES ITS HOURS, for the same reason the hour band carries its minutes. A
-       30-hour-old page used to read "last updated a day ago, well past the 28 hours we allow",
-       which a reader can only parse as a contradiction - the age looked SMALLER than the threshold
-       it had just breached. Truncating to whole days was harmless while every threshold on this
-       strip was 15 minutes; it stopped being harmless the moment a surface earned a bound measured
-       in days. */
-    var d = Math.floor(s / 86400), dh = Math.floor((s % 86400) / 3600);
-    return (d === 1 ? "a day" : d + " days") +
-           (dh ? (" and " + (dh === 1 ? "an hour" : dh + " hours")) : "") + " ago";
+    var d = Math.floor(s / 86400); return (d === 1 ? "a day ago" : d + " days ago");
   }
   function plainFor(s) { return plainAgo(s).replace(/ ago$/, ""); }   // a DURATION, not a point in time
   function plainMins(s) { var m = Math.round((s || 0) / 60); return (m <= 1 ? "minute" : m + " minutes"); }
@@ -209,14 +200,9 @@
   // ---- render the strip from the latest status payload ----
   function renderStrip() {
     var dataP = document.querySelector("#hw-data b");
-    /* THE PILL AND THE BANNER MEASURE THE SAME CLOCK, and on a surface with its own bake cadence
-       that clock is the surface's own payload - not the operator heartbeat. The pill's own title
-       has always said "When the numbers on this page were last rebuilt"; until now it answered with
-       when the STATUS FILE was rebuilt, which on standings.html was 35 minutes optimistic. */
-    var basisIso = dataIso || genIso;
-    var ageNow = basisIso ? Math.round((Date.now() - new Date(basisIso).getTime()) / 1000) : null;
-    var dataTxt = (basisIso && ageNow != null && !isNaN(ageNow))
-      ? (clockOf(basisIso) + " (" + plainAgo(ageNow) + ")")
+    var ageNow = genIso ? Math.round((Date.now() - new Date(genIso).getTime()) / 1000) : null;
+    var dataTxt = (genIso && ageNow != null && !isNaN(ageNow))
+      ? (clockOf(genIso) + " (" + plainAgo(ageNow) + ")")
       : "not read yet";
     if (dataP) { dataP.textContent = dataTxt; }
     // THE ONE LINE (see mount): the same words the updated pill carries, on the closed summary, so a
@@ -255,9 +241,7 @@
           cause - so showing it says strictly more than the work line alone, in one line instead of
           two. Whichever way work is behaving, a reader is never left believing stale numbers are
           current. */
-    var surface = surfaceFor(currentPath());
-    var fresh = staleView(basisIso, status ? status.stale_after_secs : null, Date.now(),
-                          work.paused, surfaceLoudSecs(surface));
+    var fresh = staleView(genIso, status ? status.stale_after_secs : null, Date.now(), work.paused);
     var freshLoud = !!(fresh.level && fresh.level !== "ok");
     var workLoud = !freshLoud && !!(work.paused || work.level === "bad");
 
@@ -266,20 +250,8 @@
        `stale` is false, because we do not know that the payload is old - only that we cannot date it.
        Degrading the now-fields on a missing timestamp would tell a reader the chair is unknown every
        time a stamp fails to parse on an otherwise perfectly fresh page. Only a MEASURED age past the
-       loud threshold retires a now-field.
-
-       WHICH STALENESS retires them is a second question, and splitting the basis forced it. The
-       now-fields (who is in the chair, is anything listening, is work paused) are read out of
-       status.json, so it is STATUS.JSON's age that decides whether we may still assert them - not
-       the age of the basketball numbers on this page. A daily standings bake sitting 20 hours old
-       with a heartbeat 30 seconds old tells us nothing whatever about the chair, and degrading the
-       chair on it would be the same category error, one layer down, as the banner reading the
-       wrong file in the first place. On every fast-loop page the two views share one stamp, so this
-       is a no-op there. */
-    var statusFresh = (basisIso === genIso)
-      ? fresh
-      : staleView(genIso, status ? status.stale_after_secs : null, Date.now(), work.paused);
-    var invalid = !!statusFresh.stale;
+       loud threshold retires a now-field. */
+    var invalid = !!fresh.stale;
 
     // Now-fields, painted only after freshness is known. Each still always says something (never-blank);
     // past the threshold what it says is that it cannot know.
@@ -471,107 +443,10 @@
   function loudAfterSecs(staleAfterSecs) {
     return Math.max(contractSecs(staleAfterSecs), PUB_FLOOR_SECS);
   }
-
-  /* ---- A PAGE THAT REBUILDS ONCE A DAY IS NOT STALE AT SIXTEEN MINUTES.
-     ============================================================================================
-     THE DEFECT, measured live 2026-08-08T18:03Z on standings.html: a full-width red banner reading
-     "STALE - these numbers were last updated 17 minutes ago, well past the 15 minutes we allow ...
-     Do not trust anything on this page until it refreshes." A page that shouts that all day trains
-     a reader to ignore the banner, and the day it means something it is already ignored. The board
-     shouting stale at five-minute-old numbers was the same shape, on a different surface.
-
-     TWO THINGS WERE WRONG, and only fixing the second one would have left the sentence lying.
-
-     1. THE BASIS WAS THE WRONG FILE. Everything above measured age against status.json's
-        `generated_utc` - the OPERATOR heartbeat, baked by the fast site loop - on all 25 pages,
-        including pages whose numbers come from somewhere else entirely. MEASURED on the live host
-        at 18:03Z: status.json 17:40:12Z, and standings.json 17:08:35Z. The banner said "these
-        numbers were last updated 17 minutes ago" about numbers that were 52 minutes old. It was
-        not merely alarming on the wrong threshold, it was quoting the wrong clock: on a slow page
-        it UNDERSTATES the age, and one late heartbeat lights all 25 pages at once. So a page with
-        its own bake clock is now measured against ITS OWN payload, which is what the sentence has
-        always claimed to do (see the file header, "this page's own published refresh contract").
-
-     2. THE BOUND WAS ONE GLOBAL NUMBER. max(300s contract, 900s pager floor) = 15 minutes, for a
-        daily oneshot and a five-minute loop alike. standings.json is baked by ONE daily job
-        (report_scheduler.py `standings_outlook_refresh`, 15:00 ET, bake_playoff_odds_read --pair),
-        so 15 minutes made it call itself untrustworthy for ~23 hours 45 minutes of every day, BY
-        CONSTRUCTION.
-
-     WHAT WAS DELIBERATELY NOT DONE: the global bound was not raised. Raising it would silence the
-     honest alarm on the fast-moving boards - the opposite of the fix, and strictly worse than the
-     defect. The fast loop keeps max(contract, PUB_FLOOR_SECS) EXACTLY as it was, so those pages
-     and scripts/publish_health.py still page at the same second as each other.
-
-     EVERY NUMBER BELOW IS READ OUT OF THE JOB THAT ACTUALLY REBUILDS THE FILE - none is tuned to
-     make today's reading come out calm:
-       everySecs  the job's own cadence (a daily oneshot = 86400; a 30-min sweep = 1800)
-       graceSecs  the job's OWN declared lateness allowance - `grace_min` for the oneshots, and one
-                  further sweep period for the sweeps, which is the point at which a sweep has
-                  provably missed rather than merely not come round yet
-       source     the scheduler job id, so the next reader re-derives the bound instead of trusting
-                  this comment; tests/test_surface_freshness_cadence.js re-reads report_scheduler.py
-                  and fails if a job's et_time/grace_min drifts away from the numbers here.
-
-     A page NOT in this table is one the fast loop bakes in the SAME pass that writes status.json -
-     MEASURED identical stamps at 18:03Z for board, games, teams, accuracy, players, allstar,
-     compare_seasons, ledger and org (all 17:40:12Z, to the second). For those, status.json IS the
-     page's own stamp, and nothing about their behaviour changes. explorer.json is deliberately
-     absent: its baker rides a sweep whose period this lane could not establish from the job
-     definition, and inventing a cadence is exactly what this block exists to stop. */
-  var SWEEP_SECS = 1800;      // report_scheduler.py: availability/coach/gm/tempo bakes, "swept every 30 min"
-  var DAILY_SECS = 86400;
-  var SURFACE_CADENCE = {
-    "standings.html": { payload: "standings.json", everySecs: DAILY_SECS, graceSecs: 240 * 60,
-                        source: "report_scheduler.py standings_outlook_refresh (oneshot 15:00 ET, grace_min 240)" },
-    "deepdive.html":  { payload: "deepdive_index.json", everySecs: DAILY_SECS, graceSecs: 300 * 60,
-                        source: "report_scheduler.py deep_dives_refresh (oneshot 10:00 ET, grace_min 300)" },
-    "situation.html": { payload: "situation.json", everySecs: DAILY_SECS, graceSecs: 300 * 60,
-                        source: "report_scheduler.py situation_explorer_refresh (oneshot 10:30 ET, grace_min 300)" },
-    "coach.html":     { payload: "coach.json", everySecs: SWEEP_SECS, graceSecs: SWEEP_SECS,
-                        source: "report_scheduler.py coach_dashboard_bake (sweep, every 30 min)" },
-    "gm.html":        { payload: "gm.json", everySecs: SWEEP_SECS, graceSecs: SWEEP_SECS,
-                        source: "report_scheduler.py gm_dashboard_bake (sweep, every 30 min)" },
-    "tempo.html":     { payload: "tempo.json", everySecs: SWEEP_SECS, graceSecs: SWEEP_SECS,
-                        source: "report_scheduler.py tempo_hub_bake (sweep, every 30 min)" },
-    "availability.html": { payload: "availability.json", everySecs: SWEEP_SECS, graceSecs: SWEEP_SECS,
-                        source: "report_scheduler.py availability_bake (sweep, every 30 min)" }
-  };
-  /* The bound a surface's OWN clock earns. Never below the pager floor: a page may be slower than
-     the pager, never quieter than it at the same age. */
-  function surfaceLoudSecs(surface) {
-    if (!surface) return null;
-    return Math.max(surface.everySecs + surface.graceSecs, PUB_FLOOR_SECS);
-  }
-  /* Guarded because the test suites drive the SHIPPED module under a DOM shim that has no
-     `location`; an unguarded read would make this file loadable only in a browser, and the whole
-     point of exporting the view functions is that the tests exercise the real code. */
-  function currentPath() {
-    try { return (typeof location !== "undefined" && location) ? String(location.pathname || "") : ""; }
-    catch (e) { return ""; }
-  }
-  function surfaceFor(pathname) {
-    var p = String(pathname || "");
-    var base = p.split("?")[0].split("#")[0].split("/").pop();
-    if (!base) base = "index.html";
-    return SURFACE_CADENCE[base] || null;
-  }
-  /* A WINDOW, not a count of minutes. plainMins(100800) reads "1680 minutes", which is true and
-     unreadable; the sentence quoting the threshold has to be sayable out loud. */
-  function plainWindow(s) {
-    s = Math.max(0, Math.round(s || 0));
-    if (s < 5400) return plainMins(s);   // unchanged wording for every bound that was already minutes
-    if (s < 172800) { var h = Math.round(s / 3600); return (h <= 1 ? "hour" : h + " hours"); }
-    var d = Math.round(s / 86400); return (d <= 1 ? "day" : d + " days");
-  }
-  function staleView(genIsoStr, staleAfterSecs, nowMs, workPaused, loudOverrideSecs) {
+  function staleView(genIsoStr, staleAfterSecs, nowMs, workPaused) {
     // `due` (this page's published refresh contract) is still what `loud` is derived FROM - see
     // loudAfterSecs - it just no longer draws anything of its own. See the calm-band note below.
-    // `loudOverrideSecs` is the surface's OWN cadence bound (SURFACE_CADENCE) when it has one; the
-    // fifth argument is optional precisely so every existing caller and test keeps the old bound.
-    var loud = (typeof loudOverrideSecs === "number" && loudOverrideSecs > 0)
-      ? loudOverrideSecs
-      : loudAfterSecs(staleAfterSecs);
+    var loud = loudAfterSecs(staleAfterSecs);
     if (!genIsoStr) {
       // HONEST UNAVAILABLE, never an invented age.
       return { level: "warn", stale: false, age: null, thresh: loud,
@@ -612,7 +487,7 @@
        genuinely dead page look like a page that was thirty seconds late. */
     return { level: "bad", stale: true, age: age, thresh: loud,
              text: "STALE - these numbers were last updated " + plainAgo(age) + ", well past the " +
-                   plainWindow(loud) + " we allow before treating a page as out of date. " +
+                   plainMins(loud) + " we allow before treating a page as out of date. " +
                    "Do not trust anything on this page until it refreshes." };
   }
 
@@ -699,30 +574,8 @@
     }
   }
 
-  /* ---- poll THIS page's own payload, for pages that bake on their own clock.
-     Same-origin, same discipline as status.json, and the page has already fetched this exact URL
-     for its own content, so it is normally served straight out of the browser's cache. Only the
-     one field is read. A page not in SURFACE_CADENCE makes no second request at all, and a failed
-     read leaves dataIso null, which falls the basis back to status.json rather than blanking the
-     line - the never-blank contract, unchanged. */
-  function pollSurface() {
-    var surface = surfaceFor(currentPath());
-    if (!surface) return;
-    fetch("./" + surface.payload, { cache: "no-cache" })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (d) {
-        if (d) {
-          var iso = d.generated_utc || (d.freshness && d.freshness.baked_utc) || null;
-          if (iso) { dataIso = iso; }
-        }
-        renderStrip();
-      })
-      .catch(function () { renderStrip(); });
-  }
-
   // ---- non-disruptive poll of status.json (strip only; never touches #main) ----
   function poll() {
-    pollSurface();
     fetch(STATUS_URL, { cache: "no-cache" })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (s) {
@@ -783,11 +636,6 @@
     _pctSentence: pctSentence,
     PUB_FLOOR_SECS: PUB_FLOOR_SECS,
     STALE_DEFAULT_SECS: STALE_DEFAULT_SECS,
-    _loudAfterSecs: loudAfterSecs,
-    // per-surface cadence bounds, exported so tests exercise THE SHIPPED table, never a copy
-    SURFACE_CADENCE: SURFACE_CADENCE,
-    _surfaceFor: surfaceFor,
-    _surfaceLoudSecs: surfaceLoudSecs,
-    _plainWindow: plainWindow
+    _loudAfterSecs: loudAfterSecs
   };
 })();

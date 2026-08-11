@@ -79,7 +79,8 @@ section{padding:16px 0}
 @media(max-width:720px){.mcols{grid-template-columns:1fr}}
 .mcol h2{font:700 14px/1 "Barlow Condensed";text-transform:uppercase;letter-spacing:.1em;color:var(--chalk);margin:0 0 6px}
 .mcol h2 span{color:var(--chalk-dim);font:400 11px/1 Barlow;letter-spacing:0;margin-left:6px}
-.mlist{display:grid;gap:4px;max-height:186px;overflow:auto}
+/* 186px showed FIVE of twelve rows the renderer already had in hand, and the CEO asked to show way more. 300px shows about nine. It stays capped and scrollable so a long queue can never push the record and the numbers off the page. */
+.mlist{display:grid;gap:3px;max-height:300px;overflow:auto}
 .mrow{background:var(--plank);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:12.5px;line-height:1.3;color:var(--chalk);display:flex;gap:7px;align-items:baseline}
 .mrow i{color:var(--chalk-dim);font-style:normal;font-variant-numeric:tabular-nums}
 .mrow .t{flex:1;min-width:0}
@@ -246,8 +247,9 @@ footer .util a:hover{color:var(--chalk)}
 })();
   </script>
   <section class="acc">
+    <!-- Two lines of prose held a whole block to say one thing. One line now, same links. -->
     <div class="eyebrow">The record</div>
-    <p class="sub" style="margin-top:8px">We grade every call the morning after and publish the running record - hits, misses, and what we learned. <a href="accuracy.html">See our accuracy</a> or read the <a href="review.html" style="color:var(--maple)">daily review</a>.</p>
+    <p class="sub" style="margin-top:6px">Every call graded the morning after. <a href="accuracy.html">Our accuracy</a> · <a href="review.html" style="color:var(--maple)">Daily review</a></p>
   </section>
   <section id="best" hidden>
     <div class="eyebrow">Best numbers</div>
