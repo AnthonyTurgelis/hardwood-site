@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-11T19:50:33+00:00",
+ "generated_utc": "2026-08-11T20:01:29+00:00",
  "freshness": {
-  "baked_utc": "2026-08-11T19:50:33+00:00",
-  "baked_et": "Aug 11, 3:50pm ET",
-  "revalidated_utc": "2026-08-11T19:50:33+00:00",
+  "baked_utc": "2026-08-11T20:01:29+00:00",
+  "baked_et": "Aug 11, 4:01pm ET",
+  "revalidated_utc": "2026-08-11T20:01:29+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-11",
@@ -14,7 +14,7 @@
   "maintenance": 0,
   "needs_anthony": 0,
   "lanes_today": 0,
-  "upcoming": 432
+  "upcoming": 434
  },
  "ship_checklist": {
   "known": true,
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-11T19:50:33+00:00",
+  "generated_utc": "2026-08-11T20:01:29+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -2153,7 +2153,7 @@
       "why": "The chrome fix worked - the stale badges, the refresh-late banner and the nothing-is-paused line are all gone, the why line says something real now, and one roster list went from twenty names to a ...",
       "priority": 0,
       "seat": "viz",
-      "status": "RETIRED-WITH-EVIDENCE 2026-07-30T20:07Z, commits 48a3d278 + 7b6621a7 (lane red-banner-about-our-lane-count-tops-his-front-page). Operator alarm REMOVED from the front page, not retuned - no threshold rescues a fact the reader cannot act on, and \"work has stopped\" is already stated one element above in reader language. The live read was WORSE than briefed: \"Only 0 of 4 work lanes for 55 min\" while the SAME payload carried coordinator_heartbeat.alive true with last_progress_age_secs 9, and the denominator 4 was the configured ceiling while the governor had tapered the live target to 3 (flag file said 1) - we alarmed about a shortfall against a number nobody was trying to hit. width_defect_log has 55 rows today oscillating 0/1/4, so the instant was never the day. THIRD INSTANCE was LIVE, not hypothetical, and is fixed: renderHelpers was binary on result==done though the baker emits four results, so nine rows showed a red dot beside the red word \"scheduled\", one reading \"next 5:15pm\" - flagged broken for being due later. 6 mutations watched go red, 5 captures looked at. CODE ONLY at close - live only after the next bake+publish.",
+      "status": "[state word 'closed' normalised to 'done' 2026-08-11; verdict proven unchanged] RETIRED-WITH-EVIDENCE 2026-07-30T20:07Z, commits 48a3d278 + 7b6621a7 (lane red-banner-about-our-lane-count-tops-his-front-page). Operator alarm REMOVED from the front page, not retuned - no threshold rescues a fact the reader cannot act on, and \"work has stopped\" is already stated one element above in reader language. The live read was WORSE than briefed: \"Only 0 of 4 work lanes for 55 min\" while the SAME payload carried coordinator_heartbeat.alive true with last_progress_age_secs 9, and the denominator 4 was the configured ceiling while the governor had tapered the live target to 3 (flag file said 1) - we alarmed about a shortfall against a number nobody was trying to hit. width_defect_log has 55 rows today oscillating 0/1/4, so the instant was never the day. THIRD INSTANCE was LIVE, not hypothetical, and is fixed: renderHelpers was binary on result==done though the baker emits four results, so nine rows showed a red dot beside the red word \"scheduled\", one reading \"next 5:15pm\" - flagged broken for being due later. 6 mutations watched go red, 5 captures looked at. CODE ONLY at close - live only after the next bake+publish.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -2161,7 +2161,7 @@
       "title": "A red bar about our own work queue now tops the front page",
       "unlocks": "The chrome fix worked - the stale badges, the refresh-late banner and the nothing-is-paused line are all gone, the why ...",
       "owner": "MACHINE",
-      "feed_status": "DONE TODAY",
+      "feed_status": "QUEUED",
       "tier": 0,
       "group": "",
       "ceo_ask": true,
@@ -2243,7 +2243,7 @@
       "why": "CEO order via publish the 24 item pre-pause checklist as a live board surface showing A done of 13 B done of 9 C done of 2 updating as each closes so he can look once and see how much is left. The ...",
       "priority": 0,
       "seat": "MACHINE",
-      "status": "closed",
+      "status": "[state word 'closed' normalised to 'done' 2026-08-11; verdict proven unchanged] closed",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -2706,7 +2706,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 131,
+      "rank": 132,
       "actions": [
        {
         "verb": "top",
@@ -2751,7 +2751,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 144,
+      "rank": 145,
       "actions": [
        {
         "verb": "top",
@@ -2783,7 +2783,7 @@
       "why": "Measured by the coordinator on the surfaces 2026-07-30T17 after recording a lane's claim that they agreed on all 185 shared players. They disagree on 13 and the disagreement is not a rounding edge ...",
       "priority": 1,
       "seat": "top",
-      "status": "RETIRED-WITH-EVIDENCE 2026-07-30T19:50Z, commit 500d135e (lane bring-the-impact-feed-to-the-boards-thin-rule). 13 of 185 -> 0. n_basis and gp agreed on ALL 13 - the surfaces never disagreed on evidence, only on the rule. Two missing legs, both now inherited: the held-career exemption (Vandersloot 4 stints but 327 career games over 12 seasons held; Juhasz; Maley) and the floor-time leg (10 deep reserves incl Harmon at 68 season min). The feed no longer COMPUTES a marker - it imports build_site._si_thin_label, and RAISES if that becomes unreachable rather than falling back silently. build_site.py and site/ are byte-unchanged. 22 passed, 7 mutations watched go red, each test asserting the FLIP (re-executes the old rule and requires the opposite) not just the end state. CODE ONLY - the served feed carries it after the next bake; NOT yet claimed live.",
+      "status": "[state word 'closed' normalised to 'done' 2026-08-11; verdict proven unchanged] RETIRED-WITH-EVIDENCE 2026-07-30T19:50Z, commit 500d135e (lane bring-the-impact-feed-to-the-boards-thin-rule). 13 of 185 -> 0. n_basis and gp agreed on ALL 13 - the surfaces never disagreed on evidence, only on the rule. Two missing legs, both now inherited: the held-career exemption (Vandersloot 4 stints but 327 career games over 12 seasons held; Juhasz; Maley) and the floor-time leg (10 deep reserves incl Harmon at 68 season min). The feed no longer COMPUTES a marker - it imports build_site._si_thin_label, and RAISES if that becomes unreachable rather than falling back silently. build_site.py and site/ are byte-unchanged. 22 passed, 7 mutations watched go red, each test asserting the FLIP (re-executes the old rule and requires the opposite) not just the end state. CODE ONLY - the served feed carries it after the next bake; NOT yet claimed live.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -2791,12 +2791,12 @@
       "title": "The board and the impact feed call opposite players a thin read",
       "unlocks": "Rori Harmon sits at 8 tracked stints on both called thin by the board and not thin by the feed.",
       "owner": "MACHINE",
-      "feed_status": "DONE TODAY",
+      "feed_status": "QUEUED",
       "tier": 2,
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 150,
+      "rank": 151,
       "actions": [
        {
         "verb": "top",
@@ -2841,7 +2841,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 151,
+      "rank": 152,
       "actions": [
        {
         "verb": "top",
@@ -2886,7 +2886,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 152,
+      "rank": 153,
       "actions": [
        {
         "verb": "top",
@@ -2931,7 +2931,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 160,
+      "rank": 161,
       "actions": [
        {
         "verb": "top",
@@ -2976,7 +2976,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 189,
+      "rank": 190,
       "actions": [
        {
         "verb": "top",
@@ -3021,7 +3021,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 205,
+      "rank": 206,
       "actions": [
        {
         "verb": "top",
@@ -3066,7 +3066,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 212,
+      "rank": 213,
       "actions": [
        {
         "verb": "top",
@@ -3112,7 +3112,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The wave was dispatched as fifteen finished surfaces one bake from the reader.",
-      "rank": 221,
+      "rank": 222,
       "actions": [
        {
         "verb": "top",
@@ -3157,7 +3157,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 222,
+      "rank": 223,
       "actions": [
        {
         "verb": "top",
@@ -3202,7 +3202,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 240,
+      "rank": 242,
       "actions": [
        {
         "verb": "top",
@@ -3234,8 +3234,8 @@
       "why": "The site clone at C Users antho hardwood-site is written by the scheduled bake by the floor re-stamp bake and now by the single-payload publish path and none of them takes a shared lock. On a bake ...",
       "priority": 2,
       "seat": "pm",
-      "status": "ready - FOUND WHILE RE-MEASURING THE 07-31 WIDTH-TAPER ROW, 2026-08-07T16:31Z coord--visible. That row's own symptom did NOT reproduce - the bake log holds SIX deferral lines total, all on 07-31 and 08-01, and ZERO today - but reading today's log for them surfaced a live failure instead. THE EVENT, verbatim: 13:58:03Z bake+push ABORTED rc=2, PUBLIC PUSH DID NOT HAPPEN, fatal: Unable to create C:/Users/antho/hardwood-site/.git/index.lock: File exists. Another git process seems to be running in this repository. THE PROOF THAT IT WAS A RACE RATHER THAN A STALE LOCK: commit landed in that same clone at 13:58:04Z, ONE SECOND after the abort, so a second writer held the index at that moment and finished. The tick that died had started at 13:55:31Z, triggered at 13:55:20Z by floor: ACTIVE re-stamp bake because the board was 70 SECONDS OLD - so the re-stamp path can launch a bake into one already in flight. I CHECKED MY OWN HANDS FIRST and the timing clears me on the commit: my single-payload standings commit is stamped 14:01:32Z, three and a half minutes AFTER the abort. What I cannot exclude is my read of that clone - I ran git status --porcelain against it in the same window, and git status TAKES THE INDEX LOCK while refreshing, so an inspection that looks read-only is a third writer. That is worth knowing regardless of who caused this one. SELF-HEALED, so this is a defect and not an outage: the 14:07:29Z tick pushed at 14:09:53Z and the live page carried the standings fix at 14:02Z. CONSEQUENCE FOR THE DIRECTOR'S CLOG-4 ITEM: the single-payload publish path he asked for is now a THIRD uncoordinated writer on that clone, so it should take the same lock the bake takes rather than racing it. FIX DIRECTION: one named lock around every mutation of the publish clone, held by the scheduled bake, the floor re-stamp and any manual publish alike, plus a guard on the re-stamp path so it cannot launch into an in-flight bake. ||| CAUSE FIXED, ROW NARROWED RATHER THAN CLOSED, 16:00Z. The concurrent writers were build_site racing ITSELF, and commit b1455772 makes that impossible - one instance per label. What this row still covers is the remaining writer that the gate cannot see: a MANUAL publish. I ran one today with HARDWOOD_ADMISSION_GATE=0 to break the loop, which is exactly a second writer entering by the door the mutex does not guard. Also unchanged: git status TAKES the index lock while refreshing, so even inspecting that clone is a write. Narrowed to those two, and both are human-initiated rather than scheduled, so the frequency drops from every few minutes to rarely.",
-      "state": "ready now",
+      "status": "[state word 'ready' normalised to 'open' 2026-08-11; verdict proven unchanged] ready - FOUND WHILE RE-MEASURING THE 07-31 WIDTH-TAPER ROW, 2026-08-07T16:31Z coord--visible. That row's own symptom did NOT reproduce - the bake log holds SIX deferral lines total, all on 07-31 and 08-01, and ZERO today - but reading today's log for them surfaced a live failure instead. THE EVENT, verbatim: 13:58:03Z bake+push ABORTED rc=2, PUBLIC PUSH DID NOT HAPPEN, fatal: Unable to create C:/Users/antho/hardwood-site/.git/index.lock: File exists. Another git process seems to be running in this repository. THE PROOF THAT IT WAS A RACE RATHER THAN A STALE LOCK: commit landed in that same clone at 13:58:04Z, ONE SECOND after the abort, so a second writer held the index at that moment and finished. The tick that died had started at 13:55:31Z, triggered at 13:55:20Z by floor: ACTIVE re-stamp bake because the board was 70 SECONDS OLD - so the re-stamp path can launch a bake into one already in flight. I CHECKED MY OWN HANDS FIRST and the timing clears me on the commit: my single-payload standings commit is stamped 14:01:32Z, three and a half minutes AFTER the abort. What I cannot exclude is my read of that clone - I ran git status --porcelain against it in the same window, and git status TAKES THE INDEX LOCK while refreshing, so an inspection that looks read-only is a third writer. That is worth knowing regardless of who caused this one. SELF-HEALED, so this is a defect and not an outage: the 14:07:29Z tick pushed at 14:09:53Z and the live page carried the standings fix at 14:02Z. CONSEQUENCE FOR THE DIRECTOR'S CLOG-4 ITEM: the single-payload publish path he asked for is now a THIRD uncoordinated writer on that clone, so it should take the same lock the bake takes rather than racing it. FIX DIRECTION: one named lock around every mutation of the publish clone, held by the scheduled bake, the floor re-stamp and any manual publish alike, plus a guard on the re-stamp path so it cannot launch into an in-flight bake. ||| CAUSE FIXED, ROW NARROWED RATHER THAN CLOSED, 16:00Z. The concurrent writers were build_site racing ITSELF, and commit b1455772 makes that impossible - one instance per label. What this row still covers is the remaining writer that the gate cannot see: a MANUAL publish. I ran one today with HARDWOOD_ADMISSION_GATE=0 to break the loop, which is exactly a second writer entering by the door the mutex does not guard. Also unchanged: git status TAKES the index lock while refreshing, so even inspecting that clone is a write. Narrowed to those two, and both are human-initiated rather than scheduled, so the frequency drops from every few minutes to rarely.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 2.0,
@@ -3247,7 +3247,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 261,
+      "rank": 263,
       "actions": [
        {
         "verb": "top",
@@ -3292,7 +3292,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 272,
+      "rank": 274,
       "actions": [
        {
         "verb": "top",
@@ -3337,7 +3337,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 275,
+      "rank": 277,
       "actions": [
        {
         "verb": "top",
@@ -3382,7 +3382,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 276,
+      "rank": 278,
       "actions": [
        {
         "verb": "top",
@@ -3427,7 +3427,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 286,
+      "rank": 288,
       "actions": [
        {
         "verb": "top",
@@ -3472,7 +3472,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 288,
+      "rank": 290,
       "actions": [
        {
         "verb": "top",
@@ -3517,7 +3517,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 300,
+      "rank": 302,
       "actions": [
        {
         "verb": "top",
@@ -3562,7 +3562,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 304,
+      "rank": 306,
       "actions": [
        {
         "verb": "top",
@@ -3607,7 +3607,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 312,
+      "rank": 314,
       "actions": [
        {
         "verb": "top",
@@ -3652,7 +3652,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 314,
+      "rank": 316,
       "actions": [
        {
         "verb": "top",
@@ -3697,7 +3697,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 315,
+      "rank": 317,
       "actions": [
        {
         "verb": "top",
@@ -3742,7 +3742,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 317,
+      "rank": 319,
       "actions": [
        {
         "verb": "top",
@@ -3787,7 +3787,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 326,
+      "rank": 328,
       "actions": [
        {
         "verb": "top",
@@ -3832,7 +3832,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 329,
+      "rank": 331,
       "actions": [
        {
         "verb": "top",
@@ -3877,7 +3877,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 333,
+      "rank": 335,
       "actions": [
        {
         "verb": "top",
@@ -3922,7 +3922,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 353,
+      "rank": 355,
       "actions": [
        {
         "verb": "top",
@@ -3967,7 +3967,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 356,
+      "rank": 358,
       "actions": [
        {
         "verb": "top",
@@ -4012,7 +4012,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 357,
+      "rank": 359,
       "actions": [
        {
         "verb": "top",
@@ -4057,7 +4057,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 368,
+      "rank": 370,
       "actions": [
        {
         "verb": "top",
@@ -4102,7 +4102,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 372,
+      "rank": 374,
       "actions": [
        {
         "verb": "top",
@@ -4147,7 +4147,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 375,
+      "rank": 377,
       "actions": [
        {
         "verb": "top",
@@ -4192,7 +4192,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 383,
+      "rank": 385,
       "actions": [
        {
         "verb": "top",
@@ -4237,7 +4237,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 390,
+      "rank": 392,
       "actions": [
        {
         "verb": "top",
@@ -4282,7 +4282,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 404,
+      "rank": 406,
       "actions": [
        {
         "verb": "top",
@@ -4327,7 +4327,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 405,
+      "rank": 407,
       "actions": [
        {
         "verb": "top",
@@ -4372,7 +4372,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 418,
+      "rank": 420,
       "actions": [
        {
         "verb": "top",
@@ -4417,7 +4417,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 429,
+      "rank": 431,
       "actions": [
        {
         "verb": "top",
@@ -4811,7 +4811,7 @@
       "why": "HardwoodCoordinatorWatchdog and HardwoodCoordinatorWatchdog2 both read State=Disabled. Their task files were last written 2026-08-07T17:36:, which is 66 seconds after this seat was claimed, and no ...",
       "priority": 0,
       "seat": "MACHINE",
-      "status": "CORRECTED 2026-08-08T20:05Z - THE ROW RETIRES, BUT NOT FOR THE REASON I GAVE AT 19:15Z. I measured the state right and judged it against the wrong contract. Watchdog reading Ready and the supervisor reading Running is NOT respawn healthily restored - it is two CEO orders not in effect. Section 0's 1815Z addendum makes HardwoodSupervisorVisible a PERMANENT ordered disable, and today's P0 says disable every automatic respawner, crashes tolerated. Both were live anyway. RESTORED AND READ BACK 2026-08-08T20:0xZ: Watchdog Disabled, Watchdog2 Disabled, SupervisorVisible Disabled - the in-flight supervisor instance had to be stopped separately, because disabling a task does not stop the copy already running, and it had been up over an hour. SO NOTHING RESPAWNING THE SEAT IS THE ORDERED STATE, NOT A DEFECT, and the row is closed on that basis. The earlier evidence is left below rather than deleted. WHAT A FUTURE SESSION MUST NOT DO: read these three tasks as enabled and conclude respawn was fixed. Check section 0 before treating a running respawner as health. ||| RETIRED-WITH-EVIDENCE 2026-08-08T19:15Z. Premise no longer holds and respawn is RESTORED, measured not assumed: HardwoodCoordinatorWatchdog reads State=Ready, HardwoodSupervisorVisible reads Running with one live supervisor process, and the spawn freeze that was suppressing them was cleared earlier today. A crashed coordinator IS respawned again - this session is itself a successor that came back carrying its conversation. RESIDUAL, split out honestly rather than closed over: HardwoodCoordinatorWatchdog2, the REDUNDANT twin, is still Disabled and refuses Enable-ScheduledTask with Access is denied; its principal reads 'antho Limited', so it needs an elevated hand. That is a redundancy gap, not a respawn gap - one watchdog plus the supervisor is a working chain, which is why this row retires rather than staying open on its original claim.",
+      "status": "[state word 'closed' normalised to 'done' 2026-08-11; verdict proven unchanged] CORRECTED 2026-08-08T20:05Z - THE ROW RETIRES, BUT NOT FOR THE REASON I GAVE AT 19:15Z. I measured the state right and judged it against the wrong contract. Watchdog reading Ready and the supervisor reading Running is NOT respawn healthily restored - it is two CEO orders not in effect. Section 0's 1815Z addendum makes HardwoodSupervisorVisible a PERMANENT ordered disable, and today's P0 says disable every automatic respawner, crashes tolerated. Both were live anyway. RESTORED AND READ BACK 2026-08-08T20:0xZ: Watchdog Disabled, Watchdog2 Disabled, SupervisorVisible Disabled - the in-flight supervisor instance had to be stopped separately, because disabling a task does not stop the copy already running, and it had been up over an hour. SO NOTHING RESPAWNING THE SEAT IS THE ORDERED STATE, NOT A DEFECT, and the row is closed on that basis. The earlier evidence is left below rather than deleted. WHAT A FUTURE SESSION MUST NOT DO: read these three tasks as enabled and conclude respawn was fixed. Check section 0 before treating a running respawner as health. ||| RETIRED-WITH-EVIDENCE 2026-08-08T19:15Z. Premise no longer holds and respawn is RESTORED, measured not assumed: HardwoodCoordinatorWatchdog reads State=Ready, HardwoodSupervisorVisible reads Running with one live supervisor process, and the spawn freeze that was suppressing them was cleared earlier today. A crashed coordinator IS respawned again - this session is itself a successor that came back carrying its conversation. RESIDUAL, split out honestly rather than closed over: HardwoodCoordinatorWatchdog2, the REDUNDANT twin, is still Disabled and refuses Enable-ScheduledTask with Access is denied; its principal reads 'antho Limited', so it needs an elevated hand. That is a redundancy gap, not a respawn gap - one watchdog plus the supervisor is a working chain, which is why this row retires rather than staying open on its original claim.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -5666,8 +5666,8 @@
       "why": "The margin successor oracle stage was wired into the nightly today and exits 1 by design while its fourth bar fails. The nightly takes its worst stage's exit code and the feed alarm counts ...",
       "priority": 1,
       "seat": "qa",
-      "status": "ready - FORESEEN AT THE MOMENT OF WIRING RATHER THAN DISCOVERED IN A WEEK, 2026-08-07T15:18Z coord--visible. Lane A wired margin_successor_oracle into ops/scout/nightly_model_task.ps1 today and said so plainly in its own report: the stage returns nonzero until the totals band is reconciled against our warehouse coverage. Lane B measured the number the same hour - totals_mae 13.7580 against a 13.970-14.270 band, failing BY BEING BETTER, at z = -1.27, which is ordinary sampling noise on n=1488 versus the directive's 1489. THE MECHANICAL CONSEQUENCE: the nightly task inherits its WORST stage's exit code, and ops/scout/feed_streak_alarm counts consecutive nonzero runs, so HardwoodNightlyModel is now guaranteed to alarm every single night with nothing broken underneath it. The alarm fired at 15:12:35Z already - RED=2 for HardwoodBuildFreshness and HardwoodNightlyModel. THIS IS THE EXACT SHAPE THIS SESSION SPENT THE MORNING UNTANGLING: a monitor exits nonzero to REPORT, a streak counter reads that as a corpse, and a healthy chain gets painted dead - the 22-consecutive-failure nightly that turned out to be 18 of 20 stages green. Wiring a permanently-failing monitor into the same counter reinstalls the defect deliberately. THE FIX IS NOT TO MUTE IT, which would recreate the blind check: give the runner a way to mark a stage as DETECTION rather than FAULT, so a reporting stage can be red without owning the task's exit code - the same distinction build_freshness already draws between naming a stale feed and failing. Until then every nightly alarm on this task carries no information, and an always-firing alarm trains everyone to ignore the one that matters.",
-      "state": "ready now",
+      "status": "[state word 'ready' normalised to 'open' 2026-08-11; verdict proven unchanged] ready - FORESEEN AT THE MOMENT OF WIRING RATHER THAN DISCOVERED IN A WEEK, 2026-08-07T15:18Z coord--visible. Lane A wired margin_successor_oracle into ops/scout/nightly_model_task.ps1 today and said so plainly in its own report: the stage returns nonzero until the totals band is reconciled against our warehouse coverage. Lane B measured the number the same hour - totals_mae 13.7580 against a 13.970-14.270 band, failing BY BEING BETTER, at z = -1.27, which is ordinary sampling noise on n=1488 versus the directive's 1489. THE MECHANICAL CONSEQUENCE: the nightly task inherits its WORST stage's exit code, and ops/scout/feed_streak_alarm counts consecutive nonzero runs, so HardwoodNightlyModel is now guaranteed to alarm every single night with nothing broken underneath it. The alarm fired at 15:12:35Z already - RED=2 for HardwoodBuildFreshness and HardwoodNightlyModel. THIS IS THE EXACT SHAPE THIS SESSION SPENT THE MORNING UNTANGLING: a monitor exits nonzero to REPORT, a streak counter reads that as a corpse, and a healthy chain gets painted dead - the 22-consecutive-failure nightly that turned out to be 18 of 20 stages green. Wiring a permanently-failing monitor into the same counter reinstalls the defect deliberately. THE FIX IS NOT TO MUTE IT, which would recreate the blind check: give the runner a way to mark a stage as DETECTION rather than FAULT, so a reporting stage can be red without owning the task's exit code - the same distinction build_freshness already draws between naming a stale feed and failing. Until then every nightly alarm on this task carries no information, and an always-firing alarm trains everyone to ignore the one that matters.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -6354,7 +6354,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 102,
+      "rank": 103,
       "actions": [
        {
         "verb": "top",
@@ -6399,7 +6399,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 104,
+      "rank": 105,
       "actions": [
        {
         "verb": "top",
@@ -6444,7 +6444,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 105,
+      "rank": 106,
       "actions": [
        {
         "verb": "top",
@@ -6489,7 +6489,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 106,
+      "rank": 107,
       "actions": [
        {
         "verb": "top",
@@ -6534,7 +6534,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 107,
+      "rank": 108,
       "actions": [
        {
         "verb": "top",
@@ -6579,7 +6579,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 109,
+      "rank": 110,
       "actions": [
        {
         "verb": "top",
@@ -6624,7 +6624,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 120,
+      "rank": 121,
       "actions": [
        {
         "verb": "top",
@@ -6669,7 +6669,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 122,
+      "rank": 123,
       "actions": [
        {
         "verb": "top",
@@ -6714,7 +6714,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 123,
+      "rank": 124,
       "actions": [
        {
         "verb": "top",
@@ -6759,7 +6759,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 124,
+      "rank": 125,
       "actions": [
        {
         "verb": "top",
@@ -6804,7 +6804,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 132,
+      "rank": 133,
       "actions": [
        {
         "verb": "top",
@@ -6849,7 +6849,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 139,
+      "rank": 140,
       "actions": [
        {
         "verb": "top",
@@ -6894,7 +6894,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 141,
+      "rank": 142,
       "actions": [
        {
         "verb": "top",
@@ -6939,7 +6939,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 145,
+      "rank": 146,
       "actions": [
        {
         "verb": "top",
@@ -6984,7 +6984,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 146,
+      "rank": 147,
       "actions": [
        {
         "verb": "top",
@@ -7029,7 +7029,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 147,
+      "rank": 148,
       "actions": [
        {
         "verb": "top",
@@ -7074,7 +7074,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 148,
+      "rank": 149,
       "actions": [
        {
         "verb": "top",
@@ -7119,7 +7119,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 153,
+      "rank": 154,
       "actions": [
        {
         "verb": "top",
@@ -7164,7 +7164,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 157,
+      "rank": 158,
       "actions": [
        {
         "verb": "top",
@@ -7209,7 +7209,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 159,
+      "rank": 160,
       "actions": [
        {
         "verb": "top",
@@ -7254,7 +7254,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 161,
+      "rank": 162,
       "actions": [
        {
         "verb": "top",
@@ -7299,7 +7299,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 162,
+      "rank": 163,
       "actions": [
        {
         "verb": "top",
@@ -7344,7 +7344,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 164,
+      "rank": 165,
       "actions": [
        {
         "verb": "top",
@@ -7389,7 +7389,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 165,
+      "rank": 166,
       "actions": [
        {
         "verb": "top",
@@ -7434,7 +7434,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 169,
+      "rank": 170,
       "actions": [
        {
         "verb": "top",
@@ -7466,8 +7466,8 @@
       "why": "Making unwired reachability transitive moved the untriaged count from 38 to 42 and revealed six modules that a one-hop scan had reported as called. Four describe themselves as guards, bridges or ...",
       "priority": 1,
       "seat": "qa",
-      "status": "ready - TRIAGE OF THE NEWLY VISIBLE SIX, 2026-08-07T15:58Z coord--visible, produced by diffing the detector output either side of commit 90cc2725. THE FIXPOINT PROVED ITSELF ON THE FIRST RUN: scripts/hca_autofirm_guard.py is one of the two files that had been vouching for the hidden live-board builder, and it is now correctly dark itself. THE SIX, with their own first docstring line. ops/identity_resolver.py calls itself THE ONE SANCTIONED WRITER for the two player-identity bridges - a single sanctioned writer that nothing invokes is the sharpest shape on this list, and it sits directly under the law that all player joins go through the name map. ops/scout/preflight.py calls itself THE BOOT PREFLIGHT and cites the directive that ordered it. ops/notify_completion.py is the lane-completion to FYI push bridge, described as a root fix, so if it is dark then lane completions do not announce. scripts/calibration_cohort_guard.py guards that a calibration cohort matches the population it is served to. scripts/hca_autofirm_guard.py guards the home-court-advantage auto-firm recenter. AND ONE IS A FALSE POSITIVE OF A CLASS THE DETECTOR DOES NOT MODEL: ops/resume/record.py has no code caller and never will, because SESSIONS INVOKE IT BY HAND - I have run it at every step boundary today. A human-invoked command-line tool is legitimately caller-less, and the checker has no category for it, so it should be parked for cause with that reason rather than wired. WHAT I VERIFIED AND WHAT I DID NOT, stated so nobody over-reads this: I confirmed none of the six is referenced in the .claude session hooks or in docs/BOOT_DOC.md, and the checker itself accounts for scheduled-task command lines. I did NOT trace each one to a runner by hand, so treat the four as STRONG CANDIDATES rather than proven-dark - record.py is the standing proof that this list can flag something that is genuinely in use.",
-      "state": "ready now",
+      "status": "[state word 'ready' normalised to 'open' 2026-08-11; verdict proven unchanged] ready - TRIAGE OF THE NEWLY VISIBLE SIX, 2026-08-07T15:58Z coord--visible, produced by diffing the detector output either side of commit 90cc2725. THE FIXPOINT PROVED ITSELF ON THE FIRST RUN: scripts/hca_autofirm_guard.py is one of the two files that had been vouching for the hidden live-board builder, and it is now correctly dark itself. THE SIX, with their own first docstring line. ops/identity_resolver.py calls itself THE ONE SANCTIONED WRITER for the two player-identity bridges - a single sanctioned writer that nothing invokes is the sharpest shape on this list, and it sits directly under the law that all player joins go through the name map. ops/scout/preflight.py calls itself THE BOOT PREFLIGHT and cites the directive that ordered it. ops/notify_completion.py is the lane-completion to FYI push bridge, described as a root fix, so if it is dark then lane completions do not announce. scripts/calibration_cohort_guard.py guards that a calibration cohort matches the population it is served to. scripts/hca_autofirm_guard.py guards the home-court-advantage auto-firm recenter. AND ONE IS A FALSE POSITIVE OF A CLASS THE DETECTOR DOES NOT MODEL: ops/resume/record.py has no code caller and never will, because SESSIONS INVOKE IT BY HAND - I have run it at every step boundary today. A human-invoked command-line tool is legitimately caller-less, and the checker has no category for it, so it should be parked for cause with that reason rather than wired. WHAT I VERIFIED AND WHAT I DID NOT, stated so nobody over-reads this: I confirmed none of the six is referenced in the .claude session hooks or in docs/BOOT_DOC.md, and the checker itself accounts for scheduled-task command lines. I did NOT trace each one to a runner by hand, so treat the four as STRONG CANDIDATES rather than proven-dark - record.py is the standing proof that this list can flag something that is genuinely in use.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -7479,7 +7479,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 171,
+      "rank": 172,
       "actions": [
        {
         "verb": "top",
@@ -7524,7 +7524,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 172,
+      "rank": 173,
       "actions": [
        {
         "verb": "top",
@@ -7569,7 +7569,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 175,
+      "rank": 176,
       "actions": [
        {
         "verb": "top",
@@ -7614,7 +7614,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 176,
+      "rank": 177,
       "actions": [
        {
         "verb": "top",
@@ -7659,7 +7659,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 180,
+      "rank": 181,
       "actions": [
        {
         "verb": "top",
@@ -7704,7 +7704,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 181,
+      "rank": 182,
       "actions": [
        {
         "verb": "top",
@@ -7749,7 +7749,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 182,
+      "rank": 183,
       "actions": [
        {
         "verb": "top",
@@ -7794,7 +7794,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 183,
+      "rank": 184,
       "actions": [
        {
         "verb": "top",
@@ -7839,7 +7839,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 184,
+      "rank": 185,
       "actions": [
        {
         "verb": "top",
@@ -7884,7 +7884,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 186,
+      "rank": 187,
       "actions": [
        {
         "verb": "top",
@@ -7929,7 +7929,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 188,
+      "rank": 189,
       "actions": [
        {
         "verb": "top",
@@ -7974,7 +7974,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 192,
+      "rank": 193,
       "actions": [
        {
         "verb": "top",
@@ -8019,7 +8019,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 193,
+      "rank": 194,
       "actions": [
        {
         "verb": "top",
@@ -8064,7 +8064,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 194,
+      "rank": 195,
       "actions": [
        {
         "verb": "top",
@@ -8109,7 +8109,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 202,
+      "rank": 203,
       "actions": [
        {
         "verb": "top",
@@ -8154,7 +8154,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 203,
+      "rank": 204,
       "actions": [
        {
         "verb": "top",
@@ -8199,7 +8199,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 206,
+      "rank": 207,
       "actions": [
        {
         "verb": "top",
@@ -8244,7 +8244,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 209,
+      "rank": 210,
       "actions": [
        {
         "verb": "top",
@@ -8289,7 +8289,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 211,
+      "rank": 212,
       "actions": [
        {
         "verb": "top",
@@ -8334,7 +8334,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 213,
+      "rank": 214,
       "actions": [
        {
         "verb": "top",
@@ -8379,7 +8379,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 214,
+      "rank": 215,
       "actions": [
        {
         "verb": "top",
@@ -8424,7 +8424,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 215,
+      "rank": 216,
       "actions": [
        {
         "verb": "top",
@@ -8469,7 +8469,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 217,
+      "rank": 218,
       "actions": [
        {
         "verb": "top",
@@ -8514,7 +8514,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 219,
+      "rank": 220,
       "actions": [
        {
         "verb": "top",
@@ -8559,7 +8559,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 223,
+      "rank": 224,
       "actions": [
        {
         "verb": "top",
@@ -8604,7 +8604,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 226,
+      "rank": 227,
       "actions": [
        {
         "verb": "top",
@@ -8649,7 +8649,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 227,
+      "rank": 228,
       "actions": [
        {
         "verb": "top",
@@ -8694,7 +8694,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 229,
+      "rank": 230,
       "actions": [
        {
         "verb": "top",
@@ -8739,7 +8739,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 230,
+      "rank": 231,
       "actions": [
        {
         "verb": "top",
@@ -8784,7 +8784,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 232,
+      "rank": 234,
       "actions": [
        {
         "verb": "top",
@@ -8829,7 +8829,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 238,
+      "rank": 240,
       "actions": [
        {
         "verb": "top",
@@ -8874,7 +8874,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 239,
+      "rank": 241,
       "actions": [
        {
         "verb": "top",
@@ -8919,7 +8919,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 246,
+      "rank": 248,
       "actions": [
        {
         "verb": "top",
@@ -8964,7 +8964,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 247,
+      "rank": 249,
       "actions": [
        {
         "verb": "top",
@@ -8996,7 +8996,7 @@
       "why": "Verified pre-existing twice today independently once by me stashing my own change and re-running and once by a lane checking it against the committed file. tests test comms needsyou test the fallback ...",
       "priority": 2,
       "seat": "qa",
-      "status": "RETIRED-WITH-EVIDENCE 2026-07-30T19:40Z (coordinator, inline). VERDICT: the TEST was asserting the wrong thing; the writer is intact and no redrive property is broken. The fixture body is ACCEPTED by HEAD gate (returns a msg id), so the refusal funnel was never entered and the absent journal row was correct. A body that IS refused (SQL-verb update, stage=token) writes its row and closes it delivered citing the carrier - measured with a spy on _journal_refusal. Root of the long redness: assert posted cannot distinguish a refusal fallback from an ordinary send, so the guard positioned to catch this was satisfied by the very send that proved the test had stopped reaching its subject. Fixture fixed + swallow removed + a reason-prefix substance assertion added; test NOT deleted, writer NOT touched. Three mutations watched go red (old body / broken writer / broken resolution); comms_gate.py restored byte-clean; file 19 passed. Commit 31b42f96, delta docs/deltas/qa_fallback_journal_test_red_since_before_today_.md",
+      "status": "[state word 'closed' normalised to 'done' 2026-08-11; verdict proven unchanged] RETIRED-WITH-EVIDENCE 2026-07-30T19:40Z (coordinator, inline). VERDICT: the TEST was asserting the wrong thing; the writer is intact and no redrive property is broken. The fixture body is ACCEPTED by HEAD gate (returns a msg id), so the refusal funnel was never entered and the absent journal row was correct. A body that IS refused (SQL-verb update, stage=token) writes its row and closes it delivered citing the carrier - measured with a spy on _journal_refusal. Root of the long redness: assert posted cannot distinguish a refusal fallback from an ordinary send, so the guard positioned to catch this was satisfied by the very send that proved the test had stopped reaching its subject. Fixture fixed + swallow removed + a reason-prefix substance assertion added; test NOT deleted, writer NOT touched. Three mutations watched go red (old body / broken writer / broken resolution); comms_gate.py restored byte-clean; file 19 passed. Commit 31b42f96, delta docs/deltas/qa_fallback_journal_test_red_since_before_today_.md",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -9004,12 +9004,12 @@
       "title": "A comms test has been failing since before this session",
       "unlocks": "Nobody has established which because the test has been red long enough to be scenery.",
       "owner": "MACHINE",
-      "feed_status": "DONE TODAY",
+      "feed_status": "QUEUED",
       "tier": 3,
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 249,
+      "rank": 251,
       "actions": [
        {
         "verb": "top",
@@ -9054,7 +9054,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 250,
+      "rank": 252,
       "actions": [
        {
         "verb": "top",
@@ -9086,7 +9086,7 @@
       "why": "Found width tripwire. cannot prove dead by silence is defined and has zero call sites. Its name states a real and important rule - that silence is not proof of death which is the doctrine the whole ...",
       "priority": 2,
       "seat": "qa",
-      "status": "retired",
+      "status": "[state word 'retired' normalised to 'done' 2026-08-11; verdict proven unchanged] retired",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -9094,12 +9094,12 @@
       "title": "A function that reads as active protection is defined and never called",
       "unlocks": "Cannot prove dead by silence is defined and has zero call sites.",
       "owner": "DIRECTOR",
-      "feed_status": "DONE TODAY",
+      "feed_status": "QUEUED",
       "tier": 3,
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 251,
+      "rank": 253,
       "actions": [
        {
         "verb": "top",
@@ -9144,7 +9144,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 252,
+      "rank": 254,
       "actions": [
        {
         "verb": "top",
@@ -9189,7 +9189,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 254,
+      "rank": 256,
       "actions": [
        {
         "verb": "top",
@@ -9234,7 +9234,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 255,
+      "rank": 257,
       "actions": [
        {
         "verb": "top",
@@ -9279,7 +9279,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 256,
+      "rank": 258,
       "actions": [
        {
         "verb": "top",
@@ -9324,7 +9324,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 257,
+      "rank": 259,
       "actions": [
        {
         "verb": "top",
@@ -9369,7 +9369,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 258,
+      "rank": 260,
       "actions": [
        {
         "verb": "top",
@@ -9414,7 +9414,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 259,
+      "rank": 261,
       "actions": [
        {
         "verb": "top",
@@ -9459,7 +9459,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 262,
+      "rank": 264,
       "actions": [
        {
         "verb": "top",
@@ -9504,7 +9504,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 263,
+      "rank": 265,
       "actions": [
        {
         "verb": "top",
@@ -9549,7 +9549,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 265,
+      "rank": 267,
       "actions": [
        {
         "verb": "top",
@@ -9594,7 +9594,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 266,
+      "rank": 268,
       "actions": [
        {
         "verb": "top",
@@ -9639,7 +9639,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 267,
+      "rank": 269,
       "actions": [
        {
         "verb": "top",
@@ -9671,7 +9671,7 @@
       "why": "The always-on background monitor that flags anything needing a decision",
       "priority": 2,
       "seat": "qa",
-      "status": "RETIRED-WITH-EVIDENCE 2026-07-30T19:42Z (coordinator, inline). NO CODE CHANGE OWED. Half 1 (point the fixture logger at a temp path) was ALREADY SHIPPED in bcff0734 - test_busy_spare_hysteresis.py stubs w.log with the comment never write the live logs/scout.log; the row predates that landing and was never re-read. Half 2 (audit the log before trusting a count) DONE and CLEAN: no 4242/9999, ZERO FORCE-RESTART lines in the whole retained log, 19 distinct pids all plausible. The 12 sibling scout suites that reference log were MEASURED, not grepped - 86 passed, 0 polluting lines, the only new log lines being the live watcher own. Note a static stub-signal grep flagged 12 of those 12 falsely, which is why they were measured. HONEST LIMIT: the log now spans 07-30T06:54Z onward so the cited 07-29T14:42Z entries are outside the retained window - original pollution not confirmed, only its absence today. Recurrence guard deliberately NOT built (racy against the live watcher). Delta docs/deltas/qa_fixture_pids_in_the_real_scout_log_.md",
+      "status": "[state word 'closed' normalised to 'done' 2026-08-11; verdict proven unchanged] RETIRED-WITH-EVIDENCE 2026-07-30T19:42Z (coordinator, inline). NO CODE CHANGE OWED. Half 1 (point the fixture logger at a temp path) was ALREADY SHIPPED in bcff0734 - test_busy_spare_hysteresis.py stubs w.log with the comment never write the live logs/scout.log; the row predates that landing and was never re-read. Half 2 (audit the log before trusting a count) DONE and CLEAN: no 4242/9999, ZERO FORCE-RESTART lines in the whole retained log, 19 distinct pids all plausible. The 12 sibling scout suites that reference log were MEASURED, not grepped - 86 passed, 0 polluting lines, the only new log lines being the live watcher own. Note a static stub-signal grep flagged 12 of those 12 falsely, which is why they were measured. HONEST LIMIT: the log now spans 07-30T06:54Z onward so the cited 07-29T14:42Z entries are outside the retained window - original pollution not confirmed, only its absence today. Recurrence guard deliberately NOT built (racy against the live watcher). Delta docs/deltas/qa_fixture_pids_in_the_real_scout_log_.md",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -9679,12 +9679,12 @@
       "title": "A test writes fake restart events into the real operator log",
       "unlocks": "Same family as the tests that wrote live state fixed earlier today - a test reaching out of its sandbox this time into ...",
       "owner": "MACHINE",
-      "feed_status": "DONE TODAY",
+      "feed_status": "QUEUED",
       "tier": 3,
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 268,
+      "rank": 270,
       "actions": [
        {
         "verb": "top",
@@ -9729,7 +9729,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 270,
+      "rank": 272,
       "actions": [
        {
         "verb": "top",
@@ -9774,7 +9774,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 273,
+      "rank": 275,
       "actions": [
        {
         "verb": "top",
@@ -9819,7 +9819,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 274,
+      "rank": 276,
       "actions": [
        {
         "verb": "top",
@@ -9864,7 +9864,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 280,
+      "rank": 282,
       "actions": [
        {
         "verb": "top",
@@ -9909,7 +9909,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 283,
+      "rank": 285,
       "actions": [
        {
         "verb": "top",
@@ -9954,7 +9954,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 284,
+      "rank": 286,
       "actions": [
        {
         "verb": "top",
@@ -9999,7 +9999,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 289,
+      "rank": 291,
       "actions": [
        {
         "verb": "top",
@@ -10044,7 +10044,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 293,
+      "rank": 295,
       "actions": [
        {
         "verb": "top",
@@ -10089,7 +10089,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 294,
+      "rank": 296,
       "actions": [
        {
         "verb": "top",
@@ -10134,7 +10134,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 309,
+      "rank": 311,
       "actions": [
        {
         "verb": "top",
@@ -10179,7 +10179,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 310,
+      "rank": 312,
       "actions": [
        {
         "verb": "top",
@@ -10224,7 +10224,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 313,
+      "rank": 315,
       "actions": [
        {
         "verb": "top",
@@ -10269,7 +10269,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 316,
+      "rank": 318,
       "actions": [
        {
         "verb": "top",
@@ -10314,7 +10314,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 318,
+      "rank": 320,
       "actions": [
        {
         "verb": "top",
@@ -10359,7 +10359,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 319,
+      "rank": 321,
       "actions": [
        {
         "verb": "top",
@@ -10404,7 +10404,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 320,
+      "rank": 322,
       "actions": [
        {
         "verb": "top",
@@ -10449,7 +10449,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 321,
+      "rank": 323,
       "actions": [
        {
         "verb": "top",
@@ -10494,7 +10494,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 324,
+      "rank": 326,
       "actions": [
        {
         "verb": "top",
@@ -10539,7 +10539,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 325,
+      "rank": 327,
       "actions": [
        {
         "verb": "top",
@@ -10584,7 +10584,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 327,
+      "rank": 329,
       "actions": [
        {
         "verb": "top",
@@ -10629,7 +10629,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 331,
+      "rank": 333,
       "actions": [
        {
         "verb": "top",
@@ -10674,7 +10674,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 332,
+      "rank": 334,
       "actions": [
        {
         "verb": "top",
@@ -10719,7 +10719,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 334,
+      "rank": 336,
       "actions": [
        {
         "verb": "top",
@@ -10764,7 +10764,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 338,
+      "rank": 340,
       "actions": [
        {
         "verb": "top",
@@ -10809,7 +10809,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 341,
+      "rank": 343,
       "actions": [
        {
         "verb": "top",
@@ -10854,7 +10854,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 342,
+      "rank": 344,
       "actions": [
        {
         "verb": "top",
@@ -10899,7 +10899,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 343,
+      "rank": 345,
       "actions": [
        {
         "verb": "top",
@@ -10944,7 +10944,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 349,
+      "rank": 351,
       "actions": [
        {
         "verb": "top",
@@ -10976,7 +10976,7 @@
       "why": "Raised in severity after measuring what actually happens, which is worse than the crash this row originally described. The decode failure is raised inside the reader thread, so the call does NOT ...",
       "priority": 2,
       "seat": "Infra",
-      "status": "retired",
+      "status": "[state word 'retired' normalised to 'done' 2026-08-11; verdict proven unchanged] retired",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -10984,12 +10984,12 @@
       "title": "Twenty-six helpers can silently read nothing instead of failing",
       "unlocks": "The decode failure is raised inside the reader thread, so the call does NOT raise - it returns with no output at all ...",
       "owner": "MACHINE",
-      "feed_status": "DONE TODAY",
+      "feed_status": "QUEUED",
       "tier": 3,
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 351,
+      "rank": 353,
       "actions": [
        {
         "verb": "top",
@@ -11034,7 +11034,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 352,
+      "rank": 354,
       "actions": [
        {
         "verb": "top",
@@ -11079,7 +11079,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 355,
+      "rank": 357,
       "actions": [
        {
         "verb": "top",
@@ -11124,7 +11124,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 360,
+      "rank": 362,
       "actions": [
        {
         "verb": "top",
@@ -11169,7 +11169,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 362,
+      "rank": 364,
       "actions": [
        {
         "verb": "top",
@@ -11214,7 +11214,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 363,
+      "rank": 365,
       "actions": [
        {
         "verb": "top",
@@ -11259,7 +11259,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 369,
+      "rank": 371,
       "actions": [
        {
         "verb": "top",
@@ -11304,7 +11304,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 371,
+      "rank": 373,
       "actions": [
        {
         "verb": "top",
@@ -11349,7 +11349,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 373,
+      "rank": 375,
       "actions": [
        {
         "verb": "top",
@@ -11394,7 +11394,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 376,
+      "rank": 378,
       "actions": [
        {
         "verb": "top",
@@ -11439,7 +11439,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 377,
+      "rank": 379,
       "actions": [
        {
         "verb": "top",
@@ -11484,7 +11484,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 379,
+      "rank": 381,
       "actions": [
        {
         "verb": "top",
@@ -11529,7 +11529,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 380,
+      "rank": 382,
       "actions": [
        {
         "verb": "top",
@@ -11574,7 +11574,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 382,
+      "rank": 384,
       "actions": [
        {
         "verb": "top",
@@ -11619,7 +11619,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 384,
+      "rank": 386,
       "actions": [
        {
         "verb": "top",
@@ -11664,7 +11664,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 385,
+      "rank": 387,
       "actions": [
        {
         "verb": "top",
@@ -11709,7 +11709,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 386,
+      "rank": 388,
       "actions": [
        {
         "verb": "top",
@@ -11754,7 +11754,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 387,
+      "rank": 389,
       "actions": [
        {
         "verb": "top",
@@ -11799,7 +11799,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 388,
+      "rank": 390,
       "actions": [
        {
         "verb": "top",
@@ -11844,7 +11844,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 389,
+      "rank": 391,
       "actions": [
        {
         "verb": "top",
@@ -11889,7 +11889,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 392,
+      "rank": 394,
       "actions": [
        {
         "verb": "top",
@@ -11934,7 +11934,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 393,
+      "rank": 395,
       "actions": [
        {
         "verb": "top",
@@ -11979,7 +11979,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 394,
+      "rank": 396,
       "actions": [
        {
         "verb": "top",
@@ -12024,7 +12024,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 395,
+      "rank": 397,
       "actions": [
        {
         "verb": "top",
@@ -12069,7 +12069,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 396,
+      "rank": 398,
       "actions": [
        {
         "verb": "top",
@@ -12114,7 +12114,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 397,
+      "rank": 399,
       "actions": [
        {
         "verb": "top",
@@ -12160,7 +12160,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs a human sign-in; mostly self-heals now, with a small residual.",
-      "rank": 401,
+      "rank": 403,
       "actions": [
        {
         "verb": "top",
@@ -12206,7 +12206,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs unblocked runner (infra CEO decision).",
-      "rank": 413,
+      "rank": 415,
       "actions": [
        {
         "verb": "top",
@@ -12251,7 +12251,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 428,
+      "rank": 430,
       "actions": [
        {
         "verb": "top",
@@ -12296,7 +12296,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 430,
+      "rank": 432,
       "actions": [
        {
         "verb": "top",
@@ -12342,7 +12342,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 431,
+      "rank": 433,
       "actions": [
        {
         "verb": "top",
@@ -12387,7 +12387,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 432,
+      "rank": 434,
       "actions": [
        {
         "verb": "top",
@@ -12794,7 +12794,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 103,
+      "rank": 104,
       "actions": [
        {
         "verb": "top",
@@ -12839,7 +12839,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 111,
+      "rank": 112,
       "actions": [
        {
         "verb": "top",
@@ -12884,7 +12884,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 113,
+      "rank": 114,
       "actions": [
        {
         "verb": "top",
@@ -12929,7 +12929,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 114,
+      "rank": 115,
       "actions": [
        {
         "verb": "top",
@@ -12974,7 +12974,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 115,
+      "rank": 116,
       "actions": [
        {
         "verb": "top",
@@ -13019,7 +13019,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 116,
+      "rank": 117,
       "actions": [
        {
         "verb": "top",
@@ -13064,7 +13064,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 117,
+      "rank": 118,
       "actions": [
        {
         "verb": "top",
@@ -13109,7 +13109,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 118,
+      "rank": 119,
       "actions": [
        {
         "verb": "top",
@@ -13154,7 +13154,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 119,
+      "rank": 120,
       "actions": [
        {
         "verb": "top",
@@ -13199,7 +13199,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 121,
+      "rank": 122,
       "actions": [
        {
         "verb": "top",
@@ -13244,7 +13244,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 129,
+      "rank": 130,
       "actions": [
        {
         "verb": "top",
@@ -13289,7 +13289,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 136,
+      "rank": 137,
       "actions": [
        {
         "verb": "top",
@@ -13321,8 +13321,8 @@
       "why": "",
       "priority": 1,
       "seat": "data",
-      "status": "ready - SURFACED BY THE PLAY-PROBABILITY FIX, 2026-08-07T16:38Z. With the resolver wired, 198 of 220 slate players resolve against the live feed and 22 do not. Those 22 now write NULL for play_prob and status_norm rather than carrying a value forward, which is the honest disposition - their frozen 'healthy' at 0.95 was EXACTLY AS FABRICATED as the 0.022 that maligned the other seven, it simply flattered instead. All 22 are stale roster ghosts with a median last appearance in June and none in the last week. THE REAL QUESTION IS UPSTREAM: the live feed carries 210 rows against a 220-player slate, so this is roster membership rather than availability. Standing law says membership comes from and never from game history, so the gap should be measured against that source. Filed rather than papered over: a default would have made the surface look complete while hiding a feed that is short.",
-      "state": "ready now",
+      "status": "[state word 'ready' normalised to 'open' 2026-08-11; verdict proven unchanged] ready - SURFACED BY THE PLAY-PROBABILITY FIX, 2026-08-07T16:38Z. With the resolver wired, 198 of 220 slate players resolve against the live feed and 22 do not. Those 22 now write NULL for play_prob and status_norm rather than carrying a value forward, which is the honest disposition - their frozen 'healthy' at 0.95 was EXACTLY AS FABRICATED as the 0.022 that maligned the other seven, it simply flattered instead. All 22 are stale roster ghosts with a median last appearance in June and none in the last week. THE REAL QUESTION IS UPSTREAM: the live feed carries 210 rows against a 220-player slate, so this is roster membership rather than availability. Standing law says membership comes from and never from game history, so the gap should be measured against that source. Filed rather than papered over: a default would have made the surface look complete while hiding a feed that is short.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -13334,7 +13334,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 137,
+      "rank": 138,
       "actions": [
        {
         "verb": "top",
@@ -13379,7 +13379,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 154,
+      "rank": 155,
       "actions": [
        {
         "verb": "top",
@@ -13424,7 +13424,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 155,
+      "rank": 156,
       "actions": [
        {
         "verb": "top",
@@ -13469,7 +13469,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 166,
+      "rank": 167,
       "actions": [
        {
         "verb": "top",
@@ -13514,7 +13514,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 168,
+      "rank": 169,
       "actions": [
        {
         "verb": "top",
@@ -13559,7 +13559,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 177,
+      "rank": 178,
       "actions": [
        {
         "verb": "top",
@@ -13604,7 +13604,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 178,
+      "rank": 179,
       "actions": [
        {
         "verb": "top",
@@ -13649,7 +13649,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 179,
+      "rank": 180,
       "actions": [
        {
         "verb": "top",
@@ -13694,7 +13694,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 187,
+      "rank": 188,
       "actions": [
        {
         "verb": "top",
@@ -13739,7 +13739,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 190,
+      "rank": 191,
       "actions": [
        {
         "verb": "top",
@@ -13784,7 +13784,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 191,
+      "rank": 192,
       "actions": [
        {
         "verb": "top",
@@ -13829,7 +13829,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 197,
+      "rank": 198,
       "actions": [
        {
         "verb": "top",
@@ -13874,7 +13874,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 198,
+      "rank": 199,
       "actions": [
        {
         "verb": "top",
@@ -13919,7 +13919,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 199,
+      "rank": 200,
       "actions": [
        {
         "verb": "top",
@@ -13951,7 +13951,7 @@
       "why": "Refresh who is available to play",
       "priority": 1,
       "seat": "data",
-      "status": "duplicate",
+      "status": "[state word 'duplicate' normalised to 'done' 2026-08-11; verdict proven unchanged] duplicate",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -13964,7 +13964,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 201,
+      "rank": 202,
       "actions": [
        {
         "verb": "top",
@@ -14009,7 +14009,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 204,
+      "rank": 205,
       "actions": [
        {
         "verb": "top",
@@ -14054,7 +14054,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 216,
+      "rank": 217,
       "actions": [
        {
         "verb": "top",
@@ -14099,7 +14099,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 220,
+      "rank": 221,
       "actions": [
        {
         "verb": "top",
@@ -14144,7 +14144,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 224,
+      "rank": 225,
       "actions": [
        {
         "verb": "top",
@@ -14189,7 +14189,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 228,
+      "rank": 229,
       "actions": [
        {
         "verb": "top",
@@ -14234,7 +14234,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 233,
+      "rank": 235,
       "actions": [
        {
         "verb": "top",
@@ -14279,7 +14279,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 235,
+      "rank": 237,
       "actions": [
        {
         "verb": "top",
@@ -14324,7 +14324,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 236,
+      "rank": 238,
       "actions": [
        {
         "verb": "top",
@@ -14369,7 +14369,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 237,
+      "rank": 239,
       "actions": [
        {
         "verb": "top",
@@ -14414,7 +14414,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 241,
+      "rank": 243,
       "actions": [
        {
         "verb": "top",
@@ -14459,7 +14459,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 243,
+      "rank": 245,
       "actions": [
        {
         "verb": "top",
@@ -14504,7 +14504,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 253,
+      "rank": 255,
       "actions": [
        {
         "verb": "top",
@@ -14549,7 +14549,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 271,
+      "rank": 273,
       "actions": [
        {
         "verb": "top",
@@ -14594,7 +14594,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 281,
+      "rank": 283,
       "actions": [
        {
         "verb": "top",
@@ -14639,7 +14639,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 282,
+      "rank": 284,
       "actions": [
        {
         "verb": "top",
@@ -14684,7 +14684,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 287,
+      "rank": 289,
       "actions": [
        {
         "verb": "top",
@@ -14729,7 +14729,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 290,
+      "rank": 292,
       "actions": [
        {
         "verb": "top",
@@ -14774,7 +14774,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 291,
+      "rank": 293,
       "actions": [
        {
         "verb": "top",
@@ -14819,7 +14819,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": true,
-      "rank": 301,
+      "rank": 303,
       "actions": [
        {
         "verb": "top",
@@ -14864,7 +14864,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 322,
+      "rank": 324,
       "actions": [
        {
         "verb": "top",
@@ -14909,7 +14909,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 323,
+      "rank": 325,
       "actions": [
        {
         "verb": "top",
@@ -14954,7 +14954,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 328,
+      "rank": 330,
       "actions": [
        {
         "verb": "top",
@@ -14999,7 +14999,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 336,
+      "rank": 338,
       "actions": [
        {
         "verb": "top",
@@ -15044,7 +15044,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 337,
+      "rank": 339,
       "actions": [
        {
         "verb": "top",
@@ -15089,7 +15089,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 340,
+      "rank": 342,
       "actions": [
        {
         "verb": "top",
@@ -15134,7 +15134,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 345,
+      "rank": 347,
       "actions": [
        {
         "verb": "top",
@@ -15179,7 +15179,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 346,
+      "rank": 348,
       "actions": [
        {
         "verb": "top",
@@ -15224,7 +15224,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 354,
+      "rank": 356,
       "actions": [
        {
         "verb": "top",
@@ -15269,7 +15269,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 358,
+      "rank": 360,
       "actions": [
        {
         "verb": "top",
@@ -15315,7 +15315,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The evidence is already gathered and it is unambiguous.",
-      "rank": 361,
+      "rank": 363,
       "actions": [
        {
         "verb": "top",
@@ -15360,7 +15360,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 364,
+      "rank": 366,
       "actions": [
        {
         "verb": "top",
@@ -15405,7 +15405,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 367,
+      "rank": 369,
       "actions": [
        {
         "verb": "top",
@@ -15450,7 +15450,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 391,
+      "rank": 393,
       "actions": [
        {
         "verb": "top",
@@ -15495,7 +15495,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 402,
+      "rank": 404,
       "actions": [
        {
         "verb": "top",
@@ -15540,7 +15540,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 410,
+      "rank": 412,
       "actions": [
        {
         "verb": "top",
@@ -15585,7 +15585,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 412,
+      "rank": 414,
       "actions": [
        {
         "verb": "top",
@@ -15631,7 +15631,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Lfb recon French box data usr bin bash-reachable from this box (Genius livestats 52 fields).",
-      "rank": 414,
+      "rank": 416,
       "actions": [
        {
         "verb": "top",
@@ -15676,7 +15676,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 415,
+      "rank": 417,
       "actions": [
        {
         "verb": "top",
@@ -15755,7 +15755,7 @@
       "why": "Set up the alert notifications",
       "priority": 0,
       "seat": "MACHINE",
-      "status": "DENSITY PASS ONE IS LIVE 2026-08-08T22:2xZ, card with a photograph of the live page. THE WORST OFFENDER WAS MEASURED BY LOOKING AT THE PAGE RATHER THAN COUNTING CHARACTERS: the ship checklist printed each row full evidence paragraph, so THREE rows filled the panel and the other ten sat below the fold, with the fourth cut off mid-row. Now one line per row, and the live capture shows FIVE rows in slightly less height than three used to take. The proof is not lost - it is on the full checklist page, one click away. Stopped rows keep a first-sentence reason, because a status word with no why is not an answer. ONE COMPATIBILITY CATCH WORTH KEEPING: the first version split the sentence with a regex lookbehind, which throws at parse time on Safari before 16.4 and would have killed the whole panel silently on a phone. Replaced with an indexOf. STILL OPEN: the record section spends a large block on two lines of prose, and the machine band remains the tallest thing on the page - though he asked for that band explicitly, so it is a tightening job and not a removal. ||| THE ORDER IS FIXED AND LIVE-VERIFIED 2026-08-08T22:0xZ, card sent with a photograph of the live page, discord . MEASURED BEFORE: sections rendered shipcheck, machine, slate, best - 3250 plus 6154 characters of internal status ABOVE 406 characters of actual predictions. MEASURED AFTER on the live URL: slate, shipcheck, machine, best. The how-to-read link is out of the lead. The status panels were NOT removed, because he asked for the checklist himself - they simply stop outranking the thing the site is for. STILL OPEN, HONESTLY: the other half of his ask is DENSITY - a tiny amount of information in a large amount of space, way tighter, show way more, everything visible at once. Reordering does not make the page denser. The machine panel alone is 6154 characters of vertical space, and the slate at 406 characters is thin because it renders a handful of cards. Next step is a density pass on the machine panel and more per-game information above the fold, which is a design change rather than a move and deserves its own measurement of what fits in one screen.",
+      "status": "CLOSED 2026-08-11T19:5xZ - BOTH HALVES LIVE-VERIFIED ON THE PUBLIC PAGE. ORDER: the slate leads, then the checklist, then machine state - measured before the change as 9404 characters of internal status ABOVE 406 characters of predictions. DENSITY: the live capture now shows THREE game cards across the top, NINE checklist rows where three used to fit, and EIGHT queue items per column where five used to. The how-to-read link is out of the lead and the record section is one line rather than a full-width block of prose. WHAT MADE THE DENSITY WORK: the list cap, not the data - the code already handed over twelve rows while the container showed five, so lifting the ceiling answered \"show way more\" without fetching anything. Also one line per checklist row instead of a full evidence paragraph under each, with the proof moved to the full list one click away and stopped rows keeping a short reason. NOT CLAIMED: no further tightening of the machine band, which he asked for explicitly and which stays as-is deliberately.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -16289,6 +16289,51 @@
       ]
      },
      {
+      "task_id": "the-five-ready-rows-say-open-but-their-prose-nam",
+      "family": "modeling",
+      "name": "Five rows declare a word the reader does not know, and their text names a blocker the ...",
+      "header": "Five rows declare a word the reader does not know, and their text names a blocker the ...",
+      "why": "Measured while normalising the row-state vocabulary. The reader accepts five words - done gated blocked open partial - and anything else falls back to reading the status prose. -ONE rows carried a ...",
+      "priority": 1,
+      "seat": "MACHINE",
+      "status": "ready",
+      "state": "ready now",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 1.0,
+      "title": "Five rows declare a word the reader does not know, and their text names a blocker the ...",
+      "unlocks": "The reader accepts five words - done gated blocked open partial - and anything else falls back to reading the status ...",
+      "owner": "DIRECTOR",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 102,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-five-ready-rows-say-open-but-their-prose-nam%3A%20top&body=Five%20rows%20declare%20a%20word%20the%20reader%20does%20not%20know%2C%20and%20their%20text%20names%20a%20blocker%20the%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-11%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-five-ready-rows-say-open-but-their-prose-nam%3A%20bump&body=Five%20rows%20declare%20a%20word%20the%20reader%20does%20not%20know%2C%20and%20their%20text%20names%20a%20blocker%20the%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-11%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-five-ready-rows-say-open-but-their-prose-nam%3A%20demote&body=Five%20rows%20declare%20a%20word%20the%20reader%20does%20not%20know%2C%20and%20their%20text%20names%20a%20blocker%20the%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-11%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-five-ready-rows-say-open-but-their-prose-nam%3A%20shelve&body=Five%20rows%20declare%20a%20word%20the%20reader%20does%20not%20know%2C%20and%20their%20text%20names%20a%20blocker%20the%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-11%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "junction-grading-loop-and-report-citation",
       "family": "modeling",
       "name": "Junction step 5 remains: the gameday report must cite the freshest snapshot",
@@ -16309,7 +16354,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 108,
+      "rank": 109,
       "actions": [
        {
         "verb": "top",
@@ -16354,7 +16399,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 110,
+      "rank": 111,
       "actions": [
        {
         "verb": "top",
@@ -16399,7 +16444,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 112,
+      "rank": 113,
       "actions": [
        {
         "verb": "top",
@@ -16444,7 +16489,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 125,
+      "rank": 126,
       "actions": [
        {
         "verb": "top",
@@ -16489,7 +16534,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 126,
+      "rank": 127,
       "actions": [
        {
         "verb": "top",
@@ -16534,7 +16579,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 127,
+      "rank": 128,
       "actions": [
        {
         "verb": "top",
@@ -16579,7 +16624,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 128,
+      "rank": 129,
       "actions": [
        {
         "verb": "top",
@@ -16624,7 +16669,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 130,
+      "rank": 131,
       "actions": [
        {
         "verb": "top",
@@ -16670,7 +16715,7 @@
       "ceo_ask": true,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 133,
+      "rank": 134,
       "actions": [
        {
         "verb": "top",
@@ -16715,7 +16760,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 134,
+      "rank": 135,
       "actions": [
        {
         "verb": "top",
@@ -16760,7 +16805,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 135,
+      "rank": 136,
       "actions": [
        {
         "verb": "top",
@@ -16805,7 +16850,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 138,
+      "rank": 139,
       "actions": [
        {
         "verb": "top",
@@ -16850,7 +16895,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 140,
+      "rank": 141,
       "actions": [
        {
         "verb": "top",
@@ -16895,7 +16940,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 142,
+      "rank": 143,
       "actions": [
        {
         "verb": "top",
@@ -16927,7 +16972,7 @@
       "why": "Surfaced (lane asg-followthrough asg stale basis strings and 2026 starters .md) and it was A . Once the minutes gap closed on 07-26 fit minutes began accepting every season so n team games went from ...",
       "priority": 1,
       "seat": "Modeling",
-      "status": "RETIRED-WITH-EVIDENCE 2026-07-30T20:07Z, commit ab2f5c75 (lane asg-minute-shape-self-referential). Projected season held out of EVERY ASG fit; B-R scrape removed from both call sites so the script makes no network call at all. Refit: pool 44->42, max slot movement 0.1602 min (the briefed 0.16 reproduced exactly), max PLAYER movement 0.0399 min - INSIDE the 0.0700 seed-noise floor. 110 passed / 2 skipped across ASG suites; 14/14 mutations killed after TWO were found inert (the fake db connection was doing the query filtering, so deleting the season bound - the exact defect - survived). PREMISE CORRECTED, and it is the load-bearing one: the PUBLISHED ladder was never self-referential (generated 07-25T23:35Z, a day BEFORE the backfill, on n_team_games 28). The leak was LATENT and fires on the next rebuild - which made the fix free today rather than unnecessary. Also found: fit_share_dispersion was equally season-blind and unnamed in the brief, and it sets the WIDTH of every prop band.",
+      "status": "[state word 'closed' normalised to 'done' 2026-08-11; verdict proven unchanged] RETIRED-WITH-EVIDENCE 2026-07-30T20:07Z, commit ab2f5c75 (lane asg-minute-shape-self-referential). Projected season held out of EVERY ASG fit; B-R scrape removed from both call sites so the script makes no network call at all. Refit: pool 44->42, max slot movement 0.1602 min (the briefed 0.16 reproduced exactly), max PLAYER movement 0.0399 min - INSIDE the 0.0700 seed-noise floor. 110 passed / 2 skipped across ASG suites; 14/14 mutations killed after TWO were found inert (the fake db connection was doing the query filtering, so deleting the season bound - the exact defect - survived). PREMISE CORRECTED, and it is the load-bearing one: the PUBLISHED ladder was never self-referential (generated 07-25T23:35Z, a day BEFORE the backfill, on n_team_games 28). The leak was LATENT and fires on the next rebuild - which made the fix free today rather than unnecessary. Also found: fit_share_dispersion was equally season-blind and unnamed in the brief, and it sets the WIDTH of every prop band.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -16935,12 +16980,12 @@
       "title": "Stop the projection from learning from the game it is projecting",
       "unlocks": "",
       "owner": "MACHINE",
-      "feed_status": "DONE TODAY",
+      "feed_status": "QUEUED",
       "tier": 0,
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 143,
+      "rank": 144,
       "actions": [
        {
         "verb": "top",
@@ -16985,7 +17030,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 149,
+      "rank": 150,
       "actions": [
        {
         "verb": "top",
@@ -17030,7 +17075,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 156,
+      "rank": 157,
       "actions": [
        {
         "verb": "top",
@@ -17075,7 +17120,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 158,
+      "rank": 159,
       "actions": [
        {
         "verb": "top",
@@ -17107,7 +17152,7 @@
       "why": "Refresh the full-roster player ratings",
       "priority": 1,
       "seat": "Modeling",
-      "status": "open",
+      "status": "PREMISE CORRECTED BY MEASUREMENT 2026-08-11T20:1xZ - THE COVERAGE EXISTS NOW, AND THE REAL PROBLEM IS ONE STEP LATER. When this row was written no impact measure reached the current season. That changed on 08-07: the impact table now holds 2026 with 223 players and 87,310 stints on a complete game spine. WHAT IS STILL TRUE, AND IT IS THE ACTUAL DEFECT: nothing serves it. The site builder does not read that table at all - the board still leads with the thin blend, so the warehouse has the answer and no reader can see it. WHY IT IS NOT SIMPLY WIRED UP, measured rather than recalled: on the newest fit, a player with TWO games and fifteen stints ranks THIRD in the league on impact, another with five games ranks seventh, and FORTY players in the fit have five games or fewer. Publishing that order would put a two-game player above almost everyone, which fails the coach-handable bar on sight. UNLOCK LADDER: rung 1, the 2026 fit exists and is measured (DONE); rung 2, a shrink toward the population or an explicit qualification threshold, so thin samples sink instead of topping the board - this is a modelling decision and belongs to the Director, not to a wiring lane; rung 3, repoint the served surfaces and re-verify the top of the board reads sensibly to a reader. STILL GENUINELY MISSING for 2026: the win-shares measure stops at 2025, and the split table stops at 2025 as well.",
       "state": "",
       "pm_authored": false,
       "impact": "The platform's stated differentiator -- impact over counting stats -- is running on one thinly-estimated number for the live season.",
@@ -17116,11 +17161,11 @@
       "unlocks": "Every CEO-visible surface is required to lead with impact metrics (player-impact, player rating, on/off, net rating) ...",
       "owner": "MACHINE",
       "feed_status": "QUEUED",
-      "tier": 0,
+      "tier": 1,
       "group": "",
       "ceo_ask": false,
-      "p0": true,
-      "rank": 163,
+      "p0": false,
+      "rank": 164,
       "actions": [
        {
         "verb": "top",
@@ -17165,7 +17210,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 167,
+      "rank": 168,
       "actions": [
        {
         "verb": "top",
@@ -17211,7 +17256,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Drop-in replacing p home = Phi(margin 12.65) with a two-parameter map fitted .",
-      "rank": 170,
+      "rank": 171,
       "actions": [
        {
         "verb": "top",
@@ -17256,7 +17301,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 173,
+      "rank": 174,
       "actions": [
        {
         "verb": "top",
@@ -17301,7 +17346,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 174,
+      "rank": 175,
       "actions": [
        {
         "verb": "top",
@@ -17346,7 +17391,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 185,
+      "rank": 186,
       "actions": [
        {
         "verb": "top",
@@ -17391,7 +17436,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 195,
+      "rank": 196,
       "actions": [
        {
         "verb": "top",
@@ -17436,7 +17481,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 196,
+      "rank": 197,
       "actions": [
        {
         "verb": "top",
@@ -17481,7 +17526,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 200,
+      "rank": 201,
       "actions": [
        {
         "verb": "top",
@@ -17526,7 +17571,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 207,
+      "rank": 208,
       "actions": [
        {
         "verb": "top",
@@ -17571,7 +17616,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 208,
+      "rank": 209,
       "actions": [
        {
         "verb": "top",
@@ -17616,7 +17661,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 210,
+      "rank": 211,
       "actions": [
        {
         "verb": "top",
@@ -17661,7 +17706,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 218,
+      "rank": 219,
       "actions": [
        {
         "verb": "top",
@@ -17706,7 +17751,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 225,
+      "rank": 226,
       "actions": [
        {
         "verb": "top",
@@ -17751,7 +17796,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 231,
+      "rank": 232,
       "actions": [
        {
         "verb": "top",
@@ -17776,6 +17821,51 @@
       ]
      },
      {
+      "task_id": "claim-guard-five-red-are-they-pre-bake-or-live",
+      "family": "modeling",
+      "name": "The unwired claim guard names 3 veterans published as provisional - decide if that is ...",
+      "header": "The unwired claim guard names 3 veterans published as provisional - decide if that is ...",
+      "why": "",
+      "priority": 1,
+      "seat": "Modeling",
+      "status": "[state word 'answered' normalised to 'done' 2026-08-11; verdict proven unchanged] done - ANSWERED (the question this row asked was pre-bake or live, and the answer is LIVE). I RAN THE UNWIRED GUARD READ-ONLY AT 06:15Z AND TRIAGED ITS FINDINGS. It is NOT vacuous: VERDICT RED (7 RED) = 5 stale_confidence_marker + 1 marker_saturation + 1 cross_surface_disagreement, plus 2 REVIEW. The 5 are three real players, published as provisional while we hold far more than we read: COURTNEY VANDERSLOOT on BOTH site/players.json (impact_provisional=True) and site/explorer.json (provisional=True) - 327 career games / 9,275.7 min / 11 seasons held, sample 10 games / 184 min, so 317 games and 9,091.7 min UNREAD; SAMI WHITCOMB - 312 games / 5,984.4 min / 9 seasons held, sample 5 games / 72 min; DORKA JUHASZ on both surfaces - 79 games / 1,597.5 min / 2 seasons, sample 7 games / 131 min. Anneli Maley accounts for the 2 REVIEW rows. This is the Collier class the guard was built for, and Vandersloot is a bigger instance than Collier (327 games vs 193). ALREADY ROOT-CAUSED IN THE CODEBASE, so do NOT re-derive it: scripts/build_site.py:3868-3891 documents this exact saturation with the cause MEASURED - scripts/build_season_impact_v1.py:77 still carries the stale literal IMPACT_PRIOR_STINTS = 500.0 while the board's FITTED, s12-verified value is 5, so the feed's flag `n_basis < 500` is true for all 213 rows; recomputing the feed's own published formula with 5 fires on 32. The chosen disposition is already split: the LABEL pass-through IS FIXED there (re-derived from the numbers the feed already publishes against the fitted prior), while the NUMBERS are STAGED for pre-registration and sign-off because that same stale 500 shrinks the feed's impact_rating ~100x harder than the board's - which IS the cross_surface_disagreement the guard reports, at a median ratio of 22x. That staged half is the p0 row impact-prior-stints-500-vs-5, sign-off owed. THE ONE THING I COULD NOT DETERMINE, STATED PLAINLY RATHER THAN GUESSED: whether the 5 RED rows are STALE ARTIFACTS awaiting a re-bake (the label fix landed in ed304b9c 2026-07-29T20:22Z; site/players.json was generated 2026-07-30T04:42:53Z, which is AFTER it - so a stale-bake explanation is NOT obviously available and that is precisely why this needs resolving) or a LIVE GAP the label fix does not cover. I tried three times and misread the artifact's structure twice - site/players.json is keyed under `ratings` and its values are not the row dicts I assumed - so my key-scan for the fix's own `thin_shrunk` field returned a FALSE ABSENCE and must not be quoted. HOW TO SETTLE IT WITHOUT REPEATING MY MISTAKE: use the guard's OWN extractors (extract_json_markers / extract_player_pages in scripts/surface_claim_contract_guard.py) as the authoritative reader instead of hand-rolling one, since those are what produced the finding. If the artifact IS post-fix and still flags Vandersloot, the label fix does not reach players.json/explorer.json and that is a NEW defect, not the staged one. If it is pre-fix, this row closes on a re-bake - which is itself blocked while publishing is frozen. NOT TOUCHED: no surface, no constant, no label. Both halves are either fixed or awaiting sign-off, and a lane editing `thin` underneath a staged decision is the collision the p0 is waiting to avoid. || SETTLED 2026-07-30T06:40Z by coordinator scout-wake--1d1866, INLINE (both subagent dispatches of this lane died on upstream 529 before their first tool call, so I ran it myself with the guard's own extractors). VERDICT: LIVE GAP on all 5 rows, but NOT for the reason this row assumed - the label fix ed304b9c RAN and WORKED (thin=False on every one of these players on both surfaces, post-fix artifact), and impact_provisional=True is ARITHMETICALLY CORRECT (build_site.py:3547 uses the FITTED prior of 5, and measured n_basis is 4/1/0/4, all genuinely <5). So this is a WORDING/PROPAGATION defect (LAW A), not a computation defect - do NOT let anyone \"fix\" the impact_provisional arithmetic. build_site.py:3527-3529 says the scoping outright: impact_provisional is UNCHANGED, the fix does not touch it. PER-SURFACE, because the 5 rows do NOT share one disposition: (1) site/players.html = NO GAP, the fix is honoured at :355-359/:455-460 which consult career_basis; (2) site/player.html = LIVE GAP, FE-ONLY, the data is already baked on site/players/981.json - filed as row player-page-says-thin-sample-on-a-veteran-we-hold [p1]; (3) site/explorer.html = LIVE GAP that CANNOT be fixed on the FE alone because site/explorer.json carries no held-record fields - filed as row explorer-cannot-soften-provisional-fields-not-baked [p1], bake before FE. Nothing was modified: no artifact, no constant, no FE file; the staged p0 impact-prior-stints-500-vs-5 is untouched. FULL EVIDENCE + my own recorded misread (career_gp/career_min are the real key names, populated 327/9275.7 - I first read them as None) in docs/deltas/claim_guard_five_red_stale_or_live_.md. THIS ROW IS ANSWERED; the two filed rows carry the remaining work. || TWO CORRECTIONS TO MY OWN EARLIER TEXT ON THIS ROW, both measured by the wiring lane and both accepted. (1) I wrote that THREE of the REDs are rooted in IMPACT_PRIOR_STINTS. It is TWO - only marker_saturation|site/season_impact.json|thin (build_season_impact_v1.py:345) and cross_surface_disagreement belong to impact-prior-stints-500-vs-5. The 5 stale_confidence_marker REDs have a DIFFERENT owner: build_site.py _prov (~:3574), inherited verbatim by bake_explorer.py:215. This row owns them. (2) MORE IMPORTANT, AND IT INVALIDATES A CLAIM I PUT IN TWO COMMIT MESSAGES AND THE HANDOFF: I said 2 of the 5 would CLEAR at the next bake. THEY WILL NOT. The guard reads the BOOLEAN impact_provisional; my fixes (3395dcfe, b185c181) changed COPY and added held-record disclosure and DELIBERATELY KEPT the boolean true (4 < the fitted prior of 5 is a true statement). The guard cannot see the disclosure, so it will keep firing on a defect whose owners have already addressed it in the way they chose. That is a live cry-wolf risk on exactly these five findings and it is now the highest-value open thread here - see the new row claim-guard-credits-copy-fixes-or-cries-wolf. || CORRECTED AND CLOSED-OUT 2026-07-30T22:0xZ by lane `claim-guard-three-red-flag-or-data`. THIS ROW WAS DONE WHILE THE THREE FINDINGS IT OWNED WERE STILL LIVE, which voided their waivers and is why enforcement_probe.surface_claim_contract was RED. Both readings of that are worth keeping: the row itself closed HONESTLY (it answered its own question -- pre-bake or live -- and filed successor rows for the remaining work), but the BASELINE never re-pointed its five waivers at those successors, so a correctly-closed row was still carrying live findings. THE ANSWER TO 'flag wrong or data wrong' IS NEITHER, MEASURED ON THE LIVE PAYLOAD: Vandersloot n_basis=4, Whitcomb 0, Juhasz 1, all genuinely < the fitted prior of 5, so impact_provisional=True is correct; thin=False on all three, so no page calls them thin; career_basis=True with career_gp/career_min populated (327/9275.7, 313/5997.4, 79/1597.5), and the DEPLOYED compare.html carries sampleMark + the career_basis gating. The reader was already being told the truth. The broken thing was the INSTRUMENT: the registered witness tests/test_board_provisional_wording.js was never committed to git AND drove a compare.html function `provWording` that fb536a44 + d90bbfea deleted the same day. It threw ReferenceError, the fail-closed credit refused, and the refusal read as a defect in three players. Witness re-pointed at sampleMark/playerNote (38 checks, mutation-proven), committed, and the five waivers RETIRED with evidence in ops/scout/claim_contract_baseline.json. Guard now status=green, n_red=0; probe green. NO FLAG, PAGE, FEED OR PUBLISHED NUMBER WAS CHANGED.",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 1.0,
+      "title": "The unwired claim guard names 3 veterans published as provisional - decide if that is ...",
+      "unlocks": "",
+      "owner": "DIRECTOR",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 233,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20claim-guard-five-red-are-they-pre-bake-or-live%3A%20top&body=The%20unwired%20claim%20guard%20names%203%20veterans%20published%20as%20provisional%20-%20decide%20if%20that%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-11%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20claim-guard-five-red-are-they-pre-bake-or-live%3A%20bump&body=The%20unwired%20claim%20guard%20names%203%20veterans%20published%20as%20provisional%20-%20decide%20if%20that%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-11%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20claim-guard-five-red-are-they-pre-bake-or-live%3A%20demote&body=The%20unwired%20claim%20guard%20names%203%20veterans%20published%20as%20provisional%20-%20decide%20if%20that%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-11%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20claim-guard-five-red-are-they-pre-bake-or-live%3A%20shelve&body=The%20unwired%20claim%20guard%20names%203%20veterans%20published%20as%20provisional%20-%20decide%20if%20that%20is%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-11%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "totals-emos-prereg-rolling-environment",
       "family": "modeling",
       "name": "Totals model with a rolling environment level and dispersion",
@@ -17796,7 +17886,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 234,
+      "rank": 236,
       "actions": [
        {
         "verb": "top",
@@ -17841,7 +17931,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 242,
+      "rank": 244,
       "actions": [
        {
         "verb": "top",
@@ -17886,7 +17976,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 244,
+      "rank": 246,
       "actions": [
        {
         "verb": "top",
@@ -17931,7 +18021,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 245,
+      "rank": 247,
       "actions": [
        {
         "verb": "top",
@@ -17976,7 +18066,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 248,
+      "rank": 250,
       "actions": [
        {
         "verb": "top",
@@ -18021,7 +18111,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 260,
+      "rank": 262,
       "actions": [
        {
         "verb": "top",
@@ -18066,7 +18156,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 264,
+      "rank": 266,
       "actions": [
        {
         "verb": "top",
@@ -18111,7 +18201,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 269,
+      "rank": 271,
       "actions": [
        {
         "verb": "top",
@@ -18156,7 +18246,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 277,
+      "rank": 279,
       "actions": [
        {
         "verb": "top",
@@ -18201,7 +18291,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 278,
+      "rank": 280,
       "actions": [
        {
         "verb": "top",
@@ -18246,7 +18336,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 279,
+      "rank": 281,
       "actions": [
        {
         "verb": "top",
@@ -18291,7 +18381,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 285,
+      "rank": 287,
       "actions": [
        {
         "verb": "top",
@@ -18336,7 +18426,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 292,
+      "rank": 294,
       "actions": [
        {
         "verb": "top",
@@ -18381,7 +18471,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 295,
+      "rank": 297,
       "actions": [
        {
         "verb": "top",
@@ -18426,7 +18516,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 296,
+      "rank": 298,
       "actions": [
        {
         "verb": "top",
@@ -18471,7 +18561,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 297,
+      "rank": 299,
       "actions": [
        {
         "verb": "top",
@@ -18516,7 +18606,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 298,
+      "rank": 300,
       "actions": [
        {
         "verb": "top",
@@ -18561,7 +18651,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 299,
+      "rank": 301,
       "actions": [
        {
         "verb": "top",
@@ -18606,7 +18696,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 302,
+      "rank": 304,
       "actions": [
        {
         "verb": "top",
@@ -18651,7 +18741,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 303,
+      "rank": 305,
       "actions": [
        {
         "verb": "top",
@@ -18696,7 +18786,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 305,
+      "rank": 307,
       "actions": [
        {
         "verb": "top",
@@ -18741,7 +18831,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 306,
+      "rank": 308,
       "actions": [
        {
         "verb": "top",
@@ -18786,7 +18876,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 307,
+      "rank": 309,
       "actions": [
        {
         "verb": "top",
@@ -18831,7 +18921,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 308,
+      "rank": 310,
       "actions": [
        {
         "verb": "top",
@@ -18876,7 +18966,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 311,
+      "rank": 313,
       "actions": [
        {
         "verb": "top",
@@ -18921,7 +19011,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 330,
+      "rank": 332,
       "actions": [
        {
         "verb": "top",
@@ -18966,7 +19056,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 335,
+      "rank": 337,
       "actions": [
        {
         "verb": "top",
@@ -19011,7 +19101,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 339,
+      "rank": 341,
       "actions": [
        {
         "verb": "top",
@@ -19056,7 +19146,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 344,
+      "rank": 346,
       "actions": [
        {
         "verb": "top",
@@ -19101,7 +19191,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 347,
+      "rank": 349,
       "actions": [
        {
         "verb": "top",
@@ -19146,7 +19236,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 348,
+      "rank": 350,
       "actions": [
        {
         "verb": "top",
@@ -19191,7 +19281,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 350,
+      "rank": 352,
       "actions": [
        {
         "verb": "top",
@@ -19236,7 +19326,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 359,
+      "rank": 361,
       "actions": [
        {
         "verb": "top",
@@ -19281,7 +19371,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 365,
+      "rank": 367,
       "actions": [
        {
         "verb": "top",
@@ -19326,7 +19416,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 366,
+      "rank": 368,
       "actions": [
        {
         "verb": "top",
@@ -19358,7 +19448,7 @@
       "why": "",
       "priority": 3,
       "seat": "Modeling",
-      "status": "open - PARTLY CAUSED BY MY OWN FIX TONIGHT, so it is filed with that said plainly rather than as a found bug. Before tonight the board-stale monitor wrote a NEW inbox file every ~5 minutes: ops/scout/inbox/processed/ holds BOARD_STALE_ALERT files at 044857Z, 045404Z, 045858Z, 050357Z, 050901Z and then they STOP. They stop because the stale-alert dedup I shipped this session refreshes ONE open alert in place and stamps it '(restated N times)' instead of flooding - the surviving file BOARD_STALE_ALERT_.md now carries an internal header of 061857Z and 'restated 14 times'. That is the intended behaviour and it suppressed roughly fourteen duplicate files. THE NEW INTERACTION: the unprocessed-directive counter treats ANY .md in the inbox as unread, so a correctly-persisting open alert reads as an unprocessed directive indefinitely. The stop hook has been reporting '1 unprocessed directive' for a file that has been read, investigated, root-caused and ACKed - DIRECTIVE_ACK_.md exists. Every successor will re-read it and re-do the same investigation, which is the re-poke noise class this session spent effort removing. ALSO NOTE the filename/header divergence the dedup creates: the file is NAMED for its FIRST firing (051402Z) and its CONTENT is the LATEST (061857Z). Anything keying on the filename timestamp - an age check, an ordering sort, a staleness bound - now reads an hour-old name for current content. Nothing observed breaking on it, but it is a trap worth knowing before someone writes such a check. THE FIX IS SMALL AND SHOULD NOT BE 'MOVE THE FILE': moving it to processed/ would be WRONG, because the condition is still open - the board IS still stale, and one live file that updates is the correct representation. The counter is what should change: do not count an inbox file that has a matching DIRECTIVE_ACK_<ts>.md receipt, or distinguish an OPEN-CONDITION alert from an UNREAD directive. Note ack.py contains no move logic at all (verified by grep), so whatever moves these files is elsewhere - find that owner before changing the lifecycle. DO NOT close this by suppressing the alert. The underlying condition is real and reader-facing: the live board is frozen at 2026-07-29T23:25:37Z behind the credential. || DOES NOT REPRODUCE 2026-07-30T07:22Z (coordinator scout-wake--1d1866). MEASURED, with the inbox holding ONLY BOARD_STALE_ALERT_.md, every counter reports ZERO: idle_guard._unprocessed_directives() -> [] ; inbox_age_hook._unread_items() -> [] ; inbox_age_hook.evaluate() -> None. The reason is structural, not incidental - ALL FOUR counting sites filter by the literal prefix DIRECTOR_DIRECTIVE_ and the alert is BOARD_STALE_ALERT_, so it can never be counted: idle_guard.py:122-123 (startswith 'DIRECTOR_DIRECTIVE_'), inbox_age_hook.py:119 (_PREFIX = 'DIRECTOR_DIRECTIVE_'), status_assembler.py:813 (regex ^DIRECTOR_DIRECTIVE_\\d{8}T\\d{6}Z_.+\\.md$), and directive_ledger.py:246. inbox_age_hook ALSO already has ACK-based archive exclusion (_split_archived / _unread_items: 'a directive that has an ACK, or that predates the current era, is archived and never re-surfaces'), which is the very fix this row proposed. Across this whole session every unread-nag I received named a REAL DIRECTOR_DIRECTIVE (062413Z, 063913Z, 064813Z, 070513Z, 070836Z, 071247Z) and never the alert - so the original observation was most likely a real directive's nag attributed to the alert sitting beside it. RETIRED as not-reproducing rather than never-real, since I can only test today's code. SEPARATE FACTUAL CORRECTION to the 06:20Z handoff, which stated 'DIRECTIVE_ACK_.md is on disk': IT IS NOT, and no DIRECTIVE_ACK file for it exists anywhere in the working tree. ack.py files ACKs to GOOGLE DRIVE via scout_drive.ScoutDrive().upload_text (ack.py:149-155); locally it only calls _remove_from_inbox(ts) and directive_ledger.mark_done(ts). Anyone hunting that file on disk will not find it and should not conclude the ACK is missing.",
+      "status": "[state word 'retired-does-not-reproduce' normalised to 'done' 2026-08-11; verdict proven unchanged] open - PARTLY CAUSED BY MY OWN FIX TONIGHT, so it is filed with that said plainly rather than as a found bug. Before tonight the board-stale monitor wrote a NEW inbox file every ~5 minutes: ops/scout/inbox/processed/ holds BOARD_STALE_ALERT files at 044857Z, 045404Z, 045858Z, 050357Z, 050901Z and then they STOP. They stop because the stale-alert dedup I shipped this session refreshes ONE open alert in place and stamps it '(restated N times)' instead of flooding - the surviving file BOARD_STALE_ALERT_.md now carries an internal header of 061857Z and 'restated 14 times'. That is the intended behaviour and it suppressed roughly fourteen duplicate files. THE NEW INTERACTION: the unprocessed-directive counter treats ANY .md in the inbox as unread, so a correctly-persisting open alert reads as an unprocessed directive indefinitely. The stop hook has been reporting '1 unprocessed directive' for a file that has been read, investigated, root-caused and ACKed - DIRECTIVE_ACK_.md exists. Every successor will re-read it and re-do the same investigation, which is the re-poke noise class this session spent effort removing. ALSO NOTE the filename/header divergence the dedup creates: the file is NAMED for its FIRST firing (051402Z) and its CONTENT is the LATEST (061857Z). Anything keying on the filename timestamp - an age check, an ordering sort, a staleness bound - now reads an hour-old name for current content. Nothing observed breaking on it, but it is a trap worth knowing before someone writes such a check. THE FIX IS SMALL AND SHOULD NOT BE 'MOVE THE FILE': moving it to processed/ would be WRONG, because the condition is still open - the board IS still stale, and one live file that updates is the correct representation. The counter is what should change: do not count an inbox file that has a matching DIRECTIVE_ACK_<ts>.md receipt, or distinguish an OPEN-CONDITION alert from an UNREAD directive. Note ack.py contains no move logic at all (verified by grep), so whatever moves these files is elsewhere - find that owner before changing the lifecycle. DO NOT close this by suppressing the alert. The underlying condition is real and reader-facing: the live board is frozen at 2026-07-29T23:25:37Z behind the credential. || DOES NOT REPRODUCE 2026-07-30T07:22Z (coordinator scout-wake--1d1866). MEASURED, with the inbox holding ONLY BOARD_STALE_ALERT_.md, every counter reports ZERO: idle_guard._unprocessed_directives() -> [] ; inbox_age_hook._unread_items() -> [] ; inbox_age_hook.evaluate() -> None. The reason is structural, not incidental - ALL FOUR counting sites filter by the literal prefix DIRECTOR_DIRECTIVE_ and the alert is BOARD_STALE_ALERT_, so it can never be counted: idle_guard.py:122-123 (startswith 'DIRECTOR_DIRECTIVE_'), inbox_age_hook.py:119 (_PREFIX = 'DIRECTOR_DIRECTIVE_'), status_assembler.py:813 (regex ^DIRECTOR_DIRECTIVE_\\d{8}T\\d{6}Z_.+\\.md$), and directive_ledger.py:246. inbox_age_hook ALSO already has ACK-based archive exclusion (_split_archived / _unread_items: 'a directive that has an ACK, or that predates the current era, is archived and never re-surfaces'), which is the very fix this row proposed. Across this whole session every unread-nag I received named a REAL DIRECTOR_DIRECTIVE (062413Z, 063913Z, 064813Z, 070513Z, 070836Z, 071247Z) and never the alert - so the original observation was most likely a real directive's nag attributed to the alert sitting beside it. RETIRED as not-reproducing rather than never-real, since I can only test today's code. SEPARATE FACTUAL CORRECTION to the 06:20Z handoff, which stated 'DIRECTIVE_ACK_.md is on disk': IT IS NOT, and no DIRECTIVE_ACK file for it exists anywhere in the working tree. ack.py files ACKs to GOOGLE DRIVE via scout_drive.ScoutDrive().upload_text (ack.py:149-155); locally it only calls _remove_from_inbox(ts) and directive_ledger.mark_done(ts). Anyone hunting that file on disk will not find it and should not conclude the ACK is missing.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -19371,7 +19461,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 370,
+      "rank": 372,
       "actions": [
        {
         "verb": "top",
@@ -19416,7 +19506,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 374,
+      "rank": 376,
       "actions": [
        {
         "verb": "top",
@@ -19461,7 +19551,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 378,
+      "rank": 380,
       "actions": [
        {
         "verb": "top",
@@ -19507,7 +19597,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Upstream API returning 529 Overloaded - external, not a repo condition",
-      "rank": 381,
+      "rank": 383,
       "actions": [
        {
         "verb": "top",
@@ -19552,7 +19642,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 398,
+      "rank": 400,
       "actions": [
        {
         "verb": "top",
@@ -19597,7 +19687,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 399,
+      "rank": 401,
       "actions": [
        {
         "verb": "top",
@@ -19643,7 +19733,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Dallas and Las Vegas read too low, Los Angeles too high; extend the shipped fix.",
-      "rank": 400,
+      "rank": 402,
       "actions": [
        {
         "verb": "top",
@@ -19689,7 +19779,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 403,
+      "rank": 405,
       "actions": [
        {
         "verb": "top",
@@ -19735,7 +19825,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Break down offense and defense value by area of the floor for sharper scouting.",
-      "rank": 406,
+      "rank": 408,
       "actions": [
        {
         "verb": "top",
@@ -19780,7 +19870,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 407,
+      "rank": 409,
       "actions": [
        {
         "verb": "top",
@@ -19825,7 +19915,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 408,
+      "rank": 410,
       "actions": [
        {
         "verb": "top",
@@ -19870,7 +19960,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 409,
+      "rank": 411,
       "actions": [
        {
         "verb": "top",
@@ -19915,7 +20005,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 411,
+      "rank": 413,
       "actions": [
        {
         "verb": "top",
@@ -19960,7 +20050,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 416,
+      "rank": 418,
       "actions": [
        {
         "verb": "top",
@@ -20005,7 +20095,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 417,
+      "rank": 419,
       "actions": [
        {
         "verb": "top",
@@ -20050,7 +20140,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 419,
+      "rank": 421,
       "actions": [
        {
         "verb": "top",
@@ -20095,7 +20185,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 420,
+      "rank": 422,
       "actions": [
        {
         "verb": "top",
@@ -20140,7 +20230,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 421,
+      "rank": 423,
       "actions": [
        {
         "verb": "top",
@@ -20186,7 +20276,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 422,
+      "rank": 424,
       "actions": [
        {
         "verb": "top",
@@ -20231,7 +20321,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 423,
+      "rank": 425,
       "actions": [
        {
         "verb": "top",
@@ -20276,7 +20366,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 424,
+      "rank": 426,
       "actions": [
        {
         "verb": "top",
@@ -20322,7 +20412,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 425,
+      "rank": 427,
       "actions": [
        {
         "verb": "top",
@@ -20367,7 +20457,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 426,
+      "rank": 428,
       "actions": [
        {
         "verb": "top",
@@ -20412,7 +20502,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 427,
+      "rank": 429,
       "actions": [
        {
         "verb": "top",
@@ -20492,7 +20582,7 @@
       "why": "Set up the alert notifications",
       "priority": 1,
       "seat": "Research",
-      "status": "open",
+      "status": "answered",
       "state": "",
       "pm_authored": false,
       "impact": "A CEO-highlighted product/research item, and a clean showcase of the impact-metrics-lead-everything doctrine.",
@@ -20505,6 +20595,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
+      "answered": true,
       "rank": 80,
       "actions": [
        {
@@ -20531,14 +20622,14 @@
      }
     ]
    },
-   "more_count": 422,
+   "more_count": 424,
    "floor": {
     "target": 40,
-    "count": 432,
+    "count": 434,
     "ok": true,
-    "label": "432 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 14m ago.)",
+    "label": "434 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 25m ago.)",
     "as_of_utc": "2026-08-11T19:36:09Z",
-    "age_secs": 887,
+    "age_secs": 1543,
     "stale": false
    },
    "source": "dispatch queue",
@@ -21089,110 +21180,110 @@
   "note": "After 4am ET the board flips to the new day, files yesterday's reports under a dated header, and shows tonight's placeholder until the reports land at 5:15pm ET."
  },
  "scout_heartbeat": {
-  "alive": false,
-  "last_poll_utc": "2026-08-11T19:39:40Z",
-  "age_s": 658,
-  "cycles": 8,
+  "alive": true,
+  "last_poll_utc": "2026-08-11T20:01:01Z",
+  "age_s": 33,
+  "cycles": 1,
   "known": true,
-  "label": "scout: no poll for 658s",
+  "label": "scout: alive, last poll 33s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "3:43pm",
-   "text": "divergence alarm: clean (build code matches the shared branch",
-   "detail": "divergence_alarm: clean (build code matches the shared branch)"
-  },
-  {
-   "time": "3:43pm",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
-  },
-  {
-   "time": "3:43pm",
-   "text": "chain-health: chain HEALTHY again — flag cleared",
-   "detail": "chain-health: chain HEALTHY again — flag cleared"
-  },
-  {
-   "time": "3:43pm",
+   "time": "3:57pm",
    "text": "slate-refresh: slate ok (today populated",
    "detail": "slate-refresh: slate ok (today populated)"
   },
   {
-   "time": "3:45pm",
+   "time": "4:00pm",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
   },
   {
-   "time": "3:47pm",
-   "text": "divergence alarm: clean (build code matches the shared branch",
-   "detail": "divergence_alarm: clean (build code matches the shared branch)"
+   "time": "4:00pm",
+   "text": "monitor started",
+   "detail": "scout watcher START pid=3804 poll=60s folder=1wFZtN61Ze5EaUv9ia7rJ8LjHQByhIMOj inbox=C:\\Users\\antho\\hardwood-cron\\ops\\scout\\inbox"
   },
   {
-   "time": "3:47pm",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
+   "time": "4:00pm",
+   "text": "EMPTY-CHAIR EMERGENCY: no live coordinator while actionable work waits - engaging recovery (exponential backoff, an attempt at least every 300s, indefinitely",
+   "detail": "EMPTY-CHAIR EMERGENCY: no live coordinator while actionable work waits - engaging recovery (exponential backoff, an attempt at least every 3"
   },
   {
-   "time": "3:47pm",
-   "text": "chain-health: clean (all four legs healthy",
-   "detail": "chain-health: clean (all four legs healthy)"
+   "time": "4:00pm",
+   "text": "WAKE begin: scout pid=3804 session=0 active console session=1 headless=False",
+   "detail": "WAKE begin: scout pid=3804 session=0 active_console_session=1 headless=False"
   },
   {
-   "time": "3:47pm",
-   "text": "slate-refresh: slate ok (today populated",
-   "detail": "slate-refresh: slate ok (today populated)"
+   "time": "4:00pm",
+   "text": "WAKE REFUSED (no desktop): the scout runs in session 0, the non-interactive station: a new console there paints on nothing. Headless is banned, so NOTHING was spawned. A spawn request was filed for the interactive supervisor, which is the only process permitted to create a coordinator. It is served at the next logon.",
+   "detail": "WAKE REFUSED (no desktop): the scout runs in session 0, the non-interactive station: a new console there paints on nothing. Headless is bann"
   },
   {
-   "time": "3:50pm",
-   "text": "board-selfpolice: clean (live board matches repo truth",
-   "detail": "board-selfpolice: clean (live board matches repo truth)"
+   "time": "4:00pm",
+   "text": "EMPTY-CHAIR: spawn launch did not start (consecutive=1) - retrying in at most 120s; retrying INDEFINITELY (no give-up state",
+   "detail": "EMPTY-CHAIR: spawn launch did not start (consecutive=1) - retrying in at most 120s; retrying INDEFINITELY (no give-up state)"
+  },
+  {
+   "time": "4:01pm",
+   "text": "connection hiccup — backing off and retrying",
+   "detail": "poll cycle=1 ERROR RuntimeError: OAuth token cache at C:\\Users\\antho\\.hardwood\\token.json is unreadable (JSONDecodeError) - it is present bu"
+  },
+  {
+   "time": "4:01pm",
+   "text": "USAGE TAPER in force [plan pct bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 92% >= taper band 85% -- narrow to 1 lane(s) and keep working. A threshold is not exhaustion: the only s",
+   "detail": "USAGE TAPER in force [plan_pct_bands[taper]]: narrow to 1 lane(s) and keep working -- live plan usage 92% >= taper band 85% -- narrow to 1 l"
+  },
+  {
+   "time": "4:01pm",
+   "text": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
+   "detail": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full str"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-11T19:50:22.592441+00:00",
+  "as_of": "2026-08-11T20:01:22Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
    {
     "name": "Scout",
     "does": "watches for your instructions",
-    "active": false,
-    "stale": true,
-    "age_label": "10m",
-    "state_text": "quiet · last seen 10m ago"
+    "active": true,
+    "stale": false,
+    "age_label": "33s",
+    "state_text": "on · seen 33s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "15s",
-    "state_text": "on · seen 15s ago"
+    "age_label": "18s",
+    "state_text": "on · seen 18s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "2m",
-    "state_text": "on · seen 2m ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "78s",
-    "state_text": "on · seen 78s ago"
+    "age_label": "12s",
+    "state_text": "on · seen 12s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "2m",
-    "state_text": "on · seen 2m ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    }
   ],
   "width": {
@@ -21386,7 +21477,7 @@
    },
    {
     "label": "Playoff odds refresh",
-    "ran_et": "3:50pm",
+    "ran_et": "4:00pm",
     "next_et": "3:20pm",
     "result": "needs a look"
    },
@@ -21402,25 +21493,25 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-11T19:50:35Z",
-  "session_age_secs": 261731,
-  "last_progress_age_secs": 3,
-  "last_spawn_attempt": "2026-08-11T19:39:39Z",
+  "last_heartbeat_utc": "2026-08-11T20:01:22Z",
+  "session_age_secs": 262387,
+  "last_progress_age_secs": 12,
+  "last_spawn_attempt": "2026-08-11T20:00:55Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
  "pipe_health": {
   "directives_pending": 0,
-  "last_processed_clock": "3:47pm",
-  "last_processed_iso": "2026-08-11T19:47:23Z",
+  "last_processed_clock": "3:57pm",
+  "last_processed_iso": "2026-08-11T19:57:22Z",
   "last_processed_known": true,
-  "last_processed_display": "3:47pm",
+  "last_processed_display": "3:57pm",
   "last_processed_source": "directive_ledger.done",
   "newest_directive_clock": "",
   "newest_directive_iso": null,
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-08-11T19:47:23Z",
+  "as_of": "2026-08-11T19:57:22Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -21430,31 +21521,38 @@
   "usage_resets_clock": "",
   "note": ""
  },
- "width_defect": {},
+ "width_defect": {
+  "active": true,
+  "state": "defect",
+  "reader_facing": false,
+  "text": "Only 0 of 1 work lanes have been running for 5960 min while jobs wait to start — being looked into.",
+  "running": 0,
+  "target": 1
+ },
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-11T19:50:33+00:00",
+   "revalidated": "2026-08-11T20:01:29+00:00",
    "stale_reason": "These readings may be out of date — last updated 99h ago.",
    "age_label": "99h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-11T19:50:33+00:00",
+   "as_of": "2026-08-11T20:01:29+00:00",
    "stale": false,
-   "revalidated": "2026-08-11T19:50:33+00:00",
+   "revalidated": "2026-08-11T20:01:29+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-11T19:50:33+00:00",
+   "as_of": "2026-08-11T20:01:29+00:00",
    "stale": false,
-   "revalidated": "2026-08-11T19:50:33+00:00",
+   "revalidated": "2026-08-11T20:01:29+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -21463,66 +21561,66 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-11T19:50:33+00:00",
+   "revalidated": "2026-08-11T20:01:29+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-11T19:36:09Z",
+   "as_of": "2026-08-11T19:59:42Z",
    "stale": false,
-   "revalidated": "2026-08-11T19:50:33+00:00",
+   "revalidated": "2026-08-11T20:01:29+00:00",
    "stale_reason": "",
-   "age_label": "14m",
+   "age_label": "1m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-11T19:50:33+00:00",
+   "revalidated": "2026-08-11T20:01:29+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-08-11T19:47:23Z",
+   "as_of": "2026-08-11T19:57:22Z",
    "stale": false,
-   "revalidated": "2026-08-11T19:50:33+00:00",
+   "revalidated": "2026-08-11T20:01:29+00:00",
    "stale_reason": "",
-   "age_label": "3m",
+   "age_label": "4m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-08T12:00:00Z",
    "stale": true,
-   "revalidated": "2026-08-11T19:50:33+00:00",
-   "stale_reason": "No new team updates in 79h — nothing was shipped in that window. The feed itself is current.",
-   "age_label": "79h",
+   "revalidated": "2026-08-11T20:01:29+00:00",
+   "stale_reason": "No new team updates in 80h — nothing was shipped in that window. The feed itself is current.",
+   "age_label": "80h",
    "stale_after": 172800,
    "quiet": true
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-11T19:45:42+00:00",
+   "as_of": "2026-08-11T19:55:35+00:00",
    "stale": false,
-   "revalidated": "2026-08-11T19:50:33+00:00",
+   "revalidated": "2026-08-11T20:01:29+00:00",
    "stale_reason": "",
-   "age_label": "4m",
+   "age_label": "5m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-11T19:50:22.592441+00:00",
+   "as_of": "2026-08-11T20:01:22Z",
    "stale": false,
-   "revalidated": "2026-08-11T19:50:33+00:00",
+   "revalidated": "2026-08-11T20:01:29+00:00",
    "stale_reason": "",
-   "age_label": "15s",
+   "age_label": "12s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 11, 3:50pm ET"
+ "generated_et": "Aug 11, 4:01pm ET"
 }
