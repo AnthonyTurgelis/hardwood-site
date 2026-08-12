@@ -1,7 +1,7 @@
 {
   "stat": "value_spine",
   "kind": "shared_currency_read",
-  "generated_utc": "2026-08-12T03:15:34Z",
+  "generated_utc": "2026-08-12T11:01:28Z",
   "season": 2026,
   "about": {
     "title": "The Value Spine",
@@ -39,9 +39,9 @@
     ]
   },
   "coverage": {
-    "players_total": 207,
+    "players_total": 208,
     "with_war_projection": 144,
-    "without_war_projection": 63,
+    "without_war_projection": 64,
     "with_skill_archetype": 128,
     "with_base_salary_2026": 120,
     "with_pp_rating_active": 186,
@@ -88,16 +88,16 @@
       "rating_as_of": "2026-08-11",
       "n_rating_names_at_asof": 221,
       "n_rating_names_with_stints": 212,
-      "n_active_2026_gamelog_names": 227,
+      "n_active_2026_gamelog_names": 228,
       "n_rated_shown": 211
     },
     "notes": [
       "Player value currency = WAR (Wins Above Replacement). proj_war_2026 is the age-adjusted forecast; war_2025 is realized.",
-      "pp_rating_active is the ACTIVE-ONLY per-possession on-court rating (RAPM-scale, 186 of 207 players). It is shown ONLY for players who are genuinely active in 2026 (>=1 game log with minutes) AND whose rating is computed from real 2026 on-court possessions (not a carried-forward prior). Retired players, coaches, and prior-only/out-all-season players get null -- omit, never a misleading number. This is the honest fix for the v1-dropped raw rating (a naive 'latest rating per player' pull resurfaced Kara Lawson's 2015 and Sylvia Fowles's 2022 ratings). WAR stays the primary currency; the rating is a second, complementary face.",
+      "pp_rating_active is the ACTIVE-ONLY per-possession on-court rating (RAPM-scale, 186 of 208 players). It is shown ONLY for players who are genuinely active in 2026 (>=1 game log with minutes) AND whose rating is computed from real 2026 on-court possessions (not a carried-forward prior). Retired players, coaches, and prior-only/out-all-season players get null -- omit, never a misleading number. This is the honest fix for the v1-dropped raw rating (a naive 'latest rating per player' pull resurfaced Kara Lawson's 2015 and Sylvia Fowles's 2022 ratings). WAR stays the primary currency; the rating is a second, complementary face.",
       "Team proj_wins is the MEDIAN projected final regular-season win total from the live season simulation -- the same number and the same simulation the standings page shows, so the two surfaces cannot disagree. win_band is that simulation's [p5, p95]: 9 of 10 simulated seasons finish inside it. Every team's projection is checked at bake time against wins already banked and games still on the schedule; a projection outside that range blocks the bake.",
       "Skill archetypes + component bars come from a 2025 skillset decomposition; players with no 2025 minutes (rookies, some newcomers) show no archetype/bars.",
       "Base salary known for 120 of the ~180 league roster spots; $/WAR shown only where salary and a positive WAR projection both exist. Full multi-year contract structure is a v2 data acquisition.",
-      "Roster membership + each player's current team come from the LIVE daily roster feed (all 15 teams, including the 2026 expansion clubs POR/TOR). WAR / skills / salary / rating are joined onto that roster; 144 of 207 rostered players have a 2026 WAR projection. The remaining 63 (expansion newcomers, rookies, players with no 2026 projection yet) are listed with an HONEST null value face -- never a fabricated 0, never silently dropped."
+      "Roster membership + each player's current team come from the LIVE daily roster feed (all 15 teams, including the 2026 expansion clubs POR/TOR). WAR / skills / salary / rating are joined onto that roster; 144 of 208 rostered players have a 2026 WAR projection. The remaining 64 (expansion newcomers, rookies, players with no 2026 projection yet) are listed with an HONEST null value face -- never a fabricated 0, never silently dropped."
     ]
   },
   "players": [
@@ -3810,6 +3810,21 @@
       "pp_rating_active": -0.0019
     },
     {
+      "key": "zaay green",
+      "name": "Zaay Green",
+      "team": "TOR",
+      "war_2025": null,
+      "proj_war_2026": null,
+      "age_2026": 26,
+      "archetype": null,
+      "archetype_matchup": null,
+      "primary_style": null,
+      "skills_pct": null,
+      "salary_2026": null,
+      "dollar_per_war": null,
+      "pp_rating_active": null
+    },
+    {
       "key": "teonni key",
       "name": "Teonni Key",
       "team": "TOR",
@@ -4025,13 +4040,13 @@
     "IND": {
       "team_full": "Indiana Fever",
       "rank": 3,
-      "strength": 6.4,
-      "title_pct": 17.6,
+      "strength": 6.7,
+      "title_pct": 18.0,
       "playoff_pct": 100.0,
-      "proj_wins": 26.8,
+      "proj_wins": 27.3,
       "win_band": [
-        24.0,
-        29.5
+        24.5,
+        29.8
       ],
       "style": {
         "style_season": 2025,
@@ -4071,13 +4086,13 @@
     "NYL": {
       "team_full": "New York Liberty",
       "rank": 5,
-      "strength": 5.1,
-      "title_pct": 21.7,
-      "playoff_pct": 99.9,
-      "proj_wins": 26.2,
+      "strength": 4.8,
+      "title_pct": 21.3,
+      "playoff_pct": 99.8,
+      "proj_wins": 25.8,
       "win_band": [
-        23.4,
-        28.8
+        23.1,
+        28.2
       ],
       "style": {
         "style_season": 2025,
@@ -4142,7 +4157,7 @@
       "rank": 8,
       "strength": 1.2,
       "title_pct": 0.3,
-      "playoff_pct": 92.7,
+      "playoff_pct": 92.8,
       "proj_wins": 23.1,
       "win_band": [
         20.4,
@@ -4278,7 +4293,7 @@
         15.5
       ],
       "style": null,
-      "roster_rated_n": 13
+      "roster_rated_n": 14
     },
     "CON": {
       "team_full": "Connecticut Sun",
