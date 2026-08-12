@@ -1240,6 +1240,28 @@
     }
     f.appendChild(plab("Who earned it — and who drew the soft schedule"));
     f.appendChild(simpleTable(cols, rows));
+    // THE PLAYER GRAIN of the same question, and it is a genuinely different measurement - not the
+    // team number handed down. qoc is the exposure-weighted rating of the five opponents actually
+    // on the floor with that player, over their own stints, so a player whose team drew a hard
+    // schedule but who sat for the hard nights reads soft here, correctly.
+    var cf=d.competition_faced;
+    if(cf&&cf.hardest&&cf.hardest.length){
+      f.appendChild(plab("Players: the competition each one actually faced"));
+      var pcols=[
+        {h:"Player", rowh:true, get:function(r){ return r.player; }},
+        {h:"Stints", num:true, get:function(r){ return num(r.stints); }},
+        {h:"Opponent quality", num:true, get:function(r){ return sign(r.qoc,4); }}
+      ];
+      f.appendChild(simpleTable(pcols, cf.hardest));
+      if(cf.softest&&cf.softest.length){
+        f.appendChild(plab("And the softest assignments"));
+        f.appendChild(simpleTable(pcols, cf.softest));
+      }
+      f.appendChild(el("div","dvfoot","Measured at each player’s OWN stints — the average rating "
+        +"of the five opponents on the floor with them, not their team’s schedule handed down. "
+        +"Only players with enough floor time to rank are listed ("+num(cf.qualified_players)
+        +" qualified); without that filter the list is topped by someone with three stints."));
+    }
     if(hasSched){
       f.appendChild(el("div","dvfoot","“Draw faced” is the average opponent rating a team "
         +"has actually played, in points above or below the league’s average draw, with each "
