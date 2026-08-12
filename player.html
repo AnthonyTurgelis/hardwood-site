@@ -376,7 +376,11 @@
         if(pct>=85){ p=el("span","avail ok","Expected to play"); }
         else if(pct>=40){ p=el("span","avail warn","Questionable "+pct+"%"); }
         else { p=el("span","avail out","Doubtful "+pct+"%"); }
-        p.title="Estimated chance of playing the next game: "+pct+"%";
+        // WAS "Estimated chance of playing the next game", which is the precise misreading this
+        // number invites: it is a CATEGORY RATE keyed on availability status, identical for every
+        // player carrying that status, not an estimate computed for this player.
+        p.title="Category rate: "+pct+"% of players carrying this availability status play. "
+               +"Not a per-player estimate.";
       }
       if(p) nmrow.appendChild(p);
     })();

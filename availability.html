@@ -141,6 +141,12 @@
     top.appendChild(left);
     if(p.play_pct!=null){
       var ch=el("div","chance"); ch.innerHTML="play chance <b>"+p.play_pct+"%</b>";
+      // A CATEGORY RATE, NOT A PER-PLAYER ESTIMATE. Every value this column can take is a constant
+      // keyed on the availability status - healthy, day-to-day, out - plus one fine tier for
+      // "probable". None of them is computed for the individual player. Two decimal places read as
+      // a measurement, so the derivation is one tap away rather than absent.
+      ch.title="Category rate: the share of players carrying this availability status who play. "
+              +"Not a per-player estimate.";
       top.appendChild(ch);
     }
     row.appendChild(top);

@@ -499,7 +499,12 @@
                                             : " (status changed since we set this projection)"; }
           r.appendChild(el("span","rotname", nmtxt));
           if(p.status==="limited"){
-            r.appendChild(el("span","rotlim", p.play_pct!=null ? (p.play_pct+"% to play") : "limited"));
+            var lim=el("span","rotlim", p.play_pct!=null ? (p.play_pct+"% to play") : "limited");
+            // See site/availability.html: this percentage is a CATEGORY RATE keyed on availability
+            // status, not a number computed for this player.
+            if(p.play_pct!=null){ lim.title="Category rate: the share of players carrying this "
+                                           +"availability status who play. Not a per-player estimate."; }
+            r.appendChild(lim);
           }
           // projected minutes, and — when the preview carries it — projected SCORING alongside
           // (B rung). `pts` undefined = not baked on this row -> show minutes only (forward-safe);
