@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-12T10:11:53+00:00",
+ "generated_utc": "2026-08-12T10:26:34+00:00",
  "freshness": {
-  "baked_utc": "2026-08-12T10:11:53+00:00",
-  "baked_et": "Aug 12, 6:11am ET",
-  "revalidated_utc": "2026-08-12T10:11:53+00:00",
+  "baked_utc": "2026-08-12T10:26:34+00:00",
+  "baked_et": "Aug 12, 6:26am ET",
+  "revalidated_utc": "2026-08-12T10:26:34+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-12",
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-12T10:11:53+00:00",
+  "generated_utc": "2026-08-12T10:26:34+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -2013,7 +2013,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 105,
+      "rank": 104,
       "actions": [
        {
         "verb": "top",
@@ -2058,7 +2058,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 112,
+      "rank": 111,
       "actions": [
        {
         "verb": "top",
@@ -2083,51 +2083,6 @@
       ]
      },
      {
-      "task_id": "forward-bet-tracker-reads-a-dead-table-and-fails",
-      "family": "data",
-      "name": "Forward bet tracking reads a table that died in May and returns empty without complaining",
-      "header": "Forward bet tracking reads a table that died in May and returns empty without complaining",
-      "why": "Measured 2026-08-07T11 and it . scripts forward bet queries filtered to commence time = 2026 then does if not len(preds) return empty list. That table stopped being written . So for the entire back ...",
-      "priority": 1,
-      "seat": "data",
-      "status": "open - THE WRITER IS IDENTIFIED AND IT IS OUTSIDE THE REPO, 2026-08-07T11:35Z coord--visible. docs/builder_table_map_v1.md names it: is written by hardwood_v3_pipeline.ipynb, a NOTEBOOK under hardwood-workspace/notebooks, with create_table, delete and to_sql against that table. It is not a repo-resident script, which is why a repo-wide search for a writer returns only readers. When that notebook stopped being run in mid-May the feed died and NOTHING IN THIS REPOSITORY COULD HAVE KEPT IT ALIVE. THIS IS THE SAME SHAPE AS TWO OTHER LIVE ITEMS: the stint spine had no repo producer and needed a port, and the RAPM fit builder was confirmed absent from the repo and needed transcribing against a written spec. A capability whose only implementation is an unversioned notebook dies the moment nobody runs the notebook, and the repo cannot even report why. DECISION OWED BEFORE ANY BUILD, and it is not mine: is forward bet tracking meant to be live at all? Betting is ranked LAST by standing order, so porting a props feed may be correctly low priority - but the SILENT part is not. Whatever is decided, forward_bet_tracker.py should fail LOUDLY on an empty read rather than returning an empty list, because a betting surface that quietly shows nothing is indistinguishable from one that has nothing to show. ||| CROSS-CHECKED BY A SECOND SOURCE 2026-08-07T11:30Z: a repo-wide search for returns FOUR files and not one of them writes it - scripts/forward_bet_tracker.py reads it, scripts/freshness_gate.py declares its spec, and the other two only NAME it in docstrings. That independently confirms the builder_table_map answer that the writer is hardwood_v3_pipeline.ipynb, outside this repo. Two sources, same conclusion, so the no-repo-writer finding is not resting on one document. CAUTION FOR THE NEXT SEARCH, and it is self-inflicted: two of those four hits are files I ADDED TODAY - ops/read_sentinel_red_list.py and scripts/daily_reconcile.py - which mention the table only in prose explaining this very investigation. A future grep will surface them as if they were consumers. A mention is not a claim of authorship; read the context of every hit before counting it as a reader.",
-      "state": "",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "Forward bet tracking reads a table that died in May and returns empty without complaining",
-      "unlocks": "So for the entire back half of the season this consumer returns and says nothing about it - a silent no-op not an error ...",
-      "owner": "DIRECTOR",
-      "feed_status": "QUEUED",
-      "tier": 4,
-      "group": "betting",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 114,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20forward-bet-tracker-reads-a-dead-table-and-fails%3A%20top&body=Forward%20bet%20tracking%20reads%20a%20table%20that%20died%20in%20May%20and%20returns%20empty%20without%20complaining%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20forward-bet-tracker-reads-a-dead-table-and-fails%3A%20bump&body=Forward%20bet%20tracking%20reads%20a%20table%20that%20died%20in%20May%20and%20returns%20empty%20without%20complaining%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20forward-bet-tracker-reads-a-dead-table-and-fails%3A%20demote&body=Forward%20bet%20tracking%20reads%20a%20table%20that%20died%20in%20May%20and%20returns%20empty%20without%20complaining%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20forward-bet-tracker-reads-a-dead-table-and-fails%3A%20shelve&body=Forward%20bet%20tracking%20reads%20a%20table%20that%20died%20in%20May%20and%20returns%20empty%20without%20complaining%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "international-coverage-program-charter",
       "family": "data",
       "name": "Map every women's competition we should cover, and what covered means",
@@ -2148,7 +2103,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 122,
+      "rank": 120,
       "actions": [
        {
         "verb": "top",
@@ -2193,7 +2148,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 124,
+      "rank": 122,
       "actions": [
        {
         "verb": "top",
@@ -2238,7 +2193,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 125,
+      "rank": 123,
       "actions": [
        {
         "verb": "top",
@@ -2283,7 +2238,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 126,
+      "rank": 124,
       "actions": [
        {
         "verb": "top",
@@ -2328,7 +2283,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 127,
+      "rank": 125,
       "actions": [
        {
         "verb": "top",
@@ -2373,7 +2328,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 135,
+      "rank": 133,
       "actions": [
        {
         "verb": "top",
@@ -2418,7 +2373,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 140,
+      "rank": 138,
       "actions": [
        {
         "verb": "top",
@@ -2463,7 +2418,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 141,
+      "rank": 139,
       "actions": [
        {
         "verb": "top",
@@ -2508,7 +2463,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 155,
+      "rank": 153,
       "actions": [
        {
         "verb": "top",
@@ -2553,7 +2508,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 165,
+      "rank": 162,
       "actions": [
        {
         "verb": "top",
@@ -2598,7 +2553,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 174,
+      "rank": 171,
       "actions": [
        {
         "verb": "top",
@@ -2643,7 +2598,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 175,
+      "rank": 172,
       "actions": [
        {
         "verb": "top",
@@ -2688,7 +2643,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 184,
+      "rank": 181,
       "actions": [
        {
         "verb": "top",
@@ -2733,7 +2688,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 188,
+      "rank": 185,
       "actions": [
        {
         "verb": "top",
@@ -2778,7 +2733,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 189,
+      "rank": 186,
       "actions": [
        {
         "verb": "top",
@@ -2823,7 +2778,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 190,
+      "rank": 187,
       "actions": [
        {
         "verb": "top",
@@ -2868,7 +2823,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 192,
+      "rank": 189,
       "actions": [
        {
         "verb": "top",
@@ -2913,7 +2868,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 200,
+      "rank": 197,
       "actions": [
        {
         "verb": "top",
@@ -2938,51 +2893,6 @@
       ]
      },
      {
-      "task_id": "the-serve-history-guard-points-at-a-table-that-c",
-      "family": "data",
-      "name": "The serve-history guard sends you to a table that cannot answer the question",
-      "header": "The serve-history guard sends you to a table that cannot answer the question",
-      "why": "Refresh who is available to play",
-      "priority": 1,
-      "seat": "data",
-      "status": "open - CONFIRMED, THE LAST ESCAPE IS CLOSED BY MEASUREMENT, 2026-08-07T10:33Z coord--visible. I left one candidate open rather than overstating: the source column might have carried the served signature. IT DOES NOT. source holds a SINGLE CONSTANT VALUE across all 385 rows, build_site_served_join, spanning 2026-07-23 to 2026-08-07. It is a provenance tag naming the JOIN that produced the row, not a model signature, and a column with one distinct value cannot discriminate anything. SO THE GUARD IS DEFINITIVELY UNANSWERABLE AS WRITTEN, on all three counts: no sig or column exists, source is single-valued provenance and not a signature, and the table begins 2026-07-23 so any min snapshot_date is floored there regardless. DISPOSITION: the guard needs a DIFFERENT authority named for serve-start dates, or the snapshot table needs a served-signature column added going forward and the guard rewritten to say that history before 2026-07-23 is unavailable rather than implying it can be looked up. Do NOT soften the guard into accepting a guess - it exists to stop exactly that, and it is guarding a published headline. The honest fix names the boundary.",
-      "state": "",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "The serve-history guard sends you to a table that cannot answer the question",
-      "unlocks": "The table has no model or column at all.",
-      "owner": "DIRECTOR",
-      "feed_status": "QUEUED",
-      "tier": 1,
-      "group": "",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 204,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-serve-history-guard-points-at-a-table-that-c%3A%20top&body=The%20serve-history%20guard%20sends%20you%20to%20a%20table%20that%20cannot%20answer%20the%20question%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-serve-history-guard-points-at-a-table-that-c%3A%20bump&body=The%20serve-history%20guard%20sends%20you%20to%20a%20table%20that%20cannot%20answer%20the%20question%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-serve-history-guard-points-at-a-table-that-c%3A%20demote&body=The%20serve-history%20guard%20sends%20you%20to%20a%20table%20that%20cannot%20answer%20the%20question%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-serve-history-guard-points-at-a-table-that-c%3A%20shelve&body=The%20serve-history%20guard%20sends%20you%20to%20a%20table%20that%20cannot%20answer%20the%20question%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "the-team-resolver-answers-one-player-with-anothe",
       "family": "data",
       "name": "The team resolver answers one player's name with a different person's identifier",
@@ -3003,7 +2913,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 211,
+      "rank": 207,
       "actions": [
        {
         "verb": "top",
@@ -3048,7 +2958,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 217,
+      "rank": 212,
       "actions": [
        {
         "verb": "top",
@@ -3093,7 +3003,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 219,
+      "rank": 214,
       "actions": [
        {
         "verb": "top",
@@ -3138,7 +3048,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 220,
+      "rank": 215,
       "actions": [
        {
         "verb": "top",
@@ -3183,7 +3093,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 235,
+      "rank": 230,
       "actions": [
        {
         "verb": "top",
@@ -3228,7 +3138,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 246,
+      "rank": 241,
       "actions": [
        {
         "verb": "top",
@@ -3273,7 +3183,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 254,
+      "rank": 249,
       "actions": [
        {
         "verb": "top",
@@ -3318,7 +3228,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 268,
+      "rank": 264,
       "actions": [
        {
         "verb": "top",
@@ -3363,7 +3273,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 269,
+      "rank": 265,
       "actions": [
        {
         "verb": "top",
@@ -3408,7 +3318,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 275,
+      "rank": 271,
       "actions": [
        {
         "verb": "top",
@@ -3453,7 +3363,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 278,
+      "rank": 274,
       "actions": [
        {
         "verb": "top",
@@ -3498,7 +3408,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 279,
+      "rank": 275,
       "actions": [
        {
         "verb": "top",
@@ -3543,7 +3453,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 280,
+      "rank": 276,
       "actions": [
        {
         "verb": "top",
@@ -3588,7 +3498,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 281,
+      "rank": 277,
       "actions": [
        {
         "verb": "top",
@@ -3633,7 +3543,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": true,
-      "rank": 293,
+      "rank": 289,
       "actions": [
        {
         "verb": "top",
@@ -3678,7 +3588,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 314,
+      "rank": 311,
       "actions": [
        {
         "verb": "top",
@@ -3723,7 +3633,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 317,
+      "rank": 314,
       "actions": [
        {
         "verb": "top",
@@ -3768,7 +3678,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 318,
+      "rank": 315,
       "actions": [
        {
         "verb": "top",
@@ -3813,7 +3723,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 324,
+      "rank": 321,
       "actions": [
        {
         "verb": "top",
@@ -3858,7 +3768,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 325,
+      "rank": 322,
       "actions": [
        {
         "verb": "top",
@@ -3903,7 +3813,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 328,
+      "rank": 325,
       "actions": [
        {
         "verb": "top",
@@ -3948,7 +3858,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 337,
+      "rank": 334,
       "actions": [
        {
         "verb": "top",
@@ -3993,7 +3903,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 341,
+      "rank": 338,
       "actions": [
        {
         "verb": "top",
@@ -4038,7 +3948,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 344,
+      "rank": 341,
       "actions": [
        {
         "verb": "top",
@@ -4063,6 +3973,51 @@
       ]
      },
      {
+      "task_id": "the-serve-history-guard-points-at-a-table-that-c",
+      "family": "data",
+      "name": "The serve-history guard sends you to a table that cannot answer the question",
+      "header": "The serve-history guard sends you to a table that cannot answer the question",
+      "why": "Refresh who is available to play",
+      "priority": 2,
+      "seat": "data",
+      "status": "open - CONFIRMED, THE LAST ESCAPE IS CLOSED BY MEASUREMENT, 2026-08-07T10:33Z coord--visible. I left one candidate open rather than overstating: the source column might have carried the served signature. IT DOES NOT. source holds a SINGLE CONSTANT VALUE across all 385 rows, build_site_served_join, spanning 2026-07-23 to 2026-08-07. It is a provenance tag naming the JOIN that produced the row, not a model signature, and a column with one distinct value cannot discriminate anything. SO THE GUARD IS DEFINITIVELY UNANSWERABLE AS WRITTEN, on all three counts: no sig or column exists, source is single-valued provenance and not a signature, and the table begins 2026-07-23 so any min snapshot_date is floored there regardless. DISPOSITION: the guard needs a DIFFERENT authority named for serve-start dates, or the snapshot table needs a served-signature column added going forward and the guard rewritten to say that history before 2026-07-23 is unavailable rather than implying it can be looked up. Do NOT soften the guard into accepting a guess - it exists to stop exactly that, and it is guarding a published headline. The honest fix names the boundary. MEASURED 2026-08-12: REASON ONE IS REFUTED, REASON TWO STANDS AND IS NOW DEMONSTRABLE. THE TABLE CAN ANSWER THE QUESTION. This row says it has no sig, model or column, which is true as a statement about COLUMN NAMES and wrong as a statement about CAPABILITY. The signature lives in the columns this row lists and passes over as 'the mv fields': mv_margin holds exactly two values with their served ranges - served 2026-07-23 to 2026-08-05 across 336 rows, and served 2026-08-06 to 2026-08-11 across 97. mv_phw carries the matching probability sigs and mv_total carries 18 daily totals sigs. So SELECT MIN(snapshot_date) WHERE mv_margin = the sig is precisely the query the guard asks for. mv_ is abbreviated. THE ROW DID THE RIGHT THING AND STILL MISSED IT, which is worth naming: it identified `source` as the one candidate and said CHECK THAT BEFORE CONCLUDING IT IS IMPOSSIBLE. I checked - source is a single constant, build_site_served_join on all 433 rows, so that candidate was correctly ruled out. The answer was in a column already listed but read as a data field rather than an identity field. REASON TWO STANDS AND THE FIRST ROW OF DATA PROVES IT: the table spans 2026-07-23 to 2026-08-11 only, 433 rows. And the earliest sig NAMES ITS OWN BUILD TIME - - so its true serve-start is 07-22 at the latest while MIN(snapshot_date) can only ever return 07-23. The floor is not hypothetical; it is already wrong by a day on the very first signature in the table. SO THE GUARD IS FOLLOWABLE FOR ANY SIG FIRST SERVED ON OR AFTER 2026-07-23 AND NOT BEFORE. The fix is small and is about honesty rather than plumbing: the guard should name mv_margin as the column, and it should REFUSE rather than return a floored date when MIN(snapshot_date) equals the table's own first date - because that is exactly the case where the number is a floor and not a serve-start, and returning it silently is the guessing this guard exists to prevent.",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 2.0,
+      "title": "The serve-history guard sends you to a table that cannot answer the question",
+      "unlocks": "The table has no model or column at all.",
+      "owner": "DIRECTOR",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 343,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-serve-history-guard-points-at-a-table-that-c%3A%20top&body=The%20serve-history%20guard%20sends%20you%20to%20a%20table%20that%20cannot%20answer%20the%20question%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-serve-history-guard-points-at-a-table-that-c%3A%20bump&body=The%20serve-history%20guard%20sends%20you%20to%20a%20table%20that%20cannot%20answer%20the%20question%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-serve-history-guard-points-at-a-table-that-c%3A%20demote&body=The%20serve-history%20guard%20sends%20you%20to%20a%20table%20that%20cannot%20answer%20the%20question%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-serve-history-guard-points-at-a-table-that-c%3A%20shelve&body=The%20serve-history%20guard%20sends%20you%20to%20a%20table%20that%20cannot%20answer%20the%20question%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "the-wehoop-feed-publishes-five-days-behind-the-g",
       "family": "data",
       "name": "The upstream play-by-play feed lags the schedule, which bounds how current any rating can ...",
@@ -4083,7 +4038,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 349,
+      "rank": 348,
       "actions": [
        {
         "verb": "top",
@@ -4128,7 +4083,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 350,
+      "rank": 349,
       "actions": [
        {
         "verb": "top",
@@ -4173,7 +4128,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 358,
+      "rank": 357,
       "actions": [
        {
         "verb": "top",
@@ -4218,7 +4173,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 361,
+      "rank": 360,
       "actions": [
        {
         "verb": "top",
@@ -4263,7 +4218,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 363,
+      "rank": 362,
       "actions": [
        {
         "verb": "top",
@@ -4309,7 +4264,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The evidence is already gathered and it is unambiguous.",
-      "rank": 366,
+      "rank": 365,
       "actions": [
        {
         "verb": "top",
@@ -4354,7 +4309,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 369,
+      "rank": 368,
       "actions": [
        {
         "verb": "top",
@@ -4399,7 +4354,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 372,
+      "rank": 371,
       "actions": [
        {
         "verb": "top",
@@ -4420,6 +4375,51 @@
         "verb": "shelve",
         "icon": "🗄",
         "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-power-rankings-alarm-points-at-an-empty-tabl%3A%20shelve&body=A%20standing%20staleness%20warning%20names%20a%20table%20with%20no%202026%20rows%20and%20no%20readers%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       }
+      ]
+     },
+     {
+      "task_id": "forward-bet-tracker-reads-a-dead-table-and-fails",
+      "family": "data",
+      "name": "Forward bet tracking reads a table that died in May and returns empty without complaining",
+      "header": "Forward bet tracking reads a table that died in May and returns empty without complaining",
+      "why": "Measured 2026-08-07T11 and it . scripts forward bet queries filtered to commence time = 2026 then does if not len(preds) return empty list. That table stopped being written . So for the entire back ...",
+      "priority": 3,
+      "seat": "data",
+      "status": "open - THE WRITER IS IDENTIFIED AND IT IS OUTSIDE THE REPO, 2026-08-07T11:35Z coord--visible. docs/builder_table_map_v1.md names it: is written by hardwood_v3_pipeline.ipynb, a NOTEBOOK under hardwood-workspace/notebooks, with create_table, delete and to_sql against that table. It is not a repo-resident script, which is why a repo-wide search for a writer returns only readers. When that notebook stopped being run in mid-May the feed died and NOTHING IN THIS REPOSITORY COULD HAVE KEPT IT ALIVE. THIS IS THE SAME SHAPE AS TWO OTHER LIVE ITEMS: the stint spine had no repo producer and needed a port, and the RAPM fit builder was confirmed absent from the repo and needed transcribing against a written spec. A capability whose only implementation is an unversioned notebook dies the moment nobody runs the notebook, and the repo cannot even report why. DECISION OWED BEFORE ANY BUILD, and it is not mine: is forward bet tracking meant to be live at all? Betting is ranked LAST by standing order, so porting a props feed may be correctly low priority - but the SILENT part is not. Whatever is decided, forward_bet_tracker.py should fail LOUDLY on an empty read rather than returning an empty list, because a betting surface that quietly shows nothing is indistinguishable from one that has nothing to show. ||| CROSS-CHECKED BY A SECOND SOURCE 2026-08-07T11:30Z: a repo-wide search for returns FOUR files and not one of them writes it - scripts/forward_bet_tracker.py reads it, scripts/freshness_gate.py declares its spec, and the other two only NAME it in docstrings. That independently confirms the builder_table_map answer that the writer is hardwood_v3_pipeline.ipynb, outside this repo. Two sources, same conclusion, so the no-repo-writer finding is not resting on one document. CAUTION FOR THE NEXT SEARCH, and it is self-inflicted: two of those four hits are files I ADDED TODAY - ops/read_sentinel_red_list.py and scripts/daily_reconcile.py - which mention the table only in prose explaining this very investigation. A future grep will surface them as if they were consumers. A mention is not a claim of authorship; read the context of every hit before counting it as a reader. RE-MEASURED 2026-08-12: THE TABLE IS DEAD AS FILED, AND THE FAILURE MODE IS WORSE THAN 'RETURNS EMPTY'. holds 93536 rows with snapshot_at running 2025-05-15 to 2026-05-13 and commence_time to 2026-05-14. It has been unwritten for NINETY-ONE DAYS, which confirms this row exactly. BUT THE TRACKER'S OWN FILTER IS NOT EMPTY. EXTRACT(YEAR FROM commence_time)=2026 matches 1624 ROWS - every one of them from 1 to 14 May. So the query returns DATA, not nothing; it is the FORWARD use that yields nothing, because the newest commence_time in the table is 2026-05-14 and there has been no future game in it since. This row's 'returns nothing' is right about the outcome and understates the hazard. WHY THAT DISTINCTION MATTERS MORE THAN IT SOUNDS: a freshness or coverage check written the obvious way - did the query return rows - READS GREEN on this table. 1624 is a healthy-looking number. Only a check on the newest commence_time or snapshot_at catches it, and that is exactly the build-stamp-versus-coverage-horizon distinction this repo has been bitten by before. A dead feed that still answers a row-count question is harder to notice than one that errors. SO THE GUARD THIS NEEDS IS NOT 'IS THE RESULT EMPTY' BUT 'IS THE NEWEST ROW WITHIN A STATED HORIZON', and it should say the horizon out loud - a forward bet tracker whose newest fixture is ninety-one days in the past should be RED, loudly, not quietly returning an empty forward list. THE ROW'S OWN CORRECTION STANDS AND SHOULD NOT BE UNDONE: is NOT the successor - I read its schema tonight for a different row and it carries game-level margin, total and win-probability fields with mv_ signature columns, no odds_event_id, no player_id, no pred_type. Different shape, different job. Anyone repointing this consumer at it would be joining player-level bet tracking to a game-level served snapshot.",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 3.0,
+      "title": "Forward bet tracking reads a table that died in May and returns empty without complaining",
+      "unlocks": "So for the entire back half of the season this consumer returns and says nothing about it - a silent no-op not an error ...",
+      "owner": "DIRECTOR",
+      "feed_status": "QUEUED",
+      "tier": 4,
+      "group": "betting",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 377,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20forward-bet-tracker-reads-a-dead-table-and-fails%3A%20top&body=Forward%20bet%20tracking%20reads%20a%20table%20that%20died%20in%20May%20and%20returns%20empty%20without%20complaining%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20forward-bet-tracker-reads-a-dead-table-and-fails%3A%20bump&body=Forward%20bet%20tracking%20reads%20a%20table%20that%20died%20in%20May%20and%20returns%20empty%20without%20complaining%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20forward-bet-tracker-reads-a-dead-table-and-fails%3A%20demote&body=Forward%20bet%20tracking%20reads%20a%20table%20that%20died%20in%20May%20and%20returns%20empty%20without%20complaining%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20forward-bet-tracker-reads-a-dead-table-and-fails%3A%20shelve&body=Forward%20bet%20tracking%20reads%20a%20table%20that%20died%20in%20May%20and%20returns%20empty%20without%20complaining%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
        }
       ]
      },
@@ -6452,51 +6452,6 @@
       ]
      },
      {
-      "task_id": "both-obvious-visibility-tests-are-wrong-one-is-d",
-      "family": "infra",
-      "name": "Both obvious fixes for the visibility test are wrong and one would reap the live head",
-      "header": "Both obvious fixes for the visibility test are wrong and one would reap the live head",
-      "why": "Measured 2026-08-07T12 against row supervisor-cannot-see-a-pipe-backed-head-in-session-1 whose premise is hardwood supervisor. line 297 sets visible capable = sid -ne 0 so a bg-pty-host coordinator ...",
-      "priority": 1,
-      "seat": "ops_monitor",
-      "status": "open - premise confirmed and both obvious fixes eliminated with evidence; the console-window probe is the untested direction ||| THE THIRD APPROACH IS NOW TESTED AND IT WORKS, 2026-08-07T12:53Z, with both controls. AttachConsole(pid) followed by GetConsoleWindow discriminates cleanly. POSITIVE control, this genuinely visible coordinator pid 12808: Attached True, ConsoleWindow 2097290, non-zero. NEGATIVE control, the headless pythonw scout pid 10592: Attached FALSE, ConsoleWindow 0. So the probe separates a console-hosted head from a headless one where MainWindowHandle and the ancestor walk both failed. 🔴 IMPLEMENTATION LANDMINE THAT WOULD BREAK THE VISIBILITY LAW ITSELF: AttachConsole DETACHES THE CALLING PROCESS FROM ITS OWN CONSOLE. hardwood_supervisor.ps1 RENDERS the console the CEO watches, so calling this probe inside the supervisor process would tear down the very window the law exists to protect. THE PROBE MUST RUN IN A SHORT-LIVED SUBPROCESS and report back a boolean. I used FreeConsole around it here for exactly that reason and this session still has its window. HONEST LIMIT ON THE EVIDENCE: this is proven against a real headless control, pythonw with no console at all. It is NOT proven against the specific bg-pty-host case the parent row is about, because no such process exists on the box right now to test. A pty-host may attach a PSEUDOconsole and behave differently. Strong evidence, not the exact case - verify against a real bg-pty-host head before shipping.",
-      "state": "",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "Both obvious fixes for the visibility test are wrong and one would reap the live head",
-      "unlocks": "The row is right and the fix is harder than it looks.",
-      "owner": "MACHINE",
-      "feed_status": "QUEUED",
-      "tier": 3,
-      "group": "process",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 101,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20both-obvious-visibility-tests-are-wrong-one-is-d%3A%20top&body=Both%20obvious%20fixes%20for%20the%20visibility%20test%20are%20wrong%20and%20one%20would%20reap%20the%20live%20head%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20both-obvious-visibility-tests-are-wrong-one-is-d%3A%20bump&body=Both%20obvious%20fixes%20for%20the%20visibility%20test%20are%20wrong%20and%20one%20would%20reap%20the%20live%20head%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20both-obvious-visibility-tests-are-wrong-one-is-d%3A%20demote&body=Both%20obvious%20fixes%20for%20the%20visibility%20test%20are%20wrong%20and%20one%20would%20reap%20the%20live%20head%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20both-obvious-visibility-tests-are-wrong-one-is-d%3A%20shelve&body=Both%20obvious%20fixes%20for%20the%20visibility%20test%20are%20wrong%20and%20one%20would%20reap%20the%20live%20head%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "eight-attribution-tests-have-been-failing-at-hea",
       "family": "infra",
       "name": "Eight behaviour tests in the attribution check have been failing on the main branch",
@@ -6517,7 +6472,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 107,
+      "rank": 106,
       "actions": [
        {
         "verb": "top",
@@ -6562,7 +6517,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 108,
+      "rank": 107,
       "actions": [
        {
         "verb": "top",
@@ -6607,7 +6562,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 110,
+      "rank": 109,
       "actions": [
        {
         "verb": "top",
@@ -6652,7 +6607,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 115,
+      "rank": 113,
       "actions": [
        {
         "verb": "top",
@@ -6697,7 +6652,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 116,
+      "rank": 114,
       "actions": [
        {
         "verb": "top",
@@ -6742,7 +6697,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 117,
+      "rank": 115,
       "actions": [
        {
         "verb": "top",
@@ -6787,7 +6742,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 118,
+      "rank": 116,
       "actions": [
        {
         "verb": "top",
@@ -6832,7 +6787,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 121,
+      "rank": 119,
       "actions": [
        {
         "verb": "top",
@@ -6877,7 +6832,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 128,
+      "rank": 126,
       "actions": [
        {
         "verb": "top",
@@ -6922,7 +6877,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 129,
+      "rank": 127,
       "actions": [
        {
         "verb": "top",
@@ -6967,7 +6922,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 130,
+      "rank": 128,
       "actions": [
        {
         "verb": "top",
@@ -7012,7 +6967,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 143,
+      "rank": 141,
       "actions": [
        {
         "verb": "top",
@@ -7057,7 +7012,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 145,
+      "rank": 143,
       "actions": [
        {
         "verb": "top",
@@ -7102,7 +7057,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 150,
+      "rank": 148,
       "actions": [
        {
         "verb": "top",
@@ -7147,7 +7102,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 151,
+      "rank": 149,
       "actions": [
        {
         "verb": "top",
@@ -7192,7 +7147,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 159,
+      "rank": 156,
       "actions": [
        {
         "verb": "top",
@@ -7237,7 +7192,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 162,
+      "rank": 159,
       "actions": [
        {
         "verb": "top",
@@ -7282,7 +7237,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 163,
+      "rank": 160,
       "actions": [
        {
         "verb": "top",
@@ -7327,7 +7282,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 166,
+      "rank": 163,
       "actions": [
        {
         "verb": "top",
@@ -7372,7 +7327,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 168,
+      "rank": 165,
       "actions": [
        {
         "verb": "top",
@@ -7417,7 +7372,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 169,
+      "rank": 166,
       "actions": [
        {
         "verb": "top",
@@ -7462,7 +7417,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 172,
+      "rank": 169,
       "actions": [
        {
         "verb": "top",
@@ -7507,7 +7462,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 173,
+      "rank": 170,
       "actions": [
        {
         "verb": "top",
@@ -7552,7 +7507,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 176,
+      "rank": 173,
       "actions": [
        {
         "verb": "top",
@@ -7597,7 +7552,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 177,
+      "rank": 174,
       "actions": [
        {
         "verb": "top",
@@ -7642,7 +7597,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 178,
+      "rank": 175,
       "actions": [
        {
         "verb": "top",
@@ -7687,7 +7642,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 179,
+      "rank": 176,
       "actions": [
        {
         "verb": "top",
@@ -7732,7 +7687,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 180,
+      "rank": 177,
       "actions": [
        {
         "verb": "top",
@@ -7777,7 +7732,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 181,
+      "rank": 178,
       "actions": [
        {
         "verb": "top",
@@ -7822,7 +7777,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 182,
+      "rank": 179,
       "actions": [
        {
         "verb": "top",
@@ -7867,7 +7822,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 185,
+      "rank": 182,
       "actions": [
        {
         "verb": "top",
@@ -7912,7 +7867,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 186,
+      "rank": 183,
       "actions": [
        {
         "verb": "top",
@@ -7957,7 +7912,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 191,
+      "rank": 188,
       "actions": [
        {
         "verb": "top",
@@ -8002,7 +7957,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 193,
+      "rank": 190,
       "actions": [
        {
         "verb": "top",
@@ -8047,7 +8002,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 196,
+      "rank": 193,
       "actions": [
        {
         "verb": "top",
@@ -8092,7 +8047,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 197,
+      "rank": 194,
       "actions": [
        {
         "verb": "top",
@@ -8137,7 +8092,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 198,
+      "rank": 195,
       "actions": [
        {
         "verb": "top",
@@ -8182,7 +8137,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 199,
+      "rank": 196,
       "actions": [
        {
         "verb": "top",
@@ -8227,7 +8182,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 201,
+      "rank": 198,
       "actions": [
        {
         "verb": "top",
@@ -8272,7 +8227,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 203,
+      "rank": 200,
       "actions": [
        {
         "verb": "top",
@@ -8317,7 +8272,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 207,
+      "rank": 203,
       "actions": [
        {
         "verb": "top",
@@ -8362,7 +8317,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 209,
+      "rank": 205,
       "actions": [
        {
         "verb": "top",
@@ -8407,7 +8362,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 210,
+      "rank": 206,
       "actions": [
        {
         "verb": "top",
@@ -8432,51 +8387,6 @@
       ]
      },
      {
-      "task_id": "three-unwatched-scheduled-tasks-are-all-failing",
-      "family": "infra",
-      "name": "The three unwatched tasks: one crashed, two were working and unread",
-      "header": "The three unwatched tasks: one crashed, two were working and unread",
-      "why": "Run the daily data-integrity check",
-      "priority": 1,
-      "seat": "ops_monitor",
-      "status": "open - I MISLABELLED SENTINELSWEEP AND THE CORRECTION IS BIGGER THAN THE ORIGINAL CLAIM, 2026-08-07T10:10Z coord--visible. I filed all three as failing on their non-zero exit codes. SENTINELSWEEP IS NOT FAILING. Its own docstring line 48 defines the contract: exit 0 = all green, 1 = config or DB error, 2 = ONE OR MORE RED. It exits 2 because it is WORKING - it runs to completion nightly and writes a 99KB log. Reading an exit code without reading the contract that defines it is the error, and it is the same shape as everything else found today. THE ACTUAL DEFECT IS WORSE THAN A CRASHED TASK: the nightly full-DB invariant sweep is finding 17 RED items across 11 distinct checks every night and NOBODY READS THEM, because the task is unwatched so its verdict reaches no one. That is a detector with no disposition, at full DB scope. THE 17, from the 06 August sweep: 7 freshness targets STALE - predictions_live 2,043h, props 1,849h, season_wins 1,742h, totals 1,739h, power_rankings 588h, bdl_active 36h - plus scheduled_task_health, feed_failure_streak, one_person_served_as_two, id_space_join_coverage, membership_pool_eq_roster, membership_no_ghost_team, projection_coverage_missing, gameday_box, gameday_box_rate, interval_family_reach. NOTE scheduled_task_health and feed_failure_streak are in that list, so the sweep was ALREADY REPORTING the season_stats breakage I diagnosed separately an hour ago. TREAT THE STALE HOURS AS UNVERIFIED: a freshness checker reading the wrong column is a known failure mode here, and 85 days stale on predictions_live while the season is being served is exactly the kind of number that is wrong for a boring reason. Verify one target against the live surface before acting on any of them. STILL GENUINELY UNDIAGNOSED: TrackingTripwire rc=1, which for that script may or may not mean the same thing - read ITS contract first. ||| VERIFICATION ATTEMPT 10:12Z, PARTIAL - I DID NOT MANAGE TO VERIFY THE STALE HOURS AND AM SAYING SO RATHER THAN IMPLYING I DID. My check was malformed twice: has no computed_at column, and the follow-up created_at query returned InternalError only because the first error had already aborted the transaction - a psycopg artifact of my own making, not a second finding. The caution on the 17 RED items therefore STANDS UNVERIFIED exactly as written. WHAT I DID ESTABLISH, and it makes the freshness claim MORE suspicious not less: the live board is healthy. site/board.json baked 2026-08-07T10:00:40Z, twelve minutes before the check, with today_games populated, 22 done_today and 365 upcoming. A served surface that fresh sitting alongside a sweep claiming predictions_live is 2,043 hours stale is a contradiction, and the two-truths rule says one of them is wrong. Measure the freshness checker against the column it actually reads before trusting any of the 7 freshness REDs. ALSO: my first read of board.json reported zero games. That was MY WRONG KEY - games live under sections.today_games, not a top-level games list. No board defect exists. Recorded so nobody chases it. ||| TRIAGE COMPLETE 2026-08-07T10:40Z. TRACKINGTRIPWIRE IS ALSO WORKING, NOT BROKEN - AND MY CAUTION TO READ ITS CONTRACT FIRST WAS RIGHT, BECAUSE ITS EXIT 1 MEANS SOMETHING DIFFERENT FROM SENTINEL EXIT 1. scripts/tracking_tripwire.py line 35: 0 = all-empty baseline, 1 = config, DB, or ALL-PROBES-BLIND error, 2 = TRIPWIRE FIRED. Its 01 August log shows all 10 of 10 probes returning ERROR_ReadTimeout or ERROR_ConnectionError - ptstats PaintTouch, ptstats Defense, ptdefend Overall, ptshot VeryTight and the rest - so it took the all-probes-blind branch and reported it correctly. It also APPENDED all 10 blind rows to before exiting, so the blindness is on the record. THE FINDING IS A DATA-ACQUISITION ONE, NOT A BROKEN SCRIPT: the tracking-stats endpoints are unreachable from this box. Note dispatch.ps1 describes this machine as the residential-IP box chosen precisely because those endpoints are datacenter-blocked, so if they are now blind from HERE too, the workaround has stopped working. IT IS ON A MONTHLY TRIGGER AND ONLY ONE LOG EXISTS, from 01 August, so it does not retry until 01 September - a thirty-day blind window nobody would see. FINAL SCORE ON THIS ROW: of three tasks I filed as failing, ONE was genuinely crashing (season_stats, now fixed and the table refreshed) and TWO were working correctly and reporting real problems that nobody read. The header is corrected to say so. Reading an exit code without its contract was my error, twice. ||| IN FLIGHT 2026-08-07T10:45Z: re-running scripts/tracking_tripwire.py by hand to answer whether the tracking endpoints are blind NOW or were only transiently blind on 01 August - its monthly trigger means nothing else answers that until 01 September. PRELIMINARY AND NOT A CONCLUSION: the run exceeded 120 seconds and went to the background, which is weak evidence for still-blind, since a reachable endpoint returns fast while timeouts burn the clock. DO NOT record that as the answer - read the run exit code. Contract: 0 all-empty baseline, 1 config or DB or all-probes-blind, 2 tripwire fired. The run appends to by design, append-only. ||| TRIPWIRE RE-RUN IS INCONCLUSIVE, 2026-08-07T11:00Z - REPORTING A NON-RESULT AS ONE. It TIMED OUT after 380 seconds without completing, so there is NO exit code and therefore NO answer on whether the endpoints are blind now. The background notification said exit 0; that was MY WRAPPER handling its own timeout, NOT the tripwire verdict - do not read it as a pass. My 380s budget was simply too short for 10 probes that each carry their own connect and read timeout. THE EARLIER WEAK SIGNAL IS STILL ONLY WEAK: a long runtime is consistent with timeouts but also with slow-but-working probes, so it does not decide anything. TO ACTUALLY ANSWER IT: re-run with a budget over 900 seconds, or probe ONE endpoint directly instead of the full sweep of ten. The 01 August evidence stands unchanged as the only real data point - all 10 probes ERROR_ReadTimeout or ERROR_ConnectionError. ||| ANSWERED 2026-08-07T11:05Z AND IT CORRECTS ME: THE ENDPOINTS ARE REACHABLE FROM THIS BOX RIGHT NOW. Probed one tracking endpoint directly instead of the sweep of ten, which is what I said the fix was: stats.wnba.com leaguedashptstats, LeagueID 10, Season 2026, PtMeasureType SpeedDistance, with the usual browser and x-nba-stats headers. HTTP 200 in 0.9 SECONDS, 805 bytes. SO MY SPECULATION THAT THE RESIDENTIAL-IP WORKAROUND HAS STOPPED WORKING IS WRONG - the network path is fine and that line should not be carried forward. WHAT THAT LEAVES, and it is a better lead: the 01 August all-probes-blind was either TRANSIENT, or the tripwire own request shape differs from mine in headers, timeout or retry policy. Compare scripts/tracking_tripwire.py request construction against a working probe before assuming an outage. ONE NUANCE, NOT SWEPT UNDER: 805 bytes is SMALL and may well be an empty resultSet, so REACHABLE IS NOT THE SAME AS HAS-DATA. The tripwire distinguishes EMPTY, LIVE and ZERO_PAYLOAD precisely because that difference matters, and this probe only establishes the first of the three. Do not upgrade this to the endpoints are healthy. ||| ELIMINATED 2026-08-07T11:20Z - THE ENV KEY COUNT IS A RED HERRING AND THE LEAD IS DEAD. The dispatch.ps1 loader logic run against the live file counts SEVENTEEN right now, and .env was last modified 08/06 at 13:48 local. The failing season_stats run was 08/06 at 09:30 local, BEFORE that edit. So env_keys_loaded=16 on the failing run and 17 on later runs is purely CHRONOLOGICAL - the seventeenth key was added afterwards. No key is being dropped, the loader is correct, and the file is well formed. THE EDIT CANNOT HAVE CAUSED THE CRASH EITHER, because the crash at 09:30 PRECEDED the edit at 13:48 by four hours. Both directions are closed. WHERE THAT LEAVES THE CRASH: one observed failure, on 08-06, exit 0xC0000374 STATUS_HEAP_CORRUPTION with zero python output, and NO established cause. The manual run I did today exits 0 and did real work, so it is not reproducible on demand. NOTE the next scheduled run is 08-07 at 09:30 local and had not fired when this was written - read its log before theorising further, because a second data point is worth more than any hypothesis built on one. ||| CLOCK PINNED 2026-08-07T11:18Z, AND A FALSE ALARM AVOIDED. I was about to file that SeasonStatsRefresh had silently SKIPPED its 08-07 run, because LastRunTime still read 08-06 and NextRunTime read 08-07 09:30 while my UTC clock said 11:18. MEASURED FIRST AND IT IS WRONG: this box is UTC MINUS FIVE. Local now is 07:18 against UTC 11:18, so the 09:30 LOCAL trigger is 14:30 UTC - two hours and twelve minutes in the FUTURE. The scheduler agrees, reporting next-is-in-past as False, and the task state is Ready. THERE IS NO MISSED RUN AND NO DEFECT HERE. THE EARLIER ELIMINATION STILL STANDS because it did not mix clocks: the crash at 09:30 and the .env edit at 13:48 both came from PowerShell and are both LOCAL, so the crash still precedes the edit by four hours. STANDING CAUTION: task LastRunTime, NextRunTime and file mtimes are LOCAL; log filename stamps and every state file are UTC. Never compare one against the other without converting - a five-hour offset turns a healthy schedule into a missed run. THE SECOND DATA POINT ON THE CRASH ARRIVES AT 14:30 UTC TODAY - read logs/local_runner for a season_stats file dated 08-07. ||| CORRECTING MY OWN SENTENCE ABOVE, 11:22Z: I wrote that this box is UTC MINUS FIVE. THAT IS WRONG and it contradicts the numbers in the same sentence. I quoted TimeZoneInfo Local BaseUtcOffset, which is the STANDARD offset and ignores daylight time. The LIVE offset is UTC MINUS FOUR: local 07:18:05 against UTC 11:18:05 is exactly four hours. EVERY CONCLUSION IS UNCHANGED because the arithmetic used the real clocks, not the label - 09:30 local is 13:30 UTC, which was two hours and twelve minutes ahead of 11:18 UTC, exactly as stated. So there is still no missed run, and the crash still precedes the .env edit. THE TRAP WORTH KEEPING: BaseUtcOffset is the STANDARD offset, not the current one. In summer it is an hour off. Derive the offset by SUBTRACTING two measured clocks - Get-Date and its ToUniversalTime - never by reading a timezone property. ||| THE ADDED KEY IS NAMED AND IT HAS NO PATH TO THE CRASH - closed properly 11:52Z, not just chronologically. An env pre-image survives from 2026-08-05T15:45Z, predating both the 08-06 09:30 crash and the 08-06 13:48 edit. Diffing KEY NAMES ONLY, never values: the pre-image holds 16 keys, the current file holds 17, and the single addition is SCOUT_SINGLETON_REAP. THAT KEY IS REFERENCED ONLY IN ops/ops_monitor.py, where it gates scout singleton reaping and defaults OFF. scripts/season_stats_refresh.py NEVER READS IT - zero references. So the 16 versus 17 is not merely a timing artifact; the key that appeared has NO CAUSAL PATH to the crashing script. WHY THIS MATTERS FOR THE NEXT RUN: today 13:30 UTC run will load 17 keys. IF IT SUCCEEDS, IT WILL NOT BE BECAUSE OF THAT KEY, and concluding otherwise is the obvious wrong inference sitting right there. The crash still has one observation and no established cause. INCIDENTAL, FLAGGED NOT CLAIMED: SCOUT_SINGLETON_REAP gates whether the scout KILLS non-owner coordinator processes, it was added 08-06, and it sits in the machinery around the succession failure this session could not resolve. No connection is asserted - but anyone working succession should know a singleton-reap gate was recently introduced and defaults OFF.",
-      "state": "",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "The three unwatched tasks: one crashed, two were working and unread",
-      "unlocks": "The unwired checker names three tasks that appear in no entry and that no references.",
-      "owner": "MACHINE",
-      "feed_status": "QUEUED",
-      "tier": 3,
-      "group": "process",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 212,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20three-unwatched-scheduled-tasks-are-all-failing%3A%20top&body=The%20three%20unwatched%20tasks%3A%20one%20crashed%2C%20two%20were%20working%20and%20unread%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20three-unwatched-scheduled-tasks-are-all-failing%3A%20bump&body=The%20three%20unwatched%20tasks%3A%20one%20crashed%2C%20two%20were%20working%20and%20unread%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20three-unwatched-scheduled-tasks-are-all-failing%3A%20demote&body=The%20three%20unwatched%20tasks%3A%20one%20crashed%2C%20two%20were%20working%20and%20unread%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20three-unwatched-scheduled-tasks-are-all-failing%3A%20shelve&body=The%20three%20unwatched%20tasks%3A%20one%20crashed%2C%20two%20were%20working%20and%20unread%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "both-commit-guards-go-permissive-when-they-canno",
       "family": "infra",
       "name": "The two guards on every commit allow the commit when their read fails",
@@ -8497,7 +8407,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 213,
+      "rank": 208,
       "actions": [
        {
         "verb": "top",
@@ -8542,7 +8452,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 216,
+      "rank": 211,
       "actions": [
        {
         "verb": "top",
@@ -8587,7 +8497,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 221,
+      "rank": 216,
       "actions": [
        {
         "verb": "top",
@@ -8632,7 +8542,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 222,
+      "rank": 217,
       "actions": [
        {
         "verb": "top",
@@ -8677,7 +8587,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 227,
+      "rank": 222,
       "actions": [
        {
         "verb": "top",
@@ -8722,7 +8632,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 228,
+      "rank": 223,
       "actions": [
        {
         "verb": "top",
@@ -8767,7 +8677,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 230,
+      "rank": 225,
       "actions": [
        {
         "verb": "top",
@@ -8812,7 +8722,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 232,
+      "rank": 227,
       "actions": [
        {
         "verb": "top",
@@ -8857,7 +8767,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 233,
+      "rank": 228,
       "actions": [
        {
         "verb": "top",
@@ -8902,7 +8812,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 234,
+      "rank": 229,
       "actions": [
        {
         "verb": "top",
@@ -8947,7 +8857,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 236,
+      "rank": 231,
       "actions": [
        {
         "verb": "top",
@@ -8992,7 +8902,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 237,
+      "rank": 232,
       "actions": [
        {
         "verb": "top",
@@ -9037,7 +8947,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 238,
+      "rank": 233,
       "actions": [
        {
         "verb": "top",
@@ -9082,7 +8992,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 239,
+      "rank": 234,
       "actions": [
        {
         "verb": "top",
@@ -9127,7 +9037,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 240,
+      "rank": 235,
       "actions": [
        {
         "verb": "top",
@@ -9172,7 +9082,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 241,
+      "rank": 236,
       "actions": [
        {
         "verb": "top",
@@ -9217,7 +9127,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 244,
+      "rank": 239,
       "actions": [
        {
         "verb": "top",
@@ -9262,7 +9172,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 245,
+      "rank": 240,
       "actions": [
        {
         "verb": "top",
@@ -9307,7 +9217,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 248,
+      "rank": 243,
       "actions": [
        {
         "verb": "top",
@@ -9352,7 +9262,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 249,
+      "rank": 244,
       "actions": [
        {
         "verb": "top",
@@ -9397,7 +9307,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 250,
+      "rank": 245,
       "actions": [
        {
         "verb": "top",
@@ -9442,7 +9352,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 251,
+      "rank": 246,
       "actions": [
        {
         "verb": "top",
@@ -9487,7 +9397,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 253,
+      "rank": 248,
       "actions": [
        {
         "verb": "top",
@@ -9512,6 +9422,51 @@
       ]
      },
      {
+      "task_id": "both-obvious-visibility-tests-are-wrong-one-is-d",
+      "family": "infra",
+      "name": "Both obvious fixes for the visibility test are wrong and one would reap the live head",
+      "header": "Both obvious fixes for the visibility test are wrong and one would reap the live head",
+      "why": "Measured 2026-08-07T12 against row supervisor-cannot-see-a-pipe-backed-head-in-session-1 whose premise is hardwood supervisor. line 297 sets visible capable = sid -ne 0 so a bg-pty-host coordinator ...",
+      "priority": 2,
+      "seat": "ops_monitor",
+      "status": "open - premise confirmed and both obvious fixes eliminated with evidence; the console-window probe is the untested direction ||| THE THIRD APPROACH IS NOW TESTED AND IT WORKS, 2026-08-07T12:53Z, with both controls. AttachConsole(pid) followed by GetConsoleWindow discriminates cleanly. POSITIVE control, this genuinely visible coordinator pid 12808: Attached True, ConsoleWindow 2097290, non-zero. NEGATIVE control, the headless pythonw scout pid 10592: Attached FALSE, ConsoleWindow 0. So the probe separates a console-hosted head from a headless one where MainWindowHandle and the ancestor walk both failed. 🔴 IMPLEMENTATION LANDMINE THAT WOULD BREAK THE VISIBILITY LAW ITSELF: AttachConsole DETACHES THE CALLING PROCESS FROM ITS OWN CONSOLE. hardwood_supervisor.ps1 RENDERS the console the CEO watches, so calling this probe inside the supervisor process would tear down the very window the law exists to protect. THE PROBE MUST RUN IN A SHORT-LIVED SUBPROCESS and report back a boolean. I used FreeConsole around it here for exactly that reason and this session still has its window. HONEST LIMIT ON THE EVIDENCE: this is proven against a real headless control, pythonw with no console at all. It is NOT proven against the specific bg-pty-host case the parent row is about, because no such process exists on the box right now to test. A pty-host may attach a PSEUDOconsole and behave differently. Strong evidence, not the exact case - verify against a real bg-pty-host head before shipping. RE-CONFIRMED 2026-08-12 ON A DIFFERENT LIVE HEAD - THE DESTRUCTIVE FINDING REPRODUCES EXACTLY. This row measured claude.exe pid 12808 with MainWindowHandle ZERO. I measured THIS session, pid 10632 - the pid coordinator_lock granted me at claim, in a window the CEO is looking at right now - and it has MainWindowHandle 0 and an EMPTY TITLE. So does every conhost on the box, in session 0 and session 1 alike. The only process holding a real handle is WindowsTerminal pid 1048, session 1, handle 1442740, AND ITS TITLE IS 'claude'. SO FIX ONE WOULD HAVE REAPED ME. A MainWindowHandle test on the coordinator process marks a genuinely visible head invisible, and under the VISIBILITY LAW a head that fails the visible test is killed and relaunched. Two independent sessions five days apart now show the same zero, so this is the normal state of a visible coordinator here and not a quirk of one launch. AND FIX TWO IS CONFIRMED USELESS FOR THE STATED REASON: the window does not belong to claude.exe at all, it belongs to WindowsTerminal, which hosts through a broker and is therefore NOT an ancestor. No parent walk can reach it. ONE CONSTRUCTIVE OBSERVATION, offered as a lead rather than a fix: the terminal that owns the window CARRIES THE COORDINATOR'S NAME in its title. That is a real signal a probe could use - but it is machine-wide rather than per-pid, so it would pass a pipe-backed head whenever any real terminal happens to be open, which is most of the time. It is a corroborator, never the test. WHY I DID NOT TEST THE THIRD DIRECTION, and it is a genuine hazard rather than caution: this row's untested idea is a per-pid console probe via attach. ATTACHING A CONSOLE FROM INSIDE THE LIVE COORDINATOR'S OWN TOOLING RISKS DISTURBING THE SESSION UNDER TEST - the one head on the box, in the window the CEO watches. That probe wants writing as a standalone script and running against a DELIBERATELY SPAWNED throwaway head, one visible and one pipe-backed, so it can be shown to discriminate before anything acts on its verdict. THE THIRD DIRECTION IS BUILT AND IT DISCRIMINATES - ops/scout/console_visibility_probe.py, 2026-08-12. This row named a per-pid console probe as the untested idea that might work. It works. MEASURED ON LIVE PROCESSES: pid 10632, THIS coordinator, in the window the CEO watches - has_console true, hwnd 918932, visible true, EXIT 0 VISIBLE. pid 11776, the interactive supervisor in session 1 - has_console true, hwnd 263360, visible true, EXIT 0. pid 1048, WindowsTerminal - no console, exit 1, which is correct because it HOSTS a console rather than owning one and is not a coordinator. A nonexistent pid returns err 87 and exit 1. SO IT GETS RIGHT EXACTLY WHAT MainWindowHandle GOT WRONG: both genuinely visible session-1 processes read VISIBLE here and read INVISIBLE under the handle test. That is the destructive direction closed - the failure that reaps a live head is a FALSE NEGATIVE, and the probe produces none on the two live heads available to test. WHAT IS STILL UNTESTED, STATED PLAINLY: the NEGATIVE side. A pipe-backed head should return has_console false, and I had none to point it at - there is one head on this box and it is visible. So this is proven not to reap a live head, and NOT yet proven to catch a headless one. Both halves matter and only one is done. Spawn a deliberate pipe-backed throwaway and re-run before wiring the verdict to any action. THREE PROPERTIES BUILT IN ON PURPOSE. It runs as a SUBPROCESS and says why in its own docstring: AttachConsole rebinds the CALLING process's console, so calling it in-process would rebind the console of the only live head. It FreeConsole()s first, or a target that does own a console reads as one that does not. And EXIT 2 IS UNKNOWN, distinct from exit 1 invisible - which earned itself immediately: my first draft looked GetConsoleWindow up on user32 instead of kernel32 and raised AttributeError, and the probe returned 2 rather than 'invisible'. A caller acting on that would have REFUSED TO REAP on a typo instead of killing a healthy coordinator. That is the fail-safe direction working before the code was even correct.",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 2.0,
+      "title": "Both obvious fixes for the visibility test are wrong and one would reap the live head",
+      "unlocks": "The row is right and the fix is harder than it looks.",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 3,
+      "group": "process",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 251,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20both-obvious-visibility-tests-are-wrong-one-is-d%3A%20top&body=Both%20obvious%20fixes%20for%20the%20visibility%20test%20are%20wrong%20and%20one%20would%20reap%20the%20live%20head%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20both-obvious-visibility-tests-are-wrong-one-is-d%3A%20bump&body=Both%20obvious%20fixes%20for%20the%20visibility%20test%20are%20wrong%20and%20one%20would%20reap%20the%20live%20head%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20both-obvious-visibility-tests-are-wrong-one-is-d%3A%20demote&body=Both%20obvious%20fixes%20for%20the%20visibility%20test%20are%20wrong%20and%20one%20would%20reap%20the%20live%20head%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20both-obvious-visibility-tests-are-wrong-one-is-d%3A%20shelve&body=Both%20obvious%20fixes%20for%20the%20visibility%20test%20are%20wrong%20and%20one%20would%20reap%20the%20live%20head%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "alarms-blame-our-machinery-during-a-declared-ups",
       "family": "infra",
       "name": "During a provider outage our alarms still read as our own machinery failing",
@@ -9532,7 +9487,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 257,
+      "rank": 253,
       "actions": [
        {
         "verb": "top",
@@ -9577,7 +9532,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 258,
+      "rank": 254,
       "actions": [
        {
         "verb": "top",
@@ -9622,7 +9577,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 260,
+      "rank": 256,
       "actions": [
        {
         "verb": "top",
@@ -9667,7 +9622,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 264,
+      "rank": 260,
       "actions": [
        {
         "verb": "top",
@@ -9712,7 +9667,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 267,
+      "rank": 263,
       "actions": [
        {
         "verb": "top",
@@ -9757,7 +9712,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 271,
+      "rank": 267,
       "actions": [
        {
         "verb": "top",
@@ -9802,7 +9757,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 272,
+      "rank": 268,
       "actions": [
        {
         "verb": "top",
@@ -9847,7 +9802,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 277,
+      "rank": 273,
       "actions": [
        {
         "verb": "top",
@@ -9892,7 +9847,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 283,
+      "rank": 279,
       "actions": [
        {
         "verb": "top",
@@ -9937,7 +9892,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 284,
+      "rank": 280,
       "actions": [
        {
         "verb": "top",
@@ -9982,7 +9937,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 291,
+      "rank": 287,
       "actions": [
        {
         "verb": "top",
@@ -10027,7 +9982,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 300,
+      "rank": 296,
       "actions": [
        {
         "verb": "top",
@@ -10072,7 +10027,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 302,
+      "rank": 298,
       "actions": [
        {
         "verb": "top",
@@ -10117,7 +10072,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 303,
+      "rank": 299,
       "actions": [
        {
         "verb": "top",
@@ -10162,7 +10117,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 306,
+      "rank": 302,
       "actions": [
        {
         "verb": "top",
@@ -10207,7 +10162,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 309,
+      "rank": 305,
       "actions": [
        {
         "verb": "top",
@@ -10252,7 +10207,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 311,
+      "rank": 307,
       "actions": [
        {
         "verb": "top",
@@ -10297,7 +10252,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 312,
+      "rank": 309,
       "actions": [
        {
         "verb": "top",
@@ -10342,7 +10297,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 313,
+      "rank": 310,
       "actions": [
        {
         "verb": "top",
@@ -10387,7 +10342,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 315,
+      "rank": 312,
       "actions": [
        {
         "verb": "top",
@@ -10432,7 +10387,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 316,
+      "rank": 313,
       "actions": [
        {
         "verb": "top",
@@ -10477,7 +10432,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 319,
+      "rank": 316,
       "actions": [
        {
         "verb": "top",
@@ -10522,7 +10477,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 320,
+      "rank": 317,
       "actions": [
        {
         "verb": "top",
@@ -10567,7 +10522,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 323,
+      "rank": 320,
       "actions": [
        {
         "verb": "top",
@@ -10612,7 +10567,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 329,
+      "rank": 326,
       "actions": [
        {
         "verb": "top",
@@ -10657,7 +10612,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 330,
+      "rank": 327,
       "actions": [
        {
         "verb": "top",
@@ -10702,7 +10657,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 334,
+      "rank": 331,
       "actions": [
        {
         "verb": "top",
@@ -10747,7 +10702,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 335,
+      "rank": 332,
       "actions": [
        {
         "verb": "top",
@@ -10792,7 +10747,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 338,
+      "rank": 335,
       "actions": [
        {
         "verb": "top",
@@ -10837,7 +10792,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 342,
+      "rank": 339,
       "actions": [
        {
         "verb": "top",
@@ -10882,7 +10837,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 345,
+      "rank": 342,
       "actions": [
        {
         "verb": "top",
@@ -10927,7 +10882,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 346,
+      "rank": 344,
       "actions": [
        {
         "verb": "top",
@@ -10972,7 +10927,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 347,
+      "rank": 345,
       "actions": [
        {
         "verb": "top",
@@ -10997,6 +10952,51 @@
       ]
      },
      {
+      "task_id": "three-unwatched-scheduled-tasks-are-all-failing",
+      "family": "infra",
+      "name": "The three unwatched tasks: one crashed, two were working and unread",
+      "header": "The three unwatched tasks: one crashed, two were working and unread",
+      "why": "Run the daily data-integrity check",
+      "priority": 2,
+      "seat": "ops_monitor",
+      "status": "open - I MISLABELLED SENTINELSWEEP AND THE CORRECTION IS BIGGER THAN THE ORIGINAL CLAIM, 2026-08-07T10:10Z coord--visible. I filed all three as failing on their non-zero exit codes. SENTINELSWEEP IS NOT FAILING. Its own docstring line 48 defines the contract: exit 0 = all green, 1 = config or DB error, 2 = ONE OR MORE RED. It exits 2 because it is WORKING - it runs to completion nightly and writes a 99KB log. Reading an exit code without reading the contract that defines it is the error, and it is the same shape as everything else found today. THE ACTUAL DEFECT IS WORSE THAN A CRASHED TASK: the nightly full-DB invariant sweep is finding 17 RED items across 11 distinct checks every night and NOBODY READS THEM, because the task is unwatched so its verdict reaches no one. That is a detector with no disposition, at full DB scope. THE 17, from the 06 August sweep: 7 freshness targets STALE - predictions_live 2,043h, props 1,849h, season_wins 1,742h, totals 1,739h, power_rankings 588h, bdl_active 36h - plus scheduled_task_health, feed_failure_streak, one_person_served_as_two, id_space_join_coverage, membership_pool_eq_roster, membership_no_ghost_team, projection_coverage_missing, gameday_box, gameday_box_rate, interval_family_reach. NOTE scheduled_task_health and feed_failure_streak are in that list, so the sweep was ALREADY REPORTING the season_stats breakage I diagnosed separately an hour ago. TREAT THE STALE HOURS AS UNVERIFIED: a freshness checker reading the wrong column is a known failure mode here, and 85 days stale on predictions_live while the season is being served is exactly the kind of number that is wrong for a boring reason. Verify one target against the live surface before acting on any of them. STILL GENUINELY UNDIAGNOSED: TrackingTripwire rc=1, which for that script may or may not mean the same thing - read ITS contract first. ||| VERIFICATION ATTEMPT 10:12Z, PARTIAL - I DID NOT MANAGE TO VERIFY THE STALE HOURS AND AM SAYING SO RATHER THAN IMPLYING I DID. My check was malformed twice: has no computed_at column, and the follow-up created_at query returned InternalError only because the first error had already aborted the transaction - a psycopg artifact of my own making, not a second finding. The caution on the 17 RED items therefore STANDS UNVERIFIED exactly as written. WHAT I DID ESTABLISH, and it makes the freshness claim MORE suspicious not less: the live board is healthy. site/board.json baked 2026-08-07T10:00:40Z, twelve minutes before the check, with today_games populated, 22 done_today and 365 upcoming. A served surface that fresh sitting alongside a sweep claiming predictions_live is 2,043 hours stale is a contradiction, and the two-truths rule says one of them is wrong. Measure the freshness checker against the column it actually reads before trusting any of the 7 freshness REDs. ALSO: my first read of board.json reported zero games. That was MY WRONG KEY - games live under sections.today_games, not a top-level games list. No board defect exists. Recorded so nobody chases it. ||| TRIAGE COMPLETE 2026-08-07T10:40Z. TRACKINGTRIPWIRE IS ALSO WORKING, NOT BROKEN - AND MY CAUTION TO READ ITS CONTRACT FIRST WAS RIGHT, BECAUSE ITS EXIT 1 MEANS SOMETHING DIFFERENT FROM SENTINEL EXIT 1. scripts/tracking_tripwire.py line 35: 0 = all-empty baseline, 1 = config, DB, or ALL-PROBES-BLIND error, 2 = TRIPWIRE FIRED. Its 01 August log shows all 10 of 10 probes returning ERROR_ReadTimeout or ERROR_ConnectionError - ptstats PaintTouch, ptstats Defense, ptdefend Overall, ptshot VeryTight and the rest - so it took the all-probes-blind branch and reported it correctly. It also APPENDED all 10 blind rows to before exiting, so the blindness is on the record. THE FINDING IS A DATA-ACQUISITION ONE, NOT A BROKEN SCRIPT: the tracking-stats endpoints are unreachable from this box. Note dispatch.ps1 describes this machine as the residential-IP box chosen precisely because those endpoints are datacenter-blocked, so if they are now blind from HERE too, the workaround has stopped working. IT IS ON A MONTHLY TRIGGER AND ONLY ONE LOG EXISTS, from 01 August, so it does not retry until 01 September - a thirty-day blind window nobody would see. FINAL SCORE ON THIS ROW: of three tasks I filed as failing, ONE was genuinely crashing (season_stats, now fixed and the table refreshed) and TWO were working correctly and reporting real problems that nobody read. The header is corrected to say so. Reading an exit code without its contract was my error, twice. ||| IN FLIGHT 2026-08-07T10:45Z: re-running scripts/tracking_tripwire.py by hand to answer whether the tracking endpoints are blind NOW or were only transiently blind on 01 August - its monthly trigger means nothing else answers that until 01 September. PRELIMINARY AND NOT A CONCLUSION: the run exceeded 120 seconds and went to the background, which is weak evidence for still-blind, since a reachable endpoint returns fast while timeouts burn the clock. DO NOT record that as the answer - read the run exit code. Contract: 0 all-empty baseline, 1 config or DB or all-probes-blind, 2 tripwire fired. The run appends to by design, append-only. ||| TRIPWIRE RE-RUN IS INCONCLUSIVE, 2026-08-07T11:00Z - REPORTING A NON-RESULT AS ONE. It TIMED OUT after 380 seconds without completing, so there is NO exit code and therefore NO answer on whether the endpoints are blind now. The background notification said exit 0; that was MY WRAPPER handling its own timeout, NOT the tripwire verdict - do not read it as a pass. My 380s budget was simply too short for 10 probes that each carry their own connect and read timeout. THE EARLIER WEAK SIGNAL IS STILL ONLY WEAK: a long runtime is consistent with timeouts but also with slow-but-working probes, so it does not decide anything. TO ACTUALLY ANSWER IT: re-run with a budget over 900 seconds, or probe ONE endpoint directly instead of the full sweep of ten. The 01 August evidence stands unchanged as the only real data point - all 10 probes ERROR_ReadTimeout or ERROR_ConnectionError. ||| ANSWERED 2026-08-07T11:05Z AND IT CORRECTS ME: THE ENDPOINTS ARE REACHABLE FROM THIS BOX RIGHT NOW. Probed one tracking endpoint directly instead of the sweep of ten, which is what I said the fix was: stats.wnba.com leaguedashptstats, LeagueID 10, Season 2026, PtMeasureType SpeedDistance, with the usual browser and x-nba-stats headers. HTTP 200 in 0.9 SECONDS, 805 bytes. SO MY SPECULATION THAT THE RESIDENTIAL-IP WORKAROUND HAS STOPPED WORKING IS WRONG - the network path is fine and that line should not be carried forward. WHAT THAT LEAVES, and it is a better lead: the 01 August all-probes-blind was either TRANSIENT, or the tripwire own request shape differs from mine in headers, timeout or retry policy. Compare scripts/tracking_tripwire.py request construction against a working probe before assuming an outage. ONE NUANCE, NOT SWEPT UNDER: 805 bytes is SMALL and may well be an empty resultSet, so REACHABLE IS NOT THE SAME AS HAS-DATA. The tripwire distinguishes EMPTY, LIVE and ZERO_PAYLOAD precisely because that difference matters, and this probe only establishes the first of the three. Do not upgrade this to the endpoints are healthy. ||| ELIMINATED 2026-08-07T11:20Z - THE ENV KEY COUNT IS A RED HERRING AND THE LEAD IS DEAD. The dispatch.ps1 loader logic run against the live file counts SEVENTEEN right now, and .env was last modified 08/06 at 13:48 local. The failing season_stats run was 08/06 at 09:30 local, BEFORE that edit. So env_keys_loaded=16 on the failing run and 17 on later runs is purely CHRONOLOGICAL - the seventeenth key was added afterwards. No key is being dropped, the loader is correct, and the file is well formed. THE EDIT CANNOT HAVE CAUSED THE CRASH EITHER, because the crash at 09:30 PRECEDED the edit at 13:48 by four hours. Both directions are closed. WHERE THAT LEAVES THE CRASH: one observed failure, on 08-06, exit 0xC0000374 STATUS_HEAP_CORRUPTION with zero python output, and NO established cause. The manual run I did today exits 0 and did real work, so it is not reproducible on demand. NOTE the next scheduled run is 08-07 at 09:30 local and had not fired when this was written - read its log before theorising further, because a second data point is worth more than any hypothesis built on one. ||| CLOCK PINNED 2026-08-07T11:18Z, AND A FALSE ALARM AVOIDED. I was about to file that SeasonStatsRefresh had silently SKIPPED its 08-07 run, because LastRunTime still read 08-06 and NextRunTime read 08-07 09:30 while my UTC clock said 11:18. MEASURED FIRST AND IT IS WRONG: this box is UTC MINUS FIVE. Local now is 07:18 against UTC 11:18, so the 09:30 LOCAL trigger is 14:30 UTC - two hours and twelve minutes in the FUTURE. The scheduler agrees, reporting next-is-in-past as False, and the task state is Ready. THERE IS NO MISSED RUN AND NO DEFECT HERE. THE EARLIER ELIMINATION STILL STANDS because it did not mix clocks: the crash at 09:30 and the .env edit at 13:48 both came from PowerShell and are both LOCAL, so the crash still precedes the edit by four hours. STANDING CAUTION: task LastRunTime, NextRunTime and file mtimes are LOCAL; log filename stamps and every state file are UTC. Never compare one against the other without converting - a five-hour offset turns a healthy schedule into a missed run. THE SECOND DATA POINT ON THE CRASH ARRIVES AT 14:30 UTC TODAY - read logs/local_runner for a season_stats file dated 08-07. ||| CORRECTING MY OWN SENTENCE ABOVE, 11:22Z: I wrote that this box is UTC MINUS FIVE. THAT IS WRONG and it contradicts the numbers in the same sentence. I quoted TimeZoneInfo Local BaseUtcOffset, which is the STANDARD offset and ignores daylight time. The LIVE offset is UTC MINUS FOUR: local 07:18:05 against UTC 11:18:05 is exactly four hours. EVERY CONCLUSION IS UNCHANGED because the arithmetic used the real clocks, not the label - 09:30 local is 13:30 UTC, which was two hours and twelve minutes ahead of 11:18 UTC, exactly as stated. So there is still no missed run, and the crash still precedes the .env edit. THE TRAP WORTH KEEPING: BaseUtcOffset is the STANDARD offset, not the current one. In summer it is an hour off. Derive the offset by SUBTRACTING two measured clocks - Get-Date and its ToUniversalTime - never by reading a timezone property. ||| THE ADDED KEY IS NAMED AND IT HAS NO PATH TO THE CRASH - closed properly 11:52Z, not just chronologically. An env pre-image survives from 2026-08-05T15:45Z, predating both the 08-06 09:30 crash and the 08-06 13:48 edit. Diffing KEY NAMES ONLY, never values: the pre-image holds 16 keys, the current file holds 17, and the single addition is SCOUT_SINGLETON_REAP. THAT KEY IS REFERENCED ONLY IN ops/ops_monitor.py, where it gates scout singleton reaping and defaults OFF. scripts/season_stats_refresh.py NEVER READS IT - zero references. So the 16 versus 17 is not merely a timing artifact; the key that appeared has NO CAUSAL PATH to the crashing script. WHY THIS MATTERS FOR THE NEXT RUN: today 13:30 UTC run will load 17 keys. IF IT SUCCEEDS, IT WILL NOT BE BECAUSE OF THAT KEY, and concluding otherwise is the obvious wrong inference sitting right there. The crash still has one observation and no established cause. INCIDENTAL, FLAGGED NOT CLAIMED: SCOUT_SINGLETON_REAP gates whether the scout KILLS non-owner coordinator processes, it was added 08-06, and it sits in the machinery around the succession failure this session could not resolve. No connection is asserted - but anyone working succession should know a singleton-reap gate was recently introduced and defaults OFF. RE-MEASURED 2026-08-12 AND THE DIAGNOSIS IS NOW A DIFFERENT ONE: THESE ARE NOT THREE FAILING TASKS, THEY ARE CASUALTIES OF A CRASH-REBOOT. THE EXIT CODES ALL CHANGED. SeasonStatsRefresh was , heap corruption; SentinelSweep was 2. Both now read = 0x800710E0, 'the operator or administrator has refused the request', and BOTH AT THE SAME INSTANT, 2026-08-11 14:28:28. TrackingTripwire still reads 1 from its monthly run on 2026-08-01, unchanged. AND IT IS NOT A PRINCIPAL PROBLEM, which is what I first assumed and had to drop: SEVEN tasks machine-wide carry that refusal code and they span THREE principal types - HardwoodDiscordGateway and GamedayGrade are S4U, SeasonStatsRefresh and SentinelSweep are Interactive, and Backup, SilentCleanup and ProcessMemoryDiagnosticEvents are Group. Four of them share the identical timestamp 14:28:28. A refusal that crosses every principal type at one instant is a MACHINE EVENT, not a permissions fault. THE MACHINE EVENT IS AN UNCLEAN REBOOT, and there have been FIVE IN SIX DAYS. System log, Event 41 'rebooted without cleanly shutting down first': 2026-08-11 23:46:56 after an unexpected shutdown at 23:40:25; 2026-08-11 14:20:15 - EIGHT MINUTES BEFORE the 14:28:28 batch refusal; 2026-08-08 14:36:40; 2026-08-07 13:12:12; 2026-08-07 12:39:22. The tasks were refused during crash recovery. SO THE ROW'S FIX CHANGES SHAPE. Wiring these three into FEEDS so someone reads their result is still right and still cheap - the checker that flagged them was correct that nothing watches them. But their CURRENT non-zero is not their own fault and chasing it as a task defect would burn a lane on a symptom. Re-run them once by hand and read the real exit code before treating any of the three as broken. TrackingTripwire's exit 1 from 08-01 is the only failure here that is still its own, and its monthly trigger means it stays that way until 01 September. THE REPEATED UNCLEAN REBOOTS ARE THE BIGGER FINDING and they are not this row's to fix, but they explain a category of overnight disappearance - any lane, detached run or heartbeat that vanished around 08-07, 08-08 or 08-11 should be read against this list before a mechanism is blamed.",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 2.0,
+      "title": "The three unwatched tasks: one crashed, two were working and unread",
+      "unlocks": "The unwired checker names three tasks that appear in no entry and that no references.",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 3,
+      "group": "process",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 346,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20three-unwatched-scheduled-tasks-are-all-failing%3A%20top&body=The%20three%20unwatched%20tasks%3A%20one%20crashed%2C%20two%20were%20working%20and%20unread%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20three-unwatched-scheduled-tasks-are-all-failing%3A%20bump&body=The%20three%20unwatched%20tasks%3A%20one%20crashed%2C%20two%20were%20working%20and%20unread%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20three-unwatched-scheduled-tasks-are-all-failing%3A%20demote&body=The%20three%20unwatched%20tasks%3A%20one%20crashed%2C%20two%20were%20working%20and%20unread%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20three-unwatched-scheduled-tasks-are-all-failing%3A%20shelve&body=The%20three%20unwatched%20tasks%3A%20one%20crashed%2C%20two%20were%20working%20and%20unread%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "triage-verdicts-were-recorded-in-prose-not-in-th",
       "family": "infra",
       "name": "Triage verdicts were recorded in prose and never reached the registry that asks for them",
@@ -11017,7 +11017,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 353,
+      "rank": 352,
       "actions": [
        {
         "verb": "top",
@@ -11062,7 +11062,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 355,
+      "rank": 354,
       "actions": [
        {
         "verb": "top",
@@ -11107,7 +11107,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 356,
+      "rank": 355,
       "actions": [
        {
         "verb": "top",
@@ -11152,7 +11152,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 359,
+      "rank": 358,
       "actions": [
        {
         "verb": "top",
@@ -11197,7 +11197,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 365,
+      "rank": 364,
       "actions": [
        {
         "verb": "top",
@@ -11242,7 +11242,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 367,
+      "rank": 366,
       "actions": [
        {
         "verb": "top",
@@ -11287,7 +11287,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 368,
+      "rank": 367,
       "actions": [
        {
         "verb": "top",
@@ -11332,7 +11332,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 374,
+      "rank": 373,
       "actions": [
        {
         "verb": "top",
@@ -11377,7 +11377,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 376,
+      "rank": 375,
       "actions": [
        {
         "verb": "top",
@@ -13049,7 +13049,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 103,
+      "rank": 102,
       "actions": [
        {
         "verb": "top",
@@ -13094,7 +13094,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 106,
+      "rank": 105,
       "actions": [
        {
         "verb": "top",
@@ -13139,7 +13139,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 111,
+      "rank": 110,
       "actions": [
        {
         "verb": "top",
@@ -13184,7 +13184,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 113,
+      "rank": 112,
       "actions": [
        {
         "verb": "top",
@@ -13229,7 +13229,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 120,
+      "rank": 118,
       "actions": [
        {
         "verb": "top",
@@ -13274,7 +13274,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 123,
+      "rank": 121,
       "actions": [
        {
         "verb": "top",
@@ -13319,7 +13319,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 131,
+      "rank": 129,
       "actions": [
        {
         "verb": "top",
@@ -13364,7 +13364,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 132,
+      "rank": 130,
       "actions": [
        {
         "verb": "top",
@@ -13409,7 +13409,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 133,
+      "rank": 131,
       "actions": [
        {
         "verb": "top",
@@ -13454,7 +13454,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 134,
+      "rank": 132,
       "actions": [
        {
         "verb": "top",
@@ -13499,7 +13499,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 136,
+      "rank": 134,
       "actions": [
        {
         "verb": "top",
@@ -13545,7 +13545,7 @@
       "ceo_ask": true,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 137,
+      "rank": 135,
       "actions": [
        {
         "verb": "top",
@@ -13590,7 +13590,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 138,
+      "rank": 136,
       "actions": [
        {
         "verb": "top",
@@ -13635,7 +13635,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 139,
+      "rank": 137,
       "actions": [
        {
         "verb": "top",
@@ -13680,7 +13680,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 142,
+      "rank": 140,
       "actions": [
        {
         "verb": "top",
@@ -13725,7 +13725,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 144,
+      "rank": 142,
       "actions": [
        {
         "verb": "top",
@@ -13770,7 +13770,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 146,
+      "rank": 144,
       "actions": [
        {
         "verb": "top",
@@ -13815,7 +13815,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 147,
+      "rank": 145,
       "actions": [
        {
         "verb": "top",
@@ -13860,7 +13860,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 148,
+      "rank": 146,
       "actions": [
        {
         "verb": "top",
@@ -13905,7 +13905,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 152,
+      "rank": 150,
       "actions": [
        {
         "verb": "top",
@@ -13950,7 +13950,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 156,
+      "rank": 154,
       "actions": [
        {
         "verb": "top",
@@ -13975,51 +13975,6 @@
       ]
      },
      {
-      "task_id": "the-successor-engine-is-one-oracle-bar-from-eval",
-      "family": "modeling",
-      "name": "The clean engine now reproduces three of four bars and the basis finally matches",
-      "header": "The clean engine now reproduces three of four bars and the basis finally matches",
-      "why": "Measured 2026-08-07T10 . records the benchmark of record as unreproducible here because the warehouse held no postseason and the maximum 2019-2026 basis was 1739 against a stated need of roughly ...",
-      "priority": 1,
-      "seat": "top",
-      "status": "ready ||| SWEEP FALSE POSITIVE - the delta CONFIRMS this row rather than resolving it, 13:56Z. The cited artifact says the successor engine now reproduces THREE OF FOUR oracle bars on our own warehouse. That is precisely the state this row describes - one bar from evaluable - so the delta is the evidence FOR the row, not evidence the row is finished. The remaining work is the fourth bar, and MODEL_STATE_OF_RECORD still carries the engine as stop-and-report. THE ROW STANDS, and it is load-bearing for ship-list item 4.",
-      "state": "ready now",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "The clean engine now reproduces three of four bars and the basis finally matches",
-      "unlocks": "AND- this is not a promotion proposal.",
-      "owner": "MACHINE",
-      "feed_status": "QUEUED",
-      "tier": 1,
-      "group": "",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 157,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-successor-engine-is-one-oracle-bar-from-eval%3A%20top&body=The%20clean%20engine%20now%20reproduces%20three%20of%20four%20bars%20and%20the%20basis%20finally%20matches%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-successor-engine-is-one-oracle-bar-from-eval%3A%20bump&body=The%20clean%20engine%20now%20reproduces%20three%20of%20four%20bars%20and%20the%20basis%20finally%20matches%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-successor-engine-is-one-oracle-bar-from-eval%3A%20demote&body=The%20clean%20engine%20now%20reproduces%20three%20of%20four%20bars%20and%20the%20basis%20finally%20matches%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-successor-engine-is-one-oracle-bar-from-eval%3A%20shelve&body=The%20clean%20engine%20now%20reproduces%20three%20of%20four%20bars%20and%20the%20basis%20finally%20matches%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "no-2026-coverage-in-any-impact-metric",
       "family": "modeling",
       "name": "The current season has exactly one impact number and it is uncorroborated",
@@ -14040,7 +13995,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 160,
+      "rank": 157,
       "actions": [
        {
         "verb": "top",
@@ -14085,7 +14040,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 161,
+      "rank": 158,
       "actions": [
        {
         "verb": "top",
@@ -14130,7 +14085,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 164,
+      "rank": 161,
       "actions": [
        {
         "verb": "top",
@@ -14162,7 +14117,7 @@
       "why": "Drop-in replacing p home = Phi(margin 12.65) with a two-parameter map fitted . and it is the 's own binding rather than my reading collapse the four production sigmas to ONE served value first ...",
       "priority": 1,
       "seat": "top",
-      "status": "blocked - FILED FROM THE INBOX 2026-08-07T14:22Z by coord--visible, and deliberately NOT applied. Three reasons, each from the directive itself rather than from caution: (1) it opens DO NOT WORK THIS UNTIL THE FREEZE CLEARS and says it was filed as QUEUED rather than as an inbox directive precisely so it could not be picked up early - the freeze IS now absent, so this reason has lapsed; (2) its binding prereg says the four-values-in-production problem is NOT resolved by it and to collapse to one served value FIRST, then this becomes that one value - that collapse is ship-list item 6, Director-owned, still open; (3) the prereg requires a refit on the REAL engine's walk-forward set of 1,615 rather than the team-only harness that produced these numbers, and states its harness runs MAE 10.06 against the engine's 9.95 so its parameters are approximate. THE MEASURED CASE IS HONEST AND WORTH KEEPING: log loss 0.6346 to 0.6313, Brier flat, side accuracy unchanged at 0.650, and the directive says plainly that the headline gain is small. The value is calibration in the band that matters - above +6, n=73, the largest band, where the constant overstates the home win rate by 7.5 points and the fitted map halves that to 4.7. It does NOT fix the toss-up band, where 36 games predicted level produced 66.7 percent home wins, and it is slightly worse on heavy underdogs; the directive names both. Fitted parameters intercept +0.0019, slope +0.1066, an effective spread near 16 points. UNBLOCKS WHEN item 6 collapses the sigmas. ||| BLOCKER MOVED, NOT CLEARED, 14:31Z: the Director RULED the collapse in DIRECTOR_DIRECTIVE_ - collapse to the ENGINE'S OWN MEASURED RESIDUAL SD on the real walk-forward set of 1,615, explicitly NOT to any hand-set constant and explicitly not to 12.65. The oracle: direct residual SD 13.09, which at a +8 favourite gives 0.729 and so matches the WIDER of the two public surfaces at 72.7 percent - the narrow 76.1 percent surface is the defect. Two caveats travel with it by the Director's own instruction: the implied spread is NOT stable across bands, reading about 12 at 5-7 and about 15 at 7-9, and the figures come from a team-only harness at MAE about 10.1 against the engine's 9.95, so they are an upper bound to be confirmed on the engine's own set. THIS ROW REMAINS BLOCKED, on the EXECUTION of that collapse rather than on the decision, which is ship-list item 6. ||| BLOCKER CLEARED - THE PREREG LANDED IN FULL, 2026-08-07T16:58Z. DIRECTOR_DIRECTIVE_ section 4 delivers everything this row was waiting on and states nothing further is owed. QUANTITY: the standard deviation of actual minus predicted margin on the successor engine's own walk-forward set at n=1,615, clean basis, regular season. EXPECTED LANDING ZONE 12.4 to 13.2, with the Director's references all WIDER than every constant in production - direct residual SD 13.09 on 756 walk-forward games. STOP CONDITION, and it is a real one rather than a formality: outside 11.5 to 14.5, STOP and report rather than ship, because that would mean the engine's MAE and its residuals disagree. THEN set that single value as the ONE served spread and repoint all four consumers in the SAME change per the propagation law, with no consumer left on an old value. VERIFY ALL THREE: the two public surfaces must return the same probability for the same game, interval coverage must hold at 89 to 90 percent, and the value must reproduce. EXPLICITLY OUT OF SCOPE, in his words: the shape problem - a single value cannot fix a bias that reverses sign between the coin-flip band and the big-edge band, which is what THIS row's fitted map addresses afterwards. So the ordering is unchanged and now fully specified: collapse first, then this map becomes that one value.",
+      "status": "blocked - FILED FROM THE INBOX 2026-08-07T14:22Z by coord--visible, and deliberately NOT applied. Three reasons, each from the directive itself rather than from caution: (1) it opens DO NOT WORK THIS UNTIL THE FREEZE CLEARS and says it was filed as QUEUED rather than as an inbox directive precisely so it could not be picked up early - the freeze IS now absent, so this reason has lapsed; (2) its binding prereg says the four-values-in-production problem is NOT resolved by it and to collapse to one served value FIRST, then this becomes that one value - that collapse is ship-list item 6, Director-owned, still open; (3) the prereg requires a refit on the REAL engine's walk-forward set of 1,615 rather than the team-only harness that produced these numbers, and states its harness runs MAE 10.06 against the engine's 9.95 so its parameters are approximate. THE MEASURED CASE IS HONEST AND WORTH KEEPING: log loss 0.6346 to 0.6313, Brier flat, side accuracy unchanged at 0.650, and the directive says plainly that the headline gain is small. The value is calibration in the band that matters - above +6, n=73, the largest band, where the constant overstates the home win rate by 7.5 points and the fitted map halves that to 4.7. It does NOT fix the toss-up band, where 36 games predicted level produced 66.7 percent home wins, and it is slightly worse on heavy underdogs; the directive names both. Fitted parameters intercept +0.0019, slope +0.1066, an effective spread near 16 points. UNBLOCKS WHEN item 6 collapses the sigmas. ||| BLOCKER MOVED, NOT CLEARED, 14:31Z: the Director RULED the collapse in DIRECTOR_DIRECTIVE_ - collapse to the ENGINE'S OWN MEASURED RESIDUAL SD on the real walk-forward set of 1,615, explicitly NOT to any hand-set constant and explicitly not to 12.65. The oracle: direct residual SD 13.09, which at a +8 favourite gives 0.729 and so matches the WIDER of the two public surfaces at 72.7 percent - the narrow 76.1 percent surface is the defect. Two caveats travel with it by the Director's own instruction: the implied spread is NOT stable across bands, reading about 12 at 5-7 and about 15 at 7-9, and the figures come from a team-only harness at MAE about 10.1 against the engine's 9.95, so they are an upper bound to be confirmed on the engine's own set. THIS ROW REMAINS BLOCKED, on the EXECUTION of that collapse rather than on the decision, which is ship-list item 6. ||| BLOCKER CLEARED - THE PREREG LANDED IN FULL, 2026-08-07T16:58Z. DIRECTOR_DIRECTIVE_ section 4 delivers everything this row was waiting on and states nothing further is owed. QUANTITY: the standard deviation of actual minus predicted margin on the successor engine's own walk-forward set at n=1,615, clean basis, regular season. EXPECTED LANDING ZONE 12.4 to 13.2, with the Director's references all WIDER than every constant in production - direct residual SD 13.09 on 756 walk-forward games. STOP CONDITION, and it is a real one rather than a formality: outside 11.5 to 14.5, STOP and report rather than ship, because that would mean the engine's MAE and its residuals disagree. THEN set that single value as the ONE served spread and repoint all four consumers in the SAME change per the propagation law, with no consumer left on an old value. VERIFY ALL THREE: the two public surfaces must return the same probability for the same game, interval coverage must hold at 89 to 90 percent, and the value must reproduce. EXPLICITLY OUT OF SCOPE, in his words: the shape problem - a single value cannot fix a bias that reverses sign between the coin-flip band and the big-edge band, which is what THIS row's fitted map addresses afterwards. So the ordering is unchanged and now fully specified: collapse first, then this map becomes that one value. BLOCKER RE-READ 2026-08-12: THE SIGMA COLLAPSE THIS WAITED ON IS DONE AND SERVED. ops/analytics/win_prob_sigma.py holds the ONE value, SIGMA_MARGIN_RESIDUAL = 12.5569 as-of 2026-08-07 n=1474; build_site.py:2255 serves it as , repointed 2026-08-08; and the accuracy page's private 13.2353 was retired in the same change so no surface holds a copy. That was this row's only named blocker. NOT UNILATERALLY UNBLOCKING IT - the prereg that set the blocker is the directive's own and a human should confirm the collapse satisfies it - but the CONDITION IS MEASURABLY MET and this row should be re-read for readiness rather than left waiting. Note also that MODEL_STATE_OF_RECORD still calls 12.5569 not-yet-served, which is stale and may be why this row still reads blocked.",
       "state": "blocked",
       "pm_authored": false,
       "impact": "",
@@ -14176,7 +14131,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Drop-in replacing p home = Phi(margin 12.65) with a two-parameter map fitted .",
-      "rank": 167,
+      "rank": 164,
       "actions": [
        {
         "verb": "top",
@@ -14221,7 +14176,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 170,
+      "rank": 167,
       "actions": [
        {
         "verb": "top",
@@ -14253,7 +14208,7 @@
       "why": "Item 3 deliverable filed 2026-08-07T12 at docs reports .md. Nothing is repointed which the requires. THE each with its path and its consumer. ONE sigma 11.2500 serving the games slate and it is NOT A ...",
       "priority": 1,
       "seat": "top",
-      "status": "open - inventory DELIVERED and nothing repointed; the collapse to one served value is the next decision and 11.24 to 12.65 must not ship",
+      "status": "open - inventory DELIVERED and nothing repointed; the collapse to one served value is the next decision and 11.24 to 12.65 must not ship THE INVENTORY DID ITS JOB - THE COLLAPSE LANDED THE NEXT DAY AND IS SERVED. Measured 2026-08-12. This row was filed 2026-08-07 with nothing repointed, as the directive required. On 2026-08-08 the repoint happened: ops/analytics/win_prob_sigma.py now holds SIGMA_MARGIN_RESIDUAL = 12.5569, as-of 2026-08-07 at n=1474, and FIVE modules read it - build_site, build_season_accuracy_v1, build_rating_chain_extend, pin_win_prob_sigma_shadow_v1 and margin_residual_sigma_v1. BOTH DISAGREEING SURFACES WERE FIXED AT ONCE. build_season_accuracy_v1 used to carry a private 13.2353 while the board served 11.2500 - two public surfaces disagreeing about the same game. Its comment now reads 'there is no private copy of this number anywhere', with the old value kept as an audit trail rather than deleted. build_site.py:2255 serves . So the four-sigma inventory became a one-sigma serve in a day. AND THE REPOINT RECORDED ITS OWN LIMITS, which is why it is trustworthy: coverage improved to 90.25 percent against the served 11.25's 86.12 at n=1477; the CENTRE is byte-identical, so this is corrected confidence and integrity and NEVER better predictions, with the head-to-head called a dead heat at 10.12 against 10.05; it is append-only as a new with the incumbent's 268 rows untouched; and the rollback is one line. TWO CONSEQUENCES WORTH CARRYING. FIRST, docs/reports/MODEL_STATE_OF_RECORD.md still describes 12.5569 as accepted but NOT YET SERVED - that is LAPSED, it has been served since 2026-08-08 and the record should say so. SECOND, and this is the valuable one: the row the-fitted-probability-map-is-ready-and-waits-on-the-sigma-collapse is a DIRECTOR-FINISHED apply item whose ONLY stated blocker was 'collapse the four production sigmas to ONE served value first'. THAT COLLAPSE IS DONE AND SERVED. Its blocker has cleared and it should be re-read for readiness rather than left sitting.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -14266,7 +14221,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 171,
+      "rank": 168,
       "actions": [
        {
         "verb": "top",
@@ -14311,7 +14266,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 187,
+      "rank": 184,
       "actions": [
        {
         "verb": "top",
@@ -14356,7 +14311,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 194,
+      "rank": 191,
       "actions": [
        {
         "verb": "top",
@@ -14401,7 +14356,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 195,
+      "rank": 192,
       "actions": [
        {
         "verb": "top",
@@ -14446,7 +14401,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 202,
+      "rank": 199,
       "actions": [
        {
         "verb": "top",
@@ -14491,7 +14446,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 208,
+      "rank": 204,
       "actions": [
        {
         "verb": "top",
@@ -14536,7 +14491,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 214,
+      "rank": 209,
       "actions": [
        {
         "verb": "top",
@@ -14581,7 +14536,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 215,
+      "rank": 210,
       "actions": [
        {
         "verb": "top",
@@ -14626,7 +14581,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 218,
+      "rank": 213,
       "actions": [
        {
         "verb": "top",
@@ -14671,7 +14626,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 224,
+      "rank": 219,
       "actions": [
        {
         "verb": "top",
@@ -14716,7 +14671,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 225,
+      "rank": 220,
       "actions": [
        {
         "verb": "top",
@@ -14761,7 +14716,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 226,
+      "rank": 221,
       "actions": [
        {
         "verb": "top",
@@ -14806,7 +14761,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 229,
+      "rank": 224,
       "actions": [
        {
         "verb": "top",
@@ -14851,7 +14806,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 231,
+      "rank": 226,
       "actions": [
        {
         "verb": "top",
@@ -14896,7 +14851,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 242,
+      "rank": 237,
       "actions": [
        {
         "verb": "top",
@@ -14941,7 +14896,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 247,
+      "rank": 242,
       "actions": [
        {
         "verb": "top",
@@ -14986,7 +14941,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 252,
+      "rank": 247,
       "actions": [
        {
         "verb": "top",
@@ -15031,7 +14986,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 255,
+      "rank": 250,
       "actions": [
        {
         "verb": "top",
@@ -15076,7 +15031,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 263,
+      "rank": 259,
       "actions": [
        {
         "verb": "top",
@@ -15121,7 +15076,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 265,
+      "rank": 261,
       "actions": [
        {
         "verb": "top",
@@ -15166,7 +15121,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 266,
+      "rank": 262,
       "actions": [
        {
         "verb": "top",
@@ -15212,7 +15167,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Which margin model the hard dependency attaches to - the market-fitted served incumbent or the unpromoted clean successor. Filed ops scout outbox the ...",
-      "rank": 270,
+      "rank": 266,
       "actions": [
        {
         "verb": "top",
@@ -15257,7 +15212,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 273,
+      "rank": 269,
       "actions": [
        {
         "verb": "top",
@@ -15302,7 +15257,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 282,
+      "rank": 278,
       "actions": [
        {
         "verb": "top",
@@ -15347,7 +15302,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 285,
+      "rank": 281,
       "actions": [
        {
         "verb": "top",
@@ -15392,7 +15347,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 286,
+      "rank": 282,
       "actions": [
        {
         "verb": "top",
@@ -15437,7 +15392,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 287,
+      "rank": 283,
       "actions": [
        {
         "verb": "top",
@@ -15482,7 +15437,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 289,
+      "rank": 285,
       "actions": [
        {
         "verb": "top",
@@ -15527,7 +15482,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 290,
+      "rank": 286,
       "actions": [
        {
         "verb": "top",
@@ -15572,7 +15527,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 294,
+      "rank": 290,
       "actions": [
        {
         "verb": "top",
@@ -15617,7 +15572,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 295,
+      "rank": 291,
       "actions": [
        {
         "verb": "top",
@@ -15662,7 +15617,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 297,
+      "rank": 293,
       "actions": [
        {
         "verb": "top",
@@ -15707,7 +15662,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 298,
+      "rank": 294,
       "actions": [
        {
         "verb": "top",
@@ -15752,7 +15707,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 299,
+      "rank": 295,
       "actions": [
        {
         "verb": "top",
@@ -15797,7 +15752,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 301,
+      "rank": 297,
       "actions": [
        {
         "verb": "top",
@@ -15842,7 +15797,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 304,
+      "rank": 300,
       "actions": [
        {
         "verb": "top",
@@ -15863,6 +15818,51 @@
         "verb": "shelve",
         "icon": "🗄",
         "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20deserved-record-v2-must-beat-margin-r063%3A%20shelve&body=The%20bar%20deserved-record%20has%20to%20clear%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       }
+      ]
+     },
+     {
+      "task_id": "the-successor-engine-is-one-oracle-bar-from-eval",
+      "family": "modeling",
+      "name": "The clean engine now reproduces three of four bars and the basis finally matches",
+      "header": "The clean engine now reproduces three of four bars and the basis finally matches",
+      "why": "Measured 2026-08-07T10 . records the benchmark of record as unreproducible here because the warehouse held no postseason and the maximum 2019-2026 basis was 1739 against a stated need of roughly ...",
+      "priority": 2,
+      "seat": "top",
+      "status": "ready ||| SWEEP FALSE POSITIVE - the delta CONFIRMS this row rather than resolving it, 13:56Z. The cited artifact says the successor engine now reproduces THREE OF FOUR oracle bars on our own warehouse. That is precisely the state this row describes - one bar from evaluable - so the delta is the evidence FOR the row, not evidence the row is finished. The remaining work is the fourth bar, and MODEL_STATE_OF_RECORD still carries the engine as stop-and-report. THE ROW STANDS, and it is load-bearing for ship-list item 4. CROSS-CHECKED 2026-08-12, AND THIS ROW IS THE SAME INVESTIGATION AS seven-games-short-and-the-totals-band-still-misses - read them together. THE MARGIN ARM CONFIRMS EXACTLY: holds 1611 rows, matching this row's margin n=1611 to the row. The engine writes precisely what it scores, so the served table and the backtest agree and neither is drifting from the other. THE BASIS HAS MOVED AND THAT MATTERS FOR THE COMPARISON: measured today the 2019-2026 non-exhibition basis is 1894 = 1757 regular plus 137 postseason, against this row's 1879 = 1742 plus 137 on 2026-08-07. The POSTSEASON half is identical, 137 both times, which is the backfill holding steady. The regular half grew by 15 in five days because the season is being played. SO 1879 IS AN AS-OF NUMBER, NOT A CONSTANT, and any comparison against the oracle's roughly 1855 must carry its date - the render-time-numbers law applies to a basis count exactly as it does to a published figure. A future reader who finds 1894 has not found a discrepancy. WHAT THE SIBLING ROW ADDS, so nobody re-derives it: the totals sample is NOT short by an accident. ops/analytics/margin_successor_v1.py line 190 gates the totals arm on `tm.ready(h,a) and Y != 2020`, which is TWO exclusions - a whole season AND the totals model's own readiness condition, separate from and stricter than the margin arm's per-team BURN_IN. That is why totals n sits near 1488 while margin sits at 1611, and it is why a whole-2020 explanation does not reconcile the difference arithmetically. AND THE REMAINING BAR FAILS ON THE LOW SIDE: totals MAE 13.758 against an expected 13.970 to 14.270 is BETTER than the band, not worse. Widening an oracle downward to admit a better-than-expected number on a basis that is not yet reconciled would be fitting the oracle to the result - which this row's own do-not-re-band instruction already says, and the arithmetic above is the reason it is right.",
+      "state": "ready now",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 2.0,
+      "title": "The clean engine now reproduces three of four bars and the basis finally matches",
+      "unlocks": "AND- this is not a promotion proposal.",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 308,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-successor-engine-is-one-oracle-bar-from-eval%3A%20top&body=The%20clean%20engine%20now%20reproduces%20three%20of%20four%20bars%20and%20the%20basis%20finally%20matches%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-successor-engine-is-one-oracle-bar-from-eval%3A%20bump&body=The%20clean%20engine%20now%20reproduces%20three%20of%20four%20bars%20and%20the%20basis%20finally%20matches%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-successor-engine-is-one-oracle-bar-from-eval%3A%20demote&body=The%20clean%20engine%20now%20reproduces%20three%20of%20four%20bars%20and%20the%20basis%20finally%20matches%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-successor-engine-is-one-oracle-bar-from-eval%3A%20shelve&body=The%20clean%20engine%20now%20reproduces%20three%20of%20four%20bars%20and%20the%20basis%20finally%20matches%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
        }
       ]
      },
@@ -15888,7 +15888,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Which numbers are the floor - the pre- 0.25 gain or the leak-free 0.051. Filed ops scout outbox the availability floor names no . the floor is named ...",
-      "rank": 322,
+      "rank": 319,
       "actions": [
        {
         "verb": "top",
@@ -15933,7 +15933,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 327,
+      "rank": 324,
       "actions": [
        {
         "verb": "top",
@@ -15978,7 +15978,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 331,
+      "rank": 328,
       "actions": [
        {
         "verb": "top",
@@ -16023,7 +16023,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 333,
+      "rank": 330,
       "actions": [
        {
         "verb": "top",
@@ -16068,7 +16068,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 336,
+      "rank": 333,
       "actions": [
        {
         "verb": "top",
@@ -16113,7 +16113,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 339,
+      "rank": 336,
       "actions": [
        {
         "verb": "top",
@@ -16158,7 +16158,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 343,
+      "rank": 340,
       "actions": [
        {
         "verb": "top",
@@ -16203,7 +16203,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 348,
+      "rank": 347,
       "actions": [
        {
         "verb": "top",
@@ -16248,7 +16248,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 351,
+      "rank": 350,
       "actions": [
        {
         "verb": "top",
@@ -16293,7 +16293,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 352,
+      "rank": 351,
       "actions": [
        {
         "verb": "top",
@@ -16338,7 +16338,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 354,
+      "rank": 353,
       "actions": [
        {
         "verb": "top",
@@ -16383,7 +16383,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 364,
+      "rank": 363,
       "actions": [
        {
         "verb": "top",
@@ -16428,7 +16428,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 370,
+      "rank": 369,
       "actions": [
        {
         "verb": "top",
@@ -16473,7 +16473,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 371,
+      "rank": 370,
       "actions": [
        {
         "verb": "top",
@@ -16518,7 +16518,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 375,
+      "rank": 374,
       "actions": [
        {
         "verb": "top",
@@ -18866,7 +18866,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 102,
+      "rank": 101,
       "actions": [
        {
         "verb": "top",
@@ -18911,7 +18911,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 104,
+      "rank": 103,
       "actions": [
        {
         "verb": "top",
@@ -18956,7 +18956,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 109,
+      "rank": 108,
       "actions": [
        {
         "verb": "top",
@@ -19001,7 +19001,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 119,
+      "rank": 117,
       "actions": [
        {
         "verb": "top",
@@ -19046,7 +19046,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 149,
+      "rank": 147,
       "actions": [
        {
         "verb": "top",
@@ -19091,7 +19091,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 153,
+      "rank": 151,
       "actions": [
        {
         "verb": "top",
@@ -19136,7 +19136,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 154,
+      "rank": 152,
       "actions": [
        {
         "verb": "top",
@@ -19181,7 +19181,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 158,
+      "rank": 155,
       "actions": [
        {
         "verb": "top",
@@ -19226,7 +19226,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 183,
+      "rank": 180,
       "actions": [
        {
         "verb": "top",
@@ -19272,7 +19272,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The wave was dispatched as fifteen finished surfaces one bake from the reader.",
-      "rank": 205,
+      "rank": 201,
       "actions": [
        {
         "verb": "top",
@@ -19317,7 +19317,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 206,
+      "rank": 202,
       "actions": [
        {
         "verb": "top",
@@ -19362,7 +19362,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 223,
+      "rank": 218,
       "actions": [
        {
         "verb": "top",
@@ -19407,7 +19407,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 243,
+      "rank": 238,
       "actions": [
        {
         "verb": "top",
@@ -19452,7 +19452,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 256,
+      "rank": 252,
       "actions": [
        {
         "verb": "top",
@@ -19497,7 +19497,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 259,
+      "rank": 255,
       "actions": [
        {
         "verb": "top",
@@ -19542,7 +19542,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 261,
+      "rank": 257,
       "actions": [
        {
         "verb": "top",
@@ -19587,7 +19587,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 262,
+      "rank": 258,
       "actions": [
        {
         "verb": "top",
@@ -19632,7 +19632,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 274,
+      "rank": 270,
       "actions": [
        {
         "verb": "top",
@@ -19677,7 +19677,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 276,
+      "rank": 272,
       "actions": [
        {
         "verb": "top",
@@ -19722,7 +19722,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 288,
+      "rank": 284,
       "actions": [
        {
         "verb": "top",
@@ -19767,7 +19767,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 292,
+      "rank": 288,
       "actions": [
        {
         "verb": "top",
@@ -19812,7 +19812,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 296,
+      "rank": 292,
       "actions": [
        {
         "verb": "top",
@@ -19857,7 +19857,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 305,
+      "rank": 301,
       "actions": [
        {
         "verb": "top",
@@ -19902,7 +19902,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 307,
+      "rank": 303,
       "actions": [
        {
         "verb": "top",
@@ -19947,7 +19947,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 308,
+      "rank": 304,
       "actions": [
        {
         "verb": "top",
@@ -19992,7 +19992,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 310,
+      "rank": 306,
       "actions": [
        {
         "verb": "top",
@@ -20037,7 +20037,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 321,
+      "rank": 318,
       "actions": [
        {
         "verb": "top",
@@ -20082,7 +20082,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 326,
+      "rank": 323,
       "actions": [
        {
         "verb": "top",
@@ -20127,7 +20127,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 332,
+      "rank": 329,
       "actions": [
        {
         "verb": "top",
@@ -20172,7 +20172,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 340,
+      "rank": 337,
       "actions": [
        {
         "verb": "top",
@@ -20217,7 +20217,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 357,
+      "rank": 356,
       "actions": [
        {
         "verb": "top",
@@ -20262,7 +20262,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 360,
+      "rank": 359,
       "actions": [
        {
         "verb": "top",
@@ -20307,7 +20307,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 362,
+      "rank": 361,
       "actions": [
        {
         "verb": "top",
@@ -20352,7 +20352,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 373,
+      "rank": 372,
       "actions": [
        {
         "verb": "top",
@@ -20397,7 +20397,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 377,
+      "rank": 376,
       "actions": [
        {
         "verb": "top",
@@ -20837,9 +20837,9 @@
     "target": 40,
     "count": 438,
     "ok": true,
-    "label": "438 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 6m ago.)",
+    "label": "438 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 20m ago.)",
     "as_of_utc": "2026-08-12T10:06:09Z",
-    "age_secs": 364,
+    "age_secs": 1241,
     "stale": false
    },
    "source": "dispatch queue",
@@ -21410,67 +21410,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-12T10:10:53Z",
-  "age_s": 65,
-  "cycles": 294,
+  "last_poll_utc": "2026-08-12T10:25:58Z",
+  "age_s": 40,
+  "cycles": 307,
   "known": true,
-  "label": "scout: alive, last poll 65s ago",
+  "label": "scout: alive, last poll 40s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "6:09am",
+   "time": "6:24am",
+   "text": "poll #306 · nothing new",
+   "detail": "poll cycle=306 ok directives_new=0"
+  },
+  {
+   "time": "6:24am",
+   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
+   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
+  },
+  {
+   "time": "6:24am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   },
   {
-   "time": "6:10am",
+   "time": "6:25am",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
   },
   {
-   "time": "6:10am",
-   "text": "poll #294 · nothing new",
-   "detail": "poll cycle=294 ok directives_new=0"
+   "time": "6:25am",
+   "text": "no spawn yet - EMPTY-CHAIR backoff (47s of 120s, failures=1); retrying indefinitely, gap capped at 300s",
+   "detail": "no spawn yet - EMPTY-CHAIR backoff (47s of 120s, failures=1); retrying indefinitely, gap capped at 300s"
   },
   {
-   "time": "6:10am",
+   "time": "6:25am",
+   "text": "unfinished work found — resuming a coordinator",
+   "detail": "ORPHAN-WAKE queue_state: no live coordinator + unfinished work - attempting resume spawn"
+  },
+  {
+   "time": "6:25am",
+   "text": "no spawn yet - EMPTY-CHAIR backoff (41s of 120s, failures=1); retrying indefinitely, gap capped at 300s",
+   "detail": "no spawn yet - EMPTY-CHAIR backoff (41s of 120s, failures=1); retrying indefinitely, gap capped at 300s"
+  },
+  {
+   "time": "6:25am",
+   "text": "poll #307 · nothing new",
+   "detail": "poll cycle=307 ok directives_new=0"
+  },
+  {
+   "time": "6:25am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
   },
   {
-   "time": "6:10am",
+   "time": "6:26am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
-  },
-  {
-   "time": "6:12am",
-   "text": "poll #295 · nothing new",
-   "detail": "poll cycle=295 ok directives_new=0"
-  },
-  {
-   "time": "6:12am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
-  },
-  {
-   "time": "6:12am",
-   "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
-   "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
-  },
-  {
-   "time": "6:12am",
-   "text": "publish-health: PUBLIC BOARD STALE (#1): staleness=926s threshold=900s live=2026-08-12T09:56:36+00:00",
-   "detail": "publish-health: PUBLIC BOARD STALE (#1): staleness=926s threshold=900s live=2026-08-12T09:56:36+00:00"
-  },
-  {
-   "time": "6:12am",
-   "text": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
-   "detail": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full str"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-12T10:11:42.847205+00:00",
+  "as_of": "2026-08-12T10:26:25.885407+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -21479,40 +21479,40 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "65s",
-    "state_text": "on · seen 65s ago"
+    "age_label": "40s",
+    "state_text": "on · seen 40s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "15s",
-    "state_text": "on · seen 15s ago"
+    "age_label": "12s",
+    "state_text": "on · seen 12s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "5m",
-    "state_text": "on · seen 5m ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "38s",
-    "state_text": "on · seen 38s ago"
+    "age_label": "42s",
+    "state_text": "on · seen 42s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "6m",
-    "state_text": "on · seen 6m ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    }
   ],
   "width": {
@@ -21592,7 +21592,7 @@
    },
    {
     "label": "Midnight projected",
-    "ran_et": "6:10am",
+    "ran_et": "6:25am",
     "next_et": "12:00am",
     "result": "needs a look"
    },
@@ -21622,7 +21622,7 @@
    },
    {
     "label": "standing daily reconcile: CEO-ask reconciliation, stale-state audit (silently-stale is banned), superseded-file consolidation candidates, claims-vs-reality reopener, and the two-truths scan -> a plain-English diff in the morning brief plus a board panel",
-    "ran_et": "6:10am",
+    "ran_et": "6:25am",
     "next_et": "3:30am",
     "result": "needs a look"
    },
@@ -21733,13 +21733,13 @@
  },
  "coordinator_heartbeat": {
   "known": true,
-  "alive": true,
-  "last_heartbeat_utc": "2026-08-12T10:11:47Z",
-  "session_age_secs": 23019,
-  "last_progress_age_secs": 11,
-  "last_spawn_attempt": "2026-08-12T03:45:18Z",
-  "blocked_reason": "",
-  "state": "ALIVE"
+  "alive": false,
+  "last_heartbeat_utc": "2026-08-12T10:24:26Z",
+  "session_age_secs": 23899,
+  "last_progress_age_secs": 132,
+  "last_spawn_attempt": "2026-08-12T10:24:40Z",
+  "blocked_reason": "no start attempt yet — rate floor holds the next one for up to 181s (one attempt guaranteed every 300s while the chair is empty)",
+  "state": "DEAD"
  },
  "pipe_health": {
   "directives_pending": 0,
@@ -21766,7 +21766,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 1 work lanes have been running for 6810 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 1 work lanes have been running for 6825 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 1
  },
@@ -21775,25 +21775,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-12T10:11:53+00:00",
+   "revalidated": "2026-08-12T10:26:34+00:00",
    "stale_reason": "These readings may be out of date — last updated 113h ago.",
    "age_label": "113h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-12T10:11:53+00:00",
+   "as_of": "2026-08-12T10:26:34+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T10:11:53+00:00",
+   "revalidated": "2026-08-12T10:26:34+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T10:11:53+00:00",
+   "as_of": "2026-08-12T10:26:34+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T10:11:53+00:00",
+   "revalidated": "2026-08-12T10:26:34+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -21802,25 +21802,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T10:11:53+00:00",
+   "revalidated": "2026-08-12T10:26:34+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-12T10:11:40Z",
+   "as_of": "2026-08-12T10:23:57Z",
    "stale": false,
-   "revalidated": "2026-08-12T10:11:53+00:00",
+   "revalidated": "2026-08-12T10:26:34+00:00",
    "stale_reason": "",
-   "age_label": "13s",
+   "age_label": "2m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T10:11:53+00:00",
+   "revalidated": "2026-08-12T10:26:34+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -21829,16 +21829,16 @@
    "source": "director inbox",
    "as_of": "2026-08-12T09:06:28Z",
    "stale": false,
-   "revalidated": "2026-08-12T10:11:53+00:00",
+   "revalidated": "2026-08-12T10:26:34+00:00",
    "stale_reason": "",
-   "age_label": "65m",
+   "age_label": "80m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-08T12:00:00Z",
    "stale": true,
-   "revalidated": "2026-08-12T10:11:53+00:00",
+   "revalidated": "2026-08-12T10:26:34+00:00",
    "stale_reason": "No new team updates in 94h — nothing was shipped in that window. The feed itself is current.",
    "age_label": "94h",
    "stale_after": 172800,
@@ -21846,22 +21846,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T10:02:12+00:00",
+   "as_of": "2026-08-12T10:21:51+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T10:11:53+00:00",
+   "revalidated": "2026-08-12T10:26:34+00:00",
    "stale_reason": "",
-   "age_label": "9m",
+   "age_label": "4m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-12T10:11:42.847205+00:00",
+   "as_of": "2026-08-12T10:26:25.885407+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T10:11:53+00:00",
+   "revalidated": "2026-08-12T10:26:34+00:00",
    "stale_reason": "",
-   "age_label": "15s",
+   "age_label": "12s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 12, 6:11am ET"
+ "generated_et": "Aug 12, 6:26am ET"
 }
