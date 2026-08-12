@@ -128,19 +128,29 @@ function groupTable(d, code){
 // THE PRODUCT PROMISE, MECHANICALLY: the call must equal the sum of its named parts, and the page
 // refuses to display a number whose parts do not add up to it. Two-truths at the surface.
 function showWork(g, d){
-  const quality = g.margin_a;
-  const site = 0, rest = 0;
-  const sum = quality + site + rest;
-  if (Math.abs(sum - g.margin_a) > 0.05){
-    return `<div class="work err">This number does not equal the sum of its parts, so it is not
-      shown. Reported rather than rendered.</div>`;
-  }
   const a = TEAMS_BY_CODE[g.team_a], b = TEAMS_BY_CODE[g.team_b];
+  // The call decomposes into named parts, and the parts must ADD UP to the number on the card.
+  const ranking = (a.rank_prior ?? 0) - (b.rank_prior ?? 0);
+  const form    = (a.results_term ?? 0) - (b.results_term ?? 0);
+  const court = 0, rest = 0;
+  const sum = ranking + form + court + rest;
+  // HARD ASSERT AT RENDER. If the components do not sum to the displayed call, the card refuses to
+  // show a derivation rather than showing one that does not reconcile — a breakdown that does not
+  // add up is worse than no breakdown, because it looks like proof.
+  if (Math.abs(sum - g.margin_a) > 0.05){
+    return `<div class="work err">These parts do not add up to the call
+      (${sum.toFixed(1)} against ${g.margin_a.toFixed(1)}), so the working is withheld rather than
+      shown wrong. Reported, not rendered.</div>`;
+  }
+  const sgn = v => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1);
   return `<div class="work">
-    <b>Call = quality ${quality >= 0 ? "+" : "−"}${Math.abs(quality).toFixed(1)}</b>
-      for ${a.name}, and nothing else.<br>
-    <b>Quality</b> is the gap in FIBA world-ranking strength — ${a.name} ${a.fiba_points} against
-      ${b.name} ${b.fiba_points} — put on a scoreboard scale that we fitted, not chose.<br>
+    <b>Call ${sgn(g.margin_a)} for ${a.name} = ranking ${sgn(ranking)} · recent form ${sgn(form)}</b><br>
+    <b>Ranking</b> is the gap in FIBA world-ranking points — ${a.name} ${a.fiba_points} against
+      ${b.name} ${b.fiba_points} — put on a scoreboard scale we fitted from
+      ${d.fit.n_games} verified games, never chosen.<br>
+    <b>Recent form</b> is how far each side has run ahead of or behind its ranking in the games we
+      could verify, shrunk hard so one result cannot re-rate a country:
+      ${a.name} ${sgn(a.results_term ?? 0)}, ${b.name} ${sgn(b.results_term ?? 0)}.<br>
     <b>Court</b> adds nothing: every game is at the same neutral arena.
       ${g.is_host_game ? "Mexico is at home in the building, but we have not measured a home effect "
       + "in this competition and will not borrow the one we measured in a different league." : ""}<br>
