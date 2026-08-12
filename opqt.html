@@ -164,6 +164,43 @@ function gameStrip(d){
   }).join("")}</div>`;
 }
 
+// The ledger scores the call that was on the board BEFORE tip — never a number re-figured with the
+// result in hand. It renders the losses at the same size as the wins; a ledger that quietly drops
+// its bad nights is an advertisement, not a record.
+function ledger(d){
+  const rows = d.grades || [];
+  const s = d.grades_summary;
+  if (!rows.length){
+    return `<div class="card"><div class="scroll"><table>
+      <thead><tr><th>Game</th><th>Our call</th><th>Our win odds</th><th>Final</th>
+        <th>Margin error</th><th>Brier</th></tr></thead>
+      <tbody><tr><td colspan="6" class="empty" style="text-align:left">First grades land Monday
+        night.</td></tr></tbody></table></div></div>`;
+  }
+  const sideLabel = {correct:"called it", wrong:"missed it", pickem:"coin flip"};
+  const body = rows.map(g => {
+    const a = TEAMS_BY_CODE[g.team_a], b = TEAMS_BY_CODE[g.team_b];
+    const fav = g.called_margin_a >= 0 ? a : b;
+    return `<tr>
+      <td>${a.name} vs ${b.name}<div class="cap">${sideLabel[g.side] || g.side} · called
+        ${g.called_at.slice(0,10)}</div></td>
+      <td>${fav.name} by ${Math.abs(g.called_margin_a).toFixed(1)}</td>
+      <td>${fmtPct0(g.called_win_prob_a)} ${a.team}</td>
+      <td>${g.score_a}–${g.score_b}</td>
+      <td>${g.margin_error.toFixed(1)}</td>
+      <td>${g.brier.toFixed(3)}</td></tr>`;
+  }).join("");
+  const foot = s ? `<div class="pad note">Through ${s.n_graded} game${s.n_graded===1?"":"s"}:
+    average margin error <b>${s.mean_margin_error.toFixed(1)} points</b> ·
+    Brier <b>${s.mean_brier.toFixed(3)}</b> (a coin scores 0.250, and lower is better) ·
+    right side on ${s.n_correct_side} of ${s.n_decided} games that had one.
+    Every row scores the number published before tip.</div>` : "";
+  return `<div class="card"><div class="scroll"><table>
+    <thead><tr><th>Game</th><th>Our call</th><th>Our win odds</th><th>Final</th>
+      <th>Margin error</th><th>Brier</th></tr></thead>
+    <tbody>${body}</tbody></table></div>${foot}</div>`;
+}
+
 function render(d){
   d.teams.forEach(t => TEAMS_BY_CODE[t.team] = t);
   const byTitle = [...d.teams].sort((a,b) => b.p_title - a.p_title);
@@ -239,10 +276,7 @@ function render(d){
     </div></div>
 
     <h2>The grading ledger</h2>
-    <div class="card"><div class="scroll"><table>
-      <thead><tr><th>Game</th><th>Our call</th><th>Our win odds</th><th>Final</th><th>Margin error</th><th>Brier</th></tr></thead>
-      <tbody><tr><td colspan="6" class="empty" style="text-align:left">First grades land Monday night.</td></tr></tbody>
-    </table></div></div>
+    ${ledger(d)}
 
     <div class="card"><div class="pad note">
       This field left its senior professional players home, so these ratings lean on
