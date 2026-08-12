@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-12T08:31:42+00:00",
+ "generated_utc": "2026-08-12T08:41:42+00:00",
  "freshness": {
-  "baked_utc": "2026-08-12T08:31:42+00:00",
-  "baked_et": "Aug 12, 4:31am ET",
-  "revalidated_utc": "2026-08-12T08:31:42+00:00",
+  "baked_utc": "2026-08-12T08:41:42+00:00",
+  "baked_et": "Aug 12, 4:41am ET",
+  "revalidated_utc": "2026-08-12T08:41:42+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-12",
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-12T08:31:42+00:00",
+  "generated_utc": "2026-08-12T08:41:42+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -1277,7 +1277,7 @@
      "why": "Measured while closing the-grades-table-has-eight-thousand-rows-with-no-player and it is the reason that row's backfill cannot proceed. .player id holds id spaces simultaneously 103310 rows in the ...",
      "priority": -3.5,
      "seat": "DATA",
-     "status": "open",
+     "status": "RE-MEASURED 2026-08-12 ON THE REAL CONSUMER: THE LIVE HARM IS ZERO, AND THE STRUCTURAL POINT SURVIVES IN A STRONGER FORM. RERANKED, NOT CLOSED-AS-FIXED. THE 38 PERCENT DOES NOT REPRODUCE. I first measured it loosely and got 0.3 percent, then suspected my own query rather than the row and read the join at scripts/dvp_rung_substrate_eval.py line 155. It joins on BOTH keys - gl.game_id=g.game_id AND gl.player_id::text=g.player_id - and it reads only the slice where source_kind is reconstructed, reconstruction_version is , stat_group is player, stat is one of MIN PTS REB AST, and realized is not null. Reproduced exactly: 23232 eligible grade rows carry an id and 23232 SURVIVE THE JOIN. ZERO DROPPED, 0.0 percent. THE 66095 FIGURE CAME FROM A POPULATION THE CONSUMER NEVER READS - all 173790 grade rows with an id, joined on player_id alone without game_id and without the reconstructed filters. The consumer's population is 23232 of those, and it matches completely. So the harm is live and measured, not theoretical, is the part that does not hold. THE UNKNOWN POPULATION IS GONE. The row records 6690 ids in no space. Measured now against : of 173790 grade rows carrying an id, 109775 match an espn_athlete_id, 103060 match an nba_player_id, and ZERO match NEITHER. Every id resolves. AND THE COLUMN-LEVEL ARGUMENT IS SHARPER THAN FILED, WHICH IS WHY THIS ROW STAYS OPEN. Those two counts sum to 212835 against a total of 173790, so a single value can match BOTH map columns - the spaces are NOT cleanly disjoint and the column therefore cannot be typed by lookup either. That is a stronger statement of this row's own thesis that player_id here is a guess rather than a type. carries the same mixture: 225 distinct ids in the ESPN space and 553 in the NBA-stats space. The two mixed columns happen to align on the reconstructed slice, which is why today's consumer loses nothing. WHAT IS ACTUALLY OWED, and it is latent rather than urgent: any FUTURE consumer joining this column without the reconstructed filter, or on player_id alone, can still mis-join silently, and nothing declares which space a value came from. The fix is to carry the space alongside the id or resolve through the name map at the join, per the standing rule that all player joins go through the name map with the normalized fallback cascade. NOT LABELLED APPLY - nothing here is finished and awaiting wiring.",
      "state": "",
      "pm_authored": false,
      "impact": "",
@@ -1502,7 +1502,7 @@
      "why": "Measured while closing the-site-builder-needs-the-bridge-above-the-total whose hazardous half is already fixed. THE scripts build aggregates player totals at line 3868 with player id player name and ...",
      "priority": -3.35,
      "seat": "VIZ",
-     "status": "open",
+     "status": "CLOSED 2026-08-12 AS ALREADY-TRUE. THE SQL IS AS DESCRIBED AND THE PUBLISHED NUMBERS ARE NOT SPLIT - THE ROW READ THE GROUP BY AND NOT THE OUTPUT. Both GROUP BY sites are exactly as filed: scripts/build_site.py line 3868 groups by player_id, player_name and line 5811 by player_id, player_name, season, team_abbr, both on . But the resolution happens DOWNSTREAM of the aggregate, before anything publishes. MEASURED ON THIS ROW'S OWN EXAMPLE. Jewell Loyd holds two identifiers in : 204319 with 371 games and 11207.3 minutes, and 2987869 with 31 games and 845.0 minutes. Entity total 402 games, 12052.3 minutes - and site/players.json serves career_min 12052.3, the FULL entity total, not a half. The row cites 402 games as the true figure, which is precisely the merged number already being served. THE PER-SEASON SURFACE IS ALSO WHOLE. site/compare_seasons.json carries Jewell Loyd ONCE, keyed on the name key jewell loyd, with all twelve seasons 2015 through 2026 present - and 2026 there is 31 games and 845.0 minutes, which is the SECOND identifier's data sitting beside the first identifier's 2015 to 2025. One node, both ids, no split. THE MECHANISM, so nobody re-files this. Immediately after the first aggregate, build_site.py:3871 builds a union-find over name and id pairs and unions each row's normalized name with its raw id, then sums games and minutes across every component of the entity. Its own comment records the 2026-07-30 extension that unioned SEASONS too, having measured 154 of 556 players under-reporting their season count. compare_seasons resolves through name keys instead, which is why it carries a complete career across an id migration. Keying the GROUP BY on the raw identifier is therefore not a defect on its own; it is an intermediate the resolver consumes. THE LESSON THIS ROW IS AN INSTANCE OF: reading the aggregate is not reading the published number. A two-word change to those GROUP BY clauses would have been made against a surface that was already correct, and on this repo's own evidence it could have regressed the union - the resolver keys on the raw id, so changing what the aggregate emits changes what the resolver has to work with. NOT LABELLED APPLY, deliberately: it is not finished-work-awaiting-wiring, it is finished.",
      "state": "",
      "pm_authored": false,
      "impact": "",
@@ -3093,7 +3093,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 217,
+      "rank": 216,
       "actions": [
        {
         "verb": "top",
@@ -3138,7 +3138,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 221,
+      "rank": 220,
       "actions": [
        {
         "verb": "top",
@@ -3183,7 +3183,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 228,
+      "rank": 227,
       "actions": [
        {
         "verb": "top",
@@ -3228,7 +3228,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 234,
+      "rank": 233,
       "actions": [
        {
         "verb": "top",
@@ -3273,7 +3273,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 236,
+      "rank": 235,
       "actions": [
        {
         "verb": "top",
@@ -3318,7 +3318,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 237,
+      "rank": 236,
       "actions": [
        {
         "verb": "top",
@@ -3363,7 +3363,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 241,
+      "rank": 240,
       "actions": [
        {
         "verb": "top",
@@ -3408,7 +3408,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 252,
+      "rank": 251,
       "actions": [
        {
         "verb": "top",
@@ -3453,7 +3453,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 270,
+      "rank": 269,
       "actions": [
        {
         "verb": "top",
@@ -3498,7 +3498,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 280,
+      "rank": 279,
       "actions": [
        {
         "verb": "top",
@@ -3543,7 +3543,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 281,
+      "rank": 280,
       "actions": [
        {
         "verb": "top",
@@ -3588,7 +3588,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 287,
+      "rank": 286,
       "actions": [
        {
         "verb": "top",
@@ -3633,7 +3633,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 290,
+      "rank": 289,
       "actions": [
        {
         "verb": "top",
@@ -3678,7 +3678,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 291,
+      "rank": 290,
       "actions": [
        {
         "verb": "top",
@@ -3723,7 +3723,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 292,
+      "rank": 291,
       "actions": [
        {
         "verb": "top",
@@ -3768,7 +3768,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": true,
-      "rank": 302,
+      "rank": 301,
       "actions": [
        {
         "verb": "top",
@@ -3813,7 +3813,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 321,
+      "rank": 320,
       "actions": [
        {
         "verb": "top",
@@ -3858,7 +3858,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 324,
+      "rank": 323,
       "actions": [
        {
         "verb": "top",
@@ -3903,7 +3903,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 325,
+      "rank": 324,
       "actions": [
        {
         "verb": "top",
@@ -3948,7 +3948,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 331,
+      "rank": 330,
       "actions": [
        {
         "verb": "top",
@@ -3993,7 +3993,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 341,
+      "rank": 340,
       "actions": [
        {
         "verb": "top",
@@ -6909,7 +6909,7 @@
       "why": "The always-on background monitor that flags anything needing a decision",
       "priority": 1,
       "seat": "infra",
-      "status": "open",
+      "status": "CLOSED 2026-08-12 AS ALREADY-TRUE ON THE WAKER RISK, AND THE SECOND FINDING IS KEPT AS THE LESSON. THE LEFTOVERS ARE REAL: 20 spawn_child_*.ps1 files sit in ops/scout/state dated 2026-08-06 through 08-12, each ending in claude --dangerously-skip-permissions, and NONE mentions a pause, PAUSED_UNTIL or ack.py. So the row is right that the FILES do not read the flag. BUT THE GATE IS AT THE ONLY PLACE IT CAN LIVE, AND IT IS REAL. Verified in code rather than from a comment: ops/scout/hardwood_supervisor.ps1 checks the pause gate at the TOP of the spawn function around line 528, and it is FAIL-CLOSED IN BOTH DIRECTIONS - it initialises pauseGate to 75, sets it to 75 in its catch, and returns a PAUSE GATE refusal on any nonzero. The child script is staged much later, at line 694. SO DURING A PAUSE NO CHILD IS EVER WRITTEN OR LAUNCHED - there is nothing to leak, and the file cannot be gated in its own right because it does not exist until the gate has already passed. The supervisor's own comment says exactly this and the code backs it. The gate sits at the top rather than at either call site because there are two callers and a guard that must be remembered at each caller is the defect being closed. A REAPER ALREADY BOUNDS THE DIRECTORY: the same function keeps the 20 newest launchers and deletes the rest on every spawn. The count I measured is exactly 20, so the reaper is working, not absent - this is a bounded ring rather than unbounded accumulation. THE RESIDUAL IS MANUAL EXECUTION ONLY. A stale launcher would have to be run by hand, or by a stale shortcut, to wake the box during a pause. Nothing in the system re-invokes a spent one-shot. ON MY OWN EARLIER CHANGE, since it is the reason nothing reports these any more: I excluded ops/scout/state generated artifacts from ops/scout/test_pause_gate_sweep.py earlier tonight and spawn_child accusations went to zero. Re-checked here, that exclusion is CORRECT rather than a suppression - these are generated one-shot artifacts, not code, and the check they were failing belongs to their generator, which passes it. Had the generator been ungated the exclusion would have been a real suppression, which is why this was worth re-measuring rather than assuming. THE SECOND FINDING STANDS AND IS THE DURABLE PART: a lane in an isolated worktree saw this same sweep PASS because a worktree carries no gitignored files. A check whose verdict depends on generated state is green in isolation and red in the checkout, so WORKTREE-GREEN IS NOT PROOF for any check that scans a state directory - verify those in the main checkout before believing them.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -8297,51 +8297,6 @@
       ]
      },
      {
-      "task_id": "the-apply-first-gate-is-live-and-refuses-nothing",
-      "family": "infra",
-      "name": "The ranking gate is wired and every queue row is unlabelled, so it governs nothing",
-      "header": "The ranking gate is wired and every queue row is unlabelled, so it governs nothing",
-      "why": "Landed as commits and with 28 mutation-proven tests. The gate reads an apply or build label on each queue row and refuses a build dispatch while finished apply items wait. Zero of 517 rows in ops ...",
-      "priority": 1,
-      "seat": "infra",
-      "status": "open ||| SWEEP FALSE POSITIVE of the shipped-but-not-the-fix class, 13:56Z. The cited delta says the apply-first gate is verified and wired. This row does not dispute that it is wired - it says the gate IS LIVE AND REFUSES NOTHING. Both can be true at once, and a delta proving the gate was wired says nothing about whether it ever refuses anything, which is the entire complaint. Same shape as the directory-pathspec row where a WARNING shipped and the LEAK stayed open. THE ROW STANDS. MEASURED 2026-08-12 AND THE INSTRUCTION IS HALF WRONG - LABELLING EVERY ROW BUILD WOULD BE A FALSE ALL-CLEAR. I read the gate before touching a row. Two facts from ops/dispatch_lane.py decide the work. FIRST, ONLY APPLY LABELS ARM ANYTHING: check_apply_first builds its refusal set from rows where is_apply_item is true, and is_apply_item matches only the _APPLY_LABELS vocabulary - director-finished, apply, apply-only, finished, wire, wire-only. The lane being dispatched is classified by lane_is_apply_lane from its OWN identity, not from a queue row's build label. So a build label on a queue row changes NO gate behaviour. SECOND, AND THIS IS THE HARM: labelled_count increments on ANY label at line 1390, and it is what suppresses the DORMANT banner at line 1563. Mass-labelling 264 rows build would push labelled_count off zero, silence the line that currently says 0 of N rows carry a label so N=0 means UNLABELLED not clear, and arm nothing - the gate would LOOK live while still refusing nothing. That destroys precisely the honest reading this row praises. I ALSO DID NOT BULK-LABEL FROM A HEURISTIC, because the gate bans exactly that in its own words: an unlabelled row is NEVER inferred to be an apply item, inference here would be the whole bug, it would sweep half the backlog into N and refuse every build lane. A regex over row prose is that inference. Twelve open rows match a built-but-not-wired signature; I labelled only the three I measured MYSELF tonight and left the other nine for whoever verifies them. LABELLED APPLY, each with label_evidence on the row: line-impact-is-a-hard-dependency-of-the-margin-model, where walkforward_values.py already computes the specified adjustment and has no production consumer; the-availability-junction-has-a-numeric-bar-to-clear, which gates a promotion of that same existing build; and a-built-and-tested-rate-fix-has-sat-unserved-for-two-weeks, where 9234 rows are built and the effect re-confirmed on the current base. All three are currently blocked on a Director call, which is CORRECT and harmless - readiness is decided by the queue's own status and blocker fields through ops/queue_feed.py, so a blocked apply row sits out of the refusal set until it is answered and refuses no build lane meanwhile. SO THE REMAINING WORK IS NARROWER THAN FILED: label the APPLY rows only, one at a time, each with evidence that the content or code is complete. Leave build rows unlabelled so the dormancy counter keeps telling the truth about how much of the backlog has been classified. CORRECTION TO MY OWN PARAGRAPH ABOVE, CAUGHT BEFORE COMMITTING. I wrote that a blocked apply row sits out of the refusal set automatically. IT DOES NOT. queue_feed.is_blocked matches ^(blocked|gated|gating|gate) against the status STRING - blockedness is a LEAD WORD on the status, not an inferred property - so my three newly-labelled rows went straight into READY and the gate reported 2 ready RED. That would have refused build lanes for work no machine can action, which is the exact over-eager-gate failure ops/dispatch_lane.py warns about in its own header: an over-eager gate that halts the floor is worse than the prose. FIXED IN THE SAME BREATH by making the record true rather than by removing the labels. All three now carry a blocker field naming its OWNER and its UNLOCK, per the standing rule that a blocker with no named owner means nobody looked, and their status leads with BLOCKED ON A NAMED DIRECTOR CALL. MEASURED AFTER: apply-backlog reports 0 ready with 3 apply-labelled, and prints each held row beside its blocker. That is the gate armed and honest - it knows about three finished items, holds none of them against a build lane, and says why for each.",
-      "state": "",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "The ranking gate is wired and every queue row is unlabelled, so it governs nothing",
-      "unlocks": "Landed as commits and with 28 mutation-proven tests.",
-      "owner": "MACHINE",
-      "feed_status": "QUEUED",
-      "tier": 3,
-      "group": "process",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 210,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-apply-first-gate-is-live-and-refuses-nothing%3A%20top&body=The%20ranking%20gate%20is%20wired%20and%20every%20queue%20row%20is%20unlabelled%2C%20so%20it%20governs%20nothing%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-apply-first-gate-is-live-and-refuses-nothing%3A%20bump&body=The%20ranking%20gate%20is%20wired%20and%20every%20queue%20row%20is%20unlabelled%2C%20so%20it%20governs%20nothing%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-apply-first-gate-is-live-and-refuses-nothing%3A%20demote&body=The%20ranking%20gate%20is%20wired%20and%20every%20queue%20row%20is%20unlabelled%2C%20so%20it%20governs%20nothing%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-apply-first-gate-is-live-and-refuses-nothing%3A%20shelve&body=The%20ranking%20gate%20is%20wired%20and%20every%20queue%20row%20is%20unlabelled%2C%20so%20it%20governs%20nothing%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "the-counter-truth-writer-reports-lanes-orphaned",
       "family": "infra",
       "name": "The reaper logs lanes as orphaned, fails to write it, and returns them as orphaned anyway",
@@ -8362,7 +8317,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 212,
+      "rank": 211,
       "actions": [
        {
         "verb": "top",
@@ -8407,7 +8362,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 214,
+      "rank": 213,
       "actions": [
        {
         "verb": "top",
@@ -8452,7 +8407,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 215,
+      "rank": 214,
       "actions": [
        {
         "verb": "top",
@@ -8497,7 +8452,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 216,
+      "rank": 215,
       "actions": [
        {
         "verb": "top",
@@ -8542,7 +8497,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 218,
+      "rank": 217,
       "actions": [
        {
         "verb": "top",
@@ -8587,7 +8542,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 220,
+      "rank": 219,
       "actions": [
        {
         "verb": "top",
@@ -8632,7 +8587,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 224,
+      "rank": 223,
       "actions": [
        {
         "verb": "top",
@@ -8677,7 +8632,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 226,
+      "rank": 225,
       "actions": [
        {
         "verb": "top",
@@ -8722,7 +8677,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 227,
+      "rank": 226,
       "actions": [
        {
         "verb": "top",
@@ -8767,7 +8722,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 229,
+      "rank": 228,
       "actions": [
        {
         "verb": "top",
@@ -8812,7 +8767,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 230,
+      "rank": 229,
       "actions": [
        {
         "verb": "top",
@@ -8857,7 +8812,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 233,
+      "rank": 232,
       "actions": [
        {
         "verb": "top",
@@ -8902,7 +8857,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 238,
+      "rank": 237,
       "actions": [
        {
         "verb": "top",
@@ -8947,7 +8902,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 239,
+      "rank": 238,
       "actions": [
        {
         "verb": "top",
@@ -8992,7 +8947,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 245,
+      "rank": 244,
       "actions": [
        {
         "verb": "top",
@@ -9037,7 +8992,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 246,
+      "rank": 245,
       "actions": [
        {
         "verb": "top",
@@ -9082,7 +9037,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 248,
+      "rank": 247,
       "actions": [
        {
         "verb": "top",
@@ -9127,7 +9082,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 249,
+      "rank": 248,
       "actions": [
        {
         "verb": "top",
@@ -9172,7 +9127,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 250,
+      "rank": 249,
       "actions": [
        {
         "verb": "top",
@@ -9217,7 +9172,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 251,
+      "rank": 250,
       "actions": [
        {
         "verb": "top",
@@ -9262,7 +9217,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 253,
+      "rank": 252,
       "actions": [
        {
         "verb": "top",
@@ -9307,7 +9262,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 254,
+      "rank": 253,
       "actions": [
        {
         "verb": "top",
@@ -9352,7 +9307,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 255,
+      "rank": 254,
       "actions": [
        {
         "verb": "top",
@@ -9397,7 +9352,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 256,
+      "rank": 255,
       "actions": [
        {
         "verb": "top",
@@ -9442,7 +9397,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 257,
+      "rank": 256,
       "actions": [
        {
         "verb": "top",
@@ -9487,7 +9442,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 258,
+      "rank": 257,
       "actions": [
        {
         "verb": "top",
@@ -9532,7 +9487,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 261,
+      "rank": 260,
       "actions": [
        {
         "verb": "top",
@@ -9577,7 +9532,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 262,
+      "rank": 261,
       "actions": [
        {
         "verb": "top",
@@ -9622,7 +9577,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 264,
+      "rank": 263,
       "actions": [
        {
         "verb": "top",
@@ -9667,7 +9622,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 265,
+      "rank": 264,
       "actions": [
        {
         "verb": "top",
@@ -9712,7 +9667,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 266,
+      "rank": 265,
       "actions": [
        {
         "verb": "top",
@@ -9757,7 +9712,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 267,
+      "rank": 266,
       "actions": [
        {
         "verb": "top",
@@ -9802,7 +9757,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 269,
+      "rank": 268,
       "actions": [
        {
         "verb": "top",
@@ -9847,7 +9802,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 272,
+      "rank": 271,
       "actions": [
        {
         "verb": "top",
@@ -9892,7 +9847,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 273,
+      "rank": 272,
       "actions": [
        {
         "verb": "top",
@@ -9937,7 +9892,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 279,
+      "rank": 278,
       "actions": [
        {
         "verb": "top",
@@ -9982,7 +9937,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 283,
+      "rank": 282,
       "actions": [
        {
         "verb": "top",
@@ -10027,7 +9982,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 284,
+      "rank": 283,
       "actions": [
        {
         "verb": "top",
@@ -10072,7 +10027,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 289,
+      "rank": 288,
       "actions": [
        {
         "verb": "top",
@@ -10117,7 +10072,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 294,
+      "rank": 293,
       "actions": [
        {
         "verb": "top",
@@ -10162,7 +10117,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 295,
+      "rank": 294,
       "actions": [
        {
         "verb": "top",
@@ -10207,7 +10162,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 310,
+      "rank": 309,
       "actions": [
        {
         "verb": "top",
@@ -10252,7 +10207,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 311,
+      "rank": 310,
       "actions": [
        {
         "verb": "top",
@@ -10297,7 +10252,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 314,
+      "rank": 313,
       "actions": [
        {
         "verb": "top",
@@ -10342,7 +10297,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 317,
+      "rank": 316,
       "actions": [
        {
         "verb": "top",
@@ -10387,7 +10342,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 319,
+      "rank": 318,
       "actions": [
        {
         "verb": "top",
@@ -10432,7 +10387,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 320,
+      "rank": 319,
       "actions": [
        {
         "verb": "top",
@@ -10477,7 +10432,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 322,
+      "rank": 321,
       "actions": [
        {
         "verb": "top",
@@ -10522,7 +10477,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 323,
+      "rank": 322,
       "actions": [
        {
         "verb": "top",
@@ -10567,7 +10522,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 326,
+      "rank": 325,
       "actions": [
        {
         "verb": "top",
@@ -10612,7 +10567,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 327,
+      "rank": 326,
       "actions": [
        {
         "verb": "top",
@@ -10657,7 +10612,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 330,
+      "rank": 329,
       "actions": [
        {
         "verb": "top",
@@ -10702,7 +10657,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 334,
+      "rank": 333,
       "actions": [
        {
         "verb": "top",
@@ -10747,7 +10702,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 335,
+      "rank": 334,
       "actions": [
        {
         "verb": "top",
@@ -10792,7 +10747,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 338,
+      "rank": 337,
       "actions": [
        {
         "verb": "top",
@@ -10837,7 +10792,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 339,
+      "rank": 338,
       "actions": [
        {
         "verb": "top",
@@ -10858,6 +10813,51 @@
         "verb": "shelve",
         "icon": "🗄",
         "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-isolation-sweep-cannot-see-a-gate-behind-a-n%3A%20shelve&body=The%20production%20sweep%20reports%20a%20correctly%20gated%20test%20as%20ungated%20so%20its%20carries%20a%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       }
+      ]
+     },
+     {
+      "task_id": "the-apply-first-gate-is-live-and-refuses-nothing",
+      "family": "infra",
+      "name": "The ranking gate is wired and every queue row is unlabelled, so it governs nothing",
+      "header": "The ranking gate is wired and every queue row is unlabelled, so it governs nothing",
+      "why": "Landed as commits and with 28 mutation-proven tests. The gate reads an apply or build label on each queue row and refuses a build dispatch while finished apply items wait. Zero of 517 rows in ops ...",
+      "priority": 2,
+      "seat": "infra",
+      "status": "open ||| SWEEP FALSE POSITIVE of the shipped-but-not-the-fix class, 13:56Z. The cited delta says the apply-first gate is verified and wired. This row does not dispute that it is wired - it says the gate IS LIVE AND REFUSES NOTHING. Both can be true at once, and a delta proving the gate was wired says nothing about whether it ever refuses anything, which is the entire complaint. Same shape as the directory-pathspec row where a WARNING shipped and the LEAK stayed open. THE ROW STANDS. MEASURED 2026-08-12 AND THE INSTRUCTION IS HALF WRONG - LABELLING EVERY ROW BUILD WOULD BE A FALSE ALL-CLEAR. I read the gate before touching a row. Two facts from ops/dispatch_lane.py decide the work. FIRST, ONLY APPLY LABELS ARM ANYTHING: check_apply_first builds its refusal set from rows where is_apply_item is true, and is_apply_item matches only the _APPLY_LABELS vocabulary - director-finished, apply, apply-only, finished, wire, wire-only. The lane being dispatched is classified by lane_is_apply_lane from its OWN identity, not from a queue row's build label. So a build label on a queue row changes NO gate behaviour. SECOND, AND THIS IS THE HARM: labelled_count increments on ANY label at line 1390, and it is what suppresses the DORMANT banner at line 1563. Mass-labelling 264 rows build would push labelled_count off zero, silence the line that currently says 0 of N rows carry a label so N=0 means UNLABELLED not clear, and arm nothing - the gate would LOOK live while still refusing nothing. That destroys precisely the honest reading this row praises. I ALSO DID NOT BULK-LABEL FROM A HEURISTIC, because the gate bans exactly that in its own words: an unlabelled row is NEVER inferred to be an apply item, inference here would be the whole bug, it would sweep half the backlog into N and refuse every build lane. A regex over row prose is that inference. Twelve open rows match a built-but-not-wired signature; I labelled only the three I measured MYSELF tonight and left the other nine for whoever verifies them. LABELLED APPLY, each with label_evidence on the row: line-impact-is-a-hard-dependency-of-the-margin-model, where walkforward_values.py already computes the specified adjustment and has no production consumer; the-availability-junction-has-a-numeric-bar-to-clear, which gates a promotion of that same existing build; and a-built-and-tested-rate-fix-has-sat-unserved-for-two-weeks, where 9234 rows are built and the effect re-confirmed on the current base. All three are currently blocked on a Director call, which is CORRECT and harmless - readiness is decided by the queue's own status and blocker fields through ops/queue_feed.py, so a blocked apply row sits out of the refusal set until it is answered and refuses no build lane meanwhile. SO THE REMAINING WORK IS NARROWER THAN FILED: label the APPLY rows only, one at a time, each with evidence that the content or code is complete. Leave build rows unlabelled so the dormancy counter keeps telling the truth about how much of the backlog has been classified. CORRECTION TO MY OWN PARAGRAPH ABOVE, CAUGHT BEFORE COMMITTING. I wrote that a blocked apply row sits out of the refusal set automatically. IT DOES NOT. queue_feed.is_blocked matches ^(blocked|gated|gating|gate) against the status STRING - blockedness is a LEAD WORD on the status, not an inferred property - so my three newly-labelled rows went straight into READY and the gate reported 2 ready RED. That would have refused build lanes for work no machine can action, which is the exact over-eager-gate failure ops/dispatch_lane.py warns about in its own header: an over-eager gate that halts the floor is worse than the prose. FIXED IN THE SAME BREATH by making the record true rather than by removing the labels. All three now carry a blocker field naming its OWNER and its UNLOCK, per the standing rule that a blocker with no named owner means nobody looked, and their status leads with BLOCKED ON A NAMED DIRECTOR CALL. MEASURED AFTER: apply-backlog reports 0 ready with 3 apply-labelled, and prints each held row beside its blocker. That is the gate armed and honest - it knows about three finished items, holds none of them against a build lane, and says why for each. ARMED AND HONEST AS OF 2026-08-12 - RERANKED p2, THE REST IS ONGOING HYGIENE RATHER THAN A TASK. apply-backlog now reports 5 apply-labelled, 0 ready, and prints each held row beside its blocker. The gate went from dormant to doing its job without refusing a single lane, which is the correct resting state while every finished item is genuinely held. HOW THE LAST TWO WERE FOUND, and it is not the inference the gate bans: TWO OPEN ROWS DECLARE THEIR OWN CLASS IN THEIR OWN TEXT - the literal token DIRECTOR-FINISHED in the first lines of their why - while carrying no label field, so row_label returned empty and the gate could not see them. Reading a row's own declaration is not guessing from tone. Both were already in a blocked or gated state with a named blocker, so labelling them cost nothing and refuses nothing. They are the-fitted-probability-map-is-ready-and-waits-on-the-sigma-collapse, a written and measured two-parameter drop-in for p_home = Phi(margin over 12.65) held by a sigma collapse that MODEL_STATE_OF_RECORD records as value-accepted at 12.5569 but NOT YET SERVED; and accuracy-page-market-claims-have-no-fresh-source, Director-finished copy binding five numbers of which three resolve from site/accuracy.json today. THE PATTERN IN THE FIVE BLOCKERS IS THE FINDING, and it is worth a Director read on its own. Every one is Director-owned, and THREE OF THE FIVE ARE MODEL-INTEGRITY QUESTIONS RATHER THAN MISSING WORK: the accuracy page is gated because the served margin engine carries the closing line as an INPUT so a beat rate would measure the model against itself; line-impact waits on whether its new hard dependency attaches to that same market-fitted incumbent or to the unpromoted clean successor; and the availability junction waits on whether its floor is a pre-walk-forward number produced by a harness that could see the future. The finished-work backlog is not dammed behind many small things. It is dammed behind the market-circularity question, in three costumes. THE REST OF THE LABELLING IS PER-ROW AND MUST STAY THAT WAY. Two of the twelve built-not-wired signature matches I checked turned out premise-lapsed rather than shippable - group-the-site-totals-by-entity-not-by-raw-id publishes whole totals already, and the-grades-player-id-column-holds-three-id-spaces drops 0 rows on its real consumer, not 38 percent. Neither was an apply item. That is the argument for verifying before labelling rather than classifying the backlog in one sweep.",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 2.0,
+      "title": "The ranking gate is wired and every queue row is unlabelled, so it governs nothing",
+      "unlocks": "Landed as commits and with 28 mutation-proven tests.",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 3,
+      "group": "process",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 341,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-apply-first-gate-is-live-and-refuses-nothing%3A%20top&body=The%20ranking%20gate%20is%20wired%20and%20every%20queue%20row%20is%20unlabelled%2C%20so%20it%20governs%20nothing%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-apply-first-gate-is-live-and-refuses-nothing%3A%20bump&body=The%20ranking%20gate%20is%20wired%20and%20every%20queue%20row%20is%20unlabelled%2C%20so%20it%20governs%20nothing%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-apply-first-gate-is-live-and-refuses-nothing%3A%20demote&body=The%20ranking%20gate%20is%20wired%20and%20every%20queue%20row%20is%20unlabelled%2C%20so%20it%20governs%20nothing%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-apply-first-gate-is-live-and-refuses-nothing%3A%20shelve&body=The%20ranking%20gate%20is%20wired%20and%20every%20queue%20row%20is%20unlabelled%2C%20so%20it%20governs%20nothing%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
        }
       ]
      },
@@ -14536,7 +14536,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 211,
+      "rank": 210,
       "actions": [
        {
         "verb": "top",
@@ -14581,7 +14581,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 219,
+      "rank": 218,
       "actions": [
        {
         "verb": "top",
@@ -14626,7 +14626,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 225,
+      "rank": 224,
       "actions": [
        {
         "verb": "top",
@@ -14671,7 +14671,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 231,
+      "rank": 230,
       "actions": [
        {
         "verb": "top",
@@ -14716,7 +14716,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 232,
+      "rank": 231,
       "actions": [
        {
         "verb": "top",
@@ -14761,7 +14761,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 235,
+      "rank": 234,
       "actions": [
        {
         "verb": "top",
@@ -14806,7 +14806,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 242,
+      "rank": 241,
       "actions": [
        {
         "verb": "top",
@@ -14851,7 +14851,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 243,
+      "rank": 242,
       "actions": [
        {
         "verb": "top",
@@ -14896,7 +14896,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 244,
+      "rank": 243,
       "actions": [
        {
         "verb": "top",
@@ -14941,7 +14941,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 247,
+      "rank": 246,
       "actions": [
        {
         "verb": "top",
@@ -14986,7 +14986,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 259,
+      "rank": 258,
       "actions": [
        {
         "verb": "top",
@@ -15031,7 +15031,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 263,
+      "rank": 262,
       "actions": [
        {
         "verb": "top",
@@ -15076,7 +15076,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 268,
+      "rank": 267,
       "actions": [
        {
         "verb": "top",
@@ -15121,7 +15121,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 276,
+      "rank": 275,
       "actions": [
        {
         "verb": "top",
@@ -15166,7 +15166,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 277,
+      "rank": 276,
       "actions": [
        {
         "verb": "top",
@@ -15211,7 +15211,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 278,
+      "rank": 277,
       "actions": [
        {
         "verb": "top",
@@ -15257,7 +15257,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Which margin model the hard dependency attaches to - the market-fitted served incumbent or the unpromoted clean successor. Filed ops scout outbox the ...",
-      "rank": 282,
+      "rank": 281,
       "actions": [
        {
         "verb": "top",
@@ -15302,7 +15302,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 285,
+      "rank": 284,
       "actions": [
        {
         "verb": "top",
@@ -15347,7 +15347,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 293,
+      "rank": 292,
       "actions": [
        {
         "verb": "top",
@@ -15392,7 +15392,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 296,
+      "rank": 295,
       "actions": [
        {
         "verb": "top",
@@ -15437,7 +15437,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 297,
+      "rank": 296,
       "actions": [
        {
         "verb": "top",
@@ -15482,7 +15482,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 298,
+      "rank": 297,
       "actions": [
        {
         "verb": "top",
@@ -15527,7 +15527,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 299,
+      "rank": 298,
       "actions": [
        {
         "verb": "top",
@@ -15572,7 +15572,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 300,
+      "rank": 299,
       "actions": [
        {
         "verb": "top",
@@ -15617,7 +15617,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 303,
+      "rank": 302,
       "actions": [
        {
         "verb": "top",
@@ -15662,7 +15662,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 304,
+      "rank": 303,
       "actions": [
        {
         "verb": "top",
@@ -15707,7 +15707,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 306,
+      "rank": 305,
       "actions": [
        {
         "verb": "top",
@@ -15752,7 +15752,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 307,
+      "rank": 306,
       "actions": [
        {
         "verb": "top",
@@ -15797,7 +15797,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 308,
+      "rank": 307,
       "actions": [
        {
         "verb": "top",
@@ -15842,7 +15842,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 309,
+      "rank": 308,
       "actions": [
        {
         "verb": "top",
@@ -15887,7 +15887,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 312,
+      "rank": 311,
       "actions": [
        {
         "verb": "top",
@@ -15933,7 +15933,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Which numbers are the floor - the pre- 0.25 gain or the leak-free 0.051. Filed ops scout outbox the availability floor names no . the floor is named ...",
-      "rank": 329,
+      "rank": 328,
       "actions": [
        {
         "verb": "top",
@@ -15978,7 +15978,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 333,
+      "rank": 332,
       "actions": [
        {
         "verb": "top",
@@ -16023,7 +16023,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 336,
+      "rank": 335,
       "actions": [
        {
         "verb": "top",
@@ -16068,7 +16068,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 340,
+      "rank": 339,
       "actions": [
        {
         "verb": "top",
@@ -19316,7 +19316,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 213,
+      "rank": 212,
       "actions": [
        {
         "verb": "top",
@@ -19362,7 +19362,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The wave was dispatched as fifteen finished surfaces one bake from the reader.",
-      "rank": 222,
+      "rank": 221,
       "actions": [
        {
         "verb": "top",
@@ -19407,7 +19407,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 223,
+      "rank": 222,
       "actions": [
        {
         "verb": "top",
@@ -19452,7 +19452,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 240,
+      "rank": 239,
       "actions": [
        {
         "verb": "top",
@@ -19497,7 +19497,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 260,
+      "rank": 259,
       "actions": [
        {
         "verb": "top",
@@ -19542,7 +19542,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 271,
+      "rank": 270,
       "actions": [
        {
         "verb": "top",
@@ -19587,7 +19587,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 274,
+      "rank": 273,
       "actions": [
        {
         "verb": "top",
@@ -19632,7 +19632,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 275,
+      "rank": 274,
       "actions": [
        {
         "verb": "top",
@@ -19677,7 +19677,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 286,
+      "rank": 285,
       "actions": [
        {
         "verb": "top",
@@ -19722,7 +19722,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 288,
+      "rank": 287,
       "actions": [
        {
         "verb": "top",
@@ -19767,7 +19767,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 301,
+      "rank": 300,
       "actions": [
        {
         "verb": "top",
@@ -19812,7 +19812,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 305,
+      "rank": 304,
       "actions": [
        {
         "verb": "top",
@@ -19857,7 +19857,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 313,
+      "rank": 312,
       "actions": [
        {
         "verb": "top",
@@ -19902,7 +19902,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 315,
+      "rank": 314,
       "actions": [
        {
         "verb": "top",
@@ -19947,7 +19947,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 316,
+      "rank": 315,
       "actions": [
        {
         "verb": "top",
@@ -19992,7 +19992,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 318,
+      "rank": 317,
       "actions": [
        {
         "verb": "top",
@@ -20037,7 +20037,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 328,
+      "rank": 327,
       "actions": [
        {
         "verb": "top",
@@ -20082,7 +20082,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 332,
+      "rank": 331,
       "actions": [
        {
         "verb": "top",
@@ -20127,7 +20127,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 337,
+      "rank": 336,
       "actions": [
        {
         "verb": "top",
@@ -20792,9 +20792,9 @@
     "target": 40,
     "count": 437,
     "ok": true,
-    "label": "437 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 25m ago.)",
-    "as_of_utc": "2026-08-12T08:06:09Z",
-    "age_secs": 1550,
+    "label": "437 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 5m ago.)",
+    "as_of_utc": "2026-08-12T08:36:09Z",
+    "age_secs": 355,
     "stale": false
    },
    "source": "dispatch queue",
@@ -21365,67 +21365,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-12T08:31:19Z",
-  "age_s": 27,
-  "cycles": 209,
+  "last_poll_utc": "2026-08-12T08:40:42Z",
+  "age_s": 65,
+  "cycles": 217,
   "known": true,
-  "label": "scout: alive, last poll 27s ago",
+  "label": "scout: alive, last poll 65s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "4:29am",
-   "text": "poll #207 · nothing new",
-   "detail": "poll cycle=207 ok directives_new=0"
+   "time": "4:39am",
+   "text": "poll #216 · nothing new",
+   "detail": "poll cycle=216 ok directives_new=0"
   },
   {
-   "time": "4:29am",
+   "time": "4:39am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
   },
   {
-   "time": "4:29am",
+   "time": "4:39am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   },
   {
-   "time": "4:30am",
-   "text": "poll #208 · nothing new",
-   "detail": "poll cycle=208 ok directives_new=0"
-  },
-  {
-   "time": "4:30am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
-  },
-  {
-   "time": "4:30am",
-   "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
-   "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
-  },
-  {
-   "time": "4:30am",
+   "time": "4:40am",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
   },
   {
-   "time": "4:31am",
-   "text": "poll #209 · nothing new",
-   "detail": "poll cycle=209 ok directives_new=0"
+   "time": "4:40am",
+   "text": "poll #217 · nothing new",
+   "detail": "poll cycle=217 ok directives_new=0"
   },
   {
-   "time": "4:31am",
+   "time": "4:40am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
   },
   {
-   "time": "4:31am",
+   "time": "4:40am",
+   "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
+   "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
+  },
+  {
+   "time": "4:41am",
+   "text": "poll #218 · nothing new",
+   "detail": "poll cycle=218 ok directives_new=0"
+  },
+  {
+   "time": "4:41am",
+   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
+   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
+  },
+  {
+   "time": "4:41am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   }
  ],
  "helpers": {
-  "as_of": "2026-08-12T08:31:33.742945+00:00",
+  "as_of": "2026-08-12T08:41:31.571312+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -21434,40 +21434,40 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "27s",
-    "state_text": "on · seen 27s ago"
+    "age_label": "65s",
+    "state_text": "on · seen 65s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "12s",
-    "state_text": "on · seen 12s ago"
+    "age_label": "15s",
+    "state_text": "on · seen 15s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "2m",
+    "state_text": "on · seen 2m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "25s",
-    "state_text": "on · seen 25s ago"
+    "age_label": "26s",
+    "state_text": "on · seen 26s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "2m",
+    "state_text": "on · seen 2m ago"
    }
   ],
   "width": {
@@ -21547,7 +21547,7 @@
    },
    {
     "label": "Midnight projected",
-    "ran_et": "4:30am",
+    "ran_et": "4:40am",
     "next_et": "12:00am",
     "result": "needs a look"
    },
@@ -21577,7 +21577,7 @@
    },
    {
     "label": "standing daily reconcile: CEO-ask reconciliation, stale-state audit (silently-stale is banned), superseded-file consolidation candidates, claims-vs-reality reopener, and the two-truths scan -> a plain-English diff in the morning brief plus a board panel",
-    "ran_et": "4:30am",
+    "ran_et": "4:40am",
     "next_et": "3:30am",
     "result": "needs a look"
    },
@@ -21689,9 +21689,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-12T08:31:39Z",
-  "session_age_secs": 17007,
-  "last_progress_age_secs": 7,
+  "last_heartbeat_utc": "2026-08-12T08:41:36Z",
+  "session_age_secs": 17608,
+  "last_progress_age_secs": 11,
   "last_spawn_attempt": "2026-08-12T03:45:18Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -21721,7 +21721,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 1 work lanes have been running for 6710 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 1 work lanes have been running for 6720 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 1
  },
@@ -21730,25 +21730,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-12T08:31:42+00:00",
-   "stale_reason": "These readings may be out of date — last updated 111h ago.",
-   "age_label": "111h",
+   "revalidated": "2026-08-12T08:41:42+00:00",
+   "stale_reason": "These readings may be out of date — last updated 112h ago.",
+   "age_label": "112h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-12T08:31:42+00:00",
+   "as_of": "2026-08-12T08:41:42+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T08:31:42+00:00",
+   "revalidated": "2026-08-12T08:41:42+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T08:31:42+00:00",
+   "as_of": "2026-08-12T08:41:42+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T08:31:42+00:00",
+   "revalidated": "2026-08-12T08:41:42+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -21757,25 +21757,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T08:31:42+00:00",
+   "revalidated": "2026-08-12T08:41:42+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-12T08:30:30Z",
+   "as_of": "2026-08-12T08:39:43Z",
    "stale": false,
-   "revalidated": "2026-08-12T08:31:42+00:00",
+   "revalidated": "2026-08-12T08:41:42+00:00",
    "stale_reason": "",
-   "age_label": "72s",
+   "age_label": "1m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T08:31:42+00:00",
+   "revalidated": "2026-08-12T08:41:42+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -21784,16 +21784,16 @@
    "source": "director inbox",
    "as_of": "2026-08-12T04:34:40Z",
    "stale": false,
-   "revalidated": "2026-08-12T08:31:42+00:00",
+   "revalidated": "2026-08-12T08:41:42+00:00",
    "stale_reason": "",
-   "age_label": "3h",
+   "age_label": "4h",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-08T12:00:00Z",
    "stale": true,
-   "revalidated": "2026-08-12T08:31:42+00:00",
+   "revalidated": "2026-08-12T08:41:42+00:00",
    "stale_reason": "No new team updates in 92h — nothing was shipped in that window. The feed itself is current.",
    "age_label": "92h",
    "stale_after": 172800,
@@ -21801,22 +21801,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T08:26:27+00:00",
+   "as_of": "2026-08-12T08:36:50+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T08:31:42+00:00",
+   "revalidated": "2026-08-12T08:41:42+00:00",
    "stale_reason": "",
-   "age_label": "5m",
+   "age_label": "4m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-12T08:31:33.742945+00:00",
+   "as_of": "2026-08-12T08:41:31.571312+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T08:31:42+00:00",
+   "revalidated": "2026-08-12T08:41:42+00:00",
    "stale_reason": "",
-   "age_label": "12s",
+   "age_label": "15s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 12, 4:31am ET"
+ "generated_et": "Aug 12, 4:41am ET"
 }
