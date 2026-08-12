@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-12T08:11:30+00:00",
+ "generated_utc": "2026-08-12T08:21:57+00:00",
  "freshness": {
-  "baked_utc": "2026-08-12T08:11:30+00:00",
-  "baked_et": "Aug 12, 4:11am ET",
-  "revalidated_utc": "2026-08-12T08:11:30+00:00",
+  "baked_utc": "2026-08-12T08:21:57+00:00",
+  "baked_et": "Aug 12, 4:21am ET",
+  "revalidated_utc": "2026-08-12T08:21:57+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-12",
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-12T08:11:30+00:00",
+  "generated_utc": "2026-08-12T08:21:57+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -2623,51 +2623,6 @@
       ]
      },
      {
-      "task_id": "two-players-left-with-no-paperwork-and-a-third-i",
-      "family": "data",
-      "name": "The departure guard needs a transaction to drop anyone, two players left without one, and ...",
-      "header": "The departure guard needs a transaction to drop anyone, two players left without one, and ...",
-      "why": "Measured on the live database while chasing why today's report died. The roster resolver already has a departure guard and it works: twenty two players who appear only in game history are dropped ...",
-      "priority": 1,
-      "seat": "data",
-      "status": "RETRACTED 2026-08-06T12:50Z - I had the central fact backwards. Megan Gustafson did not leave Portland. She changed her name. Same player id, 3934218, serving two names in the season: Megan Gustafson through 14 July and Megan DiLeo from 22 July, four games since, most recently 2 August. She is on the current active roster under the new name and she is a starter tonight. The evidence I called corroboration was one source counted twice. I said the roster feed and the game logs independently agreed she was gone. They key on the NAME, so they lost her at the same instant for the same reason - a rename reads exactly like a departure to both. That is a single failure wearing two faces, and I presented it as two witnesses. The rule I proposed on the strength of it, dropping a player on weeks of feed absence plus no appearances, would have deleted an active starter from tonight lineup. Do not build it. What is real: three player ids serve two names each this season - 3934218 Gustafson to DiLeo, 5349415 Florez and Florez Getino, 5107404 Sha Carter and Quionche Carter, the last genuinely departed under both spellings. The defect is that a rename is not bridged: the projection pool carries the retired name, the roster carries the new one, and the id cascade meant to rescue exactly this case does not fire because the two sides hold ids from different schemes. Bridge the rename and the report stops dying. Kayla Alexander remains genuinely unexplained and is the only name of the three that may really be a departure. ||| 2026-08-07 coord--visible: state declared partial. This row was excluded from the ready-set as BLOCKED by its narrative prose, and it is waiting on nothing. Residual work: the premise is retracted but the finding underneath is live: the roster feed and the game logs both key on NAME, so a rename reads as a departure to both. RE-MEASURED BY ID 2026-08-12 AND THE COUNT IS ONE, NOT TWO. This row states the right rule and then breaks it one sentence earlier, which is exactly why it is worth re-measuring rather than implementing. Measured against whose newest snapshot is today: MEGAN GUSTAFSON DID NOT LEAVE. She is bdl_player_id 579, she IS in today's snapshot, and the name changed to Megan DiLeo. Her last-by-id snapshot is 2026-08-12, not July. She is the SAME class of artefact this row correctly identifies for Alicia Florez - a person who looks departed because a STRING stopped matching - and the row files her as a genuine departure anyway. I made the identical error earlier tonight on the same name, which is the argument for the rule below. KAYLA ALEXANDER IS THE ONLY GENUINE ONE, and she is corroborated: bdl_player_id 337, last roster snapshot 2026-08-03, last game log 2026-07-20. Absent from the feed and not playing, by id. ALICIA FLOREZ GETINO IS A DUPLICATE ID, NOT A SPELLING, which is sharper than this row has it. TWO bdl ids carry the IDENTICAL full name Alicia Florez Getino on the SAME team_id 5: id 99338 runs 2026-05-16 through today, id 100493 stops 2026-08-03. So the split is at the identifier level and survives any amount of name normalisation - merging spellings would not have found it. The stale id is what looks like a departure. Dropping it would delete a current player exactly as this row warns. THE RULE THAT FOLLOWS, and it is stronger than the one filed: CORROBORATED ABSENCE MUST BE EVALUATED PER PERSON, AFTER ID RESOLUTION - never per name, and never per raw id either. Both false positives here are invisible to a name test AND one of them is invisible to a naive id test, because the person holds two ids. Sequence the check as resolve identity first, merge duplicate ids, THEN ask whether the resulting person is absent from the feed and not playing. Run it that way and it drops Kayla Alexander alone, which is the correct answer. Run it on names and it deletes a rostered player on her wedding. USE Membership.resolve_membership, added today at scripts/roster_truth.py, for the membership half of that test: it returns a team only on roster-feed evidence and None for game history, and it is guarded by tests/test_resolve_membership_refuses_game_history.py.",
-      "state": "",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "The departure guard needs a transaction to drop anyone, two players left without one, and ...",
-      "unlocks": "The roster resolver already has a departure guard and it works: twenty two players who appear only in game history are ...",
-      "owner": "MACHINE",
-      "feed_status": "QUEUED",
-      "tier": 1,
-      "group": "",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 175,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20two-players-left-with-no-paperwork-and-a-third-i%3A%20top&body=The%20departure%20guard%20needs%20a%20transaction%20to%20drop%20anyone%2C%20two%20players%20left%20without%20one%2C%20and%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20two-players-left-with-no-paperwork-and-a-third-i%3A%20bump&body=The%20departure%20guard%20needs%20a%20transaction%20to%20drop%20anyone%2C%20two%20players%20left%20without%20one%2C%20and%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20two-players-left-with-no-paperwork-and-a-third-i%3A%20demote&body=The%20departure%20guard%20needs%20a%20transaction%20to%20drop%20anyone%2C%20two%20players%20left%20without%20one%2C%20and%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20two-players-left-with-no-paperwork-and-a-third-i%3A%20shelve&body=The%20departure%20guard%20needs%20a%20transaction%20to%20drop%20anyone%2C%20two%20players%20left%20without%20one%2C%20and%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "her-only-starter-record-lives-on-the-rows-we-wou",
       "family": "data",
       "name": "The duplicate rows hold her only starter record, so deleting them destroys data",
@@ -2688,7 +2643,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 177,
+      "rank": 176,
       "actions": [
        {
         "verb": "top",
@@ -2733,7 +2688,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 186,
+      "rank": 185,
       "actions": [
        {
         "verb": "top",
@@ -2778,7 +2733,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 187,
+      "rank": 186,
       "actions": [
        {
         "verb": "top",
@@ -2823,7 +2778,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 195,
+      "rank": 194,
       "actions": [
        {
         "verb": "top",
@@ -2868,7 +2823,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 198,
+      "rank": 197,
       "actions": [
        {
         "verb": "top",
@@ -2913,7 +2868,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 199,
+      "rank": 198,
       "actions": [
        {
         "verb": "top",
@@ -2958,7 +2913,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 204,
+      "rank": 202,
       "actions": [
        {
         "verb": "top",
@@ -3003,7 +2958,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 205,
+      "rank": 203,
       "actions": [
        {
         "verb": "top",
@@ -3048,7 +3003,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 207,
+      "rank": 205,
       "actions": [
        {
         "verb": "top",
@@ -3093,7 +3048,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 210,
+      "rank": 208,
       "actions": [
        {
         "verb": "top",
@@ -3138,7 +3093,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 221,
+      "rank": 219,
       "actions": [
        {
         "verb": "top",
@@ -3183,7 +3138,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 225,
+      "rank": 223,
       "actions": [
        {
         "verb": "top",
@@ -3228,7 +3183,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 232,
+      "rank": 230,
       "actions": [
        {
         "verb": "top",
@@ -3273,7 +3228,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 238,
+      "rank": 236,
       "actions": [
        {
         "verb": "top",
@@ -3318,7 +3273,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 240,
+      "rank": 238,
       "actions": [
        {
         "verb": "top",
@@ -3363,7 +3318,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 241,
+      "rank": 239,
       "actions": [
        {
         "verb": "top",
@@ -3408,7 +3363,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 245,
+      "rank": 243,
       "actions": [
        {
         "verb": "top",
@@ -3453,7 +3408,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 256,
+      "rank": 254,
       "actions": [
        {
         "verb": "top",
@@ -3498,7 +3453,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 274,
+      "rank": 272,
       "actions": [
        {
         "verb": "top",
@@ -3543,7 +3498,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 284,
+      "rank": 282,
       "actions": [
        {
         "verb": "top",
@@ -3588,7 +3543,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 285,
+      "rank": 283,
       "actions": [
        {
         "verb": "top",
@@ -3633,7 +3588,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 290,
+      "rank": 288,
       "actions": [
        {
         "verb": "top",
@@ -3678,7 +3633,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 293,
+      "rank": 291,
       "actions": [
        {
         "verb": "top",
@@ -3723,7 +3678,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 294,
+      "rank": 292,
       "actions": [
        {
         "verb": "top",
@@ -3768,7 +3723,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 295,
+      "rank": 293,
       "actions": [
        {
         "verb": "top",
@@ -3813,7 +3768,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": true,
-      "rank": 305,
+      "rank": 303,
       "actions": [
        {
         "verb": "top",
@@ -3838,6 +3793,51 @@
       ]
      },
      {
+      "task_id": "two-players-left-with-no-paperwork-and-a-third-i",
+      "family": "data",
+      "name": "The departure guard needs a transaction to drop anyone, two players left without one, and ...",
+      "header": "The departure guard needs a transaction to drop anyone, two players left without one, and ...",
+      "why": "Measured on the live database while chasing why today's report died. The roster resolver already has a departure guard and it works: twenty two players who appear only in game history are dropped ...",
+      "priority": 2,
+      "seat": "data",
+      "status": "RETRACTED 2026-08-06T12:50Z - I had the central fact backwards. Megan Gustafson did not leave Portland. She changed her name. Same player id, 3934218, serving two names in the season: Megan Gustafson through 14 July and Megan DiLeo from 22 July, four games since, most recently 2 August. She is on the current active roster under the new name and she is a starter tonight. The evidence I called corroboration was one source counted twice. I said the roster feed and the game logs independently agreed she was gone. They key on the NAME, so they lost her at the same instant for the same reason - a rename reads exactly like a departure to both. That is a single failure wearing two faces, and I presented it as two witnesses. The rule I proposed on the strength of it, dropping a player on weeks of feed absence plus no appearances, would have deleted an active starter from tonight lineup. Do not build it. What is real: three player ids serve two names each this season - 3934218 Gustafson to DiLeo, 5349415 Florez and Florez Getino, 5107404 Sha Carter and Quionche Carter, the last genuinely departed under both spellings. The defect is that a rename is not bridged: the projection pool carries the retired name, the roster carries the new one, and the id cascade meant to rescue exactly this case does not fire because the two sides hold ids from different schemes. Bridge the rename and the report stops dying. Kayla Alexander remains genuinely unexplained and is the only name of the three that may really be a departure. ||| 2026-08-07 coord--visible: state declared partial. This row was excluded from the ready-set as BLOCKED by its narrative prose, and it is waiting on nothing. Residual work: the premise is retracted but the finding underneath is live: the roster feed and the game logs both key on NAME, so a rename reads as a departure to both. RE-MEASURED BY ID 2026-08-12 AND THE COUNT IS ONE, NOT TWO. This row states the right rule and then breaks it one sentence earlier, which is exactly why it is worth re-measuring rather than implementing. Measured against whose newest snapshot is today: MEGAN GUSTAFSON DID NOT LEAVE. She is bdl_player_id 579, she IS in today's snapshot, and the name changed to Megan DiLeo. Her last-by-id snapshot is 2026-08-12, not July. She is the SAME class of artefact this row correctly identifies for Alicia Florez - a person who looks departed because a STRING stopped matching - and the row files her as a genuine departure anyway. I made the identical error earlier tonight on the same name, which is the argument for the rule below. KAYLA ALEXANDER IS THE ONLY GENUINE ONE, and she is corroborated: bdl_player_id 337, last roster snapshot 2026-08-03, last game log 2026-07-20. Absent from the feed and not playing, by id. ALICIA FLOREZ GETINO IS A DUPLICATE ID, NOT A SPELLING, which is sharper than this row has it. TWO bdl ids carry the IDENTICAL full name Alicia Florez Getino on the SAME team_id 5: id 99338 runs 2026-05-16 through today, id 100493 stops 2026-08-03. So the split is at the identifier level and survives any amount of name normalisation - merging spellings would not have found it. The stale id is what looks like a departure. Dropping it would delete a current player exactly as this row warns. THE RULE THAT FOLLOWS, and it is stronger than the one filed: CORROBORATED ABSENCE MUST BE EVALUATED PER PERSON, AFTER ID RESOLUTION - never per name, and never per raw id either. Both false positives here are invisible to a name test AND one of them is invisible to a naive id test, because the person holds two ids. Sequence the check as resolve identity first, merge duplicate ids, THEN ask whether the resulting person is absent from the feed and not playing. Run it that way and it drops Kayla Alexander alone, which is the correct answer. Run it on names and it deletes a rostered player on her wedding. USE Membership.resolve_membership, added today at scripts/roster_truth.py, for the membership half of that test: it returns a team only on roster-feed evidence and None for game history, and it is guarded by tests/test_resolve_membership_refuses_game_history.py. IDENTITY BRIDGE BUILT 2026-08-12 - THE ASK THIS ROW PUTS AHEAD OF THE ABSENCE RULE IS NOW DONE. Membership.person_is_active in scripts/roster_truth.py answers whether the PERSON behind a name is on the current feed, returning True, False, or None. It works off two new maps loaded from ALL roster snapshots rather than only the newest: every id a name has ever been seen under, and the id set on the current snapshot. ONE RULE HANDLES BOTH FALSE POSITIVES this row names - call the person active if ANY id she has ever held is live. The rename resolves because her id persists across the name change; the duplicate resolves because her live id vindicates her stale one. NONE IS NOT FALSE, AND THAT IS THE SAFETY PROPERTY. An unidentifiable name, or an unreadable feed, answers UNKNOWN. I cannot find her must never be recorded as she left - that is the direction where being wrong deletes a rostered player from a live surface. VERIFIED AGAINST THE LIVE FEED, all six cases correct: Megan Gustafson True, Megan DiLeo True, Alicia Florez Getino True, Kayla Alexander False, an unknown name None. The sixth was my own expectation being wrong rather than the code - the short spelling Alicia Florez also answers True, because the feed itself has carried her under it, and True is the right answer. Maps loaded: 233 historical name to id entries against 207 ids on the current snapshot. IT DROPS NOBODY. person_is_active has no consumer anywhere in the repo yet, verified by grep, so no surface moved. Tests: tests/test_person_is_active_resolves_identity_first.py plus the membership test, 11 passed, no database - the maps are hand-set so the RULE is the subject and neither can pass merely because today's feed is clean. WHAT REMAINS, and it is now the only part left: arm corroborated absence ON TOP of this bridge - days absent from the feed, no appearances, team games missed - and measure it against the real slate before it runs. Run correctly it drops Kayla Alexander alone. The row's third ask, merge the split name, is better stated as merge the duplicate bdl ids 99338 and 100493, since both carry the identical full name and the split is at the identifier level.",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 2.0,
+      "title": "The departure guard needs a transaction to drop anyone, two players left without one, and ...",
+      "unlocks": "The roster resolver already has a departure guard and it works: twenty two players who appear only in game history are ...",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 322,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20two-players-left-with-no-paperwork-and-a-third-i%3A%20top&body=The%20departure%20guard%20needs%20a%20transaction%20to%20drop%20anyone%2C%20two%20players%20left%20without%20one%2C%20and%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20two-players-left-with-no-paperwork-and-a-third-i%3A%20bump&body=The%20departure%20guard%20needs%20a%20transaction%20to%20drop%20anyone%2C%20two%20players%20left%20without%20one%2C%20and%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20two-players-left-with-no-paperwork-and-a-third-i%3A%20demote&body=The%20departure%20guard%20needs%20a%20transaction%20to%20drop%20anyone%2C%20two%20players%20left%20without%20one%2C%20and%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20two-players-left-with-no-paperwork-and-a-third-i%3A%20shelve&body=The%20departure%20guard%20needs%20a%20transaction%20to%20drop%20anyone%2C%20two%20players%20left%20without%20one%2C%20and%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       }
+      ]
+     },
+     {
       "task_id": "the-quarantine-mark-is-documentation-not-enforce",
       "family": "data",
       "name": "The duplicate rows are marked and nothing actually reads the mark",
@@ -3858,7 +3858,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 326,
+      "rank": 325,
       "actions": [
        {
         "verb": "top",
@@ -3903,7 +3903,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 327,
+      "rank": 326,
       "actions": [
        {
         "verb": "top",
@@ -3948,7 +3948,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 332,
+      "rank": 331,
       "actions": [
        {
         "verb": "top",
@@ -7552,7 +7552,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 178,
+      "rank": 177,
       "actions": [
        {
         "verb": "top",
@@ -7597,7 +7597,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 180,
+      "rank": 179,
       "actions": [
        {
         "verb": "top",
@@ -7642,7 +7642,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 181,
+      "rank": 180,
       "actions": [
        {
         "verb": "top",
@@ -7687,7 +7687,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 184,
+      "rank": 183,
       "actions": [
        {
         "verb": "top",
@@ -7732,7 +7732,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 185,
+      "rank": 184,
       "actions": [
        {
         "verb": "top",
@@ -7777,7 +7777,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 188,
+      "rank": 187,
       "actions": [
        {
         "verb": "top",
@@ -7822,7 +7822,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 189,
+      "rank": 188,
       "actions": [
        {
         "verb": "top",
@@ -7867,7 +7867,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 190,
+      "rank": 189,
       "actions": [
        {
         "verb": "top",
@@ -7912,7 +7912,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 191,
+      "rank": 190,
       "actions": [
        {
         "verb": "top",
@@ -7957,7 +7957,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 192,
+      "rank": 191,
       "actions": [
        {
         "verb": "top",
@@ -8002,7 +8002,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 194,
+      "rank": 193,
       "actions": [
        {
         "verb": "top",
@@ -8047,7 +8047,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 196,
+      "rank": 195,
       "actions": [
        {
         "verb": "top",
@@ -8092,7 +8092,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 200,
+      "rank": 199,
       "actions": [
        {
         "verb": "top",
@@ -8137,7 +8137,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 201,
+      "rank": 200,
       "actions": [
        {
         "verb": "top",
@@ -8182,7 +8182,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 208,
+      "rank": 206,
       "actions": [
        {
         "verb": "top",
@@ -8227,7 +8227,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 209,
+      "rank": 207,
       "actions": [
        {
         "verb": "top",
@@ -8272,7 +8272,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 211,
+      "rank": 209,
       "actions": [
        {
         "verb": "top",
@@ -8317,7 +8317,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 214,
+      "rank": 212,
       "actions": [
        {
         "verb": "top",
@@ -8362,7 +8362,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 216,
+      "rank": 214,
       "actions": [
        {
         "verb": "top",
@@ -8407,7 +8407,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 218,
+      "rank": 216,
       "actions": [
        {
         "verb": "top",
@@ -8452,7 +8452,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 219,
+      "rank": 217,
       "actions": [
        {
         "verb": "top",
@@ -8497,7 +8497,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 220,
+      "rank": 218,
       "actions": [
        {
         "verb": "top",
@@ -8542,7 +8542,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 222,
+      "rank": 220,
       "actions": [
        {
         "verb": "top",
@@ -8587,7 +8587,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 224,
+      "rank": 222,
       "actions": [
        {
         "verb": "top",
@@ -8632,7 +8632,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 228,
+      "rank": 226,
       "actions": [
        {
         "verb": "top",
@@ -8677,7 +8677,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 230,
+      "rank": 228,
       "actions": [
        {
         "verb": "top",
@@ -8722,7 +8722,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 231,
+      "rank": 229,
       "actions": [
        {
         "verb": "top",
@@ -8767,7 +8767,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 233,
+      "rank": 231,
       "actions": [
        {
         "verb": "top",
@@ -8812,7 +8812,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 234,
+      "rank": 232,
       "actions": [
        {
         "verb": "top",
@@ -8857,7 +8857,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 237,
+      "rank": 235,
       "actions": [
        {
         "verb": "top",
@@ -8902,7 +8902,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 242,
+      "rank": 240,
       "actions": [
        {
         "verb": "top",
@@ -8947,7 +8947,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 243,
+      "rank": 241,
       "actions": [
        {
         "verb": "top",
@@ -8992,7 +8992,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 249,
+      "rank": 247,
       "actions": [
        {
         "verb": "top",
@@ -9037,7 +9037,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 250,
+      "rank": 248,
       "actions": [
        {
         "verb": "top",
@@ -9082,7 +9082,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 252,
+      "rank": 250,
       "actions": [
        {
         "verb": "top",
@@ -9127,7 +9127,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 253,
+      "rank": 251,
       "actions": [
        {
         "verb": "top",
@@ -9172,7 +9172,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 254,
+      "rank": 252,
       "actions": [
        {
         "verb": "top",
@@ -9217,7 +9217,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 255,
+      "rank": 253,
       "actions": [
        {
         "verb": "top",
@@ -9262,7 +9262,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 257,
+      "rank": 255,
       "actions": [
        {
         "verb": "top",
@@ -9307,7 +9307,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 258,
+      "rank": 256,
       "actions": [
        {
         "verb": "top",
@@ -9352,7 +9352,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 259,
+      "rank": 257,
       "actions": [
        {
         "verb": "top",
@@ -9397,7 +9397,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 260,
+      "rank": 258,
       "actions": [
        {
         "verb": "top",
@@ -9442,7 +9442,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 261,
+      "rank": 259,
       "actions": [
        {
         "verb": "top",
@@ -9487,7 +9487,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 262,
+      "rank": 260,
       "actions": [
        {
         "verb": "top",
@@ -9532,7 +9532,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 265,
+      "rank": 263,
       "actions": [
        {
         "verb": "top",
@@ -9577,7 +9577,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 266,
+      "rank": 264,
       "actions": [
        {
         "verb": "top",
@@ -9622,7 +9622,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 268,
+      "rank": 266,
       "actions": [
        {
         "verb": "top",
@@ -9667,7 +9667,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 269,
+      "rank": 267,
       "actions": [
        {
         "verb": "top",
@@ -9712,7 +9712,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 270,
+      "rank": 268,
       "actions": [
        {
         "verb": "top",
@@ -9757,7 +9757,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 271,
+      "rank": 269,
       "actions": [
        {
         "verb": "top",
@@ -9802,7 +9802,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 273,
+      "rank": 271,
       "actions": [
        {
         "verb": "top",
@@ -9847,7 +9847,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 276,
+      "rank": 274,
       "actions": [
        {
         "verb": "top",
@@ -9892,7 +9892,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 277,
+      "rank": 275,
       "actions": [
        {
         "verb": "top",
@@ -9937,7 +9937,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 283,
+      "rank": 281,
       "actions": [
        {
         "verb": "top",
@@ -9982,7 +9982,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 286,
+      "rank": 284,
       "actions": [
        {
         "verb": "top",
@@ -10027,7 +10027,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 287,
+      "rank": 285,
       "actions": [
        {
         "verb": "top",
@@ -10072,7 +10072,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 292,
+      "rank": 290,
       "actions": [
        {
         "verb": "top",
@@ -10117,7 +10117,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 297,
+      "rank": 295,
       "actions": [
        {
         "verb": "top",
@@ -10162,7 +10162,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 298,
+      "rank": 296,
       "actions": [
        {
         "verb": "top",
@@ -10207,7 +10207,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 313,
+      "rank": 311,
       "actions": [
        {
         "verb": "top",
@@ -10252,7 +10252,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 314,
+      "rank": 312,
       "actions": [
        {
         "verb": "top",
@@ -10297,7 +10297,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 317,
+      "rank": 315,
       "actions": [
        {
         "verb": "top",
@@ -10342,7 +10342,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 320,
+      "rank": 318,
       "actions": [
        {
         "verb": "top",
@@ -10387,7 +10387,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 322,
+      "rank": 320,
       "actions": [
        {
         "verb": "top",
@@ -10432,7 +10432,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 323,
+      "rank": 321,
       "actions": [
        {
         "verb": "top",
@@ -10477,7 +10477,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 324,
+      "rank": 323,
       "actions": [
        {
         "verb": "top",
@@ -10522,7 +10522,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 325,
+      "rank": 324,
       "actions": [
        {
         "verb": "top",
@@ -10567,7 +10567,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 328,
+      "rank": 327,
       "actions": [
        {
         "verb": "top",
@@ -10612,7 +10612,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 329,
+      "rank": 328,
       "actions": [
        {
         "verb": "top",
@@ -10657,7 +10657,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 331,
+      "rank": 330,
       "actions": [
        {
         "verb": "top",
@@ -10702,7 +10702,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 335,
+      "rank": 334,
       "actions": [
        {
         "verb": "top",
@@ -10747,7 +10747,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 336,
+      "rank": 335,
       "actions": [
        {
         "verb": "top",
@@ -14219,7 +14219,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 176,
+      "rank": 175,
       "actions": [
        {
         "verb": "top",
@@ -14265,7 +14265,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Drop-in replacing p home = Phi(margin 12.65) with a two-parameter map fitted .",
-      "rank": 179,
+      "rank": 178,
       "actions": [
        {
         "verb": "top",
@@ -14310,7 +14310,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 182,
+      "rank": 181,
       "actions": [
        {
         "verb": "top",
@@ -14355,7 +14355,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 183,
+      "rank": 182,
       "actions": [
        {
         "verb": "top",
@@ -14400,7 +14400,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 193,
+      "rank": 192,
       "actions": [
        {
         "verb": "top",
@@ -14425,51 +14425,6 @@
       ]
      },
      {
-      "task_id": "the-scale-calibration-cannot-be-anchored-to-the",
-      "family": "modeling",
-      "name": "The ordered fix for our compressed player values calibrates against market moves, which ...",
-      "header": "The ordered fix for our compressed player values calibrates against market moves, which ...",
-      "why": "Three independent measurements now agree that our player-value scale is compressed by roughly three times, and that compression - not the concept - is what caps every player-level feature we build. ...",
-      "priority": 1,
-      "seat": "top",
-      "status": "ready",
-      "state": "ready now",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "The ordered fix for our compressed player values calibrates against market moves, which ...",
-      "unlocks": "Three independent measurements now agree that our player-value scale is compressed by roughly three times, and that ...",
-      "owner": "MACHINE",
-      "feed_status": "QUEUED",
-      "tier": 1,
-      "group": "",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 202,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-scale-calibration-cannot-be-anchored-to-the%3A%20top&body=The%20ordered%20fix%20for%20our%20compressed%20player%20values%20calibrates%20against%20market%20moves%2C%20which%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-scale-calibration-cannot-be-anchored-to-the%3A%20bump&body=The%20ordered%20fix%20for%20our%20compressed%20player%20values%20calibrates%20against%20market%20moves%2C%20which%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-scale-calibration-cannot-be-anchored-to-the%3A%20demote&body=The%20ordered%20fix%20for%20our%20compressed%20player%20values%20calibrates%20against%20market%20moves%2C%20which%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-scale-calibration-cannot-be-anchored-to-the%3A%20shelve&body=The%20ordered%20fix%20for%20our%20compressed%20player%20values%20calibrates%20against%20market%20moves%2C%20which%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "the-sim-feedback-is-twice-its-fitted-value",
       "family": "modeling",
       "name": "The parameter that makes the simulator pass is double what the data says it should be",
@@ -14490,7 +14445,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 203,
+      "rank": 201,
       "actions": [
        {
         "verb": "top",
@@ -14535,7 +14490,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 206,
+      "rank": 204,
       "actions": [
        {
         "verb": "top",
@@ -14580,7 +14535,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 212,
+      "rank": 210,
       "actions": [
        {
         "verb": "top",
@@ -14625,7 +14580,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 213,
+      "rank": 211,
       "actions": [
        {
         "verb": "top",
@@ -14670,7 +14625,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 215,
+      "rank": 213,
       "actions": [
        {
         "verb": "top",
@@ -14715,7 +14670,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 223,
+      "rank": 221,
       "actions": [
        {
         "verb": "top",
@@ -14760,7 +14715,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 229,
+      "rank": 227,
       "actions": [
        {
         "verb": "top",
@@ -14805,7 +14760,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 235,
+      "rank": 233,
       "actions": [
        {
         "verb": "top",
@@ -14850,7 +14805,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 236,
+      "rank": 234,
       "actions": [
        {
         "verb": "top",
@@ -14895,7 +14850,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 239,
+      "rank": 237,
       "actions": [
        {
         "verb": "top",
@@ -14940,7 +14895,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 246,
+      "rank": 244,
       "actions": [
        {
         "verb": "top",
@@ -14985,7 +14940,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 247,
+      "rank": 245,
       "actions": [
        {
         "verb": "top",
@@ -15030,7 +14985,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 248,
+      "rank": 246,
       "actions": [
        {
         "verb": "top",
@@ -15075,7 +15030,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 251,
+      "rank": 249,
       "actions": [
        {
         "verb": "top",
@@ -15120,7 +15075,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 263,
+      "rank": 261,
       "actions": [
        {
         "verb": "top",
@@ -15165,7 +15120,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 267,
+      "rank": 265,
       "actions": [
        {
         "verb": "top",
@@ -15210,7 +15165,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 272,
+      "rank": 270,
       "actions": [
        {
         "verb": "top",
@@ -15255,7 +15210,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 280,
+      "rank": 278,
       "actions": [
        {
         "verb": "top",
@@ -15300,7 +15255,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 281,
+      "rank": 279,
       "actions": [
        {
         "verb": "top",
@@ -15345,7 +15300,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 282,
+      "rank": 280,
       "actions": [
        {
         "verb": "top",
@@ -15390,7 +15345,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 288,
+      "rank": 286,
       "actions": [
        {
         "verb": "top",
@@ -15435,7 +15390,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 296,
+      "rank": 294,
       "actions": [
        {
         "verb": "top",
@@ -15480,7 +15435,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 299,
+      "rank": 297,
       "actions": [
        {
         "verb": "top",
@@ -15525,7 +15480,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 300,
+      "rank": 298,
       "actions": [
        {
         "verb": "top",
@@ -15570,7 +15525,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 301,
+      "rank": 299,
       "actions": [
        {
         "verb": "top",
@@ -15615,7 +15570,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 302,
+      "rank": 300,
       "actions": [
        {
         "verb": "top",
@@ -15660,7 +15615,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 303,
+      "rank": 301,
       "actions": [
        {
         "verb": "top",
@@ -15705,7 +15660,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 306,
+      "rank": 304,
       "actions": [
        {
         "verb": "top",
@@ -15750,7 +15705,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 307,
+      "rank": 305,
       "actions": [
        {
         "verb": "top",
@@ -15795,7 +15750,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 309,
+      "rank": 307,
       "actions": [
        {
         "verb": "top",
@@ -15840,7 +15795,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 310,
+      "rank": 308,
       "actions": [
        {
         "verb": "top",
@@ -15885,7 +15840,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 311,
+      "rank": 309,
       "actions": [
        {
         "verb": "top",
@@ -15930,7 +15885,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 312,
+      "rank": 310,
       "actions": [
        {
         "verb": "top",
@@ -15975,7 +15930,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 315,
+      "rank": 313,
       "actions": [
        {
         "verb": "top",
@@ -16020,7 +15975,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 334,
+      "rank": 333,
       "actions": [
        {
         "verb": "top",
@@ -16041,6 +15996,51 @@
         "verb": "shelve",
         "icon": "🗄",
         "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20full-slate-margin-figure-is-one-generation-not-t%3A%20shelve&body=The%20margin%20figure%20we%20call%20full%20slate%20is%20143%20games%20of%20one%20model%20generation%3B%20the%20whole%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       }
+      ]
+     },
+     {
+      "task_id": "the-scale-calibration-cannot-be-anchored-to-the",
+      "family": "modeling",
+      "name": "The ordered fix for our compressed player values calibrates against market moves, which ...",
+      "header": "The ordered fix for our compressed player values calibrates against market moves, which ...",
+      "why": "Three independent measurements now agree that our player-value scale is compressed by roughly three times, and that compression - not the concept - is what caps every player-level feature we build. ...",
+      "priority": 2,
+      "seat": "top",
+      "status": "ready MEASURED 2026-08-12 AND THE OBJECTION IS RIGHT BUT DOES NOT GO FAR ENOUGH - THE INSTRUMENT IS CLOSED, NOT JUST THE ANCHOR. This row is correct that fitting the multiplier to market-move magnitudes makes a market quantity a promotable model's calibration target, which the market-as-measure-only law forbids by name. That needs no ruling. But the scale multiplier ITSELF sits on the TESTED AND REJECTED ledger at docs/reports/MODEL_STATE_OF_RECORD.md line 148, quote, the scale multiplier, measures regularisation not value, under a header reading nothing here is re-testable on a hunch. The row proposes re-running it with a different ruler and does not cite the ledger. The state of record already records this happening once before under directive 1440Z. THE REJECTION'S MECHANISM DEFEATS THE OUTCOME ANCHOR EXACTLY AS IT DEFEATS THE MARKET ONE, which is what this row misses. A global multiplier assumes compression is UNIFORM across players. Measured on , eval_pop_n 171: k_eb_median is 4.985 and k_eb_mean is 23.131, a 4.64x skew, so per-player shrinkage varies by nearly an order of magnitude because it is a function of each player's own on-court basis. One global constant therefore over-corrects well-sampled players and under-corrects thin ones whatever it is fitted against. Swapping the anchor changes the ruler, not the instrument - the outcome anchor would be law-compliant AND still wrong. THE COMPRESSION THIS REPO ACTUALLY MEASURED IS ALREADY CURED AND LIVE. The same fit's notes say the rating column is already an EB posterior at blend k=15 and the display n over n plus 500 was a REDUNDANT SECOND SHRINK toward zero, with the fitted prior single-digit and 500 about 100x too large. That shipped: scripts/build_site.py carries IMPACT_PRIOR_STINTS = 5, section 12 verified 2026-07-16. Measured on the served surface today, site/season_impact.json holds 198 DISTINCT impact values across 212 players, range -1.704 to 2.724, stdev 0.717. The old defect collapsed the board to 3 distinct values. It is not collapsed now. WHAT I DID NOT ESTABLISH: separation is not magnitude. My measurement proves the board separates players, not that the absolute scale is right, so a residual compression could still be real. The row's three cited measurements are not re-verified against the post k*=5 values. PROCEEDING ON: implement NEITHER anchor. Re-measure the 3x claim on the CURRENT served values first, because the pre-fix board was compressed by a mechanism that no longer exists; if it survives, treat it as an estimator or regularisation question rather than a scaling one, since the 4.64x skew is direct evidence no single constant fits all players. Modelling call filed to the Director at ops/scout/outbox/DIRECTOR_QUESTION__scale_multiplier_is_on_the_rejected_ledger.md. NOTHING BLOCKED, nothing touched - no model, pointer or surface moved, and the row stays open at rank pending the Director's word on reopening a ledger entry. I ACTED ON MY OWN RECOMMENDATION RATHER THAN PARKING THE LANE, AND THE ANCHOR DATASET IS WORSE THAN CIRCULAR - IT IS US. Re-measuring the claim meant finding the dataset a fit would use, and the obvious one is . MEASURED ON ALL 2500 ROWS: spread_3_bookie_line divided by headline_spread has DISTINCT COUNT 1, every row 0.489837. A column named bookie line is a FIXED MULTIPLE OF OUR OWN NUMBER. spread_4_added_to_avg_team is likewise a single fixed ratio; only spread_2_on_floor is independent, at 349 distinct ratios. AND THE TABLE HOLDS ONLY 2008 THROUGH 2013 - its top names are Diana Taurasi, Tamika Catchings and Lindsay Whalen, so it could not anchor anything about a current player even if the column were real. THIS SHARPENS THE ROW'S OWN WARNING INTO SOMETHING STRICTER. The row objects that fitting to market-move magnitudes would make the model unable to claim it beats the market. On this dataset it is worse: the residual is ZERO BY CONSTRUCTION because the target IS the input times 0.489837. A fit would converge perfectly, report success, and mean nothing - a model calibrated to itself and told it agrees with Vegas. That is not a law violation to be argued about, it is a measurement error that would have looked like a triumph. NOTHING READS IT TODAY - grep across scripts, ops and site returns 0 hits - so nothing is poisoned now. The exposure was entirely prospective and pointed exactly at this row's ordered fix. GUARD ADDED: tests/test_bookie_line_column_is_our_own_number.py, 3 passed, with a mutation test proving it bites. It is the sibling of tests/test_pbp_spread_is_a_placeholder.py, which pins a hardcoded 2.5 in the play-by-play table - two columns, two tables, ONE DEFECT CLASS: a constant or a rescaling wearing a market name, which never trips a freshness or coverage check because it is always populated. Filling either honestly is the one answer that is definitely wrong, since that plants real market data where a future fit could reach it. NET FOR THIS ROW: the market anchor is barred by law, the outcome anchor is barred by the rejected ledger and by the 4.64x per-player shrinkage skew, and the dataset that made the market anchor look easy is our own number in disguise. Re-ranked p2 - what remains is a Director call on reopening a ledger entry, not machine work, and the trap that made it urgent is now guarded.",
+      "state": "ready now",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": 2.0,
+      "title": "The ordered fix for our compressed player values calibrates against market moves, which ...",
+      "unlocks": "Three independent measurements now agree that our player-value scale is compressed by roughly three times, and that ...",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 336,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-scale-calibration-cannot-be-anchored-to-the%3A%20top&body=The%20ordered%20fix%20for%20our%20compressed%20player%20values%20calibrates%20against%20market%20moves%2C%20which%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-scale-calibration-cannot-be-anchored-to-the%3A%20bump&body=The%20ordered%20fix%20for%20our%20compressed%20player%20values%20calibrates%20against%20market%20moves%2C%20which%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-scale-calibration-cannot-be-anchored-to-the%3A%20demote&body=The%20ordered%20fix%20for%20our%20compressed%20player%20values%20calibrates%20against%20market%20moves%2C%20which%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-scale-calibration-cannot-be-anchored-to-the%3A%20shelve&body=The%20ordered%20fix%20for%20our%20compressed%20player%20values%20calibrates%20against%20market%20moves%2C%20which%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
        }
       ]
      },
@@ -19268,7 +19268,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 197,
+      "rank": 196,
       "actions": [
        {
         "verb": "top",
@@ -19313,7 +19313,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 217,
+      "rank": 215,
       "actions": [
        {
         "verb": "top",
@@ -19359,7 +19359,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The wave was dispatched as fifteen finished surfaces one bake from the reader.",
-      "rank": 226,
+      "rank": 224,
       "actions": [
        {
         "verb": "top",
@@ -19404,7 +19404,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 227,
+      "rank": 225,
       "actions": [
        {
         "verb": "top",
@@ -19449,7 +19449,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 244,
+      "rank": 242,
       "actions": [
        {
         "verb": "top",
@@ -19494,7 +19494,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 264,
+      "rank": 262,
       "actions": [
        {
         "verb": "top",
@@ -19539,7 +19539,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 275,
+      "rank": 273,
       "actions": [
        {
         "verb": "top",
@@ -19584,7 +19584,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 278,
+      "rank": 276,
       "actions": [
        {
         "verb": "top",
@@ -19629,7 +19629,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 279,
+      "rank": 277,
       "actions": [
        {
         "verb": "top",
@@ -19674,7 +19674,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 289,
+      "rank": 287,
       "actions": [
        {
         "verb": "top",
@@ -19719,7 +19719,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 291,
+      "rank": 289,
       "actions": [
        {
         "verb": "top",
@@ -19764,7 +19764,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 304,
+      "rank": 302,
       "actions": [
        {
         "verb": "top",
@@ -19809,7 +19809,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 308,
+      "rank": 306,
       "actions": [
        {
         "verb": "top",
@@ -19854,7 +19854,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 316,
+      "rank": 314,
       "actions": [
        {
         "verb": "top",
@@ -19899,7 +19899,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 318,
+      "rank": 316,
       "actions": [
        {
         "verb": "top",
@@ -19944,7 +19944,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 319,
+      "rank": 317,
       "actions": [
        {
         "verb": "top",
@@ -19989,7 +19989,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 321,
+      "rank": 319,
       "actions": [
        {
         "verb": "top",
@@ -20034,7 +20034,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 330,
+      "rank": 329,
       "actions": [
        {
         "verb": "top",
@@ -20079,7 +20079,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 333,
+      "rank": 332,
       "actions": [
        {
         "verb": "top",
@@ -20789,9 +20789,9 @@
     "target": 40,
     "count": 437,
     "ok": true,
-    "label": "437 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 5m ago.)",
+    "label": "437 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 16m ago.)",
     "as_of_utc": "2026-08-12T08:06:09Z",
-    "age_secs": 339,
+    "age_secs": 970,
     "stale": false
    },
    "source": "dispatch queue",
@@ -21362,67 +21362,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-12T08:10:39Z",
-  "age_s": 55,
-  "cycles": 191,
+  "last_poll_utc": "2026-08-12T08:21:01Z",
+  "age_s": 61,
+  "cycles": 200,
   "known": true,
-  "label": "scout: alive, last poll 55s ago",
+  "label": "scout: alive, last poll 61s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "4:09am",
+   "time": "4:19am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   },
   {
-   "time": "4:09am",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
-  },
-  {
-   "time": "4:09am",
-   "text": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
-   "detail": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full str"
-  },
-  {
-   "time": "4:10am",
+   "time": "4:20am",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
   },
   {
-   "time": "4:10am",
-   "text": "poll #191 · nothing new",
-   "detail": "poll cycle=191 ok directives_new=0"
+   "time": "4:21am",
+   "text": "poll #200 · nothing new",
+   "detail": "poll cycle=200 ok directives_new=0"
   },
   {
-   "time": "4:10am",
+   "time": "4:21am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
   },
   {
-   "time": "4:10am",
+   "time": "4:21am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   },
   {
-   "time": "4:11am",
-   "text": "poll #192 · nothing new",
-   "detail": "poll cycle=192 ok directives_new=0"
+   "time": "4:21am",
+   "text": "publish-health: clean (public board is fresh",
+   "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "4:11am",
+   "time": "4:21am",
+   "text": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
+   "detail": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full str"
+  },
+  {
+   "time": "4:22am",
+   "text": "poll #201 · nothing new",
+   "detail": "poll cycle=201 ok directives_new=0"
+  },
+  {
+   "time": "4:22am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
   },
   {
-   "time": "4:11am",
+   "time": "4:22am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   }
  ],
  "helpers": {
-  "as_of": "2026-08-12T08:11:21Z",
+  "as_of": "2026-08-12T08:21:46.325219+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -21431,40 +21431,40 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "55s",
-    "state_text": "on · seen 55s ago"
+    "age_label": "61s",
+    "state_text": "on · seen 61s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "13s",
-    "state_text": "on · seen 13s ago"
+    "age_label": "16s",
+    "state_text": "on · seen 16s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "2m",
-    "state_text": "on · seen 2m ago"
+    "age_label": "59s",
+    "state_text": "on · seen 59s ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "13s",
-    "state_text": "on · seen 13s ago"
+    "age_label": "41s",
+    "state_text": "on · seen 41s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "2m",
-    "state_text": "on · seen 2m ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    }
   ],
   "width": {
@@ -21544,7 +21544,7 @@
    },
    {
     "label": "Midnight projected",
-    "ran_et": "4:10am",
+    "ran_et": "4:20am",
     "next_et": "12:00am",
     "result": "needs a look"
    },
@@ -21574,7 +21574,7 @@
    },
    {
     "label": "standing daily reconcile: CEO-ask reconciliation, stale-state audit (silently-stale is banned), superseded-file consolidation candidates, claims-vs-reality reopener, and the two-truths scan -> a plain-English diff in the morning brief plus a board panel",
-    "ran_et": "4:10am",
+    "ran_et": "4:20am",
     "next_et": "3:30am",
     "result": "needs a look"
    },
@@ -21686,9 +21686,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-12T08:11:34Z",
-  "session_age_secs": 15795,
-  "last_progress_age_secs": 0,
+  "last_heartbeat_utc": "2026-08-12T08:22:00Z",
+  "session_age_secs": 16423,
+  "last_progress_age_secs": 2,
   "last_spawn_attempt": "2026-08-12T03:45:18Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -21718,7 +21718,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 1 work lanes have been running for 6690 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 1 work lanes have been running for 6700 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 1
  },
@@ -21727,25 +21727,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-12T08:11:30+00:00",
+   "revalidated": "2026-08-12T08:21:57+00:00",
    "stale_reason": "These readings may be out of date — last updated 111h ago.",
    "age_label": "111h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-12T08:11:30+00:00",
+   "as_of": "2026-08-12T08:21:57+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T08:11:30+00:00",
+   "revalidated": "2026-08-12T08:21:57+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T08:11:30+00:00",
+   "as_of": "2026-08-12T08:21:57+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T08:11:30+00:00",
+   "revalidated": "2026-08-12T08:21:57+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -21754,25 +21754,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T08:11:30+00:00",
+   "revalidated": "2026-08-12T08:21:57+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-12T08:10:20Z",
+   "as_of": "2026-08-12T08:21:21Z",
    "stale": false,
-   "revalidated": "2026-08-12T08:11:30+00:00",
+   "revalidated": "2026-08-12T08:21:57+00:00",
    "stale_reason": "",
-   "age_label": "70s",
+   "age_label": "36s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T08:11:30+00:00",
+   "revalidated": "2026-08-12T08:21:57+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -21781,7 +21781,7 @@
    "source": "director inbox",
    "as_of": "2026-08-12T04:34:40Z",
    "stale": false,
-   "revalidated": "2026-08-12T08:11:30+00:00",
+   "revalidated": "2026-08-12T08:21:57+00:00",
    "stale_reason": "",
    "age_label": "3h",
    "stale_after": 28800
@@ -21790,7 +21790,7 @@
    "source": "the team's updates feed",
    "as_of": "2026-08-08T12:00:00Z",
    "stale": true,
-   "revalidated": "2026-08-12T08:11:30+00:00",
+   "revalidated": "2026-08-12T08:21:57+00:00",
    "stale_reason": "No new team updates in 92h — nothing was shipped in that window. The feed itself is current.",
    "age_label": "92h",
    "stale_after": 172800,
@@ -21798,22 +21798,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T08:06:38+00:00",
+   "as_of": "2026-08-12T08:16:37+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T08:11:30+00:00",
+   "revalidated": "2026-08-12T08:21:57+00:00",
    "stale_reason": "",
-   "age_label": "4m",
+   "age_label": "5m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-12T08:11:21Z",
+   "as_of": "2026-08-12T08:21:46.325219+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T08:11:30+00:00",
+   "revalidated": "2026-08-12T08:21:57+00:00",
    "stale_reason": "",
-   "age_label": "13s",
+   "age_label": "16s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 12, 4:11am ET"
+ "generated_et": "Aug 12, 4:21am ET"
 }
