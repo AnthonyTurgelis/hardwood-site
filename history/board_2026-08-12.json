@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-12T09:37:37+00:00",
+ "generated_utc": "2026-08-12T09:46:33+00:00",
  "freshness": {
-  "baked_utc": "2026-08-12T09:37:37+00:00",
-  "baked_et": "Aug 12, 5:37am ET",
-  "revalidated_utc": "2026-08-12T09:37:37+00:00",
+  "baked_utc": "2026-08-12T09:46:33+00:00",
+  "baked_et": "Aug 12, 5:46am ET",
+  "revalidated_utc": "2026-08-12T09:46:33+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-12",
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-12T09:37:37+00:00",
+  "generated_utc": "2026-08-12T09:46:33+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -7134,7 +7134,7 @@
       "why": "Measured and it A I HAD . I told the CEO exactly two alarms were genuinely outstanding both crew dead from 07-29. That was wrong. My raw parse of alarm undelivered.jsonl only treated ...",
       "priority": 1,
       "seat": "infra",
-      "status": "ready",
+      "status": "ready RE-MEASURED 2026-08-12 AND THE FRAMING IS WRONG IN A WAY THAT MATTERS - THE REDNESS IS NOT SPURIOUS. KEPT AT p1. THE BACKLOG HALF OF THIS ROW IS CONFIRMED: asked through the module as this row's own lesson requires, notify._load_undelivered() returns 62 entries, 60 delivered and 2 cancelled_recovered, and redrive_undelivered() reports pending 0, held_pause 0, gave_up 0, failed 0. Completely empty, exactly as filed. BUT THE DEADMAN IS RED FOR A DIFFERENT AND LEGITIMATE REASON, and this row reads as though the redness were the false part. probe_alert_path_deadman runs tests/test_alert_path_guarantee.py, which is a SCRIPT-style test - pytest collects nothing from it, so anyone checking it with pytest sees 'no tests ran' and learns nothing. Run as a script it exits 1 with SIXTEEN NAMED CHECKS FAILING: LADDER_ESCALATES_IN_PLACE, PREREACTED_RUNG_AND_ESCALATED_ADVANCE, twelve ARRIVES_* checks, and four SILENT_CAPPED_* checks. The notify line about an alerting_degraded alarm not being delivered, which the probe surfaces, is TEST OUTPUT from a deliberately degraded path - not the cause. THE FAILURE SIGNATURE IS COHERENT AND POINTS AT SOMETHING SERIOUS: LADDER_ESCALATES_IN_PLACE reports 0 update(s), all into the SAME thread. Meanwhile LADDER_OPENS_INCIDENT, LADDER_ONE_INCIDENT_ONE_THREAD, LADDER_BACKOFF_WIDENS with real minutes 15, 30, 60, 120, 240, 240, LADDER_CAPS and LADDER_STOPS_ON_READ ALL PASS. So the ladder SCHEDULES correctly and EMITS NOTHING. An escalating alarm that never re-pages is the exact shape of the harm behind the CEO's No other updates all day - and one of the failing checks is literally named ARRIVES_SILENT_LADDER_IS_A_COUNTED_DEFECT. WHY I AM NOT FIXING IT HERE: sixteen interlocking checks in the path that decides what reaches his phone, where a wrong repair either spams him or silences him further. That wants a rested lane with the whole file in view, not the end of a long session. WHAT THE NEXT LANE SHOULD NOT REDO: the backlog is empty and is not the cause; the probe's notify line is output not cause; the file is script-style so run it with python, not pytest; and the scheduling half of the ladder is healthy, so start at the emission step. CONFIRMED IN PRODUCTION STATE 2026-08-12 - THE TEST IS RIGHT AND THE LADDER REALLY DOES NOT ESCALATE. This was the safe read-only question: does the ladder emit 0 updates only in the harness, or on the real box? Answer is the real box. ops/scout/state/alert_incidents.json holds NINE OPEN INCIDENTS and NOT ONE carries a reminders, rungs, sent or updates field. Every incident has the identical key set - key, event_key, section, message, opened_utc, opened_ts, msg_id, first_delivery, ack_baseline - which records that it OPENED and was DELIVERED ONCE, and nothing after that. That is LADDER_ESCALATES_IN_PLACE reporting 0 updates, reproduced on live state rather than in a test fixture. AND THE AGES MAKE IT CONCRETE: fast_rescue_unavailable:ops has been open since 2026-07-31, TWELVE DAYS, with zero reminders. pipe_silent:ops since 08-05. empty_chair:ops, report_failed:games and refresh_failed:ledger since last night. Two opened in the last hour - spawn_failed:ops at 09:25:31 and meter_unreadable:ops at 09:37:33 - so alarms ARE opening normally. They open, they page once, and they go quiet forever. THAT IS THE MECHANISM BEHIND No other updates all day, from the other direction: not that we said too little, but that an alarm which should have kept pressing said nothing after its first line. The backoff schedule this row's test proves healthy - 15, 30, 60, 120, 240, 240 minutes - is being computed for reminders that are never sent. ONE OBSERVATION I AM NOT TURNING INTO A CONCLUSION: empty_chair:ops is still OPEN from 2026-08-11 19:09 even though I verified tonight that coordinator_lock raises the seat-filled all-clear on claim and watched it fire at my own boot. Either the all-clear cancels pending DELIVERIES without closing the INCIDENT, or this incident is stale for another reason. Worth one check by whoever takes this - it may be a second defect in the same file or it may be by design. RANK: this is the emission step I said to start at, now with live proof it is a production defect and not a stale expectation. Nine incidents, one twelve days old, none escalating. ROOT CAUSE FOUND 2026-08-12 - THE ESCALATION LADDER IS BUILT, TESTED AND NEVER RUN. run_alert_ladder is defined at ops/notify.py line 2431 and is invoked from exactly TWO places, both inside notify.py's own CLI at lines 3325 and 3327 - the --ladder flag and a combined redrive-plus-ladder path. There is NO programmatic caller anywhere. And nothing schedules the flag: grep for --ladder across every ps1, py, json and xml under ops and scripts returns nothing outside notify.py, and NO Hardwood scheduled task has ladder or notify anywhere in its Arguments. THAT EXPLAINS EVERY SYMPTOM ON THIS ROW WITH ONE MECHANISM. Incidents open and deliver once because notify() does that inline. Nothing ever advances a rung because the only thing that advances rungs is a command nobody runs. Hence nine open incidents with no reminders field, fast_rescue_unavailable:ops silent for twelve days, LADDER_ESCALATES_IN_PLACE reporting 0 updates, and a backoff schedule of 15, 30, 60, 120, 240, 240 minutes computed for reminders that are never sent. It is the built-but-never-wired class again, and this is the most consequential instance of it I have found - the un-run artifact is the one that is supposed to KEEP PRESSING when something is wrong. DO NOT SIMPLY SCHEDULE IT, AND THIS IS THE PART THAT MUST TRAVEL WITH THE FIX. There are NINE OPEN INCIDENTS RIGHT NOW, one of them twelve days old. Turning the ladder on cold would immediately walk every one of them up its rungs and fire a burst of escalations at the CEO's phone for things that are mostly stale - which is the spam failure, and it would get the ladder switched off again within the hour. SEQUENCE IT: first triage the nine open incidents, closing or ageing out the ones already resolved - empty_chair:ops and publish_stale:ops both look stale to me tonight, the seat is filled and Pages is publishing again - THEN schedule the tick. A cadence around 5 to 15 minutes serves a 15-minute first rung. WHAT I DELIBERATELY DID NOT DO: wire it. Diagnosis here was entirely read-only. Turning this on is a change to what reaches his phone, with a live burst risk attached, and it wants a rested lane that can watch what happens - not the last item of a long session.",
       "state": "ready now",
       "pm_authored": false,
       "impact": "",
@@ -20837,9 +20837,9 @@
     "target": 40,
     "count": 438,
     "ok": true,
-    "label": "438 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 1m ago.)",
+    "label": "438 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 10m ago.)",
     "as_of_utc": "2026-08-12T09:36:10Z",
-    "age_secs": 117,
+    "age_secs": 641,
     "stale": false
    },
    "source": "dispatch queue",
@@ -21410,67 +21410,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-12T09:37:07Z",
-  "age_s": 35,
-  "cycles": 265,
+  "last_poll_utc": "2026-08-12T09:46:32Z",
+  "age_s": 5,
+  "cycles": 273,
   "known": true,
-  "label": "scout: alive, last poll 35s ago",
+  "label": "scout: alive, last poll 5s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "5:34am",
+   "time": "5:44am",
+   "text": "poll #271 · nothing new",
+   "detail": "poll cycle=271 ok directives_new=0"
+  },
+  {
+   "time": "5:44am",
+   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
+   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
+  },
+  {
+   "time": "5:44am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   },
   {
-   "time": "5:35am",
+   "time": "5:45am",
+   "text": "poll #272 · nothing new",
+   "detail": "poll cycle=272 ok directives_new=0"
+  },
+  {
+   "time": "5:45am",
+   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
+   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
+  },
+  {
+   "time": "5:45am",
+   "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
+   "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
+  },
+  {
+   "time": "5:45am",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
   },
   {
-   "time": "5:35am",
-   "text": "poll #264 · nothing new",
-   "detail": "poll cycle=264 ok directives_new=0"
+   "time": "5:46am",
+   "text": "poll #273 · nothing new",
+   "detail": "poll cycle=273 ok directives_new=0"
   },
   {
-   "time": "5:35am",
+   "time": "5:46am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
   },
   {
-   "time": "5:35am",
+   "time": "5:46am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
-  },
-  {
-   "time": "5:37am",
-   "text": "poll #265 · nothing new",
-   "detail": "poll cycle=265 ok directives_new=0"
-  },
-  {
-   "time": "5:37am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
-  },
-  {
-   "time": "5:37am",
-   "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
-   "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
-  },
-  {
-   "time": "5:37am",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
-  },
-  {
-   "time": "5:37am",
-   "text": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
-   "detail": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full str"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-12T09:37:21Z",
+  "as_of": "2026-08-12T09:46:32Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -21479,40 +21479,40 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "35s",
-    "state_text": "on · seen 35s ago"
+    "age_label": "5s",
+    "state_text": "on · seen 5s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "20s",
-    "state_text": "on · seen 20s ago"
+    "age_label": "13s",
+    "state_text": "on · seen 13s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "33s",
-    "state_text": "on · seen 33s ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "21s",
-    "state_text": "on · seen 21s ago"
+    "age_label": "6s",
+    "state_text": "on · seen 6s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "7m",
-    "state_text": "on · seen 7m ago"
+    "age_label": "5m",
+    "state_text": "on · seen 5m ago"
    }
   ],
   "width": {
@@ -21592,7 +21592,7 @@
    },
    {
     "label": "Midnight projected",
-    "ran_et": "5:35am",
+    "ran_et": "5:45am",
     "next_et": "12:00am",
     "result": "needs a look"
    },
@@ -21622,7 +21622,7 @@
    },
    {
     "label": "standing daily reconcile: CEO-ask reconciliation, stale-state audit (silently-stale is banned), superseded-file consolidation candidates, claims-vs-reality reopener, and the two-truths scan -> a plain-English diff in the morning brief plus a board panel",
-    "ran_et": "5:35am",
+    "ran_et": "5:45am",
     "next_et": "3:30am",
     "result": "needs a look"
    },
@@ -21734,9 +21734,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-12T09:37:35Z",
-  "session_age_secs": 20963,
-  "last_progress_age_secs": 7,
+  "last_heartbeat_utc": "2026-08-12T09:46:15Z",
+  "session_age_secs": 21498,
+  "last_progress_age_secs": 22,
   "last_spawn_attempt": "2026-08-12T03:45:18Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -21766,7 +21766,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 1 work lanes have been running for 6776 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 1 work lanes have been running for 6786 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 1
  },
@@ -21775,25 +21775,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-12T09:37:37+00:00",
+   "revalidated": "2026-08-12T09:46:33+00:00",
    "stale_reason": "These readings may be out of date — last updated 113h ago.",
    "age_label": "113h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-12T09:37:37+00:00",
+   "as_of": "2026-08-12T09:46:33+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T09:37:37+00:00",
+   "revalidated": "2026-08-12T09:46:33+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T09:37:37+00:00",
+   "as_of": "2026-08-12T09:46:33+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T09:37:37+00:00",
+   "revalidated": "2026-08-12T09:46:33+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -21802,25 +21802,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T09:37:37+00:00",
+   "revalidated": "2026-08-12T09:46:33+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-12T09:36:44Z",
-   "stale": false,
-   "revalidated": "2026-08-12T09:37:37+00:00",
-   "stale_reason": "",
-   "age_label": "53s",
+   "as_of": "2026-08-12T09:46:47Z",
+   "stale": true,
+   "revalidated": "2026-08-12T09:46:33+00:00",
+   "stale_reason": "A newer update is being re-checked now.",
+   "age_label": "0s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T09:37:37+00:00",
+   "revalidated": "2026-08-12T09:46:33+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -21829,16 +21829,16 @@
    "source": "director inbox",
    "as_of": "2026-08-12T09:06:28Z",
    "stale": false,
-   "revalidated": "2026-08-12T09:37:37+00:00",
+   "revalidated": "2026-08-12T09:46:33+00:00",
    "stale_reason": "",
-   "age_label": "31m",
+   "age_label": "40m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-08T12:00:00Z",
    "stale": true,
-   "revalidated": "2026-08-12T09:37:37+00:00",
+   "revalidated": "2026-08-12T09:46:33+00:00",
    "stale_reason": "No new team updates in 93h — nothing was shipped in that window. The feed itself is current.",
    "age_label": "93h",
    "stale_after": 172800,
@@ -21846,22 +21846,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T09:27:15+00:00",
+   "as_of": "2026-08-12T09:37:37+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T09:37:37+00:00",
+   "revalidated": "2026-08-12T09:46:33+00:00",
    "stale_reason": "",
-   "age_label": "10m",
+   "age_label": "9m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-12T09:37:21Z",
+   "as_of": "2026-08-12T09:46:32Z",
    "stale": false,
-   "revalidated": "2026-08-12T09:37:37+00:00",
+   "revalidated": "2026-08-12T09:46:33+00:00",
    "stale_reason": "",
-   "age_label": "21s",
+   "age_label": "5s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 12, 5:37am ET"
+ "generated_et": "Aug 12, 5:46am ET"
 }
