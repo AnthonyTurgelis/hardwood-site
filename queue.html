@@ -128,14 +128,20 @@ function paint(d){
   var t = Date.parse(d.as_of_iso || "");
   if(t && Date.now() - t > 1800000) el("q-stale").style.display = "block";
 
-  var live = function(i){ return i.status !== "DONE TODAY" && i.status !== "BLOCKED"; };
+  /* Two finished words, not one - see the FINISHED note in index.html. Testing only for
+     "DONE TODAY" left every LANDED row (landed, verification owed) sitting in the OPEN lanes. */
+  var FINISHED = {"DONE TODAY":1, "LANDED":1};
+  var live = function(i){ return !FINISHED[i.status] && i.status !== "BLOCKED"; };
   var open = items.filter(function(i){ return live(i) && i.group !== "process" && i.group !== "betting"; });
   var machine = open.filter(function(i){ return i.owner === "MACHINE"; });
   var director = open.filter(function(i){ return i.owner === "DIRECTOR"; });
   var blocked = items.filter(function(i){ return i.status === "BLOCKED"; });
   var process = items.filter(function(i){ return live(i) && i.group === "process"; });
   var betting = items.filter(function(i){ return live(i) && i.group === "betting"; });
-  var done = items.filter(function(i){ return i.status === "DONE TODAY"; });
+  var done = items.filter(function(i){ return !!FINISHED[i.status]; });
+  /* newest completion first; undated finished rows sort last rather than being dropped */
+  done.sort(function(a,b){ var x=a.event_utc||"", y=b.event_utc||"";
+    if(x===y) return 0; if(!x) return 1; if(!y) return -1; return x<y?1:-1; });
 
   var head = machine.slice(0, MACHINE_HEAD);
   el("q-m").innerHTML = head.map(row).join("")

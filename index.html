@@ -234,14 +234,30 @@ footer .util a:hover{color:var(--chalk)}
           roadmap: a reader wants what we are building, not our plumbing. Family is the filter, so
           a mis-filed row lands here - that is how "Stop telling him we are idle when we are not"
           reached the front page. Plumbing has its own home now: the status chips above. */
+    /* FINISHED IS A SET OF WORDS, NOT ONE WORD. The feed carries two finished states - DONE TODAY
+       and LANDED, the landed-and-owed-a-verification word - and testing for only the first read 23
+       rows that landed today as UPCOMING WORK. Same list as _QUEUE_FINISHED in the baker. */
+    var FINISHED={'DONE TODAY':1,'LANDED':1};
     var next=items.filter(function(i){
-      return i.status!=='DONE TODAY' && i.status!=='BLOCKED'
+      return !FINISHED[i.status] && i.status!=='BLOCKED'
           && String(i.family||'').toLowerCase()!=='operations';
     });
     /* FINISHED shows every family, ops included - the CEO asked for completed tasks and the
        machine's own work is the bulk of them. The list scrolls in place so the band stays one
        screen tall; the heading carries the true total, not the visible count. */
-    var done=items.filter(function(i){return i.status==='DONE TODAY';});
+    var done=items.filter(function(i){return !!FINISHED[i.status];});
+    /* NEWEST FIRST, and only here. The ranked order this list inherits is a PRIORITY order, which
+       is meaningless for work that is already finished: it scattered today's completions among a
+       hundred older rows, so a band headed "Finished today" opened on items from three weeks ago.
+       Rows carrying no date sort last rather than being dropped - an undated finished row is still
+       finished, it just cannot claim a place in the ordering. */
+    done.sort(function(a,b){
+      var x=a.event_utc||'', y=b.event_utc||'';
+      if(x===y) return 0;
+      if(!x) return 1;
+      if(!y) return -1;
+      return x<y?1:-1;
+    });
     paint('m-queue',next.slice(0,12),'m-qcount',next.length,'waiting');
     paint('m-done',done,'m-dcount',done.length,'done');
     /* CONTENT-TIME LAW (CEO 20260812). This line used to print d.as_of_et when as_of_et WAS the
