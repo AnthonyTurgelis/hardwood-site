@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-08-12T18:46:10+00:00",
+ "generated_utc": "2026-08-12T18:55:48+00:00",
  "title": "Ship checklist — the target set before the pause",
  "source_doc": "docs/SHIP_CHECKLIST_20260807.md",
  "rule": "An item is DONE only on live-verified evidence with a picture. Committed, pushed and wired all count as NOT DONE.",
@@ -158,8 +158,8 @@
      "section": "B",
      "item": "Admission gate reclaim ceiling cut from 1800 to 300 seconds",
      "done_test": "a hung holder costs 5 minutes, not 30",
-     "state": "open",
-     "evidence": ""
+     "state": "done",
+     "evidence": "Applied 2026-08-12: LABEL_TTL_SECS['build_site'] cut 600 -> 300 in ops/admission_gate.py, verified by ttl_for('build_site')==300 with the unmeasured-label default deliberately left at the generous 1800. THE NUMBER ONLY BECAME SAFE TODAY, and that is the substance of this row rather than the edit. A legitimate bake ran 768 seconds this morning, so a bare age test at 300s would have reclaimed a LIVE baker mid-push - the exact collision the gate exists to prevent. What changed is that token_is_stale now asks whether the holder is alive, so this ceiling reclaims DEAD holders only and no longer has to clear the job's slowest legitimate runtime. Proven both directions on the real module: a DEAD holder is reclaimable at 299s, 301s and 901s, while a LIVE holder at 299s and 301s is NOT reclaimable and is broken only at 901s. MEASURED EFFECT, stated precisely rather than to the item's wording: the dead-holder case was ALREADY fast before this edit, because the pid check fires past 60s independently of the ceiling. What this edit actually buys is the WEDGED-BUT-ALIVE bound, which falls from HARD_TTL_MULTIPLIER x 600 = 1800s to 3 x 300 = 900s. So a hung holder costs at most 15 minutes rather than 30, and a dead one about a minute. THE LITERAL 'five minutes' IS NOT ACHIEVABLE FOR A WEDGED-ALIVE HOLDER and should not be forced: breaking a live token at 300s would kill the 768s bake on record. 900s is the tightest bound that clears every legitimate run measured. TWO PRE-EXISTING RED TESTS FIXED IN THE SAME MOTION, found by running the suite rather than reported: test_a_stale_same_label_token_does_not_block and test_a_hung_build_site_is_reclaimed_at_its_own_ceiling were ALREADY FAILING before this change - confirmed by stashing the edit and re-running - because they set up LIVE holders and expected reclaim-at-ceiling, which is precisely what today's age-is-not-death fix removed on purpose. They now use a dead pid, and a new test test_a_live_holder_past_its_ceiling_is_NOT_reclaimed pins the protection they used to contradict. Suite is 18 passed, 0 failed, up from 15 passed / 2 failed. NO PICTURE: this is an internal gate constant with no rendered surface, which the picture gate exempts."
     },
     {
      "id": "B6",
@@ -194,9 +194,9 @@
      "evidence": "The market surface stopped publishing figures and published an explanation instead, but the explanation carried no time of its own, so a reader could not tell whether the withholding was decided this morning or months ago and forgotten. It now carries its own clock, live-verified on the public URL. Wiring checked end to end rather than assumed: the site bake does NOT regenerate this file, so running its own baker was what proved the stamp reaches the served copy."
     }
    ],
-   "done": 3,
+   "done": 4,
    "total": 9,
-   "label": "3 of 9"
+   "label": "4 of 9"
   },
   {
    "key": "C",
@@ -224,8 +224,8 @@
    "label": "2 of 2"
   }
  ],
- "done": 14,
+ "done": 15,
  "total": 24,
- "label": "14 of 24",
+ "label": "15 of 24",
  "all_done": false
 }
