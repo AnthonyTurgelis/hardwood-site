@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-12T06:00:59+00:00",
+ "generated_utc": "2026-08-12T06:10:41+00:00",
  "freshness": {
-  "baked_utc": "2026-08-12T06:00:59+00:00",
-  "baked_et": "Aug 12, 2:00am ET",
-  "revalidated_utc": "2026-08-12T06:00:59+00:00",
+  "baked_utc": "2026-08-12T06:10:41+00:00",
+  "baked_et": "Aug 12, 2:10am ET",
+  "revalidated_utc": "2026-08-12T06:10:41+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-12",
@@ -14,7 +14,7 @@
   "maintenance": 0,
   "needs_anthony": 0,
   "lanes_today": 0,
-  "upcoming": 434
+  "upcoming": 433
  },
  "ship_checklist": {
   "known": true,
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-12T06:00:59+00:00",
+  "generated_utc": "2026-08-12T06:10:41+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -1367,7 +1367,7 @@
      "why": "Measured and it is a not the split the parent row described. holds Azura Stevens' 2025 season twice 44 games under player id with the accented spelling and the 44 game ids under player id with the ...",
      "priority": -3.4,
      "seat": "DATA",
-     "status": "open",
+     "status": "CONSUMER IMPACT MEASURED 2026-08-12 on the sibling row one-player-is-counted-twice-in-the-game-logs, and it decides the shape of this repair. 130 files reference , 108 AGGREGATE it, and only 53 of those accent-fold names - so 55 aggregating consumers over-count her right now. Fixing readers means touching 55 files and policing 108 forever; fixing the source is one change. MERGE AT THE SOURCE. Live proof the defect is real and the fold is sufficient: 2025 box sums disagree with the recorded final on 44 team-games, every one of them HIGHER than the final, and re-summing with names accent-folded gives ZERO. NOTE FOR WHOEVER TAKES IT: lower-casing is not folding - a dedup on lower of player_name still returns all 44, because the spellings differ by an acute accent. open",
      "state": "",
      "pm_authored": false,
      "impact": "",
@@ -1495,20 +1495,20 @@
      ]
     },
     {
-     "task_id": "the-sentinel-sweep-is-on-no-clock",
+     "task_id": "the-bridge-repair-task-runs-only-while-someone-i",
      "family": "infra",
-     "name": "Run the daily data-integrity check",
-     "header": "Run the daily data-integrity check",
-     "why": "Approve switching on the always-on monitor so it can run without a person watching",
-     "priority": -3.2,
+     "name": "Three scheduled tasks are being refused for having an interactive principal",
+     "header": "Three scheduled tasks are being refused for having an interactive principal",
+     "why": "Registered HardwoodBridgeRepair weekly and proved it runs by requiring a new log rather than an exit code but its principal is Interactive rather than S4U. Every other Hardwood task is S4U. The ...",
+     "priority": -3.3,
      "seat": "INFRA",
-     "status": "open",
+     "status": "WIDENED 2026-08-12 - this is no longer one task, it is a live outage on three, with a measured cause. ORIGINAL: HardwoodBridgeRepair was registered this session with an Interactive principal because both elevated paths were refused, and the standing learning says an Interactive task is silently refused after a reboot with nobody logged on. That was recorded as a latent risk. IT IS NOT LATENT. PROVEN ON THREE EXISTING TASKS, read back from the task XML rather than the summary view: SentinelSweep, SeasonStatsRefresh and TrackingTripwire all carry LogonType InteractiveToken, and SentinelSweep and SeasonStatsRefresh both last returned - hex 0x800710E0 - the documented refusal for exactly this shape. The box last booted 2026-08-11T23:46:54 local. THE COST IS ALREADY BEING PAID. SentinelSweep carries the id-space guard, which is RED right now over a duplicated player-season, and nobody has heard it because the task is refused rather than run. THESE TASKS LIVE IN A FOLDER THAT NAME QUERIES MISS: they sit under \\Hardwood\\ and are named GamedayGrade, GamedayReport, SeasonStatsRefresh, SentinelSweep, TrackingTripwire - not one starts with the word Hardwood, so every Get-ScheduledTask -TaskName 'Hardwood*' query in this repo skips them entirely. Any future audit must query by TaskPath, not by name. THE FIX IS UNCHANGED AND NEEDS ELEVATION: re-register each as S4U keeping its action byte-identical, then READ THE PRINCIPAL BACK FROM THE XML, because the summary view reported S4U for a task whose XML said InteractiveToken. Never convert a window-spawner.",
      "state": "",
      "pm_authored": false,
      "impact": "",
-     "rank_priority": -3.2,
-     "title": "The sentinel sweep carries a red identity guard and no scheduler runs it",
-     "unlocks": "No Hardwood scheduled task passes sentinel to dispatch.",
+     "rank_priority": -3.3,
+     "title": "Three scheduled tasks are being refused for having an interactive principal",
+     "unlocks": "Registered HardwoodBridgeRepair weekly and proved it runs by requiring a new log rather than an exit code but its ...",
      "owner": "MACHINE",
      "feed_status": "QUEUED",
      "tier": 3,
@@ -1520,28 +1520,73 @@
       {
        "verb": "top",
        "icon": "⤒",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sentinel-sweep-is-on-no-clock%3A%20top&body=Run%20the%20daily%20data-integrity%20check%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-bridge-repair-task-runs-only-while-someone-i%3A%20top&body=Three%20scheduled%20tasks%20are%20being%20refused%20for%20having%20an%20interactive%20principal%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
       },
       {
        "verb": "bump",
        "icon": "⬆",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sentinel-sweep-is-on-no-clock%3A%20bump&body=Run%20the%20daily%20data-integrity%20check%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-bridge-repair-task-runs-only-while-someone-i%3A%20bump&body=Three%20scheduled%20tasks%20are%20being%20refused%20for%20having%20an%20interactive%20principal%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
       },
       {
        "verb": "demote",
        "icon": "⬇",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sentinel-sweep-is-on-no-clock%3A%20demote&body=Run%20the%20daily%20data-integrity%20check%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-bridge-repair-task-runs-only-while-someone-i%3A%20demote&body=Three%20scheduled%20tasks%20are%20being%20refused%20for%20having%20an%20interactive%20principal%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
       },
       {
        "verb": "shelve",
        "icon": "🗄",
-       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sentinel-sweep-is-on-no-clock%3A%20shelve&body=Run%20the%20daily%20data-integrity%20check%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-bridge-repair-task-runs-only-while-someone-i%3A%20shelve&body=Three%20scheduled%20tasks%20are%20being%20refused%20for%20having%20an%20interactive%20principal%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
       }
      ]
     }
    ],
    "more_by_family": {
     "infra": [
+     {
+      "task_id": "the-sentinel-sweep-is-on-no-clock",
+      "family": "infra",
+      "name": "I filed this wrong: the sweep is scheduled and being refused, not unscheduled",
+      "header": "I filed this wrong: the sweep is scheduled and being refused, not unscheduled",
+      "why": "Approve switching on the always-on monitor so it can run without a person watching",
+      "priority": -3.2,
+      "seat": "INFRA",
+      "status": "CORRECTED 2026-08-12, BY ME, WITHIN THE HOUR - THE PREMISE OF THIS ROW AS I FILED IT IS WRONG. I wrote that nothing schedules the sentinel sweep. It IS scheduled: task SentinelSweep, daily at 08:00, in the \\Hardwood\\ task FOLDER. My check missed it because I queried Get-ScheduledTask with -TaskName 'Hardwood*', which globs the task NAME, and the tasks in that folder are named GamedayGrade, GamedayReport, SeasonStatsRefresh, SentinelSweep and TrackingTripwire - none of them starts with the word Hardwood. A whole folder of scheduled work was invisible to every task query I ran this session. THE REAL DEFECT IS WORSE THAN THE ONE I FILED, and it is live. SentinelSweep's last result is , which is 0x800710E0 - the documented refusal when a task with an INTERACTIVE principal fires and nobody is logged on. Read back from the task XML rather than the summary view, its LogonType is InteractiveToken, and so are SeasonStatsRefresh and TrackingTripwire. GamedayGrade and GamedayReport are correctly S4U. So the sweep is not unscheduled - it is scheduled and REFUSED, which looks identical from the data and is a different repair entirely. WHAT STANDS FROM THE ORIGINAL FILING: the id-space guard inside the sweep is correct and is RED right now, and nobody has heard it. The cause is refusal, not absence. FOLDED INTO the-bridge-repair-task-runs-only-while-someone-is-logged-in, which already names this exact failure and now has three more proven instances. This row is closed as superseded rather than deleted, because the wrong reasoning is worth keeping: a name-glob is not a task inventory.",
+      "state": "",
+      "pm_authored": false,
+      "impact": "",
+      "rank_priority": -3.2,
+      "title": "I filed this wrong: the sweep is scheduled and being refused, not unscheduled",
+      "unlocks": "No Hardwood scheduled task passes sentinel to dispatch.",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 3,
+      "group": "process",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 11,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sentinel-sweep-is-on-no-clock%3A%20top&body=I%20filed%20this%20wrong%3A%20the%20sweep%20is%20scheduled%20and%20being%20refused%2C%20not%20unscheduled%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sentinel-sweep-is-on-no-clock%3A%20bump&body=I%20filed%20this%20wrong%3A%20the%20sweep%20is%20scheduled%20and%20being%20refused%2C%20not%20unscheduled%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sentinel-sweep-is-on-no-clock%3A%20demote&body=I%20filed%20this%20wrong%3A%20the%20sweep%20is%20scheduled%20and%20being%20refused%2C%20not%20unscheduled%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sentinel-sweep-is-on-no-clock%3A%20shelve&body=I%20filed%20this%20wrong%3A%20the%20sweep%20is%20scheduled%20and%20being%20refused%2C%20not%20unscheduled%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
+       }
+      ]
+     },
      {
       "task_id": "shipcheck-b4-acceptance-bars-recomputed-at-regul",
       "family": "infra",
@@ -1563,7 +1608,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 11,
+      "rank": 12,
       "actions": [
        {
         "verb": "top",
@@ -1608,7 +1653,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 29,
+      "rank": 30,
       "actions": [
        {
         "verb": "top",
@@ -1653,7 +1698,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 30,
+      "rank": 31,
       "actions": [
        {
         "verb": "top",
@@ -1698,7 +1743,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 31,
+      "rank": 32,
       "actions": [
        {
         "verb": "top",
@@ -1743,7 +1788,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 32,
+      "rank": 33,
       "actions": [
        {
         "verb": "top",
@@ -1788,7 +1833,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 33,
+      "rank": 34,
       "actions": [
        {
         "verb": "top",
@@ -1833,7 +1878,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 34,
+      "rank": 35,
       "actions": [
        {
         "verb": "top",
@@ -1878,7 +1923,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 35,
+      "rank": 36,
       "actions": [
        {
         "verb": "top",
@@ -1923,7 +1968,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 36,
+      "rank": 37,
       "actions": [
        {
         "verb": "top",
@@ -1944,51 +1989,6 @@
         "verb": "shelve",
         "icon": "🗄",
         "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20shipcheck-b9-market-grade-json-carries-a-generat%3A%20shelve&body=Market%20carries%20a%20generated%20stamp%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       }
-      ]
-     },
-     {
-      "task_id": "the-bridge-repair-task-runs-only-while-someone-i",
-      "family": "infra",
-      "name": "The new weekly task has an Interactive principal so a with no login skips it",
-      "header": "The new weekly task has an Interactive principal so a with no login skips it",
-      "why": "Registered HardwoodBridgeRepair weekly and proved it runs by requiring a new log rather than an exit code but its principal is Interactive rather than S4U. Every other Hardwood task is S4U. The ...",
-      "priority": -2.9,
-      "seat": "INFRA",
-      "status": "open",
-      "state": "",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": -2.9,
-      "title": "The new weekly task has an Interactive principal so a with no login skips it",
-      "unlocks": "Registered HardwoodBridgeRepair weekly and proved it runs by requiring a new log rather than an exit code but its ...",
-      "owner": "MACHINE",
-      "feed_status": "QUEUED",
-      "tier": 3,
-      "group": "process",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 37,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-bridge-repair-task-runs-only-while-someone-i%3A%20top&body=The%20new%20weekly%20task%20has%20an%20Interactive%20principal%20so%20a%20with%20no%20login%20skips%20it%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-bridge-repair-task-runs-only-while-someone-i%3A%20bump&body=The%20new%20weekly%20task%20has%20an%20Interactive%20principal%20so%20a%20with%20no%20login%20skips%20it%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-bridge-repair-task-runs-only-while-someone-i%3A%20demote&body=The%20new%20weekly%20task%20has%20an%20Interactive%20principal%20so%20a%20with%20no%20login%20skips%20it%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-bridge-repair-task-runs-only-while-someone-i%3A%20shelve&body=The%20new%20weekly%20task%20has%20an%20Interactive%20principal%20so%20a%20with%20no%20login%20skips%20it%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
        }
       ]
      },
@@ -2308,51 +2308,6 @@
       ]
      },
      {
-      "task_id": "the-reconcile-check-stopped-a-month-ago",
-      "family": "infra",
-      "name": "A check that compares our scores to the outside world existed, and stopped a month ago",
-      "header": "A check that compares our scores to the outside world existed, and stopped a month ago",
-      "why": "The wrong final we repaired tonight would have been caught on the day it happened. A reconciliation table already compares recorded finals against two independent sources, it holds a hundred and ...",
-      "priority": 1,
-      "seat": "data",
-      "status": "ready",
-      "state": "ready now",
-      "pm_authored": false,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "A check that compares our scores to the outside world existed, and stopped a month ago",
-      "unlocks": "The wrong final we repaired tonight would have been caught on the day it happened.",
-      "owner": "DIRECTOR",
-      "feed_status": "QUEUED",
-      "tier": 3,
-      "group": "process",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 62,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20top&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20bump&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20demote&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-reconcile-check-stopped-a-month-ago%3A%20shelve&body=A%20check%20that%20compares%20our%20scores%20to%20the%20outside%20world%20existed%2C%20and%20stopped%20a%20month%20ago%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-12%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "a-liveness-check-that-can-only-pass-while-the-bu",
       "family": "infra",
       "name": "A check that proves a rule is alive by counting findings fails the moment the rule is ...",
@@ -2373,7 +2328,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 63,
+      "rank": 62,
       "actions": [
        {
         "verb": "top",
@@ -2418,7 +2373,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 64,
+      "rank": 63,
       "actions": [
        {
         "verb": "top",
@@ -2463,7 +2418,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 65,
+      "rank": 64,
       "actions": [
        {
         "verb": "top",
@@ -2508,7 +2463,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 66,
+      "rank": 65,
       "actions": [
        {
         "verb": "top",
@@ -2553,7 +2508,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 67,
+      "rank": 66,
       "actions": [
        {
         "verb": "top",
@@ -2598,7 +2553,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 69,
+      "rank": 68,
       "actions": [
        {
         "verb": "top",
@@ -2643,7 +2598,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 70,
+      "rank": 69,
       "actions": [
        {
         "verb": "top",
@@ -2688,7 +2643,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 71,
+      "rank": 70,
       "actions": [
        {
         "verb": "top",
@@ -2733,7 +2688,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 72,
+      "rank": 71,
       "actions": [
        {
         "verb": "top",
@@ -2778,7 +2733,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 73,
+      "rank": 72,
       "actions": [
        {
         "verb": "top",
@@ -2823,7 +2778,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 74,
+      "rank": 73,
       "actions": [
        {
         "verb": "top",
@@ -2868,7 +2823,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 75,
+      "rank": 74,
       "actions": [
        {
         "verb": "top",
@@ -2913,7 +2868,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 76,
+      "rank": 75,
       "actions": [
        {
         "verb": "top",
@@ -2958,7 +2913,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 77,
+      "rank": 76,
       "actions": [
        {
         "verb": "top",
@@ -3003,7 +2958,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 83,
+      "rank": 82,
       "actions": [
        {
         "verb": "top",
@@ -3048,7 +3003,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 84,
+      "rank": 83,
       "actions": [
        {
         "verb": "top",
@@ -3093,7 +3048,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 85,
+      "rank": 84,
       "actions": [
        {
         "verb": "top",
@@ -3138,7 +3093,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 87,
+      "rank": 86,
       "actions": [
        {
         "verb": "top",
@@ -3183,7 +3138,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 91,
+      "rank": 90,
       "actions": [
        {
         "verb": "top",
@@ -3228,7 +3183,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 92,
+      "rank": 91,
       "actions": [
        {
         "verb": "top",
@@ -3273,7 +3228,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 93,
+      "rank": 92,
       "actions": [
        {
         "verb": "top",
@@ -3318,7 +3273,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 95,
+      "rank": 94,
       "actions": [
        {
         "verb": "top",
@@ -3363,7 +3318,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 96,
+      "rank": 95,
       "actions": [
        {
         "verb": "top",
@@ -3408,7 +3363,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 102,
+      "rank": 101,
       "actions": [
        {
         "verb": "top",
@@ -3453,7 +3408,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 103,
+      "rank": 102,
       "actions": [
        {
         "verb": "top",
@@ -3498,7 +3453,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 105,
+      "rank": 104,
       "actions": [
        {
         "verb": "top",
@@ -3543,7 +3498,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 107,
+      "rank": 106,
       "actions": [
        {
         "verb": "top",
@@ -3588,7 +3543,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 111,
+      "rank": 110,
       "actions": [
        {
         "verb": "top",
@@ -3633,7 +3588,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 113,
+      "rank": 112,
       "actions": [
        {
         "verb": "top",
@@ -3678,7 +3633,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 114,
+      "rank": 113,
       "actions": [
        {
         "verb": "top",
@@ -3723,7 +3678,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 115,
+      "rank": 114,
       "actions": [
        {
         "verb": "top",
@@ -3768,7 +3723,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 116,
+      "rank": 115,
       "actions": [
        {
         "verb": "top",
@@ -3813,7 +3768,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 118,
+      "rank": 117,
       "actions": [
        {
         "verb": "top",
@@ -3858,7 +3813,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 128,
+      "rank": 127,
       "actions": [
        {
         "verb": "top",
@@ -3903,7 +3858,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 129,
+      "rank": 128,
       "actions": [
        {
         "verb": "top",
@@ -3948,7 +3903,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 130,
+      "rank": 129,
       "actions": [
        {
         "verb": "top",
@@ -3993,7 +3948,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 138,
+      "rank": 137,
       "actions": [
        {
         "verb": "top",
@@ -4038,7 +3993,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 145,
+      "rank": 144,
       "actions": [
        {
         "verb": "top",
@@ -4083,7 +4038,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 147,
+      "rank": 146,
       "actions": [
        {
         "verb": "top",
@@ -4128,7 +4083,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 152,
+      "rank": 151,
       "actions": [
        {
         "verb": "top",
@@ -4173,7 +4128,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 153,
+      "rank": 152,
       "actions": [
        {
         "verb": "top",
@@ -4218,7 +4173,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 154,
+      "rank": 153,
       "actions": [
        {
         "verb": "top",
@@ -4263,7 +4218,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 155,
+      "rank": 154,
       "actions": [
        {
         "verb": "top",
@@ -4308,7 +4263,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 162,
+      "rank": 161,
       "actions": [
        {
         "verb": "top",
@@ -4353,7 +4308,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 164,
+      "rank": 163,
       "actions": [
        {
         "verb": "top",
@@ -4398,7 +4353,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 166,
+      "rank": 165,
       "actions": [
        {
         "verb": "top",
@@ -4443,7 +4398,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 169,
+      "rank": 168,
       "actions": [
        {
         "verb": "top",
@@ -4488,7 +4443,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 170,
+      "rank": 169,
       "actions": [
        {
         "verb": "top",
@@ -4533,7 +4488,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 174,
+      "rank": 173,
       "actions": [
        {
         "verb": "top",
@@ -4578,7 +4533,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 176,
+      "rank": 175,
       "actions": [
        {
         "verb": "top",
@@ -4623,7 +4578,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 177,
+      "rank": 176,
       "actions": [
        {
         "verb": "top",
@@ -4668,7 +4623,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 180,
+      "rank": 179,
       "actions": [
        {
         "verb": "top",
@@ -4713,7 +4668,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 181,
+      "rank": 180,
       "actions": [
        {
         "verb": "top",
@@ -4758,7 +4713,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 185,
+      "rank": 184,
       "actions": [
        {
         "verb": "top",
@@ -4803,7 +4758,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 186,
+      "rank": 185,
       "actions": [
        {
         "verb": "top",
@@ -4848,7 +4803,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 187,
+      "rank": 186,
       "actions": [
        {
         "verb": "top",
@@ -4893,7 +4848,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 188,
+      "rank": 187,
       "actions": [
        {
         "verb": "top",
@@ -4938,7 +4893,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 189,
+      "rank": 188,
       "actions": [
        {
         "verb": "top",
@@ -4983,7 +4938,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 191,
+      "rank": 190,
       "actions": [
        {
         "verb": "top",
@@ -5028,7 +4983,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 193,
+      "rank": 192,
       "actions": [
        {
         "verb": "top",
@@ -5073,7 +5028,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 197,
+      "rank": 196,
       "actions": [
        {
         "verb": "top",
@@ -5118,7 +5073,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 198,
+      "rank": 197,
       "actions": [
        {
         "verb": "top",
@@ -5163,7 +5118,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 205,
+      "rank": 204,
       "actions": [
        {
         "verb": "top",
@@ -5208,7 +5163,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 206,
+      "rank": 205,
       "actions": [
        {
         "verb": "top",
@@ -5253,7 +5208,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 208,
+      "rank": 207,
       "actions": [
        {
         "verb": "top",
@@ -5298,7 +5253,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 211,
+      "rank": 210,
       "actions": [
        {
         "verb": "top",
@@ -5343,7 +5298,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 213,
+      "rank": 212,
       "actions": [
        {
         "verb": "top",
@@ -5388,7 +5343,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 215,
+      "rank": 214,
       "actions": [
        {
         "verb": "top",
@@ -5433,7 +5388,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 216,
+      "rank": 215,
       "actions": [
        {
         "verb": "top",
@@ -5478,7 +5433,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 217,
+      "rank": 216,
       "actions": [
        {
         "verb": "top",
@@ -5523,7 +5478,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 219,
+      "rank": 218,
       "actions": [
        {
         "verb": "top",
@@ -5568,7 +5523,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 221,
+      "rank": 220,
       "actions": [
        {
         "verb": "top",
@@ -5613,7 +5568,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 225,
+      "rank": 224,
       "actions": [
        {
         "verb": "top",
@@ -5658,7 +5613,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 227,
+      "rank": 226,
       "actions": [
        {
         "verb": "top",
@@ -5703,7 +5658,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 228,
+      "rank": 227,
       "actions": [
        {
         "verb": "top",
@@ -5748,7 +5703,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 230,
+      "rank": 229,
       "actions": [
        {
         "verb": "top",
@@ -5793,7 +5748,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 231,
+      "rank": 230,
       "actions": [
        {
         "verb": "top",
@@ -5838,7 +5793,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 234,
+      "rank": 233,
       "actions": [
        {
         "verb": "top",
@@ -5883,7 +5838,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 240,
+      "rank": 239,
       "actions": [
        {
         "verb": "top",
@@ -5928,7 +5883,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 241,
+      "rank": 240,
       "actions": [
        {
         "verb": "top",
@@ -5973,7 +5928,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 248,
+      "rank": 247,
       "actions": [
        {
         "verb": "top",
@@ -6018,7 +5973,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 249,
+      "rank": 248,
       "actions": [
        {
         "verb": "top",
@@ -6063,7 +6018,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 251,
+      "rank": 250,
       "actions": [
        {
         "verb": "top",
@@ -6108,7 +6063,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 252,
+      "rank": 251,
       "actions": [
        {
         "verb": "top",
@@ -6153,7 +6108,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 253,
+      "rank": 252,
       "actions": [
        {
         "verb": "top",
@@ -6198,7 +6153,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 254,
+      "rank": 253,
       "actions": [
        {
         "verb": "top",
@@ -6243,7 +6198,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 256,
+      "rank": 255,
       "actions": [
        {
         "verb": "top",
@@ -6288,7 +6243,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 257,
+      "rank": 256,
       "actions": [
        {
         "verb": "top",
@@ -6333,7 +6288,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 258,
+      "rank": 257,
       "actions": [
        {
         "verb": "top",
@@ -6378,7 +6333,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 259,
+      "rank": 258,
       "actions": [
        {
         "verb": "top",
@@ -6423,7 +6378,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 260,
+      "rank": 259,
       "actions": [
        {
         "verb": "top",
@@ -6468,7 +6423,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 261,
+      "rank": 260,
       "actions": [
        {
         "verb": "top",
@@ -6513,7 +6468,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 264,
+      "rank": 263,
       "actions": [
        {
         "verb": "top",
@@ -6558,7 +6513,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 265,
+      "rank": 264,
       "actions": [
        {
         "verb": "top",
@@ -6603,7 +6558,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 267,
+      "rank": 266,
       "actions": [
        {
         "verb": "top",
@@ -6648,7 +6603,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 268,
+      "rank": 267,
       "actions": [
        {
         "verb": "top",
@@ -6693,7 +6648,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 269,
+      "rank": 268,
       "actions": [
        {
         "verb": "top",
@@ -6738,7 +6693,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 270,
+      "rank": 269,
       "actions": [
        {
         "verb": "top",
@@ -6783,7 +6738,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 272,
+      "rank": 271,
       "actions": [
        {
         "verb": "top",
@@ -6828,7 +6783,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 275,
+      "rank": 274,
       "actions": [
        {
         "verb": "top",
@@ -6873,7 +6828,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 276,
+      "rank": 275,
       "actions": [
        {
         "verb": "top",
@@ -6918,7 +6873,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 282,
+      "rank": 281,
       "actions": [
        {
         "verb": "top",
@@ -6963,7 +6918,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 285,
+      "rank": 284,
       "actions": [
        {
         "verb": "top",
@@ -7008,7 +6963,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 286,
+      "rank": 285,
       "actions": [
        {
         "verb": "top",
@@ -7053,7 +7008,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 291,
+      "rank": 290,
       "actions": [
        {
         "verb": "top",
@@ -7098,7 +7053,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 295,
+      "rank": 294,
       "actions": [
        {
         "verb": "top",
@@ -7143,7 +7098,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 296,
+      "rank": 295,
       "actions": [
        {
         "verb": "top",
@@ -7188,7 +7143,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 311,
+      "rank": 310,
       "actions": [
        {
         "verb": "top",
@@ -7233,7 +7188,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 312,
+      "rank": 311,
       "actions": [
        {
         "verb": "top",
@@ -7278,7 +7233,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 315,
+      "rank": 314,
       "actions": [
        {
         "verb": "top",
@@ -7323,7 +7278,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 318,
+      "rank": 317,
       "actions": [
        {
         "verb": "top",
@@ -7368,7 +7323,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 320,
+      "rank": 319,
       "actions": [
        {
         "verb": "top",
@@ -7413,7 +7368,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 321,
+      "rank": 320,
       "actions": [
        {
         "verb": "top",
@@ -7458,7 +7413,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 322,
+      "rank": 321,
       "actions": [
        {
         "verb": "top",
@@ -7503,7 +7458,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 323,
+      "rank": 322,
       "actions": [
        {
         "verb": "top",
@@ -7548,7 +7503,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 326,
+      "rank": 325,
       "actions": [
        {
         "verb": "top",
@@ -7593,7 +7548,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 327,
+      "rank": 326,
       "actions": [
        {
         "verb": "top",
@@ -7638,7 +7593,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 329,
+      "rank": 328,
       "actions": [
        {
         "verb": "top",
@@ -7683,7 +7638,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 333,
+      "rank": 332,
       "actions": [
        {
         "verb": "top",
@@ -7728,7 +7683,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 334,
+      "rank": 333,
       "actions": [
        {
         "verb": "top",
@@ -7773,7 +7728,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 336,
+      "rank": 335,
       "actions": [
        {
         "verb": "top",
@@ -7818,7 +7773,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 340,
+      "rank": 339,
       "actions": [
        {
         "verb": "top",
@@ -7863,7 +7818,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 343,
+      "rank": 342,
       "actions": [
        {
         "verb": "top",
@@ -7908,7 +7863,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 344,
+      "rank": 343,
       "actions": [
        {
         "verb": "top",
@@ -7953,7 +7908,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 345,
+      "rank": 344,
       "actions": [
        {
         "verb": "top",
@@ -7998,7 +7953,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 351,
+      "rank": 350,
       "actions": [
        {
         "verb": "top",
@@ -8043,7 +7998,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 353,
+      "rank": 352,
       "actions": [
        {
         "verb": "top",
@@ -8088,7 +8043,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 354,
+      "rank": 353,
       "actions": [
        {
         "verb": "top",
@@ -8133,7 +8088,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 357,
+      "rank": 356,
       "actions": [
        {
         "verb": "top",
@@ -8178,7 +8133,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 362,
+      "rank": 361,
       "actions": [
        {
         "verb": "top",
@@ -8223,7 +8178,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 364,
+      "rank": 363,
       "actions": [
        {
         "verb": "top",
@@ -8268,7 +8223,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 365,
+      "rank": 364,
       "actions": [
        {
         "verb": "top",
@@ -8313,7 +8268,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 371,
+      "rank": 370,
       "actions": [
        {
         "verb": "top",
@@ -8358,7 +8313,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 373,
+      "rank": 372,
       "actions": [
        {
         "verb": "top",
@@ -8403,7 +8358,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 375,
+      "rank": 374,
       "actions": [
        {
         "verb": "top",
@@ -8448,7 +8403,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 378,
+      "rank": 377,
       "actions": [
        {
         "verb": "top",
@@ -8493,7 +8448,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 379,
+      "rank": 378,
       "actions": [
        {
         "verb": "top",
@@ -8538,7 +8493,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 381,
+      "rank": 380,
       "actions": [
        {
         "verb": "top",
@@ -8583,7 +8538,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 382,
+      "rank": 381,
       "actions": [
        {
         "verb": "top",
@@ -8628,7 +8583,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 384,
+      "rank": 383,
       "actions": [
        {
         "verb": "top",
@@ -8673,7 +8628,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 386,
+      "rank": 385,
       "actions": [
        {
         "verb": "top",
@@ -8718,7 +8673,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 387,
+      "rank": 386,
       "actions": [
        {
         "verb": "top",
@@ -8763,7 +8718,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 388,
+      "rank": 387,
       "actions": [
        {
         "verb": "top",
@@ -8808,7 +8763,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 389,
+      "rank": 388,
       "actions": [
        {
         "verb": "top",
@@ -8853,7 +8808,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 390,
+      "rank": 389,
       "actions": [
        {
         "verb": "top",
@@ -8898,7 +8853,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 391,
+      "rank": 390,
       "actions": [
        {
         "verb": "top",
@@ -8943,7 +8898,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 394,
+      "rank": 393,
       "actions": [
        {
         "verb": "top",
@@ -8988,7 +8943,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 395,
+      "rank": 394,
       "actions": [
        {
         "verb": "top",
@@ -9033,7 +8988,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 396,
+      "rank": 395,
       "actions": [
        {
         "verb": "top",
@@ -9078,7 +9033,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 397,
+      "rank": 396,
       "actions": [
        {
         "verb": "top",
@@ -9123,7 +9078,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 398,
+      "rank": 397,
       "actions": [
        {
         "verb": "top",
@@ -9168,7 +9123,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 399,
+      "rank": 398,
       "actions": [
        {
         "verb": "top",
@@ -9214,7 +9169,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs a human sign-in; mostly self-heals now, with a small residual.",
-      "rank": 403,
+      "rank": 402,
       "actions": [
        {
         "verb": "top",
@@ -9260,7 +9215,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs unblocked runner (infra CEO decision).",
-      "rank": 415,
+      "rank": 414,
       "actions": [
        {
         "verb": "top",
@@ -9305,7 +9260,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 430,
+      "rank": 429,
       "actions": [
        {
         "verb": "top",
@@ -9350,7 +9305,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 432,
+      "rank": 431,
       "actions": [
        {
         "verb": "top",
@@ -9396,7 +9351,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 433,
+      "rank": 432,
       "actions": [
        {
         "verb": "top",
@@ -9441,7 +9396,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 434,
+      "rank": 433,
       "actions": [
        {
         "verb": "top",
@@ -9488,7 +9443,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 12,
+      "rank": 13,
       "actions": [
        {
         "verb": "top",
@@ -9533,7 +9488,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 13,
+      "rank": 14,
       "actions": [
        {
         "verb": "top",
@@ -9578,7 +9533,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 14,
+      "rank": 15,
       "actions": [
        {
         "verb": "top",
@@ -9623,7 +9578,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 15,
+      "rank": 16,
       "actions": [
        {
         "verb": "top",
@@ -9668,7 +9623,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 16,
+      "rank": 17,
       "actions": [
        {
         "verb": "top",
@@ -9713,7 +9668,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 17,
+      "rank": 18,
       "actions": [
        {
         "verb": "top",
@@ -9758,7 +9713,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 18,
+      "rank": 19,
       "actions": [
        {
         "verb": "top",
@@ -9803,7 +9758,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 19,
+      "rank": 20,
       "actions": [
        {
         "verb": "top",
@@ -9848,7 +9803,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 20,
+      "rank": 21,
       "actions": [
        {
         "verb": "top",
@@ -9893,7 +9848,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 21,
+      "rank": 22,
       "actions": [
        {
         "verb": "top",
@@ -9938,7 +9893,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 22,
+      "rank": 23,
       "actions": [
        {
         "verb": "top",
@@ -9983,7 +9938,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 23,
+      "rank": 24,
       "actions": [
        {
         "verb": "top",
@@ -10028,7 +9983,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 24,
+      "rank": 25,
       "actions": [
        {
         "verb": "top",
@@ -10073,7 +10028,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 25,
+      "rank": 26,
       "actions": [
        {
         "verb": "top",
@@ -10118,7 +10073,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 26,
+      "rank": 27,
       "actions": [
        {
         "verb": "top",
@@ -10163,7 +10118,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 27,
+      "rank": 28,
       "actions": [
        {
         "verb": "top",
@@ -10208,7 +10163,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 28,
+      "rank": 29,
       "actions": [
        {
         "verb": "top",
@@ -10433,7 +10388,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 68,
+      "rank": 67,
       "actions": [
        {
         "verb": "top",
@@ -10478,7 +10433,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 78,
+      "rank": 77,
       "actions": [
        {
         "verb": "top",
@@ -10523,7 +10478,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 79,
+      "rank": 78,
       "actions": [
        {
         "verb": "top",
@@ -10568,7 +10523,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 86,
+      "rank": 85,
       "actions": [
        {
         "verb": "top",
@@ -10613,7 +10568,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 97,
+      "rank": 96,
       "actions": [
        {
         "verb": "top",
@@ -10658,7 +10613,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 99,
+      "rank": 98,
       "actions": [
        {
         "verb": "top",
@@ -10703,7 +10658,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 104,
+      "rank": 103,
       "actions": [
        {
         "verb": "top",
@@ -10748,7 +10703,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 106,
+      "rank": 105,
       "actions": [
        {
         "verb": "top",
@@ -10793,7 +10748,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 137,
+      "rank": 136,
       "actions": [
        {
         "verb": "top",
@@ -10838,7 +10793,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 151,
+      "rank": 150,
       "actions": [
        {
         "verb": "top",
@@ -10883,7 +10838,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 157,
+      "rank": 156,
       "actions": [
        {
         "verb": "top",
@@ -10928,7 +10883,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 158,
+      "rank": 157,
       "actions": [
        {
         "verb": "top",
@@ -10973,7 +10928,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 159,
+      "rank": 158,
       "actions": [
        {
         "verb": "top",
@@ -11018,7 +10973,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 165,
+      "rank": 164,
       "actions": [
        {
         "verb": "top",
@@ -11063,7 +11018,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 194,
+      "rank": 193,
       "actions": [
        {
         "verb": "top",
@@ -11108,7 +11063,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 214,
+      "rank": 213,
       "actions": [
        {
         "verb": "top",
@@ -11154,7 +11109,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The wave was dispatched as fifteen finished surfaces one bake from the reader.",
-      "rank": 223,
+      "rank": 222,
       "actions": [
        {
         "verb": "top",
@@ -11199,7 +11154,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 224,
+      "rank": 223,
       "actions": [
        {
         "verb": "top",
@@ -11244,7 +11199,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 242,
+      "rank": 241,
       "actions": [
        {
         "verb": "top",
@@ -11289,7 +11244,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 263,
+      "rank": 262,
       "actions": [
        {
         "verb": "top",
@@ -11334,7 +11289,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 274,
+      "rank": 273,
       "actions": [
        {
         "verb": "top",
@@ -11379,7 +11334,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 277,
+      "rank": 276,
       "actions": [
        {
         "verb": "top",
@@ -11424,7 +11379,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 278,
+      "rank": 277,
       "actions": [
        {
         "verb": "top",
@@ -11469,7 +11424,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 288,
+      "rank": 287,
       "actions": [
        {
         "verb": "top",
@@ -11514,7 +11469,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 290,
+      "rank": 289,
       "actions": [
        {
         "verb": "top",
@@ -11559,7 +11514,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 302,
+      "rank": 301,
       "actions": [
        {
         "verb": "top",
@@ -11604,7 +11559,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 306,
+      "rank": 305,
       "actions": [
        {
         "verb": "top",
@@ -11649,7 +11604,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 314,
+      "rank": 313,
       "actions": [
        {
         "verb": "top",
@@ -11694,7 +11649,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 316,
+      "rank": 315,
       "actions": [
        {
         "verb": "top",
@@ -11739,7 +11694,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 317,
+      "rank": 316,
       "actions": [
        {
         "verb": "top",
@@ -11784,7 +11739,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 319,
+      "rank": 318,
       "actions": [
        {
         "verb": "top",
@@ -11829,7 +11784,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 328,
+      "rank": 327,
       "actions": [
        {
         "verb": "top",
@@ -11874,7 +11829,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 331,
+      "rank": 330,
       "actions": [
        {
         "verb": "top",
@@ -11919,7 +11874,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 335,
+      "rank": 334,
       "actions": [
        {
         "verb": "top",
@@ -11964,7 +11919,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 355,
+      "rank": 354,
       "actions": [
        {
         "verb": "top",
@@ -12009,7 +11964,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 358,
+      "rank": 357,
       "actions": [
        {
         "verb": "top",
@@ -12054,7 +12009,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 359,
+      "rank": 358,
       "actions": [
        {
         "verb": "top",
@@ -12099,7 +12054,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 370,
+      "rank": 369,
       "actions": [
        {
         "verb": "top",
@@ -12144,7 +12099,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 374,
+      "rank": 373,
       "actions": [
        {
         "verb": "top",
@@ -12189,7 +12144,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 377,
+      "rank": 376,
       "actions": [
        {
         "verb": "top",
@@ -12234,7 +12189,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 385,
+      "rank": 384,
       "actions": [
        {
         "verb": "top",
@@ -12279,7 +12234,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 392,
+      "rank": 391,
       "actions": [
        {
         "verb": "top",
@@ -12324,7 +12279,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 406,
+      "rank": 405,
       "actions": [
        {
         "verb": "top",
@@ -12369,7 +12324,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 407,
+      "rank": 406,
       "actions": [
        {
         "verb": "top",
@@ -12414,7 +12369,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 420,
+      "rank": 419,
       "actions": [
        {
         "verb": "top",
@@ -12459,7 +12414,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 431,
+      "rank": 430,
       "actions": [
        {
         "verb": "top",
@@ -12686,7 +12641,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 80,
+      "rank": 79,
       "actions": [
        {
         "verb": "top",
@@ -12731,7 +12686,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 82,
+      "rank": 81,
       "actions": [
        {
         "verb": "top",
@@ -12776,7 +12731,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 90,
+      "rank": 89,
       "actions": [
        {
         "verb": "top",
@@ -12821,7 +12776,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 100,
+      "rank": 99,
       "actions": [
        {
         "verb": "top",
@@ -12866,7 +12821,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 109,
+      "rank": 108,
       "actions": [
        {
         "verb": "top",
@@ -12911,7 +12866,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 112,
+      "rank": 111,
       "actions": [
        {
         "verb": "top",
@@ -12956,7 +12911,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 120,
+      "rank": 119,
       "actions": [
        {
         "verb": "top",
@@ -13001,7 +12956,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 122,
+      "rank": 121,
       "actions": [
        {
         "verb": "top",
@@ -13046,7 +13001,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 123,
+      "rank": 122,
       "actions": [
        {
         "verb": "top",
@@ -13091,7 +13046,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 124,
+      "rank": 123,
       "actions": [
        {
         "verb": "top",
@@ -13123,8 +13078,8 @@
       "why": "Found by a check that was auditing something else and caught itself lying first. The game logs carry the same woman under two identifiers that differ only by an accent on her first name, so anything ...",
       "priority": 1,
       "seat": "data",
-      "status": "ready",
-      "state": "ready now",
+      "status": "MEASURED AND CLOSED 2026-08-12. Every claim in this row reproduced exactly, and the question it asked - how many consumers sum the table - now has a number that decides the repair. THE SYMPTOM REPRODUCED TO THE GAME. Summing 2025 game-log points per team-game and comparing to the recorded final: 44 team-games disagree, and in ALL 44 the box score is HIGHER than the final, which is over-counting rather than missing data. Sample: LAS in game sums to 95 against a final of 84, an 11-point gap that is one player's points counted a second time. AND FOLDING FIXES IT COMPLETELY: re-summing with names accent-folded gives ZERO disagreements, down from 44. That is a clean before-and-after on live data, and it independently validates the stroke-and-accent fold shipped to the canonical normalizer earlier today. A TRAP WORTH RECORDING FOR THE NEXT READER: lower-casing is NOT folding. My first pass deduplicated on lower of player_name and still got 44, because the two spellings differ by an ACUTE ACCENT and lower leaves it alone. Any repair or reader-side fix that reaches for lower or for a simple case-insensitive key will appear to do something and change nothing. THE CONSUMER COUNT, which is the answer this row asked for: 130 files reference , 108 of them AGGREGATE it, and of those 108 only 53 accent-fold names. FIFTY-FIVE aggregate without folding and are therefore over-counting her today. SO THE DECISION IS SETTLED BY ARITHMETIC, not preference: teaching the readers to fold means changing 55 files and then policing all 108 forever, against ONE change at the source. Merge at the source. The identity itself - which of her two ids is canonical, and whether the duplicate rows are tombstoned or given a canonical_player_id rather than deleted, since deletion conflicts with append-only - is the open decision on azura-stevens-2025-is-ingested-twice-under-two-ids, which is the same defect measured from the identity side. This row is the consumer-impact half of it and closes here.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -13136,7 +13091,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 125,
+      "rank": 124,
       "actions": [
        {
         "verb": "top",
@@ -13181,7 +13136,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 126,
+      "rank": 125,
       "actions": [
        {
         "verb": "top",
@@ -13226,7 +13181,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 127,
+      "rank": 126,
       "actions": [
        {
         "verb": "top",
@@ -13271,7 +13226,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 135,
+      "rank": 134,
       "actions": [
        {
         "verb": "top",
@@ -13316,7 +13271,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 142,
+      "rank": 141,
       "actions": [
        {
         "verb": "top",
@@ -13361,7 +13316,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 143,
+      "rank": 142,
       "actions": [
        {
         "verb": "top",
@@ -13406,7 +13361,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 160,
+      "rank": 159,
       "actions": [
        {
         "verb": "top",
@@ -13451,7 +13406,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 171,
+      "rank": 170,
       "actions": [
        {
         "verb": "top",
@@ -13496,7 +13451,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 173,
+      "rank": 172,
       "actions": [
        {
         "verb": "top",
@@ -13541,7 +13496,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 182,
+      "rank": 181,
       "actions": [
        {
         "verb": "top",
@@ -13573,8 +13528,8 @@
       "why": "This is a live bleed and not a historical mess. The daily grading job writes the literal text None into the player key whenever it cannot resolve a player most recently on 5 August at a rate of ten ...",
       "priority": 1,
       "seat": "data",
-      "status": "ready",
-      "state": "ready now",
+      "status": "MEASURED AND CLOSED 2026-08-12. The bleed this row describes has STOPPED, and its warning about the obvious fix was right - I verified that independently before touching anything. THE LIVE BLEED IS OVER. The literal text None appears ZERO times in player_id, and so do none, NULL and nan. More decisively than a count of the bad value: ZERO player rows have been written without an identifier since 2026-07-12, which matches the row's own account of a reconstruction writer that stopped on 11 July. The 765 rows that carried the literal are preserved in , so the repair took a pre-image. THE ROW'S WARNING ABOUT THE ONE-LINE FIX IS CORRECT, and I can now show why with a measurement rather than agreement. Turning the text into a real null would move those rows into the bucket that means TEAM: the table partitions exactly, 3363 rows with no player_name are ALL stat_group team - team_spread, team_total, win_prob - and there are ZERO named team rows and ZERO nameless non-team rows. A null player identifier is the positive signal for a whole-team row here, so writing nulls into player rows would have made them indistinguishable from team rows rather than merely unresolved. The daily 4 to 8 null-id rows appearing now are exactly those legitimate team rows. MISATTRIBUTION VERSUS DOUBLE-COUNTING, which this row got right and is worth preserving: a non-unique key does not inflate, it COLLIDES, and a dedup keeping one row per key silently discards the rest. That is the sharper failure and the reason this could not be left to a later cleanup. ONE THING FOUND WHILE MEASURING, and it is not this row's defect: the grader itself last produced a report_date of 2026-08-07 and its last log is 2026-08-08T09:15, which SUCCEEDED with grade=0 accuracy=0. It has not run since. Its task is GamedayGrade in the \\Hardwood\\ folder, and the cause sits with the interactive-principal refusals now recorded on the-bridge-repair-task-runs-only-while-someone-is-logged-in.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -13586,7 +13541,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 183,
+      "rank": 182,
       "actions": [
        {
         "verb": "top",
@@ -13631,7 +13586,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 184,
+      "rank": 183,
       "actions": [
        {
         "verb": "top",
@@ -13676,7 +13631,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 192,
+      "rank": 191,
       "actions": [
        {
         "verb": "top",
@@ -13721,7 +13676,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 195,
+      "rank": 194,
       "actions": [
        {
         "verb": "top",
@@ -13766,7 +13721,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 196,
+      "rank": 195,
       "actions": [
        {
         "verb": "top",
@@ -13811,7 +13766,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 201,
+      "rank": 200,
       "actions": [
        {
         "verb": "top",
@@ -13856,7 +13811,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 202,
+      "rank": 201,
       "actions": [
        {
         "verb": "top",
@@ -13901,7 +13856,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 204,
+      "rank": 203,
       "actions": [
        {
         "verb": "top",
@@ -13946,7 +13901,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 207,
+      "rank": 206,
       "actions": [
        {
         "verb": "top",
@@ -13991,7 +13946,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 218,
+      "rank": 217,
       "actions": [
        {
         "verb": "top",
@@ -14036,7 +13991,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 222,
+      "rank": 221,
       "actions": [
        {
         "verb": "top",
@@ -14081,7 +14036,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 229,
+      "rank": 228,
       "actions": [
        {
         "verb": "top",
@@ -14126,7 +14081,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 235,
+      "rank": 234,
       "actions": [
        {
         "verb": "top",
@@ -14171,7 +14126,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 237,
+      "rank": 236,
       "actions": [
        {
         "verb": "top",
@@ -14216,7 +14171,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 238,
+      "rank": 237,
       "actions": [
        {
         "verb": "top",
@@ -14261,7 +14216,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 239,
+      "rank": 238,
       "actions": [
        {
         "verb": "top",
@@ -14306,7 +14261,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 243,
+      "rank": 242,
       "actions": [
        {
         "verb": "top",
@@ -14351,7 +14306,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 245,
+      "rank": 244,
       "actions": [
        {
         "verb": "top",
@@ -14396,7 +14351,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 255,
+      "rank": 254,
       "actions": [
        {
         "verb": "top",
@@ -14441,7 +14396,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 273,
+      "rank": 272,
       "actions": [
        {
         "verb": "top",
@@ -14486,7 +14441,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 283,
+      "rank": 282,
       "actions": [
        {
         "verb": "top",
@@ -14531,7 +14486,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 284,
+      "rank": 283,
       "actions": [
        {
         "verb": "top",
@@ -14576,7 +14531,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 289,
+      "rank": 288,
       "actions": [
        {
         "verb": "top",
@@ -14621,7 +14576,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 292,
+      "rank": 291,
       "actions": [
        {
         "verb": "top",
@@ -14666,7 +14621,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 293,
+      "rank": 292,
       "actions": [
        {
         "verb": "top",
@@ -14711,7 +14666,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": true,
-      "rank": 303,
+      "rank": 302,
       "actions": [
        {
         "verb": "top",
@@ -14756,7 +14711,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 324,
+      "rank": 323,
       "actions": [
        {
         "verb": "top",
@@ -14801,7 +14756,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 325,
+      "rank": 324,
       "actions": [
        {
         "verb": "top",
@@ -14846,7 +14801,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 330,
+      "rank": 329,
       "actions": [
        {
         "verb": "top",
@@ -14891,7 +14846,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 338,
+      "rank": 337,
       "actions": [
        {
         "verb": "top",
@@ -14936,7 +14891,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 339,
+      "rank": 338,
       "actions": [
        {
         "verb": "top",
@@ -14981,7 +14936,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 342,
+      "rank": 341,
       "actions": [
        {
         "verb": "top",
@@ -15026,7 +14981,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 347,
+      "rank": 346,
       "actions": [
        {
         "verb": "top",
@@ -15071,7 +15026,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 348,
+      "rank": 347,
       "actions": [
        {
         "verb": "top",
@@ -15116,7 +15071,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 356,
+      "rank": 355,
       "actions": [
        {
         "verb": "top",
@@ -15161,7 +15116,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 360,
+      "rank": 359,
       "actions": [
        {
         "verb": "top",
@@ -15207,7 +15162,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The evidence is already gathered and it is unambiguous.",
-      "rank": 363,
+      "rank": 362,
       "actions": [
        {
         "verb": "top",
@@ -15252,7 +15207,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 366,
+      "rank": 365,
       "actions": [
        {
         "verb": "top",
@@ -15297,7 +15252,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 369,
+      "rank": 368,
       "actions": [
        {
         "verb": "top",
@@ -15342,7 +15297,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 393,
+      "rank": 392,
       "actions": [
        {
         "verb": "top",
@@ -15387,7 +15342,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 404,
+      "rank": 403,
       "actions": [
        {
         "verb": "top",
@@ -15432,7 +15387,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 412,
+      "rank": 411,
       "actions": [
        {
         "verb": "top",
@@ -15477,7 +15432,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 414,
+      "rank": 413,
       "actions": [
        {
         "verb": "top",
@@ -15523,7 +15478,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Lfb recon French box data usr bin bash-reachable from this box (Genius livestats 52 fields).",
-      "rank": 416,
+      "rank": 415,
       "actions": [
        {
         "verb": "top",
@@ -15568,7 +15523,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 417,
+      "rank": 416,
       "actions": [
        {
         "verb": "top",
@@ -15976,7 +15931,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 81,
+      "rank": 80,
       "actions": [
        {
         "verb": "top",
@@ -16021,7 +15976,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 88,
+      "rank": 87,
       "actions": [
        {
         "verb": "top",
@@ -16066,7 +16021,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 94,
+      "rank": 93,
       "actions": [
        {
         "verb": "top",
@@ -16111,7 +16066,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 98,
+      "rank": 97,
       "actions": [
        {
         "verb": "top",
@@ -16156,7 +16111,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 101,
+      "rank": 100,
       "actions": [
        {
         "verb": "top",
@@ -16201,7 +16156,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 108,
+      "rank": 107,
       "actions": [
        {
         "verb": "top",
@@ -16246,7 +16201,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 110,
+      "rank": 109,
       "actions": [
        {
         "verb": "top",
@@ -16291,7 +16246,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 117,
+      "rank": 116,
       "actions": [
        {
         "verb": "top",
@@ -16336,7 +16291,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 119,
+      "rank": 118,
       "actions": [
        {
         "verb": "top",
@@ -16381,7 +16336,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 121,
+      "rank": 120,
       "actions": [
        {
         "verb": "top",
@@ -16426,7 +16381,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 131,
+      "rank": 130,
       "actions": [
        {
         "verb": "top",
@@ -16471,7 +16426,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 132,
+      "rank": 131,
       "actions": [
        {
         "verb": "top",
@@ -16516,7 +16471,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 133,
+      "rank": 132,
       "actions": [
        {
         "verb": "top",
@@ -16561,7 +16516,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 134,
+      "rank": 133,
       "actions": [
        {
         "verb": "top",
@@ -16606,7 +16561,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 136,
+      "rank": 135,
       "actions": [
        {
         "verb": "top",
@@ -16652,7 +16607,7 @@
       "ceo_ask": true,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 139,
+      "rank": 138,
       "actions": [
        {
         "verb": "top",
@@ -16697,7 +16652,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 140,
+      "rank": 139,
       "actions": [
        {
         "verb": "top",
@@ -16742,7 +16697,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 141,
+      "rank": 140,
       "actions": [
        {
         "verb": "top",
@@ -16787,7 +16742,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 144,
+      "rank": 143,
       "actions": [
        {
         "verb": "top",
@@ -16832,7 +16787,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 146,
+      "rank": 145,
       "actions": [
        {
         "verb": "top",
@@ -16877,7 +16832,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 148,
+      "rank": 147,
       "actions": [
        {
         "verb": "top",
@@ -16922,7 +16877,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 149,
+      "rank": 148,
       "actions": [
        {
         "verb": "top",
@@ -16967,7 +16922,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 150,
+      "rank": 149,
       "actions": [
        {
         "verb": "top",
@@ -17012,7 +16967,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 156,
+      "rank": 155,
       "actions": [
        {
         "verb": "top",
@@ -17057,7 +17012,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 161,
+      "rank": 160,
       "actions": [
        {
         "verb": "top",
@@ -17102,7 +17057,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 163,
+      "rank": 162,
       "actions": [
        {
         "verb": "top",
@@ -17147,7 +17102,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 167,
+      "rank": 166,
       "actions": [
        {
         "verb": "top",
@@ -17192,7 +17147,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 168,
+      "rank": 167,
       "actions": [
        {
         "verb": "top",
@@ -17237,7 +17192,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 172,
+      "rank": 171,
       "actions": [
        {
         "verb": "top",
@@ -17283,7 +17238,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Drop-in replacing p home = Phi(margin 12.65) with a two-parameter map fitted .",
-      "rank": 175,
+      "rank": 174,
       "actions": [
        {
         "verb": "top",
@@ -17328,7 +17283,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 178,
+      "rank": 177,
       "actions": [
        {
         "verb": "top",
@@ -17373,7 +17328,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 179,
+      "rank": 178,
       "actions": [
        {
         "verb": "top",
@@ -17418,7 +17373,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 190,
+      "rank": 189,
       "actions": [
        {
         "verb": "top",
@@ -17463,7 +17418,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 199,
+      "rank": 198,
       "actions": [
        {
         "verb": "top",
@@ -17508,7 +17463,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 200,
+      "rank": 199,
       "actions": [
        {
         "verb": "top",
@@ -17553,7 +17508,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 203,
+      "rank": 202,
       "actions": [
        {
         "verb": "top",
@@ -17598,7 +17553,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 209,
+      "rank": 208,
       "actions": [
        {
         "verb": "top",
@@ -17643,7 +17598,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 210,
+      "rank": 209,
       "actions": [
        {
         "verb": "top",
@@ -17688,7 +17643,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 212,
+      "rank": 211,
       "actions": [
        {
         "verb": "top",
@@ -17733,7 +17688,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 220,
+      "rank": 219,
       "actions": [
        {
         "verb": "top",
@@ -17778,7 +17733,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 226,
+      "rank": 225,
       "actions": [
        {
         "verb": "top",
@@ -17823,7 +17778,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 232,
+      "rank": 231,
       "actions": [
        {
         "verb": "top",
@@ -17868,7 +17823,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 233,
+      "rank": 232,
       "actions": [
        {
         "verb": "top",
@@ -17913,7 +17868,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 236,
+      "rank": 235,
       "actions": [
        {
         "verb": "top",
@@ -17958,7 +17913,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 244,
+      "rank": 243,
       "actions": [
        {
         "verb": "top",
@@ -18003,7 +17958,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 246,
+      "rank": 245,
       "actions": [
        {
         "verb": "top",
@@ -18048,7 +18003,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 247,
+      "rank": 246,
       "actions": [
        {
         "verb": "top",
@@ -18093,7 +18048,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 250,
+      "rank": 249,
       "actions": [
        {
         "verb": "top",
@@ -18138,7 +18093,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 262,
+      "rank": 261,
       "actions": [
        {
         "verb": "top",
@@ -18183,7 +18138,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 266,
+      "rank": 265,
       "actions": [
        {
         "verb": "top",
@@ -18228,7 +18183,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 271,
+      "rank": 270,
       "actions": [
        {
         "verb": "top",
@@ -18273,7 +18228,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 279,
+      "rank": 278,
       "actions": [
        {
         "verb": "top",
@@ -18318,7 +18273,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 280,
+      "rank": 279,
       "actions": [
        {
         "verb": "top",
@@ -18363,7 +18318,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 281,
+      "rank": 280,
       "actions": [
        {
         "verb": "top",
@@ -18408,7 +18363,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 287,
+      "rank": 286,
       "actions": [
        {
         "verb": "top",
@@ -18453,7 +18408,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 294,
+      "rank": 293,
       "actions": [
        {
         "verb": "top",
@@ -18498,7 +18453,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 297,
+      "rank": 296,
       "actions": [
        {
         "verb": "top",
@@ -18543,7 +18498,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 298,
+      "rank": 297,
       "actions": [
        {
         "verb": "top",
@@ -18588,7 +18543,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 299,
+      "rank": 298,
       "actions": [
        {
         "verb": "top",
@@ -18633,7 +18588,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 300,
+      "rank": 299,
       "actions": [
        {
         "verb": "top",
@@ -18678,7 +18633,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 301,
+      "rank": 300,
       "actions": [
        {
         "verb": "top",
@@ -18723,7 +18678,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 304,
+      "rank": 303,
       "actions": [
        {
         "verb": "top",
@@ -18768,7 +18723,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 305,
+      "rank": 304,
       "actions": [
        {
         "verb": "top",
@@ -18813,7 +18768,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 307,
+      "rank": 306,
       "actions": [
        {
         "verb": "top",
@@ -18858,7 +18813,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 308,
+      "rank": 307,
       "actions": [
        {
         "verb": "top",
@@ -18903,7 +18858,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 309,
+      "rank": 308,
       "actions": [
        {
         "verb": "top",
@@ -18948,7 +18903,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 310,
+      "rank": 309,
       "actions": [
        {
         "verb": "top",
@@ -18993,7 +18948,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 313,
+      "rank": 312,
       "actions": [
        {
         "verb": "top",
@@ -19038,7 +18993,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 332,
+      "rank": 331,
       "actions": [
        {
         "verb": "top",
@@ -19083,7 +19038,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 337,
+      "rank": 336,
       "actions": [
        {
         "verb": "top",
@@ -19128,7 +19083,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 341,
+      "rank": 340,
       "actions": [
        {
         "verb": "top",
@@ -19173,7 +19128,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 346,
+      "rank": 345,
       "actions": [
        {
         "verb": "top",
@@ -19218,7 +19173,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 349,
+      "rank": 348,
       "actions": [
        {
         "verb": "top",
@@ -19263,7 +19218,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 350,
+      "rank": 349,
       "actions": [
        {
         "verb": "top",
@@ -19308,7 +19263,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 352,
+      "rank": 351,
       "actions": [
        {
         "verb": "top",
@@ -19353,7 +19308,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 361,
+      "rank": 360,
       "actions": [
        {
         "verb": "top",
@@ -19398,7 +19353,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 367,
+      "rank": 366,
       "actions": [
        {
         "verb": "top",
@@ -19443,7 +19398,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 368,
+      "rank": 367,
       "actions": [
        {
         "verb": "top",
@@ -19488,7 +19443,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 372,
+      "rank": 371,
       "actions": [
        {
         "verb": "top",
@@ -19533,7 +19488,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 376,
+      "rank": 375,
       "actions": [
        {
         "verb": "top",
@@ -19578,7 +19533,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 380,
+      "rank": 379,
       "actions": [
        {
         "verb": "top",
@@ -19624,7 +19579,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Upstream API returning 529 Overloaded - external, not a repo condition",
-      "rank": 383,
+      "rank": 382,
       "actions": [
        {
         "verb": "top",
@@ -19669,7 +19624,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 400,
+      "rank": 399,
       "actions": [
        {
         "verb": "top",
@@ -19714,7 +19669,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 401,
+      "rank": 400,
       "actions": [
        {
         "verb": "top",
@@ -19760,7 +19715,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Dallas and Las Vegas read too low, Los Angeles too high; extend the shipped fix.",
-      "rank": 402,
+      "rank": 401,
       "actions": [
        {
         "verb": "top",
@@ -19806,7 +19761,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 405,
+      "rank": 404,
       "actions": [
        {
         "verb": "top",
@@ -19852,7 +19807,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Break down offense and defense value by area of the floor for sharper scouting.",
-      "rank": 408,
+      "rank": 407,
       "actions": [
        {
         "verb": "top",
@@ -19897,7 +19852,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 409,
+      "rank": 408,
       "actions": [
        {
         "verb": "top",
@@ -19942,7 +19897,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 410,
+      "rank": 409,
       "actions": [
        {
         "verb": "top",
@@ -19987,7 +19942,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 411,
+      "rank": 410,
       "actions": [
        {
         "verb": "top",
@@ -20032,7 +19987,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 413,
+      "rank": 412,
       "actions": [
        {
         "verb": "top",
@@ -20077,7 +20032,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 418,
+      "rank": 417,
       "actions": [
        {
         "verb": "top",
@@ -20122,7 +20077,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 419,
+      "rank": 418,
       "actions": [
        {
         "verb": "top",
@@ -20167,7 +20122,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 421,
+      "rank": 420,
       "actions": [
        {
         "verb": "top",
@@ -20212,7 +20167,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 422,
+      "rank": 421,
       "actions": [
        {
         "verb": "top",
@@ -20257,7 +20212,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 423,
+      "rank": 422,
       "actions": [
        {
         "verb": "top",
@@ -20303,7 +20258,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 424,
+      "rank": 423,
       "actions": [
        {
         "verb": "top",
@@ -20348,7 +20303,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 425,
+      "rank": 424,
       "actions": [
        {
         "verb": "top",
@@ -20393,7 +20348,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 426,
+      "rank": 425,
       "actions": [
        {
         "verb": "top",
@@ -20439,7 +20394,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No blocker is written on this row — it needs a re-read.",
-      "rank": 427,
+      "rank": 426,
       "actions": [
        {
         "verb": "top",
@@ -20484,7 +20439,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 428,
+      "rank": 427,
       "actions": [
        {
         "verb": "top",
@@ -20529,7 +20484,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 429,
+      "rank": 428,
       "actions": [
        {
         "verb": "top",
@@ -20623,7 +20578,7 @@
       "ceo_ask": true,
       "p0": false,
       "answered": true,
-      "rank": 89,
+      "rank": 88,
       "actions": [
        {
         "verb": "top",
@@ -20649,14 +20604,14 @@
      }
     ]
    },
-   "more_count": 424,
+   "more_count": 423,
    "floor": {
     "target": 40,
-    "count": 434,
+    "count": 433,
     "ok": true,
-    "label": "434 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 3m ago.)",
-    "as_of_utc": "2026-08-12T05:57:47Z",
-    "age_secs": 212,
+    "label": "433 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
+    "as_of_utc": "2026-08-12T06:10:56Z",
+    "age_secs": 2,
     "stale": false
    },
    "source": "dispatch queue",
@@ -21227,67 +21182,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-12T06:00:35Z",
-  "age_s": 29,
-  "cycles": 78,
+  "last_poll_utc": "2026-08-12T06:09:50Z",
+  "age_s": 55,
+  "cycles": 86,
   "known": true,
-  "label": "scout: alive, last poll 29s ago",
+  "label": "scout: alive, last poll 55s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "1:58am",
-   "text": "poll #76 · nothing new",
-   "detail": "poll cycle=76 ok directives_new=0"
+   "time": "2:07am",
+   "text": "slate-refresh: slate ok (today populated",
+   "detail": "slate-refresh: slate ok (today populated)"
   },
   {
-   "time": "1:58am",
+   "time": "2:08am",
+   "text": "poll #85 · nothing new",
+   "detail": "poll cycle=85 ok directives_new=0"
+  },
+  {
+   "time": "2:08am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
   },
   {
-   "time": "1:58am",
+   "time": "2:08am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   },
   {
-   "time": "1:59am",
-   "text": "poll #77 · nothing new",
-   "detail": "poll cycle=77 ok directives_new=0"
+   "time": "2:08am",
+   "text": "publish-health: clean (public board is fresh",
+   "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "1:59am",
+   "time": "2:08am",
+   "text": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
+   "detail": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full str"
+  },
+  {
+   "time": "2:09am",
+   "text": "poll #86 · nothing new",
+   "detail": "poll cycle=86 ok directives_new=0"
+  },
+  {
+   "time": "2:09am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
   },
   {
-   "time": "1:59am",
+   "time": "2:09am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   },
   {
-   "time": "2:00am",
+   "time": "2:10am",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
-  },
-  {
-   "time": "2:00am",
-   "text": "poll #78 · nothing new",
-   "detail": "poll cycle=78 ok directives_new=0"
-  },
-  {
-   "time": "2:00am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
-  },
-  {
-   "time": "2:00am",
-   "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
-   "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   }
  ],
  "helpers": {
-  "as_of": "2026-08-12T06:00:48.382477+00:00",
+  "as_of": "2026-08-12T06:10:32.998514+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -21296,32 +21251,32 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "29s",
-    "state_text": "on · seen 29s ago"
+    "age_label": "55s",
+    "state_text": "on · seen 55s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "16s",
-    "state_text": "on · seen 16s ago"
+    "age_label": "12s",
+    "state_text": "on · seen 12s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "2m",
+    "state_text": "on · seen 2m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "31s",
-    "state_text": "on · seen 31s ago"
+    "age_label": "56s",
+    "state_text": "on · seen 56s ago"
    },
    {
     "name": "Inbox triage",
@@ -21409,7 +21364,7 @@
    },
    {
     "label": "Midnight projected",
-    "ran_et": "2:00am",
+    "ran_et": "2:10am",
     "next_et": "12:00am",
     "result": "needs a look"
    },
@@ -21441,6 +21396,12 @@
     "label": "standing daily reconcile: CEO-ask reconciliation, stale-state audit (silently-stale is banned), superseded-file consolidation candidates, claims-vs-reality reopener, and the two-truths scan -> a plain-English diff in the morning brief plus a board panel",
     "ran_et": "",
     "next_et": "3:30am",
+    "result": "scheduled"
+   },
+   {
+    "label": "reconcile every recorded final in against two independent in-house sources -- the play-by-play running score and the player box sum -- and go RED only when both outvote us",
+    "ran_et": "",
+    "next_et": "4:30am",
     "result": "scheduled"
    },
    {
@@ -21539,9 +21500,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-12T06:01:04Z",
-  "session_age_secs": 7965,
-  "last_progress_age_secs": 0,
+  "last_heartbeat_utc": "2026-08-12T06:10:18Z",
+  "session_age_secs": 8546,
+  "last_progress_age_secs": 27,
   "last_spawn_attempt": "2026-08-12T03:45:18Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -21571,7 +21532,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 1 work lanes have been running for 6560 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 1 work lanes have been running for 6569 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 1
  },
@@ -21580,25 +21541,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-12T06:00:59+00:00",
+   "revalidated": "2026-08-12T06:10:41+00:00",
    "stale_reason": "These readings may be out of date — last updated 109h ago.",
    "age_label": "109h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-12T06:00:59+00:00",
+   "as_of": "2026-08-12T06:10:41+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T06:00:59+00:00",
+   "revalidated": "2026-08-12T06:10:41+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T06:00:59+00:00",
+   "as_of": "2026-08-12T06:10:41+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T06:00:59+00:00",
+   "revalidated": "2026-08-12T06:10:41+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -21607,25 +21568,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T06:00:59+00:00",
+   "revalidated": "2026-08-12T06:10:41+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-12T05:57:47Z",
-   "stale": false,
-   "revalidated": "2026-08-12T06:00:59+00:00",
-   "stale_reason": "",
-   "age_label": "3m",
+   "as_of": "2026-08-12T06:10:56Z",
+   "stale": true,
+   "revalidated": "2026-08-12T06:10:41+00:00",
+   "stale_reason": "A newer update is being re-checked now.",
+   "age_label": "0s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T06:00:59+00:00",
+   "revalidated": "2026-08-12T06:10:41+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -21634,16 +21595,16 @@
    "source": "director inbox",
    "as_of": "2026-08-12T04:34:40Z",
    "stale": false,
-   "revalidated": "2026-08-12T06:00:59+00:00",
+   "revalidated": "2026-08-12T06:10:41+00:00",
    "stale_reason": "",
-   "age_label": "86m",
+   "age_label": "1h",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-08T12:00:00Z",
    "stale": true,
-   "revalidated": "2026-08-12T06:00:59+00:00",
+   "revalidated": "2026-08-12T06:10:41+00:00",
    "stale_reason": "No new team updates in 90h — nothing was shipped in that window. The feed itself is current.",
    "age_label": "90h",
    "stale_after": 172800,
@@ -21651,22 +21612,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T05:55:42+00:00",
+   "as_of": "2026-08-12T06:05:43+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T06:00:59+00:00",
+   "revalidated": "2026-08-12T06:10:41+00:00",
    "stale_reason": "",
    "age_label": "5m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-12T06:00:48.382477+00:00",
+   "as_of": "2026-08-12T06:10:32.998514+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T06:00:59+00:00",
+   "revalidated": "2026-08-12T06:10:41+00:00",
    "stale_reason": "",
-   "age_label": "16s",
+   "age_label": "12s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 12, 2:00am ET"
+ "generated_et": "Aug 12, 2:10am ET"
 }
