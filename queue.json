@@ -1,27 +1,27 @@
 {
- "generated_utc": "2026-08-12T17:50:46+00:00",
- "as_of_et": "Aug 12, 1:44pm ET",
- "as_of_iso": "2026-08-12T17:44:56Z",
+ "generated_utc": "2026-08-12T18:00:50+00:00",
+ "as_of_et": "Aug 12, 2:00pm ET",
+ "as_of_iso": "2026-08-12T18:00:00Z",
  "as_of_basis": "content",
  "working_next_stamp": {
   "as_of_iso": "2026-08-06T22:46:12Z",
   "as_of_et": "Aug 6, 6:46pm ET",
-  "age_secs": 500724,
+  "age_secs": 501331,
   "stale": true,
   "rows": 181,
   "rows_dated": 12,
   "note": "Newest dated item here is 5d old, and only 12 of 181 items here carry a date — we cannot tell when the rest last moved."
  },
  "finished_today_stamp": {
-  "as_of_iso": "2026-08-12T17:44:56Z",
-  "as_of_et": "Aug 12, 1:44pm ET",
-  "age_secs": 400,
+  "as_of_iso": "2026-08-12T18:00:00Z",
+  "as_of_et": "Aug 12, 2:00pm ET",
+  "age_secs": 103,
   "stale": false,
-  "rows": 169,
-  "rows_dated": 30,
+  "rows": 170,
+  "rows_dated": 31,
   "note": ""
  },
- "generated_et": "Aug 12, 1:50pm ET",
+ "generated_et": "Aug 12, 2:00pm ET",
  "date": "2026-08-12",
  "available": true,
  "intro": "This is the team's ranked to-do list — the same list the team picks its next job from, highest-value work at the top. Your own requests sit above everything else. Finished work drops off the list rather than sitting at the top. Betting work sits at the bottom and is tagged research-only — an experiment we measure, never the main product and never the top of the list.",
@@ -636,24 +636,6 @@
    "rank": 33
   },
   {
-   "title": "Play-by-play was repaired in one table; the two wehoop tables are still eleven days behind",
-   "one_liner": "Filed by the lane that repaired the play-by-play gap and deliberately left open because it needs a design decision rather than a patch. THE covered only - 7 289 rows across 08-06..08-11 per-day ...",
-   "family": "Data",
-   "exploratory": false,
-   "score": null,
-   "task_id": "the-wehoop-tables-are-still-frozen-and-possessio",
-   "event_utc": null,
-   "unlocks": "And the upstream parquet's last publication.",
-   "owner": "DIRECTOR",
-   "tier": 1,
-   "group": "",
-   "ceo_ask": false,
-   "p0": false,
-   "rank_priority": 1.0,
-   "status": "QUEUED",
-   "rank": 34
-  },
-  {
    "title": "Possession-level Monte Carlo vs production win probabilities",
    "one_liner": "A possession-level Monte Carlo engine (transition probabilities + turnover off-rebound rates fitted from our own possessions and stints) improves probability calibration vs the production sim on ...",
    "family": "Modeling",
@@ -669,7 +651,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "QUEUED",
-   "rank": 35
+   "rank": 34
   },
   {
    "title": "Rebuild the offence-defence split as description, and never claim it predicts",
@@ -687,7 +669,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "QUEUED",
-   "rank": 36
+   "rank": 35
   },
   {
    "title": "Replay the whole season instead of cheering single nights",
@@ -705,7 +687,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "QUEUED",
-   "rank": 37
+   "rank": 36
   },
   {
    "title": "The current season has exactly one impact number and it is uncorroborated",
@@ -718,6 +700,24 @@
    "impact": "The platform's stated differentiator -- impact over counting stats -- is running on one thinly-estimated number for the live season.",
    "unlocks": "Every CEO-visible surface is required to lead with impact metrics (player-impact, player rating, on/off, net rating) ...",
    "owner": "MACHINE",
+   "tier": 1,
+   "group": "",
+   "ceo_ask": false,
+   "p0": false,
+   "rank_priority": 1.0,
+   "status": "QUEUED",
+   "rank": 37
+  },
+  {
+   "title": "The possession oracle's sample has always been the season's first forty games",
+   "one_liner": "Found by the lane that repaired the frozen play-by-play tables and it is a bigger finding than the repair. ops analytics possession oracle drives its sample with an max(game date) that sorts with a ...",
+   "family": "Modeling",
+   "exploratory": false,
+   "score": null,
+   "task_id": "the-oracle-has-never-graded-a-recent-game",
+   "event_utc": null,
+   "unlocks": "The oracle has therefore never exercised recent play-by-play at all - it has been re-grading May and early June on ...",
+   "owner": "DIRECTOR",
    "tier": 1,
    "group": "",
    "ceo_ask": false,
@@ -5918,6 +5918,24 @@
    "rank": 318
   },
   {
+   "title": "Play-by-play was repaired in one table; the two wehoop tables are still eleven days behind",
+   "one_liner": "Filed by the lane that repaired the play-by-play gap and deliberately left open because it needs a design decision rather than a patch. THE covered only - 7 289 rows across 08-06..08-11 per-day ...",
+   "family": "Data",
+   "exploratory": false,
+   "score": null,
+   "task_id": "the-wehoop-tables-are-still-frozen-and-possessio",
+   "event_utc": "2026-08-12T18:00:00Z",
+   "unlocks": "And the upstream parquet's last publication.",
+   "owner": "DIRECTOR",
+   "tier": 1,
+   "group": "",
+   "ceo_ask": false,
+   "p0": false,
+   "rank_priority": 1.0,
+   "status": "LANDED",
+   "rank": 319
+  },
+  {
    "title": "Rebuild the 15 tables whose date column is a real filter key, in the ranked order the ...",
    "one_liner": "Trace a data-integrity question back to its source",
    "family": "Modeling",
@@ -5933,7 +5951,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 319
+   "rank": 320
   },
   {
    "title": "Shot distances are written in the play text and the spatial work was parked for lacking ...",
@@ -5951,7 +5969,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 320
+   "rank": 321
   },
   {
    "title": "Sixteen regular-season games since 20 July have no play-by-play at all",
@@ -5969,7 +5987,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 321
+   "rank": 322
   },
   {
    "title": "Sixty two finished games carry no prediction under the version we actually serve",
@@ -5987,7 +6005,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 322
+   "rank": 323
   },
   {
    "title": "The availability feed carries 210 rows against 220 players on the slate",
@@ -6005,7 +6023,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 323
+   "rank": 324
   },
   {
    "title": "The bake timeouts and reclaim ceiling assume a 179 second bake, and bakes now run far ...",
@@ -6023,7 +6041,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 324
+   "rank": 325
   },
   {
    "title": "The chance a player appears is frozen at 10 July and nobody had it on a list",
@@ -6042,7 +6060,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 325
+   "rank": 326
   },
   {
    "title": "The chance a player appears is one of three fixed numbers, and two of them were ...",
@@ -6060,7 +6078,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 326
+   "rank": 327
   },
   {
    "title": "The dead-feed alarm worked perfectly for ten days and changed nothing",
@@ -6078,7 +6096,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 327
+   "rank": 328
   },
   {
    "title": "The documented forward projection pointer is 35 already-played games, not the forward book",
@@ -6096,7 +6114,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 328
+   "rank": 329
   },
   {
    "title": "The duplicate rows hold her only starter record, so deleting them destroys data",
@@ -6114,7 +6132,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 329
+   "rank": 330
   },
   {
    "title": "The forward prediction boards are a single frozen batch, not a nightly rebuild",
@@ -6133,7 +6151,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 330
+   "rank": 331
   },
   {
    "title": "The four-sigma inventory is delivered with code paths and consumers",
@@ -6151,7 +6169,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 331
+   "rank": 332
   },
   {
    "title": "The grader writes a broken player key every morning and different women collide under it",
@@ -6169,7 +6187,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 332
+   "rank": 333
   },
   {
    "title": "The grades table holds thousands of rows with no player attached and one player under ...",
@@ -6187,7 +6205,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 333
+   "rank": 334
   },
   {
    "title": "The nightly game log ingest mints a new player identity and cannot detect that it did",
@@ -6205,7 +6223,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 334
+   "rank": 335
   },
   {
    "title": "The parameter that makes the simulator pass is double what the data says it should be",
@@ -6223,7 +6241,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 335
+   "rank": 336
   },
   {
    "title": "The player half of the luck ask is already built and is blocked only by a hardcoded ...",
@@ -6241,7 +6259,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 336
+   "rank": 337
   },
   {
    "title": "The player props froze 13 days ago and feeds four reader surfaces",
@@ -6259,7 +6277,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 337
+   "rank": 338
   },
   {
    "title": "The player-impact chain-identity check compares the fit to the spine and has no term for ...",
@@ -6277,7 +6295,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 338
+   "rank": 339
   },
   {
    "title": "The presnap impact table has one snapshot date, in July, and the writer swallows its own ...",
@@ -6295,7 +6313,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 339
+   "rank": 340
   },
   {
    "title": "The projected starters for tonight include a player who has not been on the roster since ...",
@@ -6313,7 +6331,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 340
+   "rank": 341
   },
   {
    "title": "The published All-Star ladder is built on a shape we no longer use",
@@ -6331,7 +6349,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 341
+   "rank": 342
   },
   {
    "title": "The published props points baseline of 2.4534 is not achievable on the surface it is ...",
@@ -6349,7 +6367,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 342
+   "rank": 343
   },
   {
    "title": "The routine that repairs player identities cannot add one, so a missing person stays ...",
@@ -6367,7 +6385,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 343
+   "rank": 344
   },
   {
    "title": "The scoring band is fitted on the projections that carry the bias, so the error is baked ...",
@@ -6385,7 +6403,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 344
+   "rank": 345
   },
   {
    "title": "The served 2026 sim board was built through the All-Star-contaminated prior and nobody ...",
@@ -6403,7 +6421,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 345
+   "rank": 346
   },
   {
    "title": "The table feeding half of a prior-less player's probabilities cannot be filtered for ...",
@@ -6421,7 +6439,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 346
+   "rank": 347
   },
   {
    "title": "The team resolver answers one player's name with a different person's identifier",
@@ -6439,7 +6457,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 347
+   "rank": 348
   },
   {
    "title": "The two player accuracy figures are double counted, and by more than the one we just fixed",
@@ -6457,7 +6475,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 348
+   "rank": 349
   },
   {
    "title": "The unwired claim guard names 3 veterans published as provisional - decide if that is ...",
@@ -6475,7 +6493,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 349
+   "rank": 350
   },
   {
    "title": "Three players have their careers split in two by an accent, inside our own tables",
@@ -6493,7 +6511,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 350
+   "rank": 351
   },
   {
    "title": "Track which stars are actually going to the World Cup",
@@ -6511,7 +6529,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 351
+   "rank": 352
   },
   {
    "title": "Twelve thousand served rows carry no build stamp, and the honest value is not now",
@@ -6529,7 +6547,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 352
+   "rank": 353
   },
   {
    "title": "We guess the starting five from minutes while the real answer sits unused",
@@ -6547,7 +6565,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 353
+   "rank": 354
   },
   {
    "title": "Who has been lucky, measured by the quality of what they actually faced",
@@ -6565,7 +6583,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 354
+   "rank": 355
   },
   {
    "title": "An open alert that correctly persists reads as an unprocessed forever",
@@ -6583,7 +6601,7 @@
    "p0": false,
    "rank_priority": 3.0,
    "status": "DONE TODAY",
-   "rank": 355
+   "rank": 356
   },
   {
    "title": "Career totals for 29 percent of players publish in halves, and the fix is two words",
@@ -6601,7 +6619,7 @@
    "p0": false,
    "rank_priority": -3.35,
    "status": "DONE TODAY",
-   "rank": 356
+   "rank": 357
   },
   {
    "title": "The ship checklist needs to render on the board with its counts so nobody has to ask",
@@ -6619,7 +6637,7 @@
    "p0": false,
    "rank_priority": 0.0,
    "status": "DONE TODAY",
-   "rank": 357
+   "rank": 358
   },
   {
    "title": "A figure called season accuracy is mostly last season, and the double counting was hiding ...",
@@ -6637,7 +6655,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 358
+   "rank": 359
   },
   {
    "title": "A pill on 22 pages says off one instant",
@@ -6655,7 +6673,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 359
+   "rank": 360
   },
   {
    "title": "A tenth of a minute can flip a player's public thin verdict",
@@ -6673,7 +6691,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 360
+   "rank": 361
   },
   {
    "title": "Every visible player row carries the same caveat, so it reads as noise",
@@ -6691,7 +6709,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 361
+   "rank": 362
   },
   {
    "title": "I had this inverted: there is no scheduled bake, only a commit hook",
@@ -6709,7 +6727,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 362
+   "rank": 363
   },
   {
    "title": "Opponent quality faced is computed and committed but no surface shows it to anyone",
@@ -6727,7 +6745,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 363
+   "rank": 364
   },
   {
    "title": "The board and the impact feed call opposite players a thin read",
@@ -6745,7 +6763,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 364
+   "rank": 365
   },
   {
    "title": "The branch we treat as source can hold different numbers from the page readers see",
@@ -6763,7 +6781,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 365
+   "rank": 366
   },
   {
    "title": "The confirmed-or-projected lineup label is built on every game and rendered nowhere",
@@ -6781,7 +6799,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 366
+   "rank": 367
   },
   {
    "title": "The mirage piece's headline number aged before it could publish",
@@ -6799,7 +6817,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 367
+   "rank": 368
   },
   {
    "title": "The site builder splits every returning player in two, and the obvious fix would double ...",
@@ -6817,7 +6835,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 368
+   "rank": 369
   },
   {
    "title": "The live standings page is 10.5 hours stale while every sibling is 12 minutes old",
@@ -6835,7 +6853,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 369
+   "rank": 370
   },
   {
    "title": "I filed this wrong: the sweep is scheduled and being refused, not unscheduled",
@@ -6853,7 +6871,7 @@
    "p0": false,
    "rank_priority": -3.2,
    "status": "DONE TODAY",
-   "rank": 370
+   "rank": 371
   },
   {
    "title": "I filed this on a bad measurement - the guard already exists as player bands",
@@ -6871,7 +6889,7 @@
    "p0": false,
    "rank_priority": -2.8,
    "status": "DONE TODAY",
-   "rank": 371
+   "rank": 372
   },
   {
    "title": "Both coordinator watchdogs sit disabled, so no session can be replaced if it dies",
@@ -6889,7 +6907,7 @@
    "p0": false,
    "rank_priority": 0.0,
    "status": "DONE TODAY",
-   "rank": 372
+   "rank": 373
   },
   {
    "title": "Every document we publish returns to the inbox as though someone sent it",
@@ -6907,7 +6925,7 @@
    "p0": false,
    "rank_priority": 0.0,
    "status": "LANDED",
-   "rank": 373
+   "rank": 374
   },
   {
    "title": "The game projections on the public board have no scheduled rebuild, and the tripwire has ...",
@@ -6925,7 +6943,7 @@
    "p0": false,
    "rank_priority": 0.0,
    "status": "LANDED",
-   "rank": 374
+   "rank": 375
   },
   {
    "title": "Three coordinators were spawned in eight minutes while a fourth was alive and working the ...",
@@ -6943,7 +6961,7 @@
    "p0": false,
    "rank_priority": 0.0,
    "status": "LANDED",
-   "rank": 375
+   "rank": 376
   },
   {
    "title": "Two build site instances can hold both heavy and collide on one shared clone",
@@ -6962,7 +6980,7 @@
    "p0": false,
    "rank_priority": 0.0,
    "status": "DONE TODAY",
-   "rank": 376
+   "rank": 377
   },
   {
    "title": "Two liveness rules disagree on exactly the headless case, so a session-0 seat is never ...",
@@ -6980,7 +6998,7 @@
    "p0": false,
    "rank_priority": 0.0,
    "status": "DONE TODAY",
-   "rank": 377
+   "rank": 378
   },
   {
    "title": "A builder the live board serves is filed with the backtests, and never listed",
@@ -6999,7 +7017,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 378
+   "rank": 379
   },
   {
    "title": "A check that proves a rule is alive by counting findings fails the moment the rule is ...",
@@ -7017,7 +7035,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 379
+   "rank": 380
   },
   {
    "title": "A check turns green exactly when the thing it watches dies",
@@ -7035,7 +7053,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 380
+   "rank": 381
   },
   {
    "title": "A dark script vouching for another dark script reads as wired, and it hides the worst ...",
@@ -7054,7 +7072,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 381
+   "rank": 382
   },
   {
    "title": "A dead coordinator's daemon keeps bringing back an invisible head",
@@ -7073,7 +7091,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 382
+   "rank": 383
   },
   {
    "title": "A decode lint is red right now and nobody sees it, and four of its exemptions expired",
@@ -7091,7 +7109,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 383
+   "rank": 384
   },
   {
    "title": "A float total can hide a real change as easily as it invents a false one",
@@ -7109,7 +7127,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 384
+   "rank": 385
   },
   {
    "title": "A guard computes whether a call is sandboxed and then never consults it",
@@ -7127,7 +7145,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 385
+   "rank": 386
   },
   {
    "title": "A job that has exited 1 for 13 days has no signal left to spend",
@@ -7146,7 +7164,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 386
+   "rank": 387
   },
   {
    "title": "A lane heartbeat that also records a process id writes nothing at all",
@@ -7164,7 +7182,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 387
+   "rank": 388
   },
   {
    "title": "A lane is flipped to landed while it is still running",
@@ -7182,7 +7200,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 388
+   "rank": 389
   },
   {
    "title": "A monitor stage that always exits nonzero turns the nightly permanently red",
@@ -7200,7 +7218,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 389
+   "rank": 390
   },
   {
    "title": "A new staleness line rests on the only two builds that table has ever had",
@@ -7218,7 +7236,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 390
+   "rank": 391
   },
   {
    "title": "A row that merely describes a blocked spawn is itself marked blocked",
@@ -7236,7 +7254,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 391
+   "rank": 392
   },
   {
    "title": "A scheduled task here can be created but not repaired, and two of ours are now stuck that ...",
@@ -7254,7 +7272,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 392
+   "rank": 393
   },
   {
    "title": "A ship photo can come from disk instead of the live page",
@@ -7272,7 +7290,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 393
+   "rank": 394
   },
   {
    "title": "A test proves it wrote nothing by counting rows, and the incident it guards was an update",
@@ -7290,7 +7308,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 394
+   "rank": 395
   },
   {
    "title": "Anything picking the most recent published thing by date name can be captured by a file ...",
@@ -7308,7 +7326,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 395
+   "rank": 396
   },
   {
    "title": "Ask every reader of runtime state whether it can tell empty from unreadable",
@@ -7326,7 +7344,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 396
+   "rank": 397
   },
   {
    "title": "Eight behaviour tests in the attribution check have been failing on the main branch",
@@ -7344,7 +7362,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 397
+   "rank": 398
   },
   {
    "title": "Eight rows are parked with nothing recorded about what they wait on, and ten carry no ...",
@@ -7362,7 +7380,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 398
+   "rank": 399
   },
   {
    "title": "Every pytest run from a coordinator session exits 1 even when all tests pass",
@@ -7380,7 +7398,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 399
+   "rank": 400
   },
   {
    "title": "Filling the chair only cancels the empty-chair alarm if the did the filling",
@@ -7398,7 +7416,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 400
+   "rank": 401
   },
   {
    "title": "Four byte-identical coordinator-relaunch messages reached the CEO phone in 72 minutes",
@@ -7416,7 +7434,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 401
+   "rank": 402
   },
   {
    "title": "Four spawners can wake the machine without ever checking whether we are paused",
@@ -7434,7 +7452,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 402
+   "rank": 403
   },
   {
    "title": "Give the forward book a rebuild schedule, not just an alarm",
@@ -7452,7 +7470,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 403
+   "rank": 404
   },
   {
    "title": "Guards with a fast path and a full path, where only the fast path ever runs",
@@ -7470,7 +7488,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 404
+   "rank": 405
   },
   {
    "title": "Leftover generated launchers sit in state and never read the pause flag",
@@ -7488,7 +7506,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 405
+   "rank": 406
   },
   {
    "title": "One test calls the real sync, so running the suite writes to the live database",
@@ -7506,7 +7524,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 406
+   "rank": 407
   },
   {
    "title": "One test still calls the production entry point with a strippable flag as its only ...",
@@ -7525,7 +7543,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 407
+   "rank": 408
   },
   {
    "title": "Our alarms go quiet for weeks by design, and that is how a two-week freeze stayed ...",
@@ -7543,7 +7561,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 408
+   "rank": 409
   },
   {
    "title": "Restart the always-on background process onto current code",
@@ -7562,7 +7580,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 409
+   "rank": 410
   },
   {
    "title": "Shrink the file that gets injected into every single agent",
@@ -7581,7 +7599,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 410
+   "rank": 411
   },
   {
    "title": "The coordinator-is-down banner is false in exactly the case the watchdog was",
@@ -7599,7 +7617,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 411
+   "rank": 412
   },
   {
    "title": "The decode scan would call the repo clean if it stopped reaching any file",
@@ -7617,7 +7635,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 412
+   "rank": 413
   },
   {
    "title": "The deleter nobody could name is our own retention rule, and it fights the shield that ...",
@@ -7635,7 +7653,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 413
+   "rank": 414
   },
   {
    "title": "The fixpoint immediately surfaced a sanctioned writer and the boot preflight, both with ...",
@@ -7653,7 +7671,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 414
+   "rank": 415
   },
   {
    "title": "The freshness alarm fires every half hour because a deliberate pin is measured like a ...",
@@ -7671,7 +7689,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 415
+   "rank": 416
   },
   {
    "title": "The guard that checks report claims stopped seeing the reports",
@@ -7689,7 +7707,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 416
+   "rank": 417
   },
   {
    "title": "The guard that proves lanes are isolated gives the same clean answer when it can see no ...",
@@ -7707,7 +7725,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 417
+   "rank": 418
   },
   {
    "title": "The guard that watches commits keeps no record of warning anyone",
@@ -7725,7 +7743,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 418
+   "rank": 419
   },
   {
    "title": "The history shield restores 121 files every five minutes and nothing reports the deleter",
@@ -7743,7 +7761,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 419
+   "rank": 420
   },
   {
    "title": "The hung-holder timeout exists but is ten times the job's own runtime",
@@ -7761,7 +7779,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 420
+   "rank": 421
   },
   {
    "title": "The interval table's build stamp is finally readable and no check looks at it",
@@ -7779,7 +7797,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 421
+   "rank": 422
   },
   {
    "title": "The lane updater reports lane-not-found when it could not read the file at all",
@@ -7797,7 +7815,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 422
+   "rank": 423
   },
   {
    "title": "The minutes context layer runs dry tomorrow and nothing rebuilds it",
@@ -7815,7 +7833,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 423
+   "rank": 424
   },
   {
    "title": "The nightly suite reports 39 red and about half of that is a filing mistake, so nobody ...",
@@ -7833,7 +7851,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 424
+   "rank": 425
   },
   {
    "title": "The one commit sweep with a receipt cannot be reproduced by any mechanism we now ...",
@@ -7851,7 +7869,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 425
+   "rank": 426
   },
   {
    "title": "The probe whose only job is to certify the width counter honest goes green on a read of ...",
@@ -7869,7 +7887,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 426
+   "rank": 427
   },
   {
    "title": "The proof that the seat refills only ever watches the killing, never the refilling",
@@ -7887,7 +7905,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 427
+   "rank": 428
   },
   {
    "title": "The reaper logs lanes as orphaned, fails to write it, and returns them as orphaned anyway",
@@ -7905,7 +7923,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 428
+   "rank": 429
   },
   {
    "title": "The refill notice reposts itself every few minutes into the inbox that lost two of the ...",
@@ -7923,7 +7941,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 429
+   "rank": 430
   },
   {
    "title": "The restart command returns success and the keeps running the old code",
@@ -7941,7 +7959,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 430
+   "rank": 431
   },
   {
    "title": "The restart loop can now revert files in the working tree with nobody watching",
@@ -7959,7 +7977,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 431
+   "rank": 432
   },
   {
    "title": "The rule counts a missing env flag as unsafe even when the child cannot reach production",
@@ -7977,7 +7995,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 432
+   "rank": 433
   },
   {
    "title": "The scout is feeding our own output back to us as input",
@@ -7995,7 +8013,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 433
+   "rank": 434
   },
   {
    "title": "The scout task reports success while the scout is gone",
@@ -8013,7 +8031,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 434
+   "rank": 435
   },
   {
    "title": "The self-delivery loop covers reports too, not only deltas",
@@ -8031,7 +8049,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 435
+   "rank": 436
   },
   {
    "title": "The sweep that just started running is red on seven files, one of them writing the file ...",
@@ -8049,7 +8067,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 436
+   "rank": 437
   },
   {
    "title": "The sweep that stops tests reaching the live machine is run by nothing",
@@ -8067,7 +8085,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 437
+   "rank": 438
   },
   {
    "title": "The two guards on every commit allow the commit when their read fails",
@@ -8085,7 +8103,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 438
+   "rank": 439
   },
   {
    "title": "The width bar reads 4 while zero lanes are running, because it displays the authorisation",
@@ -8103,7 +8121,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "LANDED",
-   "rank": 439
+   "rank": 440
   },
   {
    "title": "Three commit guards were shipped in warn-only mode with a promise to flip, and nobody ...",
@@ -8121,7 +8139,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 440
+   "rank": 441
   },
   {
    "title": "Two guards add nine columns together before comparing, so a change that cancels is ...",
@@ -8139,7 +8157,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 441
+   "rank": 442
   },
   {
    "title": "Two guards check the projection version nobody is reading, and one reports itself healthy",
@@ -8157,7 +8175,7 @@
    "p0": false,
    "rank_priority": 1.0,
    "status": "DONE TODAY",
-   "rank": 442
+   "rank": 443
   },
   {
    "title": "The fast rescue can go dark visibly and still page nobody",
@@ -8175,7 +8193,7 @@
    "p0": false,
    "rank_priority": 1.5,
    "status": "DONE TODAY",
-   "rank": 443
+   "rank": 444
   },
   {
    "title": "Twenty-two tests import production modules with no redirect",
@@ -8193,7 +8211,7 @@
    "p0": false,
    "rank_priority": 1.5,
    "status": "DONE TODAY",
-   "rank": 444
+   "rank": 445
   },
   {
    "title": "A comms test has been failing since before this session",
@@ -8211,7 +8229,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 445
+   "rank": 446
   },
   {
    "title": "A function that reads as active protection is defined and never called",
@@ -8229,7 +8247,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 446
+   "rank": 447
   },
   {
    "title": "A new page can be committed, deployed, pushed and still 404",
@@ -8247,7 +8265,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 447
+   "rank": 448
   },
   {
    "title": "A red probe raises the ratio on the console and names itself to nobody",
@@ -8265,7 +8283,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 448
+   "rank": 449
   },
   {
    "title": "A test helper sets its isolation after the import that reads it, switching live writers ...",
@@ -8283,7 +8301,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 449
+   "rank": 450
   },
   {
    "title": "A test writes fake restart events into the real operator log",
@@ -8301,7 +8319,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 450
+   "rank": 451
   },
   {
    "title": "Modules a human runs every resume are counted as never run",
@@ -8319,7 +8337,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 451
+   "rank": 452
   },
   {
    "title": "The checker that finds unwired code cannot see what a scheduled task actually runs",
@@ -8337,7 +8355,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 452
+   "rank": 453
   },
   {
    "title": "The git rule flags a throwaway worktree as if it were the live repo",
@@ -8355,7 +8373,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 453
+   "rank": 454
   },
   {
    "title": "The pre-commit copy gate answers wrongly when called the wrong way",
@@ -8373,7 +8391,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 454
+   "rank": 455
   },
   {
    "title": "The same judgement is implemented three times and only two of them agree",
@@ -8391,7 +8409,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 455
+   "rank": 456
   },
   {
    "title": "Twenty-six helpers can silently read nothing instead of failing",
@@ -8409,7 +8427,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 456
+   "rank": 457
   },
   {
    "title": "Two of three amnesty registers shrink on their own and the third only grows",
@@ -8427,7 +8445,7 @@
    "p0": false,
    "rank_priority": 2.0,
    "status": "DONE TODAY",
-   "rank": 457
+   "rank": 458
   },
   {
    "title": "Wiring proof for the row-close receipt line",
@@ -8445,7 +8463,7 @@
    "p0": false,
    "rank_priority": 3.0,
    "status": "LANDED",
-   "rank": 458
+   "rank": 459
   },
   {
    "title": "The env key-count gap is in the loader, not the env file",
@@ -8463,7 +8481,7 @@
    "p0": false,
    "rank_priority": 5.0,
    "status": "DONE TODAY",
-   "rank": 459
+   "rank": 460
   },
   {
    "title": "Gate the beat-the-market claims off every surface fed by the line-fitted family",
@@ -8482,7 +8500,7 @@
    "p0": false,
    "rank_priority": 0.0,
    "status": "DONE TODAY",
-   "rank": 460
+   "rank": 461
   },
   {
    "title": "Forward bet tracking reads a table that died in May and returns empty without complaining",
@@ -8501,7 +8519,7 @@
    "p0": false,
    "rank_priority": 3.0,
    "status": "QUEUED",
-   "rank": 461
+   "rank": 462
   },
   {
    "title": "Add a weekly where-we-beat-the-market strip",
@@ -8520,7 +8538,7 @@
    "p0": false,
    "rank_priority": 128.0,
    "status": "QUEUED",
-   "rank": 462
+   "rank": 463
   },
   {
    "title": "Rank each night's best bets by confidence",
@@ -8539,23 +8557,23 @@
    "p0": false,
    "rank_priority": 130.0,
    "status": "QUEUED",
-   "rank": 463
+   "rank": 464
   }
  ],
- "shown": 463,
+ "shown": 464,
  "floor": {
   "target": 40,
-  "count": 463,
+  "count": 464,
   "ok": true,
-  "label": "463 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 6m ago.)",
-  "as_of_utc": "2026-08-12T17:44:56Z",
-  "age_secs": 400,
+  "label": "464 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 1m ago.)",
+  "as_of_utc": "2026-08-12T18:00:00Z",
+  "age_secs": 103,
   "stale": false
  },
  "source": "the team's ranked work list",
  "counts": {
-  "total": 463,
-  "finished": 169,
+  "total": 464,
+  "finished": 170,
   "blocked": 20,
   "process": 87,
   "machine": 207,
