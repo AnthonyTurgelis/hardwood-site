@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-12T14:51:29+00:00",
+ "generated_utc": "2026-08-12T15:00:43+00:00",
  "freshness": {
-  "baked_utc": "2026-08-12T14:51:29+00:00",
-  "baked_et": "Aug 12, 10:51am ET",
-  "revalidated_utc": "2026-08-12T14:51:29+00:00",
+  "baked_utc": "2026-08-12T15:00:43+00:00",
+  "baked_et": "Aug 12, 11:00am ET",
+  "revalidated_utc": "2026-08-12T15:00:43+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-12",
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-12T14:51:29+00:00",
+  "generated_utc": "2026-08-12T15:00:43+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -5604,7 +5604,7 @@
       "why": "The always-on background monitor that flags anything needing a decision",
       "priority": 0,
       "seat": "MACHINE",
-      "status": "open - P0, measured from inside the evicted session; spawn ledger, lock state and board heartbeat all captured above ||| ROOT CAUSE FOUND, AND IT IS NOT THE HEARTBEAT - MEASURED 2026-08-12T14:46Z FROM THE HEAD THAT TOOK THE SEAT. This row's title says a coordinator was declared dead on a STALE HEARTBEAT. The lock's own code rules that out in as many words: live_owner() is documented as 'grounded in a live process, NEVER in heartbeat freshness', and its docstring adds that 'a stale-but-alive coordinator still holds the seat'. Heartbeat age cannot evict anyone. So the eviction had another cause, and it is now demonstrated rather than argued. THE GUARD KEYS ON session_pid, AND THE INCUMBENT'S WAS NULL. live_owner() returns the owner ONLY IF the DURABLE session_pid - the claude.exe ancestor recorded at declare - is verifiably alive; it reads int(prev.get('session_pid') or 0) and, on a zero, returns None, which claim_or_exit treats as 'the seat is FREE'. When I booted, the held lock read session_pid null with session_instance_key ending in the literal 'nopid|nostart', WHILE its pid field held 8712 and that process was alive and had beaten 20 seconds earlier. The guard never probed 8712, because the field it probes is session_pid and not pid. My claim was GRANTED against a living, beating coordinator. That is the multi-spawn incident's actual mechanism. PROVEN BY THE CONTROL, WHICH IS THE HALF THAT MAKES THIS MORE THAN A STORY. Minutes later the same session re-declared and populated the field - the lock now reads session_pid 8712 with instance key '45d4f0b2...|8712|2026-08-12T14:27:20Z'. Re-running the SAME read-only predicate against the SAME live process now returns the owner, and a foreign claim evaluates to REFUSED. Identical code, identical process, opposite verdict - the only variable is whether session_pid was populated. SO THE DEFECT IS A BOOT WINDOW, not a staleness threshold: between declaring the lock and resolving its own claude.exe ancestor, a coordinator holds a seat that every other booting head reads as UNOWNED. Three spawns inside eight minutes is what that window looks like from outside. WHY IT MATTERS FOR THE FIX: raising heartbeat thresholds, beating more often, or shortening lane work would change NOTHING here - the eviction path never consults the heartbeat. The fix is at declare: never write a lock row with a null session_pid, or treat a null durable pid as UNKNOWN and therefore HELD rather than as free. Fail-safe direction matters, and this one currently fails OPEN - an unresolvable ancestor reads as an empty chair, which is the same 'I could not look' rendered as 'I looked and it was empty' class the console probe's header names. ONE SIDE EFFECT TO EXPECT AND NOT MISREAD: this session's own claim at 14:46Z is one of the takeovers, so the ledger will show a seat change with no crash behind it. ||| ROOT-CAUSED 2026-08-12T14:47Z, AND IT IS NOT THE HEARTBEAT. This row's 'recorded oddity, deliberately not theorised' - that the lock's pid reads NOT RUNNING for a seat that is demonstrably occupied - IS THE WHOLE DEFECT, and the heartbeat analysis above is a red herring. THE LOCK CARRIES TWO PID FIELDS AND THE SPAWNER READS THE WRONG ONE. hardwood_supervisor.ps1::Get-CoordinatorState opens with `if (-not $lk -or -not $lk.session_pid) { return EMPTY }`. That is the FIRST branch and it runs BEFORE any freshness or heartbeat test. Measured on the live lock at 14:45Z: pid 8712 (alive, in interactive session 1), last_heartbeat_utc 2026-08-12T14:45:21Z (SECONDS old), and session_pid NULL, with session_instance_key reading literally '45d4f0b2-...|nopid|nostart'. So the chair read EMPTY on every single cycle no matter how fresh the heartbeat was. Raising a staleness threshold would have changed NOTHING, which is why this row's proposed fixes - a heartbeat beaten from outside the tool call, a progress-based liveness test - would both have missed it. AND EVERY SPAWN THEN 'VERIFIED A WINDOW WITH A LIVE CLAUDE INSIDE IT' because there WERE live claudes; the spawner simply was not counting them as the seat. WHY session_pid IS NULL IS ALREADY WRITTEN DOWN, in coordinator_lock.py::_process_identity, measured the same day: _session_pid() walks parent processes looking for claude.exe, and that walk lands on the head in ONE HOP from the PowerShell tool but DIES MID-CHAIN FROM THE BASH TOOL, because the intermediate shell has already exited and a gone process reads as 'not claude' rather than 'unknown'. Its comment names this exact storm. The HARDWOOD_SESSION_PID env fallback was added for precisely this case and the seated session did not set it. THE DEFECT STATED AGAINST THE LAW: the standing dead-test is 'process gone AND heartbeat stale beyond 2 cycles -> DEAD'. A null session_pid is NOT 'process gone', it is 'pid unknown', and the heartbeat was fresh, so the seat was never dead by the law the spawner is supposed to obey. Test-CoordinatorDead one function above already applies the right fail-safe direction in its own comment - 'any doubt returns not proven dead' - and the chair test contradicts it. MITIGATED, NOT YET FIXED: ops/STOP_SPAWNS is now set with the full reason in the file, and spawn_policy --check returns rc 3 REFUSE, so all four spawn paths decline. The storm is stopped. THE DURABLE FIX IS ONE BRANCH: Get-CoordinatorState must distinguish UNKNOWN from EMPTY - a lock with no session_pid but a FRESH heartbeat is not-proven-dead and must not be spawned over. I deliberately did NOT make that edit in this session: it is the SOLE coordinator spawner and P0 infra under the visibility law, a botched edit there means nothing spawns at all, and it wants the shadow-then-enforce lifecycle and a test rather than a hot patch at the tail of a long lane. DELETING ops/STOP_SPAWNS IS PART OF THAT FIX, not a separate cleanup - while it exists there is no autonomous recovery if the seat genuinely empties. ||| STOP FLAG SET AND THEN CLEARED WITHIN THREE MINUTES, DELIBERATELY, AND THE REASON IS THE POINT. I set ops/STOP_SPAWNS at 14:47Z while three heads were alive. By 14:49Z the lock read session_pid 8712 - POPULATED, no longer null - with a heartbeat 10 seconds old, so the chair test now returns ALIVE and the storm's trigger had self-resolved for this seat. The flag's justification had therefore lapsed, and spawn_policy.py's own header states the priority plainly: a refusal gate that fails closed 'would empty the chair permanently, which is worse than a husk'. Holding a stop past its cause would have traded a stopped storm for NO AUTONOMOUS RECOVERY AT ALL. Cleared, verified rc 0 ALLOW. No spawn occurred in the interval. THE DEFECT IS NOT FIXED BY THAT AND THIS ROW STAYS P0 OPEN. session_pid populated itself for THIS seat; the branch that reads a null session_pid as an EMPTY CHAIR is untouched, so the storm recurs the next time a session declares the lock from the Bash tool - which is the documented failure path, not a rare one. The durable fix remains the single UNKNOWN branch in Get-CoordinatorState specified above. ONE THING I OWE THIS ROW HONESTLY, since it was written from inside the evicted session and I am that session: THE SEAT IS NOT MINE. At 14:49Z the lock names coord-20260812-visible-b, owner uuid 45d4f0b2, heartbeat 10 seconds old - a live, beating coordinator that is NOT me (uuid cbac19e7). I have been committing to origin/gemini-dev throughout while another head held the lock, which is the invariant violation this row is about, with me on the wrong side of it. Everything I landed is verified and pushed, but the next session should know that two coordinators were writing this repo concurrently for roughly forty minutes, and that ops/upcoming.json in particular has a scheduled writer too - I read it fresh before every write for exactly that reason.",
+      "status": "needs-verify",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -21152,9 +21152,9 @@
     "target": 40,
     "count": 445,
     "ok": true,
-    "label": "445 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 15m ago.)",
+    "label": "445 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 24m ago.)",
     "as_of_utc": "2026-08-12T14:36:38Z",
-    "age_secs": 909,
+    "age_secs": 1471,
     "stale": false
    },
    "source": "dispatch queue",
@@ -21725,67 +21725,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-12T14:51:10Z",
-  "age_s": 23,
-  "cycles": 1,
+  "last_poll_utc": "2026-08-12T15:00:28Z",
+  "age_s": 20,
+  "cycles": 9,
   "known": true,
-  "label": "scout: alive, last poll 23s ago",
+  "label": "scout: alive, last poll 20s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "10:50am",
+   "time": "11:00am",
+   "text": "slate-refresh: STEP minutes perslate rc=0 :: nothing new to insert (all present or no roster).",
+   "detail": "slate-refresh: STEP minutes_perslate rc=0 :: nothing new to insert (all present or no roster)."
+  },
+  {
+   "time": "11:00am",
    "text": "slate-refresh: STEP minutes raw ar [MINUTES VARIANT=raw ar] start",
    "detail": "slate-refresh: STEP minutes_raw_ar [MINUTES_VARIANT=raw_ar] start"
   },
   {
-   "time": "10:50am",
+   "time": "11:00am",
    "text": "slate-refresh: STEP minutes raw ar rc=0 :: nothing new to insert (all present or no roster).",
    "detail": "slate-refresh: STEP minutes_raw_ar rc=0 :: nothing new to insert (all present or no roster)."
   },
   {
-   "time": "10:50am",
+   "time": "11:00am",
    "text": "slate-refresh: STEP season impact start",
    "detail": "slate-refresh: STEP season_impact start"
   },
   {
-   "time": "10:50am",
+   "time": "11:00am",
    "text": "slate-refresh: STEP season impact rc=0 :: thin = False currently out = False play prob = 0.95",
    "detail": "slate-refresh: STEP season_impact rc=0 :: thin = False currently_out = False play_prob = 0.95"
   },
   {
-   "time": "10:50am",
+   "time": "11:00am",
    "text": "slate-refresh: CHAIN incomplete — failed steps: game logs",
    "detail": "slate-refresh: CHAIN incomplete — failed steps: game_logs"
   },
   {
-   "time": "10:50am",
+   "time": "11:00am",
    "text": "slate-refresh: run FAILED steps=[('game logs', 1), ('minutes perslate', 0), ('minutes raw ar', 0), ('season impact', 0)] fresh=True stale=False",
    "detail": "slate-refresh: run FAILED steps=[('game_logs', 1), ('minutes_perslate', 0), ('minutes_raw_ar', 0), ('season_impact', 0)] fresh=True stale=Fa"
   },
   {
-   "time": "10:50am",
-   "text": "monitor started",
-   "detail": "scout watcher START pid=11536 poll=60s folder=1wFZtN61Ze5EaUv9ia7rJ8LjHQByhIMOj inbox=C:\\Users\\antho\\hardwood-cron\\ops\\scout\\inbox"
+   "time": "11:00am",
+   "text": "poll #9 · nothing new",
+   "detail": "poll cycle=9 ok directives_new=0"
   },
   {
-   "time": "10:51am",
-   "text": "poll #1 · nothing new",
-   "detail": "poll cycle=1 ok directives_new=0"
-  },
-  {
-   "time": "10:51am",
+   "time": "11:00am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
   },
   {
-   "time": "10:51am",
-   "text": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
-   "detail": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full str"
+   "time": "11:00am",
+   "text": "board-selfpolice: clean (live board matches repo truth",
+   "detail": "board-selfpolice: clean (live board matches repo truth)"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-12T14:51:20Z",
+  "as_of": "2026-08-12T15:00:30.192756+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -21794,40 +21794,40 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "23s",
-    "state_text": "on · seen 23s ago"
+    "age_label": "20s",
+    "state_text": "on · seen 20s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "13s",
-    "state_text": "on · seen 13s ago"
+    "age_label": "18s",
+    "state_text": "on · seen 18s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "5m",
-    "state_text": "on · seen 5m ago"
+    "age_label": "2m",
+    "state_text": "on · seen 2m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "13s",
-    "state_text": "on · seen 13s ago"
+    "age_label": "21s",
+    "state_text": "on · seen 21s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "6m",
-    "state_text": "on · seen 6m ago"
+    "age_label": "2m",
+    "state_text": "on · seen 2m ago"
    }
   ],
   "width": {
@@ -21985,7 +21985,7 @@
    },
    {
     "label": "Slate data refresh",
-    "ran_et": "10:50am",
+    "ran_et": "11:00am",
     "next_et": "9:30am",
     "result": "needs a look"
    },
@@ -22048,13 +22048,13 @@
  },
  "coordinator_heartbeat": {
   "known": true,
-  "alive": false,
-  "last_heartbeat_utc": "2026-08-12T14:49:23Z",
-  "session_age_secs": 1453,
-  "last_progress_age_secs": 130,
+  "alive": true,
+  "last_heartbeat_utc": "2026-08-12T15:00:46Z",
+  "session_age_secs": 2008,
+  "last_progress_age_secs": 2,
   "last_spawn_attempt": "2026-08-12T14:01:16Z",
-  "blocked_reason": "no coordinator seated and nothing is holding a start — a start is due now",
-  "state": "DEAD"
+  "blocked_reason": "",
+  "state": "ALIVE"
  },
  "pipe_health": {
   "directives_pending": 0,
@@ -22081,7 +22081,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 4 work lanes have been running for 7090 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 4 work lanes have been running for 7099 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 4
  },
@@ -22090,25 +22090,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-12T14:51:29+00:00",
+   "revalidated": "2026-08-12T15:00:43+00:00",
    "stale_reason": "These readings may be out of date — last updated 118h ago.",
    "age_label": "118h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-12T14:51:29+00:00",
+   "as_of": "2026-08-12T15:00:43+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T14:51:29+00:00",
+   "revalidated": "2026-08-12T15:00:43+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T14:51:29+00:00",
+   "as_of": "2026-08-12T15:00:43+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T14:51:29+00:00",
+   "revalidated": "2026-08-12T15:00:43+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -22117,25 +22117,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T14:51:29+00:00",
+   "revalidated": "2026-08-12T15:00:43+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-12T14:50:21Z",
+   "as_of": "2026-08-12T15:00:01Z",
    "stale": false,
-   "revalidated": "2026-08-12T14:51:29+00:00",
+   "revalidated": "2026-08-12T15:00:43+00:00",
    "stale_reason": "",
-   "age_label": "68s",
+   "age_label": "42s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T14:51:29+00:00",
+   "revalidated": "2026-08-12T15:00:43+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -22144,7 +22144,7 @@
    "source": "director inbox",
    "as_of": "2026-08-12T09:06:28Z",
    "stale": false,
-   "revalidated": "2026-08-12T14:51:29+00:00",
+   "revalidated": "2026-08-12T15:00:43+00:00",
    "stale_reason": "",
    "age_label": "5h",
    "stale_after": 28800
@@ -22153,30 +22153,30 @@
    "source": "the team's updates feed",
    "as_of": "2026-08-08T12:00:00Z",
    "stale": true,
-   "revalidated": "2026-08-12T14:51:29+00:00",
-   "stale_reason": "No new team updates in 98h — nothing was shipped in that window. The feed itself is current.",
-   "age_label": "98h",
+   "revalidated": "2026-08-12T15:00:43+00:00",
+   "stale_reason": "No new team updates in 99h — nothing was shipped in that window. The feed itself is current.",
+   "age_label": "99h",
    "stale_after": 172800,
    "quiet": true
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T14:40:59+00:00",
+   "as_of": "2026-08-12T14:55:42+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T14:51:29+00:00",
+   "revalidated": "2026-08-12T15:00:43+00:00",
    "stale_reason": "",
-   "age_label": "10m",
+   "age_label": "5m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-12T14:51:20Z",
+   "as_of": "2026-08-12T15:00:30.192756+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T14:51:29+00:00",
+   "revalidated": "2026-08-12T15:00:43+00:00",
    "stale_reason": "",
-   "age_label": "13s",
+   "age_label": "18s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 12, 10:51am ET"
+ "generated_et": "Aug 12, 11:00am ET"
 }
