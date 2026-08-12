@@ -1,16 +1,16 @@
 {
   "slug": "rest",
-  "generated_utc": "2026-08-11T18:31:10Z",
-  "generated_et": "Aug 11, 2:31pm ET",
+  "generated_utc": "2026-08-12T14:01:17Z",
+  "generated_et": "Aug 12, 10:01am ET",
   "question": "How much does a back-to-back cost a WNBA team, and do stars get load-managed on the second night?",
   "source_tables": [
     "game results (schedule + final scores)",
     "player box scores"
   ],
   "script": "scripts/analysis_rest_b2b.py",
-  "generated_at": "2026-08-11T18:31:10Z",
-  "n_played_games": 2774,
-  "n_teamgames_with_rest": 5400,
+  "generated_at": "2026-08-12T14:01:17Z",
+  "n_played_games": 2777,
+  "n_teamgames_with_rest": 5406,
   "definitions": {
     "b2b": "0 days off \u2014 a team playing the very next calendar day (derived rest = 1 day between games).",
     "rest": "days between a team's consecutive games in a season, derived from the game schedule (authoritative).",
@@ -21,9 +21,9 @@
     "b2b_winpct": 0.4656,
     "b2b_n": 189,
     "rested_ref_avg_margin": 0.057,
-    "rested_ref_winpct": 0.5017,
+    "rested_ref_winpct": 0.5016,
     "raw_cost_points": -1.38,
-    "raw_cost_winpct": -0.0361,
+    "raw_cost_winpct": -0.036,
     "court_adjusted_cost_points": -0.766,
     "court_adjusted_cost_winpct": -0.0209,
     "b2b_share_road": 0.619,
@@ -35,7 +35,7 @@
     "question": "How much does a rest edge / a B2B cost?",
     "source_json": "deepdive_rest.json",
     "source_table": "game results + box scores",
-    "n": 2774
+    "n": 2777
   },
   "rest_buckets": [
     {
@@ -46,15 +46,15 @@
     },
     {
       "bucket": "1_day_off",
-      "n": 2591,
-      "avg_margin": -0.22,
-      "winpct": 0.4929
+      "n": 2596,
+      "avg_margin": -0.225,
+      "winpct": 0.4927
     },
     {
       "bucket": "2_days_off",
-      "n": 1367,
-      "avg_margin": 0.263,
-      "winpct": 0.5048
+      "n": 1368,
+      "avg_margin": 0.273,
+      "winpct": 0.5051
     },
     {
       "bucket": "3plus_days_off",
@@ -67,9 +67,9 @@
     {
       "court": "away",
       "is_b2b": false,
-      "n": 2584,
-      "avg_margin": -2.119,
-      "winpct": 0.4408
+      "n": 2587,
+      "avg_margin": -2.123,
+      "winpct": 0.4407
     },
     {
       "court": "away",
@@ -81,9 +81,9 @@
     {
       "court": "home",
       "is_b2b": false,
-      "n": 2627,
-      "avg_margin": 2.197,
-      "winpct": 0.5615
+      "n": 2630,
+      "avg_margin": 2.201,
+      "winpct": 0.5616
     },
     {
       "court": "home",
@@ -114,15 +114,15 @@
     },
     {
       "restdiff": 0,
-      "n": 1293,
-      "home_margin": 2.108,
-      "home_winpct": 0.5538
+      "n": 1295,
+      "home_margin": 2.107,
+      "home_winpct": 0.5537
     },
     {
       "restdiff": 1,
-      "n": 419,
-      "home_margin": 2.43,
-      "home_winpct": 0.58
+      "n": 420,
+      "home_margin": 2.457,
+      "home_winpct": 0.581
     },
     {
       "restdiff": 2,
@@ -140,29 +140,29 @@
   "player_fatigue": {
     "all_players": {
       "rested": {
-        "n": 44870,
-        "avg_min": 20.809,
-        "avg_pts": 8.431,
-        "ts_pct": 0.5357
+        "n": 46545,
+        "avg_min": 20.808,
+        "avg_pts": 8.45,
+        "ts_pct": 0.5369
       },
       "b2b": {
-        "n": 1738,
-        "avg_min": 20.91,
-        "avg_pts": 8.525,
-        "ts_pct": 0.5399
+        "n": 1803,
+        "avg_min": 20.936,
+        "avg_pts": 8.53,
+        "ts_pct": 0.5396
       }
     },
     "stars": {
       "rested": {
-        "n": 11234,
-        "avg_min": 31.017,
-        "avg_pts": 15.165,
-        "ts_pct": 0.5564
+        "n": 11672,
+        "avg_min": 31.023,
+        "avg_pts": 15.225,
+        "ts_pct": 0.5578
       },
       "b2b": {
-        "n": 428,
-        "avg_min": 30.843,
-        "avg_pts": 15.301,
+        "n": 443,
+        "avg_min": 30.833,
+        "avg_pts": 15.339,
         "ts_pct": 0.5571
       }
     },
@@ -173,7 +173,7 @@
     "Confound handled: b2b teams skew road (62% of b2b games). Raw margin overstates the pure b2b cost; the court-adjusted number is the honest one.",
     "Rest-differential (home rest - away rest) is noisy and non-monotone \u2014 confounded by road-trip/schedule structure. Shown but flagged; the b2b bucket is the reliable read.",
     "Team-strength confound not removed: rest state is quasi-random across a season so bias is small, but a single b2b bucket does not adjust for opponent quality.",
-    "Player age x b2b interaction NOT built: the box-score data carries no clean age field and b2b star-games (n=428) are too thin to split by age \u2014 omitted rather than invented.",
+    "Player age x b2b interaction NOT built: the box-score data carries no clean age field and b2b star-games (n=443) are too thin to split by age \u2014 omitted rather than invented.",
     "6 legacy team abbreviations in the box scores do not map to the game results (relocations/renames) and drop from the player join \u2014 negligible coverage loss."
   ]
 }
