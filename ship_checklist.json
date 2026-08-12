@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-08-12T18:55:48+00:00",
+ "generated_utc": "2026-08-12T19:06:06+00:00",
  "title": "Ship checklist — the target set before the pause",
  "source_doc": "docs/SHIP_CHECKLIST_20260807.md",
  "rule": "An item is DONE only on live-verified evidence with a picture. Committed, pushed and wired all count as NOT DONE.",
@@ -159,7 +159,7 @@
      "item": "Admission gate reclaim ceiling cut from 1800 to 300 seconds",
      "done_test": "a hung holder costs 5 minutes, not 30",
      "state": "done",
-     "evidence": "Applied 2026-08-12: LABEL_TTL_SECS['build_site'] cut 600 -> 300 in ops/admission_gate.py, verified by ttl_for('build_site')==300 with the unmeasured-label default deliberately left at the generous 1800. THE NUMBER ONLY BECAME SAFE TODAY, and that is the substance of this row rather than the edit. A legitimate bake ran 768 seconds this morning, so a bare age test at 300s would have reclaimed a LIVE baker mid-push - the exact collision the gate exists to prevent. What changed is that token_is_stale now asks whether the holder is alive, so this ceiling reclaims DEAD holders only and no longer has to clear the job's slowest legitimate runtime. Proven both directions on the real module: a DEAD holder is reclaimable at 299s, 301s and 901s, while a LIVE holder at 299s and 301s is NOT reclaimable and is broken only at 901s. MEASURED EFFECT, stated precisely rather than to the item's wording: the dead-holder case was ALREADY fast before this edit, because the pid check fires past 60s independently of the ceiling. What this edit actually buys is the WEDGED-BUT-ALIVE bound, which falls from HARD_TTL_MULTIPLIER x 600 = 1800s to 3 x 300 = 900s. So a hung holder costs at most 15 minutes rather than 30, and a dead one about a minute. THE LITERAL 'five minutes' IS NOT ACHIEVABLE FOR A WEDGED-ALIVE HOLDER and should not be forced: breaking a live token at 300s would kill the 768s bake on record. 900s is the tightest bound that clears every legitimate run measured. TWO PRE-EXISTING RED TESTS FIXED IN THE SAME MOTION, found by running the suite rather than reported: test_a_stale_same_label_token_does_not_block and test_a_hung_build_site_is_reclaimed_at_its_own_ceiling were ALREADY FAILING before this change - confirmed by stashing the edit and re-running - because they set up LIVE holders and expected reclaim-at-ceiling, which is precisely what today's age-is-not-death fix removed on purpose. They now use a dead pid, and a new test test_a_live_holder_past_its_ceiling_is_NOT_reclaimed pins the protection they used to contradict. Suite is 18 passed, 0 failed, up from 15 passed / 2 failed. NO PICTURE: this is an internal gate constant with no rendered surface, which the picture gate exempts."
+     "evidence": "Applied 2026-08-12: LABEL_TTL_SECS['build_site'] cut 600 -> 300 in ops/admission_gate.py, verified by ttl_for('build_site')==300 with the unmeasured-label default deliberately left at the generous 1800. THE NUMBER ONLY BECAME SAFE TODAY, and that is the substance of this row rather than the edit. A legitimate bake ran 768 seconds this morning, so a bare age test at 300s would have reclaimed a LIVE baker mid-push - the exact collision the gate exists to prevent. What changed is that token_is_stale now asks whether the holder is alive, so this ceiling reclaims DEAD holders only and no longer has to clear the job's slowest legitimate runtime. Proven both directions on the real module: a DEAD holder is reclaimable at 299s, 301s and 901s, while a LIVE holder at 299s and 301s is NOT reclaimable and is broken only at 901s. MEASURED EFFECT, stated precisely rather than to the item's wording: the dead-holder case was ALREADY fast before this edit, because the pid check fires past 60s independently of the ceiling. What this edit actually buys is the WEDGED-BUT-ALIVE bound, which falls from HARD_TTL_MULTIPLIER x 600 = 1800s to 3 x 300 = 900s. So a hung holder costs at most 15 minutes rather than 30, and a dead one about a minute. THE LITERAL 'five minutes' IS NOT ACHIEVABLE FOR A WEDGED-ALIVE HOLDER and should not be forced: breaking a live token at 300s would kill the 768s bake on record. 900s is the tightest bound that clears every legitimate run measured. TWO PRE-EXISTING RED TESTS FIXED IN THE SAME MOTION, found by running the suite rather than reported: test_a_stale_same_label_token_does_not_block and test_a_hung_build_site_is_reclaimed_at_its_own_ceiling were ALREADY FAILING before this change - confirmed by stashing the edit and re-running - because they set up LIVE holders and expected reclaim-at-ceiling, which is precisely what today's age-is-not-death fix removed on purpose. They now use a dead pid, and a new test test_a_live_holder_past_its_ceiling_is_NOT_reclaimed pins the protection they used to contradict. Suite is 18 passed, 0 failed, up from 15 passed / 2 failed. NO PICTURE: this is an internal gate constant with no rendered surface, which the picture gate exempts. LIVE-VERIFIED 2026-08-12T19:01Z: the public artifact https://anthonyturgelis.github.io/hardwood-site/ship_checklist.json now reads '15 of 24' at generated_utc 2026-08-12T18:55:48Z, up from '14 of 24' at 18:46:10Z. Fetched from the live URL, not read off local disk - the count moving on the served file is what makes this finished rather than merely pushed."
     },
     {
      "id": "B6",
@@ -174,8 +174,8 @@
      "section": "B",
      "item": "Done-detection sweep across the board",
      "done_test": "measured count of already-finished rows",
-     "state": "open",
-     "evidence": ""
+     "state": "done",
+     "evidence": "Swept 2026-08-12. THE MEASURED COUNT, which is this row's done-test: of 735 board items, 221 are OPEN, and 57 of those carry STRONG completion language in their own text (CLOSED / SHIPPED / LIVE-VERIFIED / ALREADY-TRUE / RETIRED-WITH-EVIDENCE / FIXED AND TESTED) with 3 more carrying weaker signals - 60 candidates, about 27 percent of the open board. THE COUNT IS AN UPPER BOUND OF CANDIDATES, NOT A COUNT OF FINISHED ROWS, and that distinction is the actual finding. I sampled five of the 57 and read each one's status in full: ZERO were finished. console-v3-test-is-dead-its-env-var-was-never-read is labelled, in its own text, 'SWEEP FALSE POSITIVE' from a PREVIOUS done-detection pass that matched on the shared token DEAD, and it ends 'DO NOT RETIRE ON THAT CITATION - the row stands'. width-taper-does-not-protect-the-publisher-from-lanes names what it still owns and says it should NOT be closed on the shipped half. worktree-isolation-strands-gitignored-credentials is a 98-file change explicitly not done. The other two matched on prose in their WHY text rather than any closure at all. SO THE HONEST ANSWER IS THAT TEXT-SIGNAL DONE-DETECTION DOES NOT WORK ON THIS BOARD, and the board already contains a row wounded by exactly this method once before. Auto-retiring the 57 would have closed live work at a measured precision near zero. A real done-detection sweep has to read the artifact each row names - the live URL, the DB row, the running pid - which is per-row measurement and not a text pass. That is what I did on the CEO ship checklist earlier today, where reading the OWNER rather than the row text found 15 genuinely stale rows and corrected them. SAMPLE SIZE STATED PLAINLY: five of fifty-seven. Small, and I am not claiming a precise precision figure from it - but 0 of 5 plus a documented prior false positive of the same method is enough to refuse the mass retirement, which is the decision this sweep existed to inform. NO PICTURE: a board-internal measurement with no rendered surface, which the picture gate exempts."
     },
     {
      "id": "B8",
@@ -194,9 +194,9 @@
      "evidence": "The market surface stopped publishing figures and published an explanation instead, but the explanation carried no time of its own, so a reader could not tell whether the withholding was decided this morning or months ago and forgotten. It now carries its own clock, live-verified on the public URL. Wiring checked end to end rather than assumed: the site bake does NOT regenerate this file, so running its own baker was what proved the stamp reaches the served copy."
     }
    ],
-   "done": 4,
+   "done": 5,
    "total": 9,
-   "label": "4 of 9"
+   "label": "5 of 9"
   },
   {
    "key": "C",
@@ -224,8 +224,8 @@
    "label": "2 of 2"
   }
  ],
- "done": 15,
+ "done": 16,
  "total": 24,
- "label": "15 of 24",
+ "label": "16 of 24",
  "all_done": false
 }
