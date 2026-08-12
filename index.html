@@ -85,6 +85,9 @@ section{padding:16px 0}
 .mrow i{color:var(--chalk-dim);font-style:normal;font-variant-numeric:tabular-nums}
 .mrow .t{flex:1;min-width:0}
 .mrow .fam{color:var(--chalk-dim);font-size:10.5px;white-space:nowrap}
+/* LOUD, not decorative. A frozen band has to look wrong at a glance, or the reader takes the
+   stale list at face value exactly as they took the re-stamped one. */
+.mrow.stale{background:#3a1d1d;border-color:#a33;color:#ffd7d7;font-weight:600}
 .mnote{color:var(--chalk-dim);font-size:11px;margin-top:6px}
 .mnote a{color:var(--maple);font-weight:600}
 .acc{border-top:1px solid var(--line)}
@@ -241,7 +244,26 @@ footer .util a:hover{color:var(--chalk)}
     var done=items.filter(function(i){return i.status==='DONE TODAY';});
     paint('m-queue',next.slice(0,12),'m-qcount',next.length,'waiting');
     paint('m-done',done,'m-dcount',done.length,'done');
-    if(has(d.as_of_et)) document.getElementById('m-note').appendChild(el('span',null,' Queue as of '+d.as_of_et+'.'));
+    /* CONTENT-TIME LAW (CEO 20260812). This line used to print d.as_of_et when as_of_et WAS the
+       bake instant, so Aug 7 items sat under a same-minute stamp and frozen content was
+       indistinguishable from live content. Each band now prints the newest event INSIDE its own
+       rows, and says so loudly when that clock has stopped or was never recorded. The bake instant
+       is never printed here - it is a fact about the reader, not about the list. */
+    function bandnote(id,st,word){
+      var box=document.getElementById(id); if(!box||!st) return;
+      var row=el('div','mrow');
+      if(!has(st.as_of_iso)){
+        row.className='mrow stale';
+        row.appendChild(el('div','t',has(st.note)?st.note:'We cannot tell how current this list is.'));
+      }else{
+        var txt='Newest '+word+' here: '+st.as_of_et+'.';
+        if(st.stale===true){row.className='mrow stale';txt=txt+' '+(has(st.note)?st.note:'This list has stopped moving.');}
+        row.appendChild(el('div','t',txt));
+      }
+      box.appendChild(row);
+    }
+    bandnote('m-queue',d.working_next_stamp,'item');
+    bandnote('m-done',d.finished_today_stamp,'finished item');
 
   }).catch(function(){});
 })();
