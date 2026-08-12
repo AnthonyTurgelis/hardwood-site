@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-12T07:31:56+00:00",
+ "generated_utc": "2026-08-12T07:41:42+00:00",
  "freshness": {
-  "baked_utc": "2026-08-12T07:31:56+00:00",
-  "baked_et": "Aug 12, 3:31am ET",
-  "revalidated_utc": "2026-08-12T07:31:56+00:00",
+  "baked_utc": "2026-08-12T07:41:42+00:00",
+  "baked_et": "Aug 12, 3:41am ET",
+  "revalidated_utc": "2026-08-12T07:41:42+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-12",
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-12T07:31:56+00:00",
+  "generated_utc": "2026-08-12T07:41:42+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -8889,8 +8889,8 @@
       "why": "The real way a total hides a change has nothing to do with floating point. A total is a lossy summary: add a half to one row and take a half from another and the difference is zero, in any number ...",
       "priority": 1,
       "seat": "qa",
-      "status": "ready",
-      "state": "ready now",
+      "status": "CLOSED 2026-08-12. THE REPAIR THIS ROW ASKS FOR ALREADY SHIPPED ON BOTH LIVE GUARDS, AND WHAT WAS ACTUALLY BROKEN WAS THE TEST GUARDING THEM. Measured rather than read: the two LIVE syncers scripts/board_played_mirror_sync.py and scripts/sim_played_mirror_sync.py both render GUARD_SQL as a row-level scripts/mirror_boundary_diff.py. They do not aggregate at all. That is exactly the repair this row prescribes, done by lane qa-a-cancelling-change-is-invisible on 2026-08-06 and proven there inside a rolled-back transaction on game , where the old sum-scalar reported PASS after a real value change. THE THIRD SUM IS DELIBERATE AND MUST STAY. scripts/board_played_sync_20260722.py is a spent one-off: wired to nothing, already drained with a would-update count of 0, and its own header says it is left exactly as it ran rather than edited to misrepresent what executed in July. Its instruction is do not run it and do not re-audit it. WHAT I FOUND INSTEAD, AND FIXED. tests/test_float_aggregate_stability_guards.py had been RED on BOTH live sites since that repair, demanding at least 9 and 11 per-column numeric casts inside a SUM that no longer exists and reporting found 0. The test asserted ONE REMEDY, cast every column inside the aggregate, instead of the PROPERTY it wants, which is that a stability guard's verdict must not depend on the order the executor visits rows. So the strictly stronger fix read as a regression. That is this file's own subject wearing the other hat, and a test that is red on correct code teaches everyone to ignore the file. THE CONTRACT IS NOW THE PROPERTY, satisfied by either of two shapes: no aggregate at all, which is order-proof AND cancellation-proof by construction and is what both live guards do, or an aggregate with the cast inside every SUM, kept for the historical one-off and any future guard that genuinely needs a total. The row-level branch cannot pass vacuously - it requires every guarded column still returned, a per-row key, an OUTPUT_COLS count matching the registry, and the row differ actually imported, because an emptied guard is not a row-level guard. The decision is a pure function so both branches are mutated in test_the_shape_check_bites_on_both_branches, which requires a complaint on a dropped column, an emptied select, rows selected but never diffed, a missing row key, a stale registry count, and both originally banned aggregate shapes. RESULT: 2 failed and 2 passed became 5 passed.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -12900,7 +12900,7 @@
       "why": "Player projections currently under-project scoring by roughly nine tenths of a point per player game, with eighty four of a hundred and five regulars off by a point or more. A version built on 23 ...",
       "priority": 1,
       "seat": "top",
-      "status": "EVIDENCE RE-CONFIRMED 2026-08-12, still unserved, and the pointer decision is still owed. Nothing moved, which is correct - this row is right that a served pointer is not a lane's to flip. STILL BUILT, STILL UNSERVED, NOW TWENTY DAYS. props_ratefix_usage_deshrink_ewma2_v1_ holds 9234 rows built 2026-07-23T18:13:41Z. The served pointer, _MV_PROPS_AVAIL, is props_minfix_ewma2_v1_. AND SERVING IT IS A FAMILY REPOINT, NOT A VERSION BUMP - a detail worth stating because it changes who has to act. build_site resolves that pointer to the newest member of the props_minfix_ewma2_v1_ FAMILY at run time, so no amount of rebuilding the ratefix will ever cause it to be picked up. It is a different family and only a deliberate repoint reaches it. THE FIX STILL WORKS ON TODAY'S BASE, which I can say from a run rather than from the July record: dry-running the builder tonight against the live EWMA base gave graded starters n=1121 with PTS bias moving from -1.402 to -0.200 and MAE from 5.149 to 5.060, and on the high-usage starter target n=789 bias from -1.778 to -0.070 with MAE 5.436 to 5.309. Do-no-harm held - zero negatives, below-knot flat, and minutes, rebounds, assists and threes byte-identical to the base. So the effect is not a stale July claim. ONE THING I CHANGED TONIGHT THAT MATTERS TO WHOEVER TAKES THIS: that builder used to pin its base to a hard-coded July signature. It now resolves the live EWMA base through the canonical resolver, so a re-run builds on the CURRENT minutes base rather than a months-old one. Anyone re-deriving these numbers before the repoint will get today's base automatically. WHAT IS OWED IS UNCHANGED: a decision to repoint the served props pointer from the minfix family to the ratefix one, with the usual promotion evidence. It costs a repoint rather than a build.",
+      "status": "EVIDENCE RE-CONFIRMED 2026-08-12, still unserved, and the pointer decision is still owed. Nothing moved, which is correct - this row is right that a served pointer is not a lane's to flip. STILL BUILT, STILL UNSERVED, NOW TWENTY DAYS. props_ratefix_usage_deshrink_ewma2_v1_ holds 9234 rows built 2026-07-23T18:13:41Z. The served pointer, _MV_PROPS_AVAIL, is props_minfix_ewma2_v1_. AND SERVING IT IS A FAMILY REPOINT, NOT A VERSION BUMP - a detail worth stating because it changes who has to act. build_site resolves that pointer to the newest member of the props_minfix_ewma2_v1_ FAMILY at run time, so no amount of rebuilding the ratefix will ever cause it to be picked up. It is a different family and only a deliberate repoint reaches it. THE FIX STILL WORKS ON TODAY'S BASE, which I can say from a run rather than from the July record: dry-running the builder tonight against the live EWMA base gave graded starters n=1121 with PTS bias moving from -1.402 to -0.200 and MAE from 5.149 to 5.060, and on the high-usage starter target n=789 bias from -1.778 to -0.070 with MAE 5.436 to 5.309. Do-no-harm held - zero negatives, below-knot flat, and minutes, rebounds, assists and threes byte-identical to the base. So the effect is not a stale July claim. ONE THING I CHANGED TONIGHT THAT MATTERS TO WHOEVER TAKES THIS: that builder used to pin its base to a hard-coded July signature. It now resolves the live EWMA base through the canonical resolver, so a re-run builds on the CURRENT minutes base rather than a months-old one. Anyone re-deriving these numbers before the repoint will get today's base automatically. WHAT IS OWED IS UNCHANGED: a decision to repoint the served props pointer from the minfix family to the ratefix one, with the usual promotion evidence. It costs a repoint rather than a build. CADENCE PRECONDITION FOUND 2026-08-12 WHILE MEASURING THE SCORING BAND, AND IT IS A REAL PREREQUISITE NOBODY HAD STATED. The served minfix family holds SEVEN members, newest , because report_scheduler.py runs the oneshot props_shadow_refresh at 09:50 ET which mints a fresh dated signature daily. The ratefix family holds exactly ONE member, , because build_props_ratefix_usage_deshrink_ewma2_v1.py has NO scheduled caller. SO A REPOINT ON ITS OWN WOULD SWAP A DAILY-REFRESHED PROJECTION FOR A FROZEN JULY ONE - trading a 0.9 point bias for a three-week-stale minutes regime, which is the worse of the two. THE REPOINT MUST SHIP WITH THE BUILDER ON THE SAME CADENCE, not after it. This is the identical defect the scheduler already documents in its own comment at report_scheduler.py:723: the minfix builder had no caller anywhere that runs, every signature sat stamped 2026-07-23, and four reader surfaces served 13.4-day-old projections with no alarm because a confident projection carrying no visible build date looks exactly like a fresh one. That comment also records the trap to avoid repeating: the builder hardcoded its own output signature, so scheduling it without the mint-a-fresh-sig fix produced a job that ran nightly and changed nothing detectable. Check the ratefix builder mints a dated signature per run BEFORE scheduling it, or the new job will look healthy and do nothing.",
       "state": "",
       "pm_authored": false,
       "impact": "",
@@ -14657,8 +14657,8 @@
       "why": "Most consumers of the player projections show a number, and a biased number shown is a visible error. One consumer does something worse: the scoring band is fitted on these projections, so a ...",
       "priority": 1,
       "seat": "top",
-      "status": "ready",
-      "state": "ready now",
+      "status": "CLOSED 2026-08-12 AS ALREADY-TRUE ON BOTH HALVES, AND THE PREMISE INVERTS ON THE FIRST. THE BAND IS NOT A STORED ARTIFACT. build_site.py:3112 calls fit_scoring_band with _resolve_latest_props_sig, so it REFITS ON EVERY BAKE against whichever signature is served at that moment. There is no before-or-after the bias to establish - the live fit in site/preview.json reads fit_through 2026-08-11 with fit_n 1062, i.e. refitted yesterday. No stale calibration exists. THE BIAS IS NOT BAKED IN. The band is a pinball quantile regression of ACTUAL points on PROJECTED points at tau 0.10 and 0.90, so a systematic under-projection is ABSORBED INTO THE INTERCEPTS and coverage stays honest: measured 79.9 percent in-sample and 78.4 percent out-of-sample against an 80 percent target, on a real time split trained through 2026-07-05. The row feared a calibration quietly carrying the error; what actually happens is the opposite. THE BAND IS THE ONE SURFACE THAT DISPLAYS THE BIAS RATHER THAN CONCEALING IT. From the live coefficients the projection sits BELOW THE MIDPOINT OF ITS OWN PUBLISHED INTERVAL by 1.14 at a projection of 6, 1.30 at 12 and 1.62 at 24 - and that magnitude tracks the measured starter bias of -1.402. A reader seeing a call of 12 inside a band whose centre is 13.3 is being shown the under-projection, not spared it. THE SECOND HALF IS TRUE BY CONSTRUCTION. Because the fit resolves the served signature at bake time, a repoint AUTOMATICALLY refits the band on the next bake. Nobody has to remember it and no explicit step is needed. I also measured the one way that could have gone wrong: fit_scoring_band returns nothing below MIN_FIT_N of 200 and the caller then bakes NO band, so a repoint onto a thin signature would make the band silently vanish. Both candidates carry 1062 joinable realized-error rows, so the band survives the repoint either way. WHAT THIS ROW DID SURFACE IS FILED ON THE REPOINT ROW: the served family is rebuilt daily while the ratefix family holds one member from 23 July, so a repoint alone would freeze the served projections at a July build.",
+      "state": "",
       "pm_authored": false,
       "impact": "",
       "rank_priority": 1.0,
@@ -20744,9 +20744,9 @@
     "target": 40,
     "count": 436,
     "ok": true,
-    "label": "436 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 14m ago.)",
-    "as_of_utc": "2026-08-12T07:17:54Z",
-    "age_secs": 859,
+    "label": "436 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 5m ago.)",
+    "as_of_utc": "2026-08-12T07:36:09Z",
+    "age_secs": 355,
     "stale": false
    },
    "source": "dispatch queue",
@@ -21317,67 +21317,67 @@
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-12T07:31:16Z",
-  "age_s": 45,
-  "cycles": 157,
+  "last_poll_utc": "2026-08-12T07:40:40Z",
+  "age_s": 66,
+  "cycles": 165,
   "known": true,
-  "label": "scout: alive, last poll 45s ago",
+  "label": "scout: alive, last poll 66s ago",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "3:29am",
+   "time": "3:39am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   },
   {
-   "time": "3:29am",
-   "text": "publish-health: clean (public board is fresh",
-   "detail": "publish-health: clean (public board is fresh)"
-  },
-  {
-   "time": "3:29am",
-   "text": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
-   "detail": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full str"
-  },
-  {
-   "time": "3:30am",
-   "text": "poll #156 · nothing new",
-   "detail": "poll cycle=156 ok directives_new=0"
-  },
-  {
-   "time": "3:30am",
-   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
-   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
-  },
-  {
-   "time": "3:30am",
-   "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
-   "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
-  },
-  {
-   "time": "3:30am",
+   "time": "3:40am",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
   },
   {
-   "time": "3:31am",
-   "text": "poll #157 · nothing new",
-   "detail": "poll cycle=157 ok directives_new=0"
+   "time": "3:40am",
+   "text": "poll #165 · nothing new",
+   "detail": "poll cycle=165 ok directives_new=0"
   },
   {
-   "time": "3:31am",
+   "time": "3:40am",
    "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
    "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
   },
   {
-   "time": "3:31am",
+   "time": "3:40am",
+   "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
+   "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
+  },
+  {
+   "time": "3:40am",
+   "text": "publish-health: clean (public board is fresh",
+   "detail": "publish-health: clean (public board is fresh)"
+  },
+  {
+   "time": "3:40am",
+   "text": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full streak or captured nothing past its cadence (ops/scout/state/feed streak alarm.json",
+   "detail": "feed-streak alarm: RED=3 ['HardwoodBuildFreshness', 'HardwoodOddsSnapshot', 'HardwoodNightlyModel'] - a scheduled feed has failed a full str"
+  },
+  {
+   "time": "3:41am",
+   "text": "poll #166 · nothing new",
+   "detail": "poll cycle=166 ok directives_new=0"
+  },
+  {
+   "time": "3:41am",
+   "text": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:: Subagent dispatch is unavailable in this harness: the operator's standing instruction bars calling the Agent tool unless the CEO asks for it, so no fill can cure the gap. The one lane is the coordinator working INLINE and it is not idle - it has been closing ranked rows and shipping code all cycle. Width order 13 requires this be SAID rather than read as compliance. Order 10 holds width at one regardless, since plan pct measures UNKNOWN which is fail-safe HIGH.. No directive is emitted while the cause is structural; the standing board block carries it instead. Running under the cap is CORRECT here, not an under-width defect.",
+   "detail": "width-fill suppressed - STRUCTURAL block since 2026-08-12T04:34:28Z: Subagent dispatch is unavailable in this harness: the operator's standi"
+  },
+  {
+   "time": "3:41am",
    "text": "USAGE TAPER in force [usage unknown narrow only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, band held RED, and the fail-safe NARROWS width rather than stopping: u",
    "detail": "USAGE TAPER in force [usage_unknown_narrow_only]: narrow to 1 lane(s) and keep working -- plan meter UNREADABLE -- treated as AT THRESHOLD, "
   }
  ],
  "helpers": {
-  "as_of": "2026-08-12T07:31:47.334623+00:00",
+  "as_of": "2026-08-12T07:41:31.420635+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -21386,40 +21386,40 @@
     "does": "watches for your instructions",
     "active": true,
     "stale": false,
-    "age_label": "45s",
-    "state_text": "on · seen 45s ago"
+    "age_label": "66s",
+    "state_text": "on · seen 66s ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "13s",
-    "state_text": "on · seen 13s ago"
+    "age_label": "14s",
+    "state_text": "on · seen 14s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "64s",
+    "state_text": "on · seen 64s ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "41s",
-    "state_text": "on · seen 41s ago"
+    "age_label": "25s",
+    "state_text": "on · seen 25s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "4m",
-    "state_text": "on · seen 4m ago"
+    "age_label": "2m",
+    "state_text": "on · seen 2m ago"
    }
   ],
   "width": {
@@ -21499,7 +21499,7 @@
    },
    {
     "label": "Midnight projected",
-    "ran_et": "3:30am",
+    "ran_et": "3:40am",
     "next_et": "12:00am",
     "result": "needs a look"
    },
@@ -21529,7 +21529,7 @@
    },
    {
     "label": "standing daily reconcile: CEO-ask reconciliation, stale-state audit (silently-stale is banned), superseded-file consolidation candidates, claims-vs-reality reopener, and the two-truths scan -> a plain-English diff in the morning brief plus a board panel",
-    "ran_et": "3:30am",
+    "ran_et": "3:40am",
     "next_et": "3:30am",
     "result": "needs a look"
    },
@@ -21641,9 +21641,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-12T07:31:49Z",
-  "session_age_secs": 13422,
-  "last_progress_age_secs": 12,
+  "last_heartbeat_utc": "2026-08-12T07:41:29Z",
+  "session_age_secs": 14007,
+  "last_progress_age_secs": 17,
   "last_spawn_attempt": "2026-08-12T03:45:18Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -21673,7 +21673,7 @@
   "active": true,
   "state": "defect",
   "reader_facing": false,
-  "text": "Only 0 of 1 work lanes have been running for 6650 min while jobs wait to start — being looked into.",
+  "text": "Only 0 of 1 work lanes have been running for 6660 min while jobs wait to start — being looked into.",
   "running": 0,
   "target": 1
  },
@@ -21682,25 +21682,25 @@
    "source": "live lane ledger",
    "as_of": "2026-08-07T16:36:16Z",
    "stale": true,
-   "revalidated": "2026-08-12T07:31:56+00:00",
-   "stale_reason": "These readings may be out of date — last updated 110h ago.",
-   "age_label": "110h",
+   "revalidated": "2026-08-12T07:41:42+00:00",
+   "stale_reason": "These readings may be out of date — last updated 111h ago.",
+   "age_label": "111h",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
-   "as_of": "2026-08-12T07:31:56+00:00",
+   "as_of": "2026-08-12T07:41:42+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T07:31:56+00:00",
+   "revalidated": "2026-08-12T07:41:42+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": null
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T07:31:56+00:00",
+   "as_of": "2026-08-12T07:41:42+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T07:31:56+00:00",
+   "revalidated": "2026-08-12T07:41:42+00:00",
    "stale_reason": "",
    "age_label": "0s",
    "stale_after": 3600
@@ -21709,25 +21709,25 @@
    "source": "decision brief",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T07:31:56+00:00",
+   "revalidated": "2026-08-12T07:41:42+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-12T07:27:24Z",
+   "as_of": "2026-08-12T07:38:58Z",
    "stale": false,
-   "revalidated": "2026-08-12T07:31:56+00:00",
+   "revalidated": "2026-08-12T07:41:42+00:00",
    "stale_reason": "",
-   "age_label": "4m",
+   "age_label": "2m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": false,
-   "revalidated": "2026-08-12T07:31:56+00:00",
+   "revalidated": "2026-08-12T07:41:42+00:00",
    "stale_reason": "",
    "age_label": null,
    "stale_after": 57600
@@ -21736,16 +21736,16 @@
    "source": "director inbox",
    "as_of": "2026-08-12T04:34:40Z",
    "stale": false,
-   "revalidated": "2026-08-12T07:31:56+00:00",
+   "revalidated": "2026-08-12T07:41:42+00:00",
    "stale_reason": "",
-   "age_label": "2h",
+   "age_label": "3h",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-08T12:00:00Z",
    "stale": true,
-   "revalidated": "2026-08-12T07:31:56+00:00",
+   "revalidated": "2026-08-12T07:41:42+00:00",
    "stale_reason": "No new team updates in 91h — nothing was shipped in that window. The feed itself is current.",
    "age_label": "91h",
    "stale_after": 172800,
@@ -21753,22 +21753,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-12T07:25:42+00:00",
+   "as_of": "2026-08-12T07:36:54+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T07:31:56+00:00",
+   "revalidated": "2026-08-12T07:41:42+00:00",
    "stale_reason": "",
-   "age_label": "6m",
+   "age_label": "4m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-12T07:31:47.334623+00:00",
+   "as_of": "2026-08-12T07:41:31.420635+00:00",
    "stale": false,
-   "revalidated": "2026-08-12T07:31:56+00:00",
+   "revalidated": "2026-08-12T07:41:42+00:00",
    "stale_reason": "",
-   "age_label": "13s",
+   "age_label": "14s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 12, 3:31am ET"
+ "generated_et": "Aug 12, 3:41am ET"
 }
