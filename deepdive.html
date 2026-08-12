@@ -1211,7 +1211,45 @@
     return f;
   }
 
-  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace, scoringmix:renderScoringmix, margins:renderMargins, scoringleaders:renderScoringleaders, scoreeffects:renderScoreeffects };
+  // THE DESERVED DIVE HAD NO RENDERER, so its fifteen-team table shipped in the JSON and the card
+  // showed a single headline sentence. Two separate kinds of luck belong side by side here and
+  // neither was visible: whether a team is living on close games, and whether it drew a soft
+  // schedule. A team can be lucky in both ways, one way, or neither, and only the pair tells you
+  // which. Every column below is a field already in deepdive_deserved.json - nothing is derived
+  // in the browser.
+  function renderDeserved(d){
+    var f=frag();
+    var h=d.headline||{};
+    f.appendChild(el("div","dhead", (typeof h==="string")?h:(h.text||"")));
+    var rows=d.deserved_table||[];
+    if(!rows.length) return f;
+    // Only offer the schedule columns when the build actually carried them. The builder omits them
+    // rather than inventing a league average, so an absent value means "not measured" and the
+    // column disappears instead of rendering a misleading zero.
+    var hasSched=rows.some(function(r){ return r.sched_vs_league!=null; });
+    var cols=[
+      {h:"Team", rowh:true, get:function(r){ return r.team_name||r.team; }},
+      {h:"Deserved W", num:true, get:function(r){ return num(r.deserved_wins,1); }},
+      {h:"vs actual", num:true, get:function(r){ return sign(r.gap_vs_actual,1); }},
+      {h:"Close W-L", num:true, get:function(r){
+         return (r.close_w==null&&r.close_l==null)?"—":(num(r.close_w)+"-"+num(r.close_l)); }}
+    ];
+    if(hasSched){
+      cols.push({h:"Draw faced", num:true, get:function(r){
+        return r.sched_vs_league==null?"—":sign(r.sched_vs_league,2); }});
+    }
+    f.appendChild(plab("Who earned it — and who drew the soft schedule"));
+    f.appendChild(simpleTable(cols, rows));
+    if(hasSched){
+      f.appendChild(el("div","dvfoot","“Draw faced” is the average opponent rating a team "
+        +"has actually played, in points above or below the league’s average draw, with each "
+        +"opponent valued as of the day before the game. Positive is a harder road. It is a team "
+        +"quantity and describes the schedule, not any individual player."));
+    }
+    return f;
+  }
+
+  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace, scoringmix:renderScoringmix, margins:renderMargins, scoringleaders:renderScoringleaders, scoreeffects:renderScoreeffects, deserved:renderDeserved };
 
   /* ---- as-of: every dive wears its age ----------------------------------------------------
      Silently stale is the banned state — an old number that presents itself as current. So each
