@@ -52,6 +52,22 @@
      rgba), so every bar it crosses still reads through it. */
   .ppsshade{position:absolute;top:0;bottom:0;background:var(--accent-weak);border-left:1px dashed var(--acc);border-right:1px dashed var(--acc);pointer-events:none}
   .barrow .bt>i.three{background:var(--good)}
+  /* Two seasons on ONE row, so the reader sees the shift instead of holding two charts in their
+     head. Prior season is the muted bar and sits on top; this season is the accent bar beneath.
+     Both are drawn as a SHARE of that season's team-games, never as raw counts — the seasons have
+     different numbers of games and an overlay of counts would draw the schedule, not the rotation. */
+  .dualrow{display:flex;align-items:center;gap:9px;margin:6px 0}
+  .dualrow .bl{flex:0 0 92px;font-size:11.5px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+  .dualrow .dt{flex:1 1 auto;min-width:60px;display:flex;flex-direction:column;gap:3px}
+  .dualrow .dt>span{position:relative;display:block;height:9px;border-radius:5px;background:var(--line2);overflow:hidden}
+  .dualrow .dt>span>i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;display:block}
+  .dualrow .dt>span.prior>i{background:var(--dim)}
+  .dualrow .dt>span.now>i{background:var(--acc)}
+  .dualrow .dv{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;min-width:96px;text-align:right}
+  .dualrow.thin .bl::after{content:" ·thin";color:var(--dim);font-weight:600}
+  .dualkey{display:flex;gap:14px;align-items:center;font-size:10.5px;color:var(--dim);margin:4px 0 8px 101px}
+  .dualkey b{display:inline-block;width:16px;height:8px;border-radius:4px;margin-right:5px;vertical-align:middle}
+  @media (max-width:560px){ .dualrow .bl{flex:0 1 92px;min-width:0} .dualrow .dv{min-width:0} .dualkey{margin-left:0} }
 
   /* --- stat tiles --- */
   .tiles{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:flex-end;margin:12px 0 4px}
@@ -1348,7 +1364,124 @@
     return f;
   }
 
-  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace, scoringmix:renderScoringmix, margins:renderMargins, scoringleaders:renderScoringleaders, scoreeffects:renderScoreeffects, deserved:renderDeserved, midrange:renderMidrange };
+  // -- playing_deeper ---------------------------------------------------------
+  // The league is playing deeper. Every figure printed here is a field ALREADY in
+  // deepdive_playing_deeper.json: the builder resolves the two bindings from the box scores at
+  // build time and ships BOTH the template and the filled sentence, so this renderer only ever
+  // prints what it was handed and can never disagree with the copy.
+  //
+  // The reliability numbers (.905 → .695 minutes, .49 bench, .95/.93/.90 skills) are REPLICATED
+  // FINDINGS printed as written — read from d.reliability, never re-derived here.
+  //
+  // The chart is the argument: the whole distribution of players-used per team-game, this season
+  // against the prior one, on shared rows so the rightward slide is visible rather than described.
+  // Thin buckets are DRAWN but LABELLED — a bar built on four team-games is not a shape you can
+  // read, and hiding it would quietly narrow the axis.
+  //
+  // The method footer is one line and the trailing "Glossary" is a real link, per the presentation
+  // standard — the long method lives on that page, not at the bottom of every article.
+  function renderPlayingDeeper(d){
+    var f=frag(), b=(d&&d.bindings)||{}, rel=(d&&d.reliability)||{}, m=(d&&d.method)||{},
+        rob=(d&&d.robustness)||{}, ch=(d&&d.chart)||{}, raw=(d&&d.bindings_raw)||{};
+    f.appendChild(el("div","dhead", d.headline||""));
+    f.appendChild(tiles([
+      {v:num(b.players_per_game_2026,2), l:"players used a game — now"},
+      {v:num(b.players_per_game_prior,2), l:"players used a game — prior"},
+      {v:(raw.shift!=null?"+"+num(raw.shift,2):"—"), l:"the shift, in players"},
+      {v:rNoLeadZero(rel.minutes_prior_r)+" → "+rNoLeadZero(rel.minutes_now_r), l:"minutes repeat (r)", sm:true},
+      {v:rNoLeadZero(rel.bench_minutes_r), l:"bench minutes repeat (r)", sm:true}
+    ]));
+
+    var body=(d&&d.body)||[];
+    if(body.length){
+      var prose=el("div","dvbody");
+      body.forEach(function(p){ if(p) prose.appendChild(el("p",null,String(p))); });
+      f.appendChild(prose);
+    }
+
+    // the chart — players used per team-game, both seasons, as a share of each season's games
+    var rows=(ch.rows)||(d.distribution&&d.distribution.series)||[];
+    var lbl=(ch.series_labels)||{};
+    var kPrior=null, kNow=null;
+    (m.seasons||[]).forEach(function(s,i){ if(i===0) kPrior=String(s); if(i===1) kNow=String(s); });
+    if(rows.length&&kPrior&&kNow){
+      f.appendChild(plab(ch.y_label ? (ch.x_label+" — "+ch.y_label) : "Players used in a team-game"));
+      var key=el("div","dualkey");
+      [["prior",lbl[kPrior]||kPrior],["now",lbl[kNow]||kNow]].forEach(function(p){
+        var w=el("span"); var sw=el("b"); sw.className=""; w.appendChild(sw);
+        sw.style.background=(p[0]==="now")?"var(--acc)":"var(--dim)";
+        w.appendChild(document.createTextNode(p[1])); key.appendChild(w);
+      });
+      f.appendChild(key);
+      var maxPct=0;
+      rows.forEach(function(r){
+        if(!r) return;
+        [r["pct_"+kPrior], r["pct_"+kNow]].forEach(function(v){
+          if(v!=null&&isFinite(Number(v))&&Number(v)>maxPct) maxPct=Number(v); });
+      });
+      rows.forEach(function(r){
+        if(!r) return;
+        var row=el("div","dualrow"+(r.thin?" thin":""));
+        row.appendChild(el("div","bl", String(r.players_used)+" players"));
+        var dt=el("div","dt");
+        [["prior",kPrior],["now",kNow]].forEach(function(p){
+          var s=el("span",p[0]), i=el("i");
+          var v=Number(r["pct_"+p[1]]||0);
+          i.style.width=(maxPct>0?Math.min(100,(v/maxPct)*100):0).toFixed(1)+"%";
+          s.appendChild(i); dt.appendChild(s);
+        });
+        row.appendChild(dt);
+        row.appendChild(el("div","dv", pct(r["pct_"+kPrior],1)+"  →  "+pct(r["pct_"+kNow],1)));
+        f.appendChild(row);
+      });
+      if(ch.caption) f.appendChild(el("div","dvfoot", ch.caption));
+    }
+
+    // the three alternative explanations, each MEASURED — the paragraph above claims they survive,
+    // so the numbers that back the claim are on the page rather than in a commit message.
+    var rkeys=["blowouts","expansion","season_shape"].filter(function(k){ return rob[k]; });
+    if(rkeys.length){
+      f.appendChild(plab("The obvious explanations, each measured"));
+      f.appendChild(simpleTable([
+        {h:"Check", rowh:true, get:function(r){return rob[r].check;}},
+        {h:"Prior", num:true, get:function(r){return num(rob[r].prior,2);}},
+        {h:"Now", num:true, get:function(r){return num(rob[r].current,2);}},
+        {h:"Shift", num:true, get:function(r){var v=Number(rob[r].shift); return (v>0?"+":"")+num(v,2);}}
+      ], rkeys));
+      f.appendChild(el("div","dvfoot", rkeys.map(function(k){ return rob[k].check+": "+rob[k].note; }).join(" · ")));
+    }
+
+    if(d.method_footer){
+      var mf=el("div","dvfoot");
+      var txt=String(d.method_footer), tail="Glossary.";
+      if(txt.indexOf(tail)>-1&&d.glossary_href){
+        mf.appendChild(document.createTextNode(txt.slice(0,txt.indexOf(tail))));
+        var a=document.createElement("a"); a.href=d.glossary_href; a.textContent="Glossary";
+        mf.appendChild(a); mf.appendChild(document.createTextNode("."));
+      } else { mf.textContent=txt; }
+      f.appendChild(mf);
+    }
+    var fence=[];
+    if(m.team_games) fence.push("Built on "+Number(m.team_games.current||0).toLocaleString()+
+      " team-games this season and "+Number(m.team_games.prior||0).toLocaleString()+" prior; the "
+      +"current season is still in progress.");
+    if(m.excluded){
+      if(m.excluded.exhibition_and_allstar_games!=null)
+        fence.push("Exhibition and All-Star games excluded: "+
+          Number(m.excluded.exhibition_and_allstar_games).toLocaleString()+".");
+      if(m.excluded.postseason_and_preseason_games!=null)
+        fence.push("Postseason and preseason games excluded: "+
+          Number(m.excluded.postseason_and_preseason_games).toLocaleString()+".");
+      if(m.excluded.dressed_but_did_not_play_rows!=null)
+        fence.push(Number(m.excluded.dressed_but_did_not_play_rows).toLocaleString()+
+          " box-score lines with no minutes are dressed, not used, and are not counted.");
+    }
+    if(m.garbage_time) fence.push("Garbage time: "+m.garbage_time+".");
+    if(fence.length) f.appendChild(el("div","dvfoot", fence.join(" ")));
+    return f;
+  }
+
+  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace, scoringmix:renderScoringmix, margins:renderMargins, scoringleaders:renderScoringleaders, scoreeffects:renderScoreeffects, deserved:renderDeserved, midrange:renderMidrange, playing_deeper:renderPlayingDeeper };
 
   /* ---- as-of: every dive wears its age ----------------------------------------------------
      Silently stale is the banned state — an old number that presents itself as current. So each

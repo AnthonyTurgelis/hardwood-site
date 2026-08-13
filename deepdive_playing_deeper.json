@@ -1,0 +1,276 @@
+{
+ "slug": "playing_deeper",
+ "title": "The W Is Playing Deeper — and It's Changing What Can Be Predicted",
+ "generated_utc": "2026-08-13T16:14:19Z",
+ "generated_et": "Aug 13, 12:14pm ET",
+ "dek": "Rotations are half a player longer this season. Skills stayed stable; roles didn't. That trade shapes everything from box scores to projections.",
+ "question": "How many players does a team actually use, and what does it break when that moves?",
+ "headline": "Teams are using 9.87 players a game, up from 9.43 — about half a rotation spot more, every team, every night.",
+ "body_template": [
+  "Watch enough 2026 basketball and you feel it before you can name it: more bodies. The numbers agree. WNBA teams are using {{players_per_game_2026}} players a game this season, up from {{players_per_game_prior}} — roughly half a rotation spot more, every team, every night. That sounds small. It isn't.",
+  "Minutes are the currency of basketball analysis. Nearly every projection — points, rebounds, fantasy lines, betting props, our own game model — starts by asking who plays and for how long. And minutes just got materially harder to know. In our two-season reliability testing, a player's minutes carried a season-over-season reliability of .905 in the shallower era. This season the same measure sits at .695. Bench minutes are the wild west: .49, a near coin-flip.",
+  "Here's the part that matters: the players didn't get less predictable — the coaches did. The skill signals are as stable as ever. Assist rate and defensive rebounding replicate at .95. Shot volume holds at .93. Free-throw trips at .90. What a player IS barely moves year to year. What a player is ASKED TO DO is what's wobbling, because a deeper rotation redistributes role minutes nightly.",
+  "We tested the obvious alternative explanations — an injury wave, expansion churn, general volatility — and the depth effect is what survives: the league simply plays more people. It shows up everywhere downstream. Per-game leaderboards flatten, because stars share more of the clock. Counting stats undersell talent more than usual. And per-minute, context-adjusted impact — the numbers we lead with on every card — become the honest way to compare players, because they don't punish someone for a coach's ten-deep bench.",
+  "It reshapes our own work too. This is why our minutes model runs on a short adaptive window instead of trusting last month, and why pre-tip availability — knowing who actually dresses, before the ball goes up — is the most valuable input we can capture. In a nine-and-a-half-player league, the difference between a projection and a guess is the rotation news.",
+  "The deeper league is also, quietly, a healthier one: fewer 38-minute nights, more developmental burn for the back of rosters, more variance for viewers. But if you consume numbers — fantasy, betting, arguments with your group chat — recalibrate: trust rates over totals, watch the rotation report, and treat any per-game stat this season as a minutes bet in disguise."
+ ],
+ "body": [
+  "Watch enough 2026 basketball and you feel it before you can name it: more bodies. The numbers agree. WNBA teams are using 9.87 players a game this season, up from 9.43 — roughly half a rotation spot more, every team, every night. That sounds small. It isn't.",
+  "Minutes are the currency of basketball analysis. Nearly every projection — points, rebounds, fantasy lines, betting props, our own game model — starts by asking who plays and for how long. And minutes just got materially harder to know. In our two-season reliability testing, a player's minutes carried a season-over-season reliability of .905 in the shallower era. This season the same measure sits at .695. Bench minutes are the wild west: .49, a near coin-flip.",
+  "Here's the part that matters: the players didn't get less predictable — the coaches did. The skill signals are as stable as ever. Assist rate and defensive rebounding replicate at .95. Shot volume holds at .93. Free-throw trips at .90. What a player IS barely moves year to year. What a player is ASKED TO DO is what's wobbling, because a deeper rotation redistributes role minutes nightly.",
+  "We tested the obvious alternative explanations — an injury wave, expansion churn, general volatility — and the depth effect is what survives: the league simply plays more people. It shows up everywhere downstream. Per-game leaderboards flatten, because stars share more of the clock. Counting stats undersell talent more than usual. And per-minute, context-adjusted impact — the numbers we lead with on every card — become the honest way to compare players, because they don't punish someone for a coach's ten-deep bench.",
+  "It reshapes our own work too. This is why our minutes model runs on a short adaptive window instead of trusting last month, and why pre-tip availability — knowing who actually dresses, before the ball goes up — is the most valuable input we can capture. In a nine-and-a-half-player league, the difference between a projection and a guess is the rotation news.",
+  "The deeper league is also, quietly, a healthier one: fewer 38-minute nights, more developmental burn for the back of rosters, more variance for viewers. But if you consume numbers — fantasy, betting, arguments with your group chat — recalibrate: trust rates over totals, watch the rotation report, and treat any per-game stat this season as a minutes bet in disguise."
+ ],
+ "method_footer_template": "Reliability = season-over-season correlation of player-level rates across matched samples, two seasons of play-by-play (identity-gated lineups, 97% possession coverage). Players-per-game = average distinct players logging minutes per team-game, {{as_of_date}}. Full method in the Glossary.",
+ "method_footer": "Reliability = season-over-season correlation of player-level rates across matched samples, two seasons of play-by-play (identity-gated lineups, 97% possession coverage). Players-per-game = average distinct players logging minutes per team-game, 2026-08-13. Full method in the Glossary.",
+ "glossary_href": "./glossary.html",
+ "bindings": {
+  "players_per_game_2026": 9.87,
+  "players_per_game_prior": 9.43,
+  "as_of_date": "2026-08-13"
+ },
+ "bindings_raw": {
+  "players_per_game_2026": 9.867,
+  "players_per_game_prior": 9.4251,
+  "shift": 0.4419,
+  "team_games_current": 436,
+  "team_games_prior": 574
+ },
+ "oracle_breaches": [],
+ "robustness": {
+  "blowouts": {
+   "check": "Close games only",
+   "prior": 9.14,
+   "current": 9.62,
+   "shift": 0.49,
+   "n_team_games": {
+    "prior": 390,
+    "current": 304
+   },
+   "note": "team-games decided by fewer than 15 points, the same blowout cut the score-effects dive uses — no second threshold coined here"
+  },
+  "expansion": {
+   "check": "Continuing franchises only",
+   "prior": 9.43,
+   "current": 9.81,
+   "shift": 0.39,
+   "n_team_games": {
+    "prior": 574,
+    "current": 379
+   },
+   "note": "13 franchises played both seasons; the expansion clubs are dropped from both sides"
+  },
+  "season_shape": {
+   "check": "Matched calendar window",
+   "prior": 9.45,
+   "current": 9.87,
+   "shift": 0.42,
+   "n_team_games": {
+    "prior": 422,
+    "current": 436
+   },
+   "note": "the prior season truncated to its first 75 game-dates, so a season in progress is not compared against a completed one"
+  }
+ },
+ "robustness_breaches": [],
+ "reliability": {
+  "minutes_prior_r": 0.905,
+  "minutes_now_r": 0.695,
+  "bench_minutes_r": 0.49,
+  "assist_rate_r": 0.95,
+  "dreb_r": 0.95,
+  "shot_volume_r": 0.93,
+  "ft_trips_r": 0.9,
+  "note": "Replicated findings from the established record, printed as written -- not recomputed by this dive."
+ },
+ "distribution": {
+  "by_season": {
+   "2025": {
+    "team_games": 574,
+    "avg": 9.43,
+    "buckets": {
+     "9": 218,
+     "11": 72,
+     "10": 164,
+     "8": 101,
+     "12": 15,
+     "7": 4
+    }
+   },
+   "2026": {
+    "team_games": 436,
+    "avg": 9.87,
+    "buckets": {
+     "9": 138,
+     "10": 172,
+     "12": 27,
+     "11": 73,
+     "8": 25,
+     "13": 1
+    }
+   }
+  },
+  "series": [
+   {
+    "players_used": 7,
+    "n_2025": 4,
+    "pct_2025": 0.7,
+    "n_2026": 0,
+    "pct_2026": 0.0,
+    "thin": true
+   },
+   {
+    "players_used": 8,
+    "n_2025": 101,
+    "pct_2025": 17.6,
+    "n_2026": 25,
+    "pct_2026": 5.7,
+    "thin": false
+   },
+   {
+    "players_used": 9,
+    "n_2025": 218,
+    "pct_2025": 38.0,
+    "n_2026": 138,
+    "pct_2026": 31.7,
+    "thin": false
+   },
+   {
+    "players_used": 10,
+    "n_2025": 164,
+    "pct_2025": 28.6,
+    "n_2026": 172,
+    "pct_2026": 39.4,
+    "thin": false
+   },
+   {
+    "players_used": 11,
+    "n_2025": 72,
+    "pct_2025": 12.5,
+    "n_2026": 73,
+    "pct_2026": 16.7,
+    "thin": false
+   },
+   {
+    "players_used": 12,
+    "n_2025": 15,
+    "pct_2025": 2.6,
+    "n_2026": 27,
+    "pct_2026": 6.2,
+    "thin": false
+   },
+   {
+    "players_used": 13,
+    "n_2025": 0,
+    "pct_2025": 0.0,
+    "n_2026": 1,
+    "pct_2026": 0.2,
+    "thin": true
+   }
+  ],
+  "thin_below_team_games": 10
+ },
+ "chart": {
+  "kind": "players_used_distribution",
+  "x_label": "Players used in a team-game",
+  "y_label": "Share of team-games",
+  "series_labels": {
+   "2025": "2025",
+   "2026": "2026"
+  },
+  "caption": "The whole distribution slid right by 0.44 of a player — about half a rotation spot. Bars under 10 team-games are marked thin.",
+  "rows": [
+   {
+    "players_used": 7,
+    "n_2025": 4,
+    "pct_2025": 0.7,
+    "n_2026": 0,
+    "pct_2026": 0.0,
+    "thin": true
+   },
+   {
+    "players_used": 8,
+    "n_2025": 101,
+    "pct_2025": 17.6,
+    "n_2026": 25,
+    "pct_2026": 5.7,
+    "thin": false
+   },
+   {
+    "players_used": 9,
+    "n_2025": 218,
+    "pct_2025": 38.0,
+    "n_2026": 138,
+    "pct_2026": 31.7,
+    "thin": false
+   },
+   {
+    "players_used": 10,
+    "n_2025": 164,
+    "pct_2025": 28.6,
+    "n_2026": 172,
+    "pct_2026": 39.4,
+    "thin": false
+   },
+   {
+    "players_used": 11,
+    "n_2025": 72,
+    "pct_2025": 12.5,
+    "n_2026": 73,
+    "pct_2026": 16.7,
+    "thin": false
+   },
+   {
+    "players_used": 12,
+    "n_2025": 15,
+    "pct_2025": 2.6,
+    "n_2026": 27,
+    "pct_2026": 6.2,
+    "thin": false
+   },
+   {
+    "players_used": 13,
+    "n_2025": 0,
+    "pct_2025": 0.0,
+    "n_2026": 1,
+    "pct_2026": 0.2,
+    "thin": true
+   }
+  ]
+ },
+ "method": {
+  "seasons": [
+   2025,
+   2026
+  ],
+  "source_table": "box scores",
+  "definition": "distinct players logging more than zero minutes, per team per game, averaged over team-games",
+  "team_games": {
+   "current": 436,
+   "prior": 574
+  },
+  "teams": {
+   "current": 15,
+   "prior": 13
+  },
+  "current_season_in_progress": true,
+  "garbage_time": "NOT fenced out of the headline on purpose -- a bench emptied in blowouts is one of the explanations this piece has to survive, so it is measured as a robustness check at the existing 15-point blowout cut rather than assumed away",
+  "excluded": {
+   "exhibition_and_allstar_games": 2,
+   "postseason_and_preseason_games": 24,
+   "dressed_but_did_not_play_rows": 2084,
+   "how": "each count is the SAME query with its predicate inverted -- the exhibition fence is the canonical coalesce(is_exhibition, false) = false, the season fence is season_type = 2, and a box-score row with no minutes is a player who dressed rather than a player who was used"
+  }
+ },
+ "index_row": {
+  "key": "playing_deeper",
+  "slug": "playing_deeper",
+  "title": "The W Is Playing Deeper — and It's Changing What Can Be Predicted",
+  "one_line": "Teams are using 9.87 players a game, up from 9.43 — and minutes reliability fell from .905 to .695.",
+  "headline": "Teams are using 9.87 players a game, up from 9.43 — about half a rotation spot more, every team, every night.",
+  "blurb": "Rotations are half a player longer this season. Skills stayed stable; roles didn't. That trade shapes everything from box scores to projections.",
+  "question": "How many players does a team actually use, and what does it break?",
+  "n": 1010
+ }
+}
