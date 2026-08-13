@@ -1172,6 +1172,89 @@
   }
 
   // -- scoreeffects ----------------------------------------------------------
+  // GARBAGE TIME (Deep Dive 3, shipped FLIPPED under ruling R-012). The authored copy said scoring
+  // gets EASIER once a game is decided; measurement says it is BELOW the quarter's own baseline at
+  // every threshold. Two things this renderer must keep on the face of the page, because they are
+  // the corrections: the sensitivity sweep (so a reader can see no fence rescues the old claim),
+  // and the fence's own provenance (hand-set, not fitted — the original called it fitted and no
+  // such fit exists). Nothing here is typed: every figure comes from d.bindings.
+  function renderGarbageTime(d){
+    var f=frag(), b=(d&&d.bindings)||{}, st=(d&&d.states)||{}, sn=(d&&d.sensitivity)||{},
+        fen=(d&&d.fence)||{}, win=(d&&d.window)||{};
+    f.appendChild(el("div","dhead", d.headline||""));
+    f.appendChild(tiles([
+      {v:num(b.gt_pts100,1), l:"pts/100 leading "+num(b.fence_lead)+"+ in Q4"},
+      {v:num(b.base_pts100,1), l:"pts/100 — the same quarter, all margins"},
+      {v:(b.gap!=null?"-"+num(b.gap,1):"—"), l:"the gap, per 100 possessions"},
+      {v:num(b.gt_efg,1)+" / "+num(b.comp_efg,1), l:"eFG% decided vs one-possession", sm:true},
+      {v:num(b.gt_ft_per_fga,3)+" / "+num(b.comp_ft_per_fga,3), l:"FT per FGA — where the gap is", sm:true}
+    ]));
+
+    var body=(d&&d.body)||[];
+    if(body.length){
+      var prose=el("div","dvbody");
+      body.forEach(function(p){ if(p) prose.appendChild(el("p",null,String(p))); });
+      f.appendChild(prose);
+    }
+
+    var rows=["garbage","competitive","baseline"].map(function(k){return st[k];}).filter(Boolean);
+    if(rows.length){
+      f.appendChild(plab("Fourth quarter, by score state"));
+      f.appendChild(simpleTable([
+        {h:"State", rowh:true, get:function(r){return r.label;}},
+        {h:"Poss", num:true, get:function(r){return num(r.possessions);}},
+        {h:"Pts/100", num:true, get:function(r){return num(r.pts_per100,1);}},
+        {h:"eFG%", num:true, get:function(r){return num(r.efg_pct,1);}},
+        {h:"FT/FGA", num:true, get:function(r){return num(r.ft_per_fga,3);}},
+        {h:"Sec/poss", num:true, get:function(r){return num(r.sec_per_poss,1);}}
+      ], rows));
+    }
+
+    // The sweep is the argument, not a footnote: it is what makes "different populations" unavailable.
+    var sw=(sn.by_lead)||[];
+    if(sw.length){
+      f.appendChild(plab("Does any threshold make scoring easier? — pts/100 by Q4 lead, against the "
+                         +num(b.base_pts100,1)+" baseline"));
+      f.appendChild(simpleTable([
+        {h:"Lead of", rowh:true, get:function(r){return num(r.lead)+"+";}},
+        {h:"Poss", num:true, get:function(r){return num(r.possessions);}},
+        {h:"Pts/100", num:true, get:function(r){return num(r.pts_per100,1);}},
+        {h:"vs baseline", get:function(r){return r.above_baseline?"above":"below";}}
+      ], sw));
+    }
+
+    var reads=[];
+    if(sn.any_threshold_above_baseline===false)
+      reads.push("Every threshold measured lands below the baseline for the quarter it happens in. "
+                 +"There is no cut at which the leader scores more, so this is not two populations "
+                 +"talking past each other.");
+    var cf=sn.copy_fence||{};
+    if(cf.pts_per100!=null)
+      reads.push("At "+num(cf.lead)+"+ inside the final "+num(cf.clock_minutes)+":00 — a narrower "
+                 +"fence, measured separately — the leader scores "+num(cf.pts_per100,1)
+                 +" per 100 against a "+num(cf.baseline_pts_per100,1)+" baseline for that same "
+                 +"window. Tighter fence, same answer.");
+    if(d.method_note) reads.push(d.method_note);
+    if(reads.length) f.appendChild(readStrip(reads));
+
+    f.appendChild(methodBlock("Where the line sits, and who drew it", function(bx){
+      provList(bx, [
+        ["The cut", (fen.lead!=null?("leading "+fen.lead+"+, "+(fen.scope||"")):"—")],
+        ["Fitted?", (fen.fitted===false?"No — hand-set, and named as one":"—")],
+        ["Defined in", fen.source||"—"],
+        ["Window", (win.games!=null?win.games+" regular-season games":"—")
+                   +(win.exhibition_rows_excluded!=null
+                     ? (", exhibition and All-Star play excluded ("+num(win.exhibition_rows_excluded)
+                        +" rows, "+num(win.exhibition_games_excluded)+" games)") : "")],
+        ["Share of the quarter", (b.gt_share_of_q4!=null
+          ? (b.gt_share_of_q4+"% of Q4 possessions, none of them fenced out of any published number")
+          : "—")]
+      ]);
+      if(fen.note){ var p=el("p"); p.appendChild(document.createTextNode(fen.note)); bx.appendChild(p); }
+    }));
+    return f;
+  }
+
   function renderScoreeffects(d){
     var f=frag();
     f.appendChild(el("div","dhead", typeof d.headline==="string"?d.headline:""));
@@ -1481,7 +1564,7 @@
     return f;
   }
 
-  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace, scoringmix:renderScoringmix, margins:renderMargins, scoringleaders:renderScoringleaders, scoreeffects:renderScoreeffects, deserved:renderDeserved, midrange:renderMidrange, playing_deeper:renderPlayingDeeper };
+  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace, scoringmix:renderScoringmix, margins:renderMargins, scoringleaders:renderScoringleaders, scoreeffects:renderScoreeffects, deserved:renderDeserved, midrange:renderMidrange, playing_deeper:renderPlayingDeeper, garbage_time:renderGarbageTime };
 
   /* ---- as-of: every dive wears its age ----------------------------------------------------
      Silently stale is the banned state — an old number that presents itself as current. So each

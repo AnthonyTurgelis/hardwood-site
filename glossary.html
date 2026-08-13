@@ -148,6 +148,18 @@
       <span class="how">For a player's per-game rates, thin means at or below 80 sampled minutes on the season. That threshold is measured, not chosen: below about 40 minutes a league-average baseline predicts her better than her own rate does, between 40 and 80 her own rate only just edges it, and past 80 her own rate is clearly better. For a graded accuracy band, thin means fewer than 40 graded games behind it.</span>
       <span class="not">It is not a warning that the number is wrong, and it is not the same as provisional, which is specifically about on-court stints.</span></dd>
 
+    <!-- GARBAGE TIME. This term reached us as finished copy reading "once a game is decided, scoring
+         gets easier and stops meaning anything", and it is false: measured at every threshold and
+         every clock window, the leading team scores BELOW the baseline for the quarter it is playing
+         in (ruling R-012, docs/reports/GARBAGE_TIME_THESIS_ADJUDICATION_20260813.md). It is defined
+         here in the corrected direction, in the same change that shipped the dive, because a fix to
+         the dive alone would have left this page asserting the opposite of it. No figure is printed
+         here: this page is static, and the numbers derive at bake on the dive it links to. -->
+    <dt>Garbage time</dt>
+    <dd>The stretch after a game is already decided. The popular version says scoring gets easier there — reserves running, nobody guarding. Measured on our own play-by-play it is the reverse: a team holding a large fourth-quarter lead scores fewer points per possession than the same quarter produces overall, at every margin we tested.
+      <span class="how">Shot quality is the giveaway. It is flat — a big lead shoots about as well as a one-possession lead. What separates them is the free-throw line: a close game manufactures deliberate fouls, so the comparison is inflated by the close game rather than starved by surrender defense. The leading team also slows down, so the clock says the same thing. The figures, and the cut we use, are on <a href="./deepdive.html#dive-garbage_time">the deep dive</a> — where they are recomputed from the warehouse rather than typed.</span>
+      <span class="not"><span class="owed">definition owed</span>It is not a boundary anyone fitted, and this site does not currently fence it off. The cut is hand-set and named as one, and no player number published here excludes these possessions — they sit inside every rate, the same as everyone else's. This entry gets rewritten the day that changes, and not before.</span></dd>
+
     <dt>Confirmed vs projected</dt>
     <dd><span class="owed">definition owed</span>Whether a lineup is announced by the team or is our model's expectation. The distinction is real in principle, but no surface currently marks it: the availability page reports who is out, questionable or playing as reconciled from official reports and our live feed, without flagging which lineups are confirmed. This entry stays open until a surface actually carries the mark.</dd>
   </dl>
