@@ -45,6 +45,13 @@
   .dive-asof.unknown{font-style:italic}
   /* the headline number line — the one answer, up top and bold */
   .dhead{margin:11px 0 4px;padding:10px 12px;background:var(--accent-weak);border-left:3px solid var(--acc);border-radius:8px;font-size:13.5px;font-weight:600;line-height:1.4;color:var(--ink)}
+  /* a dive that ships written argument, not just tables — the paragraphs its builder resolved */
+  .dvbody p{margin:9px 0;font-size:12.5px;line-height:1.62;color:var(--ink);max-width:78ch}
+  /* the discount zone: the stretch of the axis between what a long two returns and what the step
+     back returns, drawn ON the bars rather than described beside them. Translucent (accent-weak is
+     rgba), so every bar it crosses still reads through it. */
+  .ppsshade{position:absolute;top:0;bottom:0;background:var(--accent-weak);border-left:1px dashed var(--acc);border-right:1px dashed var(--acc);pointer-events:none}
+  .barrow .bt>i.three{background:var(--good)}
 
   /* --- stat tiles --- */
   .tiles{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:flex-end;margin:12px 0 4px}
@@ -1248,7 +1255,100 @@
     return f;
   }
 
-  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace, scoringmix:renderScoringmix, margins:renderMargins, scoringleaders:renderScoringleaders, scoreeffects:renderScoreeffects, deserved:renderDeserved };
+  // -- midrange --------------------------------------------------------------
+  // The mid-range exchange rate. Every figure here is a field ALREADY in deepdive_midrange.json:
+  // the builder resolves each binding from the play-by-play at build time and ships BOTH the
+  // template and the filled sentence, so this renderer only ever prints what it was handed.
+  //
+  // The reliability pair (.97 selection, .35 making) are REPLICATED FINDINGS printed as written,
+  // not quantities this dive recomputes — they are read from d.reliability and formatted exactly
+  // as the copy states them, never re-derived here.
+  //
+  // The chart is the argument: points per shot by distance, with the stretch of the axis between
+  // the long two and the three from 24-26 ft SHADED. Every band carries its own n beside it,
+  // because a bar with no sample size is a claim with no weight behind it.
+  function rNoLeadZero(v){ if(v==null||!isFinite(Number(v))) return "—"; var s=Number(v).toFixed(2); return s.replace(/^0\./,"."); }
+  function renderMidrange(d){
+    var f=frag(), b=(d&&d.bindings)||{}, rel=(d&&d.reliability)||{}, m=(d&&d.method)||{};
+    f.appendChild(el("div","dhead", d.headline||""));
+    f.appendChild(tiles([
+      {v:num(b.mid_pps,2), l:"pts / shot — mid-range"},
+      {v:num(b.three_pps,2), l:"pts / shot — three, 24-26 ft"},
+      {v:String(b.gap_pct||"—"), l:"more, one step back"},
+      {v:rNoLeadZero(rel.selection_r), l:"shot selection repeats (r)", sm:true},
+      {v:rNoLeadZero(rel.making_r), l:"shot making repeats (r)", sm:true}
+    ]));
+
+    // the written argument, as the builder resolved it (bindings already filled)
+    var body=(d&&d.body)||[];
+    if(body.length){
+      var prose=el("div","dvbody");
+      body.forEach(function(p){ if(p) prose.appendChild(el("p",null,String(p))); });
+      f.appendChild(prose);
+    }
+
+    // the chart — points per shot by distance, with the discount zone shaded
+    var rows=(d&&d.chart&&d.chart.rows)||d.bands||[];
+    if(rows.length){
+      f.appendChild(plab("Points per shot by distance — every band with its own sample"));
+      var maxPps=0;
+      rows.forEach(function(r){ if(r&&isFinite(Number(r.pps))&&Number(r.pps)>maxPps) maxPps=Number(r.pps); });
+      var sh=(d.chart&&d.chart.discount_shade)||null;
+      var lo=sh?Math.min(Number(sh.from_pps),Number(sh.to_pps)):null;
+      var hi=sh?Math.max(Number(sh.from_pps),Number(sh.to_pps)):null;
+      rows.forEach(function(r){
+        if(!r) return;
+        var row=barrow(r.band||"", Number(r.pps), maxPps, num(r.pps,2),
+                       (r.n!=null?("n = "+Number(r.n).toLocaleString()):null));
+        var track=row.children[1], bar=track&&track.children[0];
+        if(bar&&r.kind==="three") bar.className="three";
+        if(track&&maxPps>0&&lo!=null&&hi!=null&&isFinite(lo)&&isFinite(hi)){
+          var s=el("span","ppsshade");
+          s.style.left=((lo/maxPps)*100).toFixed(2)+"%";
+          s.style.width=(((hi-lo)/maxPps)*100).toFixed(2)+"%";
+          track.appendChild(s);
+        }
+        f.appendChild(row);
+      });
+      if(sh){
+        f.appendChild(el("div","dvfoot",
+          "Shaded: " + (sh.label||"the arc discount") + " — the stretch between " +
+          num(sh.from_pps,2) + " and " + num(sh.to_pps,2) + " points a shot. Blue bars are "
+          + "two-point attempts, green are threes. Twos and threes are kept on SEPARATE bands "
+          + "rather than merged into one distance axis: at 22-23 feet both a long two and a "
+          + "corner three exist, and averaging them would hide the whole point of the chart."));
+      }
+      f.appendChild(simpleTable([
+        {h:"Band", rowh:true, get:function(r){return r.band;}},
+        {h:"Shots", num:true, get:function(r){return r.n!=null?Number(r.n).toLocaleString():"—";}},
+        {h:"Pts / shot", num:true, get:function(r){return num(r.pps,3);}},
+        {h:"FG%", num:true, get:function(r){return pct(r.fg_pct,1);}}
+      ], rows));
+    }
+
+    if(d.method_footer) f.appendChild(el("div","dvfoot", d.method_footer));
+    var fence=[];
+    if(m.shots_considered!=null&&m.shots_with_stated_distance!=null){
+      fence.push("Of " + Number(m.shots_considered).toLocaleString() + " attempts, " +
+                 Number(m.shots_with_stated_distance).toLocaleString() + " state a distance in the "
+                 + "play text; only those are banded, and the unstated ones are overwhelmingly at "
+                 + "the rim — dropping them removes the most efficient shots in basketball "
+                 + "from the comparison, so it cannot flatter the argument.");
+    }
+    if(m.garbage_time_fenced!=null&&m.garbage_time_rule){
+      fence.push("Garbage time fenced (" + m.garbage_time_rule + "): " +
+                 Number(m.garbage_time_fenced).toLocaleString() + " shots.");
+    }
+    if(m.excluded&&m.excluded.exhibition_and_allstar_games!=null){
+      fence.push("Exhibition and All-Star games excluded: " +
+                 Number(m.excluded.exhibition_and_allstar_games).toLocaleString() +
+                 ". Postseason and preseason excluded.");
+    }
+    if(fence.length) f.appendChild(el("div","dvfoot", fence.join(" ")));
+    return f;
+  }
+
+  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace, scoringmix:renderScoringmix, margins:renderMargins, scoringleaders:renderScoringleaders, scoreeffects:renderScoreeffects, deserved:renderDeserved, midrange:renderMidrange };
 
   /* ---- as-of: every dive wears its age ----------------------------------------------------
      Silently stale is the banned state — an old number that presents itself as current. So each
@@ -2003,5 +2103,5 @@
   poll(); setInterval(poll,300000); setInterval(updAgo,1000);
 })();
 </script>
-<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot--></body>
+<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot--></body>
 </html>

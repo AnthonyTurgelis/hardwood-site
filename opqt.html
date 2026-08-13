@@ -25,34 +25,35 @@
   .card{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:10px}
   .pad{padding:10px 12px}
   .lede{font-size:15px;line-height:1.5}
-  .tierline{font-size:13px;color:var(--muted);margin-top:8px;font-style:italic}
   table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
   th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
-  th:first-child,td:first-child{text-align:left;white-space:normal}
+  th:first-child,td:first-child,th.l,td.l{text-align:left}
   th{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--dim);font-weight:700}
   tbody tr:last-child td{border-bottom:none}
+  table.sortable th{cursor:pointer;user-select:none}
+  table.sortable th:hover{color:var(--acc)}
+  table.sortable th[aria-sort="ascending"]::after{content:" \25B2";font-size:8px}
+  table.sortable th[aria-sort="descending"]::after{content:" \25BC";font-size:8px}
   .scroll{overflow-x:auto}
   .rank{display:inline-block;min-width:22px;padding:1px 5px;border-radius:5px;background:var(--chip);color:var(--muted);font-size:10.5px;font-weight:700;text-align:center;margin-right:6px}
-  .badge{display:inline-block;padding:1px 6px;border-radius:999px;font-size:9.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;border:1px solid var(--line2);color:var(--warn);background:var(--chip);margin-left:6px}
-  .cap{font-size:11px;color:var(--muted);line-height:1.45}
-  .game{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;padding:8px 12px;border-bottom:1px solid var(--line)}
+  .flag{color:var(--dim);text-decoration:none;font-size:10px;vertical-align:super}
+  .flag:hover{color:var(--acc)}
+  .game{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;padding:8px 12px;border-bottom:1px solid var(--line)}
   .game:last-child{border-bottom:none}
-  .game .when{font-size:11.5px;color:var(--muted);min-width:200px}
-  .game .match{font-weight:640;min-width:230px}
-  .game .call{font-variant-numeric:tabular-nums}
-  .game .wp{color:var(--muted);font-size:12px}
-  details{margin-top:4px;width:100%}
-  summary{font-size:11px;color:var(--acc);cursor:pointer}
-  .work{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.6;border-left:2px solid var(--line2);padding-left:9px}
-  .work b{color:var(--ink);font-weight:640}
-  .note{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.6}
-  .empty{color:var(--dim);font-style:italic}
+  .game .row{font-variant-numeric:tabular-nums}
+  .game .row b{font-weight:640}
+  details{margin-left:auto}
+  summary{font-size:10.5px;color:var(--acc);cursor:pointer}
+  .work{font-size:11.5px;color:var(--muted);width:100%;margin-top:5px;border-left:2px solid var(--line2);padding-left:9px;font-variant-numeric:tabular-nums}
+  .empty{color:var(--dim)}
   .err{color:var(--bad);font-weight:640}
   .kv{display:flex;flex-wrap:wrap;gap:6px 22px}
   .kv .i{display:inline-flex;flex-direction:column;line-height:1.3}
   .kv .i b{font-size:15px;font-variant-numeric:tabular-nums}
   .kv .i span{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
-  .warnbox{border-left:3px solid var(--warn);background:var(--card2)}
+  .meta{font-size:10.5px;color:var(--dim);line-height:1.6;font-variant-numeric:tabular-nums}
+  .meta a{color:var(--acc);text-decoration:none;font-weight:600}
+  .src{font-size:10px;color:var(--dim);white-space:normal}
 </style>
 <!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-badge{font-size:.7em;letter-spacing:.05em;vertical-align:super}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center}</style><!--/hw-chrome-style--></head>
 <body>
@@ -65,232 +66,231 @@
 <main id="main"><div class="card"><div class="pad empty">Loading the projection…</div></div></main>
 
 <script>
+// PRESENTATION LAW (CEO): numbers lead, prose follows only in articles. This surface renders no
+// inline process explanation. Every definition it used to spell out lives in glossary.html; the
+// narrative it used to carry lives in opqt_notes.html, reached by the single "Notes on this field"
+// line at the foot.
 const TEAMS_BY_CODE = {};
-const fmtPct = v => (v*100).toFixed(1) + "%";
-const fmtPct0 = v => Math.round(v*100) + "%";
 
-// ET is UTC-4 and Guadalajara is UTC-6 (Mexico abolished DST in 2022, so Jalisco is UTC-6
-// year-round). tip_utc is the canonical instant; both clocks below are arithmetic ON IT, never a
-// re-read of a page-rendered time. That is the whole finding behind this tournament's fixture pack.
-function clocks(tipUtc){
-  const t = new Date(tipUtc);
-  const et  = new Date(t.getTime() - 4*3600*1000);
-  const gdl = new Date(t.getTime() - 6*3600*1000);
+// BINDINGS DERIVE AT RENDER. Nothing on this page is a literal: every number is read from
+// opqt.json, emitted from the warehouse by scripts/opqt_prior_and_sim_v1.py. req() is the loud
+// block — a binding that cannot resolve stops the render with a named failure rather than
+// shipping a blank, an undefined, or a placeholder.
+function req(v, name){
+  if (v === undefined || v === null || (typeof v === "number" && !isFinite(v)))
+    throw new Error("unresolved binding: " + name);
+  return v;
+}
+const pct1 = (v, n) => (req(v, n)*100).toFixed(1) + "%";
+const pct0 = (v, n) => Math.round(req(v, n)*100) + "%";
+const sgn1 = v => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1);
+
+// TIERED-HEAVY: fewer than half of a squad's named players carry a measured professional rating.
+// Rendered as the one-character thin-sample flag and nothing else — never a sentence on the
+// surface. The count itself is a column, so the flag only carries the link to the definition.
+const TIERED_HEAVY = t => req(t.n_named, "n_named") > 0 && (t.n_measured / t.n_named) < 0.5;
+const FLAG = `<a class="flag" href="glossary.html#thin" title="thin sample — see glossary">†</a>`;
+
+// ET only. tip_utc is the canonical instant and the clock is arithmetic ON it, never a re-read of a
+// rendered time. Guadalajara local stays available on the game page.
+function etLabel(tipUtc){
+  const t = new Date(req(tipUtc, "tip_utc"));
+  const et = new Date(t.getTime() - 4*3600*1000);
   const D = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], M = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const hm = d => {
-    let h = d.getUTCHours(), m = String(d.getUTCMinutes()).padStart(2,"0");
-    const ap = h >= 12 ? "PM" : "AM"; h = h % 12; if (h === 0) h = 12;
-    return `${h}:${m} ${ap}`;
-  };
-  return {
-    etLabel: `${D[et.getUTCDay()]} ${M[et.getUTCMonth()]} ${et.getUTCDate()} · ${hm(et)} ET`,
-    gdlLabel: `${hm(gdl)} Guadalajara`
-  };
+  let h = et.getUTCHours();
+  const m = String(et.getUTCMinutes()).padStart(2,"0");
+  const ap = h >= 12 ? "p" : "a";
+  h = h % 12; if (h === 0) h = 12;
+  return `${D[et.getUTCDay()]} ${M[et.getUTCMonth()]} ${et.getUTCDate()} · ${h}:${m}${ap} ET`;
 }
 
-function teamCell(t){
-  const prov = t.roster_status !== "FINAL_LIKELY"
-    ? `<span class="badge" title="This federation has not posted its final 12">Provisional</span>` : "";
-  return `<span class="rank" title="FIBA world ranking">${t.fiba_rank}</span>${t.name}${prov}`;
+// Sorting is wired on every table on the page: click a header, numeric-aware via data-s, direction
+// toggles, aria-sort carries the state for screen readers.
+function wireSort(root){
+  root.querySelectorAll("table.sortable").forEach(tb => {
+    tb.querySelectorAll("thead th").forEach((th, i) => {
+      th.setAttribute("tabindex", "0");
+      const go = () => {
+        const dir = th.getAttribute("aria-sort") === "ascending" ? -1 : 1;
+        tb.querySelectorAll("thead th").forEach(o => o.removeAttribute("aria-sort"));
+        th.setAttribute("aria-sort", dir === 1 ? "ascending" : "descending");
+        const body = tb.tBodies[0];
+        const rows = [...body.rows].filter(r => !r.dataset.nosort);
+        rows.sort((x, y) => {
+          const a = x.cells[i], b = y.cells[i];
+          const av = a && a.dataset.s !== undefined ? parseFloat(a.dataset.s) : NaN;
+          const bv = b && b.dataset.s !== undefined ? parseFloat(b.dataset.s) : NaN;
+          if (!isNaN(av) && !isNaN(bv)) return (av - bv) * dir;
+          return String(a ? a.textContent : "").localeCompare(String(b ? b.textContent : "")) * dir;
+        });
+        rows.forEach(r => body.appendChild(r));
+      };
+      th.addEventListener("click", go);
+      th.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+    });
+  });
 }
 
-function capsule(t){
-  const measured = t.n_measured, tiered = t.n_tiered, named = t.n_named;
-  const statusWord = {POOL:"a wider pool, not the final 12",
-                      FINAL_LIKELY:"a named 12",
-                      INCOMPLETE:"an incomplete list"}[t.roster_status] || t.roster_status;
-  return `Rated from: ${measured} of ${named} named measured on court, ${tiered} from international tier. `
-       + `Roster status: ${statusWord}.`;
+function record(t, d){
+  // Won-lost is read from the graded record, so it fills in as the ledger does.
+  let w = 0, l = 0;
+  (d.grades || []).forEach(g => {
+    if (g.team_a === t.team) { (g.score_a > g.score_b) ? w++ : l++; }
+    else if (g.team_b === t.team) { (g.score_b > g.score_a) ? w++ : l++; }
+  });
+  return {w, l};
 }
 
 function groupTable(d, code){
   const rows = d.teams.filter(t => t.group === code)
-                      .sort((a,b) => b.p_advance - a.p_advance);
-  return `<div class="card"><div class="scroll"><table>
-    <thead><tr><th>Group ${code}</th><th>W-L</th><th>Reach semis</th><th>Win it</th></tr></thead>
-    <tbody>${rows.map(t => `
-      <tr><td>${teamCell(t)}<div class="cap">${capsule(t)}</div></td>
-          <td class="empty">—</td>
-          <td>${fmtPct(t.p_advance)}</td>
-          <td>${fmtPct(t.p_title)}</td></tr>`).join("")}
-    </tbody></table></div>
-    <div class="pad note">Won-lost fills in as games are played. Reach-semis and win-it are simulated
-      ${Number(d.sims).toLocaleString()} times from the team ratings below.</div></div>`;
+                      .sort((a,b) => b.p_title - a.p_title);
+  return `<div class="card"><div class="scroll"><table class="sortable">
+    <thead><tr>
+      <th class="l">Rank</th><th class="l">Group ${code}</th><th>W-L</th><th>FIBA pts</th>
+      <th>Rating</th><th>Adv%</th><th>Final%</th><th>Title%</th><th>Measured</th>
+    </tr></thead>
+    <tbody>${rows.map(t => {
+      const r = record(t, d);
+      return `<tr>
+        <td class="l" data-s="${req(t.fiba_rank,"fiba_rank")}"><span class="rank">${t.fiba_rank}</span></td>
+        <td class="l" data-s="0">${req(t.name,"name")}${TIERED_HEAVY(t) ? FLAG : ""}</td>
+        <td data-s="${r.w - r.l}">${r.w}-${r.l}</td>
+        <td data-s="${req(t.fiba_points,"fiba_points")}">${t.fiba_points.toFixed(1)}</td>
+        <td data-s="${req(t.rating,"rating")}">${t.rating.toFixed(1)}</td>
+        <td data-s="${req(t.p_advance,"p_advance")}">${pct1(t.p_advance,"p_advance")}</td>
+        <td data-s="${req(t.p_final,"p_final")}">${pct1(t.p_final,"p_final")}</td>
+        <td data-s="${req(t.p_title,"p_title")}">${pct1(t.p_title,"p_title")}</td>
+        <td data-s="${t.n_named ? t.n_measured / t.n_named : 0}">${req(t.n_measured,"n_measured")}/${t.n_named}</td>
+      </tr>`;
+    }).join("")}
+    </tbody></table></div></div>`;
 }
 
-// THE PRODUCT PROMISE, MECHANICALLY: the call must equal the sum of its named parts, and the page
-// refuses to display a number whose parts do not add up to it. Two-truths at the surface.
-function showWork(g, d){
+// THE PRODUCT PROMISE, MECHANICALLY: the call equals the sum of its named parts, and the page
+// refuses to display a derivation whose parts do not add up to the number on the row. Two-truths at
+// the surface. The parts are numbers under one tap; the strip row itself carries no annotation.
+function parts(g){
   const a = TEAMS_BY_CODE[g.team_a], b = TEAMS_BY_CODE[g.team_b];
-  // The call decomposes into named parts, and the parts must ADD UP to the number on the card.
   const ranking = (a.rank_prior ?? 0) - (b.rank_prior ?? 0);
   const form    = (a.results_term ?? 0) - (b.results_term ?? 0);
   const court = 0, rest = 0;
   const sum = ranking + form + court + rest;
-  // HARD ASSERT AT RENDER. If the components do not sum to the displayed call, the card refuses to
-  // show a derivation rather than showing one that does not reconcile — a breakdown that does not
-  // add up is worse than no breakdown, because it looks like proof.
-  if (Math.abs(sum - g.margin_a) > 0.05){
-    return `<div class="work err">These parts do not add up to the call
-      (${sum.toFixed(1)} against ${g.margin_a.toFixed(1)}), so the working is withheld rather than
-      shown wrong. Reported, not rendered.</div>`;
-  }
-  const sgn = v => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1);
-  return `<div class="work">
-    <b>Call ${sgn(g.margin_a)} for ${a.name} = ranking ${sgn(ranking)} · recent form ${sgn(form)}</b><br>
-    <b>Ranking</b> is the gap in FIBA world-ranking points — ${a.name} ${a.fiba_points} against
-      ${b.name} ${b.fiba_points} — put on a scoreboard scale we fitted from
-      ${d.fit.n_games} verified games, never chosen.<br>
-    <b>Recent form</b> is how far each side has run ahead of or behind its ranking in the games we
-      could verify, shrunk hard so one result cannot re-rate a country:
-      ${a.name} ${sgn(a.results_term ?? 0)}, ${b.name} ${sgn(b.results_term ?? 0)}.<br>
-    <b>Court</b> adds nothing: every game is at the same neutral arena.
-      ${g.is_host_game ? "Mexico is at home in the building, but we have not measured a home effect "
-      + "in this competition and will not borrow the one we measured in a different league." : ""}<br>
-    <b>Rest</b> adds nothing: we have no measured rest effect for this competition, and the effect we
-      measured elsewhere is not ours to lend.
-  </div>`;
+  if (Math.abs(sum - req(g.margin_a, "margin_a")) > 0.05)
+    return `<div class="work err">withheld — parts ${sum.toFixed(1)} ≠ call ${g.margin_a.toFixed(1)}</div>`;
+  const s = (g.favorite === g.team_a) ? 1 : -1;
+  const fav = TEAMS_BY_CODE[g.favorite].team;
+  return `<div class="work">${fav} margin ${sgn1(s*g.margin_a)} = ranking ${sgn1(s*ranking)} · form ${sgn1(s*form)}
+    · court ${sgn1(court)} · rest ${sgn1(rest)}</div>`;
 }
 
 function gameStrip(d){
   return `<div class="card">${d.games.map(g => {
-    const c = clocks(g.tip_utc);
-    const a = TEAMS_BY_CODE[g.team_a], b = TEAMS_BY_CODE[g.team_b];
-    const favName = TEAMS_BY_CODE[g.favorite].name;
+    const fav = TEAMS_BY_CODE[req(g.favorite, "favorite")];
+    const wp = (g.favorite === g.team_a) ? g.win_prob_a : 1 - req(g.win_prob_a, "win_prob_a");
     return `<div class="game">
-      <div class="when">${c.etLabel} <span style="color:var(--dim)">(${c.gdlLabel})</span></div>
-      <div class="match">${a.name} vs ${b.name}</div>
-      <div class="call">our call: <b>${favName} by ${g.line.toFixed(1)}</b></div>
-      <div class="wp">${a.name} win ${fmtPct0(g.win_prob_a)}</div>
-      <details><summary>show the work</summary>${showWork(g, d)}</details>
+      <div class="row">${etLabel(g.tip_utc)} — ${g.team_a} vs ${g.team_b} —
+        <b>${fav.team} −${req(g.line,"line").toFixed(1)}</b> · ${pct0(wp, "win_prob")}</div>
+      <details><summary>parts</summary></details>
+      ${parts(g)}
     </div>`;
   }).join("")}</div>`;
 }
 
-// The ledger scores the call that was on the board BEFORE tip — never a number re-figured with the
-// result in hand. It renders the losses at the same size as the wins; a ledger that quietly drops
-// its bad nights is an advertisement, not a record.
+function fitBlock(d){
+  const f = req(d.fit, "fit");
+  return `<div class="card"><div class="pad kv">
+      <div class="i"><b>${req(f.n_games,"fit.n_games")}</b><span>verified games</span></div>
+      <div class="i"><b>${req(f.slope,"fit.slope").toFixed(4)}</b><span>points per ranking point</span></div>
+      <div class="i"><b>${req(f.resid_sd,"fit.resid_sd").toFixed(1)}</b><span>residual SD</span></div>
+      <div class="i"><b>${req(f.env_total_mean,"fit.env_total_mean").toFixed(1)}</b><span>expected total (n=${req(f.env_n,"fit.env_n")})</span></div>
+      <div class="i"><b>${req(d.results_shrink_k,"results_shrink_k").toFixed(1)}</b><span>form shrink k</span></div>
+      <div class="i"><b>${Number(req(d.sims,"sims")).toLocaleString()}</b><span>simulations</span></div>
+    </div>
+    <div class="scroll"><table class="sortable">
+      <thead><tr><th class="l">Date</th><th class="l">Game</th><th>Score</th><th>Gap</th>
+        <th>Called</th><th>Actual</th><th>Error</th><th>Wt</th><th class="l">Source</th></tr></thead>
+      <tbody>${f.games.map(g => `<tr>
+        <td class="l" data-s="0">${g.date}</td>
+        <td class="l" data-s="0">${g.team_a} vs ${g.team_b}</td>
+        <td data-s="${g.score_a - g.score_b}">${g.score_a}–${g.score_b}</td>
+        <td data-s="${g.gap}">${g.gap.toFixed(1)}</td>
+        <td data-s="${g.pred}">${sgn1(g.pred)}</td>
+        <td data-s="${g.margin}">${sgn1(g.margin)}</td>
+        <td data-s="${Math.abs(g.resid)}">${Math.abs(g.resid).toFixed(1)}</td>
+        <td data-s="${g.weight}">${g.weight.toFixed(1)}</td>
+        <td class="l src" data-s="0">${g.competition} · ${g.source}</td></tr>`).join("")}
+      </tbody></table></div></div>`;
+}
+
+// The ledger scores the call that was on the board BEFORE tip. Column headers only; the losses
+// render at the same size as the wins.
 function ledger(d){
   const rows = d.grades || [];
   const s = d.grades_summary;
+  const head = `<thead><tr><th class="l">Game</th><th class="l">Called</th><th>Our call</th>
+    <th>Win odds</th><th>Final</th><th>Margin error</th><th>Brier</th><th class="l">Side</th></tr></thead>`;
   if (!rows.length){
-    return `<div class="card"><div class="scroll"><table>
-      <thead><tr><th>Game</th><th>Our call</th><th>Our win odds</th><th>Final</th>
-        <th>Margin error</th><th>Brier</th></tr></thead>
-      <tbody><tr><td colspan="6" class="empty" style="text-align:left">First grades land Monday
-        night.</td></tr></tbody></table></div></div>`;
+    return `<div class="card"><div class="scroll"><table class="sortable">${head}
+      <tbody><tr data-nosort="1"><td class="l empty" colspan="8">—</td></tr></tbody></table></div></div>`;
   }
-  const sideLabel = {correct:"called it", wrong:"missed it", pickem:"coin flip"};
   const body = rows.map(g => {
     const a = TEAMS_BY_CODE[g.team_a], b = TEAMS_BY_CODE[g.team_b];
     const fav = g.called_margin_a >= 0 ? a : b;
     return `<tr>
-      <td>${a.name} vs ${b.name}<div class="cap">${sideLabel[g.side] || g.side} · called
-        ${g.called_at.slice(0,10)}</div></td>
-      <td>${fav.name} by ${Math.abs(g.called_margin_a).toFixed(1)}</td>
-      <td>${fmtPct0(g.called_win_prob_a)} ${a.team}</td>
-      <td>${g.score_a}–${g.score_b}</td>
-      <td>${g.margin_error.toFixed(1)}</td>
-      <td>${g.brier.toFixed(3)}</td></tr>`;
+      <td class="l" data-s="0">${a.team} vs ${b.team}</td>
+      <td class="l" data-s="0">${g.called_at.slice(0,10)}</td>
+      <td data-s="${Math.abs(g.called_margin_a)}">${fav.team} −${Math.abs(g.called_margin_a).toFixed(1)}</td>
+      <td data-s="${g.called_win_prob_a}">${pct0(g.called_win_prob_a,"called_win_prob_a")} ${a.team}</td>
+      <td data-s="${g.score_a - g.score_b}">${g.score_a}–${g.score_b}</td>
+      <td data-s="${g.margin_error}">${g.margin_error.toFixed(1)}</td>
+      <td data-s="${g.brier}">${g.brier.toFixed(3)}</td>
+      <td class="l" data-s="0">${g.side}</td></tr>`;
   }).join("");
-  const foot = s ? `<div class="pad note">Through ${s.n_graded} game${s.n_graded===1?"":"s"}:
-    average margin error <b>${s.mean_margin_error.toFixed(1)} points</b> ·
-    Brier <b>${s.mean_brier.toFixed(3)}</b> (a coin scores 0.250, and lower is better) ·
-    right side on ${s.n_correct_side} of ${s.n_decided} games that had one.
-    Every row scores the number published before tip.</div>` : "";
-  return `<div class="card"><div class="scroll"><table>
-    <thead><tr><th>Game</th><th>Our call</th><th>Our win odds</th><th>Final</th>
-      <th>Margin error</th><th>Brier</th></tr></thead>
+  const foot = s ? `<div class="pad kv">
+      <div class="i"><b>${s.n_graded}</b><span>graded</span></div>
+      <div class="i"><b>${s.mean_margin_error.toFixed(1)}</b><span>mean margin error</span></div>
+      <div class="i"><b>${s.mean_brier.toFixed(3)}</b><span>Brier · coin 0.250</span></div>
+      <div class="i"><b>${s.n_correct_side}/${s.n_decided}</b><span>right side</span></div>
+    </div>` : "";
+  return `<div class="card"><div class="scroll"><table class="sortable">${head}
     <tbody>${body}</tbody></table></div>${foot}</div>`;
 }
 
 function render(d){
-  d.teams.forEach(t => TEAMS_BY_CODE[t.team] = t);
+  req(d.teams, "teams").forEach(t => TEAMS_BY_CODE[t.team] = t);
   const byTitle = [...d.teams].sort((a,b) => b.p_title - a.p_title);
-  const fav = byTitle[0], second = byTitle[1];
-  const groupSecond = code => {
-    const r = d.teams.filter(t => t.group === code).sort((a,b) => b.p_advance - a.p_advance);
-    return `${r[1].name} and ${r[2].name}`;
-  };
-  const can = TEAMS_BY_CODE["CAN"];
+  const fav = req(byTitle[0], "favorite_team"), second = req(byTitle[1], "second_team");
 
   document.getElementById("sub").textContent =
     `Arena Astros, Guadalajara · August 17–23 · eight teams, one ticket to the 2028 Olympic Qualifying Tournaments`;
 
   document.getElementById("main").innerHTML = `
     <div class="card"><div class="pad">
-      <div class="lede">${fav.name} enter Guadalajara as the structural favourite — our simulation
-        makes it ${fmtPct(fav.p_title)} to take the lone ticket to the 2028 Olympic Qualifying
-        Tournaments, with ${second.name} next at ${fmtPct(second.p_title)}. The draw split the
-        field's only two top-ten teams: Canada (world No. ${can.fiba_rank}) and Brazil (No.
-        ${TEAMS_BY_CODE["BRA"].fiba_rank}) land in opposite groups, so the modal final is
-        seven-versus-nine and each group's real race is for second —
-        ${groupSecond("A")} in A, ${groupSecond("B")} in B.</div>
-      <div class="tierline">Two tiers, one gap: Canada and Brazil, then daylight.</div>
+      <div class="lede">${req(fav.name,"favorite_team")} ${pct1(fav.p_title,"favorite_title_pct")} to take
+        the lone ticket. ${req(second.name,"second_team")} next at ${pct1(second.p_title,"second_title_pct")}.
+        Full odds below; graded after every slate.</div>
     </div></div>
 
     <h2>The groups</h2>
     ${groupTable(d, "A")}
     ${groupTable(d, "B")}
 
-    <h2>Every group game, both clocks</h2>
+    <h2>Every group game</h2>
     ${gameStrip(d)}
 
-    <h2>Canada — the Federation Desk</h2>
-    <div class="card"><div class="pad">
-      <p style="margin:0 0 8px">This is Canada without its senior core — the roster in Guadalajara is
-        the programme's next wave, and our rating treats it that way: ${can.n_measured} of
-        ${can.n_named} named players are rated from measured professional production, the rest from
-        international-tier estimates. What the tournament answers: whether the depth chart behind the
-        stars can win a must-win event on its own.</p>
-      <div class="kv">
-        <div class="i"><b>${fmtPct(can.p_advance)}</b><span>reach the semis</span></div>
-        <div class="i"><b>${fmtPct(can.p_final)}</b><span>reach the final</span></div>
-        <div class="i"><b>${fmtPct(can.p_title)}</b><span>take the ticket</span></div>
-      </div>
-    </div></div>
-
-    <h2>How this number was built</h2>
-    <div class="card warnbox"><div class="pad">
-      <p style="margin:0 0 8px">Team strength here comes from FIBA world-ranking points
-        (${d.ranking_edition} edition), converted to a scoreboard scale by fitting that gap against
-        real results. <b>The fit rests on ${d.fit.n_games} verified games.</b> That is a small
-        number and it belongs on the face of the page rather than in a footnote: treat these margins
-        as directional, not precise.</p>
-      <p style="margin:0 0 8px">Why so few: a bulk scrape of this year's qualifying results returned
-        a complete, plausible, and partly invented set of scores — one group's games were wrong in
-        winner, margin and date. Every game in the fit below was therefore confirmed one at a time
-        against a governing body or a national federation, and nothing unconfirmed was used.</p>
-      <div class="scroll"><table>
-        <thead><tr><th>Verified game</th><th>Ranking gap</th><th>We would have said</th><th>Actual</th></tr></thead>
-        <tbody>${d.fit.games.map(g => `<tr>
-          <td>${g.date} · ${g.team_a} ${g.score_a}–${g.score_b} ${g.team_b}
-            <div class="cap">${g.competition} · confirmed from: ${g.source}</div></td>
-          <td>${g.gap.toFixed(1)}</td>
-          <td>${g.pred >= 0 ? "+" : ""}${g.pred.toFixed(1)}</td>
-          <td>${g.margin >= 0 ? "+" : ""}${g.margin}</td></tr>`).join("")}
-        </tbody></table></div>
-      <div class="note">Two of those four games were played by squads that are not the squads coming
-        to Guadalajara — Brazil had its senior centre in March, Canada its senior forward, and
-        neither was named for this tournament. Those games are therefore counted at half weight:
-        they tell us about the federation, not about this roster. The expected scoring environment
-        is ${d.fit.env_total_mean.toFixed(0)} points per game across the two teams, fitted on the
-        same ${d.fit.env_n} games rather than borrowed from our league work.</div>
-    </div></div>
+    <h2>Fit sample</h2>
+    ${fitBlock(d)}
 
     <h2>The grading ledger</h2>
     ${ledger(d)}
 
-    <div class="card"><div class="pad note">
-      This field left its senior professional players home, so these ratings lean on
-      international-tier estimates more than our league work does — each row above says exactly how
-      much is measured versus tiered. Projections publish before every tip and are graded publicly
-      after every slate. No betting market of any kind feeds these numbers; we measure ourselves
-      against the market, never from it.<br><br>
-      Simulated ${Number(d.sims).toLocaleString()} times · built ${d.built_at} ·
-      ranking source: ${d.ranking_source} · the knockout bracket is simulated by format; FIBA has not
-      posted semi-final tip times and we do not invent them.
+    <div class="card"><div class="pad meta">
+      Simulated ${Number(req(d.sims,"sims")).toLocaleString()} · built ${req(d.built_at,"built_at")} ·
+      FIBA ranking ${req(d.ranking_edition,"ranking_edition")}<br>
+      <a href="opqt_notes.html">Notes on this field</a>
     </div></div>`;
+
+  wireSort(document);
 }
 
 fetch("./opqt.json?v=" + Date.now())
@@ -298,9 +298,8 @@ fetch("./opqt.json?v=" + Date.now())
   .then(render)
   .catch(e => {
     document.getElementById("main").innerHTML =
-      `<div class="card"><div class="pad err">The projection could not be loaded, so nothing is
-       shown. An empty page is the correct answer here; a stale one is not.</div></div>`;
+      `<div class="card"><div class="pad err">Projection unavailable — ${e && e.message ? e.message : "read failed"}.</div></div>`;
   });
 </script>
-<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot--></body>
+<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot--></body>
 </html>

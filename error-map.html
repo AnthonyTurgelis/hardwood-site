@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Error Map</title>
+<style>
+  :root{ --bg:#f4f6f8; --card:#fff; --card2:#f7f9fc; --ink:#161a21; --muted:#5a6675; --dim:#8a93a3;
+    --line:#e3e7ee; --line2:#d3d9e3; --acc:#2b6cb0; --good:#1f883d; --bad:#c62828; --warn:#9a6700;
+    --chip:#eef2f8; --shadow:0 1px 2px rgba(20,24,35,.06);
+    --hi:#b4530a; --lo:#2f6fed; }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --card2:#1c2330; --ink:#e6edf3;
+    --muted:#9aa7b4; --dim:#6b7684; --line:#242c38; --line2:#39424f; --acc:#58a6ff; --good:#3fb950; --bad:#ff7b72;
+    --warn:#d29922; --chip:#21324a; --shadow:none; --hi:#e0913f; --lo:#6ea0f5; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0}
+  .ago{font-size:11px;color:var(--dim);white-space:nowrap}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--acc);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 48px}
+  .lede{color:var(--muted);font-size:12.5px;margin:6px 0 2px}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:20px 0 8px;font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);overflow:hidden}
+  .scroll{overflow-x:auto}
+  .empty{color:var(--muted);font-size:12.5px;padding:12px;margin:0}
+  .note{color:var(--dim);font-size:11px;margin:6px 0 0}
+  table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+  th,td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;vertical-align:middle}
+  th:nth-child(1),td:nth-child(1),th:nth-child(2),td:nth-child(2){text-align:left}
+  th{color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;background:var(--card2);position:sticky;top:0}
+  th.s{cursor:pointer;user-select:none}
+  th.s:hover{color:var(--acc)}
+  th.s .car{opacity:.35;font-size:9px;padding-left:3px}
+  th.s[aria-sort] .car{opacity:1;color:var(--acc)}
+  td.gm{font-weight:660}
+  td.hi{color:var(--hi)} td.lo{color:var(--lo)}
+  a.rt{color:var(--acc);text-decoration:none} a.rt:hover{text-decoration:underline}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+  .tile{border:1px solid var(--line);border-radius:9px;background:var(--card);padding:10px 12px;box-shadow:var(--shadow)}
+  .tile .lb{font-size:11.5px;color:var(--muted);line-height:1.25;min-height:2.5em}
+  .tile .vl{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
+  .tile .vl.hi{color:var(--hi)} .tile .vl.lo{color:var(--lo)}
+  .tile .nn{font-size:10.5px;color:var(--dim);letter-spacing:.03em;text-transform:uppercase}
+  ul.aut{list-style:none;margin:0;padding:0}
+  ul.aut li{padding:6px 12px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+  ul.aut li:last-child{border-bottom:0}
+  ul.aut .dt{color:var(--dim);font-size:11.5px;min-width:74px}
+  ul.aut .gm{font-weight:660;min-width:88px}
+  ul.aut .er{font-variant-numeric:tabular-nums}
+  ul.aut .er.hi{color:var(--hi)} ul.aut .er.lo{color:var(--lo)}
+  footer{max-width:1080px;margin:0 auto;padding:0 14px;color:var(--dim);font-size:11px}
+</style>
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-badge{font-size:.7em;letter-spacing:.05em;vertical-align:super}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center}</style><!--/hw-chrome-style--></head>
+<body>
+<header>
+  <h1>Error Map</h1>
+  <span class="ago" id="ago">loading…</span>
+</header>
+<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-brand" href="index.html">The Hardwood</a><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026<span class="hw-badge">LIVE</span></a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
+<main id="main"></main>
+<footer id="foot"></footer>
+<script>
+(function(){
+  var DATA=null;
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  function sgn(v,d){ if(v==null) return "—"; var n=Number(v); return (n>0?"+":n<0?"−":"")+Math.abs(n).toFixed(d==null?1:d); }
+  function cls(v){ return v==null?"":(v>0?"hi":v<0?"lo":""); }
+  function emptyCard(){ var c=el("div","card"); c.appendChild(el("p","empty",(DATA&&DATA.empty_note)||"Populates as the season's grades accumulate.")); return c; }
+
+  // ---- section 1: biggest misses, sortable on every column -------------------------------
+  var COLS=[
+    {k:"date",   h:"Date",                     t:"t"},
+    {k:"game",   h:"Game",                     t:"t"},
+    {k:"line",   h:"Our line (home margin)",   t:"n"},
+    {k:"result", h:"Result (home margin)",     t:"n"},
+    {k:"error",  h:"Signed error (line − result)", t:"n", abs:true}
+  ];
+  var sortK="error", sortDesc=true;
+
+  function renderMisses(main){
+    main.appendChild(el("h2",null,"Biggest misses"));
+    var rows=(DATA&&DATA.misses)||[];
+    if(!rows.length){ main.appendChild(emptyCard()); return; }
+    var card=el("div","card scroll"), tbl=el("table");
+    var thead=el("thead"), htr=el("tr");
+    COLS.forEach(function(c){
+      var th=el("th","s"); th.appendChild(document.createTextNode(c.h));
+      th.appendChild(el("span","car",sortK===c.k?(sortDesc?"▼":"▲"):"◆"));
+      if(sortK===c.k) th.setAttribute("aria-sort",sortDesc?"descending":"ascending");
+      th.onclick=function(){ if(sortK===c.k){sortDesc=!sortDesc;} else {sortK=c.k;sortDesc=true;} render(); };
+      htr.appendChild(th);
+    });
+    thead.appendChild(htr); tbl.appendChild(thead);
+    var col=COLS.filter(function(c){return c.k===sortK;})[0]||COLS[4];
+    var sorted=rows.slice().sort(function(a,b){
+      var x=a[sortK], y=b[sortK];
+      if(col.t==="n"){ if(col.abs){ x=Math.abs(x); y=Math.abs(y); } x=Number(x); y=Number(y); }
+      else { x=String(x==null?"":x); y=String(y==null?"":y); }
+      return (x<y?-1:x>y?1:0)*(sortDesc?-1:1);
+    });
+    var tb=el("tbody");
+    sorted.forEach(function(r){
+      var tr=el("tr");
+      tr.appendChild(el("td",null,r.date||"—"));
+      tr.appendChild(el("td","gm",r.game||"—"));
+      tr.appendChild(el("td",null,sgn(r.line)));
+      tr.appendChild(el("td",null,sgn(r.result)));
+      tr.appendChild(el("td",cls(r.error),sgn(r.error)));
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb); card.appendChild(tbl); main.appendChild(card);
+    var n=el("p","note");
+    n.appendChild(document.createTextNode(
+      "+ = we over-favored the home team · − = we under-favored the home team · top "+
+      (DATA.top_n||rows.length)+" of "+(DATA.n_graded||rows.length)+" graded games"));
+    main.appendChild(n);
+  }
+
+  // ---- section 2: miss patterns ----------------------------------------------------------
+  function renderPatterns(main){
+    main.appendChild(el("h2",null,"Miss patterns"));
+    var tiles=(DATA&&DATA.patterns)||[];
+    if(!tiles.length){ main.appendChild(emptyCard()); return; }
+    var grid=el("div","tiles");
+    tiles.forEach(function(p){
+      var t=el("div","tile");
+      t.appendChild(el("div","lb",p.label));
+      t.appendChild(el("div","vl "+cls(p.mean_error),sgn(p.mean_error)));
+      t.appendChild(el("div","nn","n = "+p.n));
+      grid.appendChild(t);
+    });
+    main.appendChild(grid);
+    var n=el("p","note","Mean signed error, same sign convention · no tile below n = "+
+      (DATA.min_sample!=null?DATA.min_sample:"the sample gate"));
+    main.appendChild(n);
+  }
+
+  // ---- section 3: autopsy links ----------------------------------------------------------
+  function renderAutopsies(main){
+    main.appendChild(el("h2",null,"Autopsies"));
+    var rows=((DATA&&DATA.misses)||[]).filter(function(r){ return r.retro && r.slug; });
+    if(!rows.length){ main.appendChild(emptyCard()); return; }
+    var card=el("div","card"), ul=el("ul","aut");
+    rows.forEach(function(r){
+      var li=el("li");
+      li.appendChild(el("span","dt",r.date||""));
+      li.appendChild(el("span","gm",r.game||""));
+      li.appendChild(el("span","er "+cls(r.error),sgn(r.error)));
+      var a=el("a","rt","Retro note");
+      a.href="./games/retro/"+String(r.slug).replace(/^g/,"")+".html";
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    card.appendChild(ul); main.appendChild(card);
+  }
+
+  function render(){
+    var main=document.getElementById("main");
+    main.innerHTML="";
+    main.appendChild(el("p","lede","Where we miss, how badly, and whether the misses rhyme."));
+    renderMisses(main);
+    renderPatterns(main);
+    renderAutopsies(main);
+    document.getElementById("foot").textContent=
+      "Error Map baked "+((DATA&&DATA.generated_utc)||"")+".";
+  }
+
+  function load(){
+    fetch("./error-map.json?v="+Date.now(),{cache:"no-cache"})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(j){
+        DATA=j;
+        if(!DATA){ document.getElementById("main").innerHTML='<p class="empty">Could not load the error map.</p>'; return; }
+        render();
+        var a=document.getElementById("ago"); if(a) a.textContent="live";
+      })
+      .catch(function(){ document.getElementById("main").innerHTML='<p class="empty">Could not load the error map.</p>'; });
+  }
+  load();
+  setInterval(load,300000);
+})();
+</script>
+<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot--></body>
+</html>
