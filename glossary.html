@@ -41,8 +41,22 @@
   dl.glossary dd{margin:0;color:var(--muted)}
   @media(max-width:560px){dl.glossary{grid-template-columns:1fr;gap:2px}
     dl.glossary dd{margin-bottom:8px}}
-  /* One card so the eight lines read as a single unit rather than eight loose rows. */
-  .gcard{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:16px 18px;margin:18px 0 6px}
+  /* One card per GROUP so the page reads as a handful of units rather than one long scroll.
+     The reader arrives here from a single word on a data surface, so the group heading is what
+     lets them find that word without reading the whole page. */
+  .gcard{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:16px 18px;margin:12px 0 6px}
+  h3{font-size:13px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin:26px 0 0}
+  /* "what it is not" runs quieter than the definition it qualifies - it is a guardrail, not the
+     headline. Same for the computation note, which is the how rather than the what. */
+  dl.glossary dd .not{color:var(--dim)}
+  dl.glossary dd .how{display:block;margin-top:3px;color:var(--dim);font-size:12.5px}
+  /* A term whose real computation is not discoverable is marked, never guessed. This page is the
+     one that carries all methodology, so a confidently wrong line here is worse than an absent
+     one - the marker is the honest state, not a placeholder to be quietly filled in later. */
+  .owed{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--away);border:1px solid var(--line2);border-radius:4px;padding:0 5px;margin-right:6px;vertical-align:1px}
+  /* Rendered at the size the surfaces render it, so a reader can match the mark they just tapped. */
+  .flagdemo{color:var(--dim);font-size:.72em;vertical-align:super;font-weight:700;text-decoration:none}
   .pointer{margin:18px 0 0;padding:11px 14px;background:var(--card2);border:1px solid var(--line);border-radius:9px;font-size:12.5px;line-height:1.55;color:var(--muted)}
   .pointer a{color:var(--acc);text-decoration:none;font-weight:600}
   .pointer a:hover{text-decoration:underline}
@@ -58,26 +72,119 @@
 <main>
 
   <h2>Glossary</h2>
-  <p class="lede">The eight terms the rest of the site assumes. Every one of them is measured on a page you can open — nothing here is a word we made up to avoid showing the number behind it.</p>
+  <p class="lede">Every term the rest of the site assumes, defined in one place. The pages themselves carry numbers, not explanations — this is where the explanation lives. Every term below is measured on a page you can open; nothing here is a word we made up to avoid showing the number behind it.</p>
 
+  <h3>The call and its parts</h3>
   <div class="gcard">
   <dl class="glossary">
-    <dt>The Call</dt><dd>Our locked pre-tip projection — spread, total, win chance.</dd>
-    <dt>Line Impact</dt><dd>How many points a player moves the spread at her projected minutes.</dd>
-    <dt>Deserved record</dt><dd>The record a team's schedule-adjusted play has earned, coin flips removed.</dd>
-    <dt>Leverage</dt><dd>How much a game can swing the playoff picture, measured in probability.</dd>
-    <dt>Coverage</dt><dd>How often results land inside our stated range — said 90, should be 90.</dd>
-    <dt>Beat rate</dt><dd>The share of games our call was closer than the closing line.</dd>
-    <dt>Confirmed vs projected</dt><dd>Whether a lineup is announced, or our model's expectation.</dd>
-    <dt>The breakdown</dt><dd>The visible inputs that sum exactly to every call.</dd>
+    <dt>The Call</dt>
+    <dd>Our locked pre-tip projection for a game: the margin we expect, the total, and the home team's win chance. Locked means locked — timestamped before tip-off and never edited afterwards, so the number you are graded against is the number that was published.
+      <span class="not">It is not a bet, a pick, or a recommendation.</span></dd>
+
+    <dt>The breakdown</dt>
+    <dd>The visible inputs that sum exactly to every call. Each line is one ingredient with what it contributed: the neutral-court strength edge between the two teams, roster talent, and season results form, adding to the projected margin.
+      <span class="how">The parts are checked against the published call at render. If they do not add up, the working is withheld rather than shown wrong — you will see a note saying so instead of a breakdown.</span>
+      <span class="not">It is not an after-the-fact rationalisation of a number produced some other way; the call is the sum.</span></dd>
+
+    <dt>Margin range</dt>
+    <dd>The band we expect the final margin to land in, published at three widths — 50%, 80% and 90%. A 90% range should contain the real result about 90 times in 100.
+      <span class="how">Built by conformal prediction: we take the spread of our own past out-of-sample misses, walk-forward so no game is graded against a model that had already seen it, and read the quantiles off that error record. The band is our measured accuracy, not an assumption about the shape of the errors.</span>
+      <span class="not">It is not a guarantee, and it is not derived from a fixed textbook margin of error.</span></dd>
+
+    <dt>Win chance</dt>
+    <dd>The probability the home team wins outright, translated from the projected margin through the measured spread of our past errors.
+      <span class="not">It is not the same question as the margin: a team can be a heavy favourite to win and still be inside a wide margin range.</span></dd>
+
+    <dt>Total range</dt>
+    <dd>A total range of plus or minus 9 points in the call, but no range around it and no stated confidence level for one. The interval work that exists covers margin only. Rather than describe a band that is not shipped, this entry stays open until a total interval is published.</dd>
+  </dl>
+  </div>
+
+  <h3>How we grade ourselves</h3>
+  <div class="gcard">
+  <dl class="glossary">
+    <dt>Graded</dt>
+    <dd>What happens to every locked call the next morning. Each one is scored three ways: against what actually happened, against the closing market price, and against its own stated confidence.
+      <span class="not">A game that has finished is not automatically graded — see excluded games below.</span></dd>
+
+    <dt>Coverage</dt>
+    <dd>How often results land inside our stated range — said 90, should be 90. The share of graded games whose real margin fell inside each published band, set beside the width we claimed.
+      <span class="how">Coverage below the target means the range is too narrow and we are more confident than we have earned; above it means the range is wider than it needs to be. Both are reported plainly.</span>
+      <span class="not">It is not a win rate — a call can be wrong in direction and still land inside its range.</span></dd>
+
+    <dt>Beat rate</dt>
+    <dd>The share of graded games our call was closer than the closing line. The closing price is the strongest public benchmark that exists, so this is the hardest test we can put ourselves to.
+      <span class="how">The market is a measuring stick and never an ingredient: no line, total, or implied probability enters any model that produces a call. It appears only downstream, here, after our number is locked.</span>
+      <span class="not">It is not profit, and it does not describe returns from betting.</span></dd>
+
+    <dt>Excluded games</dt>
+    <dd>Completed games left out of the graded record, always counted and named on the accuracy page. Three reasons: games from the season's opening stretch, before the model had seen enough to make a call worth grading; games from the most recent nights, where the closing price landed after the current model was built; and games with no price on record we could fairly call a closing price.
+      <span class="not">Exclusions are not a filter for games we got wrong — the average result in the excluded set is published beside the graded one so you can check.</span></dd>
+  </dl>
+  </div>
+
+  <h3>Players</h3>
+  <div class="gcard">
+  <dl class="glossary">
+    <dt>Impact rating</dt>
+    <dd>How much better her team plays in the minutes she is on the floor, in points per game, weighted by how much of the game she is actually on it.
+      <span class="how">Measured from on-court stints rather than from her scoring line, so it counts what happens around her. Small samples are pulled toward league average deliberately, so a player with a handful of stints cannot top the board on noise.</span>
+      <span class="not">It is a description of what has already happened this season, not a projection of what she will do next.</span></dd>
+
+    <dt>Season Impact</dt>
+    <dd>That per-game impact added up across every game she has played, so it rewards doing it repeatedly rather than once. Boards rank it both ways — per game and as a season total — because the two answer different questions.</dd>
+
+    <dt>Line Impact</dt>
+    <dd>How many points a player moves the spread at her projected minutes: the gap between her rating per minute and the rating of the minutes that would replace her, multiplied by the minutes we expect her to play tonight.
+      <span class="not">It is not her value in the abstract — it is measured against a specific replacement and a specific minutes projection, so the same player is worth more on a thin roster.</span></dd>
+
+    <dt>Provisional vs firm</dt>
+    <dd>Whether a player's on-court rating rests on enough tracked stints to stand on its own. Fewer than five tracked stints and the rating is provisional: it is regressed toward league average and tagged.
+      <span class="how">Only firm ratings are given a rank. Provisional players are still shown in full, listed after the ranked group, never given a position their sample cannot support.</span>
+      <span class="not">Provisional is a statement about the size of our read, not a judgement of the player — a veteran early in a season is provisional too.</span></dd>
+
+    <dt id="thin">Thin-sample flag</dt>
+    <dd>The muted mark — <a class="flagdemo" href="./glossary.html#thin">†</a> — that appears beside a number resting on a genuinely small sample. One character, linked to this page, never a sentence on the surface itself. It means read this number as a rough early indication rather than a settled one.
+      <span class="how">For a player's per-game rates, thin means at or below 80 sampled minutes on the season. That threshold is measured, not chosen: below about 40 minutes a league-average baseline predicts her better than her own rate does, between 40 and 80 her own rate only just edges it, and past 80 her own rate is clearly better. For a graded accuracy band, thin means fewer than 40 graded games behind it.</span>
+      <span class="not">It is not a warning that the number is wrong, and it is not the same as provisional, which is specifically about on-court stints.</span></dd>
+
+    <dt>Confirmed vs projected</dt>
+    <dd><span class="owed">definition owed</span>Whether a lineup is announced by the team or is our model's expectation. The distinction is real in principle, but no surface currently marks it: the availability page reports who is out, questionable or playing as reconciled from official reports and our live feed, without flagging which lineups are confirmed. This entry stays open until a surface actually carries the mark.</dd>
+  </dl>
+  </div>
+
+  <h3>Teams and the season</h3>
+  <div class="gcard">
+  <dl class="glossary">
+    <dt>Deserved record</dt>
+    <dd>The record a team's schedule-adjusted play has earned, coin flips removed. We re-run every game the team has already played, take our own pre-game win probability for each one given opponent strength, venue and rest, and add them up.
+      <span class="how">A team that won three one-point games banks three wins in the standings and about one and a half here. The gap between actual and deserved wins is the luck the standings are quiet about.</span>
+      <span class="not">It is not a claim about who should have won any single game, and it does not re-litigate results.</span></dd>
+
+    <dt>Playoff odds and title odds</dt>
+    <dd>The share of simulated seasons in which a team makes the league-wide top eight, and in which it wins the championship.
+      <span class="how">The rest of the schedule is simulated 200,000 times from current team ratings, with home court and rest applied game by game; every run produces a final table, and the odds are the share of tables where it happened. Projected wins is the median final win total across those runs, and the band beside it is where the total lands in 9 runs out of 10.</span>
+      <span class="not">It is not a prediction of the exact finish — it describes a range of outcomes, and it moves when the nightly simulation re-runs.</span></dd>
+
+    <dt>Leverage</dt>
+    <dd>How settled a team's final seed still is: 100% minus the probability of its single most likely finish, read from the season simulation's seed distribution. A team certain of its seed has no leverage; one that could still land anywhere has a lot. "Seeds in play" lists every seed it reaches in at least one simulation in ten.
+      <span class="not">It is not how much one specific game could swing the playoff picture. That per-game number is computed inside the simulation but is not published on any surface, so nothing you can open reports it yet.</span></dd>
+
+    <dt>Measured vs tiered</dt>
+    <dd>How much of a roster's rating comes from measured professional production and how much from international-tier estimates, stated per team on international competition surfaces where many players have no league record with us.
+      <span class="not">A tiered rating is not a measured one, which is why the count is printed rather than blended away.</span></dd>
   </dl>
   </div>
 
   <p class="pointer">Where each one is measured:
-  <a href="./accuracy.html">Our Accuracy</a> grades the calls and reports coverage and beat rate,
+  <a href="./accuracy.html">Our Accuracy</a> grades the calls and reports coverage, beat rate and which games were excluded,
   <a href="./ledger.html">the Error Map</a> says where we missed,
-  <a href="./availability.html">Injuries</a> is where confirmed and projected lineups are marked, and
+  <a href="./standings.html">Standings</a> carries deserved record, playoff odds and leverage,
+  <a href="./impact.html">Impact</a> ranks the on-court ratings,
+  <a href="./availability.html">Availability</a> reports who is playing, and
   <a href="./primer.html">Learn</a> walks through the reasoning from the ground up.</p>
+
+  <p class="pointer">Two entries above are marked <span class="owed">definition owed</span>. That is deliberate. This is the page the rest of the site points at for methodology, so a confident definition of something we do not actually compute would be worse than an absent one. Each stays open until the surface behind it ships.</p>
 
 </main>
 <footer>
