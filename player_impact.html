@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Player Impact Leaderboard</title>
+<style>
+  :root{ --bg:#f4f6f8; --card:#fff; --card2:#f7f9fc; --ink:#161a21; --muted:#5a6675; --dim:#8a93a3;
+    --line:#e3e7ee; --line2:#d3d9e3; --acc:#2b6cb0; --good:#1f883d; --bad:#c62828; --warn:#9a6700;
+    --chip:#eef2f8; --shadow:0 1px 2px rgba(20,24,35,.06);
+    /* DIVERGING PAIR for the signed impact bar, matching impact.html so the two boards read as
+       one system. Blue = lifted, orange = weighed down. NOT the green/red status pair: measured
+       on the palette validator green/red separate by only dE 3.3 under deuteranopia. Colour is
+       reinforcement only -- the bar's direction from the centre line and the printed signed
+       number both carry the sign. */
+    --up:#2f6fed; --down:#b4530a; --zero:#c2c9d4; }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --card2:#1c2330; --ink:#e6edf3;
+    --muted:#9aa7b4; --dim:#6b7684; --line:#242c38; --line2:#39424f; --acc:#58a6ff; --good:#3fb950;
+    --bad:#ff7b72; --warn:#d29922; --chip:#21324a; --shadow:none;
+    --up:#6ea0f5; --down:#e0913f; --zero:#39424f; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto}
+  .kicker{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--acc);font-weight:700}
+  h1{font-size:19px;margin:2px 0 0}
+  .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:2px auto 0;padding:0 14px}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 48px}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:22px 0 8px;font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:10px}
+  .pad{padding:10px 12px}
+  .kv{display:flex;flex-wrap:wrap;gap:8px 26px;align-items:flex-end}
+  .kv .i{display:inline-flex;flex-direction:column;line-height:1.25}
+  .kv .i b{font-size:19px;font-variant-numeric:tabular-nums}
+  .kv .i span{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
+  .kv .i i{font-style:normal;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:12.5px}
+  th,td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+  th:first-child,td:first-child,th.l,td.l{text-align:left}
+  th{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--dim);font-weight:700;position:sticky;top:0;background:var(--card);z-index:1}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--card2)}
+  table.sortable th{cursor:pointer;user-select:none}
+  table.sortable th:hover{color:var(--acc)}
+  table.sortable th[aria-sort="ascending"]::after{content:" \25B2";font-size:8px}
+  table.sortable th[aria-sort="descending"]::after{content:" \25BC";font-size:8px}
+  .scroll{overflow-x:auto;max-height:70vh}
+  .rank{display:inline-block;min-width:26px;padding:1px 5px;border-radius:5px;background:var(--chip);color:var(--muted);font-size:10.5px;font-weight:700;text-align:center}
+  .rank.none{background:transparent;color:var(--dim);font-weight:400}
+  .flag{color:var(--dim);text-decoration:none;font-size:10px;vertical-align:super}
+  .flag:hover{color:var(--acc)}
+  tr.thin td{color:var(--muted)}
+  /* signed impact bar: direction from the centre line carries the sign, colour reinforces it */
+  .bar{display:inline-block;position:relative;width:76px;height:9px;background:var(--card2);border-radius:2px;vertical-align:middle;margin-left:7px}
+  .bar i{position:absolute;top:0;height:9px;border-radius:2px}
+  .bar u{position:absolute;top:-1px;left:50%;width:1px;height:11px;background:var(--zero)}
+  .pos{color:var(--up)} .neg{color:var(--down)}
+  .empty{color:var(--dim)}
+  .err{color:var(--bad);font-weight:640;padding:10px 12px}
+  .meta{font-size:10.5px;color:var(--dim);line-height:1.6;font-variant-numeric:tabular-nums}
+  .meta a{color:var(--acc);text-decoration:none;font-weight:600}
+  .ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--line)}
+  .ctl input{font:inherit;font-size:12px;padding:3px 8px;border:1px solid var(--line2);border-radius:6px;background:var(--card);color:var(--ink);min-width:150px}
+  .ctl label{font-size:11.5px;color:var(--muted);display:inline-flex;gap:5px;align-items:center;cursor:pointer}
+  .ctl .n{font-size:11px;color:var(--dim);margin-left:auto;font-variant-numeric:tabular-nums}
+  svg{display:block;width:100%;height:auto}
+</style>
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-badge{font-size:.7em;letter-spacing:.05em;vertical-align:super}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center}</style><!--/hw-chrome-style--></head>
+<body>
+<header>
+  <div class="kicker">Player Impact · The Hardwood</div>
+  <h1>Player Impact Leaderboard</h1>
+</header>
+<div class="sub" id="sub">Loading…</div>
+<div class="hw-chrome">
+<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-brand" href="index.html">The Hardwood</a><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026<span class="hw-badge">LIVE</span></a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
+</div>
+<main>
+  <div class="card"><div class="pad kv" id="kpis"><span class="empty">Loading…</span></div></div>
+
+  <h2>Impact per 100 possessions</h2>
+  <div class="card">
+    <div class="ctl">
+      <input id="q" type="search" placeholder="Filter player or team" aria-label="Filter player or team">
+      <label><input type="checkbox" id="showthin" checked> Show unranked (thin sample)</label>
+      <span class="n" id="count"></span>
+    </div>
+    <div class="scroll"><table class="sortable" id="tbl"><thead></thead><tbody></tbody></table></div>
+  </div>
+
+  <h2>Impact against sample</h2>
+  <div class="card"><div class="pad" id="chartwrap"><span class="empty">Loading…</span></div></div>
+
+  <div class="meta" id="prov"></div>
+</main>
+<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot-->
+<script>
+// PRESENTATION LAW (numbers lead; prose belongs in articles). This page carries NO how-to-read
+// block and no inline process explanation. Everything a reader might need defined -- impact,
+// thin sample, offence/defence split -- is one link away in glossary.html, and the thin-sample
+// flag on a row is itself that link. Bands are OFF the default view: the fit stores no interval
+// and the empirical-Bayes shrinkage removed itself on this data (a non-positive variance), so
+// there is nothing to render and nothing is invented to fill the column.
+//
+// RULING R-006 is enforced UPSTREAM in scripts/bake_player_impact_read.py, not here: the feed
+// arrives with rank already null on every sub-floor row and every rating exactly as fitted. This
+// file re-ranks NOTHING -- sorting reorders rows, it never reassigns `rank`.
+const FLAG = `<a class="flag" href="glossary.html#thin" title="thin sample — see glossary">†</a>`;
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const sgn = (v, d=2) => v == null ? "" : (v > 0 ? "+" : "") + v.toFixed(d);
+const num = (v, d=1) => v == null ? "—" : v.toFixed(d);
+
+// COLUMNS. Every one is sortable; numerics right-aligned and tabular. `key` is the feed field,
+// `n` marks a numeric sort, `dflt` the sort direction a reader means when clicking it first.
+const COLS = [
+  {k:"rank",  t:"#",      cls:"l", n:true,  dflt:1},
+  {k:"name",  t:"Player", cls:"l", n:false, dflt:1},
+  {k:"team",  t:"Team",   cls:"l", n:false, dflt:1},
+  {k:"impact",t:"Impact/100",       n:true, dflt:-1},
+  // NO offence/defence columns. Measured on this fit: o_rapm == d_rapm == total/2 on all 223
+  // rows, so a split column would be the total halved and would carry zero information. The
+  // feed still exports both fields with `off_def_split_informative:false`; when a fit lands a
+  // real decomposition, flip the flag and restore two column entries here. A column that is
+  // always half of the column beside it is paint.
+  {k:"games", t:"G",                 n:true, dflt:-1},
+  {k:"mpg",   t:"MPG",               n:true, dflt:-1},
+  {k:"min",   t:"Min",               n:true, dflt:-1},
+  {k:"stints",t:"Stints",            n:true, dflt:-1},
+];
+let FEED = null, SORT = {k:"rank", dir:1};
+
+function fail(msg){
+  $("#sub").innerHTML = `<span class="err">${esc(msg)}</span>`;
+  $("#kpis").innerHTML = `<span class="err">${esc(msg)}</span>`;
+  $("#chartwrap").innerHTML = "";
+  $("#tbl").querySelector("tbody").innerHTML = "";
+}
+
+function head(){
+  const tr = COLS.map(c => `<th class="${c.cls||''}" data-k="${c.k}" ${SORT.k===c.k?`aria-sort="${SORT.dir>0?'ascending':'descending'}"`:''}>${c.t}</th>`).join("");
+  $("#tbl").querySelector("thead").innerHTML = `<tr>${tr}</tr>`;
+  $("#tbl").querySelectorAll("th").forEach(th => th.onclick = () => {
+    const c = COLS.find(x => x.k === th.dataset.k);
+    SORT = (SORT.k === c.k) ? {k:c.k, dir:-SORT.dir} : {k:c.k, dir:c.dflt};
+    head(); rows();
+  });
+}
+
+function rows(){
+  const q = ($("#q").value || "").trim().toLowerCase();
+  const showThin = $("#showthin").checked;
+  let rs = FEED.players.filter(p => (showThin || !p.thin) &&
+    (!q || (p.name||"").toLowerCase().includes(q) || (p.team||"").toLowerCase().includes(q)));
+  const c = COLS.find(x => x.k === SORT.k);
+  rs = rs.slice().sort((a,b) => {
+    let x = a[SORT.k], y = b[SORT.k];
+    // nulls always sort last, in BOTH directions -- an unranked player must never lead the board
+    // just because the reader flipped the arrow.
+    if (x == null && y == null) return 0;
+    if (x == null) return 1;
+    if (y == null) return -1;
+    if (!c.n) return String(x).localeCompare(String(y)) * SORT.dir;
+    return (x - y) * SORT.dir;
+  });
+  const mx = Math.max(...FEED.players.map(p => Math.abs(p.impact))) || 1;
+  $("#tbl").querySelector("tbody").innerHTML = rs.map(p => {
+    const w = Math.abs(p.impact) / mx * 38;
+    const bar = `<span class="bar"><u></u><i style="${p.impact>=0?`left:50%;background:var(--up)`:`right:50%;background:var(--down)`};width:${w}px"></i></span>`;
+    return `<tr class="${p.thin?'thin':''}">`
+      + `<td class="l"><span class="rank${p.rank==null?' none':''}">${p.rank==null?'—':p.rank}</span></td>`
+      + `<td class="l">${esc(p.name)}${p.thin?FLAG:''}</td>`
+      + `<td class="l">${esc(p.team||'—')}</td>`
+      + `<td class="${p.impact>=0?'pos':'neg'}">${sgn(p.impact)}${bar}</td>`
+      + `<td>${p.games}</td><td>${num(p.mpg)}</td><td>${num(p.min)}</td><td>${p.stints}</td></tr>`;
+  }).join("") || `<tr><td class="l empty" colspan="${COLS.length}">No player matches that filter.</td></tr>`;
+  $("#count").textContent = `${rs.length} of ${FEED.n_players} shown · ${FEED.n_ranked} ranked · ${FEED.n_unranked} unranked`;
+}
+
+// DOT PLOT: impact (y) against stints on a log x, with the sub-floor zone shaded. Sample
+// visibility is the whole point of the chart -- the shaded band is where ranking stops.
+function chart(){
+  const P = FEED.players.filter(p => p.stints > 0);
+  const W = 1000, H = 300, L = 44, R = 12, T = 12, B = 30;
+  const xs = P.map(p => Math.log10(p.stints)), ys = P.map(p => p.impact);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs);
+  const y1 = Math.max(...ys.map(Math.abs));
+  const X = v => L + (Math.log10(v) - x0) / (x1 - x0 || 1) * (W - L - R);
+  const Y = v => T + (1 - (v + y1) / (2 * y1)) * (H - T - B);
+  // the shaded zone is defined by the SAMPLE the floor actually removes, read off the feed --
+  // the largest stint count among unranked players, not a hand-picked cut.
+  const thinMax = Math.max(0, ...FEED.players.filter(p => p.thin).map(p => p.stints));
+  const dots = P.map(p => `<circle cx="${X(p.stints).toFixed(1)}" cy="${Y(p.impact).toFixed(1)}" r="${p.thin?2.4:3.1}" fill="${p.impact>=0?'var(--up)':'var(--down)'}" fill-opacity="${p.thin?.35:.72}"><title>${esc(p.name)} ${sgn(p.impact)} · ${p.games} G · ${p.stints} stints${p.thin?' · unranked, thin sample':''}</title></circle>`).join("");
+  const xt = [10,30,100,300,1000].filter(v => v >= Math.pow(10,x0) && v <= Math.pow(10,x1));
+  const yt = [-y1, -y1/2, 0, y1/2, y1];
+  $("#chartwrap").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Player impact per 100 possessions against stint count; the shaded zone is below the ranking floor">
+    ${thinMax > 0 ? `<rect x="${L}" y="${T}" width="${(X(thinMax)-L).toFixed(1)}" height="${H-T-B}" fill="var(--zero)" fill-opacity=".16"></rect>` : ""}
+    ${yt.map(v => `<line x1="${L}" x2="${W-R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="var(--line)" stroke-width="${v===0?1.4:1}"></line><text x="${L-6}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--dim)">${sgn(v,1)}</text>`).join("")}
+    ${xt.map(v => `<text x="${X(v).toFixed(1)}" y="${H-10}" text-anchor="middle" font-size="10" fill="var(--dim)">${v}</text>`).join("")}
+    <text x="${L}" y="${H-10}" text-anchor="start" font-size="10" fill="var(--dim)" opacity="0"></text>
+    ${dots}
+  </svg>
+  <div class="meta">y: impact per 100 possessions · x: stints (log) · shaded: below the ${FEED.rank_floor_games}-game ranking floor</div>`;
+}
+
+fetch("./player_impact.json?v=" + Date.now(), {cache:"no-cache"})
+  .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+  .then(d => {
+    // BLOCK LOUDLY, never a blank or a placeholder: every binding this page renders must be
+    // present in the feed. A partial feed is a failure, not a degraded page.
+    const need = ["players","n_players","n_ranked","n_unranked","rank_floor_games","leader","units","season","provenance"];
+    const missing = need.filter(k => d[k] == null);
+    if (missing.length) throw new Error("feed is missing " + missing.join(", "));
+    if (!d.players.length) throw new Error("feed carries no players");
+    FEED = d;
+    $("#sub").textContent = `${d.season} season · impact in ${d.units} · ${d.n_ranked} of ${d.n_players} players ranked`;
+    $("#kpis").innerHTML = [
+      `<span class="i"><b class="${d.leader.impact>=0?'pos':'neg'}">${sgn(d.leader.impact)}</b><span>League leader</span><i>${esc(d.leader.name)} · ${d.leader.games} G · ${d.leader.stints} stints</i></span>`,
+      `<span class="i"><b>${d.n_ranked}</b><span>Ranked</span><i>${d.rank_floor_games}+ games</i></span>`,
+      `<span class="i"><b>${d.n_unranked}</b><span>Shown, unranked</span><i>thin sample${FLAG}</i></span>`,
+      `<span class="i"><b>${d.players.reduce((a,p)=>a+p.stints,0).toLocaleString()}</b><span>Stints fitted</span><i>${d.players.reduce((a,p)=>a+p.games,0).toLocaleString()} player-games</i></span>`,
+    ].join("");
+    head(); rows(); chart();
+    $("#prov").innerHTML = esc(d.provenance) + ` <a href="glossary.html">Glossary</a>`;
+    $("#q").oninput = rows;
+    $("#showthin").onchange = rows;
+  })
+  .catch(e => fail("The impact leaderboard could not be loaded: " + e.message));
+</script>
+</body>
+</html>
