@@ -1183,7 +1183,7 @@
         fen=(d&&d.fence)||{}, win=(d&&d.window)||{};
     f.appendChild(el("div","dhead", d.headline||""));
     f.appendChild(tiles([
-      {v:num(b.gt_pts100,1), l:"pts/100 leading "+num(b.fence_lead)+"+ in Q4"},
+      {v:num(b.gt_pts100,1), l:"pts/100 leading "+num(b.fence_lead)+"+ in the fourth"},
       {v:num(b.base_pts100,1), l:"pts/100 — the same quarter, all margins"},
       {v:(b.gap!=null?"-"+num(b.gap,1):"—"), l:"the gap, per 100 possessions"},
       {v:num(b.gt_efg,1)+" / "+num(b.comp_efg,1), l:"eFG% decided vs one-possession", sm:true},
@@ -1213,7 +1213,7 @@
     // The sweep is the argument, not a footnote: it is what makes "different populations" unavailable.
     var sw=(sn.by_lead)||[];
     if(sw.length){
-      f.appendChild(plab("Does any threshold make scoring easier? — pts/100 by Q4 lead, against the "
+      f.appendChild(plab("Does any threshold make scoring easier? — pts/100 by fourth-quarter lead, against the "
                          +num(b.base_pts100,1)+" baseline"));
       f.appendChild(simpleTable([
         {h:"Lead of", rowh:true, get:function(r){return num(r.lead)+"+";}},
@@ -1247,7 +1247,7 @@
                      ? (", exhibition and All-Star play excluded ("+num(win.exhibition_rows_excluded)
                         +" rows, "+num(win.exhibition_games_excluded)+" games)") : "")],
         ["Share of the quarter", (b.gt_share_of_q4!=null
-          ? (b.gt_share_of_q4+"% of Q4 possessions, none of them fenced out of any published number")
+          ? (b.gt_share_of_q4+"% of fourth-quarter possessions, none of them fenced out of any published number")
           : "—")]
       ]);
       if(fen.note){ var p=el("p"); p.appendChild(document.createTextNode(fen.note)); bx.appendChild(p); }
