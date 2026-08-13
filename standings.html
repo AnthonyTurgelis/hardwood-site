@@ -27,6 +27,15 @@
   table{border-collapse:collapse;width:100%;font-size:12.5px}
   th,td{padding:7px 9px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
   th{color:var(--muted);font-weight:680;font-size:11px;text-transform:uppercase;letter-spacing:.03em;position:sticky;top:0;background:var(--card)}
+  /* A sortable heading has to look clickable or nobody clicks it. It also has to be REACHABLE:
+     the teams board ships this focus ring on headers that carry no tabindex and no key handler,
+     so it styles a state the element can never enter. Here the ring is earned. */
+  th.sortable{cursor:pointer;user-select:none}
+  th.sortable:hover{color:var(--ink)}
+  th.sortable:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+  th.sorted{color:var(--ink)}
+  th .arrow{font-size:9px;margin-left:.25em;opacity:.85}
+  .filt{width:100%;max-width:280px;margin:0 0 8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:12.5px}
   th.l,td.l{text-align:left}
   tbody tr:last-child td{border-bottom:none}
   td.rk{color:var(--dim);width:22px}
@@ -77,6 +86,77 @@
   // Playoff seed distribution (./playoff_odds.json) — read for STAKES, not outcome. Held here and
   // re-rendered after the standings table so the Seeding-Leverage element survives the 5-min poll.
   var PLAYOFF=null, lastData=null;
+
+  /* ---------- column sorting ----------
+     SORT STATE. null = the page's own default, which is standings order as baked (current win%).
+     Two things on this page are TRUE ONLY IN THAT DEFAULT ORDER, and both are handled below rather
+     than left to be quietly wrong:
+       * the "#" column is a team's STANDINGS RANK, not its position in whatever order you asked
+         for, so it is captured before sorting and travels with the team;
+       * the divider after the 8th row means "today's playoff cut", which is a claim about the
+         standings and nothing else. Re-sorted, the 8th row is just the 8th row, so the line is not
+         drawn at all rather than drawn somewhere it would be a lie.
+     The footer note names the active ordering for the same reason: a page that says "ordered by
+     current win%" while showing something else contradicts itself in print. */
+  var sortKey=null, sortDesc=true;
+  /* FILTER. Held OUTSIDE render because render() clears #main on every draw — including the
+     five-minute poll — so an input left to live in the DOM would silently lose what someone had
+     typed mid-sentence. The value and the caret are restored after each rebuild for the same
+     reason. */
+  var teamFilter="";
+  function matchesFilter(r){
+    if(!teamFilter) return true;
+    var q=teamFilter.toLowerCase();
+    return String(r.team||"").toLowerCase().indexOf(q)>=0
+        || String(r.team_full||"").toLowerCase().indexOf(q)>=0
+        || String(r.conference||"").toLowerCase().indexOf(q)>=0;
+  }
+  // Each column's sort value. Text sorts ascending first, numbers descending, because "best first"
+  // is what a reader means by sorting a rate column and A-Z is what they mean by sorting a name.
+  var SORTERS={
+    rank:   function(r){ return r._rank; },
+    team:   function(r){ return (r.team_full||r.team||"").toLowerCase(); },
+    rec:    function(r){ return (r.wins==null)?null:r.wins; },
+    wpct:   function(r){ return r.win_pct; },
+    gb:     function(r){ return r.games_back; },
+    proj:   function(r){ return r.proj_median_wins; },
+    playoff:function(r){ return r.p_playoff; },
+    title:  function(r){ return r.p_title; }
+  };
+  var TEXT_COLS={team:1};
+  // Reader-facing names for the footer sentence. Never the internal keys.
+  var SORT_LABELS={rank:"standings place", team:"team name", rec:"record", wpct:"win percentage",
+                   gb:"games back", proj:"projected wins", playoff:"playoff odds",
+                   title:"title odds"};
+
+  function sortTeams(teams){
+    if(!sortKey || !SORTERS[sortKey]) return teams.slice();
+    var f=SORTERS[sortKey], out=teams.slice();
+    out.sort(function(a,b){
+      var x=f(a), y=f(b);
+      // A team with no value SINKS in both directions. Floating a blank to the top on a reversed
+      // sort would read as "lowest", which is a claim the data does not make.
+      var xn=(x==null||x===""), yn=(y==null||y==="");
+      if(xn&&yn) return 0;
+      if(xn) return 1;
+      if(yn) return -1;
+      var c = (typeof x==="string") ? x.localeCompare(y) : (x<y?-1:(x>y?1:0));
+      return sortDesc ? -c : c;
+    });
+    return out;
+  }
+
+  function setSort(key){
+    if(sortKey===key){
+      // Second click reverses. A third returns to the page's own order, so a reader is never
+      // stranded in a view that has lost the standings meaning of the rank column and the cut line.
+      if(sortDesc!==!TEXT_COLS[key]) { sortKey=null; sortDesc=true; }
+      else sortDesc=!sortDesc;
+    } else {
+      sortKey=key; sortDesc=!TEXT_COLS[key];
+    }
+    if(lastData) render(lastData);
+  }
   // ONE-DAY MOVE IN TITLE ODDS, QUOTED FROM THE TEAMS BOARD — never recomputed here.
   // This page rendered title odds as a bare level while the teams board, from the same simulation,
   // already carried a one-day move for the SAME number. The house standard is that a bare level is
@@ -189,7 +269,11 @@
     var pr=d.progress||{};
 
     main.appendChild(el("p","lede",
-      "Current record for all "+teams.length+" teams, plus each team's projected final-win "+
+      // "all N teams" stops being true the moment a filter is on, so the count follows the filter.
+      (teamFilter
+        ? ("Current record for the teams matching your filter, out of "+teams.length+", ")
+        : ("Current record for all "+teams.length+" teams, "))+
+      "plus each team's projected final-win "+
       "range and playoff and title odds. The projected columns are outputs of our season "+
       "simulation — a spread of how the rest of the year could go, not certainties."));
 
@@ -206,20 +290,64 @@
     if(pr.outlook_asof) prog.appendChild(document.createTextNode(" · projection as of "+pr.outlook_asof));
     main.appendChild(prog);
 
+    // STANDINGS RANK CAPTURED BEFORE ANY RE-SORT. The baked order IS the standings, so a team's
+    // rank is its position here and nowhere else; carrying it on the row keeps the "#" column
+    // truthful under every sort.
+    teams.forEach(function(r,i){ r._rank=i+1; });
+
+    // FILTER CONTROL. Rebuilt each draw, then handed back its value and caret.
+    // Same control, class and styling the teams board already ships, so the two pages behave
+    // identically rather than growing a second filter idiom.
+    var fbox=el("input","filt");
+    fbox.type="search";
+    fbox.placeholder="Filter teams…";
+    fbox.value=teamFilter;
+    fbox.setAttribute("aria-label","Filter teams by name or conference");
+    fbox.oninput=function(){
+      teamFilter=fbox.value;
+      var pos=fbox.selectionStart, had=(document.activeElement===fbox);
+      render(lastData);
+      if(had){
+        var again=document.querySelector("input.filt");
+        if(again){ again.focus(); try{ again.setSelectionRange(pos,pos); }catch(e){} }
+      }
+    };
+    main.appendChild(fbox);
+
     var card=el("div","card"); var sc=el("div","scrollx");
     var t=el("table"); var thead=el("thead"); var hr=el("tr");
-    [["#","rk"],["Team","l"],["W-L",""],["Win%",""],["GB",""],
-     ["Proj. wins",""],["Playoff",""],["Title",""]].forEach(function(h){
-      var th=el("th",h[1]==="l"?"l":null,h[0]); hr.appendChild(th);
+    [["#","rk","rank"],["Team","l","team"],["W-L","","rec"],["Win%","","wpct"],["GB","","gb"],
+     ["Proj. wins","","proj"],["Playoff","","playoff"],["Title","","title"]].forEach(function(h){
+      var key=h[2];
+      var cls=(h[1]==="l"?"l ":"")+"sortable"+(sortKey===key?" sorted":"");
+      var th=el("th",cls,h[0]);
+      if(sortKey===key) th.appendChild(el("span","arrow",sortDesc?"▼":"▲"));
+      // Keyboard-reachable, and announced. The focus ring above is only honest because of these.
+      th.setAttribute("tabindex","0");
+      th.setAttribute("role","columnheader");
+      th.setAttribute("aria-sort", sortKey===key ? (sortDesc?"descending":"ascending") : "none");
+      th.setAttribute("title","Sort by "+h[0]);
+      th.addEventListener("click",function(){ setSort(key); });
+      th.addEventListener("keydown",function(ev){
+        if(ev.key==="Enter"||ev.key===" "||ev.key==="Spacebar"){ ev.preventDefault(); setSort(key); }
+      });
+      hr.appendChild(th);
     });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
 
-    teams.forEach(function(r,i){
+    var ordered=sortTeams(teams).filter(matchesFilter);
+    if(!ordered.length){
+      tb.appendChild((function(){ var tr=el("tr"); var td=el("td","empty","No team matches that filter.");
+        td.setAttribute("colspan","8"); td.style.textAlign="center"; tr.appendChild(td); return tr; })());
+    }
+    ordered.forEach(function(r,i){
       var tr=el("tr");
-      // draw a divider after the 8th team (the league-wide playoff cut line)
-      if(i===8) tr.className="sep";
-      tr.appendChild(el("td","rk",String(i+1)));
+      // The cut line is a claim about the STANDINGS, so it is drawn only while the standings are
+      // what is on screen. Under any other sort — or with rows filtered out — the 8th row is just
+      // the 8th row, and drawing a playoff cut there would be a fact the page does not hold.
+      if(i===8 && !sortKey && !teamFilter) tr.className="sep";
+      tr.appendChild(el("td","rk",String(r._rank!=null?r._rank:i+1)));
 
       var tm=el("td","tm l");
       tm.appendChild(document.createTextNode(r.team||"—"));
@@ -282,8 +410,21 @@
       "league-wide top-8 and wins the championship. The small figure beside Title is how much "+
       "those title odds moved since yesterday, in points, and it is the same number the Teams "+
       "page shows; a team with no measured move shows none rather than a zero. "+
-      "Teams are ordered by current win%; the line "+
-      "after the 8th team marks today's playoff cut. Projections update when the nightly "+
+      // TWO TRUTHS. This sentence STATES the ordering, so it has to be the ordering actually on
+      // screen — a page that says "ordered by current win%" while sorted by title odds contradicts
+      // itself in print, and the # column and cut line change meaning with it.
+      (sortKey
+        ? ("You have sorted this table by "+SORT_LABELS[sortKey]+", "+
+           (sortDesc?"highest first":"lowest first")+". The # column still shows each team's place "+
+           "in the actual standings, and the playoff cut line is hidden because it only marks a cut "+
+           "when the standings order is the one on screen — click the heading again to return to it. ")
+        : (teamFilter
+            ? ("Teams are in standings order, but the playoff cut line is hidden while a filter is "+
+               "on: with teams removed from the list, the 8th row shown is not the 8th in the "+
+               "league. Clear the filter to see it. ")
+            : ("Teams are ordered by current win%; the line "+
+               "after the 8th team marks today's playoff cut. ")))+
+      "Projections update when the nightly "+
       "simulation re-runs — they describe a range of outcomes, not a prediction of the exact finish."));
     main.appendChild(note);
 
