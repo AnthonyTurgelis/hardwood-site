@@ -120,6 +120,20 @@
     <dt>Excluded games</dt>
     <dd>Completed games left out of the graded record, always counted and named on the accuracy page. Three reasons: games from the season's opening stretch, before the model had seen enough to make a call worth grading; games from the most recent nights, where the closing price landed after the current model was built; and games with no price on record we could fairly call a closing price.
       <span class="not">Exclusions are not a filter for games we got wrong — the average result in the excluded set is published beside the graded one so you can check.</span></dd>
+
+    <!-- EXHIBITIONS. Added because "Excluded games" above is about GRADING — completed games left
+         out of the graded record — and a reader looking for what the All-Star game does to a rating
+         found nothing here. Two different questions were sharing one term. This one is about
+         INPUTS: what never enters a fit in the first place. Kept beside its neighbour deliberately,
+         because the pair is only legible next to each other.
+         DO NOT name the All-Star game's numeric game id here. A bare 9-digit id is a record-internal
+         token: the publish gate's long_hex_id rule ABORTS the whole bake on it, and this page is
+         static, so the abort froze every board bake from the moment that id landed until it was
+         removed. A reader needs the game named, never its warehouse key. -->
+    <dt id="exhibitions">Exhibition games</dt>
+    <dd>Games that do not count in the standings — the All-Star game, and every other exhibition. They are never inputs to anything we fit, on any surface, and they never enter the graded record either.
+      <span class="how">The 2026 All-Star game and its 34 lineup stints sit outside the impact ratings this site serves. Leaving them in barely touched the ratings themselves — a median move of 0.0003 per possession — but it reordered the top ten, and on a leaderboard the order is the claim. That is why an exhibition is worth naming even when its effect on any single number is small.</span>
+      <span class="not">This is not the same thing as excluded games above. Those are real games we played and chose not to grade; an exhibition never counted in the first place.</span></dd>
   </dl>
   </div>
 
@@ -204,6 +218,6 @@
 </footer>
 <!-- SHARED STATUS CHROME. Same script the about page loads; the staleness/pause strip is rendered
      by it rather than reimplemented here. -->
-<script src="./hardwood.js?v=1477558b"></script>
+<script src="./hardwood.js?v=b9559cd9"></script>
 <!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot--></body>
 </html>

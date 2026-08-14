@@ -285,7 +285,7 @@
   <div id="tested"></div>
 </main>
 <footer id="foot"></footer>
-<script src="./hardwood.js?v=1477558b"></script>
+<script src="./hardwood.js?v=b9559cd9"></script>
 <script>
 (function(){
   "use strict";
@@ -515,8 +515,16 @@
   function renderHomecourt(d){
     var f=frag();
     var h=d.headline||{};
-    var confMsg = (h.confirmed? "Confirmed" : "Measured")+": home is worth "+sign(h.home_margin,1)+" pts / "+pct((h.home_winpct!=null?h.home_winpct*100:null),1)+" win rate. The board uses "+sign(h.board_value_pts,1)+" pts / "+pct((h.board_value_winpct!=null?h.board_value_winpct*100:null),1)+".";
+    // The board's home term is DERIVED each bake (vs_board), never typed. This block used to read
+    // headline.confirmed / headline.board_value_pts / headline.board_value_winpct -- a hardcoded
+    // 2.1 / 55.5% the board never held, printed as "Confirmed". Those fields are gone; the payload
+    // now publishes what the board actually applies beside what we measured, and says so only when
+    // the board's term could be derived.
+    var vb=d.vs_board||{};
+    var confMsg = "Measured: home is worth "+sign(h.home_margin,1)+" pts / "+pct((h.home_winpct!=null?h.home_winpct*100:null),1)+" win rate."
+      + (vb.board_home_pts!=null ? " The board applies "+sign(vb.board_home_pts,1)+" pts - "+vb.verdict+"." : "");
     f.appendChild(el("div","dhead", confMsg));
+    if(vb.detail){ f.appendChild(el("div","rnglegend", vb.detail)); }
     f.appendChild(tiles([
       {v:sign(h.home_margin,1), l:"home margin (pts)"},
       {v:pct((h.home_winpct!=null?h.home_winpct*100:null),1), l:"home win rate"},
@@ -530,19 +538,20 @@
       var mci=h.home_margin_ci95||[], wci=h.home_winpct_ci95||[];
       if(mci.length===2){
         f.appendChild(rangerow("Home margin (pts)", mci[0], mci[1], h.home_margin,
-          {ref:h.board_value_pts, anchor:0, refTitle:"the home edge the board uses",
+          {ref:vb.board_home_pts, anchor:0, refTitle:"the home term the board applies",
            fmt:function(v){ return sign(v,2); }}));
       }
       if(wci.length===2){
+        // No board reference tick on this row: the board carries a home term in POINTS, not a
+        // home win rate. The old dark tick here was the hardcoded 55.5% -- a number nothing set.
         var p100=function(v){ return v==null?null:v*100; };
         f.appendChild(rangerow("Home win rate", p100(wci[0]), p100(wci[1]), p100(h.home_winpct),
-          {ref:p100(h.board_value_winpct), anchor:50, refTitle:"the home win rate the board uses",
-           fmt:function(v){ return pct(v,1); }}));
+          {anchor:50, fmt:function(v){ return pct(v,1); }}));
       }
       var lg=el("div","rnglegend");
       lg.appendChild(document.createTextNode(
         "Shaded block = the 95% range the true edge is in, from "+num(h.n)+" games. "
-        +"Bright tick = what we measured. Dark tick = the value the board uses. "
+        +"Bright tick = what we measured. Dark tick, where shown = the home term the board applies. "
         +"Faint tick = the level that would mean home is worth nothing."));
       f.appendChild(lg);
     }
@@ -1183,7 +1192,7 @@
         fen=(d&&d.fence)||{}, win=(d&&d.window)||{};
     f.appendChild(el("div","dhead", d.headline||""));
     f.appendChild(tiles([
-      {v:num(b.gt_pts100,1), l:"pts/100 leading "+num(b.fence_lead)+"+ in the fourth"},
+      {v:num(b.gt_pts100,1), l:"pts/100 leading "+num(b.fence_lead)+"+ in Q4"},
       {v:num(b.base_pts100,1), l:"pts/100 — the same quarter, all margins"},
       {v:(b.gap!=null?"-"+num(b.gap,1):"—"), l:"the gap, per 100 possessions"},
       {v:num(b.gt_efg,1)+" / "+num(b.comp_efg,1), l:"eFG% decided vs one-possession", sm:true},
@@ -1213,7 +1222,7 @@
     // The sweep is the argument, not a footnote: it is what makes "different populations" unavailable.
     var sw=(sn.by_lead)||[];
     if(sw.length){
-      f.appendChild(plab("Does any threshold make scoring easier? — pts/100 by fourth-quarter lead, against the "
+      f.appendChild(plab("Does any threshold make scoring easier? — pts/100 by Q4 lead, against the "
                          +num(b.base_pts100,1)+" baseline"));
       f.appendChild(simpleTable([
         {h:"Lead of", rowh:true, get:function(r){return num(r.lead)+"+";}},
@@ -1247,7 +1256,7 @@
                      ? (", exhibition and All-Star play excluded ("+num(win.exhibition_rows_excluded)
                         +" rows, "+num(win.exhibition_games_excluded)+" games)") : "")],
         ["Share of the quarter", (b.gt_share_of_q4!=null
-          ? (b.gt_share_of_q4+"% of fourth-quarter possessions, none of them fenced out of any published number")
+          ? (b.gt_share_of_q4+"% of Q4 possessions, none of them fenced out of any published number")
           : "—")]
       ]);
       if(fen.note){ var p=el("p"); p.appendChild(document.createTextNode(fen.note)); bx.appendChild(p); }

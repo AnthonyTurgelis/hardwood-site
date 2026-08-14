@@ -220,7 +220,8 @@ fetch("./player_impact.json?v=" + Date.now(), {cache:"no-cache"})
       `<span class="i"><b>${d.players.reduce((a,p)=>a+p.stints,0).toLocaleString()}</b><span>Stints fitted</span><i>${d.players.reduce((a,p)=>a+p.games,0).toLocaleString()} player-games</i></span>`,
     ].join("");
     head(); rows(); chart();
-    $("#prov").innerHTML = esc(d.provenance) + ` <a href="glossary.html">Glossary</a>`;
+    $("#prov").innerHTML = esc(d.provenance) + ` <a href="glossary.html#exhibitions">Glossary</a>`;  // the provenance line ends in a colon and this link completes it, so it must land ON the
+    // term rather than at the top of the page: one TAP, per the north star, not one tap plus a scroll.
     $("#q").oninput = rows;
     $("#showthin").onchange = rows;
   })
