@@ -704,7 +704,21 @@
      for its own content, so it is normally served straight out of the browser's cache. Only the
      one field is read. A page not in SURFACE_CADENCE makes no second request at all, and a failed
      read leaves dataIso null, which falls the basis back to status.json rather than blanking the
-     line - the never-blank contract, unchanged. */
+     line - the never-blank contract, unchanged.
+
+     `generated_utc` MEANS WHEN THE CONTENT WAS PRODUCED, AND ONLY THAT. Read the pair below as a
+     rule, not a preference: a payload may also carry `published_utc` - when that copy became the
+     served artifact - and this function MUST NEVER fall back to it. The two are not
+     interchangeable, and the difference is not academic. Between 2026-08-13 and 2026-08-16 the
+     publish step overwrote deepdive_index.json's `generated_utc` with the publish time on the
+     SERVED copy, so this check re-read its own deploy on every poll and was structurally incapable
+     of going stale; a 12-row disagreement between the deep-dive hub and the dives it links to sat
+     invisible behind it until someone compared the content by hand. The publish now writes
+     `published_utc` and leaves `generated_utc` alone (scripts/build_site.py
+     _copy_json_publish_stamped), which is what makes the line below honest.
+
+     So a fresh-looking age here is a claim about the NUMBERS, never about the deploy. Anything
+     added to this fallback chain has to be a content stamp too. */
   function pollSurface() {
     var surface = surfaceFor(currentPath());
     if (!surface) return;
@@ -712,6 +726,7 @@
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) {
         if (d) {
+          // CONTENT stamps only - never d.published_utc. See the block comment above.
           var iso = d.generated_utc || (d.freshness && d.freshness.baked_utc) || null;
           if (iso) { dataIso = iso; }
         }
