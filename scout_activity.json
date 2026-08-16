@@ -1,29 +1,29 @@
 {
- "generated_utc": "2026-08-16T20:14:05Z",
- "as_of": "2026-08-16T20:14:05Z",
+ "generated_utc": "2026-08-16T20:31:42Z",
+ "as_of": "2026-08-16T20:31:42Z",
  "driver": "scout",
  "scout_state": {
   "state": "live",
-  "label": "scout: alive, last check 7s ago (check #52)",
+  "label": "scout: alive, last check 3s ago (check #63)",
   "reason": "The background monitor is running and checking every minute.",
-  "last_poll_utc": "2026-08-16T20:13:58Z",
-  "age_s": 7,
-  "cycles": 52
+  "last_poll_utc": "2026-08-16T20:31:39Z",
+  "age_s": 3,
+  "cycles": 63
  },
  "why_quiet": "Quiet because there is nothing new to act on — checked and all clear. background monitor refreshed this every minute",
  "quiet": true,
  "cycle": {
-  "as_of": "2026-08-16T20:14:05Z",
+  "as_of": "2026-08-16T20:31:42Z",
   "checked": [],
   "found_any": false,
   "face": "checked for new work - nothing new"
  },
  "usage": {
-  "as_of": "2026-08-16T20:14:05Z",
-  "reading_utc": "2026-08-16T20:13:27Z",
-  "age_s": 38,
+  "as_of": "2026-08-16T20:31:42Z",
+  "reading_utc": "2026-08-16T20:30:05Z",
+  "age_s": 97,
   "stale": false,
-  "fresh_label": "38s",
+  "fresh_label": "1m",
   "pct": 69.0,
   "band": "green",
   "label": "Plenty of runway (69% of the plan used).",
@@ -32,8 +32,8 @@
   "no_live_reading": false,
   "governing_axis": "plan_pct_bands",
   "plan_pct_source": "statusline_rate_limits:seven_day",
-  "context_pct": 36.6,
-  "context_label": "Context window 37% full (auto-compacts; does not stop work).",
+  "context_pct": 43.0,
+  "context_label": "Context window 43% full (auto-compacts; does not stop work).",
   "amber_at": 70.0,
   "red_at": 85.0,
   "winddown_at": 85.0
@@ -48,12 +48,13 @@
   "fresh_label": "3s"
  },
  "task_state": {
-  "running": 2,
+  "running": 3,
   "names": [
-   "rerun the stint spine forward",
-   "in game curve never learned the buzzer"
+   "adopt the forward spine and light the section",
+   "adopt the buzzer curve everywhere",
+   "the world cup fixtures have no clock"
   ],
-  "line": "2 tasks running: rerun the stint spine forward, in game curve never learned the buzzer."
+  "line": "3 tasks running: adopt the forward spine and light the section, adopt the buzzer curve everywhere, the world cup fixtures have no clock."
  },
  "agents": [
   {
@@ -62,11 +63,11 @@
    "state": "active",
    "active": true,
    "does": "watches for your instructions",
-   "label": "Scout: active, last beat 7s ago",
-   "age_s": 7,
+   "label": "Scout: active, last beat 3s ago",
+   "age_s": 3,
    "stale": false,
-   "age_label": "7s",
-   "fresh_label": "7s"
+   "age_label": "3s",
+   "fresh_label": "3s"
   },
   {
    "key": "floor_manager",
@@ -74,23 +75,23 @@
    "state": "active",
    "active": true,
    "does": "counts running jobs and refills empty slots",
-   "label": "Floor manager: active, last beat 4m ago",
-   "age_s": 290,
+   "label": "Floor manager: active, last beat 11m ago",
+   "age_s": 709,
    "stale": false,
-   "age_label": "4m",
-   "fresh_label": "4m"
+   "age_label": "11m",
+   "fresh_label": "11m"
   },
   {
    "key": "board_baker",
    "name": "Status-page baker",
-   "state": "active",
-   "active": true,
+   "state": "idle",
+   "active": false,
    "does": "rebuilds the live status page",
-   "label": "Status-page baker: active, last beat 8m ago",
-   "age_s": 521,
-   "stale": false,
-   "age_label": "8m",
-   "fresh_label": "8m"
+   "label": "Status-page baker: STALE - last beat 16m ago",
+   "age_s": 970,
+   "stale": true,
+   "age_label": "16m",
+   "fresh_label": "STALE 16m"
   },
   {
    "key": "discord_replies",
@@ -98,23 +99,23 @@
    "state": "active",
    "active": true,
    "does": "routes your chat replies back in",
-   "label": "Two-way replies: active, last beat 9s ago",
-   "age_s": 9,
+   "label": "Two-way replies: active, last beat 8s ago",
+   "age_s": 8,
    "stale": false,
-   "age_label": "9s",
-   "fresh_label": "9s"
+   "age_label": "8s",
+   "fresh_label": "8s"
   },
   {
    "key": "inbox_triage",
    "name": "Inbox triage",
-   "state": "active",
-   "active": true,
+   "state": "idle",
+   "active": false,
    "does": "reads new instructions the instant they land",
-   "label": "Inbox triage: active, last beat 7m ago",
-   "age_s": 422,
-   "stale": false,
-   "age_label": "7m",
-   "fresh_label": "7m"
+   "label": "Inbox triage: STALE - last beat 15m ago",
+   "age_s": 916,
+   "stale": true,
+   "age_label": "15m",
+   "fresh_label": "STALE 15m"
   },
   {
    "key": "test_sweep",
@@ -123,7 +124,7 @@
    "active": false,
    "does": "runs every test each night and flags any that fail",
    "label": "Test sweep: 77 tests FAILING - last run 10h ago",
-   "age_s": 37943,
+   "age_s": 39000,
    "stale": false,
    "age_label": "10h",
    "fresh_label": "10h",
@@ -131,83 +132,83 @@
   }
  ],
  "width": {
-  "running": 2,
-  "target": 3,
+  "running": 3,
+  "target": 2,
   "configured_target": 3,
-  "governed": false,
-  "empty": 1,
-  "line": "2 of 3 jobs running.",
-  "reason": "1 slot open - filling from the priority list.",
-  "age_s": 290,
+  "governed": true,
+  "empty": 0,
+  "line": "3 of 2 jobs running.",
+  "reason": "Enough jobs are running for the work waiting. Running up to 2 at a time on purpose (of 3) to stay under the usage limit.",
+  "age_s": 709,
   "stale": false,
-  "fresh_label": "4m"
+  "fresh_label": "11m"
  },
  "scout_heartbeat": {
   "alive": true,
-  "last_poll_utc": "2026-08-16T20:13:58Z",
-  "age_s": 7,
-  "cycles": 52,
-  "label": "scout: alive, last check 7s ago (check #52)",
+  "last_poll_utc": "2026-08-16T20:31:39Z",
+  "age_s": 3,
+  "cycles": 63,
+  "label": "scout: alive, last check 3s ago (check #63)",
   "anchor": "scout_activity.py"
  },
  "scout_activity": [
   {
-   "time": "4:00pm",
+   "time": "4:15pm",
    "text": "checked for new work - nothing new",
    "detail": "checked for new work - nothing new"
   },
   {
-   "time": "4:01pm",
-   "text": "checked for new work - nothing new",
-   "detail": "checked for new work - nothing new"
-  },
-  {
-   "time": "4:02pm",
-   "text": "checked for new work - nothing new",
-   "detail": "checked for new work - nothing new"
-  },
-  {
-   "time": "4:04pm",
-   "text": "checked for new work - nothing new",
-   "detail": "checked for new work - nothing new"
-  },
-  {
-   "time": "4:05pm",
-   "text": "checked for new work - nothing new",
-   "detail": "checked for new work - nothing new"
-  },
-  {
-   "time": "4:06pm",
+   "time": "4:15pm",
    "text": "checked: new final games none · injury news none · instructions from you 0 new · work queue 5 lanes running",
    "detail": "new final games: none · injury news: none · instructions from you: 0 new · work queue: 5 lanes running"
   },
   {
-   "time": "4:07pm",
+   "time": "4:16pm",
    "text": "checked for new work - nothing new",
    "detail": "checked for new work - nothing new"
   },
   {
-   "time": "4:08pm",
+   "time": "4:18pm",
    "text": "checked for new work - nothing new",
    "detail": "checked for new work - nothing new"
   },
   {
-   "time": "4:09pm",
+   "time": "4:19pm",
    "text": "checked for new work - nothing new",
    "detail": "checked for new work - nothing new"
   },
   {
-   "time": "4:11pm",
+   "time": "4:21pm",
    "text": "checked for new work - nothing new",
    "detail": "checked for new work - nothing new"
   },
   {
-   "time": "4:12pm",
+   "time": "4:22pm",
    "text": "checked for new work - nothing new",
    "detail": "checked for new work - nothing new"
   },
   {
-   "time": "4:14pm",
+   "time": "4:23pm",
+   "text": "checked for new work - nothing new",
+   "detail": "checked for new work - nothing new"
+  },
+  {
+   "time": "4:25pm",
+   "text": "checked for new work - nothing new",
+   "detail": "checked for new work - nothing new"
+  },
+  {
+   "time": "4:28pm",
+   "text": "checked for new work - nothing new",
+   "detail": "checked for new work - nothing new"
+  },
+  {
+   "time": "4:30pm",
+   "text": "checked for new work - nothing new",
+   "detail": "checked for new work - nothing new"
+  },
+  {
+   "time": "4:31pm",
    "text": "checked for new work - nothing new",
    "detail": "checked for new work - nothing new"
   }
