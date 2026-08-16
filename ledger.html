@@ -556,7 +556,7 @@
 
   function render(d){
     var main=document.getElementById("main"); main.innerHTML="";
-    main.appendChild(el("p","lede", d.source || "Our own error map."));
+    main.appendChild(el("p","lede", d.source || "Our own error ledger."));
     var shown=false;
     if(d.error_map && d.error_map.available){ main.appendChild(errorMapSection(d.error_map)); shown=true; }
     if(d.error_ledger && d.error_ledger.rows && d.error_ledger.rows.length){
@@ -573,7 +573,7 @@
     if(!shown){
       var ph=el("div","placeholder");
       ph.appendChild(el("div","big", d.message || "Map being built — first version landing today."));
-      ph.appendChild(el("div",null,"This page will fill in automatically the moment the error map is baked. Nothing to do."));
+      ph.appendChild(el("div",null,"This page will fill in automatically the moment the error ledger is baked. Nothing to do."));
       main.appendChild(ph);
     }
     document.getElementById("foot").textContent = "Baked " + (d.generated_et||d.generated_utc||"") + ".";
@@ -598,7 +598,7 @@
       if(r.status===304) return null;
       etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
     }).then(function(d){ lastFetch=Date.now(); if(d){ render(d); } updAgo(); }).catch(function(e){
-      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the error map. '+(e&&e.message?e.message:"")+'</p>'; }
+      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the error ledger.  '+(e&&e.message?e.message:"")+'</p>'; }
     });
   }
   poll(); setInterval(poll,60000); setInterval(updAgo,1000);
