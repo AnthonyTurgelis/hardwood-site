@@ -69,6 +69,7 @@
   var polled = false;         // has ANY poll resolved? "not asked yet" is not "asked and cannot tell"
   var genIso = null;          // status.json generated_utc (the OPERATOR heartbeat's own stamp)
   var dataIso = null;         // THIS page's own payload stamp, when the page bakes on its own clock
+  var dataCheckedIso = null;  // when the page's producer last RE-READ its sources - see pollSurface
   var status = null;
 
   // ---- tiny helpers ----
@@ -256,8 +257,19 @@
           two. Whichever way work is behaving, a reader is never left believing stale numbers are
           current. */
     var surface = surfaceFor(currentPath());
+    /* The check stamp travels ONLY with the payload it came from: if this page fell back to
+       status.json for its basis, the deep-dive producer's liveness says nothing about that clock. */
     var fresh = staleView(basisIso, status ? status.stale_after_secs : null, Date.now(),
-                          work.paused, surfaceLoudSecs(surface));
+                          work.paused, surfaceLoudSecs(surface),
+                          (basisIso === dataIso) ? dataCheckedIso : null);
+    /* THE QUIET STATE HAS TO BE SAYABLE. Without this the strip shows a days-old stamp and no
+       account of itself, and a reader is right to read that as broken. No banner: renderFresh
+       below paints only levels above ok, and quiet is not an alarm - it is an explanation. */
+    if (fresh.quiet && fresh.checkedAge != null) {
+      var quietTxt = dataTxt + " - re-checked " + plainAgo(fresh.checkedAge) + ", nothing had changed";
+      if (dataP) { dataP.textContent = quietTxt; }
+      if (one) { one.textContent = "Numbers updated: " + quietTxt; }
+    }
     var freshLoud = !!(fresh.level && fresh.level !== "ok");
     var workLoud = !freshLoud && !!(work.paused || work.level === "bad");
 
@@ -564,7 +576,7 @@
     if (s < 172800) { var h = Math.round(s / 3600); return (h <= 1 ? "hour" : h + " hours"); }
     var d = Math.round(s / 86400); return (d <= 1 ? "day" : d + " days");
   }
-  function staleView(genIsoStr, staleAfterSecs, nowMs, workPaused, loudOverrideSecs) {
+  function staleView(genIsoStr, staleAfterSecs, nowMs, workPaused, loudOverrideSecs, checkedIsoStr) {
     // `due` (this page's published refresh contract) is still what `loud` is derived FROM - see
     // loudAfterSecs - it just no longer draws anything of its own. See the calm-band note below.
     // `loudOverrideSecs` is the surface's OWN cadence bound (SURFACE_CADENCE) when it has one; the
@@ -597,6 +609,31 @@
        banner left is the loud one below. */
     if (age <= loud) {
       return { level: "ok", stale: false, age: age, thresh: loud, text: "" };
+    }
+    /* THE THIRD STATE: RAN, AND NOTHING HAD CHANGED. Past the bound there are two different worlds
+       and they used to share one answer - the producer is dead, or the producer is fine and the
+       numbers genuinely have not moved. `checkedIsoStr` is the producer's own record of having
+       re-read its sources, so a content stamp older than the bound with a FRESH check behind it is
+       settled, not stuck: stale is false, because the numbers are the current answer.
+
+       FAIL-SAFE, IN THE ONE DIRECTION THAT MATTERS. Only a stamp that is present, parseable, not
+       in the future, and itself INSIDE the same bound can do this. Absent, unreadable, or itself
+       past the bound falls straight through to the loud verdict below, byte for byte as before -
+       and a caller that passes nothing at all, which is every existing caller and test, gets the
+       old behaviour exactly. A false calm is how the always-fresh stamp hid a 12-row content
+       disagreement for days; ambiguity here has to age loudly, never quietly. */
+    if (checkedIsoStr) {
+      var ct = new Date(checkedIsoStr).getTime();
+      if (!isNaN(ct)) {
+        var checkedAge = Math.round((nowMs - ct) / 1000);
+        if (checkedAge >= 0 && checkedAge <= loud) {
+          return { level: "ok", stale: false, quiet: true, age: age, checkedAge: checkedAge,
+                   thresh: loud,
+                   text: "These figures last changed " + plainAgo(age) + " and nothing has moved " +
+                         "them since. They were re-checked against their sources " +
+                         plainAgo(checkedAge) + ", so this page is settled, not stuck." };
+        }
+      }
     }
     if (workPaused) {
       /* FALSE-STALE GUARD. When work is paused on purpose, an ageing page is the EXPECTED
@@ -718,7 +755,25 @@
      _copy_json_publish_stamped), which is what makes the line below honest.
 
      So a fresh-looking age here is a claim about the NUMBERS, never about the deploy. Anything
-     added to this fallback chain has to be a content stamp too. */
+     added to this fallback chain has to be a content stamp too.
+
+     `checked_utc` IS THE OTHER HALF OF THE PAIR, AND IT IS A SEPARATE FIELD ON PURPOSE. Fixing the
+     always-fresh stamp above bought a real cost, named by the lane that fixed it rather than left
+     to be found: once `generated_utc` moves only when the content moves, a stretch in which
+     nothing moves - an off-season, a quiet week beyond the 29-hour bound this page allows - reads
+     EXACTLY like a producer that died. Those are two different states and they were sharing one
+     signal. So scripts/refresh_deep_dives.py writes `checked_utc` on every run that actually
+     re-read the dives, changed or not, beside `checked_dives` - how many it genuinely re-read.
+
+     Read the pair the way ops/scout/feed_streak_alarm.py reads a declined poll: a producer that RAN
+     and correctly changed nothing counts in NEITHER direction - it does not forge a content stamp,
+     and it does not let this page call the producer dead. The distinction lives HERE, in the
+     reader, because the producer already writes the fact durably; a second writer of the same fact
+     would be the defect one layer along.
+
+     `checked_dives` VALIDATES THE CLAIM, NOT THE FORM: a payload rewritten with a fresh timestamp
+     and no evidence behind it is a process running and not working, so a zero or missing count
+     leaves the checked stamp UNUSED and the page ages loudly, exactly as it does today. */
   function pollSurface() {
     var surface = surfaceFor(currentPath());
     if (!surface) return;
@@ -729,6 +784,10 @@
           // CONTENT stamps only - never d.published_utc. See the block comment above.
           var iso = d.generated_utc || (d.freshness && d.freshness.baked_utc) || null;
           if (iso) { dataIso = iso; }
+          // The producer's own liveness fact, kept SEPARATE from the content stamp and accepted
+          // only with the count that makes it a claim about work done.
+          dataCheckedIso = (d.checked_utc && typeof d.checked_dives === "number"
+                            && d.checked_dives > 0) ? d.checked_utc : null;
         }
         renderStrip();
       })
