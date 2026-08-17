@@ -277,6 +277,29 @@
       "range and playoff and title odds. The projected columns are outputs of our season "+
       "simulation — a spread of how the rest of the year could go, not certainties."));
 
+    // MOVER LEDE. The paragraph above says what the table CONTAINS; this one says what CHANGED,
+    // which is the thing a reader who saw yesterday's page actually came back for.
+    // It names one team and a magnitude, never a direction word alone: "moved" without a number is
+    // the vague-headline shape this board keeps having to unlearn.
+    // ONLY WHEN THERE IS A REAL MOVER. TMOVE arrives from teams.json AFTER first paint and triggers
+    // a re-render, so this is absent on the first frame by construction, and absent for good on a
+    // quiet day — six of fifteen teams moved at all when this was written, and on the day nobody
+    // moves, saying so beats inventing a leader out of rounding noise.
+    var _mv = null;
+    if(TMOVE){
+      Object.keys(TMOVE).forEach(function(t){
+        var v = TMOVE[t];
+        if(v == null || Math.abs(v) < 0.01) return;          // rounding noise is not a move
+        if(!_mv || Math.abs(v) > Math.abs(_mv.v)) _mv = {t:t, v:v};
+      });
+    }
+    if(_mv){
+      var _dir = _mv.v > 0 ? "up" : "down";
+      main.appendChild(el("p","lede",
+        "Biggest move since yesterday: " + _mv.t + " " + _dir + " " +
+        Math.abs(_mv.v).toFixed(2) + " points of title odds."));
+    }
+
     // honest season-progress line (self-updates from the bake)
     var prog=el("p","prog");
     prog.appendChild(document.createTextNode(d.season+" season · "));

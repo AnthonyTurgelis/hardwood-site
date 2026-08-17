@@ -1,43 +1,34 @@
 {
   "slug": "homecourt",
-  "generated_utc": "2026-08-13T21:09:07Z",
-  "generated_et": "Aug 13, 5:09pm ET",
+  "generated_utc": "2026-08-17T19:02:47Z",
+  "generated_et": "Aug 17, 3:02pm ET",
   "question": "What is home court actually worth, where does it come from, and does the board's home term match it?",
   "headline": {
-    "home_margin": 2.19,
+    "home_margin": 2.18,
     "home_margin_ci95": [
-      1.68,
-      2.71
+      1.66,
+      2.69
     ],
-    "home_margin_se": 0.262,
-    "home_winpct": 0.5601,
+    "home_margin_se": 0.261,
+    "home_winpct": 0.5593,
     "home_winpct_ci95": [
-      0.5416,
-      0.5785
+      0.5409,
+      0.5777
     ],
-    "n": 2780
+    "n": 2791
   },
   "vs_board": {
-    "board_home_pts": 3.23,
-    "board_intercept_pts": 1.35,
-    "board_recenter_pts": 1.89,
-    "guard_band": [
-      -4.38,
-      4.38
-    ],
-    "inside_measured_ci_all_seasons": false,
-    "inside_measured_ci_current_season": true,
-    "inside_guard_band": true,
-    "verdict": "agree within the guard band",
-    "detail": "The home term the board applies is inside the measured interval for the 2026 season it serves and outside it for the all-seasons sample. It stays inside the guard band that bounds how large a home correction the data can defend, so the two are consistent rather than confirmed equal.",
+    "board_home_pts": null,
+    "verdict": "not comparable",
+    "detail": "The board's home-court term could not be derived on this run, so this dive publishes no comparison: the served signature carries 2 distinct recenter values, not one -- no single home term to quote.",
     "measured_current_season": {
       "season": 2026,
-      "margin": 2.18,
+      "margin": 1.99,
       "ci95": [
-        0.46,
-        3.9
+        0.31,
+        3.67
       ],
-      "n": 250
+      "n": 261
     },
     "how_the_board_term_is_derived": "The board applies no home-court constant. Its home term is the margin it gives an evenly matched pair plus the stored calibration recenter, both read off the board it is actually serving on every run of this dive. The recenter is re-measured as games accrue, so this figure moves.",
     "provenance": {
@@ -45,52 +36,52 @@
       "resolver": "scripts/served_margin_sig.py (the one answer to which basis is served)",
       "decomposition": "scripts/game_annotation.py (the same arithmetic the game cards show)",
       "guard": "scripts/hca_autofirm_guard.py (the band the recenter is clamped to)",
-      "rating_as_of": "2026-08-05",
-      "note": "intercept recovered from the served board and proven to reproduce every served margin; recenter read from its stored provenance columns"
+      "rating_as_of": null,
+      "note": "the served signature carries 2 distinct recenter values, not one -- no single home term to quote"
     }
   },
   "offense_defense": {
     "note": "within-team home-minus-road split; nets out team quality (same team both samples)",
-    "offense_swing": 1.89,
-    "defense_swing": 2.75,
-    "total_swing": 4.64,
+    "offense_swing": 1.87,
+    "defense_swing": 2.67,
+    "total_swing": 4.54,
     "hca_from_offense": 0.94,
-    "hca_from_defense": 1.38,
-    "hca_total": 2.32,
-    "defense_share": 0.593,
-    "offense_share": 0.407,
+    "hca_from_defense": 1.34,
+    "hca_total": 2.27,
+    "defense_share": 0.588,
+    "offense_share": 0.412,
     "n_teams": 17
   },
   "quarter_timing": {
     "note": "per-quarter home-margin increment; front-loaded (Q1 biggest), dips Q3, rebounds Q4",
-    "q1": 0.664,
-    "q2": 0.5,
-    "q3": 0.384,
-    "q4": 0.606,
+    "q1": 0.659,
+    "q2": 0.491,
+    "q3": 0.382,
+    "q4": 0.604,
     "q_se": [
-      0.147,
+      0.146,
       0.14,
-      0.144,
+      0.143,
       0.137
     ],
-    "regulation_total": 2.15,
-    "n": 2670
+    "regulation_total": 2.14,
+    "n": 2681
   },
   "mechanism": {
     "note": "home-minus-away rate splits; pbp team-attribution only 2020-2026",
-    "sample_margin": 1.64,
-    "ft_attempts_diff": 1.11,
-    "ft_points_diff": 0.94,
-    "fg_points_diff": 0.69,
-    "home_fg_pct": 0.4449,
+    "sample_margin": 1.61,
+    "ft_attempts_diff": 1.1,
+    "ft_points_diff": 0.95,
+    "fg_points_diff": 0.66,
+    "home_fg_pct": 0.4446,
     "away_fg_pct": 0.441,
-    "fg_pct_diff_pp": 0.38,
-    "fga_diff": 0.07,
-    "turnover_diff": 0.29,
+    "fg_pct_diff_pp": 0.35,
+    "fga_diff": 0.09,
+    "turnover_diff": 0.3,
     "pace_diff": 0.03,
     "home_poss": 76.0,
     "away_poss": 76.0,
-    "n": 1664
+    "n": 1675
   },
   "trend": {
     "note": "HCA is drifting down; 2020 COVID bubble (no crowd) is a natural ~0-HCA control",
@@ -163,31 +154,31 @@
       },
       {
         "season": 2026,
-        "n": 250,
-        "margin": 2.18,
-        "winpct": 0.544
+        "n": 261,
+        "margin": 1.99,
+        "winpct": 0.5364
       }
     ],
-    "ols_slope_pts_per_yr": -0.1,
+    "ols_slope_pts_per_yr": -0.107,
     "era_2015_2019_margin": 3.01,
     "era_2020_bubble_margin": 0.47,
     "era_2020_bubble_winpct": 0.5034,
-    "era_2021_2026_margin": 1.77,
-    "early_minus_modern": 1.24
+    "era_2021_2026_margin": 1.74,
+    "early_minus_modern": 1.27
   },
   "index_row": {
     "slug": "homecourt",
     "title": "Home-court edge, decomposed",
     "question": "What is home worth, and why?",
-    "one_line": "Measured across 2780 games, home is worth +2.2 pts / 56.0% \u2014 the board applies +3.2. Where does the edge actually come from?",
+    "one_line": "Measured across 2791 games, home is worth +2.2 pts / 55.9%. Where does the edge actually come from?",
     "source_json": "deepdive_homecourt.json",
     "source_table": "game results + play-by-play",
-    "n": 2780
+    "n": 2791
   },
   "provenance": {
     "sources": [
-      "game results (n=2780, 2015-2026 non-neutral)",
-      "play-by-play data (n=2670 quarters; n=1664 team-attributable 2020-2026)"
+      "game results (n=2791, 2015-2026 non-neutral)",
+      "play-by-play data (n=2681 quarters; n=1675 team-attributable 2020-2026)"
     ],
     "script": "scripts/analysis_homecourt_decomp.py",
     "method": "empirical; offense/defense within-team quality-controlled; per-cell n stated",

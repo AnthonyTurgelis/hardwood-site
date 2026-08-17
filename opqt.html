@@ -231,7 +231,7 @@ function parts(g){
     return `<div class="work err">withheld — parts ${sum.toFixed(1)} ≠ call ${g.margin_a.toFixed(1)}</div>`;
   const s = (g.favorite === g.team_a) ? 1 : -1;
   const fav = TEAMS_BY_CODE[g.favorite].team;
-  // CHIPS RENDER ONLY WHEN NONZERO (standing product law; Director 20260817T170000Z §1b).
+  // Chips render only when the count is nonzero.
   // "court +0.0 · rest +0.0" printed on every row is dead weight — it spends the reader's attention
   // to tell him nothing happened. The suppression is DISPLAY ONLY and the assert above deliberately
   // still sums ALL FOUR terms: a future reader tempted to "simplify" by summing only the visible
@@ -383,7 +383,7 @@ function teamBlock(t){
   // only thing making the certified twelve reachable without a scroll hunt, so it is not cosmetic:
   // renaming it breaks teamHref() above and the conformance test asserts the pair still matches.
   return `<div class="card" id="team-${t.team}">
-    <!-- FIBA PTS AND RATING LIVE HERE NOW, not on the group strip (Director 20260817T070000Z §3d).
+    <!-- FIBA points and rating live here, not on the group strip.
          They are the inputs BEHIND the call, not the call, and on a phone every input column costs
          the reader a column he came for. Moved rather than deleted: the strip stops carrying them,
          and one tap still reaches them, which is the product promise for a number's derivation.

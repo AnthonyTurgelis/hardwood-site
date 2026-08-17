@@ -26,6 +26,13 @@
   .metric.flash,.cal.flash{animation:fl 1.1s ease}
   @keyframes fl{0%{background:var(--flash)}100%{background:var(--card)}}
   .metric .val{font-size:23px;font-weight:750;line-height:1;min-width:74px;text-align:center}
+  /* MOVEMENT CHIP (ship-check A4). Small and under the number on purpose: the level is the
+     headline and the move is context, never the other way round. Coloured by BETTER/WORSE via
+     the surface's own direction, not by sign - on an error metric a fall is the good news. */
+  .metric .val .move{display:block;font-size:11px;font-weight:650;margin-top:3px;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+  .metric .val .move.good{color:var(--good)}
+  .metric .val .move.bad{color:var(--warn)}
+
   .metric .val small{font-size:12px;font-weight:600;color:var(--muted)}
   .metric .body{flex:1}
   .metric .lbl{font-weight:640;font-size:13px}
@@ -175,6 +182,21 @@
     var v=el("div","val");
     if(m.no_data || m.value==null){ v.textContent="not yet tracked"; }
     else{ v.textContent = m.value; if(m.unit && m.unit!=="%"){ var s=el("small"); s.textContent=" "+m.unit; v.appendChild(s);} else if(m.unit==="%"){ v.textContent = m.value + "%"; } }
+    // MOVEMENT (ship-checklist A4). The panel was asked for live numbers WITH movement, and the
+    // feed now carries one for the surfaces that actually moved. It is rendered ONLY when present:
+    // the feed deliberately omits the key for a surface that did not move and for one with no prior
+    // snapshot, so an absent chip here means "nothing honest to say", never "unchanged".
+    // BETTER OR WORSE, NOT UP OR DOWN. Half these surfaces are errors where a FALL is the good news,
+    // so the arrow is chosen from the surface's own direction string rather than from the sign.
+    if(m.movement && m.movement.delta != null){
+      var d = m.movement.delta;
+      var lower = String(m.movement.direction || m.direction || "").indexOf("lower") === 0;
+      var good = lower ? (d < 0) : (d > 0);
+      var mv = el("span", "move " + (good ? "good" : "bad"));
+      mv.textContent = (d > 0 ? "▲ +" : "▼ ") + Math.abs(d).toFixed(2).replace(/\.00$/, "");
+      if(m.movement.since) mv.title = "since " + m.movement.since;
+      v.appendChild(mv);
+    }
     var body=el("div","body");
     body.appendChild(el("div","lbl", m.surface));
     if(m.note) body.appendChild(el("div","note", m.note));
