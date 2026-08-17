@@ -233,8 +233,19 @@ function parts(g){
     return `<div class="work err">withheld — parts ${sum.toFixed(1)} ≠ call ${g.margin_a.toFixed(1)}</div>`;
   const s = (g.favorite === g.team_a) ? 1 : -1;
   const fav = TEAMS_BY_CODE[g.favorite].team;
-  return `<div class="work">${fav} margin ${sgn1(s*g.margin_a)} = ranking ${sgn1(s*ranking)} · form ${sgn1(s*form)}
-    · court ${sgn1(court)} · rest ${sgn1(rest)}</div>`;
+  // CHIPS RENDER ONLY WHEN NONZERO (standing product law; Director 20260817T170000Z §1b).
+  // "court +0.0 · rest +0.0" printed on every row is dead weight — it spends the reader's attention
+  // to tell him nothing happened. The suppression is DISPLAY ONLY and the assert above deliberately
+  // still sums ALL FOUR terms: a future reader tempted to "simplify" by summing only the visible
+  // chips would silently turn a real two-truths check into a tautology, because a dropped term
+  // could never then be caught. Zero is still a term; it just is not worth a word.
+  const chips = [["ranking", s*ranking], ["form", s*form], ["court", court], ["rest", rest]]
+    .filter(([, v]) => Math.abs(v) >= 0.05)
+    .map(([k, v]) => `${k} ${sgn1(v)}`).join(" · ");
+  // Every term at zero is a real state (two evenly-matched sides, nothing situational): say so in
+  // words rather than rendering "= " with nothing after it.
+  const rhs = chips || "no separating term";
+  return `<div class="work">${fav} margin ${sgn1(s*g.margin_a)} = ${rhs}</div>`;
 }
 
 function gameStrip(d){
@@ -244,8 +255,7 @@ function gameStrip(d){
     return `<div class="game">
       <div class="row">${etLabel(g.tip_utc)} — ${g.team_a} vs ${g.team_b} —
         <b>${fav.team} −${req(g.line,"line").toFixed(1)}</b> · ${pct0(wp, "win_prob")}</div>
-      <details><summary>parts</summary></details>
-      ${parts(g)}
+      <details><summary>parts</summary>${parts(g)}</details>
     </div>`;
   }).join("")}</div>`;
 }
