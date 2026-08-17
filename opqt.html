@@ -200,8 +200,8 @@ function groupTable(d, code){
                       .sort((a,b) => b.p_title - a.p_title);
   return `<div class="card"><div class="scroll"><table class="sortable">
     <thead><tr>
-      <th class="l">Rank</th><th class="l">Group ${code}</th><th>W-L</th><th>FIBA pts</th>
-      <th>Rating</th><th>Adv%</th><th>Final%</th><th>Title%</th><th class="l">Roster</th>
+      <th class="l">Rank</th><th class="l">Group ${code}</th><th>W-L</th>
+      <th>Adv%</th><th>Final%</th><th>Title%</th><th class="l">Roster</th>
     </tr></thead>
     <tbody>${rows.map(t => {
       const r = record(t, d);
@@ -209,8 +209,6 @@ function groupTable(d, code){
         <td class="l" data-s="${req(t.fiba_rank,"fiba_rank")}"><span class="rank">${t.fiba_rank}</span></td>
         <td class="l" data-s="0">${tapLink(t, req(t.name,"name"), "the certified squad this number was built on")}${TIERED_HEAVY(t) ? FLAG : ""}</td>
         <td data-s="${r.w - r.l}">${r.w}-${r.l}</td>
-        <td data-s="${req(t.fiba_points,"fiba_points")}">${t.fiba_points.toFixed(1)}</td>
-        <td data-s="${req(t.rating,"rating")}">${t.rating.toFixed(1)}</td>
         <td data-s="${req(t.p_advance,"p_advance")}">${pct1(t.p_advance,"p_advance")}</td>
         <td data-s="${req(t.p_final,"p_final")}">${pct1(t.p_final,"p_final")}</td>
         <td data-s="${req(t.p_title,"p_title")}">${pct1(t.p_title,"p_title")}</td>
@@ -385,7 +383,21 @@ function teamBlock(t){
   // only thing making the certified twelve reachable without a scroll hunt, so it is not cosmetic:
   // renaming it breaks teamHref() above and the conformance test asserts the pair still matches.
   return `<div class="card" id="team-${t.team}">
-    <div class="pad"><b>${t.name}</b> <span class="hint">${t.team} · ${t.n_players} certified</span></div>
+    <!-- FIBA PTS AND RATING LIVE HERE NOW, not on the group strip (Director 20260817T070000Z §3d).
+         They are the inputs BEHIND the call, not the call, and on a phone every input column costs
+         the reader a column he came for. Moved rather than deleted: the strip stops carrying them,
+         and one tap still reaches them, which is the product promise for a number's derivation.
+         THEY COME FROM THE OTHER PAYLOAD. This block is rendered from opqt_players.json, whose team
+         objects carry {team, name, n_players, players} and NOTHING ELSE — the ratings live in
+         opqt.json. Reading t.fiba_points here returns undefined, and req() on it took the whole
+         panel down, which the DOM test caught as eight missing #team- anchors. So it is looked up by
+         code, and it DEGRADES rather than throws: a squad list must never fail to render because a
+         header stat is missing, exactly as ROSTER_SOURCE above degrades to a dash. -->
+    <div class="pad"><b>${t.name}</b> <span class="hint">${t.team} · ${t.n_players} certified${
+      (() => { const s = TEAMS_BY_CODE[t.team];
+               return (s && isFinite(s.fiba_points) && isFinite(s.rating))
+                 ? ` · FIBA ${s.fiba_points.toFixed(1)} pts · rating ${s.rating.toFixed(1)}` : ""; })()
+    }</span></div>
     <div class="scroll"><table class="sortable">
       <thead><tr><th class="l">Player</th><th class="l">Pos</th><th>Ht cm</th><th>Age</th>
         <th class="l">Club</th><th>Rating</th><th class="l">Show the work</th></tr></thead>
