@@ -38,6 +38,13 @@
   .rank{display:inline-block;min-width:22px;padding:1px 5px;border-radius:5px;background:var(--chip);color:var(--muted);font-size:10.5px;font-weight:700;text-align:center;margin-right:6px}
   .flag{color:var(--dim);text-decoration:none;font-size:10px;vertical-align:super}
   .flag:hover{color:var(--acc)}
+  /* TAP TARGET, NOT A HOTSPOT. A link that exists in the markup but is a 19px sliver on a phone has
+     not been made reachable. .tl is an inline-block whose padding carries the whole cell's height to
+     ~44 CSS px — the negative vertical margin cancels the cell's own 6px so the row grows to the
+     target size instead of stacking padding on padding. Measured at a true 390px layout viewport. */
+  a.tl{color:inherit;text-decoration:none;display:inline-block;padding:13px 6px;margin:-6px -6px;
+    border-bottom:1px dotted var(--line2)}
+  a.tl:hover,a.tl:focus{color:var(--acc);border-bottom-color:var(--acc)}
   .prov{color:var(--warn)}
   .game{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;padding:8px 12px;border-bottom:1px solid var(--line)}
   .game:last-child{border-bottom:none}
@@ -91,9 +98,29 @@ const sgn1 = v => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1);
 
 // TIERED-HEAVY: fewer than half of a squad's named players carry a measured professional rating.
 // Rendered as the one-character thin-sample flag and nothing else — never a sentence on the
-// surface. The count itself is a column, so the flag only carries the link to the definition.
+// surface, and never the raw fraction either.
+//
+// THE FRACTION USED TO BE A COLUMN AND IS NOT ONE ANY MORE (CEO, second order on this item). "0/12"
+// and "1/12" are honest internals that read to a reader as UNMEASURED PRODUCT on the front page:
+// they are diagnostics, and diagnostics belong off the surface. What survives is the honesty
+// signal, not the diagnostic — the flag still fires off the same computation and still carries the
+// only thing a reader needs, the link to what thin means. The counts themselves are still published
+// in full, unchanged, in The field section's own notes ("N of 94 carry a rating measured on their
+// own record") and in opqt_players.json — nothing was deleted, one presentation left.
 const TIERED_HEAVY = t => req(t.n_named, "n_named") > 0 && (t.n_measured / t.n_named) < 0.5;
 const FLAG = `<a class="flag" href="glossary.html#thin" title="thin sample — see glossary">†</a>`;
+
+// ROSTER REACH: the squad a team's number was built on is ONE TAP from its row in the groups table.
+// Both the team name and the roster cell carry that tap.
+//
+// THE ANCHOR IS ON THIS PAGE, and that is a correction worth writing down rather than re-deriving:
+// these are national-team players, so players.html — the WNBA players page — is not their home and
+// never was. Exactly 1 of the 94 certified players appears in site/players.json (Kayla Alexander,
+// who plays in both). Their cards are rendered HERE, from opqt_players.json, in The field below, so
+// the real anchor is the team's own block on this page.
+const teamHref = t => "#team-" + req(t.team, "team");
+const tapLink = (t, inner, title) =>
+  `<a class="tl" href="${teamHref(t)}" title="${title}">${inner}</a>`;
 
 // ROSTER SOURCE: which squad the projection was actually built on. A certified game roster and a
 // pre-tournament training pool both fill the Measured column with the same shape, so once the
@@ -113,7 +140,9 @@ function rosterCell(t){
   // The size rides with the label, so a certified ten reads as a certified ten and not as a short
   // twelve. Basketball New Zealand named ten; that is the roster, not a gap in it.
   const size = (typeof t.n_named === "number" && isFinite(t.n_named)) ? " " + t.n_named : "";
-  return `<td class="l${s.rank < 3 ? " prov" : ""}" data-s="${s.rank}" title="${s.note}">${s.label}${size}</td>`;
+  // "Certified 12" is the reader's word for the squad, so it is also the tap that reaches it.
+  return `<td class="l${s.rank < 3 ? " prov" : ""}" data-s="${s.rank}">${
+    tapLink(t, s.label + size, s.note + " — tap for the squad")}</td>`;
 }
 
 // ET only. tip_utc is the canonical instant and the clock is arithmetic ON it, never a re-read of a
@@ -172,13 +201,13 @@ function groupTable(d, code){
   return `<div class="card"><div class="scroll"><table class="sortable">
     <thead><tr>
       <th class="l">Rank</th><th class="l">Group ${code}</th><th>W-L</th><th>FIBA pts</th>
-      <th>Rating</th><th>Adv%</th><th>Final%</th><th>Title%</th><th class="l">Roster</th><th>Measured</th>
+      <th>Rating</th><th>Adv%</th><th>Final%</th><th>Title%</th><th class="l">Roster</th>
     </tr></thead>
     <tbody>${rows.map(t => {
       const r = record(t, d);
       return `<tr>
         <td class="l" data-s="${req(t.fiba_rank,"fiba_rank")}"><span class="rank">${t.fiba_rank}</span></td>
-        <td class="l" data-s="0">${req(t.name,"name")}${TIERED_HEAVY(t) ? FLAG : ""}</td>
+        <td class="l" data-s="0">${tapLink(t, req(t.name,"name"), "the certified squad this number was built on")}${TIERED_HEAVY(t) ? FLAG : ""}</td>
         <td data-s="${r.w - r.l}">${r.w}-${r.l}</td>
         <td data-s="${req(t.fiba_points,"fiba_points")}">${t.fiba_points.toFixed(1)}</td>
         <td data-s="${req(t.rating,"rating")}">${t.rating.toFixed(1)}</td>
@@ -186,7 +215,6 @@ function groupTable(d, code){
         <td data-s="${req(t.p_final,"p_final")}">${pct1(t.p_final,"p_final")}</td>
         <td data-s="${req(t.p_title,"p_title")}">${pct1(t.p_title,"p_title")}</td>
         ${rosterCell(t)}
-        <td data-s="${t.n_named ? t.n_measured / t.n_named : 0}">${req(t.n_measured,"n_measured")}/${t.n_named}</td>
       </tr>`;
     }).join("")}
     </tbody></table></div></div>`;
@@ -343,7 +371,10 @@ function playerRow(p){
 }
 
 function teamBlock(t){
-  return `<div class="card">
+  // id="team-XXX" is the landing site for the two taps on the team's groups-table row. It is the
+  // only thing making the certified twelve reachable without a scroll hunt, so it is not cosmetic:
+  // renaming it breaks teamHref() above and the conformance test asserts the pair still matches.
+  return `<div class="card" id="team-${t.team}">
     <div class="pad"><b>${t.name}</b> <span class="hint">${t.team} · ${t.n_players} certified</span></div>
     <div class="scroll"><table class="sortable">
       <thead><tr><th class="l">Player</th><th class="l">Pos</th><th>Ht cm</th><th>Age</th>
@@ -413,6 +444,24 @@ function render(d){
     </div></div>`;
 
   wireSort(document);
+  wireRosterTaps();
+}
+
+// A TAP MAY NOT DO NOTHING. The field loads on its own fetch AFTER the projection is on screen, so
+// for the first moments of a page load — and permanently if opqt_players.json fails to read — the
+// anchor a row points at does not exist yet and the browser silently ignores the jump. Silence is
+// the one answer a tap may not give, so fall back to the field section itself, which states its own
+// failure in words. When the anchor does exist the browser handles it natively and this does not fire.
+function wireRosterTaps(){
+  document.addEventListener("click", e => {
+    const a = e.target && e.target.closest ? e.target.closest("a.tl") : null;
+    if (!a) return;
+    const id = (a.getAttribute("href") || "").replace(/^#/, "");
+    if (!id || document.getElementById(id)) return;
+    e.preventDefault();
+    const field = document.getElementById("field");
+    if (field) field.scrollIntoView({behavior: "smooth", block: "start"});
+  });
 }
 
 fetch("./opqt.json?v=" + Date.now())
