@@ -452,8 +452,8 @@
     var si=d.season_impact;
     if(si && si.rate!=null){
       var siUnit=[];
-      if(si.thin) siUnit.push("provisional");
-      kpis.appendChild(kpi("Season Impact", si.rate.toFixed(3), siUnit.length?("· "+siUnit.join(" · ")):null));
+      if(si.results_thin) siUnit.push("thin sample");
+      kpis.appendChild(kpi("Season Impact (results-based)", si.rate.toFixed(3), siUnit.length?("· "+siUnit.join(" · ")):null));
     }
     // impact-first hero: our on-court rating is the lead number, counting stats after. It carries
     // its %-of-team-minutes flag AND an honest "provisional" note when the on-court basis is thin,
@@ -499,7 +499,7 @@
     if(si && (si.rate!=null || si.volume!=null)){
       var siCard=el("div","card pad"); siCard.style.marginBottom="12px";
       var siH=el("div"); siH.style.fontWeight="680"; siH.style.marginBottom="3px";
-      siH.textContent="Season Impact";
+      siH.textContent="Season Impact (results-based)";
       siCard.appendChild(siH);
       siCard.appendChild(el("div","note",
         "How much better her team has played with her on the floor this season, weighted by how much "
@@ -513,7 +513,7 @@
       // share of minutes is NOT repeated here — it is a benchmarked tile in the hero above.
       siK.appendChild(sikpi("Games", si.gp==null?null:si.gp));
       siCard.appendChild(siK);
-      if(si.thin){
+      if(si.results_thin){
         // COPY RE-TRUED AGAINST THE LIVE FEED. This note used to end "...and reads near zero for
         // almost everyone", which described the world before the shrinkage prior was corrected —
         // back then the flag fired on every row and every value sat near zero. On the feed as
@@ -521,9 +521,8 @@
         // everyone" was a claim the page's own data contradicted. The caveat that is still TRUE is
         // about THIS player's own sample, so that is what it now says.
         siCard.appendChild(el("div","note thin",
-          "Provisional — her on-court sample is still small, so this number is pulled toward league "
-          + "average and understates how far from average she may really be. Treat it as a rough "
-          + "read of her season rather than a firm placement against players resting on a full sample."));
+          "Thin sample — she has played under 10 games or under 15% of her team's available "
+          + "minutes, so treat this results-based season total as an early read."));
       }
       var avail=null;
       if(si.currently_out){ avail="Currently listed as out — her latest Season Impact reflects the season so far."; }
