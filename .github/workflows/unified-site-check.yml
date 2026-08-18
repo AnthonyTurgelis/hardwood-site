@@ -1,0 +1,56 @@
+name: Unified Site Check
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'games.html'
+      - 'players.html'
+      - 'teams.html'
+      - 'standings.html'
+      - 'accuracy.html'
+      - 'deepdive.html'
+      - 'game_report_v2.html'
+      - 'hw-product.css'
+      - 'hw-product.js'
+      - '.github/workflows/unified-site-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check JavaScript syntax
+        run: node --check hw-product.js
+      - name: Validate core page contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          pages = {
+              'index.html': 'data-page="home"',
+              'games.html': 'data-page="games"',
+              'players.html': 'data-page="players"',
+              'teams.html': 'data-page="teams"',
+              'standings.html': 'data-page="standings"',
+              'accuracy.html': 'data-page="accuracy"',
+              'deepdive.html': 'data-page="research"',
+          }
+          for name, marker in pages.items():
+              text = Path(name).read_text(encoding='utf-8')
+              assert marker in text, (name, marker)
+              assert 'hw-product.css' in text, name
+              assert 'hw-product.js' in text, name
+              assert '<meta name="viewport"' in text, name
+          js = Path('hw-product.js').read_text(encoding='utf-8')
+          for dataset in ('games.json','players.json','teams.json','standings.json','accuracy.json','deepdive.json'):
+              assert dataset in js, dataset
+          css = Path('hw-product.css').read_text(encoding='utf-8')
+          assert '@media(max-width:720px)' in css
+          assert '.hw-topbar' in css
+          assert '.hw-table' in css
+          print('unified public site contract: PASS')
+          PY
