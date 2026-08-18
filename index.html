@@ -438,11 +438,11 @@ Promise.all([fetch(SLATE_FEED).then(function(r){return r.json()}),stakesReady]).
     var a=g.annotation,n=a&&Number(a.neutral_margin),s=a&&Number(a.site_adjustment),f=a&&Number(a.final_margin);
     var ok=!!a&&isFinite(n)&&isFinite(s)&&isFinite(f)&&Math.abs((n+s)-f)<=.011&&Math.abs(f-g.margin)<=.011;
     var signed=function(v){return(v>=0?"+":"")+v.toFixed(1)};
-    var margin=ok?('<div class="call"><div class="margin">'+a.final_call+'</div><div class="calltxt">our call</div></div>'+ 
-      '<div class="range"><div class="track"></div><div class="zero" style="left:50%"></div>'+ 
-      '<div class="band" style="left:'+W(g.lo)+';width:'+(((g.hi-g.lo)/(2*ext))*100).toFixed(1)+'%"></div>'+ 
-      '<div class="tick" style="left:'+X(g.margin)+'"></div></div>'+ 
-      '<div class="rlabels"><span>'+g.lo.toFixed(0)+'</span><span>even</span><span>+'+g.hi.toFixed(0)+'</span></div>'+ 
+    var margin=ok?('<div class="call"><div class="margin">'+a.final_call+'</div><div class="calltxt">our call</div></div>'+
+      '<div class="range"><div class="track"></div><div class="zero" style="left:50%"></div>'+
+      '<div class="band" style="left:'+W(g.lo)+';width:'+(((g.hi-g.lo)/(2*ext))*100).toFixed(1)+'%"></div>'+
+      '<div class="tick" style="left:'+X(g.margin)+'"></div></div>'+
+      '<div class="rlabels"><span>'+g.lo.toFixed(0)+'</span><span>even</span><span>+'+g.hi.toFixed(0)+'</span></div>'+
       '<div class="facts"><span>Neutral strength <b>'+a.neutral_call+'</b></span><span>Site + calibration adjustment <b>'+signed(s)+'</b></span><span>Final call <b>'+a.final_call+'</b></span></div>'):'';
     return '<article class="card"><div class="matchup"><div class="teams">'+g.away+' @ '+g.home+
     '</div><div class="tip">'+g.tip+'</div></div>'+margin+
