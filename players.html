@@ -143,7 +143,21 @@
   // reader-facing board that DEFAULTS to a counting stat is the defect this default exists to
   // prevent (guard: tests/test_reader_boards_lead_with_impact.py + test_players_board_impact_default.js).
   var curStat=null, curData=null, ratFilter="", ratShowAll=false, curRank="impact";
+  var ratSortKey=null, ratSortDesc=true;
   var RAT_PAGE=50;   // default view = top 50; "show all" reveals the full uncapped board
+
+  // Pure per-column sorter. Unknown values always sink in both directions; rankValue supplies the
+  // active axis's rank without teaching this generic helper about impact-rank keying.
+  function sortPlayerRows(rows,key,desc,rankValue){
+    var textSort=(key==="name"||key==="team");
+    return rows.slice().sort(function(a,b){
+      var av=(key==="rank")?rankValue(a):a[key], bv=(key==="rank")?rankValue(b):b[key];
+      var an=(av==null||av===""), bn=(bv==null||bv==="");
+      if(an&&bn) return 0; if(an) return 1; if(bn) return -1;
+      var cmp=textSort?String(av).localeCompare(String(bv)):(av<bv?-1:(av>bv?1:0));
+      return desc?-cmp:cmp;
+    });
+  }
   function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
   function td(c,x){ return el("td",c,x); }
 
@@ -322,7 +336,7 @@
     // still one tap away and fully intact (counting stats move, they never disappear).
     [["impact","On-court impact"],["scoring","Season scoring"]].forEach(function(o){
       var b=el("button", curRank===o[0]?"on":null, o[1]);
-      b.onclick=function(){ if(curRank!==o[0]){ curRank=o[0]; ratShowAll=false; s.parentNode.replaceChild(ratingsSection(rt), s); } };
+      b.onclick=function(){ if(curRank!==o[0]){ curRank=o[0]; ratSortKey=null; ratSortDesc=true; ratShowAll=false; s.parentNode.replaceChild(ratingsSection(rt), s); } };
       rseg.appendChild(b);
     });
     s.appendChild(rseg);
@@ -380,9 +394,23 @@
     // The number was never wrong. The heading was silent, which is the same defect as one label
     // carrying two quantities, and the fix is the same: say which.
     var rankHead = byImpact ? "# by impact" : "# by points";
-    [rankHead,"Player","Team","Impact","% of team min","GP","PTS","REB","AST","MIN"].forEach(function(x){
-      var active = (byImpact && x==="Impact") || (!byImpact && x==="PTS");
-      hr.appendChild(el("th", active?"sortcol":null, active ? (x+" ▾") : x));
+    var heads=[[rankHead,"rank"],["Player","name"],["Team","team"],["Impact","rating"],
+      ["% of team min","min_share_pct"],["GP","gp"],["PTS","pts"],["REB","reb"],
+      ["AST","ast"],["MIN","min_avg"]];
+    heads.forEach(function(h){
+      var key=h[1], axisDefault=!ratSortKey && ((byImpact&&key==="rating")||(!byImpact&&key==="pts"));
+      var active=ratSortKey===key || axisDefault;
+      var th=el("th",active?"sortcol":null,h[0]+(active?(ratSortDesc?" ▾":" ▴"):""));
+      th.setAttribute("tabindex","0"); th.setAttribute("role","columnheader");
+      th.setAttribute("aria-sort",active?(ratSortDesc?"descending":"ascending"):"none");
+      function choose(){
+        if(ratSortKey===key) ratSortDesc=!ratSortDesc;
+        else { ratSortKey=key; ratSortDesc=(key!=="name"&&key!=="team"); }
+        ratShowAll=false; s.parentNode.replaceChild(ratingsSection(rt),s);
+      }
+      th.onclick=choose;
+      th.onkeydown=function(ev){ if(ev.key==="Enter"||ev.key===" "){ ev.preventDefault(); choose(); } };
+      hr.appendChild(th);
     });
     thead.appendChild(hr); t.appendChild(thead);
     var tb=el("tbody");
@@ -394,6 +422,11 @@
         if(af!==bf) return af?-1:1;                                     // firm-impact players first
         if(af&&bf) return (b.rating-a.rating)||((b.pts||0)-(a.pts||0))||(a.rank-b.rank);
         return (a.rank||1e9)-(b.rank||1e9);                            // non-firm keep scoring order
+      });
+    }
+    if(ratSortKey){
+      matched=sortPlayerRows(matched,ratSortKey,ratSortDesc,function(r){
+        return byImpact?impRank[pkey(r)]:r.rank;
       });
     }
     var shown = ratShowAll ? matched : matched.slice(0, RAT_PAGE);

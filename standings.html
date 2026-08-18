@@ -42,6 +42,10 @@
   td.tm{font-weight:660}
   td.tm .full{color:var(--muted);font-weight:400;font-size:11.5px;margin-left:6px}
   .conf{display:inline-block;font-size:10px;color:var(--dim);border:1px solid var(--line2);border-radius:4px;padding:0 4px;margin-left:6px;vertical-align:1px}
+  .tierbadge{display:inline-block;font-size:9.5px;font-weight:700;color:var(--acc);background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+  .tierlegend{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px}
+  .tierlegend span{font-size:10.5px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:7px;padding:3px 7px}
+  .tierlegend b{color:var(--ink)}
   td.rec{font-variant-numeric:tabular-nums;font-weight:640}
   td.num{font-variant-numeric:tabular-nums;color:var(--muted)}
   td.proj{font-variant-numeric:tabular-nums;color:var(--ink)}
@@ -49,10 +53,10 @@
   td.pct{font-variant-numeric:tabular-nums}
   /* The move sits BESIDE the level, smaller and coloured, never replacing it — a reader should get
      the value and the direction in one glance without reading two columns. */
-  td.pct .mv{font-size:10.5px;font-weight:600;font-variant-numeric:tabular-nums}
-  td.pct .mv.up{color:var(--good,#1f8f3d)}
-  td.pct .mv.dn{color:var(--bad,#c62828)}
-  td.pct .mv.flat{color:var(--dim,#8993a6)}
+  td .mv{font-size:10.5px;font-weight:600;font-variant-numeric:tabular-nums}
+  td .mv.up{color:var(--good,#1f8f3d)}
+  td .mv.dn{color:var(--bad,#c62828)}
+  td .mv.flat{color:var(--dim,#8993a6)}
   td.pct.hi{color:var(--good);font-weight:660}
   td.pct.lo{color:var(--dim)}
   td.na{color:var(--dim)}
@@ -165,6 +169,29 @@
   // their own version of one quantity is how they end up disagreeing, which is a defect this
   // record has already paid for more than once today.
   var TMOVE=null;
+
+  // Port the Teams board's public tier vocabulary and thresholds, but keep standings order.
+  // This feed uses fractions while Teams uses percentages, so convert before classification.
+  var TIERS=[
+    ["contender","Title contenders","a real shot at the championship"],
+    ["mix","In the mix","playoff-bound, but longer title odds"],
+    ["bubble","On the bubble","fighting for a playoff spot"],
+    ["string","Playing out the string","out of the playoff race"]
+  ];
+  function tierOf(r){
+    var t=r.p_title==null?null:r.p_title*100, p=r.p_playoff==null?null:r.p_playoff*100;
+    if(t==null && p==null) return null;
+    if(t!=null && t>=10) return "contender";
+    if(p!=null && p>=85) return "mix";
+    if(p!=null && p>=15) return "bubble";
+    return "string";
+  }
+  function tierMeta(key){ for(var i=0;i<TIERS.length;i++) if(TIERS[i][0]===key) return TIERS[i]; return null; }
+  function moveSpan(v, digits, title){
+    if(v==null) return null;
+    var sp=el("span","mv "+(v>0?"up":(v<0?"dn":"flat")));
+    sp.textContent=" "+(v>0?"+":"")+v.toFixed(digits); sp.title=title; return sp;
+  }
 
   // leverageRows(pj): per team, how much its FINAL SEED is still undecided, straight from the baked
   // seed distribution — NO sim re-run, NO fabricated per-game swing. leverage = 1 - (probability of
@@ -337,6 +364,19 @@
     };
     main.appendChild(fbox);
 
+    // Definitions + counts without grouping: a grouping would destroy standings order and make
+    // the top-eight cut line false. Counts follow the active filter, just like the lede.
+    var visible=sortTeams(teams).filter(matchesFilter), counts={};
+    visible.forEach(function(r){ var k=tierOf(r); if(k) counts[k]=(counts[k]||0)+1; });
+    var legend=el("div","tierlegend"); legend.setAttribute("aria-label","Outlook tiers");
+    TIERS.forEach(function(x){
+      if(!counts[x[0]]) return;
+      var chip=el("span"); chip.title=x[2];
+      chip.appendChild(el("b",null,x[1]+" ("+counts[x[0]]+")"));
+      chip.appendChild(document.createTextNode(" — "+x[2])); legend.appendChild(chip);
+    });
+    main.appendChild(legend);
+
     var card=el("div","card"); var sc=el("div","scrollx");
     var t=el("table"); var thead=el("thead"); var hr=el("tr");
     [["#","rk","rank"],["Team","l","team"],["W-L","","rec"],["Win%","","wpct"],["GB","","gb"],
@@ -376,6 +416,8 @@
       tm.appendChild(document.createTextNode(r.team||"—"));
       if(r.team_full) tm.appendChild(el("span","full",r.team_full));
       if(r.conference) tm.appendChild(el("span","conf",r.conference));
+      var ti=tierMeta(tierOf(r));
+      if(ti){ var badge=el("span","tierbadge",ti[1]); badge.title=ti[2]; tm.appendChild(badge); }
       tr.appendChild(tm);
 
       tr.appendChild(el("td","rec",(r.wins!=null&&r.losses!=null)?(r.wins+"-"+r.losses):"—"));
@@ -391,6 +433,8 @@
         var b=r.proj_range_90;
         if(b && b.length===2 && b[0]!=null && b[1]!=null)
           pc.appendChild(el("span","band"," ["+b[0].toFixed(1)+"–"+b[1].toFixed(1)+"]"));
+        var pwm=moveSpan(r.proj_median_wins_delta_1d,1,"change in projected median wins since the prior day");
+        if(pwm) pc.appendChild(pwm);
       }
       tr.appendChild(pc);
 
@@ -399,6 +443,8 @@
       po.textContent=fmtPct(r.p_playoff);
       if(r.p_playoff!=null){ po.className="pct "+(r.p_playoff>=0.85?"hi":(r.p_playoff<0.15?"lo":"")); }
       else po.className="pct na";
+      var pom=moveSpan(r.p_playoff_delta_1d,2,"change in playoff odds since the prior day, in points");
+      if(pom) po.appendChild(pom);
       tr.appendChild(po);
 
       // title odds, with the one-day move beside the level when we hold one
@@ -430,9 +476,9 @@
       "Record and games-back are today's actual standings. Proj. wins is the median final-win "+
       "total across the simulations, with the [p5–p95] band showing where the total lands in 9 of "+
       "every 10 runs. Playoff and Title are the share of simulations in which a team makes the "+
-      "league-wide top-8 and wins the championship. The small figure beside Title is how much "+
-      "those title odds moved since yesterday, in points, and it is the same number the Teams "+
-      "page shows; a team with no measured move shows none rather than a zero. "+
+      "league-wide top-8 and wins the championship. Small figures beside projected wins, Playoff, "+
+      "and Title show change since the prior day; missing history shows no figure, never a made-up "+
+      "zero. Title movement is the same number the Teams page shows. "+
       // TWO TRUTHS. This sentence STATES the ordering, so it has to be the ordering actually on
       // screen — a page that says "ordered by current win%" while sorted by title odds contradicts
       // itself in print, and the # column and cut line change meaning with it.

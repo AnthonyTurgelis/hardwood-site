@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-18T01:38:28+00:00",
+ "generated_utc": "2026-08-18T02:09:49+00:00",
  "freshness": {
-  "baked_utc": "2026-08-18T01:38:28+00:00",
-  "baked_et": "Aug 17, 9:38pm ET",
-  "revalidated_utc": "2026-08-18T01:38:28+00:00",
+  "baked_utc": "2026-08-18T02:09:49+00:00",
+  "baked_et": "Aug 17, 10:09pm ET",
+  "revalidated_utc": "2026-08-18T02:09:49+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-17",
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-18T01:38:28+00:00",
+  "generated_utc": "2026-08-18T02:09:48+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -238,7 +238,7 @@
       "blow_base_pct": 15.4
      },
      "venue_note": "",
-     "awaiting_final": false,
+     "awaiting_final": true,
      "movers_out": [
       "Azzi Fudd (DAL)"
      ],
@@ -246,7 +246,7 @@
       "Alanna Smith (DAL)",
       "Nadia Fingall (GSV)"
      ],
-     "movers_more": 3,
+     "movers_more": 4,
      "home_depth": [
       {
        "player": "Kiah Stokes",
@@ -325,7 +325,7 @@
        "group": "G",
        "base": 6,
        "effective": null,
-       "out": false,
+       "out": true,
        "susp": false,
        "promoted": false
       },
@@ -12314,18 +12314,18 @@
       "why": "",
       "priority": -4.0,
       "seat": "Modeling",
-      "status": "READ THIS FIRST - DIAGNOSIS COMPLETE 2026-08-17, ENGINEERING REMAINS. WHAT IS WRONG: the public standings page serves playoff and title odds from 2026-08-15 because the nightly model has been unable to START since ~08-16 - every stage dies at process creation with 0xC0000142 in about 0.3s. PROVEN, each measured directly: the SCRIPTS are innocent (actions_health exits 0 standalone, - inside the wrapper); the PRINCIPAL is innocent (S4U/antho/Limited, identical to tasks succeeding the same night); season_sim is innocent (absent from all 84 pre-08-16 stage failures, and it wrote odds daily to 08-15). So the fault is in HOW the wrapper launches, on a box that took four unclean reboots in 26 hours from 08-16 10:13. TWO FAULTS, NOT ONE: an OLD partial failure (runs marked failed since 07-30 while the product still shipped) and a NEW total failure (~08-16, nothing starts). The 07-30 streak is HONEST - three overlapping causes in sequence, nothing to reset. DO NOT: debug the model, chase the principal, or reset the counter. All three are ruled out above with evidence. DO, in order: (1) machine stability - the crashes are the live cause and the shelved crash-forensics programme is this row's real parent; (2) wrapper resilience - serialise or back off the 38 stage launches so a loaded box degrades instead of failing wholesale; (3) teach the alarm to distinguish PARTIAL from TOTAL failure, because it reported both identically and that is why a two-day product outage went unseen. || WORKING NOTES AND SIX RETRACTIONS FOLLOW - kept in full so nobody re-walks them. || open || ROOT CAUSE FOUND 2026-08-17T20:24Z, AND IT IS WORSE THAN STALE ODDS: THE NIGHTLY MODEL CANNOT START. nightly_model_task reads consecutive_failures=38, consecutive_ok=0, last outcome 2026-08-17T17:36:27Z kind=error, exit code - = 0xC0000142 = STATUS_DLL_INIT_FAILED - a WINDOWS PROCESS-INITIALISATION failure, so the job is not producing bad numbers, it is failing before it runs. That is why stopped at 2026-08-15T19:41Z, why the served playoff and title odds are two days old, and why the movement column is empty. THE CHAIN: model cannot start -> no new sim -> odds frozen at 08-15 -> standings serves 08-15 -> the movement guard correctly reports UNKNOWN -> the only visible symptom was an empty column nobody had wired. 0xC0000142 IS AN ENVIRONMENT/RESOURCE SIGNATURE and two measured facts fit it: this box bugchecks on memory roughly daily, and CPU read 83-91 percent tonight with the width governor tapering on load. First checks are process-start resource pressure and whether the Python environment the task launches is intact - NOT the model code. THE ALARM GAP IS THE OTHER HALF: 38 consecutive failures produced no CEO page and no board line. The streak file knew and nothing surfaced it, which is the same guard-reports-healthy shape as the rest of tonight. || NARROWED TO THE LAUNCH CONTEXT, NOT THE MODEL - read the wrapper log 2026-08-17T20:26Z. EVERY stage returns the same - and each dies in about 0.3 seconds: margin_successor_oracle, possession_oracle, possession_sim_gates, preserve_content, actions_health, freshness_guard. Six different scripts, one identical instant failure, so nothing model-specific is involved - every Python subprocess the wrapper launches is dying at process initialisation. THE DISCRIMINATOR, and it is the useful part: PYTHON WORKS FINE ON THIS BOX RIGHT NOW. This session ran dozens of Python invocations against the same repo and the same interpreter all evening, including live DB queries. So the interpreter and the packages are intact and the fault is in THAT TASK'S LAUNCH CONTEXT, not in the environment generally. WHERE TO LOOK, in order: (1) the task principal and session - HardwoodNightlyModel's launch context versus the S4U tasks that ARE succeeding tonight, since 0xC0000142 is classically a desktop-heap or session-0 initialisation failure; (2) process-start resource pressure - this box bugchecks on memory roughly daily and CPU read 83-91 percent tonight; (3) only then the scripts themselves, which are almost certainly innocent given six unrelated ones fail identically. DO NOT START BY DEBUGGING THE MODEL. Six unrelated scripts failing in 0.3 seconds each is an OS-level launch fault wearing a modelling outage's clothes. || MY OWN HYPOTHESIS TESTED AND KILLED, 2026-08-17T20:27Z - DO NOT SPEND TIME ON THE PRINCIPAL. I proposed a desktop-heap / session-0 launch-context fault and said to look there first. Measured: HardwoodNightlyModel is S4U, user antho, runlevel Limited - IDENTICAL to HardwoodJunctionPretip and HardwoodOpqtBoxWatch, both of which ran successfully tonight. Same principal, same session type, opposite outcome, so the launch context is NOT the differentiator and that line of investigation is closed before anyone spends an hour on it. WHAT ACTUALLY DIFFERS, and it is the remaining hypothesis: this task launches SIX Python subprocesses in rapid succession (each stage a fresh interpreter, all six dying within about two seconds total), where the working tasks launch ONE. 0xC0000142 under that pattern reads as resource exhaustion AT PROCESS CREATION rather than a broken environment - which also fits the two measured facts already on this row, that the box bugchecks on memory roughly daily and CPU sat at 83-91 percent tonight. SO THE NEXT TEST IS CHEAP AND DECISIVE: run ONE of those six stage scripts by hand from an ordinary shell. If it succeeds alone, the fault is contention or handle/memory pressure across the rapid launches and the fix is serialisation or backoff in the wrapper, not in any script. If it fails alone too, the environment is broken in a way my interactive Python has not touched. Either answer is one command away and neither requires reading the model. || DECISIVE TEST RUN 2026-08-17T20:29Z - THE SCRIPTS ARE INNOCENT. ops/scout/actions_health.py is ONE OF THE SIX STAGES that returns - inside the wrapper. Run standalone from an ordinary shell it EXITS 0. Same script, same box, same interpreter, same repo, minutes apart: fails inside the wrapper, succeeds outside it. SO THE FAULT IS IN HOW THE WRAPPER LAUNCHES, NOT IN WHAT IT LAUNCHES. Combined with the principal being identical to the tasks that succeed, and with all six stages dying inside about two seconds, the remaining explanation is resource exhaustion at process creation across six interpreters started in rapid succession - which fits the box bugchecking on memory roughly daily and CPU at 83-91 percent tonight. THE FIX BELONGS IN THE WRAPPER: serialise the stages, or put a short backoff and a retry between them, or hold one interpreter open across stages instead of spawning six. It does NOT belong in any model script, and reading the model would have been the expensive wrong turn this row now saves. WHAT IS STILL UNKNOWN, stated so nobody over-reads a single sample: I proved ONE of the six runs clean alone. Confirm with a second stage before committing to a wrapper change, and check whether the failures cluster with the load spikes - the load-gate work already landed tonight for lane spawns is the natural precedent and may already hold the serialisation this needs. || CORRECTING MY OWN HEADLINE NUMBER 2026-08-17T20:31Z. I reported '38 consecutive failures' and framed it as 38 repeated nightly runs. ops/scout/nightly_model_task.ps1 line 149 defines the stage list and it holds EXACTLY 38 STAGES - score_feeder through freshness_guard. A 38 that equals the stage count exactly is far more likely ONE RUN in which every stage failed than 38 separate runs, and the wrapper log supports that: six consecutive stages failing inside two seconds of each other in a single pass. WHAT THIS CHANGES: the ALARM-GAP claim. I wrote that 38 failures produced no page and no board line, which reads as days of silence. If the 38 is one run's stages then the silence is one run's worth, which is a much weaker complaint and possibly correct behaviour. VERIFY BEFORE REPEATING EITHER VERSION: read the streak file's own definition of what it counts, and count distinct run stamps in logs/local_runner/nightly_model_task.log. WHAT THIS DOES NOT CHANGE, and it is the part that matters: the odds table's newest built_at is still 2026-08-15T19:41Z, the served playoff and title odds on the public standings page are still two days old, actions_health still exits 0 standalone while returning - inside the wrapper, and the principal is still identical to the tasks that succeed. The outage and its diagnosis stand; only my count of how many times it has happened is unreliable. || AMBIGUITY RESOLVED WITH COUNTS 2026-08-17T20:32Z, so nobody has to re-derive it. logs/local_runner/nightly_model_task.log spans 2026-07-16 to 2026-08-17, 33,686 lines, with 1,525 'stage done' lines of which 86 carry exit -. At 38 stages per run that is roughly 2.3 runs' worth of total failure - so BOTH of my earlier framings were wrong: it is not 38 nightly failures, and it is not a single run either. The streak file's 38 is the most recent run's stage count, and the log shows about two full runs failing this way. THAT IS CONSISTENT WITH EVERYTHING ELSE ON THIS ROW AND SHARPENS THE WINDOW: 86 failures out of 1,525 stage-completions over a MONTH means this is RECENT, not chronic - the wrapper ran fine for weeks. The last failing stage is 2026-08-17T13:36:17, and the odds table's last good write is 2026-08-15T19:41Z, so the breakage begins between those two points. WHAT TO CHECK FIRST WITH THAT WINDOW: what changed on this box between 08-15 evening and 08-16 - the crash dossier records roughly daily memory bugchecks, and a reboot in that window is the obvious candidate given the fault is process-creation and not code. The scripts are already proven innocent (actions_health exits 0 standalone) and the principal is already ruled out (identical to the tasks that succeed tonight). || TRIGGER FOUND 2026-08-17T20:33Z - THE BOX IS CRASHING, AND THE CHAIN IS NOW COMPLETE END TO END. System event log, IDs 41/6008/6005: an UNEXPECTED SHUTDOWN at 2026-08-16 10:13, which is the first unclean reboot after the last good odds write at 2026-08-15T19:41Z and immediately before the model failures begin. Then THREE MORE unclean reboots on 08-17 at 11:10, 11:50 and 12:48. FOUR crashes in about 26 hours, well above the crash dossier's roughly-daily baseline. THE FULL CHAIN, every link measured rather than inferred: box crashes repeatedly -> Python subprocesses fail at process CREATION with 0xC0000142 (six unrelated stages, each dying in ~0.3s, while the same script exits 0 standalone and the task principal is identical to tasks that succeed) -> nightly model cannot complete a run -> frozen at 08-15 -> standings.json is built from that snapshot -> the public playoff and title odds are two days old -> the movement guard correctly reports UNKNOWN -> an empty column is the ONLY visible symptom. SO THIS ROW IS NOT A MODELLING ROW AND SHOULD NOT BE WORKED AS ONE. It is downstream of machine stability, and it will keep recurring until the crashes stop; the crash-forensics programme already on the shelf is its actual parent. A wrapper serialisation or backoff would make the model more SURVIVABLE on a sick box and is still worth doing, but it treats the symptom. WHAT I DID NOT ESTABLISH, stated so nobody over-reads a correlation: I have shown the crashes and the failures share a window and a plausible mechanism, NOT that a specific crash caused a specific failed run. Pair the 08-16 and 08-17 crash times against the nightly run stamps before calling it proven. || RETRACTING MY CRASH-TRIGGER CONCLUSION 2026-08-17T20:34Z. The feed alarm filed at 20:33:30Z is authoritative and contradicts me: '38 consecutive failed RUNS (threshold 1 at a 1440-min cadence) SINCE 2026-07-30T08:35:39'. So (a) the streak counts RUNS, not stages - my earlier 'the 38 is the stage count' correction was WRONG, and the exact coincidence with 38 stages is what misled me; and (b) the failures began 2026-07-30, EIGHTEEN DAYS before the 08-16 unclean reboot I named as the trigger. The crash correlation is therefore NOT the cause. Four crashes since 08-16 are real and worth their own attention, but they did not start this. THE CONTRADICTION THAT IS NOW THE MOST INTERESTING THING ON THIS ROW, and I am leaving it OPEN rather than guessing a fourth time: if the nightly model has failed every run since 2026-07-30, WHAT WROTE ON 2026-08-15T19:41Z? Either the season_sim stage writes from somewhere other than this wrapper, or some runs partially succeed and the streak counter is measuring the wrapper's overall exit rather than per-stage outcomes, or the odds table has a second writer. Resolve THAT before touching anything - it decides whether this is one broken job or two systems disagreeing. WHAT SURVIVES ALL THREE OF MY WRONG TURNS, because it was measured directly each time: actions_health exits 0 standalone and - inside the wrapper; the principal is identical to tasks that succeed; the odds table's newest write is 2026-08-15T19:41Z; and the public standings page is serving those two-day-old odds. The outage and the wrapper-not-scripts localisation stand. My timeline and my trigger do not. || THE CONTRADICTION RESOLVES INTO TWO SEPARATE FAILURES, AND I HAD BEEN CONFLATING THEM. Measured 2026-08-17T20:36Z: wrote near-DAILY right up to the end - 08-11 19:40Z, 08-13 19:43Z, 08-14 19:40Z, 08-15 19:41Z, all one family (mc1m_v7_champ_expdisc) - and then STOPPED DEAD after 2026-08-15T19:41Z. So stages WERE running and writing successfully through 08-15, while the alarm says the RUN has been failing since 07-30. Both are true, and they are different faults: (1) AN OLD PARTIAL FAILURE since 2026-07-30 - the wrapper's overall exit is failure because SOME stage fails, while season_sim (stage 30 of 38) still ran and wrote its odds daily. A run marked failed that still delivers most of its product is exactly the kind of thing that stays unfixed for eighteen days. (2) A NEW TOTAL FAILURE from ~08-16 - every stage now dies at process creation with 0xC0000142 in ~0.3s each, so season_sim no longer runs AT ALL and the odds froze. THIS one IS crash-correlated: the first unclean reboot is 08-16 10:13, immediately after the last good write. My retraction of the crash trigger was itself too broad - the trigger does not explain the 07-30 streak, but it fits the 08-15 cutover well. STATED AS A HYPOTHESIS THAT FITS ALL THE EVIDENCE, NOT A PROVEN FACT, because I have been wrong three times on this row: it explains the daily writes, the sudden stop, the 07-30 streak start, the identical-principal result and the standalone-exit-0 result together, which no single-fault story has managed. CONFIRM IT CHEAPLY: find which stage was failing BEFORE 08-16 (grep the log for non-zero exits dated 07-30 to 08-15 and see whether season_sim is among them). If season_sim is clean in that window, this is settled. || TWO-FAULT HYPOTHESIS CONFIRMED 2026-08-17T20:38Z, AND season_sim IS INNOCENT. Grepped the wrapper log for non-zero stage exits that are NOT the 0xC0000142 class: 84 of them, and they are freshness_guard 23, margin_successor_oracle 12, seed_dist 12, pbp_gap 4, actions_health 4, finals_recon 4. season_sim DOES NOT APPEAR - it was running clean the whole time, which is exactly what the daily odds writes through 08-15 already implied. So the picture is settled: an OLD partial failure marking runs failed since 07-30 while the product still shipped, and a NEW total failure from ~08-16 that stopped every stage including season_sim. AND THE LIKELY CAUSE OF THE OLD ONE IS THE FOURTH INSTANCE OF TONIGHT'S DOMINANT PATTERN: ops/scout/nightly_model_task.ps1 line 230 states that margin_successor_oracle is ORDERED TO EXIT non-zero. A stage designed to exit non-zero, counted by the wrapper as a run failure, is the same correct-refusal-reported-as-failure defect found tonight in the odds poller, the BDL guard and the worktree reaper. If the wrapper's overall exit is the max of its stage exits, one deliberately-non-zero stage marks every run failed forever - which is exactly what an 18-day unbroken streak that never stopped delivering product looks like. NOT PROVEN, and the check is cheap: read how the wrapper computes its overall exit, and confirm whether margin_successor_oracle's ordered exit is excluded. If it is not, THAT is the 07-30 streak, and the fix is the same disposition pattern already applied twice tonight. PRIORITY NOTE FOR WHOEVER TAKES IT: the two faults want different owners. The NEW one is machine stability and is the urgent half - it is why the CEO's odds are stale. The OLD one is an accounting defect in the wrapper's exit logic and is not urgent, but it is why nobody noticed the new one for two days: a job that has cried failure since 07-30 cannot raise an alarm anyone still believes. || MY margin_successor_oracle THEORY IS ALREADY-FIXED WORK, AND THE RECORD BEAT ME TO IT BY NINE DAYS. ops/scout/nightly_model_task.ps1 lines 228-237 document precisely what I proposed: the old rollup was `if ($rc -ne 0) { $lastExit = $rc }`, every stage ORed into one exit, which was correct until margin_successor_oracle joined on 20260807 - that stage is ORDERED to exit non-zero, so the task exit became PINNED TO 1 FOREVER and the red_streak became STRUCTURALLY UNCLEARABLE. The file's own words: 'An alarm that can never clear is a disabled alarm - it is how the next real failure gets skimmed past.' That is my conclusion verbatim, written 2026-08-08, and the ROLLUP FIX IS ALREADY LANDED with tests at tests/test_nightly_rollup.ps1: the rollup now declines to let a declared-ordered stop own the task outcome, while any other non-zero stage still pages. SO THE REMAINING QUESTION IS SHARPER AND IS THE ONE THING I HAVE NOT ANSWERED: if the rollup was fixed on 08-08, WHY does tonight's alarm still report a streak running since 2026-07-30? Either the streak counter was never reset after the fix and has been carrying a stale origin for nine days, or it reads something other than the task exit the rollup now computes. Both are cheap to check and one of them is a live defect in the alarm rather than in the model. THIS IS MY FIFTH RETRACTION ON THIS ROW AND THE PATTERN IS WORTH THE NEXT SEAT'S ATTENTION MORE THAN ANY OF MY THEORIES WERE: every time I reasoned from a number to a cause, the repo already held the answer one grep away - the two id spaces were documented as deliberate, the tier vocabulary already existed, the delta builder was already written and correct, and the unclearable-alarm insight was already recorded with its fix. SEARCH THE RECORD BEFORE BUILDING THE THEORY. || LAST QUESTION CLOSED 2026-08-17T20:41Z - THERE IS NO ALARM DEFECT, THE STREAK IS HONEST. The rollup IS wired: nightly_model_task.ps1 line 238 sources nightly_rollup.ps1, 246 calls Get-NightlyRollup, and 262 confirms exit_code stays the rollup's. It declines to let a DECLARED-ORDERED stop own the outcome - but freshness_guard (23 failures), seed_dist (12), pbp_gap and finals_recon are NOT ordered stops, so the rollup correctly marks those runs failed, and 38 stages dying on a DLL error is plainly not an ordered stop either. SO THE 07-30 STREAK IS LEGITIMATE AND UNBROKEN FOR THREE OVERLAPPING REASONS IN SEQUENCE: the ordered-exit pin before 08-08, then genuine stage failures (freshness_guard and seed_dist dominate), then total process-creation failure from ~08-16. Different causes, one continuous red. Nothing needs resetting and the counter is not lying - I had assumed a stale origin and the assumption was wrong, which is the sixth thing on this row I have had to withdraw. WHAT THIS MEANS FOR PRIORITY, and it is the practical conclusion of the whole investigation: the alarm was correct for eighteen days and the product still shipped for most of them, because season_sim was among the stages that kept succeeding. So the failure that MATTERS is not the streak, it is the CHANGE OF CHARACTER on 08-16 - from 'some stages fail, product ships' to 'nothing starts, product freezes'. An alarm that reports both states identically cannot show that transition, and that is the real gap: not a broken counter, but a binary red where the interesting signal was the SHAPE of the failure changing. THE ROW IS NOW FULLY INVESTIGATED. Remaining work is engineering, not diagnosis: fix the process-creation failures (machine stability first, wrapper resilience second), and consider whether the nightly alarm should distinguish partial failure from total failure. || LAUNCH COST IS DOUBLE WHAT I RECORDED - 76 PROCESS CREATIONS, NOT 38. nightly_model_task.ps1 line 242: each stage spawns a FRESH POWERSHELL (`& $ps -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $Dispatch -Job $stage`), and that dispatch script then launches PYTHON. So every stage costs TWO process creations, and a full run makes 76 of them back to back. WHY THIS MATTERS FOR THE FIX: 0xC0000142 is a process-CREATION failure, so the relevant load is the creation count, and I had it at half. It also explains the timing - six stages failing inside two seconds is twelve process creations in two seconds, which is a burst rather than a trickle. Any serialisation or backoff must throttle the PowerShell layer too, not just the Python one; adding a delay between stages while each stage still double-spawns would only halve the burst. CHEAPEST STRUCTURAL FIX TO EVALUATE FIRST: whether the dispatch layer can run stages in ONE PowerShell rather than one per stage. That removes 38 of the 76 creations without touching any stage script, and the stage scripts are already proven innocent. || CORRECTING MY OWN FIX RECOMMENDATION - THE 'CHEAPEST' OPTION IS THE RISKIEST, DO NOT START THERE. I suggested collapsing the 38 per-stage PowerShell spawns into one invocation. Checked: ops/local_runner/dispatch.ps1 takes a SINGLE [string]$Job (line 18), does one $Jobs[$Job] lookup, and writes one per-job log file. It has no multi-job mode, so that change means altering the signature and the logging of SHARED INFRASTRUCTURE - dispatch.ps1 is the runner for every scheduled task on this box, including board_selfpolice, the odds poller and freshness. A regression there takes out the whole crew, not one job. THE SAFER FIX IS THE OPPOSITE DIRECTION: put the throttle in nightly_model_task.ps1's own stage loop - a short sleep and/or a retry-on-0xC0000142 between stages. That is confined to ONE task, touches no shared code, needs no signature change, and directly addresses the burst (12 process creations in 2 seconds is what the log shows). If it works, the dispatcher never has to change. GENERAL POINT WORTH MORE THAN THIS ROW: 'remove the redundant layer' sounds cheaper than 'add a delay', and here it is the reverse, because one is shared and one is local. Size a fix by its BLAST RADIUS, not by how elegant it reads.",
+      "status": "needs-verify",
       "state": "",
-      "row_state": "open",
+      "row_state": "needs-verify",
       "row_closed": false,
       "pm_authored": false,
-      "event_utc": null,
+      "event_utc": "2026-08-18T01:53:16Z",
       "impact": "",
       "rank_priority": -4.0,
       "title": "The season sim last ran 08-15, so the served playoff and title odds are two days old",
       "unlocks": "The sim is 3.16 older because the snapshot is taken that same run moments after it.",
       "owner": "DIRECTOR",
-      "feed_status": "QUEUED",
+      "feed_status": "LANDED",
       "tier": 1,
       "group": "",
       "ceo_ask": false,
@@ -16984,18 +16984,18 @@
       "why": "Simulate each team's title odds",
       "priority": -2.99,
       "seat": "viz",
-      "status": "ready",
-      "state": "ready now",
-      "row_state": "open",
+      "status": "needs-verify",
+      "state": "",
+      "row_state": "needs-verify",
       "row_closed": false,
       "pm_authored": false,
-      "event_utc": null,
+      "event_utc": "2026-08-18T02:05:27Z",
       "impact": "",
       "rank_priority": -2.99,
       "title": "Players board: tiers have shipped, three of the four additions remain",
       "unlocks": "Do not build it again plain-language tiers ARE shipped.",
       "owner": "DIRECTOR",
-      "feed_status": "QUEUED",
+      "feed_status": "LANDED",
       "tier": 2,
       "group": "",
       "ceo_ask": false,
@@ -17032,18 +17032,18 @@
       "why": "Simulate each team's title odds",
       "priority": -2.99,
       "seat": "viz",
-      "status": "ready || PREMISE RE-CONFIRMED ON THE PAGE 2026-08-17T19:45Z, so the next seat can start building rather than re-measuring. Grepped site/standings.html: ZERO hits for any tier or grouping vocabulary (tier, contender, chasing, eliminated, in the hunt); ZERO hits for movement on playoff odds or projected wins; exactly ONE movement construct, which is the title-odds one this row already records as live. All three remaining items therefore stand exactly as written and none has quietly landed since 2026-08-13. NOT STARTED - this is a three-part viz build and the seat that verified it was at 74 percent of its context gate; beginning it would have hit the gate mid-build, which is the failure the gate exists to prevent. It is a clean pickup: the premise is verified, the page is the only file involved, and the title-odds movement span is the working pattern to copy for the other two columns. || CORRECTION 2026-08-17T19:47Z - THE ROW IS WRONG IN THE OPTIMISTIC DIRECTION AND THE PAGE SHOWS NO MOVEMENT AT ALL. The row credits title-odds movement as present and live-verified. Measured: site/standings.html line 459 reads r.title_delta, and NO ROW IN THE FEED HAS THAT FIELD - confirmed on disk AND on the live served standings.json, 0 of 15 teams. The guard is 'if r.title_delta != null', so the map it builds is always empty and the movement span NEVER RENDERS. It is code that cannot fire, which reads exactly like a working feature to anyone who greps for it - which is how it came to be recorded as live. SECOND HALF OF THE SAME MISMATCH: the feed DOES declare p_playoff_delta_1d and p_playoff_prev_day, and both are NULL in all 15 rows on disk and live - a declared field the builder never populates, which nothing reads anyway. So the two halves miss each other: the page wants a field the feed does not produce, and the feed declares fields the page does not read. SO THE ROW IS THREE-FOR-THREE, NOT TWO: named tiers (0 vocabulary hits), a mover lede, AND movement - all three outstanding, with movement being worse than recorded because it looks done. THE FIX IS A WIRE PLUS A BUILDER CHANGE: point the page at the field the feed actually carries, and make the builder populate it - the accuracy panel took exactly this shape tonight and ops/accuracy_movement.py is the working pattern, including its two rules that a zero movement is not a movement and a missing prior is not a zero. NOT BUILT: the seat that found it was at 75 percent of its context gate. || RETRACTION 2026-08-17T19:50Z - MY 19:47Z CORRECTION ABOVE IS WRONG AND IS WITHDRAWN. I claimed the title-odds movement was 'code that cannot fire' because standings.html reads r.title_delta and no row in standings.json has that field. THE BLOCK DOES NOT READ standings.json - it fetches teams.json, and teams.json carries title_delta POPULATED IN ALL 15 ROWS on disk and live (MIN -0.1, GSV -0.0, IND +0.18, ATL -0.09). The movement renders. The row was RIGHT that title-odds movement is present and live-verified, and I measured the wrong file. This is the standing lesson in this repo verbatim - suspect the call, not the code; a surprising result is usually the wrong shape, scope or PLACE - and I hit it inside a correction I had already committed and pushed. WHAT SURVIVES, stated narrowly and only for the file I actually measured: standings.json declares p_playoff_delta_1d and p_playoff_prev_day and both are NULL in all 15 rows on disk and live. I make no claim here about which file the playoff-odds column would read or whether that is the same defect, because that is precisely the assumption that just cost me. THE ROW STANDS AS ORIGINALLY WRITTEN: named tiers and a mover lede outstanding (0 vocabulary hits confirmed), movement half done with title live, and whoever takes it should verify the playoff and wins columns against THEIR OWN source file before writing anything. || MOVER-LEDE INPUT MEASURED LIVE 2026-08-17T19:51Z so the lede does not need re-deriving. From the live teams.json, biggest title-odds moves: IND +0.18, NYL +0.17, DAL -0.17, MIN -0.10, ATL -0.09; SIX of fifteen teams have a move of at least 0.005 and the other nine are effectively flat, which means the lede has a real subject on this data and should say WHO and BY HOW MUCH rather than describing the table. CROSS-FILE WARNING, AND IT IS THE ONE THAT JUST COST ME AN HOUR: the DELTA lives in teams.json (title_delta, populated 15 of 15) while the LEVEL lives in standings.json (p_title) - teams.json carries p_title as null. A lede naming both a team and its current title odds therefore reads TWO files, and assuming either one holds both is exactly the mistake that produced the retracted finding above. Verify which file feeds each number before writing the sentence. || ONE OF THREE SHIPPED 2026-08-17T19:55Z: the MOVER LEDE is in site/standings.html, naming a team and a magnitude, reading TMOVE (teams.json title_delta) with a 0.01 floor so rounding noise cannot be promoted to a leader, and absent entirely when nothing moved. It quotes the MOVE alone and deliberately does not pair it with a current title number, because the delta and the level live in different files - the trap that produced the retraction above, applied as a design constraint this time. STILL OWED, both needing more than a page edit: NAMED TIERS, which needs a product judgement on what the groups are and where the cut lines fall (0 vocabulary hits today, and the teams board is the model to copy); and the TWO MOVEMENT COLUMNS, which need a BUILDER change first because standings.json declares p_playoff_delta_1d and p_playoff_prev_day and both are null in all 15 rows - the column cannot render what the feed never fills. ops/accuracy_movement.py is tonight's working pattern for exactly that shape, including its two rules that a zero movement is not a movement and a missing prior is not a zero. Needs live-verify on the served page after the next SCHEDULED bake; do not force build_site, it is all-or-nothing. || THE TIERS ARE NOT A PRODUCT JUDGEMENT - THEY ARE A PORT. Measured 2026-08-17T19:58Z: site/teams.html line 421 already ships a complete TIERS vocabulary, each entry carrying a slug, a NAME and a DEFINITION, which is exactly the 'named groups with a definition and a count' this row asks for: contender / 'Title contenders' / 'a real shot at the championship'; mix / 'In the mix' / 'playoff-bound, but longer title odds'; bubble / 'On the bubble' / 'fighting for a playoff spot'; string / 'Playing out the string' / 'out of the playoff race'. That is shipped, CEO-visible language on a sibling board, so porting it to standings keeps the two surfaces speaking the same words - inventing a second tier vocabulary would be the parallel-infra defect. WHAT THE NEXT SEAT STILL NEEDS: the ASSIGNMENT thresholds, i.e. where teams.html decides which team lands in which tier - grep TIERS in that file for the call site. So this part is now copy-the-vocabulary plus read-one-threshold-block, not a judgement call. That leaves the movement columns as the only genuine build on this row, and those need the BUILDER to populate p_playoff_delta_1d first. || TIER PORT IS FULLY SPECIFIED NOW, INCLUDING THE TRAP THAT WOULD HAVE BROKEN IT SILENTLY. The port is teams.html tierOf() at line 414 plus TIERS at 421 plus the grouping block at 641 - six lines of thresholds, a four-entry array, and a header row carrying label + meaning + COUNT, which is exactly the 'named groups with a definition and a count' this row asks for. THE SCALES DIFFER BETWEEN THE TWO FEEDS AND A DIRECT PORT SILENTLY MISCLASSIFIES EVERY TEAM. teams.json carries title_pct=17.0 and playoff_pct=100.0 (percentages) while standings.json carries p_title=0.1696 and p_playoff=1.0 (fractions) - MIN is the same team in both, 17.0 against 0.1696. tierOf() tests t>=10, p>=85, p>=15, so run unconverted against standings.json every comparison is false and the WHOLE LEAGUE lands in 'Playing out the string' - four tier headers that render perfectly and mean nothing, which is the same shape as the rest of tonight's defects. SO THE PORT IS: copy tierOf/TIERS/grouping, map title_pct->p_title*100 and playoff_pct->p_playoff*100, and assert on a known team before shipping - MIN must land in 'contender' at 17 percent title odds, not in 'string'. Verify against a real row, never against the code reading correctly. || CORRECTING MYSELF AGAIN: 'the tiers are a PORT, not a judgement' is only HALF right, and the half I got wrong is the one that decides the design. The VOCABULARY ports cleanly - tierOf, TIERS, the header row with label/meaning/count. WHERE IT GOES DOES NOT. teams.html can GROUP rows into tiers because it sorts by strength; standings.html is in STANDINGS ORDER by definition, and it draws a playoff cut-line at row 8 which it guards deliberately - the code only renders that line when unsorted and unfiltered, its comment saying that under any other sort the 8th row is just the 8th row and a cut there would be a fact the page does not hold. GROUPING BY TIER REORDERS THE TABLE, which destroys standings order AND invalidates the cut line - so the teams.html pattern cannot be copied wholesale onto this page. THE REAL CHOICE, and it is a product judgement not a wiring one: (a) tier LABEL as a per-row badge, preserving standings order and the cut line; (b) tier GROUPING like teams.html, which means accepting the page is no longer a standings table; (c) tiers only when a non-standings sort is already active, since the cut line is suppressed then anyway. My read is (a) or (c) - (b) trades away the page's reason to exist - but it is the CEO's or Director's call, not mine. THE SCALE CONVERSION AND ACCEPTANCE TEST FROM THE NOTE ABOVE STILL APPLY whichever is chosen: p_title and p_playoff are FRACTIONS here and percentages on teams.html, and MIN must land in contender at 17 percent. || THE MOVEMENT COLUMNS ARE A WIRE, NOT A BUILD - measured 2026-08-17T20:15Z. I had recorded them as needing a builder change because standings.json declares p_playoff_delta_1d and p_playoff_prev_day and leaves both null. The HISTORY TO DIFFERENCE AGAINST ALREADY EXISTS: holds 1,410 rows carrying p_make_playoffs and p_champion per team across 94 DISTINCT built_at snapshots from 2026-06-02 onward. So the builder does not need a new store, it needs a join - the same shape as the accuracy panel wired tonight, and ops/accuracy_movement.py is the working pattern including its two rules that a zero movement is not a movement and a missing prior is not a zero. ONE CAVEAT TO CHECK FIRST: that table's newest built_at is 2026-08-15 while standings.json is current, so confirm whether the sim writes it on every run or only on some - differencing against a two-day-old 'prior' is fine, differencing against a STALE CURRENT is not, and the two look identical until you check. THE ROW IS NOW FULLY SPECIFIED: (1) mover lede SHIPPED; (2) tiers = vocabulary port from teams.html + a fractions-to-percent conversion + a PRODUCT JUDGEMENT on placement, because grouping reorders a standings table and kills its cut line; (3) movement = a wire from using the accuracy_movement pattern. Nothing left on it is undiscovered - it needs a seat with capacity and one product answer. || CAVEAT RESOLVED - THE WIRE IS SAFE AND THE SOURCES ARE THE SAME SOURCE. I flagged that 's newest snapshot is 2026-08-15 while standings.json is current, and warned that differencing against a stale CURRENT would be invisible. Measured: MIN reads p_make_playoffs=1.0 and p_champion=0.169603 in that table's newest snapshot, and p_playoff=1.0 and p_title=0.1696 in standings.json. THEY MATCH EXACTLY, so standings.json is BUILT FROM that snapshot - the page IS the 08-15 read, not a fresher one disagreeing with it. That makes differencing WITHIN the odds table exactly right: newest against a prior built_at, joined to the standings rows on team_abbr, and the delta will align with the level the page already shows. It also explains the null columns - the levels come from this source already, nobody wrote the join. Snapshot cadence is roughly daily (08-11,12,13,14,15) so a 1-day delta is available. THE WIRE IS UNBLOCKED AND FULLY SPECIFIED: difference newest vs prior, fill p_playoff_delta_1d and p_playoff_prev_day, render with the accuracy_movement rules - a zero movement is not a movement, a missing prior is not a zero - and colour by better/worse rather than by sign.",
-      "state": "ready now",
-      "row_state": "open",
+      "status": "needs-verify",
+      "state": "",
+      "row_state": "needs-verify",
       "row_closed": false,
       "pm_authored": false,
-      "event_utc": null,
+      "event_utc": "2026-08-18T02:00:47Z",
       "impact": "",
       "rank_priority": -2.99,
       "title": "Standings meets five of seven house properties; three gaps remain and one is already ...",
       "unlocks": "Present and live-verified since that row was written the filter box and sortable columns carried in the page's own ...",
       "owner": "MACHINE",
-      "feed_status": "QUEUED",
+      "feed_status": "LANDED",
       "tier": 2,
       "group": "",
       "ceo_ask": false,
@@ -22368,9 +22368,9 @@
     "target": 40,
     "count": 449,
     "ok": true,
-    "label": "449 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 5h ago.)",
-    "as_of_utc": "2026-08-17T19:42:00Z",
-    "age_secs": 21436,
+    "label": "449 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 5m ago.)",
+    "as_of_utc": "2026-08-18T02:05:27Z",
+    "age_secs": 316,
     "stale": false
    },
    "source": "dispatch queue",
@@ -23026,66 +23026,66 @@
  "scout_heartbeat": {
   "alive": false,
   "last_poll_utc": "2026-08-17T22:58:52Z",
-  "age_s": 9583,
+  "age_s": 11462,
   "cycles": 17,
   "known": true,
-  "label": "scout: no poll for 9583s",
+  "label": "scout: no poll for 11462s",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "9:29pm",
-   "text": "chain-health: CHAIN DOWN (#20): broken=drive,board paged=True",
-   "detail": "chain-health: CHAIN DOWN (#20): broken=drive,board paged=True"
-  },
-  {
-   "time": "9:29pm",
+   "time": "10:03pm",
    "text": "slate-refresh: slate ok (today populated",
    "detail": "slate-refresh: slate ok (today populated)"
   },
   {
-   "time": "9:30pm",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 2147s old (live 2026-08-18T00:54:27+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 1260s newer than live (repo 2026-08-18T01:15:27+00:00 vs live 2026-08-18T00:54:27+00:00",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 2147s old (live 2026-08-18T00:54:27+00:00; ac"
+   "time": "10:03pm",
+   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1522s old (live 2026-08-18T01:38:28+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 1019s newer than live (repo 2026-08-18T01:55:27+00:00 vs live 2026-08-18T01:38:28+00:00) -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1522s old (live 2026-08-18T01:38:28+00:00; active ceiling 900s) | DEPLOY-LAG: re"
   },
   {
-   "time": "9:30pm",
-   "text": "board-selfpolice: board-stale alert already open (BOARD STALE ALERT .md) -- refreshing in place (restated 4 times) rather than filing a duplicate",
-   "detail": "board-selfpolice: board-stale alert already open (BOARD_STALE_ALERT_.md) -- refreshing in place (restated 4 times) rather than filing a dupl"
+   "time": "10:04pm",
+   "text": "coordinator alive: the lock's session pid 3732 is ALIVE but runs in Windows session 0 while an interactive desktop IS present, so it can never have a window. Under the VISIBILITY LAW it does not hold the seat -> reporting NO live coordinator so the legal visible spawner can replace it. (This is the double-spawn class: the spawn gate used to read HELD here while the claim gate read FREE.",
+   "detail": "coordinator_alive: the lock's session_pid 3732 is ALIVE but runs in Windows session 0 while an interactive desktop IS present, so it can nev"
   },
   {
-   "time": "9:36pm",
-   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 2502s old (live 2026-08-18T00:54:27+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 1260s newer than live (repo 2026-08-18T01:15:27+00:00 vs live 2026-08-18T00:54:27+00:00) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 2502s old (live 2026-08-18T00:54:27+00:00; active ceiling 900s) | DEPLOY-LAG: re"
+   "time": "10:05pm",
+   "text": "publish-health: PUBLIC BOARD STALE (#4): staleness=1616s threshold=900s live=2026-08-18T01:38:28+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 1019s newer than live",
+   "detail": "publish-health: PUBLIC BOARD STALE (#4): staleness=1616s threshold=900s live=2026-08-18T01:38:28+00:00 | deploy stuck (guard/push failure): "
   },
   {
-   "time": "9:37pm",
-   "text": "divergence alarm: clean (build code matches the shared branch",
-   "detail": "divergence_alarm: clean (build code matches the shared branch)"
+   "time": "10:05pm",
+   "text": "publish-health: auto-reconcile fired: {'ok': None, 'action': 'baked', 'outcome': 'deferred', 'published': False, 'note': 'the heavy-job admission gate deferred this bake (rc=75, EX TEMPFAIL): the box was busy, NO push was attempted, and the next scheduled tick publishes · the previous pass (pid 6940) died mid-flight in phase push without recording an outcome'}",
+   "detail": "publish-health: auto-reconcile fired: {'ok': None, 'action': 'baked', 'outcome': 'deferred', 'published': False, 'note': 'the heavy-job admi"
   },
   {
-   "time": "9:37pm",
-   "text": "publish-health: PUBLIC BOARD STALE (#4): staleness=2607s threshold=900s live=2026-08-18T00:54:27+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 1260s newer than live",
-   "detail": "publish-health: PUBLIC BOARD STALE (#4): staleness=2607s threshold=900s live=2026-08-18T00:54:27+00:00 | deploy stuck (guard/push failure): "
+   "time": "10:05pm",
+   "text": "publish-health: publish drift reconcile DEFERRED (no push was attempted: the heavy-job admission gate deferred this bake (rc=75, EX TEMPFAIL): the box was busy, NO push was attempted, and the next scheduled tick publishes · the previous pass (pid 6940) died mid-flight in phase push without recording an outcome) — no remediation claimed, no failure declared; will re-attempt",
+   "detail": "publish-health: publish drift reconcile DEFERRED (no push was attempted: the heavy-job admission gate deferred this bake (rc=75, EX_TEMPFAIL"
   },
   {
-   "time": "9:38pm",
-   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 2627s old (live 2026-08-18T00:54:27+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 1260s newer than live (repo 2026-08-18T01:15:27+00:00 vs live 2026-08-18T00:54:27+00:00) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 2627s old (live 2026-08-18T00:54:27+00:00; active ceiling 900s) | DEPLOY-LAG: re"
+   "time": "10:05pm",
+   "text": "publish-health: REPEAT-RAISE ESCALATION: raise #4 of this episode (first raised 2026-08-18T01:11:); 3 automatic republish attempts were all DEFERRED (another runner held the bake lock, or the publish guard held the push) — nothing here has attempted a push",
+   "detail": "publish-health: REPEAT-RAISE ESCALATION: raise #4 of this episode (first raised 2026-08-18T01:11:31Z); 3 automatic republish attempts were a"
   },
   {
-   "time": "9:38pm",
-   "text": "chain-health: CHAIN DOWN (#21): broken=drive,board paged=True",
-   "detail": "chain-health: CHAIN DOWN (#21): broken=drive,board paged=True"
+   "time": "10:05pm",
+   "text": "REAP-STRAGGLER: released session pid 9712 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confirmed dead); taskkill rc=0 SUCCESS: The process with PID 10444 (child process of PID 9712) has been termina [Part 2 hard-exit backstop]",
+   "detail": "REAP-STRAGGLER: released session_pid 9712 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confirm"
   },
   {
-   "time": "9:39pm",
-   "text": "slate-refresh: slate ok (today populated",
-   "detail": "slate-refresh: slate ok (today populated)"
+   "time": "10:09pm",
+   "text": "board-selfpolice: auto-repair rc=2 (publish gate abort) :: push failed: CalledProcessError: Command '['git', '-C', 'C:\\\\Users\\\\antho\\\\hardwood-site', 'add', '-A']' returned non-zero exit status .",
+   "detail": "board-selfpolice: auto-repair rc=2 (publish gate abort) :: push failed: CalledProcessError: Command '['git', '-C', 'C:\\\\Users\\\\antho\\\\hardwo"
+  },
+  {
+   "time": "10:10pm",
+   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1924s old (live 2026-08-18T01:38:28+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 1534s newer than live (repo 2026-08-18T02:04:02+00:00 vs live 2026-08-18T01:38:28+00:00",
+   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1924s old (live 2026-08-18T01:38:28+00:00; ac"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-18T01:38:35Z",
+  "as_of": "2026-08-18T02:09:30.239355+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -23094,48 +23094,48 @@
     "does": "watches for your instructions",
     "active": false,
     "stale": true,
-    "age_label": "2h",
-    "state_text": "quiet · last seen 2h ago"
+    "age_label": "3h",
+    "state_text": "quiet · last seen 3h ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "33s",
-    "state_text": "on · seen 33s ago"
+    "age_label": "24s",
+    "state_text": "on · seen 24s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
-    "active": false,
-    "stale": true,
-    "age_label": "17m",
-    "state_text": "quiet · last seen 17m ago"
+    "active": true,
+    "stale": false,
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "0s",
-    "state_text": "on · seen 0s ago"
+    "age_label": "80s",
+    "state_text": "on · seen 80s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "9m",
-    "state_text": "on · seen 9m ago"
+    "age_label": "6m",
+    "state_text": "on · seen 6m ago"
    },
    {
     "name": "Q board",
     "does": "keeps your live queue board current",
     "active": true,
     "stale": false,
-    "age_label": "17m",
-    "state_text": "on · seen 17m ago"
+    "age_label": "18m",
+    "state_text": "on · seen 18m ago"
    }
   ],
   "width": {
@@ -23364,24 +23364,24 @@
   "known": true,
   "alive": false,
   "last_heartbeat_utc": "2026-08-17T21:57:25Z",
-  "session_age_secs": 13606,
-  "last_progress_age_secs": 13270,
-  "last_spawn_attempt": "2026-08-18T01:32:16Z",
-  "blocked_reason": "no coordinator seated and nothing is holding a start — a start is due now",
+  "session_age_secs": 15485,
+  "last_progress_age_secs": 15149,
+  "last_spawn_attempt": "2026-08-18T02:09:03Z",
+  "blocked_reason": "no start attempt yet — rate floor holds the next one for up to 248s (one attempt guaranteed every 300s while the chair is empty)",
   "state": "DEAD"
  },
  "pipe_health": {
-  "directives_pending": 0,
-  "last_processed_clock": "9:37pm",
-  "last_processed_iso": "2026-08-18T01:37:19Z",
+  "directives_pending": 1,
+  "last_processed_clock": "9:45pm",
+  "last_processed_iso": "2026-08-18T01:45:35Z",
   "last_processed_known": true,
-  "last_processed_display": "9:37pm",
-  "last_processed_source": "directive_ledger.done",
-  "newest_directive_clock": "",
-  "newest_directive_iso": null,
+  "last_processed_display": "9:45pm",
+  "last_processed_source": "inbox/processed archive mtime",
+  "newest_directive_clock": "10:04pm",
+  "newest_directive_iso": "2026-08-18T02:04:20Z",
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-08-18T01:37:19Z",
+  "as_of": "2026-08-18T02:04:20Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -23397,7 +23397,7 @@
    "source": "live lane ledger",
    "as_of": "2026-08-17T23:12:29Z",
    "stale": true,
-   "revalidated": "2026-08-18T01:38:28+00:00",
+   "revalidated": "2026-08-18T02:09:49+00:00",
    "stale_reason": "These readings may be out of date — last updated 2h ago.",
    "age_label": "2h",
    "stale_after": 1200
@@ -23406,84 +23406,84 @@
    "source": "work record",
    "as_of": "2026-08-17T23:11:29Z",
    "stale": false,
-   "revalidated": "2026-08-18T01:38:28+00:00",
+   "revalidated": "2026-08-18T02:09:49+00:00",
    "stale_reason": "",
    "age_label": "2h",
    "stale_after": 43200
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-18T01:15:27+00:00",
+   "as_of": "2026-08-18T02:04:02+00:00",
    "stale": false,
-   "revalidated": "2026-08-18T01:38:28+00:00",
+   "revalidated": "2026-08-18T02:09:49+00:00",
    "stale_reason": "",
-   "age_label": "23m",
+   "age_label": "5m",
    "stale_after": 3600
   },
   "needs_anthony": {
    "source": "decision brief",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-18T01:38:28+00:00",
+   "revalidated": "2026-08-18T02:09:49+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-18T01:36:51Z",
+   "as_of": "2026-08-18T02:05:27Z",
    "stale": false,
-   "revalidated": "2026-08-18T01:38:28+00:00",
+   "revalidated": "2026-08-18T02:09:49+00:00",
    "stale_reason": "",
-   "age_label": "1m",
+   "age_label": "4m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-18T01:38:28+00:00",
+   "revalidated": "2026-08-18T02:09:49+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-08-18T01:37:19Z",
+   "as_of": "2026-08-18T02:04:20Z",
    "stale": false,
-   "revalidated": "2026-08-18T01:38:28+00:00",
+   "revalidated": "2026-08-18T02:09:49+00:00",
    "stale_reason": "",
-   "age_label": "69s",
+   "age_label": "5m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-17T10:50:00-04:00",
    "stale": false,
-   "revalidated": "2026-08-18T01:38:28+00:00",
+   "revalidated": "2026-08-18T02:09:49+00:00",
    "stale_reason": "",
-   "age_label": "10h",
+   "age_label": "11h",
    "stale_after": 172800,
    "quiet": false
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-18T01:15:27+00:00",
+   "as_of": "2026-08-18T02:04:02+00:00",
    "stale": false,
-   "revalidated": "2026-08-18T01:38:28+00:00",
+   "revalidated": "2026-08-18T02:09:49+00:00",
    "stale_reason": "",
-   "age_label": "23m",
+   "age_label": "5m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-18T01:38:35Z",
+   "as_of": "2026-08-18T02:09:30.239355+00:00",
    "stale": false,
-   "revalidated": "2026-08-18T01:38:28+00:00",
+   "revalidated": "2026-08-18T02:09:49+00:00",
    "stale_reason": "",
-   "age_label": "0s",
+   "age_label": "24s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 17, 9:38pm ET"
+ "generated_et": "Aug 17, 10:09pm ET"
 }
