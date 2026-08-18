@@ -602,7 +602,10 @@
         th.setAttribute("role","button");
         th.setAttribute("tabindex","0");
         th.setAttribute("aria-label","Sort by "+h);
-        if(sortKey===h) th.appendChild(el("span","arrow", sortDesc?" ▼":" ▲"));
+        if(sortKey===h){
+          th.setAttribute("aria-sort",sortDesc?"descending":"ascending");
+          th.appendChild(el("span","arrow", sortDesc?" ▼":" ▲"));
+        }
         var pick=function(){
           // Re-clicking the active column flips it; a new column starts in the direction that
           // answers the obvious first question for that kind of value.
