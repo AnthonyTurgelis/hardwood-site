@@ -1,0 +1,179 @@
+{
+  "slug": "rest",
+  "generated_utc": "2026-08-18T18:59:00Z",
+  "generated_et": "Aug 18, 2:59pm ET",
+  "question": "How much does a back-to-back cost a WNBA team, and do stars get load-managed on the second night?",
+  "source_tables": [
+    "game results (schedule + final scores)",
+    "player box scores"
+  ],
+  "script": "scripts/analysis_rest_b2b.py",
+  "generated_at": "2026-08-18T18:59:00Z",
+  "n_played_games": 2792,
+  "n_teamgames_with_rest": 5436,
+  "definitions": {
+    "b2b": "0 days off \u2014 a team playing the very next calendar day (derived rest = 1 day between games).",
+    "rest": "days between a team's consecutive games in a season, derived from the game schedule (authoritative).",
+    "note": "the stored per-game rest column is intentionally NOT used: 2023-26 only + internally inconsistent (backfill artifact). Rest is recomputed from the schedule."
+  },
+  "headline": {
+    "b2b_avg_margin": -1.323,
+    "b2b_winpct": 0.4656,
+    "b2b_n": 189,
+    "rested_ref_avg_margin": 0.057,
+    "rested_ref_winpct": 0.5016,
+    "raw_cost_points": -1.38,
+    "raw_cost_winpct": -0.036,
+    "court_adjusted_cost_points": -0.765,
+    "court_adjusted_cost_winpct": -0.0209,
+    "b2b_share_road": 0.619,
+    "one_liner": "A back-to-back costs a WNBA team about 0.8 points and 2 percentage points of win probability once you adjust for the fact that b2b teams are usually the road team \u2014 a real but modest edge."
+  },
+  "index_row": {
+    "slug": "rest",
+    "title": "Rest & back-to-back effects",
+    "question": "How much does a rest edge / a B2B cost?",
+    "source_json": "deepdive_rest.json",
+    "source_table": "game results + box scores",
+    "n": 2792
+  },
+  "rest_buckets": [
+    {
+      "bucket": "0_days_off_b2b",
+      "n": 189,
+      "avg_margin": -1.323,
+      "winpct": 0.4656
+    },
+    {
+      "bucket": "1_day_off",
+      "n": 2612,
+      "avg_margin": -0.237,
+      "winpct": 0.4923
+    },
+    {
+      "bucket": "2_days_off",
+      "n": 1376,
+      "avg_margin": 0.321,
+      "winpct": 0.5065
+    },
+    {
+      "bucket": "3plus_days_off",
+      "n": 1259,
+      "avg_margin": 0.377,
+      "winpct": 0.5155
+    }
+  ],
+  "b2b_by_court": [
+    {
+      "court": "away",
+      "is_b2b": false,
+      "n": 2602,
+      "avg_margin": -2.112,
+      "winpct": 0.4412
+    },
+    {
+      "court": "away",
+      "is_b2b": true,
+      "n": 117,
+      "avg_margin": -3.231,
+      "winpct": 0.4188
+    },
+    {
+      "court": "home",
+      "is_b2b": false,
+      "n": 2645,
+      "avg_margin": 2.19,
+      "winpct": 0.5611
+    },
+    {
+      "court": "home",
+      "is_b2b": true,
+      "n": 72,
+      "avg_margin": 1.778,
+      "winpct": 0.5417
+    }
+  ],
+  "rest_differential": [
+    {
+      "restdiff": -3,
+      "n": 107,
+      "home_margin": 3.019,
+      "home_winpct": 0.5888
+    },
+    {
+      "restdiff": -2,
+      "n": 143,
+      "home_margin": 2.329,
+      "home_winpct": 0.5594
+    },
+    {
+      "restdiff": -1,
+      "n": 334,
+      "home_margin": 0.886,
+      "home_winpct": 0.5299
+    },
+    {
+      "restdiff": 0,
+      "n": 1299,
+      "home_margin": 2.111,
+      "home_winpct": 0.5543
+    },
+    {
+      "restdiff": 1,
+      "n": 425,
+      "home_margin": 2.496,
+      "home_winpct": 0.5812
+    },
+    {
+      "restdiff": 2,
+      "n": 221,
+      "home_margin": 3.701,
+      "home_winpct": 0.6063
+    },
+    {
+      "restdiff": 3,
+      "n": 185,
+      "home_margin": 1.708,
+      "home_winpct": 0.5351
+    }
+  ],
+  "player_fatigue": {
+    "all_players": {
+      "rested": {
+        "n": 46818,
+        "avg_min": 20.8,
+        "avg_pts": 8.447,
+        "ts_pct": 0.5369
+      },
+      "b2b": {
+        "n": 1801,
+        "avg_min": 20.933,
+        "avg_pts": 8.53,
+        "ts_pct": 0.5394
+      }
+    },
+    "stars": {
+      "rested": {
+        "n": 11703,
+        "avg_min": 31.039,
+        "avg_pts": 15.242,
+        "ts_pct": 0.5578
+      },
+      "b2b": {
+        "n": 441,
+        "avg_min": 30.864,
+        "avg_pts": 15.367,
+        "ts_pct": 0.5566
+      }
+    },
+    "finding": "No box-visible fatigue: minutes, points and TS% are ~flat b2b vs rested, even for stars."
+  },
+  "caveats": [
+    "B2B is rare in the WNBA (n=189 team-games over 11 seasons) \u2014 treat the b2b bucket as a gross estimate, not a precise per-team number.",
+    "Confound handled: b2b teams skew road (62% of b2b games). Raw margin overstates the pure b2b cost; the court-adjusted number is the honest one.",
+    "Rest-differential (home rest - away rest) is noisy and non-monotone \u2014 confounded by road-trip/schedule structure. Shown but flagged; the b2b bucket is the reliable read.",
+    "Team-strength confound not removed: rest state is quasi-random across a season so bias is small, but a single b2b bucket does not adjust for opponent quality.",
+    "Player age x b2b interaction NOT built: the box-score data carries no clean age field and b2b star-games (n=441) are too thin to split by age \u2014 omitted rather than invented.",
+    "6 legacy team abbreviations in the box scores do not map to the game results (relocations/renames) and drop from the player join \u2014 negligible coverage loss."
+  ]
+}

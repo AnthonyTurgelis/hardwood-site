@@ -1,36 +1,751 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Hardwood WNBA player ratings, projected minutes, production, and profiles.">
-  <title>Players — Hardwood</title>
-  <link rel="stylesheet" href="hw-product.css">
-</head>
-<body class="hw-product" data-page="players" data-section="players">
-  <a class="hw-skip" href="#content">Skip to content</a>
-  <main class="hw-page" id="content">
-    <header class="hw-pagehead">
-      <div class="hw-pagehead-main"><div class="hw-kicker">Players</div><h1>Player intelligence leaderboard</h1><p>Impact, projected minutes, box-score production, sample strength, and direct profile access in one sortable table.</p></div>
-      <div class="hw-page-actions"><span class="hw-fresh" data-fresh><span class="hw-fresh-dot"></span>Loading</span><a class="hw-button" href="compare.html">Compare players</a><a class="hw-button" href="player_impact.html">Impact breakdown</a></div>
-    </header>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Players</title>
+<style>
+  :root{ --bg:#f4f6f8; --card:#fff; --card2:#f7f9fc; --ink:#161a21; --muted:#5a6675; --dim:#8a93a3;
+    --line:#e3e7ee; --line2:#d3d9e3; --acc:#2b6cb0; --good:#1f883d; --bad:#c62828; --warn:#9a6700;
+    --chip:#eef2f8; --band:#c9d6e8; --pt:#1f883d; --flash:rgba(43,108,176,.20); --shadow:0 1px 2px rgba(20,24,35,.06); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --card2:#1c2330; --ink:#e6edf3;
+    --muted:#9aa7b4; --dim:#6b7684; --line:#242c38; --line2:#39424f; --acc:#58a6ff; --good:#3fb950; --bad:#ff7b72;
+    --warn:#d29922; --chip:#21324a; --band:#39424f; --pt:#3fb950; --flash:rgba(88,166,255,.26); --shadow:none; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0}
+  .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto;padding:0 14px}
+  .ago{font-size:11px;color:var(--dim);white-space:nowrap}
+  .ago b{color:var(--good);font-variant-numeric:tabular-nums}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--acc);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 48px}
+  .lede{color:var(--muted);font-size:12.5px;margin:6px 0}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:18px 0 8px;font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);overflow:hidden}
+  .scroll{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+  th,td{padding:5px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+  th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+  th{color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;background:var(--card2)}
+  th.sortcol{color:var(--acc)}
+  tr.flash td{animation:fl 1.1s ease}
+  @keyframes fl{0%{background:var(--flash)}100%{background:transparent}}
+  .rk{color:var(--dim);width:1.6em}
+  .nm{font-weight:620}
+  .tag{font-size:9.5px;color:var(--dim)}
+  .why{font-size:10.5px;color:var(--muted);font-weight:500;margin-top:1px;white-space:normal;line-height:1.3}
+  .strong{font-weight:680}
+  .thin{color:var(--dim)}
+  .shadowlbl{display:inline-block;font-size:9.5px;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:0 6px;margin-left:4px;vertical-align:middle}
+  td.prov{color:var(--muted)}
+  .provtag{display:inline-block;font-size:8.5px;font-weight:700;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:0 5px;margin-left:5px;vertical-align:middle;text-transform:uppercase;letter-spacing:.02em}
+  /* rank-delta chip (A-rung): a compact pill surfacing the two rank axes at once — "#N impact / #M
+     scoring" — so the divergence between on-court impact and box-score scoring reads at a glance.
+     Firm-impact rows only (a provisional row has no firm impact rank, so no chip). */
+  .divchip{display:inline-block;font-size:9px;font-weight:700;color:var(--acc);border:1px solid var(--acc);border-radius:999px;padding:0 6px;margin-left:6px;vertical-align:middle;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+  /* "Not ranked yet" disclosure (F3): the board's entry requirement, stated, plus every player
+     with a career record on file that it currently holds out. Deliberately quiet — it is a
+     completeness disclosure, not a second leaderboard — and it sits BELOW the board's own note. */
+  .gatecard{margin-top:10px;padding:10px 12px}
+  .gatehead{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:4px}
+  .gatetable{margin-top:8px;font-size:12px}
+  .trendarrow{font-size:11px;font-weight:700;margin-left:5px;vertical-align:middle;font-variant-numeric:tabular-nums;cursor:default}
+  .trendarrow.up{color:var(--good)}
+  .trendarrow.down{color:var(--warn)}
+  /* board headline (A-rung): the accent-bordered takeaway tile (same look as the Teams "biggest
+     mover" callout) naming the biggest impact-over-scoring riser — the "most underrated by points"
+     player. OMITTED entirely when no firm ranking exists or nobody actually rises (never fabricated). */
+  .riser{display:flex;gap:9px;align-items:baseline;margin:8px 0 6px;padding:8px 12px;background:var(--flash);border-left:3px solid var(--acc);border-radius:7px;font-size:12.5px}
+  .riser-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--acc);white-space:nowrap}
+  .riser-t{color:var(--ink);line-height:1.4}
+  .riser-t b{font-weight:700}
+  /* per-team risers (A+-rung element 1): a compact expandable strip of EACH roster's "most
+     underrated by points" — the biggest impact-over-scoring riser inside that team. One pill per
+     team that HAS an eligible firm riser (omit-not-invent: a team with none contributes no pill). */
+  .trisers{margin:2px 0 8px}
+  .trisers-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--acc);display:block;margin-bottom:5px}
+  .triser-list{display:flex;flex-wrap:wrap;gap:6px}
+  .triser{display:inline-flex;align-items:baseline;gap:5px;font-size:11px;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:7px;padding:3px 8px;line-height:1.35}
+  .triser .tm{font-weight:700;color:var(--acc);font-variant-numeric:tabular-nums}
+  .triser .nm{font-weight:600}
+  .triser .gap{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* board momentum (A++-rung): the single biggest RISING + biggest FALLING on-court-impact mover,
+     reusing the per-team riser strip idiom; the ▲/▼ arrow carries the direction color (good up /
+     warn down). Omitted entirely when no firm player has a material recent move (never fabricated). */
+  .mover{display:inline-flex;align-items:baseline;gap:5px;font-size:11px;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:7px;padding:3px 8px;line-height:1.35}
+  .mover .ar{font-weight:700;font-variant-numeric:tabular-nums}
+  .mover.up .ar{color:var(--good)}
+  .mover.down .ar{color:var(--warn)}
+  .mover .nm{font-weight:600}
+  .mover .gap{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* A+++: a mover pill is a click-through to her card when her id resolves (same route as the board
+     rows); it keeps the pill look (no link-blue), adding only a hover accent. A mover with no
+     resolvable id degrades to a plain, non-link span (never a dead link). */
+  .mover.plink{text-decoration:none;color:var(--ink);cursor:pointer}
+  .mover.plink:hover{border-color:var(--acc)}
+  /* A+++: field-relative magnitude clause under the strip — how many firm players moved today
+     (from the SAME baked impact_trend distribution); flat field appends nothing. */
+  .mover-field{color:var(--muted);font-style:italic;font-size:11px;margin-top:4px}
+  /* as_of freshness badge (BR-V2): every board section names the slate its data reflects; a data date
+     two+ days behind the board date reads LOUD (red), never a silent stale board passed off as fresh. */
+  .asof{display:inline-block;font-size:9.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;margin-left:9px;vertical-align:middle;font-variant-numeric:tabular-nums}
+  .asof.stale{color:#fff;background:var(--bad);border-color:var(--bad)}
+  .segbtns{display:flex;gap:5px;flex-wrap:wrap;margin:2px 0 8px}
+  .segbtns button{background:var(--card);color:var(--muted);border:1px solid var(--line);border-radius:7px;padding:4px 11px;font-size:12px;cursor:pointer}
+  .segbtns button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+  .rbar{position:relative;height:15px;min-width:120px;background:var(--card2);border:1px solid var(--line);border-radius:4px}
+  .rbar .b90{position:absolute;top:5px;height:5px;background:var(--band);border-radius:3px}
+  .rbar .b50{position:absolute;top:3px;height:9px;background:var(--acc);opacity:.6;border-radius:3px}
+  .rbar .p{position:absolute;top:1px;width:3px;height:13px;background:var(--pt);transform:translateX(-1px)}
+  .empty{color:var(--dim);font-style:italic}
+  .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
+  /* plain-language tier bands (the same component the teams power board uses, carried across rather
+     than a second style): a label, what it MEANS in words, and how many players are in it. A board
+     of 194 undifferentiated rows makes a reader do the grouping in their head. */
+  .tier td{background:var(--card2);border-top:2px solid var(--line2);text-align:left;padding:7px 9px}
+  .tlabel{font-weight:700;color:var(--ink);font-size:12px}
+  .tmeaning{color:var(--muted);font-weight:400;font-size:11px;margin-left:6px}
+  .tcount{color:var(--dim);font-weight:600;font-size:11px;float:right}
+  /* micro-visual beside a digit, never instead of it — the impact bar and the minutes-share bar both
+     keep the number and add a position on the field next to it (teams.html .sbar, same geometry). */
+  .scell{display:flex;align-items:center;justify-content:flex-end;gap:7px}
+  .sbar{position:relative;width:46px;height:6px;border-radius:3px;background:var(--line2);overflow:hidden;flex:none}
+  .sbar>i{position:absolute;top:0;bottom:0;background:var(--acc);border-radius:3px}
+  .sbar>i.neg{background:var(--bad)}
+  .filt{width:100%;max-width:320px;margin:0 0 8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font-size:12.5px}
+  .plink{color:var(--acc);text-decoration:none}
+  .plink:hover{text-decoration:underline}
+  .showall{margin:12px auto 2px;display:block;background:var(--card);color:var(--acc);border:1px solid var(--line);border-radius:8px;padding:7px 14px;font-size:12.5px;cursor:pointer;font-weight:600}
+  .showall:hover{border-color:var(--acc)}
+  footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
+</style>
+<link rel="stylesheet" href="./hardwood.css?v=04e913ef">
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
+<body>
+<header>
+  <h1>The Hardwood — Players</h1>
+  <span class="ago" id="ago"></span>
+</header>
+<div class="sub">Ranked by on-court impact — our plus-minus rating of how much better a team plays with her on the floor. Points, rebounds and assists sit alongside; one tap re-ranks by season scoring. For season totals, see <a class="plink" href="./impact.html">Season Impact</a>.</div>
+<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html" aria-current="page">Players</a><a class="hw-tab" href="standings.html">Standings &amp; Injuries</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
+<main id="main"><p class="empty">Loading player boards…</p></main>
+<footer id="foot"></footer>
+<script src="./hardwood.js?v=e2e90a97"></script>
+<script>
+(function(){
+  "use strict";
+  var URL="./players.json";
+  // DEFAULT RANK AXIS = IMPACT. The board leads with the on-court impact rating; season scoring is
+  // one tap away and never leaves the page. Counting stats are context, not the ranking — a
+  // reader-facing board that DEFAULTS to a counting stat is the defect this default exists to
+  // prevent (guard: tests/test_reader_boards_lead_with_impact.py + test_players_board_impact_default.js).
+  var curStat=null, curData=null, ratFilter="", ratShowAll=false, curRank="impact";
+  var ratSortKey=null, ratSortDesc=true;
+  var RAT_PAGE=50;   // default view = top 50; "show all" reveals the full uncapped board
 
-    <section class="hw-section" style="margin-top:0">
-      <div class="hw-section-head"><div><h2>Current player board</h2><p>Use the controls once, then sort any basketball field without jumping between pages.</p></div><span class="hw-count" id="players-count">Loading…</span></div>
-      <div class="hw-filterbar">
-        <div class="hw-field grow"><label for="players-search">Search player</label><input class="hw-input" id="players-search" type="search" placeholder="Player name or team"></div>
-        <div class="hw-field"><label for="players-team">Team</label><select class="hw-select" id="players-team"><option value="">All teams</option></select></div>
-        <a class="hw-button" href="impact.html">Season impact</a>
-      </div>
-      <div class="hw-table-wrap" id="players-table">
-        <table class="hw-table" style="min-width:980px">
-          <thead><tr><th>#</th><th><button class="hw-sort" data-key="name">Player</button></th><th><button class="hw-sort" data-key="team">Team</button></th><th class="num"><button class="hw-sort" data-key="gp">GP</button></th><th class="num"><button class="hw-sort" data-key="minutes">Minutes</button></th><th class="num"><button class="hw-sort" data-key="pts">PTS</button></th><th class="num"><button class="hw-sort" data-key="reb">REB</button></th><th class="num"><button class="hw-sort" data-key="ast">AST</button></th><th class="num"><button class="hw-sort" data-key="impact">Impact</button></th><th class="num"><button class="hw-sort" data-key="basis">Basis</button></th></tr></thead>
-          <tbody id="players-body"><tr><td colspan="10"><div class="hw-loading">Loading player leaderboard…</div></td></tr></tbody>
-        </table>
-      </div>
-      <div class="hw-note" style="margin-top:11px">Provisional or thin-basis players remain visible and labelled. The table never hides them merely because their uncertainty is larger.</div>
-    </section>
-  </main>
-  <script src="hw-product.js"></script>
-</body>
+  // Pure per-column sorter. Unknown values always sink in both directions; rankValue supplies the
+  // active axis's rank without teaching this generic helper about impact-rank keying.
+  function sortPlayerRows(rows,key,desc,rankValue){
+    var textSort=(key==="name"||key==="team");
+    return rows.slice().sort(function(a,b){
+      var av=(key==="rank")?rankValue(a):a[key], bv=(key==="rank")?rankValue(b):b[key];
+      var an=(av==null||av===""), bn=(bv==null||bv==="");
+      if(an&&bn) return 0; if(an) return 1; if(bn) return -1;
+      var cmp=textSort?String(av).localeCompare(String(bv)):(av<bv?-1:(av>bv?1:0));
+      return desc?-cmp:cmp;
+    });
+  }
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  function td(c,x){ return el("td",c,x); }
+
+  // RISING/FALLING IMPACT ARROW (A+-rung element 3): a small ▲/▼ beside the impact rating, reading
+  // the baked r.impact_trend {delta, days} — the honest recent direction of the SAME dated rating
+  // series the player-card sparkline draws (derived bake-side in build_players_deep, NOT here, so
+  // it can never contradict that sparkline). Renders NOTHING when the field is absent: a flat /
+  // short / stale history — or a provisional row (baked null) — carries no trend (omit, never a
+  // fabricated 0). The plain-English tooltip states the delta, the window, and the honesty floor.
+  function trendArrow(t){
+    if(!t || t.delta==null || !t.days) return null;
+    var up = t.delta > 0;
+    var mag = Math.abs(t.delta).toFixed(1);
+    var a = el("span", "trendarrow "+(up?"up":"down"), up?"▲":"▼");
+    a.title = "On-court impact rating "+(up?"rising":"falling")+" — "+(up?"+":"−")+mag+
+              " over its last "+t.days+" days of games (moves under 0.2 aren't shown).";
+    return a;
+  }
+
+  function num(v,u){ return v==null? "—" : (v.toFixed(1)+(u?u:"")); }
+  var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function monthDay(iso){ var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(iso||""); return m ? (MON[(+m[2])-1]+" "+(+m[3])) : (iso||""); }
+  // as_of FRESHNESS badge (BR-V2): show the slate the section's data reflects, and badge it STALE (red)
+  // when that date is 2+ days behind the board's own date — a genuine freeze, past the normal
+  // overnight gap where "no games played yet today" legitimately leaves stats a day back.
+  function asofBadge(asOf, boardDate){
+    if(!asOf) return null;
+    var b=el("span","asof","as of "+monthDay(asOf));
+    var a=/^(\d{4})-(\d{2})-(\d{2})/.exec(asOf), d=/^(\d{4})-(\d{2})-(\d{2})/.exec(boardDate||"");
+    if(a && d){
+      var da=Date.UTC(+a[1],+a[2]-1,+a[3]), dd=Date.UTC(+d[1],+d[2]-1,+d[3]);
+      var days=Math.round((dd-da)/86400000);
+      if(days>=2){ b.className="asof stale"; b.title="These stats have not refreshed in "+days+" days."; }
+    }
+    return b;
+  }
+  // BOARD HEADLINE (A-rung): the biggest impact-over-scoring riser — the firm player whose on-court
+  // impact rank most EXCEEDS (is better than) her scoring rank ("most underrated by points"). The
+  // server bakes rt.impact_riser as the single source; clientRiser is only a graceful fallback for a
+  // pre-A players.json (recomputes over the SAME firm rows with the SAME comparator). Provisional
+  // players are excluded (no firm impact rank to compare); returns null when nobody actually rises.
+  function clientRiser(rt){
+    var firm=(rt.players||[]).filter(function(r){ return r.rating!=null && !r.impact_provisional && r.rank!=null; });
+    if(!firm.length) return null;
+    var ranked=firm.slice().sort(function(a,b){ return (b.rating-a.rating)||((b.pts||0)-(a.pts||0))||(a.rank-b.rank); });
+    var best=null;
+    ranked.forEach(function(r,i){
+      var ir=i+1, d=r.rank-ir;
+      if(d<=0) return;
+      if(!best || d>best.delta || (d===best.delta && r.rating>best.rating) || (d===best.delta && r.rating===best.rating && r.name<best.name)){
+        best={name:r.name,team:r.team,impact_rank:ir,scoring_rank:r.rank,rating:r.rating,pts:r.pts,delta:d};
+      }
+    });
+    return best;
+  }
+  function riserCallout(rt){
+    var r = (rt.impact_riser!==undefined) ? rt.impact_riser : clientRiser(rt);  // baked single source; fallback pre-A
+    if(!r || r.delta==null || r.delta<=0) return null;                          // omit — never fabricate a riser
+    var box=el("div","riser");
+    box.appendChild(el("span","riser-k","Most underrated by points"));
+    var t=el("span","riser-t");
+    t.appendChild(el("b",null, r.name + (r.team?(" ("+r.team+")"):"")));
+    t.appendChild(document.createTextNode(" ranks "));
+    t.appendChild(el("b",null,"#"+r.impact_rank+" by on-court impact"));
+    t.appendChild(document.createTextNode(" but only #"+r.scoring_rank+" by scoring — a "+r.delta+"-spot jump the box score misses."));
+    box.appendChild(t);
+    return box;
+  }
+  // PER-TEAM RISERS (A+-rung element 1): a compact strip naming EACH roster's "most underrated by
+  // points" — the biggest impact-over-scoring riser inside that team. The server bakes
+  // rt.team_risers as the single source (same firm-only/provisional-excluded/omit-when-none guards
+  // as the league riser, applied per team); the FE renders it VERBATIM — no client re-compute (a
+  // pre-A+ players.json simply carries no team_risers and this strip is omitted). Sorted
+  // most-underrated-first server-side. Returns null when no team has an eligible riser.
+  function teamRisersStrip(rt){
+    var list = rt.team_risers;
+    if(!Array.isArray(list) || !list.length) return null;                  // omit — never fabricate
+    var box=el("div","trisers");
+    box.appendChild(el("span","trisers-k","Most underrated by points — per team"));
+    var wrap=el("div","triser-list");
+    list.forEach(function(r){
+      if(!r || r.delta==null || r.delta<=0) return;                        // defensive: skip a non-riser
+      var pill=el("span","triser");
+      pill.appendChild(el("span","tm", r.team||"—"));
+      pill.appendChild(el("span","nm", r.name));
+      pill.appendChild(el("span","gap","#"+r.impact_rank+" impact / #"+r.scoring_rank+" scoring · +"+r.delta));
+      wrap.appendChild(pill);
+    });
+    if(!wrap.children.length) return null;
+    box.appendChild(wrap);
+    return box;
+  }
+  // BOARD MOMENTUM (A++-rung): the single biggest RISING + biggest FALLING firm player, read from
+  // the SERVER-BAKED rt.momentum — a re-projection of the SAME per-row impact_trend the ▲/▼ arrows
+  // and the card sparkline draw (one core, three surfaces; it can never contradict them). Firm-only,
+  // provisional-excluded, and the sub-floor/stale/short-span omit guards are all applied bake-side,
+  // so a provisional/thin player is never crowned a mover. OMIT-when-none: a side with no material
+  // mover contributes no pill; NEITHER side -> the whole strip is omitted (no empty strip, no fake
+  // crown). No client re-compute — a pre-A++ players.json simply carries no momentum and this omits.
+  // A+++ CLICK-THROUGH: resolve a mover to her player-card id by matching name (+ team when both
+  // carry one) against the SAME board rows — no new field, render-only. A mover with no resolvable
+  // id (e.g. a synthetic/pre-bake object with no players list) returns null and the pill degrades to
+  // plain text (no dead link).
+  function moverId(rt, m){
+    if(!m || !m.name) return null;
+    var ps=(rt && rt.players) || [];
+    for(var i=0;i<ps.length;i++){
+      var p=ps[i];
+      if(p.id==null) continue;
+      if(p.name===m.name && (!m.team || !p.team || p.team===m.team)) return p.id;
+    }
+    return null;
+  }
+  // A+++ FIELD-RELATIVE MAGNITUDE: how many FIRM players moved materially today, from the SAME baked
+  // impact_trend distribution the pills read (provisional rows carry impact_trend=null bake-side, so
+  // none is counted). HONEST — no fabricated superlative: a lone mover reads "the only mover", a busy
+  // field reads "of N movers"; a flat/sub-floor field (no movers, or no board rows to count) appends
+  // NOTHING. Mirrors the teams.html moverCallout/fieldRelative idiom (quiet vs busy at the same 4-cut).
+  function momentumField(rt){
+    var movers=((rt && rt.players) || []).filter(function(p){ return p.impact_trend && p.impact_trend.delta!=null; });
+    var n=movers.length;
+    if(n<=0) return null;                                                  // flat field -> no clause
+    if(n===1) return "the only mover on the board today";
+    return "of "+n+" firm movers today — a "+(n<=4?"quiet":"busy")+" day for the field";
+  }
+  function momentumPill(m, up, id){
+    if(!m || m.delta==null || !m.days) return null;                        // omit — never fabricate
+    var link=(id!=null);
+    var pill=el(link?"a":"span","mover "+(up?"up":"down")+(link?" plink":""));
+    if(link){ pill.href="./player.html?id="+id; pill.title="Open "+m.name+"'s card"; }  // real card route
+    pill.appendChild(el("span","ar", up?"▲":"▼"));
+    pill.appendChild(el("span","nm", m.name + (m.team?(" ("+m.team+")"):"")));
+    pill.appendChild(el("span","gap",(up?"+":"−")+Math.abs(m.delta).toFixed(1)+" over "+m.days+"d"));
+    return pill;
+  }
+  function momentumStrip(rt){
+    var mo=rt.momentum;
+    if(!mo) return null;                                                   // pre-A++ bake -> omit
+    var rp=momentumPill(mo.rising,true,moverId(rt,mo.rising)), fp=momentumPill(mo.falling,false,moverId(rt,mo.falling));
+    if(!rp && !fp) return null;                                            // no material mover -> omit
+    var box=el("div","trisers momentum");
+    box.appendChild(el("span","trisers-k","On-court impact momentum — biggest movers"));
+    var wrap=el("div","triser-list");
+    if(rp) wrap.appendChild(rp);
+    if(fp) wrap.appendChild(fp);
+    box.appendChild(wrap);
+    var fld=momentumField(rt);                                            // A+++ field-relative clause
+    if(fld) box.appendChild(el("div","mover-field", fld));
+    return box;
+  }
+  function ratingsSection(rt){
+    var s=el("section");
+    var h=el("h2"); h.appendChild(document.createTextNode("Players — this season"));
+    var rb=asofBadge(rt.as_of, curData && curData.date); if(rb) h.appendChild(rb);
+    s.appendChild(h);
+    if(!rt.available){ s.appendChild(el("p","empty", rt.note||"Season stats coming soon.")); return s; }
+    // SEPARATED-IMPACT view (BR-V2, C->B rung): the same board answers two genuinely different coach
+    // questions — "who scores the most" (season scoring, box-score volume) vs "who helps their team
+    // win the most while on the floor" (our plus-minus impact rating). They diverge hard (the top
+    // impact players are often mid-pack scorers), so we let the coach flip the ranking axis instead of
+    // burying impact in one column. Everything is sourced from the SAME baked rows — no re-fetch.
+    var byImpact = (curRank==="impact");
+    s.appendChild(el("p","lede", byImpact
+      ? "Ranked by ON-COURT IMPACT — our plus-minus rating of how much better a team plays with her on the floor, biggest first. This is the board's default order, and it is a different list from the scoring board: the players near the top move the game without necessarily topping the box score, so each row also shows where she sits by scoring. Only players with a firm on-court sample are ranked; a thin, provisional sample is tagged “prov” and listed after the ranked group (no rank her sample can't support). Tap a name for her full card."
+      : "Ranked by season scoring — points per game from the official box scores. This is the box-score-volume view; the board's default ranking is on-court impact, one tap back. Impact still leads the stat columns here: our on-court rating of how much better a team plays with her on the floor. A player resting on a thin on-court sample is regressed toward league average and tagged “prov.” Her share of team minutes rides alongside too, so a big scoring line on limited minutes is easy to spot. Tap a name for her full card."));
+    // BOARD HEADLINE — biggest impact-over-scoring riser (shown on both axes; omitted when none rises)
+    var riser=riserCallout(rt); if(riser) s.appendChild(riser);
+    // BOARD MOMENTUM (A++-rung) — biggest rising + falling on-court-impact mover (omitted when none)
+    var momentum=momentumStrip(rt); if(momentum) s.appendChild(momentum);
+    // PER-TEAM RISERS (A+-rung element 1) — each roster's most-underrated-by-points, compact strip
+    var trisers=teamRisersStrip(rt); if(trisers) s.appendChild(trisers);
+    // rank-axis toggle — reuses the shared .segbtns component (same look as the Realm-of-outcomes tabs)
+    var pkey=function(r){ return r.id!=null ? ("i"+r.id) : ("n"+r.name); };
+    var rseg=el("div","segbtns");
+    // Impact sits FIRST — it is the board's default ranking; season scoring is the second option,
+    // still one tap away and fully intact (counting stats move, they never disappear).
+    [["impact","On-court impact"],["scoring","Season scoring"]].forEach(function(o){
+      var b=el("button", curRank===o[0]?"on":null, o[1]);
+      b.onclick=function(){ if(curRank!==o[0]){ curRank=o[0]; ratSortKey=null; ratSortDesc=true; ratShowAll=false; s.parentNode.replaceChild(ratingsSection(rt), s); } };
+      rseg.appendChild(b);
+    });
+    s.appendChild(rseg);
+    // impact ranks: computed over FIRM ratings only (rating present AND not provisional), so a thin
+    // provisional sample never receives a rank it can't support — it is shown after, marked "—".
+    // SINGLE-SOURCE (A-rung): prefer the SERVER-BAKED r.impact_rank when present, so the rank cell,
+    // the divergence chip, and the board headline all read ONE canonical rank. Fall back to a client
+    // recompute (identical comparator) only for a pre-A bake that hasn't shipped impact_rank yet.
+    var impRank={};
+    if(byImpact){
+      var bakedRank = rt.players.some(function(r){ return r.impact_rank!=null; });
+      if(bakedRank){
+        rt.players.forEach(function(r){ if(r.impact_rank!=null) impRank[pkey(r)]=r.impact_rank; });
+      } else {
+        rt.players.filter(function(r){ return r.rating!=null && !r.impact_provisional; })
+          .slice().sort(function(a,b){ return (b.rating-a.rating) || ((b.pts||0)-(a.pts||0)) || (a.rank-b.rank); })
+          .forEach(function(r,i){ impRank[pkey(r)]=i+1; });
+      }
+    }
+    // F2 — this client FALLBACK carried the identical unit bug as the server compose it mirrors:
+    // it printed n_basis (a TRACKED ON-COURT STINT count) in the words "N games", beside a row
+    // that publishes its own gp. Both sides are fixed together and must stay worded identically —
+    // the fallback exists only for a pre-A bake with no r.why_impact, and a fallback that
+    // contradicts the baked string is just the same defect on a slower path.
+    function impactWhy(r){
+      if(r.rating==null) return "no firm on-court rating yet";
+      if(r.impact_provisional){
+        var nbT = (r.n_basis!=null) ? (r.n_basis+" tracked on-court stint"+(r.n_basis===1?"":"s"))
+                                    : "a small tracked on-court basis";
+        var gpT = (r.gp!=null) ? (" ("+r.gp+" game"+(r.gp===1?"":"s")+")") : "";
+        if(r.career_basis){
+          return "provisional impact — short season sample so far"+gpT+", resting on "+nbT
+               + "; her career record behind it"
+               + (r.career_gp!=null ? (" runs "+r.career_gp+" career games") : " is on file");
+        }
+        return "provisional impact — thin on-court basis: "+nbT+gpT;
+      }
+      var parts=[(r.rating>0?"+":"")+r.rating.toFixed(1)+" on-court impact"];
+      if(r.pts!=null && r.rank!=null){ parts.push(r.pts.toFixed(1)+" ppg (#"+r.rank+" by scoring)"); }
+      else if(r.pts!=null){ parts.push(r.pts.toFixed(1)+" ppg"); }
+      return parts.join(" · ");
+    }
+    var fbox=el("input","filt"); fbox.type="search"; fbox.placeholder="Filter players by name or team…"; fbox.value=ratFilter;
+    fbox.oninput=function(){ ratFilter=fbox.value; var ns=ratingsSection(rt); s.parentNode.replaceChild(ns, s);
+      var nf=ns.querySelector(".filt"); if(nf){ nf.focus(); nf.setSelectionRange(nf.value.length,nf.value.length); } };
+    s.appendChild(fbox);
+    var card=el("div","card"); var sc=el("div","scroll"); var t=el("table");
+    var thead=el("thead"), hr=el("tr");
+    // EVERY RANK NAMES WHAT IT RANKS (CEO: "still showing that she's both 1st and 15th in impact").
+    // The rank column silently changed QUANTITY with the sort mode: sorted by points it printed the
+    // scoring rank, sorted by impact it printed the impact rank, under the same bare "#" heading and
+    // with nothing on the row saying which was in force. A'ja Wilson is genuinely #1 by scoring and
+    // #15 by on-court impact — both true, different questions — so a reader meeting a bare "#1" on a
+    // platform whose promise is that impact leads reasonably reads it as her impact rank.
+    // The number was never wrong. The heading was silent, which is the same defect as one label
+    // carrying two quantities, and the fix is the same: say which.
+    var rankHead = byImpact ? "# by impact" : "# by points";
+    var heads=[[rankHead,"rank"],["Player","name"],["Team","team"],["Impact","rating"],
+      ["% of team min","min_share_pct"],["GP","gp"],["PTS","pts"],["REB","reb"],
+      ["AST","ast"],["MIN","min_avg"]];
+    heads.forEach(function(h){
+      var key=h[1], axisDefault=!ratSortKey && ((byImpact&&key==="rating")||(!byImpact&&key==="pts"));
+      var active=ratSortKey===key || axisDefault;
+      var th=el("th",active?"sortcol":null,h[0]+(active?(ratSortDesc?" ▾":" ▴"):""));
+      th.setAttribute("tabindex","0"); th.setAttribute("role","columnheader");
+      th.setAttribute("aria-sort",active?(ratSortDesc?"descending":"ascending"):"none");
+      function choose(){
+        if(ratSortKey===key) ratSortDesc=!ratSortDesc;
+        else { ratSortKey=key; ratSortDesc=(key!=="name"&&key!=="team"); }
+        ratShowAll=false; s.parentNode.replaceChild(ratingsSection(rt),s);
+      }
+      th.onclick=choose;
+      th.onkeydown=function(ev){ if(ev.key==="Enter"||ev.key===" "){ ev.preventDefault(); choose(); } };
+      hr.appendChild(th);
+    });
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb=el("tbody");
+    var q=ratFilter.trim().toLowerCase();
+    var matched=rt.players.filter(function(r){ return !q || (r.name||"").toLowerCase().indexOf(q)>=0 || (r.team||"").toLowerCase().indexOf(q)>=0; });
+    if(byImpact){
+      matched=matched.slice().sort(function(a,b){
+        var af=(a.rating!=null && !a.impact_provisional), bf=(b.rating!=null && !b.impact_provisional);
+        if(af!==bf) return af?-1:1;                                     // firm-impact players first
+        if(af&&bf) return (b.rating-a.rating)||((b.pts||0)-(a.pts||0))||(a.rank-b.rank);
+        return (a.rank||1e9)-(b.rank||1e9);                            // non-firm keep scoring order
+      });
+    }
+    if(ratSortKey){
+      matched=sortPlayerRows(matched,ratSortKey,ratSortDesc,function(r){
+        return byImpact?impRank[pkey(r)]:r.rank;
+      });
+    }
+    var shown = ratShowAll ? matched : matched.slice(0, RAT_PAGE);
+    // PLAIN-LANGUAGE TIERS. Cuts are stated on the page and chosen off the live distribution of firm
+    // ratings (181 firm players, min −1.7, median 0.1, max 2.7), so each band is a group a coach
+    // would actually name rather than an even slicing of the list. A provisional rating is its own
+    // band because it is a different KIND of number, not a worse one. On the scoring axis the bands
+    // are per-game points, which need no translation.
+    var TIERS_IMPACT=[
+      ["diff", "Difference makers", "team plays more than a point better per 100 with her on", function(r){ return !r.impact_provisional && r.rating!=null && r.rating>=1.0; }],
+      ["plus", "Clear positives",   "a real, if smaller, on-court gain",                        function(r){ return !r.impact_provisional && r.rating!=null && r.rating>=0.3 && r.rating<1.0; }],
+      ["even", "Around even",       "the team plays about the same with her on the floor",      function(r){ return !r.impact_provisional && r.rating!=null && r.rating>-0.3 && r.rating<0.3; }],
+      ["neg",  "Costing minutes",   "the team has played worse with her on so far",             function(r){ return !r.impact_provisional && r.rating!=null && r.rating<=-0.3; }],
+      ["prov", "Provisional read",  "sample too thin to rank — regressed toward league average", function(r){ return r.impact_provisional || r.rating==null; }]
+    ];
+    var TIERS_SCORING=[
+      ["p1", "Primary scorers",     "18 or more points a game",            function(r){ return r.pts!=null && r.pts>=18; }],
+      ["p2", "Secondary scorers",   "12 to 18 points a game",              function(r){ return r.pts!=null && r.pts>=12 && r.pts<18; }],
+      ["p3", "Rotation scorers",    "6 to 12 points a game",               function(r){ return r.pts!=null && r.pts>=6 && r.pts<12; }],
+      ["p4", "Limited scoring role","under 6 points a game",               function(r){ return r.pts==null || r.pts<6; }]
+    ];
+    // Impact bar: a signed position on the field the board itself is showing (zero sits where zero
+    // sits), drawn from the SAME r.rating the digit prints — never a second derivation of it.
+    var rvals=matched.map(function(r){ return r.rating; }).filter(function(x){ return x!=null; });
+    var rlo=rvals.length?Math.min.apply(null,rvals):0, rhi=rvals.length?Math.max.apply(null,rvals):1;
+    var rspan=(rhi-rlo)||1, zero=Math.max(0,Math.min(1,(0-rlo)/rspan));
+    function impactBar(v){
+      var bar=el("span","sbar"); var f=el("i");
+      var x=Math.max(0,Math.min(1,(v-rlo)/rspan));
+      var a=Math.min(x,zero), b=Math.max(x,zero);
+      f.style.left=(a*100).toFixed(1)+"%"; f.style.width=Math.max(2,(b-a)*100).toFixed(1)+"%";
+      if(v<0) f.className="neg";
+      bar.appendChild(f); return bar;
+    }
+    function renderRow(r){
+      var tr=el("tr"); tr.setAttribute("data-k","rt|"+r.name);
+      var rkVal = byImpact ? (impRank[pkey(r)]!=null ? impRank[pkey(r)] : "—") : r.rank;
+      tr.appendChild(td("rk", rkVal));
+      var nm=el("td","nm");
+      if(r.id!=null){ var a=el("a",null,r.name); a.href="./player.html?id="+r.id; a.className="plink"; nm.appendChild(a); }
+      else { nm.appendChild(document.createTextNode(r.name)); }
+      // SMALL-SAMPLE CAVEAT (F1). This tag was UNREACHABLE for the whole life of the board: the
+      // bake computed r.thin as `games < 5` while its own pool query already required `games >= 5`,
+      // so 186/186 rows shipped thin=false and the board carried no small-sample caveat at all.
+      // r.thin now means "small basis AND we hold no career record to fall back on" — the only
+      // state that may say the words "thin sample". A player whose own past we hold gets the
+      // honest alternative instead, because a returning veteran is not an unknown.
+      // A CAVEAT EVERY ROW CARRIES TELLS A READER NOTHING, AND THIS ONE RODE 135 OF 186 ROWS.
+      // `career_basis` means "we hold earlier seasons her current sample never read" — a true fact
+      // that says nothing about whether THIS season's read is short, so it fired on the LARGEST
+      // sample on the board (a 29-game veteran near 950 minutes) and on 124 others like her.
+      // Measured on the 2026-07-31 bake: 125 of the 135 tagged rows (93%) were not a small basis at
+      // all, and the tagged rows' median floor time ran HIGHER than the untagged rows' — the
+      // warning was anti-correlated with the thing it warned about. The field was
+      // never the bug: compare.html and explorer.html both gate it behind impact_provisional before
+      // wording it, and this was the one renderer that printed it bare. It now waits on the bake's
+      // own small-basis decision (server-side single source, never re-derived here).
+      //
+      // And the tag now NAMES THE FLOOR TIME instead of asserting a category. Thin-ness is a
+      // continuum: "58 min so far" and "13 min so far" are different warnings and used to print the
+      // same four words. The number shown is the same whole-minute integer the threshold compared,
+      // so a reader can check the verdict against the row instead of taking it on trust.
+      // The chain below is deliberately SELF-CONTAINED — no helper and no outer var. Two suites
+      // slice it straight out of this file and eval it with only (r, el, nm) in scope, which is the
+      // whole reason the wording can be pinned at all; a shared local would silently un-testable it.
+      if(r.thin){
+        var fmin = (r.season_min_read!=null) ? Math.round(r.season_min_read) : null;
+        // The reference the cutoff came from, in plain words rather than asserted as a verdict.
+        // "rough" and "light" are opposite sides of a measured crossing, not one cliff.
+        var grade = (r.rate_basis==="rough")
+          ? "That is below the level where a player's own rate reads better than a league-average baseline, so league average is the better guide. "
+          : (r.rate_basis==="light")
+            ? "Her own rate edges a league-average baseline at this much floor time, but only just. "
+            : "";
+        var thT=el("span","tag"," · thin: "+(fmin!=null ? (fmin+" min so far") : "little floor time so far"));
+        // The caveat explains itself rather than asserting: the basis is SAMPLED FLOOR TIME, which
+        // is why a 20-game reserve with 60 total minutes qualifies and a 5-game starter may not.
+        thT.title = "Her per-game averages rest on "
+                  + (fmin!=null ? (fmin+" minutes") : "very little floor time")
+                  + " of court time this season"
+                  + (r.gp!=null ? (" across "+r.gp+" game"+(r.gp===1?"":"s")) : "")
+                  + ". " + grade
+                  + "We hold no earlier record to lean on either, so treat the numbers as rough.";
+        nm.appendChild(thT);
+      }
+      // THE GATE. Without it this branch fires on held history alone — see the block comment above.
+      // Falls back to impact_provisional on a pre-field bake, which is how compare.html and
+      // explorer.html have always gated the same field, so an older payload degrades to the
+      // platform's existing rule rather than to the defect.
+      else if(r.career_basis && ((r.small_basis!=null) ? !!r.small_basis : !!r.impact_provisional)){
+        var cmin = (r.season_min_read!=null) ? Math.round(r.season_min_read) : null;
+        var cgrade = (r.rate_basis==="rough")
+          ? "That is below the level where a player's own rate reads better than a league-average baseline, so league average is the better guide. "
+          : (r.rate_basis==="light")
+            ? "Her own rate edges a league-average baseline at this much floor time, but only just. "
+            : "";
+        var cbT=el("span","tag"," · short season: "+(cmin!=null ? (cmin+" min so far") : "little floor time so far"));
+        cbT.title = "Her season averages rest on "
+                  + (cmin!=null ? (cmin+" minutes across ") : "")
+                  + (r.gp!=null?r.gp:"a few")+" game"+(r.gp===1?"":"s")+" so far"
+                  + (r.career_gp!=null ? (", with "+r.career_gp+" career games on file behind them") : "")
+                  + ". " + cgrade
+                  + "This is a short read on a player we know, not a player we don't.";
+        nm.appendChild(cbT);
+      }
+      // RANK-DELTA CHIP (A-rung): on the impact axis, a firm-impact row carries a compact pill
+      // showing BOTH ranks — "#N impact / #M scoring" — surfacing the divergence between the two
+      // axes at a glance. Reads the same canonical impRank (server-baked) + r.rank; a provisional
+      // row (no firm impact rank) gets no chip (nothing to compare — omit, never fabricate).
+      if(byImpact && impRank[pkey(r)]!=null && r.rank!=null){
+        nm.appendChild(el("span","divchip","#"+impRank[pkey(r)]+" impact / #"+r.rank+" scoring"));
+      }
+      // WHY RANKED HERE (per-row cue, BR-V2): prefer a baked one-line decision summary under the
+      // name (server-composed in build_site as the single source). On the impact axis this is the
+      // SERVER-BAKED r.why_impact (A-rung single-source, no client compose); it falls back to the
+      // client impactWhy() only for a pre-A bake. The scoring axis reads the baked r.why.
+      var why = byImpact ? (r.why_impact || impactWhy(r)) : r.why;
+      if(!why){
+        // The cue must describe the axis ACTUALLY RENDERING, not the bake's rt.headline hint — that
+        // field records the bake's own headline choice ("season") and would tell an impact-ranked
+        // row it was "ranked by season scoring". Read byImpact, the same flag that drove the sort.
+        var wb = [];
+        if(r.team_scoring_rank!=null && r.team){ wb.push("#"+r.team_scoring_rank+" scorer on "+r.team); }
+        wb.push(byImpact ? "ranked by on-court impact" : "ranked by season scoring");
+        why = wb.join(" · ");
+      }
+      nm.appendChild(el("div","why", why));
+      tr.appendChild(nm);
+      tr.appendChild(td(null, r.team||"—"));
+      // Impact leads the stat columns. A thin-basis rating is muted + tagged "prov" so a regressed
+      // near-zero value never reads as a firm number (Order 2); its %-of-team-min sits right beside it.
+      var impCell=el("td","strong");
+      if(r.rating==null){ impCell.textContent="—"; }
+      else {
+        impCell.appendChild(document.createTextNode((r.rating>0?"+":"")+r.rating.toFixed(1)));
+        if(r.impact_provisional){
+          impCell.className="strong prov"; var ptg=el("span","provtag","prov");
+          // The tooltip used to assert a thin sample outright. It now describes the RATING's basis
+          // and distinguishes the two cases, so a returning veteran's provisional rating no longer
+          // reads as a claim that we know little about her (F1/F4 wording propagation).
+          ptg.title = r.career_basis
+            ? ("Provisional — her on-court rating rests on "
+               + (r.n_basis!=null?(r.n_basis+" tracked stint"+(r.n_basis===1?"":"s")):"a small on-court basis")
+               + " this season, so it is regressed toward league average. That is a short read on "
+               + "her season, not a thin record: "
+               + (r.career_gp!=null?(r.career_gp+" career games"):"her career") + " sits behind it.")
+            : "Provisional — rests on a thin on-court sample this early in the season.";
+          impCell.appendChild(ptg);
+        }
+      }
+      var ta=trendArrow(r.impact_trend); if(ta) impCell.appendChild(ta);   // A+ element 3: rising/falling arrow
+      // MICRO-VISUAL beside the digit (not instead of it): where this rating sits on the board's own
+      // spread, with zero marked. Reads r.rating, the value the cell already printed.
+      if(r.rating!=null){
+        var iw=el("div","scell"); iw.appendChild(impactBar(r.rating));
+        while(impCell.firstChild) iw.appendChild(impCell.firstChild);
+        impCell.appendChild(iw);
+      }
+      tr.appendChild(impCell);
+      tr.appendChild(td("thin", r.min_share_pct==null?"—":(r.min_share_pct+"%")));
+      tr.appendChild(td("thin", r.gp==null?"—":String(r.gp)));
+      tr.appendChild(td(null, num(r.pts)));
+      tr.appendChild(td(null, num(r.reb)));
+      tr.appendChild(td(null, num(r.ast)));
+      tr.appendChild(td(null, num(r.min_avg)));
+      // (The redundant trailing "deep dive →" column was removed — the player name is already a
+      //  link to the same card, so the extra column was pure wasted horizontal space.)
+      return tr;
+    }
+    // Group the shown rows into the tier bands, keeping the ranking order INSIDE each band. An empty
+    // band is omitted entirely rather than printed as a heading over nothing.
+    (byImpact ? TIERS_IMPACT : TIERS_SCORING).forEach(function(tier){
+      var group=shown.filter(tier[3]);
+      if(!group.length) return;
+      var hrow=el("tr","tier"); var hc=el("td"); hc.colSpan=10;
+      hc.innerHTML='<span class="tlabel">'+tier[1]+'</span><span class="tmeaning">'+tier[2]+'</span>'+
+        '<span class="tcount">'+group.length+(group.length===1?' player':' players')+'</span>';
+      hrow.appendChild(hc); tb.appendChild(hrow);
+      group.forEach(function(r){ tb.appendChild(renderRow(r)); });
+    });
+    t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); s.appendChild(card);
+    if(matched.length > RAT_PAGE){
+      var tog=el("button","showall", ratShowAll ? ("Show top "+RAT_PAGE) : ("Show all "+matched.length+" players"));
+      tog.onclick=function(){ ratShowAll=!ratShowAll; s.parentNode.replaceChild(ratingsSection(rt), s); };
+      s.appendChild(tog);
+    }
+    var note=el("div","note"); note.appendChild(document.createTextNode(byImpact
+      ? "Players are grouped into plain bands — difference makers, clear positives, around even, costing minutes, and provisional reads — and ranked by impact inside each band; the cut for each band is printed beside its name and the count of players in it sits on the right. The bar beside each impact number shows where she sits on the board's own spread, with zero marked, and it is drawn from the same number printed next to it. This is the on-court-impact ranking, and the board's default:our plus-minus rating of how much better the team plays with her on the floor, biggest first — a different order from season scoring (the “#… by scoring” cue on each row shows the gap). Only firm on-court samples are ranked; a “prov” tag means a thin sample with no firm read yet, listed after the ranked group — never given a rank its sample can't support. Flip to “Season scoring” for the box-score-volume board; the points, rebounds, assists and minutes columns are on every row either way. % of team min is her share of the team's floor time. Tap a name for projected minutes and outcome ranges."
+      : "You are on the season-scoring view — points per game from the official box scores, grouped into scoring roles (primary, secondary, rotation, limited) with the points-per-game cut and the player count printed beside each band, and ranked by scoring inside each one. Flip back to “On-court impact” above, the board's default, to re-rank by who moves the game most (often not the top scorers). Impact is our on-court rating (plus-minus style); a “prov” tag beside it means the rating still rests on a thin on-court sample, so it is regressed toward league average and reads near zero — provisional, not a firm read. % of team min is her share of the team's floor time, so thin-minutes vs full-time reads at a glance. Per-game averages are this season's official box scores. Tap a name for projected minutes and outcome ranges."));
+    s.appendChild(note);
+    // ---------------------------------------------------------------------------------------
+    // F3 — WHO THE ENTRY REQUIREMENT LEAVES OUT, NAMED. The board ranks players with at least
+    // rt.min_games games this season. That gate silently removed six returning veterans,
+    // Napheesa Collier among them, and no copy on the page said a gate existed — so a reader
+    // could not tell "not ranked yet" from "we hold nothing on her". These rows are a DISCLOSURE
+    // only: they are baked in a separate rt.below_gate list, never in rt.players, so no rank,
+    // divergence chip, riser or comp set on the board above shifts by a digit. Graceful-null: an
+    // older bake with no below_gate key renders nothing at all, never an empty shell.
+    // ---------------------------------------------------------------------------------------
+    if(rt.below_gate_note){
+      var gsec=el("div","card gatecard");
+      gsec.appendChild(el("div","gatehead","Not ranked yet"));
+      gsec.appendChild(el("div","note", rt.below_gate_note));
+      var bg = rt.below_gate || [];
+      if(bg.length){
+        var gt=el("table","gatetable"), ghead=el("thead"), ghr=el("tr");
+        ["Player","Team","Games so far","PTS","Career games","Career minutes"].forEach(function(x){
+          ghr.appendChild(el("th",null,x)); });
+        ghead.appendChild(ghr); gt.appendChild(ghead);
+        var gtb=el("tbody");
+        bg.forEach(function(r){
+          var gr=el("tr");
+          var gnm=el("td","nm");
+          if(r.id!=null){ var ga=el("a",null,r.name); ga.href="./player.html?id="+r.id; ga.className="plink"; gnm.appendChild(ga); }
+          else { gnm.appendChild(document.createTextNode(r.name)); }
+          gr.appendChild(gnm);
+          gr.appendChild(td(null, r.team||"—"));
+          gr.appendChild(td("thin", r.gp==null?"—":String(r.gp)));
+          gr.appendChild(td(null, num(r.pts)));
+          gr.appendChild(td(null, r.career_gp==null?"—":String(r.career_gp)));
+          gr.appendChild(td(null, r.career_min==null?"—":String(Math.round(r.career_min))));
+          gtb.appendChild(gr);
+        });
+        gt.appendChild(gtb);
+        var gsc=el("div","scroll"); gsc.appendChild(gt); gsec.appendChild(gsc);
+      }
+      s.appendChild(gsec);
+    }
+    return s;
+  }
+
+  function realmSection(rm){
+    var s=el("section");
+    var h=el("h2"); h.appendChild(document.createTextNode("Realm of outcomes"));
+    var mb=asofBadge(rm.as_of, curData && curData.date); if(mb) h.appendChild(mb);
+    s.appendChild(h);
+    if(!rm.available){ s.appendChild(el("p","empty", rm.note||"Coming soon.")); return s; }
+    s.appendChild(el("p","lede","Every projection carries a range built from how far our past projections actually missed. The dot is the projection; the solid bar is the likely range; the light bar is the wider 90% range. This is a spread of plausible outcomes, not the odds she hits the dot."+(rm.as_of?(" As of the "+monthDay(rm.as_of)+" slate."):"")));
+    var stats=rm.order.filter(function(x){ return rm.stats[x]; });
+    if(!curStat || !rm.stats[curStat]) curStat = stats[0];
+    var seg=el("div","segbtns");
+    stats.forEach(function(st){
+      var b=el("button", st===curStat?"on":null, st==="3PM"?"3-pointers":({PTS:"Points",REB:"Rebounds",AST:"Assists",MIN:"Minutes"}[st]||st));
+      b.onclick=function(){ curStat=st; s.parentNode.replaceChild(realmSection(rm), s); };
+      seg.appendChild(b);
+    });
+    s.appendChild(seg);
+    /* A family with no range for THIS slate's games is absent, not borrowed from another night.
+       Say why, so a missing tab reads as a stated absence rather than an oversight. */
+    if(rm.suppressed && rm.suppressed.length && rm.suppressed_note){
+      s.appendChild(el("p","note", rm.suppressed_note));
+    }
+    var rows=rm.stats[curStat]||[];
+    var hi=0; rows.forEach(function(r){ var v=Math.max(r.hi90||0,r.point||0); if(v>hi)hi=v; }); hi=hi||1;
+    var card=el("div","card"); var sc=el("div","scroll"); var t=el("table");
+    var thead=el("thead"), hr=el("tr");
+    ["Player","Tm","Opp","Proj","Likely range","Outcome band"].forEach(function(x){ hr.appendChild(el("th",null,x)); });
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb=el("tbody");
+    rows.forEach(function(r){
+      var tr=el("tr");
+      var nm=el("td","nm"); nm.textContent=r.name; if(r.status){ nm.appendChild(el("span","tag"," ("+r.status+")")); }
+      /* CONTESTED — two source rows named this player and disagreed on her numbers. We collapse to
+         one row (a reader must never see one person twice) but we never hide the disagreement:
+         the row shows the wider, less confident reading and says plainly that it is contested. */
+      if(r.contested){ var ct=el("span","tag"," (sources disagree)"); ct.title=r.contested_note||"two source rows for this player disagree"; nm.appendChild(ct); }
+      tr.appendChild(nm);
+      tr.appendChild(td(null, r.team||"—"));
+      tr.appendChild(td("thin", (r.is_home?"vs ":"@ ")+(r.opp||"—")));
+      tr.appendChild(td("strong", r.point==null?"—":r.point.toFixed(1)));
+      tr.appendChild(td("thin", (r.lo==null?"—":r.lo.toFixed(1))+"–"+(r.hi==null?"—":r.hi.toFixed(1))));
+      var bcell=el("td",null);
+      var bar=el("div","rbar");
+      var bx=function(v){ return v==null?null:Math.max(0,Math.min(100,(v/hi)*100)); };
+      var l90=bx(r.lo90),h90=bx(r.hi90),l=bx(r.lo),h2=bx(r.hi),pp=bx(r.point);
+      if(l90!=null&&h90!=null){ var e90=el("div","b90"); e90.style.left=l90.toFixed(1)+"%"; e90.style.width=(h90-l90).toFixed(1)+"%"; bar.appendChild(e90); }
+      if(l!=null&&h2!=null){ var e50=el("div","b50"); e50.style.left=l.toFixed(1)+"%"; e50.style.width=(h2-l).toFixed(1)+"%"; if(r.low_conf) e50.style.background="var(--warn)"; bar.appendChild(e50); }
+      if(pp!=null){ var ep=el("div","p"); ep.style.left=pp.toFixed(1)+"%"; bar.appendChild(ep); }
+      bcell.appendChild(bar); tr.appendChild(bcell);
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); sc.appendChild(t); card.appendChild(sc); s.appendChild(card);
+    s.appendChild(el("div","note","Ranges are the empirical spread of our past misses for similar players (reconstructed-season study). A dim/orange band marks thin data — treat those as rough. Not a betting line."));
+    return s;
+  }
+
+  function render(d){
+    curData=d;
+    var main=document.getElementById("main"); main.innerHTML="";
+    document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Ratings are live production. Minutes are our shadow-champion model. Outcome ranges come from grading our own past projections.";
+    main.appendChild(ratingsSection(d.ratings||{available:false}));
+    main.appendChild(realmSection(d.realm||{available:false, order:[], stats:{}}));
+    flash();
+  }
+
+  /* ---------- shared live runtime ---------- */
+  var etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
+  function updAgo(){
+    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
+    var t = s<60 ? (s+"s ago") : (Math.floor(s/60)+"m "+(s%60)+"s ago");
+    var a=document.getElementById("ago"); if(a) a.innerHTML = lastFetch? ("live · updated <b>"+t+"</b>") : "";
+  }
+  function flash(){
+    var nodes=document.querySelectorAll("#main [data-k]"), nm={};
+    nodes.forEach(function(n){ var k=n.getAttribute("data-k"), h=n.innerHTML; nm[k]=h;
+      if(!first && cardHTML[k]!==undefined && cardHTML[k]!==h){ n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); } });
+    cardHTML=nm; first=false;
+  }
+  function poll(){
+    var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
+    fetch(URL,{headers:h,cache:"no-cache"}).then(function(r){
+      if(r.status===304) return null;
+      etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
+    }).then(function(d){ lastFetch=Date.now(); if(d){ render(d); } updAgo(); }).catch(function(e){
+      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load player boards. '+(e&&e.message?e.message:"")+'</p>'; }
+    });
+  }
+  poll(); setInterval(poll,60000); setInterval(updAgo,1000);
+})();
+</script>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="error-map.html">Error Map</a><a href="board.html">Board</a></div><div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div></footer><!--/hw-foot--></body>
 </html>

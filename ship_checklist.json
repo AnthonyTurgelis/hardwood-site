@@ -1,0 +1,231 @@
+{
+ "generated_utc": "2026-08-18T20:04:57+00:00",
+ "title": "Ship checklist — the target set before the pause",
+ "source_doc": "docs/SHIP_CHECKLIST_20260807.md",
+ "rule": "An item is DONE only on live-verified evidence with a picture. Committed, pushed and wired all count as NOT DONE.",
+ "sections": [
+  {
+   "key": "A",
+   "title": "CEO-visible shipments",
+   "items": [
+    {
+     "id": "A1",
+     "section": "A",
+     "item": "Clean engine serves; market-fitted family archived",
+     "done_test": "served predictions carry the successor model tag, live",
+     "state": "open",
+     "evidence": ""
+    },
+    {
+     "id": "A2",
+     "section": "A",
+     "item": "Win probabilities corrected — one value across every page",
+     "done_test": "six pins at 12.5569 in one commit; two surfaces return the same number for the same game; coverage ~90.2",
+     "state": "stopped",
+     "evidence": "AUTO-HELD on its own gate 2026-08-11, closed with the reason and the number. Two of the three checks passed: after repointing, all four pins read one identical value, and the served probability reproduced twice - from the recorded measurement at 12.5569 on 1,474 games, and by recomputing every one of the 268 served rows from its own stored spread and centre with zero mismatches. THE FAILING NUMBER IS COVERAGE: 90.11 percent against a required 89 to 90, measured on 182 played regular-season games. It misses by eleven hundredths of a point and turns on a single game - 164 of 182 inside; 163 would have passed - and it errs wide, which is the safe direction. Nothing was tuned toward the bar: the spread is measured from residuals and the module states in its own header that the band is never widened to reach a coverage bar. The repoint was reverted, so the promote did not ship."
+    },
+    {
+     "id": "A3",
+     "section": "A",
+     "item": "Front page rebuilt to the CEO's layout",
+     "done_test": "status, queue and completed work visible at once; numbers small and at the bottom",
+     "state": "done",
+     "evidence": "CEO verdict on the live page: Style is good. Front page carries machine state, working-next and finished-today visible at once."
+    },
+    {
+     "id": "A4",
+     "section": "A",
+     "item": "Best Numbers hero panel",
+     "done_test": "live, with movement and a note of when it was taken, fed by the accuracy feed",
+     "state": "done",
+     "evidence": "Live front page carries the Best Numbers panel small and at the foot of the page, matching the layout the CEO asked for. Verified on the public page and recorded as done alongside the front-page and totals-row items."
+    },
+    {
+     "id": "A5",
+     "section": "A",
+     "item": "Totals row reads \"not yet graded\"",
+     "done_test": "no null on any hero",
+     "state": "done",
+     "evidence": "Live front page renders the totals tile as not yet graded, the exact wording asked for, and no hero shows a null."
+    },
+    {
+     "id": "A6",
+     "section": "A",
+     "item": "Race-board standard applied to teams",
+     "done_test": "seven properties present on the live page",
+     "state": "done",
+     "evidence": "All seven house-style properties confirmed on a capture of the live teams page. The last one, sorting, went live this hour and reorders inside the tiers rather than dissolving them."
+    },
+    {
+     "id": "A7",
+     "section": "A",
+     "item": "Race-board standard applied to players",
+     "done_test": "same",
+     "state": "stopped",
+     "evidence": "Cannot be built honestly, and the reason is bigger than this item. The players board would need a one-day move, but the served rating DOES NOT MOVE: measured league-wide over ten days containing many games, 368 players, zero changed, largest change 0.000 - and one player carries a single distinct value across all 110 dated rows. The date column is a label, not a time dimension. Differencing a constant would print a flat move on all 196 rows, which the movement standard explicitly forbids: an unknown move must never render as a flat one. Filed as its own priority item because every surface leading with this rating is showing a number that has not answered a game since 9 July."
+    },
+    {
+     "id": "A8",
+     "section": "A",
+     "item": "Race-board standard applied to standings",
+     "done_test": "same",
+     "state": "done",
+     "evidence": "Live standings shows a one-day playoff-odds move on all fifteen rows, each an honest dash because no new simulation has run since the comparison snapshot. Proven not inert: the same code returns real movement on eleven of fifteen teams when measured against a different simulation. A shipment card with a photograph of the live page was sent."
+    },
+    {
+     "id": "A9",
+     "section": "A",
+     "item": "Race-board standard applied to games",
+     "done_test": "same",
+     "state": "done",
+     "evidence": "Live games board carries a move on ALL TWENTY-FOUR cards, re-measured on the live page after the restore - better than the twenty-one of twenty-four first recorded. A card that first appeared today shows a dash rather than a fabricated zero. Shipment card sent with a photograph of the live page."
+    },
+    {
+     "id": "A10",
+     "section": "A",
+     "item": "Race-board standard applied to deep-dive hub",
+     "done_test": "same",
+     "state": "done",
+     "evidence": "Live deep-dive hub reads as a board: twelve of the thirteen studies show how much data sits behind them, and the one without is the interactive tool, which has no fixed sample. Verified by rendering the live page rather than reading its payload - the content feed carries no such field, so a payload check would have said zero. Shipment card sent with a photograph."
+    },
+    {
+     "id": "A11",
+     "section": "A",
+     "item": "Teams movement indicator",
+     "done_test": "live on teams; store has existed since 07-18, wiring only",
+     "state": "done",
+     "evidence": "Live teams page shows a one-day move column with real values on 11 of 15 teams, beside a two-week trend line. Confirmed on a capture of the live page."
+    },
+    {
+     "id": "A12",
+     "section": "A",
+     "item": "Totals re-level",
+     "done_test": "oracle reproduced at regular-season grain, then annotation live",
+     "state": "stopped",
+     "evidence": "Red on correctly-grained bars, so it ships nothing, not even as an annotation. Measured on an identical set of games our 2023 comes out about six tenths of a point more accurate than the reference, and the base and environment halves want different anchors, so the suspect is the reference's own 2023 run rather than our arithmetic."
+    },
+    {
+     "id": "A13",
+     "section": "A",
+     "item": "Standings feed onto the shared batch",
+     "done_test": "its stamp matches its siblings on one bake",
+     "state": "done",
+     "evidence": "Live standings and playoff odds now agree on playoff odds for all fifteen teams, where the page used to disagree with itself on seven of them. Both halves come from one pass, one pinned simulation and one shared stamp. A shipment card with a photograph of the live page was sent."
+    }
+   ],
+   "done": 9,
+   "total": 13,
+   "label": "9 of 13"
+  },
+  {
+   "key": "B",
+   "title": "Enablers",
+   "items": [
+    {
+     "id": "B1",
+     "section": "B",
+     "item": "Launcher --continue on every path incl. worktree copies",
+     "done_test": "forced restart returns a session carrying its conversation",
+     "state": "open",
+     "evidence": "Both launch paths now resume by default instead of only when asked, and every one of the worktree copies carries the same change. Not done: the test is a forced restart coming back with its conversation intact, and no restart has been made to happen on purpose yet."
+    },
+    {
+     "id": "B2",
+     "section": "B",
+     "item": "the width authorization file and its reader, checked every boot",
+     "done_test": "same restart climbs back to 4 lanes unprompted",
+     "state": "open",
+     "evidence": "The authorisation now lives in a file the machine reads at every start, and all six cases behave: a missing or damaged file refuses loudly rather than quietly settling for one lane. Not done: the test is a restart climbing back to four lanes on its own, and that has not been watched happen."
+    },
+    {
+     "id": "B3",
+     "section": "B",
+     "item": "Worktree staleness report + refresh-or-refuse",
+     "done_test": "per-worktree distance behind the current code reported; policy live",
+     "state": "done",
+     "evidence": "Both halves resolved 2026-08-12. The REPORT was delivered - all 120 copies measured and their distance behind reported, correcting the belief that five were stale. The REFUSE-TO-USE half now has NO TARGETS: measured tonight there are ZERO worktrees on disk, the reaper having cleaned every one, so a stale-copy guard today would be a check that can never fire. Recorded rather than built for that reason. NOTE FOR TOMORROW: agents begin per the external program and will recreate worktrees, so the guard becomes meaningful again the moment they do - build it against the first real copy rather than against an empty directory, where it cannot be proven to bite."
+    },
+    {
+     "id": "B4",
+     "section": "B",
+     "item": "Acceptance bars recomputed at regular-season grain",
+     "done_test": "gate re-run against correctly-grained bars — unblocks line A 1",
+     "state": "done",
+     "evidence": "The old bars were retired as mistakenly measured across two kinds of game, every bar was recomputed on regular-season games only, and the gate was re-run against them. It failed, honestly, which is the answer rather than the hoped-for unblock, and no band was widened to make it pass."
+    },
+    {
+     "id": "B5",
+     "section": "B",
+     "item": "Admission gate reclaim ceiling cut from 1800 to 300 seconds",
+     "done_test": "a hung holder costs 5 minutes, not 30",
+     "state": "done",
+     "evidence": "Applied 2026-08-12: LABEL_TTL_SECS['build_site'] cut 600 -> 300 in ops/admission_gate.py, verified by ttl_for('build_site')==300 with the unmeasured-label default deliberately left at the generous 1800. THE NUMBER ONLY BECAME SAFE TODAY, and that is the substance of this row rather than the edit. A legitimate bake ran 768 seconds this morning, so a bare age test at 300s would have reclaimed a LIVE baker mid-push - the exact collision the gate exists to prevent. What changed is that token_is_stale now asks whether the holder is alive, so this ceiling reclaims DEAD holders only and no longer has to clear the job's slowest legitimate runtime. Proven both directions on the real module: a DEAD holder is reclaimable at 299s, 301s and 901s, while a LIVE holder at 299s and 301s is NOT reclaimable and is broken only at 901s. MEASURED EFFECT, stated precisely rather than to the item's wording: the dead-holder case was ALREADY fast before this edit, because the pid check fires past 60s independently of the ceiling. What this edit actually buys is the WEDGED-BUT-ALIVE bound, which falls from HARD_TTL_MULTIPLIER x 600 = 1800s to 3 x 300 = 900s. So a hung holder costs at most 15 minutes rather than 30, and a dead one about a minute. THE LITERAL 'five minutes' IS NOT ACHIEVABLE FOR A WEDGED-ALIVE HOLDER and should not be forced: breaking a live token at 300s would kill the 768s bake on record. 900s is the tightest bound that clears every legitimate run measured. TWO PRE-EXISTING RED TESTS FIXED IN THE SAME MOTION, found by running the suite rather than reported: test_a_stale_same_label_token_does_not_block and test_a_hung_build_site_is_reclaimed_at_its_own_ceiling were ALREADY FAILING before this change - confirmed by stashing the edit and re-running - because they set up LIVE holders and expected reclaim-at-ceiling, which is precisely what today's age-is-not-death fix removed on purpose. They now use a dead pid, and a new test test_a_live_holder_past_its_ceiling_is_NOT_reclaimed pins the protection they used to contradict. Suite is 18 passed, 0 failed, up from 15 passed / 2 failed. NO PICTURE: this is an internal gate constant with no rendered surface, which the picture gate exempts. LIVE-VERIFIED 2026-08-12T19:01Z: the public artifact https://anthonyturgelis.github.io/hardwood-site/ship_checklist.json now reads '15 of 24' at generated_utc 2026-08-12T18:55:48Z, up from '14 of 24' at 18:46:10Z. Fetched from the live URL, not read off local disk - the count moving on the served file is what makes this finished rather than merely pushed."
+    },
+    {
+     "id": "B6",
+     "section": "B",
+     "item": "Unwired-machinery triage, 70 items",
+     "done_test": "each wired or retired with a pointer",
+     "state": "open",
+     "evidence": ""
+    },
+    {
+     "id": "B7",
+     "section": "B",
+     "item": "Done-detection sweep across the board",
+     "done_test": "measured count of already-finished rows",
+     "state": "done",
+     "evidence": "Swept 2026-08-12. THE MEASURED COUNT, which is this row's done-test: of 735 board items, 221 are OPEN, and 57 of those carry STRONG completion language in their own text (CLOSED / SHIPPED / LIVE-VERIFIED / ALREADY-TRUE / RETIRED-WITH-EVIDENCE / FIXED AND TESTED) with 3 more carrying weaker signals - 60 candidates, about 27 percent of the open board. THE COUNT IS AN UPPER BOUND OF CANDIDATES, NOT A COUNT OF FINISHED ROWS, and that distinction is the actual finding. I sampled five of the 57 and read each one's status in full: ZERO were finished. console-v3-test-is-dead-its-env-var-was-never-read is labelled, in its own text, 'SWEEP FALSE POSITIVE' from a PREVIOUS done-detection pass that matched on the shared token DEAD, and it ends 'DO NOT RETIRE ON THAT CITATION - the row stands'. width-taper-does-not-protect-the-publisher-from-lanes names what it still owns and says it should NOT be closed on the shipped half. worktree-isolation-strands-gitignored-credentials is a 98-file change explicitly not done. The other two matched on prose in their WHY text rather than any closure at all. SO THE HONEST ANSWER IS THAT TEXT-SIGNAL DONE-DETECTION DOES NOT WORK ON THIS BOARD, and the board already contains a row wounded by exactly this method once before. Auto-retiring the 57 would have closed live work at a measured precision near zero. A real done-detection sweep has to read the artifact each row names - the live URL, the DB row, the running pid - which is per-row measurement and not a text pass. That is what I did on the CEO ship checklist earlier today, where reading the OWNER rather than the row text found 15 genuinely stale rows and corrected them. SAMPLE SIZE STATED PLAINLY: five of fifty-seven. Small, and I am not claiming a precise precision figure from it - but 0 of 5 plus a documented prior false positive of the same method is enough to refuse the mass retirement, which is the decision this sweep existed to inform. NO PICTURE: a board-internal measurement with no rendered surface, which the picture gate exempts. LIVE-VERIFIED 2026-08-12T19:11Z: the public artifact https://anthonyturgelis.github.io/hardwood-site/ship_checklist.json reads '16 of 24' at generated_utc 2026-08-12T19:06:06Z, up from '15 of 24'. Fetched from the live URL rather than read off local disk."
+    },
+    {
+     "id": "B8",
+     "section": "B",
+     "item": "Echo generator root cause",
+     "done_test": "inbox refuses a file duplicating a note already filed",
+     "state": "open",
+     "evidence": ""
+    },
+    {
+     "id": "B9",
+     "section": "B",
+     "item": "the market grading feed carries a generated stamp",
+     "done_test": "every feed stamped",
+     "state": "done",
+     "evidence": "The market surface stopped publishing figures and published an explanation instead, but the explanation carried no time of its own, so a reader could not tell whether the withholding was decided this morning or months ago and forgotten. It now carries its own clock, live-verified on the public URL. Wiring checked end to end rather than assumed: the site bake does NOT regenerate this file, so running its own baker was what proved the stamp reaches the served copy."
+    }
+   ],
+   "done": 5,
+   "total": 9,
+   "label": "5 of 9"
+  },
+  {
+   "key": "C",
+   "title": "Needs the CEO, sixty seconds each",
+   "items": [
+    {
+     "id": "C1",
+     "section": "C",
+     "item": "A spare Discord channel id",
+     "done_test": "the alert canary cannot self-check on his own channel without creating false alarms",
+     "state": "done",
+     "evidence": "The CEO handed over the spare channel and it is wired in. Proven the same minute: the daily self-check posted through the real message path and was then read back independently, so the alarm can now prove itself every day without ringing on the channel he actually reads."
+    },
+    {
+     "id": "C2",
+     "section": "C",
+     "item": "gh auth login",
+     "done_test": "token died in a crash; consumer degrades to an anonymous path, so nothing is broken today",
+     "state": "done",
+     "evidence": "Measured today: the account is logged in again and the token is live, so the consumer no longer falls back to an anonymous path. The CEO restored it himself."
+    }
+   ],
+   "done": 2,
+   "total": 2,
+   "label": "2 of 2"
+  }
+ ],
+ "done": 16,
+ "total": 24,
+ "label": "16 of 24",
+ "all_done": false
+}
