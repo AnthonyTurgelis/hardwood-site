@@ -39,6 +39,7 @@
   td.hi{color:var(--hi)} td.lo{color:var(--lo)}
   a.rt{color:var(--acc);text-decoration:none} a.rt:hover{text-decoration:underline}
   .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:12px 0}
   .tile{border:1px solid var(--line);border-radius:9px;background:var(--card);padding:10px 12px;box-shadow:var(--shadow)}
   .tile .lb{font-size:11.5px;color:var(--muted);line-height:1.25;min-height:2.5em}
   .tile .vl{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
@@ -69,6 +70,16 @@
   function sgn(v,d){ if(v==null) return "—"; var n=Number(v); return (n>0?"+":n<0?"−":"")+Math.abs(n).toFixed(d==null?1:d); }
   function cls(v){ return v==null?"":(v>0?"hi":v<0?"lo":""); }
   function emptyCard(){ var c=el("div","card"); c.appendChild(el("p","empty",(DATA&&DATA.empty_note)||"Populates as the season's grades accumulate.")); return c; }
+
+  function renderSummary(main){
+    var s=(DATA&&DATA.summary)||{}, grid=el("div","summary");
+    [["Our margin error",s.our_mae==null?"—":Number(s.our_mae).toFixed(2)+" pts"],
+     ["Market margin error",s.market_mae==null?"Withheld":Number(s.market_mae).toFixed(2)+" pts"],
+     ["Beat rate",s.beat_rate==null?"Withheld":Number(s.beat_rate).toFixed(1)+"%"],
+     ["Games graded",s.n==null?"—":String(s.n)]].forEach(function(x){var t=el("div","tile");t.appendChild(el("div","lb",x[0]));t.appendChild(el("div","vl",x[1]));grid.appendChild(t);});
+    main.appendChild(grid);
+    if(s.market_note) main.appendChild(el("p","note",s.market_note));
+  }
 
   // ---- section 1: biggest misses, sortable on every column -------------------------------
   var COLS=[
@@ -128,12 +139,13 @@
     tiles.forEach(function(p){
       var t=el("div","tile");
       t.appendChild(el("div","lb",p.label));
-      t.appendChild(el("div","vl "+cls(p.mean_error),sgn(p.mean_error)));
-      t.appendChild(el("div","nn","n = "+p.n));
+      t.appendChild(el("div","vl",p.mae==null?"—":Number(p.mae).toFixed(1)+" pts MAE"));
+      t.appendChild(el("div","nn","bias "+sgn(p.mean_error)+" · n = "+p.n));
+      if(p.market_fit_era) t.appendChild(el("div","note","Market comparison withheld · market-fit era"));
       grid.appendChild(t);
     });
     main.appendChild(grid);
-    var n=el("p","note","Mean signed error, same sign convention · no tile below n = "+
+    var n=el("p","note","MAE is miss size; bias uses the signed-error convention · no tile below n = "+
       (DATA.min_sample!=null?DATA.min_sample:"the sample gate"));
     main.appendChild(n);
   }
@@ -161,6 +173,7 @@
     var main=document.getElementById("main");
     main.innerHTML="";
     main.appendChild(el("p","lede","Where we miss, how badly, and whether the misses rhyme."));
+    renderSummary(main);
     renderMisses(main);
     renderPatterns(main);
     renderAutopsies(main);
