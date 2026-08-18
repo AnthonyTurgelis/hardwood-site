@@ -33,6 +33,10 @@
   .pill{font-size:10.5px;color:var(--muted);background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:1px 7px;font-variant-numeric:tabular-nums}
   .gtip{display:block;font-size:10.5px;color:var(--dim);margin-top:3px;white-space:nowrap;font-variant-numeric:tabular-nums}
   .call{font-size:13px;font-weight:650;margin:5px 0 6px;color:var(--acc)}
+  .mann{display:grid;gap:2px;margin:0 0 7px;padding:6px 8px;border-left:2px solid var(--line2);font-size:10.5px;color:var(--muted)}
+  .mann div{display:flex;justify-content:space-between;gap:10px}
+  .mann b{color:var(--ink);font-variant-numeric:tabular-nums;text-align:right}
+  .mann .final{padding-top:2px;border-top:1px solid var(--line);font-weight:700}
   .conf{display:inline-block;font-size:10.5px;font-weight:700;margin-left:7px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);vertical-align:1px;letter-spacing:.2px}
   .conf.toss{color:var(--warn);background:var(--chip)}
   .conf.lean{color:var(--acc);background:var(--chip)}
@@ -826,10 +830,33 @@
     rt.appendChild(st);
     h.appendChild(rt);
     c.appendChild(h);
-    var callLine=el("div","call");
-    callLine.appendChild(document.createTextNode("Our call: "+(g.call||"—")));
-    var cf=confChip(g); if(cf){ callLine.appendChild(cf); }
-    c.appendChild(callLine);
+    // The three-line annotation is data, not browser arithmetic.  We still re-check the equality
+    // before rendering so a stale/mutated payload cannot put contradictory numbers on the card.
+    function marginAnnotation(x){
+      var a=x&&x.margin_annotation; if(!a) return null;
+      var n=Number(a.neutral_margin), s=Number(a.site_adjustment), f=Number(a.final_margin);
+      if(!isFinite(n)||!isFinite(s)||!isFinite(f)||Math.abs((n+s)-f)>0.011){
+        if(typeof console!=="undefined"&&console.error) console.error("margin annotation mismatch",x.game_id);
+        return null;
+      }
+      var box=el("div","mann"), signed=function(v){return (v>=0?"+":"")+v.toFixed(1);};
+      var lines=[
+        ["Neutral strength",a.neutral_call],
+        ["Site + calibration adjustment",signed(s)],
+        ["Final call",a.final_call]
+      ];
+      lines.forEach(function(line,i){var r=el("div",i===2?"final":null);r.appendChild(el("span",null,line[0]));r.appendChild(el("b",null,line[1]));box.appendChild(r);});
+      return box;
+    }
+    var ma=marginAnnotation(g);
+    // No annotation means no point estimate: the call, range and reconciliation are one component.
+    if(ma){
+      var callLine=el("div","call");
+      callLine.appendChild(document.createTextNode("Our call: "+g.call));
+      var cf=confChip(g); if(cf){ callLine.appendChild(cf); }
+      c.appendChild(callLine);
+      c.appendChild(ma);
+    }
 
     var kv=el("div","kv");
     var k1=el("div","k"); k1.appendChild(el("div","kl","Combined total"));
@@ -854,14 +881,14 @@
     // game projects high/low-scoring (graceful: omitted when the pace read didn't cover this game).
     var pl=paceLine(g); if(pl){ c.appendChild(pl); }
 
-    var hasDist=!!(g.density && g.density.dens && g.density.dens.length);
-    c.appendChild(el("div","note", hasDist
+    var hasDist=!!(ma && g.density && g.density.dens && g.density.dens.length);
+    if(ma) c.appendChild(el("div","note", hasDist
       // the shading marks WHICH SIDE OF PICK'EM each bar falls on. It no longer claims to BE the
       // win chance: the printed percentages come from the win-chance model (the same number the
       // pill shows), and the drawn area is a picture of the margin, not a second answer.
       ? "How the final margin could land — taller bars are more likely, and the shading splits at pick'em (left of the line the visitor wins, right of it the host does):"
       : "Margin range (how much the result could swing):"));
-    c.appendChild(densityStrip(g));
+    if(ma) c.appendChild(densityStrip(g));
 
     var sl=styleLine(g); if(sl){ c.appendChild(sl); }
     var ab=availBlock(g); if(ab){ c.appendChild(ab); }

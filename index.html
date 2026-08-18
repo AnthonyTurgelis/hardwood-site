@@ -426,6 +426,7 @@ Promise.all([fetch(SLATE_FEED).then(function(r){return r.json()}),stakesReady]).
     lo:+(g.range80_lo!=null?g.range80_lo:g.lo), hi:+(g.range80_hi!=null?g.range80_hi:g.hi),
     wp:+(g.p_home_win!=null?g.p_home_win:g.win_prob),
     gid:g.game_id||"", total:(g.total!=null?+g.total:null),
+    annotation:g.margin_annotation||null,
     avail:flat(g.avail)||g.availability_note||""}});
   if(!games.length) return;
   var dt=d.date_et||""; if(dt) document.getElementById("today-date").textContent=dt;
@@ -434,13 +435,17 @@ Promise.all([fetch(SLATE_FEED).then(function(r){return r.json()}),stakesReady]).
   var W=function(v){return ((v-(-ext))/(2*ext)*100).toFixed(1)+"%"};
   document.getElementById("cards").innerHTML=games.map(function(g){
     var wp=g.wp>1?g.wp:g.wp*100;
+    var a=g.annotation,n=a&&Number(a.neutral_margin),s=a&&Number(a.site_adjustment),f=a&&Number(a.final_margin);
+    var ok=!!a&&isFinite(n)&&isFinite(s)&&isFinite(f)&&Math.abs((n+s)-f)<=.011&&Math.abs(f-g.margin)<=.011;
+    var signed=function(v){return(v>=0?"+":"")+v.toFixed(1)};
+    var margin=ok?('<div class="call"><div class="margin">'+a.final_call+'</div><div class="calltxt">our call</div></div>'+ 
+      '<div class="range"><div class="track"></div><div class="zero" style="left:50%"></div>'+ 
+      '<div class="band" style="left:'+W(g.lo)+';width:'+(((g.hi-g.lo)/(2*ext))*100).toFixed(1)+'%"></div>'+ 
+      '<div class="tick" style="left:'+X(g.margin)+'"></div></div>'+ 
+      '<div class="rlabels"><span>'+g.lo.toFixed(0)+'</span><span>even</span><span>+'+g.hi.toFixed(0)+'</span></div>'+ 
+      '<div class="facts"><span>Neutral strength <b>'+a.neutral_call+'</b></span><span>Site + calibration adjustment <b>'+signed(s)+'</b></span><span>Final call <b>'+a.final_call+'</b></span></div>'):'';
     return '<article class="card"><div class="matchup"><div class="teams">'+g.away+' @ '+g.home+
-    '</div><div class="tip">'+g.tip+'</div></div><div class="call"><div class="margin">'+
-    (g.margin>0?g.home:g.away)+' by '+Math.abs(g.margin).toFixed(1)+'</div><div class="calltxt">our call</div></div>'+
-    '<div class="range"><div class="track"></div><div class="zero" style="left:50%"></div>'+
-    '<div class="band" style="left:'+W(g.lo)+';width:'+(((g.hi-g.lo)/(2*ext))*100).toFixed(1)+'%"></div>'+
-    '<div class="tick" style="left:'+X(g.margin)+'"></div></div>'+
-    '<div class="rlabels"><span>'+g.lo.toFixed(0)+'</span><span>even</span><span>+'+g.hi.toFixed(0)+'</span></div>'+
+    '</div><div class="tip">'+g.tip+'</div></div>'+margin+
     '<div class="winrow" title="'+WINPCT_TIP+'"><div class="winbar"><i style="width:'+wp.toFixed(0)+'%"></i></div><div class="winpct">'+g.home+' '+wp.toFixed(0)+'%</div></div>'+
     (function(){var s=STAKES[g.gid],bits=[];
       if(g.total!=null&&isFinite(g.total)) bits.push('Total <b>'+g.total.toFixed(1)+'</b>');

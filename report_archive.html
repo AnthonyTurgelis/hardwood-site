@@ -35,6 +35,10 @@
   .pred .call{font-size:12.5px}
   .pred .win{color:var(--muted);font-size:11.5px;margin-top:1px;cursor:help}
   .pred .rng{color:var(--muted);font-size:11.5px;margin-top:1px}
+  .pred .mbar{position:relative;height:20px;margin:6px 0 2px;background:var(--bg);border:1px solid var(--line);border-radius:5px}
+  .pred .mbar .b80{position:absolute;top:5px;height:10px;background:var(--accent);opacity:.55;border-radius:3px}
+  .pred .mbar .pt{position:absolute;top:2px;width:3px;height:16px;background:var(--good);transform:translateX(-1px)}
+  .pred .mbar .zero{position:absolute;top:0;bottom:0;width:1px;background:var(--muted);opacity:.7}
   .norep{color:var(--muted);font-size:11.5px;font-style:italic}
   .empty{color:var(--muted);font-style:italic}
   footer{max-width:860px;margin:0 auto;padding:24px 16px;color:var(--muted);font-size:12px}
@@ -83,13 +87,21 @@
     if(p.tip){ mu.appendChild(el("small",null, p.tip)); }
     row.appendChild(mu);
     var body=el("div");
-    if(p.call){ body.appendChild(el("div","call", p.call)); }
+    var a=p.margin_annotation,n=a&&Number(a.neutral_margin),s=a&&Number(a.site_adjustment),f=a&&Number(a.final_margin);
+    var ok=!!a&&isFinite(n)&&isFinite(s)&&isFinite(f)&&Math.abs((n+s)-f)<=.011;
+    if(ok && p.call){ body.appendChild(el("div","call", p.call)); }
     if(p.win_line){
       var wl=el("div","win", p.win_line);
       wl.setAttribute("title", WINPCT_TIP);
       body.appendChild(wl);
     }
-    if(p.range80){ body.appendChild(el("div","rng","80% range: "+p.range80)); }
+    if(ok && p.range90_lo!=null && p.range90_hi!=null && p.range80_lo!=null && p.range80_hi!=null){
+      var span=Math.max(Math.abs(p.range90_lo),Math.abs(p.range90_hi),1),sc=function(v){return((Number(v)+span)/(2*span))*100};
+      var bar=el("div","mbar"),z=el("div","zero");z.style.left="50%";bar.appendChild(z);
+      var b=el("div","b80");b.style.left=sc(p.range80_lo).toFixed(1)+"%";b.style.width=(sc(p.range80_hi)-sc(p.range80_lo)).toFixed(1)+"%";bar.appendChild(b);
+      var pt=el("div","pt");pt.style.left=sc(p.pred_margin).toFixed(1)+"%";bar.appendChild(pt);body.appendChild(bar);
+      body.appendChild(el("div","rng","Neutral strength "+a.neutral_call+" · Site + calibration adjustment "+(s>=0?"+":"")+s.toFixed(1)+" · Final call "+a.final_call));
+    }
     row.appendChild(body);
     return row;
   }

@@ -339,6 +339,17 @@
     return wrap;
   }
 
+  function marginAnnotation(d){
+    var a=d&&d.margin_annotation; if(!a) return null;
+    var n=Number(a.neutral_margin),s=Number(a.site_adjustment),f=Number(a.final_margin);
+    if(!isFinite(n)||!isFinite(s)||!isFinite(f)||Math.abs((n+s)-f)>.011) return null;
+    var box=el("div","why"), signed=function(v){return(v>=0?"+":"")+v.toFixed(1)};
+    [["Neutral strength",a.neutral_call],["Site + calibration adjustment",signed(s)],["Final call",a.final_call]].forEach(function(x,i){
+      var r=el("div","wrow"+(i===2?" wtot":""));r.appendChild(el("div","wlab",x[0]));r.appendChild(el("div","wval",x[1]));box.appendChild(r);
+    });
+    return box;
+  }
+
   // ---- WHY-CHAIN-BEGIN (exercised directly by scripts/test_game_card_chain.py - the test extracts
   // this exact block and runs it in node against the real baked payloads, so the geometry has one
   // implementation and not a Python replica of it) ----
@@ -835,17 +846,19 @@
     var back=el("a","back","← Back to all games"); back.href="./games.html"; main.appendChild(back);
     var hero=el("div","hero");
     hero.appendChild(el("div","mu", (d.away_full||d.away)+" @ "+(d.home_full||d.home)));
-    hero.appendChild(el("div","call","Our call: "+(d.call||"—")));
+    var ann=marginAnnotation(d);
+    if(ann) hero.appendChild(el("div","call","Our call: "+d.call));
     // THE ANSWER, LED WITH: the call above, and immediately under it the one line that says what
     // drives it. Everything else on this page is support for these two lines.
     var lead=leadLine(d);
     if(lead) hero.appendChild(el("div","lead", lead));
     // ...and immediately under the lead, the range that answer lives inside — drawn, not narrated.
-    var mr=marginRangeBar(d); if(mr) hero.appendChild(mr);
+    var mr=ann?marginRangeBar(d):null; if(mr) hero.appendChild(mr);
+    if(ann) hero.appendChild(ann);
     // ...and under that, HOW the number was built — drawn, on the card, not listed in an appendix.
     // The row this answers reads "show how each game prediction is built, right on the game card":
     // the derivation being correct and reconciling was never the gap, being three taps away was.
-    var wc=whyChainBar(d); if(wc) hero.appendChild(wc);
+    var wc=ann?whyChainBar(d):null; if(wc) hero.appendChild(wc);
     hero.appendChild(el("div","sub", d.date||""));
     main.appendChild(hero);
 

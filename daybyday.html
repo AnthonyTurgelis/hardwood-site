@@ -107,7 +107,10 @@ function winLineFromPct(pHome, homeFull, awayFull){
 function normPast(p){
   return { matchup:(p.matchup||"—"), tip:(p.tip||""), call:(p.call||""),
     win_line:(p.win_line||""), win_pct:(p.win_pct!=null?p.win_pct:null),
-    range80:(p.range80||""), band:null, avail:"", side:"past", actual:null };
+    range80:(p.range80||""), annotation:p.margin_annotation||null,
+    band:((p.range90_lo==null||p.range90_hi==null)?null:{lo:p.range90_lo,hi:p.range90_hi,
+      lo80:p.range80_lo,hi80:p.range80_hi,point:p.pred_margin,home:p.home,away:p.away}),
+    avail:"", side:"past", actual:null };
 }
 /* Normalize a FORWARD projection (games.json .games[]). */
 function normFuture(g){
@@ -130,6 +133,7 @@ function normFuture(g){
       lo:g.range90_lo, hi:g.range90_hi,
       lo80:(g.range80_lo==null?null:g.range80_lo), hi80:(g.range80_hi==null?null:g.range80_hi),
       point:(g.pred_margin==null?null:g.pred_margin), home:g.home, away:g.away }),
+    annotation:g.margin_annotation||null,
     avail:out.join(" · "), side:"future", actual:null };
 }
 /* Merge the immutable past-archive + the forward games slate into one ordered date timeline.
@@ -276,7 +280,9 @@ if (typeof module!=="undefined" && module.exports){
     var mu=el("div","mu"); mu.appendChild(document.createTextNode(g.matchup||"—"));
     if(g.tip){ mu.appendChild(el("span","tip", g.tip)); }
     c.appendChild(mu);
-    if(g.call){ c.appendChild(el("div","call", g.call)); }
+    var an=g.annotation,n=an&&Number(an.neutral_margin),s=an&&Number(an.site_adjustment),f=an&&Number(an.final_margin);
+    var reconciles=!!an&&isFinite(n)&&isFinite(s)&&isFinite(f)&&Math.abs((n+s)-f)<=.011;
+    if(reconciles && g.call){ c.appendChild(el("div","call", g.call)); }
     if(g.win_line){
       var wl=el("div","win", g.win_line);
       wl.setAttribute("title", WINPCT_TIP);
@@ -285,9 +291,11 @@ if (typeof module!=="undefined" && module.exports){
     // The range is SHOWN when we hold the raw band, and only described when we do not. Archived
     // past rows carry the sentence and nothing else, so they keep the sentence rather than losing
     // the information to a presentation change.
-    var mb=marginBar(g.band);
-    if(mb){ c.appendChild(mb); }
-    else if(g.range80){ c.appendChild(el("div","rng","80% range: "+g.range80)); }
+    var mb=reconciles?marginBar(g.band):null;
+    if(mb){
+      c.appendChild(mb);
+      c.appendChild(el("div","rng","Neutral strength "+an.neutral_call+" · Site + calibration adjustment "+(s>=0?"+":"")+s.toFixed(1)+" · Final call "+an.final_call));
+    }
     if(g.side==="future" && g.avail){
       var a=el("div","avail"); a.appendChild(el("b",null,"Current lineups: ")); a.appendChild(document.createTextNode(g.avail));
       c.appendChild(a);
