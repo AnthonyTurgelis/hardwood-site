@@ -510,7 +510,8 @@
         var kv=el("div","kv"); kv.textContent=(v==null?"—":v); if(u){ var s=el("small",null); s.textContent=" "+u; kv.appendChild(s);} k.appendChild(kv); return k; }
       siK.appendChild(sikpi("Per game", si.rate==null?null:si.rate.toFixed(3)));
       siK.appendChild(sikpi("Season total", si.volume==null?null:si.volume.toFixed(2)));
-      // share of minutes is NOT repeated here — it is a benchmarked tile in the hero above.
+      siK.appendChild(sikpi("Available-minute share",
+        si.min_share==null?null:(si.min_share*100).toFixed(1), "%"));
       siK.appendChild(sikpi("Games", si.gp==null?null:si.gp));
       siCard.appendChild(siK);
       if(si.results_thin){
