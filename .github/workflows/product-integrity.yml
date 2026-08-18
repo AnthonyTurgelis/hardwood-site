@@ -3,6 +3,8 @@ name: Product Surface Integrity
 on:
   push:
     branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
@@ -14,12 +16,16 @@ concurrency:
 
 jobs:
   restore-reviewed-product:
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout public site
+      - name: Checkout current public main
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
       - name: Fetch and validate the canonical product bundle
