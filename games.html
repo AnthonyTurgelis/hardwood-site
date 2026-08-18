@@ -157,7 +157,7 @@
   /* per-game rotation preview (fetched separately so the slate poll stays light):
      PV = the preview payload, joined by game_id; ROTOPEN remembers which cards the reader
      expanded so a live re-render never collapses an open rotation. */
-  var PURL="./preview.json", PV=null, lastData=null, ROTOPEN={};
+  var PURL="./preview.json", PV=null, STAKES={}, lastData=null, ROTOPEN={};
   /* per-team coaching STYLE read (matchup context line, B rung) — REUSE the SAME per-team
      read already baked for coach.html (./coach_style.json), fetched separately + graceful:
      a missing/late style file can never blank a card, it just drops the context line. */
@@ -854,6 +854,8 @@
       var callLine=el("div","call");
       callLine.appendChild(document.createTextNode("Our call: "+g.call));
       var cf=confChip(g); if(cf){ callLine.appendChild(cf); }
+      var st=STAKES[g.game_id];
+      if(st){ callLine.appendChild(el("span","conf lean",st.tier+" · #"+st.rank+" left")); }
       c.appendChild(callLine);
       c.appendChild(ma);
     }
@@ -1049,6 +1051,14 @@
         }
       }).catch(function(){});
   }
+  function loadLeverage(){
+    fetch(bust("./leverage.json"),{cache:"no-cache"}).then(function(r){return r.ok?r.json():null;})
+      .then(function(d){
+        if(!d || d.stale || !d.games) return;
+        STAKES={}; d.games.forEach(function(x){STAKES[x.game_id]=x;});
+        if(lastData) render(lastData);
+      }).catch(function(){});
+  }
   // one-shot fetch of the per-team style read (matchup context line) — independent + graceful,
   // re-renders once when it lands so the line appears without waiting on a slate poll. Styles
   // change rarely (per game, not per minute) so a single load is enough.
@@ -1062,7 +1072,7 @@
     fetch(bust(TVURL),{cache:"no-cache"}).then(function(r){ return r.ok ? r.json() : null; })
       .then(function(t){ if(t && t.matchups){ TV=t; if(lastData){ render(lastData); } } }).catch(function(){});
   }
-  poll(); pollPreview(); loadStyle(); loadTempo(); setInterval(poll,60000); setInterval(pollPreview,60000); setInterval(updAgo,1000);
+  poll(); pollPreview(); loadLeverage(); loadStyle(); loadTempo(); setInterval(poll,60000); setInterval(pollPreview,60000); setInterval(loadLeverage,300000); setInterval(updAgo,1000);
 })();
 </script>
 <!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="error-map.html">Error Map</a><a href="board.html">Board</a></div><div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div></footer><!--/hw-foot--></body>
