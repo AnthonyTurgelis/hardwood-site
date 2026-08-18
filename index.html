@@ -1,458 +1,74 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Hardwood - WNBA predictions and simulation</title>
-<meta name="description" content="Today's WNBA slate: our margin call, the honest range around it, and the win chance. A front-office analyst system that grades itself daily.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
-<style>
-:root{--lacquer:#201812;--plank:#2B211A;--maple:#C98A3D;--chalk:#EFE7D8;--chalk-dim:#B9AE9C;--key:#3E7C74;--flag:#D9A03C;--line:#4A3B2E}
-*{box-sizing:border-box;margin:0}
-html{scroll-behavior:smooth}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{background:var(--lacquer);color:var(--chalk);font:400 16px/1.55 Barlow,system-ui,sans-serif}
-a{color:var(--chalk);text-decoration:none}
-a:focus-visible,button:focus-visible{outline:2px solid var(--maple);outline-offset:3px}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-header{border-bottom:1px solid var(--line);padding:16px 0 10px}
-.mark{font:700 27px/1 "Barlow Condensed";letter-spacing:.06em;text-transform:uppercase}
-.mark span{color:var(--maple)}
-.ethos{color:var(--chalk-dim);margin-top:4px;font-size:14px}
-nav{display:flex;gap:2px 18px;flex-wrap:wrap;margin-top:10px}
-nav a{font:600 15px/1 "Barlow Condensed";letter-spacing:.12em;text-transform:uppercase;color:var(--chalk-dim);padding:8px 0;border-bottom:2px solid transparent}
-nav a:hover,nav a[aria-current]{color:var(--chalk);border-color:var(--maple)}
-.eyebrow{font:600 14px/1 "Barlow Condensed";letter-spacing:.22em;text-transform:uppercase;color:var(--maple)}
-h1{font:700 30px/1.05 "Barlow Condensed";text-transform:uppercase;letter-spacing:.02em;margin:2px 0 2px}
-.sub{color:var(--chalk-dim);max-width:72ch;font-size:14px}
-section{padding:16px 0}
-#slate .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:9px;margin-top:12px}
-.card{background:var(--plank);border:1px solid var(--line);border-radius:8px;padding:10px 11px 9px}
-.matchup{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.teams{font:700 18px/1.1 "Barlow Condensed";letter-spacing:.03em}
-.tip{color:var(--chalk-dim);font-size:11px;white-space:nowrap}
-.call{display:flex;align-items:baseline;gap:7px;margin:7px 0 1px}
-.margin{font:700 24px/1 "Barlow Condensed";font-variant-numeric:tabular-nums}
-.calltxt{color:var(--chalk-dim);font-size:11px}
-.range{position:relative;height:17px;margin:5px 0 1px}
-.range .track{position:absolute;left:0;right:0;top:8px;height:2px;background:var(--line)}
-.range .zero{position:absolute;top:2px;width:2px;height:13px;background:var(--chalk-dim);opacity:.6}
-.range .band{position:absolute;top:6px;height:6px;background:var(--key);border-radius:3px;opacity:.85}
-.range .tick{position:absolute;top:1px;width:3px;height:15px;background:var(--maple);border-radius:2px}
-.rlabels{display:flex;justify-content:space-between;color:var(--chalk-dim);font-size:10px;font-variant-numeric:tabular-nums}
-.winrow{display:flex;align-items:center;gap:8px;margin-top:7px;cursor:help}
-.winbar{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
-.winbar i{display:block;height:100%;background:var(--key)}
-.winpct{font:600 12px/1 Barlow;font-variant-numeric:tabular-nums}
-.avail{margin-top:6px;color:var(--flag);font-size:11px;line-height:1.35}
-.avail:empty{display:none}
-.facts{display:flex;gap:8px;flex-wrap:wrap;margin-top:5px;color:var(--chalk-dim);font-size:11px;font-variant-numeric:tabular-nums}
-.facts b{color:var(--chalk);font-weight:600}
-.stk{color:var(--flag)}
-.note{color:var(--chalk-dim);font-size:12px;margin-top:6px}
-.legend{background:var(--plank);border:1px solid var(--line);border-radius:10px;padding:20px;margin-top:26px}
-.legend h2{font:700 20px/1 "Barlow Condensed";text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-.legend p{color:var(--chalk-dim);font-size:14px;margin-top:6px}
-.legend b{color:var(--chalk)}
-/* BEST NUMBERS - demoted to the bottom of main and set in SMALL type by CEO order 2026-08-07
-   ("bury that towards the bottom in tinier numbers, that isn't the first thing we need to see").
-   Only size, spacing and position changed; the block's data path is untouched. */
-#best{padding:12px 0 2px;border-top:1px solid var(--line);margin-top:8px}
-#best .bn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:7px;margin-top:8px}
-.bn{background:var(--plank);border:1px solid var(--line);border-radius:8px;padding:7px 9px 6px}
-.bn .v{font:700 17px/1 "Barlow Condensed";font-variant-numeric:tabular-nums;color:var(--chalk)}
-.bn .v small{font:600 10px/1 Barlow;color:var(--chalk-dim);margin-left:3px}
-.bn .v.pending{font:600 11.5px/1.2 Barlow;color:var(--chalk-dim)}
-.bn .l{color:var(--chalk);font-size:11px;line-height:1.28;margin-top:5px}
-.bn .n{color:var(--chalk-dim);font-size:10px;font-variant-numeric:tabular-nums;margin-top:3px}
-/* MACHINE BAND - status + queue + completed, dense enough to read in one screen (CEO order
-   2026-08-07: "everything should be visible all at once on the front page, especially status
-   and the q and everything and completed tasks"). Compact beats spacious here by instruction. */
-#machine{padding:12px 0 4px}
-.mstrip{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.chip{background:var(--plank);border:1px solid var(--line);border-radius:6px;padding:5px 9px;line-height:1.25}
-.chip .k{color:var(--chalk-dim);font:600 9.5px/1 "Barlow Condensed";letter-spacing:.16em;text-transform:uppercase;display:block}
-.chip .val{color:var(--chalk);font-size:12.5px;font-variant-numeric:tabular-nums;margin-top:3px}
-.chip .val.warn{color:var(--flag)}
-.mcols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-@media(max-width:720px){.mcols{grid-template-columns:1fr}}
-.mcol h2{font:700 14px/1 "Barlow Condensed";text-transform:uppercase;letter-spacing:.1em;color:var(--chalk);margin:0 0 6px}
-.mcol h2 span{color:var(--chalk-dim);font:400 11px/1 Barlow;letter-spacing:0;margin-left:6px}
-/* 186px showed FIVE of twelve rows the renderer already had in hand, and the CEO asked to show way more. 300px shows about nine. It stays capped and scrollable so a long queue can never push the record and the numbers off the page. */
-.mlist{display:grid;gap:3px;max-height:300px;overflow:auto}
-.mrow{background:var(--plank);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:12.5px;line-height:1.3;color:var(--chalk);display:flex;gap:7px;align-items:baseline}
-.mrow i{color:var(--chalk-dim);font-style:normal;font-variant-numeric:tabular-nums}
-.mrow .t{flex:1;min-width:0}
-.mrow .fam{color:var(--chalk-dim);font-size:10.5px;white-space:nowrap}
-/* LOUD, not decorative. A frozen band has to look wrong at a glance, or the reader takes the
-   stale list at face value exactly as they took the re-stamped one. */
-.mrow.stale{background:#3a1d1d;border-color:#a33;color:#ffd7d7;font-weight:600}
-.mnote{color:var(--chalk-dim);font-size:11px;margin-top:6px}
-.mnote a{color:var(--maple);font-weight:600}
-.acc{border-top:1px solid var(--line)}
-.acc a{color:var(--maple);font-weight:600}
-footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--chalk-dim);font-size:13px}
-footer .util{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:12px}
-footer .util a{color:var(--chalk-dim)}
-footer .util a:hover{color:var(--chalk)}
-@media(max-width:560px){h1{font-size:34px}.mark{font-size:28px}}
-</style>
-<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
-<body>
-<header class="wrap">
-  <div class="mark">The <span>Hardwood</span></div>
-  <p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p>
-  <!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="games.html" aria-current="page">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="standings.html">Standings &amp; Injuries</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
-</header>
-<main class="wrap">
-  <!-- SHIP CHECKLIST — a PERSISTENT panel, deliberately ABOVE the activity feed below it.
-       The feed forgets by design: items enter, complete and roll off as newer work lands. Eleven
-       shipments landed overnight and the checklist the CEO was asked to watch scrolled out of the
-       window entirely. A fixed set of rows that must stay legible until every one is done cannot
-       live in a surface built to forget, so it sits here and does not move. -->
-  <!-- THE PRODUCT LEADS. Moved above the status panels 2026-08-08 on the CEO's instruction,
-       given three times: the page "puts a whole bunch of info about how to read it front and
-       center, not what i asked for at all", it is "a tiny amount of info in a large amount of
-       space", and "everything should be visible all at once on the front page". Measured
-       before the change: 9,404 characters of ship checklist and machine state rendered ABOVE
-       406 characters of actual predictions. The status panels are not removed - he asked for
-       the checklist - they simply stop outranking the thing the site is for. -->
-  <section id="slate">
-    <div class="eyebrow" id="today-date">Today</div>
-    <h1>Today's slate</h1>
-    <p class="sub">Who wins, by how much, and how sure we are.</p>
-    <div class="grid" id="cards">
-      <div class="card" id="loading-card">
-        <div class="teams">Loading today's games&hellip;</div>
-        <p class="note">If this doesn't fill in, tonight's slate may not be posted yet - yesterday's grades are on the <a href="review.html" style="color:var(--maple)">Daily Review</a>.</p>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Hardwood — WNBA predictions, player intelligence, season outlooks, public grading, and research.">
+  <title>Hardwood — WNBA Intelligence</title>
+  <link rel="stylesheet" href="hw-product.css">
+</head>
+<body class="hw-product" data-page="home" data-section="home">
+  <a class="hw-skip" href="#content">Skip to content</a>
+  <main class="hw-page" id="content">
+    <section class="hw-hero">
+      <div class="hw-card hw-hero-main">
+        <div>
+          <div class="hw-kicker">WNBA intelligence platform</div>
+          <h1 class="hw-hero-title">Predictions, players, teams, and research in one coherent system.</h1>
+          <p class="hw-hero-copy">Hardwood publishes pre-tip forecasts, grades them in public, tracks player and team strength, and turns its historical coverage into tools a basketball decision-maker can actually use.</p>
+        </div>
+        <div class="hw-hero-actions">
+          <a class="hw-button primary" href="#today">Today’s board</a>
+          <a class="hw-button" href="players.html">Player leaders</a>
+          <a class="hw-button" href="standings.html">Season outlook</a>
+          <a class="hw-button" href="deepdive.html">Research library</a>
+        </div>
       </div>
-    </div>
-  </section>
-  <section id="shipcheck" hidden>
-    <div class="eyebrow">Ship checklist<span id="sc-count"></span></div>
-    <div class="mlist" id="sc-rows"></div>
-    <p class="mnote" id="sc-note"></p>
-  </section>
-  <section id="machine">
-    <div class="eyebrow">Where the machine is right now</div>
-    <div class="mstrip" id="m-strip"></div>
-    <div class="mcols">
-      <div class="mcol">
-        <h2>Working next<span id="m-qcount"></span></h2>
-        <div class="mlist" id="m-queue"></div>
-      </div>
-      <div class="mcol">
-        <h2>Finished today<span id="m-dcount"></span></h2>
-        <div class="mlist" id="m-done"></div>
-      </div>
-    </div>
-    <p class="mnote" id="m-note"><a href="queue.html">Full queue -&gt;</a></p>
-  </section>
-  <script>
-/* MACHINE BAND. Status, the ranked queue and the finished work, side by side and above the fold,
-   by CEO order 2026-08-07: "everything should be visible all at once on the front page, especially
-   status and the q and everything and completed tasks".
-   EVERY value below is read from ./status.json or ./queue.json AT RENDER TIME. There is not one
-   literal figure, label or row title in this block - the same law the accuracy block at the bottom
-   of this page is built on, and for the same reason: a hand-typed status line on the front door is
-   a lie the moment the machine moves.
-   NULL RULE: nothing renders as null, undefined, NaN or a blank tile. An absent value renders the
-   honest words "not reported" (or, for a whole feed, the section degrades rather than showing a
-   number-shaped hole) - the same discipline as "not yet graded" below.
-   STALENESS: status.json ships its own contract (stale_after_secs). We compare it against the
-   clock at render and mark the timestamp chip rather than quietly serving an old reading as fresh.
-   OPERATIONS FILTER on "Working next" is UNCHANGED and deliberate - see the note on that list. */
-(function(){
-  function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n;}
-  function has(v){return v!==null&&v!==undefined&&v!=='';}
-  var MISSING='not reported';
-  function chip(k,v,warn){
-    var c=el('div','chip');
-    c.appendChild(el('span','k',k));
-    /* an unreadable value is flagged exactly like a bad one - unknown is never shown as fine */
-    c.appendChild(el('div','val'+((warn||!has(v))?' warn':''), has(v)?String(v):MISSING));
-    return c;
-  }
-  /* STATUS. Booleans in the feed are turned into words here (alive / down); every number, clock
-     and phrase is the feed's own. `known:false` on a block means the machine could not read its
-     own state - that renders as "not reported", never as a confident green. */
-  fetch('./status.json').then(function(r){return r.json()}).then(function(s){
-    if(!s) return;
-    var strip=document.getElementById('m-strip');
-    var sc=s.scout||{}, co=s.coordinator||{}, pa=s.pause||{}, ph=s.pipe_health||{};
-    var pct=pa.percent||{};
-    var scv=sc.known===false?null:(sc.alive===true?'alive':(sc.alive===false?'down':null));
-    if(has(scv)&&has(sc.age_s)) scv=scv+' - '+sc.age_s+'s ago';
-    strip.appendChild(chip('Monitor',scv,scv&&scv.indexOf('down')===0));
-    var cov=co.known===false?null:(has(co.state)?String(co.state).toLowerCase():(co.alive===true?'alive':null));
-    strip.appendChild(chip('Worker',cov,cov==='dead'||cov==='blocked'));
-    strip.appendChild(chip('Run state',has(pa.label)?pa.label:(has(pa.state)?pa.state:null),has(pa.state)&&pa.state!=='NORMAL'));
-    var usage=has(pct.display)?pct.display:(has(pct.value)?pct.value+'%':null);
-    if(has(usage)&&has(pct.quality)&&pct.quality!=='MEASURED') usage=usage+' ('+String(pct.quality).toLowerCase()+')';
-    strip.appendChild(chip('Plan used',usage,!has(pct.display)));
-    var dp=has(ph.directives_pending)?ph.directives_pending:null;
-    if(has(dp)&&has(ph.last_processed_display)) dp=dp+' - last '+ph.last_processed_display;
-    strip.appendChild(chip('Requests waiting',dp));
-    /* the freshness chip states the reading's age against the feed's OWN staleness contract */
-    var stamp=has(s.generated_et)?s.generated_et:(has(s.generated_utc)?s.generated_utc:null), stale=false;
-    if(has(s.generated_utc)&&has(s.stale_after_secs)){
-      var age=(Date.now()-Date.parse(s.generated_utc))/1000;
-      if(isFinite(age)&&age>s.stale_after_secs){stale=true;stamp=stamp+' - stale';}
-    }
-    strip.appendChild(chip('Reading taken',stamp,stale));
-  }).catch(function(){});
-  /* QUEUE + FINISHED, one feed, one fetch. */
-  fetch('./queue.json').then(function(r){return r.json()}).then(function(d){
-    var items=(d&&d.items)||[];
-    if(!items.length) return;
-    function paint(id,rows,countId,count,word){
-      var box=document.getElementById(id);
-      if(!rows.length){box.appendChild(el('div','mrow','nothing on this list right now'));}
-      rows.forEach(function(i,n){
-        var row=el('div','mrow');
-        row.appendChild(el('i',null,(n+1)+'.'));
-        row.appendChild(el('div','t', has(i.title)?i.title:'untitled item'));
-        if(has(i.family)) row.appendChild(el('div','fam',i.family));
-        box.appendChild(row);
-      });
-      /* the heading counts the WHOLE filtered set, not the rows that fit on screen */
-      document.getElementById(countId).textContent=' - '+count+' '+word;
-    }
-    /* PUBLIC PROJECTION of the ranked queue - filter unchanged from the strip this replaced. Two
-       things it must never do, both shipped once and both caught by the CEO on the live page:
-       1. Print the internal owner/status tag - "(MACHINE - NEXT)" is a record-internal identifier
-          and has no meaning to a reader.
-       2. Show OPERATIONS rows. The queue is one canonical list, but this list is the product
-          roadmap: a reader wants what we are building, not our plumbing. Family is the filter, so
-          a mis-filed row lands here - that is how "Stop telling him we are idle when we are not"
-          reached the front page. Plumbing has its own home now: the status chips above. */
-    /* FINISHED IS A SET OF WORDS, NOT ONE WORD. The feed carries two finished states - DONE TODAY
-       and LANDED, the landed-and-owed-a-verification word - and testing for only the first read 23
-       rows that landed today as UPCOMING WORK. Same list as _QUEUE_FINISHED in the baker. */
-    var FINISHED={'DONE TODAY':1,'LANDED':1};
-    var next=items.filter(function(i){
-      return !FINISHED[i.status] && i.status!=='BLOCKED'
-          && String(i.family||'').toLowerCase()!=='operations';
-    });
-    /* FINISHED shows every family, ops included - the CEO asked for completed tasks and the
-       machine's own work is the bulk of them. The list scrolls in place so the band stays one
-       screen tall; the heading carries the true total, not the visible count. */
-    var done=items.filter(function(i){return !!FINISHED[i.status];});
-    /* NEWEST FIRST, and only here. The ranked order this list inherits is a PRIORITY order, which
-       is meaningless for work that is already finished: it scattered today's completions among a
-       hundred older rows, so a band headed "Finished today" opened on items from three weeks ago.
-       Rows carrying no date sort last rather than being dropped - an undated finished row is still
-       finished, it just cannot claim a place in the ordering. */
-    done.sort(function(a,b){
-      var x=a.event_utc||'', y=b.event_utc||'';
-      if(x===y) return 0;
-      if(!x) return 1;
-      if(!y) return -1;
-      return x<y?1:-1;
-    });
-    paint('m-queue',next.slice(0,12),'m-qcount',next.length,'waiting');
-    paint('m-done',done,'m-dcount',done.length,'done');
-    /* CONTENT-TIME LAW (CEO 20260812). This line used to print d.as_of_et when as_of_et WAS the
-       bake instant, so Aug 7 items sat under a same-minute stamp and frozen content was
-       indistinguishable from live content. Each band now prints the newest event INSIDE its own
-       rows, and says so loudly when that clock has stopped or was never recorded. The bake instant
-       is never printed here - it is a fact about the reader, not about the list. */
-    function bandnote(id,st,word){
-      var box=document.getElementById(id); if(!box||!st) return;
-      var row=el('div','mrow');
-      if(!has(st.as_of_iso)){
-        row.className='mrow stale';
-        row.appendChild(el('div','t',has(st.note)?st.note:'We cannot tell how current this list is.'));
-      }else{
-        var txt='Newest '+word+' here: '+st.as_of_et+'.';
-        if(st.stale===true){row.className='mrow stale';txt=txt+' '+(has(st.note)?st.note:'This list has stopped moving.');}
-        row.appendChild(el('div','t',txt));
-      }
-      box.appendChild(row);
-    }
-    bandnote('m-queue',d.working_next_stamp,'item');
-    bandnote('m-done',d.finished_today_stamp,'finished item');
+      <aside class="hw-card">
+        <div class="hw-card-head"><h3>Platform snapshot</h3><span class="hw-fresh" data-fresh><span class="hw-fresh-dot"></span>Loading</span></div>
+        <div class="hw-card-body hw-kpi-grid" id="home-kpis">
+          <div class="hw-kpi"><span class="hw-kpi-label">Loading</span><strong class="hw-kpi-value">—</strong></div>
+          <div class="hw-kpi"><span class="hw-kpi-label">Loading</span><strong class="hw-kpi-value">—</strong></div>
+          <div class="hw-kpi"><span class="hw-kpi-label">Loading</span><strong class="hw-kpi-value">—</strong></div>
+          <div class="hw-kpi"><span class="hw-kpi-label">Loading</span><strong class="hw-kpi-value">—</strong></div>
+        </div>
+      </aside>
+    </section>
 
-  }).catch(function(){});
-})();
-  </script>
-  <section class="acc">
-    <!-- Two lines of prose held a whole block to say one thing. One line now, same links. -->
-    <div class="eyebrow">The record</div>
-    <p class="sub" style="margin-top:6px">Every call graded the morning after. <a href="accuracy.html">Our accuracy</a> · <a href="review.html" style="color:var(--maple)">Daily review</a></p>
-  </section>
-  <section id="best" hidden>
-    <div class="eyebrow">Best numbers</div>
-    <div class="bn-grid" id="bn-grid"></div>
-  </section>
-  <script>
-/* BEST NUMBERS. POSITION AND SIZE CHANGED 2026-08-07 BY CEO ORDER - it opened the page and he said
-   it "isn't the first thing we need to see", so it sits at the FOOT of main in small type now. The
-   DATA PATH BELOW IS UNTOUCHED: every figure is still read from ./accuracy.json AT RENDER TIME -
-   there is not a single literal number in this block, by order. A hand-typed accuracy figure goes
-   stale the next morning the grader runs and then the front door is lying; that is the defect class
-   this block exists to avoid. Same feed accuracy.html reads, so the two surfaces cannot disagree.
-   NULL RULE: a surface with no graded sample carries value null at n 0 - the combined-total row is
-   null today. A null renders as "not yet graded", never as a dash, a zero, or a blank tile: an
-   absent number stated plainly beats a number-shaped hole. Applies to any future null, not just
-   this one. The sample size rides with every figure because n is part of the claim.
-   Fail-soft: no feed, no surfaces, or a bad parse leaves the section hidden rather than empty. */
-(function(){
-  function el(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n;}
-  /* The checklist lives in board.json, so it gets its OWN fetch. My first version painted it
-     inside the queue.json handler, where `d` is the queue and `d.ship_checklist` is forever
-     undefined -- so the branch skipped in silence and the panel stayed hidden while the data sat
-     live one file away. A read against the wrong object fails exactly like a missing feature. */
-  fetch('./board.json').then(function(r){return r.json()}).then(function(b){
-    /* SHIP CHECKLIST. Painted from board.json's own persistent key, never from the feed.
-       UNKNOWN IS NOT EMPTY: if the payload could not be read the baker sends known:false with no
-       counts, and this panel then says so rather than staying hidden — a hidden panel and a panel
-       with nothing left to show are opposite statements, and the second one is a lie when the
-       truth is that we could not read it.
-       A row marked done with no evidence renders as claimed-without-proof, never as a tick: the
-       rule this list exists to enforce is that live-verified WITH A PICTURE is the only done. */
-    var sc=b.ship_checklist;
-    if(sc){
-      var host=document.getElementById('shipcheck');
-      var rows=document.getElementById('sc-rows');
-      host.hidden=false;
-      if(!sc.known){
-        document.getElementById('sc-count').textContent=' — unknown';
-        rows.appendChild(el('div','mnote','The checklist could not be read ('+(sc.reason||'no reason given')+'). This is not an empty list.'));
-      }else{
-        document.getElementById('sc-count').textContent=' '+sc.label+(sc.stopped?' · '+sc.stopped+' stopped':'');
-        /* ONE LINE PER ROW. The evidence paragraph used to render in full under every item, so
-           THREE rows filled the panel and the other ten were below the fold - a tiny amount of
-           information in a large amount of space, which is the CEO's exact complaint. All
-           thirteen now fit in less height than three used to take. The evidence is not lost: it
-           is on the full checklist page, one click away, where a reader who wants the proof goes.
-           STOPPED rows keep a short clause, because "stopped" without a reason is a status word
-           pretending to be an answer, and those are the rows a reader actually stops on. */
-        sc.rows.forEach(function(r){
-          var line=el('div','mrow');
-          var mark=r.state==='done'?'done':(r.state==='stopped'?'stopped':'open');
-          line.appendChild(el('b',null,r.id+' '));
-          line.appendChild(el('span',null,r.item||''));
-          line.appendChild(el('span','tag '+mark,' '+(r.state==='done'&&!r.evidence?'claimed, no proof':mark)));
-          if(r.state==='stopped'&&r.evidence){
-            /* first sentence, without a lookbehind - Safari below 16.4 throws on those and the
-               whole panel would die at parse time, on a phone, silently. */
-            var ev=String(r.evidence), dot=ev.indexOf('. ');
-            var why=dot>0?ev.slice(0,dot+1):ev;
-            if(why.length>120) why=why.slice(0,117).replace(/\s\S*$/,'')+'...';
-            line.appendChild(el('span','mnote',' '+why));
-          }
-          rows.appendChild(line);
-        });
-        document.getElementById('sc-note').appendChild(el('a',null,'Full checklist ->')).href=sc.href||'./ship_checklist.html';
-      }
-    }
-  }).catch(function(){});
-  fetch('./accuracy.json').then(function(r){return r.json()}).then(function(a){
-    var rows=(a&&a.surfaces)||[];
-    if(!rows.length) return;
-    var g=document.getElementById('bn-grid');
-    rows.forEach(function(m){
-      var card=el('div','bn'), v;
-      if(m.value==null){
-        v=el('div','v pending','not yet graded');
-      }else{
-        v=el('div','v', m.unit==='%' ? (m.value+'%') : String(m.value));
-        if(m.unit && m.unit!=='%') v.appendChild(el('small',null,m.unit));
-      }
-      card.appendChild(v);
-      card.appendChild(el('div','l', m.surface||''));
-      /* the n line belongs to a CLAIM: a null row makes none, so it gets no sample line either -
-         "n = 0 - lower is better" under "not yet graded" is clutter dressed as evidence. */
-      if(m.value!=null){
-        var bits=[];
-        if(m.n!=null) bits.push('n = '+m.n);
-        if(m.direction) bits.push(m.direction);
-        if(bits.length) card.appendChild(el('div','n', bits.join(' · ')));
-      }
-      g.appendChild(card);
-    });
-    document.getElementById('best').hidden=false;
-  }).catch(function(){});
-})();
-  </script>
-</main>
-<footer class="wrap">
-  <div class="util">
-    <a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="ledger.html">Error Map</a><a href="board.html">Board</a><a href="glossary.html">Glossary</a><a href="about.html">About</a>
-  </div>
-  <div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div>
-</footer>
-<script>
-/* ============ COORDINATOR WIRING POINT ============
-   SLATE_FEED is the SAME json games.html reads (its `var URL="./games.json"`).
-   The mapping below is the feed's REAL shape, read off site/games.json - the
-   template's placeholder names did not match it, so only map() moved:
-     d.today          today's slate ONLY (4 rows for 2026-08-05). d.games carries the
-                      whole forward book through 08-10, which would have put next
-                      week's games on the front page. today -> games is the fallback.
-     g.away / g.home  already abbreviations
-     g.tip_et         already a display string
-     g.pred_margin    home-positive margin        (template called it `margin`)
-     g.range80_lo/hi  the honest range            (template called it `lo`/`hi`)
-     g.p_home_win     ALREADY 0-100 (e.g. 75.8), NOT a 0-1 fraction
-     g.avail          an OBJECT {away:{out:[],limited:[],team},home:{...}}, not a
-                      string - flattened to a note here. Empty stays empty and the
-                      .avail:empty rule hides the row.
-   Nothing else was restyled. */
-/* WIN-CHANCE HOVER NOTE. Kept byte-identical on every surface that renders a win chance
-   (index.html, board.html, daybyday.html, report_archive.html); primer.html#winpct-ref is the
-   single source of truth for the three numbers in it and tests/test_winpct_reference.py fails if
-   a copy drifts from the others or from the table. It names the gap between the simulated number
-   and the reference rather than smoothing it - the card's number is NOT adjusted to match. */
-var WINPCT_TIP = "Our win chance comes from simulating the game. For reference, a 3-point favorite wins about 59% of the time, a 6-point favorite about 68%, and a 10-point favorite about 79%. On clear favorites our simulated number can run a point or two above that reference - a known gap, written up on the Learn page.";
-var SLATE_FEED = "./games.json";
-/* STAKES join. site/leverage.json carries per-game leverage for every remaining game, keyed on the
-   SAME g-prefixed id games.json uses, so the join is exact and no recomputation happens here - the
-   season engine is the only place leverage is calculated. Fail-soft by design: if the feed is
-   missing or marked stale, cards render without a stakes chip rather than showing a number from a
-   race that has already resolved. */
-var STAKES={};
-var stakesReady=fetch("./leverage.json").then(function(r){return r.json()}).then(function(L){
-  if(L&&!L.stale&&L.games) L.games.forEach(function(x){STAKES[x.game_id]={tier:x.tier,rank:x.rank};});
-}).catch(function(){});
-Promise.all([fetch(SLATE_FEED).then(function(r){return r.json()}),stakesReady]).then(function(a){var d=a[0];
-  var flat=function(a){if(!a)return"";if(typeof a==="string")return a;
-    var o=[].concat(((a.away||{}).out)||[],((a.home||{}).out)||[]);return o.length?("Out: "+o.join(", ")):""};
-  var games=(d.today||d.games||d).map(function(g){return{
-    away:g.away||g.away_team_abbr, home:g.home||g.home_team_abbr,
-    tip:g.tip_et||g.tip||"", margin:+(g.pred_margin!=null?g.pred_margin:g.margin),
-    lo:+(g.range80_lo!=null?g.range80_lo:g.lo), hi:+(g.range80_hi!=null?g.range80_hi:g.hi),
-    wp:+(g.p_home_win!=null?g.p_home_win:g.win_prob),
-    gid:g.game_id||"", total:(g.total!=null?+g.total:null),
-    annotation:g.margin_annotation||null,
-    avail:flat(g.avail)||g.availability_note||""}});
-  if(!games.length) return;
-  var dt=d.date_et||""; if(dt) document.getElementById("today-date").textContent=dt;
-  var ext=Math.max.apply(null,games.map(function(g){return Math.max(Math.abs(g.lo),Math.abs(g.hi))}))||15;
-  var X=function(v){return (50+50*(v/ext)).toFixed(1)+"%"};
-  var W=function(v){return ((v-(-ext))/(2*ext)*100).toFixed(1)+"%"};
-  document.getElementById("cards").innerHTML=games.map(function(g){
-    var wp=g.wp>1?g.wp:g.wp*100;
-    var a=g.annotation,n=a&&Number(a.neutral_margin),s=a&&Number(a.site_adjustment),f=a&&Number(a.final_margin);
-    var ok=!!a&&isFinite(n)&&isFinite(s)&&isFinite(f)&&Math.abs((n+s)-f)<=.011&&Math.abs(f-g.margin)<=.011;
-    var signed=function(v){return(v>=0?"+":"")+v.toFixed(1)};
-    var margin=ok?('<div class="call"><div class="margin">'+a.final_call+'</div><div class="calltxt">our call</div></div>'+
-      '<div class="range"><div class="track"></div><div class="zero" style="left:50%"></div>'+
-      '<div class="band" style="left:'+W(g.lo)+';width:'+(((g.hi-g.lo)/(2*ext))*100).toFixed(1)+'%"></div>'+
-      '<div class="tick" style="left:'+X(g.margin)+'"></div></div>'+
-      '<div class="rlabels"><span>'+g.lo.toFixed(0)+'</span><span>even</span><span>+'+g.hi.toFixed(0)+'</span></div>'+
-      '<div class="facts"><span>Neutral strength <b>'+a.neutral_call+'</b></span><span>Site + calibration adjustment <b>'+signed(s)+'</b></span><span>Final call <b>'+a.final_call+'</b></span></div>'):'';
-    return '<article class="card"><div class="matchup"><div class="teams">'+g.away+' @ '+g.home+
-    '</div><div class="tip">'+g.tip+'</div></div>'+margin+
-    '<div class="winrow" title="'+WINPCT_TIP+'"><div class="winbar"><i style="width:'+wp.toFixed(0)+'%"></i></div><div class="winpct">'+g.home+' '+wp.toFixed(0)+'%</div></div>'+
-    (function(){var s=STAKES[g.gid],bits=[];
-      if(g.total!=null&&isFinite(g.total)) bits.push('Total <b>'+g.total.toFixed(1)+'</b>');
-      if(s) bits.push('<span class="stk">'+s.tier+'</span> &middot; #'+s.rank+' left');
-      return bits.length?'<div class="facts">'+bits.join('<span style="opacity:.4">|</span>')+'</div>':''})()+
-    (g.avail?'<div class="avail">'+g.avail+'</div>':'')+'</article>'}).join("");
-}).catch(function(){ /* static content stands on its own */ });
-</script>
-<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="error-map.html">Error Map</a><a href="board.html">Board</a></div><div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div></footer><!--/hw-foot--></body>
+    <section class="hw-section" id="today">
+      <div class="hw-section-head"><div><h2>Current game board</h2><p>Forecast, uncertainty, total, and direct access to the full report.</p></div><a class="hw-section-link" href="games.html">All games →</a></div>
+      <div class="hw-game-grid" id="home-games"><div class="hw-card hw-loading">Loading game forecasts…</div></div>
+    </section>
+
+    <section class="hw-section">
+      <div class="hw-grid two">
+        <article class="hw-card">
+          <div class="hw-card-head"><div><h3>Player impact leaders</h3><span class="hw-muted">Current published rating</span></div><a class="hw-section-link" href="players.html">Full leaderboard →</a></div>
+          <div class="hw-table-wrap" style="border:0;border-radius:0"><table class="hw-table" style="min-width:560px"><thead><tr><th>#</th><th>Player</th><th class="num">Impact</th><th class="num">Minutes</th><th class="num">PTS</th></tr></thead><tbody id="home-players"><tr><td colspan="5"><div class="hw-loading">Loading players…</div></td></tr></tbody></table></div>
+        </article>
+        <article class="hw-card">
+          <div class="hw-card-head"><div><h3>Standings and outlook</h3><span class="hw-muted">Current record plus simulated finish</span></div><a class="hw-section-link" href="standings.html">Full standings →</a></div>
+          <div class="hw-table-wrap" style="border:0;border-radius:0"><table class="hw-table" style="min-width:560px"><thead><tr><th>#</th><th>Team</th><th class="num">Record</th><th class="num">Proj W</th><th class="num">Playoff</th><th class="num">Title</th></tr></thead><tbody id="home-standings"><tr><td colspan="6"><div class="hw-loading">Loading standings…</div></td></tr></tbody></table></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="hw-section">
+      <div class="hw-section-head"><div><h2>Research library</h2><p>Empirical WNBA questions with the sample and conclusion on the face of the card.</p></div><a class="hw-section-link" href="deepdive.html">All research →</a></div>
+      <div class="hw-research-grid" id="home-research"><div class="hw-card hw-loading">Loading research…</div></div>
+    </section>
+
+    <section class="hw-section">
+      <div class="hw-section-head"><div><h2>Explore the platform</h2><p>The site is organized by basketball questions, not by whichever script produced the data.</p></div></div>
+      <div class="hw-cap-grid">
+        <article class="hw-card hw-capability"><strong>Who is better?</strong><p>Player impact, team strength, projected minutes, and side-by-side comparison.</p><a href="players.html">Open player intelligence →</a></article>
+        <article class="hw-card hw-capability"><strong>Who wins tonight?</strong><p>Game probabilities, margins, totals, uncertainty bands, availability, and reports.</p><a href="games.html">Open game board →</a></article>
+        <article class="hw-card hw-capability"><strong>Where is the season going?</strong><p>Current standings, projected wins, playoff odds, and title odds.</p><a href="standings.html">Open season outlook →</a></article>
+        <article class="hw-card hw-capability"><strong>Can the model be trusted?</strong><p>Published misses, winner accuracy, calibration, and historical scorecards.</p><a href="accuracy.html">Open model audit →</a></article>
+      </div>
+      <div class="hw-note" style="margin-top:12px">The internal queue and machine status remain available under <a class="hw-section-link" href="board.html">Operations</a>, but they no longer lead the public product.</div>
+    </section>
+  </main>
+  <script src="hw-product.js"></script>
+</body>
 </html>
