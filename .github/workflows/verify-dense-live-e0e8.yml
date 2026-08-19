@@ -1,0 +1,66 @@
+name: Verify Dense Site Live e0e8
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/verify-dense-live-e0e8.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify live route markers and assets
+        env:
+          RELEASE: e0e8aa83c757bd83f2054b95120ed54f5fa3ac13
+        run: |
+          set -euo pipefail
+          declare -A routes=(
+            [index.html]='data-product="league-command-center"'
+            [games.html]='data-product="league-games"'
+            [report_archive.html]='data-product="dense-reports"'
+            [game_report_v2.html]='data-product="dense-game-report"'
+            [players.html]='data-product="dense-players"'
+            [teams.html]='data-product="dense-teams"'
+            [standings.html]='data-product="dense-standings"'
+            [accuracy.html]='data-product="dense-accuracy"'
+            [deepdive.html]='data-product="dense-research"'
+          )
+          assets=(
+            hw-product.css hw-product.js hw-dense.css hw-command.js
+            hw-games.css hw-games.js hw-reports.css hw-reports.js
+            hw-game-report.css hw-game-report.js hw-players.css hw-players.js
+            hw-teams.css hw-teams.js hw-standings.css hw-standings.js
+            hw-accuracy.css hw-accuracy.js hw-research.css hw-research.js
+          )
+          for attempt in $(seq 1 36); do
+            ok=true
+            for route in "${!routes[@]}"; do
+              body=$(curl -fsSL --max-time 20 "https://anthonyturgelis.github.io/hardwood-site/${route}?release=${RELEASE}" || true)
+              if ! printf '%s' "$body" | grep -Fq "${routes[$route]}"; then
+                echo "WAIT route=$route marker=${routes[$route]} attempt=$attempt"
+                ok=false
+                break
+              fi
+            done
+            if [ "$ok" = true ]; then
+              for asset in "${assets[@]}"; do
+                if ! curl -fsSL --max-time 20 "https://anthonyturgelis.github.io/hardwood-site/${asset}?release=${RELEASE}" >/dev/null; then
+                  echo "WAIT asset=$asset attempt=$attempt"
+                  ok=false
+                  break
+                fi
+              done
+            fi
+            if [ "$ok" = true ]; then
+              echo "LIVE_VERIFIED routes=${#routes[@]} assets=${#assets[@]} release=${RELEASE}"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Dense site not fully live within six minutes"
+          exit 1
