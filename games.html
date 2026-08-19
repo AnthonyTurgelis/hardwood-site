@@ -1,95 +1,1079 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Hardwood WNBA game board — every forecast, uncertainty range, total, availability read, leverage signal, result, and report in one compact view.">
-  <title>Games — Hardwood</title>
-  <link rel="stylesheet" href="hw-product.css">
-  <link rel="stylesheet" href="hw-dense.css">
-  <link rel="stylesheet" href="hw-games.css">
-</head>
-<body class="hw-product" data-page="games-dense" data-section="games" data-product="league-games">
-  <a class="hw-skip" href="#content">Skip to the game board</a>
-  <main class="hw-page" id="content">
-    <section class="hw-command" aria-labelledby="games-title">
-      <header class="hw-command-head hw-games-command-head">
-        <div class="hw-command-title">
-          <div class="hw-kicker">WNBA games</div>
-          <h1 id="games-title">Forecasts, context, and results.</h1>
-          <p>Every published call in a compact board. Open a row only when you need the full uncertainty, availability, movement, rotation, and report detail.</p>
-        </div>
-        <div class="hw-command-meta">
-          <span class="hw-fresh" data-games-fresh><span class="hw-fresh-dot"></span>Loading current data</span>
-          <a class="hw-button" href="daybyday.html">Day by day</a>
-          <a class="hw-button" href="report_archive.html">Report archive</a>
-          <a class="hw-button" href="availability.html">Availability</a>
-        </div>
-      </header>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Games</title>
+<style>
+  :root{ --bg:#f4f6f8; --card:#fff; --card2:#f7f9fc; --ink:#161a21; --muted:#5a6675; --dim:#8a93a3;
+    --line:#e3e7ee; --line2:#d3d9e3; --acc:#2b6cb0; --good:#1f883d; --bad:#c62828; --warn:#9a6700;
+    --chip:#eef2f8; --home:#2b6cb0; --away:#9a6700; --flash:rgba(43,108,176,.20); --shadow:0 1px 2px rgba(20,24,35,.06); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --card2:#1c2330; --ink:#e6edf3;
+    --muted:#9aa7b4; --dim:#6b7684; --line:#242c38; --line2:#39424f; --acc:#58a6ff; --good:#3fb950; --bad:#ff7b72;
+    --warn:#d29922; --chip:#21324a; --home:#58a6ff; --away:#e3b341; --flash:rgba(88,166,255,.26); --shadow:none; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0}
+  .sub{color:var(--muted);font-size:12px}
+  .ago{font-size:11px;color:var(--dim);white-space:nowrap}
+  .ago b{color:var(--good);font-variant-numeric:tabular-nums}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--acc);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 48px}
+  .lede{color:var(--muted);font-size:12.5px;margin:6px 0 2px}
+  .daylbl{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;margin:16px 0 8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+  .g{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:10px 11px;box-shadow:var(--shadow)}
+  .g.flash{animation:fl 1.1s ease}
+  @keyframes fl{0%{background:var(--flash)}100%{background:var(--card)}}
+  .gh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:2px}
+  .gh b{font-size:14.5px}
+  .pill{font-size:10.5px;color:var(--muted);background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:1px 7px;font-variant-numeric:tabular-nums}
+  .gtip{display:block;font-size:10.5px;color:var(--dim);margin-top:3px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .call{font-size:13px;font-weight:650;margin:5px 0 6px;color:var(--acc)}
+  .mann{display:grid;gap:2px;margin:0 0 7px;padding:6px 8px;border-left:2px solid var(--line2);font-size:10.5px;color:var(--muted)}
+  .mann div{display:flex;justify-content:space-between;gap:10px}
+  .mann b{color:var(--ink);font-variant-numeric:tabular-nums;text-align:right}
+  .mann .final{padding-top:2px;border-top:1px solid var(--line);font-weight:700}
+  .conf{display:inline-block;font-size:10.5px;font-weight:700;margin-left:7px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);vertical-align:1px;letter-spacing:.2px}
+  .conf.toss{color:var(--warn);background:var(--chip)}
+  .conf.lean{color:var(--acc);background:var(--chip)}
+  .conf.fav{color:var(--good);background:var(--chip)}
+  .kv{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+  .k{background:var(--card2);border:1px solid var(--line);border-radius:7px;padding:5px 8px}
+  .k .kl{font-size:9.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.4px}
+  .k .kvv{font-size:13.5px;font-weight:640;margin-top:1px}
+  .wp{display:flex;height:16px;border-radius:5px;overflow:hidden;border:1px solid var(--line);margin-top:2px;font-size:10px}
+  .wp .h{background:var(--home);color:#fff;display:flex;align-items:center;padding:0 5px}
+  .wp .a{background:var(--card2);color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding:0 5px;flex:1}
+  .mbar{position:relative;height:20px;margin:7px 0 2px;background:var(--card2);border:1px solid var(--line);border-radius:5px}
+  .mbar .b90{position:absolute;top:6px;height:8px;background:var(--line2);border-radius:3px}
+  .mbar .b80{position:absolute;top:5px;height:10px;background:var(--acc);opacity:.55;border-radius:3px}
+  .mbar .pt{position:absolute;top:2px;width:3px;height:16px;background:var(--good);transform:translateX(-1px)}
+  .mbar .zero{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.7}
+  .mcap{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:1px}
+  /* margin-DISTRIBUTION strip (the density component ported from the gameday report) */
+  .dwrap{position:relative;height:40px;margin:7px 0 2px}
+  .dbars{display:flex;align-items:flex-end;height:100%}
+  .dbars .dcol{flex:1 1 0;height:100%;display:flex;align-items:flex-end}
+  .dbars .dcol i{display:block;width:100%;border-radius:1px 1px 0 0}
+  .dbars .dcol i.home{background:var(--home)}
+  .dbars .dcol i.away{background:var(--away)}
+  .dzero{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.75}
+  .dmed{position:absolute;top:-3px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:6px solid var(--good)}
+  .note{font-size:10.5px;color:var(--dim);margin-top:6px}
+  .todaynote{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--warn);
+    border-radius:8px;padding:8px 11px;color:var(--muted);font-size:12.5px;margin:4px 0}
+  .res{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:9px 11px;box-shadow:var(--shadow)}
+  .res .rh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .res .rteam{font-size:13.5px;font-weight:640}
+  .res .rscore{font-size:15px;font-weight:720;font-variant-numeric:tabular-nums}
+  .res .fin{font-size:12px;color:var(--muted);margin-top:3px}
+  .res .grade{font-size:12px;margin-top:5px;font-weight:620}
+  .grade.good{color:var(--good)} .grade.bad{color:var(--bad)} .grade.na{color:var(--dim);font-weight:500}
+  .pdfs{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+  .pdfs a{font-size:11px;color:var(--acc);border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:var(--card);text-decoration:none}
+  /* forward-availability preview — who's in/out/limited + what we assumed */
+  .avail{margin:7px 0 2px;border-top:1px solid var(--line);padding-top:6px}
+  .avlbl{font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--dim);font-weight:700;margin-bottom:4px}
+  .avteam{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px;margin:3px 0}
+  .avtm{font-size:11px;font-weight:700;color:var(--muted);min-width:2.4em}
+  .avdesc{font-size:11px;flex:1 1 60%}
+  .avout{color:var(--bad);font-weight:600}
+  .avlim{color:var(--warn);font-weight:600}
+  .avfull{color:var(--good)}
+  .avroster{font-size:10px;color:var(--dim);white-space:nowrap}
+  .avnote{font-size:10px;color:var(--dim);margin-top:5px;line-height:1.4}
+  .gstyle{font-size:11px;color:var(--dim);margin:2px 0 4px;line-height:1.4}
+  /* projected rotation + active roster — the expandable per-game preview (upcoming-preview rung) */
+  .rot{margin:6px 0 2px;font-size:11.5px}
+  .rot summary{cursor:pointer;font-size:10.5px;color:var(--acc);font-weight:600;user-select:none}
+  .rotside{margin:6px 0 2px}
+  .rotteam{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+  .rotrow{display:flex;gap:7px;align-items:baseline;padding:1px 0;border-bottom:1px dotted var(--line)}
+  .rotrow:last-child{border-bottom:none}
+  .rotname{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rotmin{color:var(--ink);font-weight:620;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rotlim{color:var(--warn);font-size:10px;white-space:nowrap;font-weight:600}
+  .rotout{color:var(--bad);font-size:10.5px;margin-top:3px}
+  .rotroster{color:var(--dim);font-size:10px;margin-top:3px;line-height:1.45}
+  .empty{color:var(--dim);font-style:italic}
+  /* ===== SLATE BOARD (A9) — the dense, sortable, banded table above the cards. Carried across
+     from site/teams.html rather than invented here: same tier bands, same sortable headings, same
+     sparkline+arrow movement cell, same plain-English footer. ===== */
+  .boardwrap{background:var(--card);border:1px solid var(--line);border-radius:9px;
+    box-shadow:var(--shadow);margin:8px 0 6px;overflow-x:auto}
+  table.brd{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+  table.brd th,table.brd td{padding:3px 7px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+  table.brd th{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--dim);
+    font-weight:700;position:sticky;top:0;background:var(--card);z-index:1}
+  table.brd th.sortable{cursor:pointer;user-select:none}
+  table.brd th.sortable:hover{color:var(--acc)}
+  table.brd th.sorted{color:var(--acc)}
+  table.brd td.l,table.brd th.l{text-align:left}
+  table.brd tr.tier td{background:var(--card2);border-bottom:1px solid var(--line2);padding:4px 7px}
+  .tlabel{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+  .tmeaning{font-size:10.5px;color:var(--muted);margin-left:7px}
+  .tcount{font-size:10.5px;color:var(--dim);float:right}
+  .bmatch{font-weight:650}
+  .bmatch a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--line2)}
+  .bday{color:var(--dim);font-size:10.5px;margin-left:5px}
+  .up{color:var(--good);font-weight:700}
+  .down{color:var(--bad);font-weight:700}
+  .flat{color:var(--dim)}
+  .mvcell{display:flex;align-items:center;gap:4px;justify-content:flex-end}
+  .marr{font-size:10.5px}
+  .repoint{color:var(--warn);font-weight:700;font-size:10px}
+  .spark{display:block;color:var(--line2);flex:none}
+  .spark path{fill:none;stroke:currentColor;stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}
+  .fbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0 2px}
+  .fbar input{font:inherit;font-size:12px;padding:3px 8px;border:1px solid var(--line2);
+    border-radius:6px;background:var(--card);color:var(--ink);min-width:190px}
+  .fbar .fnote{font-size:11px;color:var(--dim)}
+  .biglede{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--acc);
+    border-radius:8px;padding:8px 11px;font-size:12.5px;margin:6px 0 2px}
+  .biglede b{font-weight:720}
+  .brdfoot{font-size:11px;color:var(--dim);margin:6px 0 2px;line-height:1.5}
+  footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
+</style>
+<link rel="stylesheet" href="./hardwood.css?v=04e913ef">
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
+<body>
+<header>
+  <h1>The Hardwood — Games</h1>
+  <span class="ago" id="ago"></span>
+</header>
+<div class="sub" style="max-width:1080px;margin:0 auto;padding:0 14px">Today's slate: our margin call, the honest range around it, and the win chance.</div>
+<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="games.html" aria-current="page">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="standings.html">Standings &amp; Injuries</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
+<main id="main"><p class="empty">Loading the slate…</p></main>
+<footer id="foot"></footer>
+<script src="./hardwood.js?v=e2e90a97"></script>
+<script>
+(function(){
+  "use strict";
+  var URL="./games.json";
+  /* per-game rotation preview (fetched separately so the slate poll stays light):
+     PV = the preview payload, joined by game_id; ROTOPEN remembers which cards the reader
+     expanded so a live re-render never collapses an open rotation. */
+  var PURL="./preview.json", PV=null, STAKES={}, lastData=null, ROTOPEN={};
+  /* per-team coaching STYLE read (matchup context line, B rung) — REUSE the SAME per-team
+     read already baked for coach.html (./coach_style.json), fetched separately + graceful:
+     a missing/late style file can never blank a card, it just drops the context line. */
+  var CSURL="./coach_style.json", CS=null;
+  /* per-matchup expected TEMPO (upcoming-preview B->A rung) — REUSE the already-baked per-team
+     season pace read (./tempo.json), whose `matchups` block carries, per game, the expected tempo
+     = the two teams' season-pace average plus a league +/-0.5sd fast/slow/average tag. Fetched
+     separately + graceful: a missing/late tempo file, or a game the pace read didn't cover (a side
+     did not join the pace table, or a date past the nearest computed slate), just drops the line —
+     omit-not-invent, never a guessed pace. This is the WHY behind a high/low projected total:
+     faster pace inflates both teams' point totals equally (a style read, not a strength signal). */
+  var TVURL="./tempo.json", TV=null;
+  /* plain-English coaching style for one team abbr, or null when we have no established read
+     (new coach / no history / file absent) -> the card omits it (omit-not-invent, never guess). */
+  function teamStyle(abbr){
+    if(!CS||!CS.teams||!abbr) return null;
+    var t=CS.teams[abbr]; if(!t||!t.has_history) return null;
+    var s=(t.style||"").trim(); return s||null;
+  }
+  /* the matchup/style context line for a game card: "How they play: Away — style · Home — style".
+     Shows only the side(s) we actually have a style for; returns null when neither is known so no
+     empty line is invented. */
+  function styleLine(g){
+    var hs=teamStyle(g.home), as_=teamStyle(g.away);
+    if(!hs && !as_) return null;
+    var parts=[];
+    if(as_) parts.push((g.away_full||g.away)+" — "+as_);
+    if(hs) parts.push((g.home_full||g.home)+" — "+hs);
+    return el("div","gstyle","How they play: "+parts.join(" · "));
+  }
+  /* "2026-07-22" -> "Jul 22" for the pace as-of stamp. Plain date in, plain label out;
+     graceful-'' on anything unparseable so a bad stamp drops the clause, never the line. */
+  function shortDate(iso){
+    if(!iso) return "";
+    var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso)); if(!m) return "";
+    var MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    var mi=parseInt(m[2],10)-1; if(mi<0||mi>11) return "";
+    return MN[mi]+" "+parseInt(m[3],10);
+  }
+  /* find this card's expected-tempo read, normalised to ONE shape regardless of source.
+     PREFERRED source is ./preview.json — the bake joins per-team season pace to EVERY upcoming
+     game by that game's own team abbreviations and carries the read's true as-of, so coverage is
+     the whole slate rather than the nearest date. Falls back to the ./tempo.json matchups block
+     (same pace source, same definition) when the preview has no pace for this game. Null when
+     neither joins — the card omits the line rather than guess a pace. */
+  function paceMatchup(g){
+    if(!g) return null;
+    if(PV && PV.games && PV.games[g.game_id] && PV.games[g.game_id].pace){
+      var p=PV.games[g.game_id].pace;
+      if(p.exp_pace!=null){
+        return {exp_pace:p.exp_pace, exp_tag_label:p.tag_label,
+                home_pace:p.home_pace, away_pace:p.away_pace,
+                as_of:p.as_of, days_behind:p.days_behind,
+                missing_games:p.missing_games, stale:p.stale};
+      }
+    }
+    if(!TV||!TV.matchups||!TV.matchups.games) return null;
+    var gm=TV.matchups.games;
+    for(var i=0;i<gm.length;i++){
+      if(gm[i] && gm[i].home===g.home && gm[i].away===g.away) return gm[i];
+    }
+    return null;
+  }
+  /* the per-matchup expected-tempo line (B->A rung): a REAL possessions-per-game number for THIS
+     matchup, with each side's season pace so the reader sees WHY a game projects high or
+     low-scoring, and — when the pace read does not yet include every game played — an explicit
+     "through <date>" stamp so an old number can never read as a current one. Returns null when no
+     matchup joins (missing/uncovered) — the card just omits it. */
+  function paceLine(g){
+    var m=paceMatchup(g); if(!m || m.exp_pace==null) return null;
+    var tag=m.exp_tag_label ? (" · "+m.exp_tag_label) : "";
+    var sides=[];
+    if(m.away_pace!=null) sides.push((g.away||"")+" "+m.away_pace);
+    if(m.home_pace!=null) sides.push((g.home||"")+" "+m.home_pace);
+    var detail=sides.length ? (" — "+sides.join(", ")) : "";
+    /* the as-of stamp. A pace read can fall behind two ways — the whole read lags the schedule
+       by days, or it lags by GAMES already played that it has not absorbed (which a date alone
+       cannot see when only some teams are behind). Report whichever applies; a current read is
+       still stamped, so the reader never has to assume. */
+    var asof="", d=shortDate(m.as_of);
+    if(d){
+      asof=" Season pace through "+d;
+      var lag=[];
+      if(m.days_behind>0){ lag.push(m.days_behind+(m.days_behind===1?" day":" days")); }
+      if(m.missing_games>0){ lag.push(m.missing_games+(m.missing_games===1?" game":" games")); }
+      if(lag.length){ asof+=" — "+lag.join(" and ")+" behind the latest game played"; }
+      asof+=".";
+    }
+    return el("div","gstyle","Expected tempo: "+m.exp_pace+" possessions/game"+tag+detail+
+      ". Faster pace lifts both teams' point totals — a style read, not a strength signal."+asof);
+  }
+  /* the projected-scoring range for one rotation row, as "(9–38)". The bake attaches pts_lo/pts_hi
+     ONLY when the projection itself is shown and the band could be fitted, so a dashed projection
+     or an unavailable fit simply renders the point with no range (omit-not-invent). */
+  function ptsRange(p){
+    if(!p || p.pts_lo==null || p.pts_hi==null) return "";
+    return " ("+p.pts_lo+"–"+p.pts_hi+")";
+  }
+  /* one plain-English line explaining what the scoring range IS and how often it actually
+     contained the result — the coverage is measured at bake time, never asserted. Null when the
+     payload carries no band (then no row shows a range either, so nothing to explain). */
+  function bandNote(){
+    var b=PV && PV.scoring_band; if(!b || b.level_pct==null) return null;
+    var t="The range after each scoring number is where about "+b.level_pct+
+          " out of 100 results have landed — it widens for bigger scorers because their game-to-game "+
+          "swing is genuinely bigger.";
+    if(b.coverage_pct!=null){
+      t+=" Checked against "+b.fit_n+" projections we have since graded: "+b.coverage_pct+
+         "% landed inside it";
+      if(b.oos_coverage_pct!=null){
+        t+=", and "+b.oos_coverage_pct+"% on the "+b.oos_n+" games the range was not fitted on";
+      }
+      t+=".";
+    }
+    return el("div","avnote",t);
+  }
+  /* absolute ET clock ("Jul 22, 11:28 PM ET") for the preview freshness stamp so a coach can
+     see how stale the shown assumptions are. Formats a UTC ISO string in America/New_York;
+     graceful-'' on a bad/absent stamp (the stamp line is then omitted). */
+  function etStamp(utc){
+    if(!utc) return "";
+    var d=new Date(utc); if(isNaN(d.getTime())) return "";
+    try{
+      return d.toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",
+        hour:"numeric",minute:"2-digit"})+" ET";
+    }catch(e){ return ""; }
+  }
+  /* CACHE-BUST: append a CHANGING ?v=<ms> token per fetch so the CDN never serves a stale
+     games.json on reload; a fresh token per poll keeps live polling live. */
+  function bust(u){ return u + (u.indexOf("?")<0?"?":"&") + "v=" + Date.now(); }
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  function num(v,u){ return v==null?"—":(v + (u||"")); }
 
-      <section class="hw-story-strip" id="games-stories" aria-label="Game-board headlines">
-        <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Published games</span></article>
-        <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Closest call</span></article>
-        <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Biggest favorite</span></article>
-        <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Highest total</span></article>
-        <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Highest stakes</span></article>
-      </section>
+  /* ============ ONE QUANTITY, ONE SOURCE — the win chance (fixed 2026-08-07) ============
+     A card used to print the win chance TWICE from TWO different sources: the Win-chance pill read
+     g.p_home_win (the served recalibrated win probability, the number that also propagates to the
+     front page), while the caption under the margin-distribution strip re-derived one from
+     g.density.p_home — the AREA of the drawn shape right of the pick'em line. That area inherits
+     the plot's binning and its linear-taper tails, so it is a PICTURE of a number, not the number.
+     Live sweep: 23 of 24 cards disagreed by 1-3 pts, always low for the favourite.
 
-      <section class="hw-module hw-games-controls" aria-label="Game filters">
-        <div class="hw-games-filterbar">
-          <label class="hw-field hw-games-search"><span>Search</span><input class="hw-input" id="games-dense-search" type="search" placeholder="Team, matchup, or call"></label>
-          <label class="hw-field"><span>Team</span><select class="hw-select" id="games-dense-team"><option value="">All teams</option></select></label>
-          <label class="hw-field"><span>State</span><select class="hw-select" id="games-dense-state"><option value="">All published</option><option value="upcoming">Upcoming</option><option value="final">Final</option></select></label>
-          <label class="hw-field"><span>Window</span><select class="hw-select" id="games-dense-window"><option value="">All dates</option><option value="next7">Next 7 days</option><option value="recent7">Past 7 days</option></select></label>
-          <label class="hw-field"><span>Sort</span><select class="hw-select" id="games-dense-sort"><option value="date">Date</option><option value="closest">Closest call</option><option value="favorite">Biggest favorite</option><option value="total">Highest total</option><option value="uncertainty">Widest range</option><option value="leverage">Highest stakes</option></select></label>
-          <button class="hw-button" id="games-dense-reset" type="button">Reset</button>
-        </div>
-      </section>
+     winSplit() is now the ONLY producer of a rendered win percentage on this page. It rounds the
+     home side ONCE and takes the away side as its COMPLEMENT, so the printed pair sums to exactly
+     100 by construction — the old code rounded each side from its own float and printed
+     "CON 44% / 57% PHO". No win probability => NO percentage anywhere on the card (omit-not-invent),
+     never a second number invented from the drawn shape. Mirrors _win_chance_split in
+     scripts/build_site.py; the two must stay in lockstep. */
+  function winSplit(g){
+    if(!g || g.p_home_win==null) return null;
+    var hp=Math.max(0,Math.min(100,g.p_home_win));
+    var home=Math.round(hp);
+    return {raw:hp, home:home, away:100-home};
+  }
+  /* RENDER-TIME ASSERT: fails LOUDLY rather than quietly shipping a two-truths card. Every rendered
+     win-chance pair is registered here; a pair that does not sum to 100, or two pairs on the SAME
+     card that disagree, throws a visible banner onto the page and a console.error. In the spirit of
+     the components-must-sum-exactly rule that blocks the bake. */
+  var WIN_SEEN={}, WIN_FAULTS=[];
+  function winAssert(key, s, where){
+    if(!s) return s;
+    if(s.home+s.away!==100){
+      winFault(key+": "+where+" prints "+s.home+"% / "+s.away+"% — sums to "+(s.home+s.away)+", not 100");
+    }
+    var prev=WIN_SEEN[key];
+    if(prev && (prev.s.home!==s.home || prev.s.away!==s.away)){
+      winFault(key+": "+prev.where+" prints "+prev.s.home+"% but "+where+" prints "+s.home+"% — "
+        +"one quantity, two answers");
+    } else if(!prev){ WIN_SEEN[key]={s:s, where:where}; }
+    return s;
+  }
+  function winFault(msg){
+    WIN_FAULTS.push(msg);
+    try{ console.error("[win-chance render check] "+msg); }catch(e){}
+    var b=document.getElementById("winfault");
+    if(!b){
+      b=el("div","stale"); b.id="winfault";
+      b.style.background="#7f1d1d"; b.style.color="#fff"; b.style.padding="10px";
+      b.style.margin="8px 0"; b.style.fontWeight="700";
+      var host=document.querySelector("main")||document.body;
+      host.insertBefore(b, host.firstChild);
+    }
+    b.textContent="RENDER CHECK FAILED — a game card is showing two different win chances for the "
+      +"same game. Do not trust the win chance on this page until it is fixed. ("+WIN_FAULTS.length
+      +" fault"+(WIN_FAULTS.length===1?"":"s")+": "+WIN_FAULTS[0]+")";
+  }
+  function gkey(g){ return (g&&g.date? g.date:"?")+"|"+(g&&g.away? g.away:"?")+"@"+(g&&g.home? g.home:"?"); }
 
-      <div class="hw-command-grid hw-games-layout">
-        <section class="hw-module" aria-labelledby="board-heading">
-          <div class="hw-module-head"><h2 id="board-heading">Published game board</h2><span id="games-dense-count">Loading…</span></div>
-          <div class="hw-module-body flush">
-            <div class="hw-ledger-row hw-ledger-head" aria-hidden="true">
-              <span>Date / tip</span><span>Matchup</span><span>Call</span><span>Home win</span><span>Margin</span><span>80% range</span><span>Total</span><span>Context</span><span></span>
-            </div>
-            <div id="games-dense-list"><div class="hw-empty">Loading game forecasts…</div></div>
-          </div>
-        </section>
+  function marginBar(g){
+    var lo=g.range90_lo, hi=g.range90_hi, l80=g.range80_lo, h80=g.range80_hi, pt=g.pred_margin;
+    if(lo==null||hi==null) return el("div","note","range not available");
+    var span=Math.max(Math.abs(lo),Math.abs(hi),1);
+    var sc=function(v){ return ((v+span)/(2*span))*100; };
+    var bar=el("div","mbar");
+    var z=el("div","zero"); z.style.left=sc(0).toFixed(1)+"%"; bar.appendChild(z);
+    var b90=el("div","b90"); b90.style.left=sc(lo).toFixed(1)+"%"; b90.style.width=(sc(hi)-sc(lo)).toFixed(1)+"%"; bar.appendChild(b90);
+    if(l80!=null&&h80!=null){ var b80=el("div","b80"); b80.style.left=sc(l80).toFixed(1)+"%"; b80.style.width=(sc(h80)-sc(l80)).toFixed(1)+"%"; bar.appendChild(b80); }
+    if(pt!=null){ var p=el("div","pt"); p.style.left=sc(pt).toFixed(1)+"%"; bar.appendChild(p); }
+    var wrap=el("div");
+    wrap.appendChild(bar);
+    var cap=el("div","mcap");
+    // SIGN-AWARE endpoint labels: lo/hi are HOME-margin values (positive = home wins by that much,
+    // negative = away wins by |that|). Label each endpoint by the SIGN of its value, not by fixed
+    // position. The prior code hardcoded the low end to the away team and the high end to the home
+    // team via Math.abs — correct only when the range straddles zero. For a one-sided range (a
+    // confident favorite), that named the WRONG team as favored at one end; sign-labelling fixes it
+    // and is byte-identical for any range that does straddle zero.
+    function endLabel(v){
+      if(v>0) return g.home+" +"+v.toFixed(0);
+      if(v<0) return g.away+" +"+Math.abs(v).toFixed(0);
+      return "even";
+    }
+    cap.appendChild(el("span",null, endLabel(lo)));
+    cap.appendChild(el("span",null,"pick'em"));
+    cap.appendChild(el("span",null, endLabel(hi)));
+    wrap.appendChild(cap);
+    return wrap;
+  }
 
-        <aside class="hw-module" aria-labelledby="pulse-heading">
-          <div class="hw-module-head"><h2 id="pulse-heading">Slate pulse</h2><span>Recomputes with filters</span></div>
-          <div class="hw-module-body"><div class="hw-pulse-list" id="games-dense-pulse"><div class="hw-empty">Loading game stories…</div></div></div>
-        </aside>
-      </div>
+  // MARGIN-DISTRIBUTION strip — the CEO-loved density component, rendered from the SAME calibrated
+  // predictive distribution the gameday report reconstructs (baked into g.density by the site build,
+  // which imports the report's core rather than forking it). Columns LEFT of the pick'em line are
+  // the away accent, RIGHT the home accent, so each shaded AREA reads as that team's win chance;
+  // a pick'em tick + a median caret sit on the axis. Graceful: if the calibrated distribution isn't
+  // available for this game, fall back to the plain range bar and note nothing false.
+  function densityStrip(g){
+    var d=g.density;
+    if(!d || !d.dens || !d.dens.length){ return marginBar(g); }
+    var dens=d.dens, n=dens.length, zi=d.zero_i, mi=d.med_i;
+    var wrap=el("div");
+    var box=el("div","dwrap");
+    var bars=el("div","dbars");
+    for(var i=0;i<n;i++){
+      var col=el("div","dcol");
+      var b=el("i", i<zi?"away":"home");
+      b.style.height=Math.max(2,Math.round(dens[i]*100))+"%";
+      col.appendChild(b); bars.appendChild(col);
+    }
+    box.appendChild(bars);
+    var zpos=(zi+0.5)/n*100, mpos=(mi+0.5)/n*100;
+    var z=el("div","dzero"); z.style.left=zpos.toFixed(1)+"%"; box.appendChild(z);
+    var m=el("div","dmed"); m.style.left="calc("+mpos.toFixed(1)+"% - 4px)"; box.appendChild(m);
+    wrap.appendChild(box);
+    var cap=el("div","mcap");
+    // SAME source as the Win-chance pill (winSplit -> g.p_home_win). It used to read the density
+    // payload's own area field, which disagreed with the pill on 23 of 24 live cards. No win
+    // probability => the caption names the teams and prints no percentage at all.
+    var s=winAssert(gkey(g), winSplit(g), "distribution caption");
+    cap.appendChild(el("span",null, g.away + (s?(" "+s.away+"%"):"")));
+    cap.appendChild(el("span",null,"pick'em"));
+    cap.appendChild(el("span",null, g.home + (s?(" "+s.home+"%"):"")));
+    wrap.appendChild(cap);
+    return wrap;
+  }
 
-      <section class="hw-module" aria-labelledby="visual-heading">
-        <div class="hw-module-head">
-          <h2 id="visual-heading">Game landscape</h2>
-          <div class="hw-visual-tabs" role="tablist" aria-label="Choose a game visual">
-            <button class="hw-visual-tab active" type="button" role="tab" aria-selected="true" data-games-viz="margin-total">Margin vs total</button>
-            <button class="hw-visual-tab" type="button" role="tab" aria-selected="false" data-games-viz="confidence-range">Confidence vs uncertainty</button>
-          </div>
-        </div>
-        <div class="hw-module-body flush">
-          <div class="hw-viz hw-games-viz" id="games-dense-viz"><div class="hw-empty">Loading game visual…</div></div>
-          <div class="hw-viz-legend" id="games-dense-viz-legend"></div>
-          <div class="hw-data-note" id="games-dense-viz-note">Select a point to open that game’s detail row.</div>
-        </div>
-      </section>
+  // FORWARD-AVAILABILITY preview: per side, who's OUT (minutes redistributed), who's limited
+  // (partial play chance), and the active roster we assumed. Read-only from g.avail; renders
+  // nothing when the projection has no availability rows for this game (graceful).
+  function availBlock(g){
+    var av=g.avail; if(!av || (!av.home && !av.away)) return null;
+    var wrap=el("div","avail");
+    wrap.appendChild(el("div","avlbl","Availability we assumed"));
+    [["away", g.away], ["home", g.home]].forEach(function(pair){
+      var side=av[pair[0]]; if(!side) return;
+      var row=el("div","avteam");
+      row.appendChild(el("span","avtm", side.team||pair[1]||""));
+      var desc=el("span","avdesc");
+      if(side.out && side.out.length){
+        desc.appendChild(el("span","avout","Out: "));
+        desc.appendChild(document.createTextNode(side.out.join(", ")));
+      }
+      if(side.limited && side.limited.length){
+        if(desc.childNodes.length) desc.appendChild(document.createTextNode(" · "));
+        desc.appendChild(el("span","avlim","Limited: "));
+        desc.appendChild(document.createTextNode(side.limited.map(function(p){
+          return p.name + (p.play_pct!=null ? (" ("+p.play_pct+"% to play)") : "");
+        }).join(", ")));
+      }
+      if(!desc.childNodes.length){ desc.appendChild(el("span","avfull","Full roster assumed available")); }
+      row.appendChild(desc);
+      var rtxt = (side.roster!=null) ? (side.roster+" active") : (side.in_count+" available");
+      row.appendChild(el("span","avroster", rtxt));
+      wrap.appendChild(row);
+    });
+    wrap.appendChild(el("div","avnote",
+      "Out players' minutes are redistributed to the rest of the rotation; limited players carry a reduced play chance. This is the availability the projection assumed, not injury news."));
+    return wrap;
+  }
 
-      <section class="hw-module" aria-labelledby="results-heading">
-        <div class="hw-module-head"><h2 id="results-heading">Recent graded calls</h2><a href="accuracy.html">Full model audit →</a></div>
-        <div class="hw-module-body flush hw-table-wrap">
-          <table class="hw-compact-table hw-results-table">
-            <thead><tr><th>Date</th><th>Matchup</th><th>Published call</th><th>Final</th><th class="num">Actual margin</th><th class="num">Miss</th><th>Winner</th><th>Report</th></tr></thead>
-            <tbody id="games-dense-results"><tr><td colspan="8"><div class="hw-empty">Loading graded calls…</div></td></tr></tbody>
-          </table>
-        </div>
-      </section>
-    </section>
-  </main>
-  <script src="hw-product.js"></script>
-  <script src="hw-games.js"></script>
-</body>
+  // PROJECTED ROTATION + ACTIVE ROSTER (upcoming-preview rung): the per-player minutes the
+  // projection assumed AFTER redistributing unavailable players' time — rendered verbatim from
+  // the baked preview, never recomputed here. Collapsed by default (the impact line above stays
+  // the lead); a dash marks a player whose status changed after the projection froze, NEVER a
+  // fabricated number. Renders nothing when the preview has no entry for this game (graceful).
+  function rotationBlock(g){
+    if(!PV || !PV.games) return null;
+    var pv=PV.games[g.game_id]; if(!pv || !pv.sides) return null;
+    var det=document.createElement("details"); det.className="rot";
+    if(ROTOPEN[g.game_id]){ det.setAttribute("open","open"); det.open=true; }
+    det.addEventListener("toggle", function(){ ROTOPEN[g.game_id]=!!det.open; });
+    var sum=document.createElement("summary"); sum.textContent="Projected rotation & active roster";
+    det.appendChild(sum);
+    [["away", g.away], ["home", g.home]].forEach(function(pair){
+      var side=pv.sides[pair[0]]; if(!side) return;
+      var box=el("div","rotside");
+      box.appendChild(el("div","rotteam", side.team||pair[1]||""));
+      // rotation = everyone not out, biggest projected minutes first (the order the preview
+      // bakes); a null-minutes row still shows (as a dash) so nobody silently disappears.
+      var rows=(side.players||[]).filter(function(p){
+        return p.status!=="out" && (p.min==null || p.min>=1);
+      });
+      if(rows.length){
+        rows.forEach(function(p){
+          var r=el("div","rotrow");
+          // A RESCUED player (tagged out when we set the projection, since cleared) now SHOWS her
+          // projection, so she must not wear the same sentence as one whose projection is hidden.
+          // Both used to read "status changed since we set this projection", which is why a shown
+          // number and a dash were indistinguishable to a reader.
+          var nmtxt=p.name;
+          if(p.updated){ nmtxt += p.rescued ? " (cleared to play since we set this projection)"
+                                            : " (status changed since we set this projection)"; }
+          r.appendChild(el("span","rotname", nmtxt));
+          if(p.status==="limited"){
+            var lim=el("span","rotlim", p.play_pct!=null ? (p.play_pct+"% to play") : "limited");
+            // See site/availability.html: this percentage is a CATEGORY RATE keyed on availability
+            // status, not a number computed for this player.
+            if(p.play_pct!=null){ lim.title="Category rate: the share of players carrying this "
+                                           +"availability status who play. Not a per-player estimate."; }
+            r.appendChild(lim);
+          }
+          // projected minutes, and — when the preview carries it — projected SCORING alongside
+          // (B rung). `pts` undefined = not baked on this row -> show minutes only (forward-safe);
+          // `pts` null = status moved after the projection froze -> a dash, never a fake 0.
+          var stat=(p.min==null ? "—" : (Math.round(p.min)+" min"));
+          if(p.pts!==undefined){
+            stat += " · " + (p.pts==null ? "—" : (Math.round(p.pts)+" pts"+ptsRange(p)));
+          }
+          r.appendChild(el("span","rotmin", stat));
+          box.appendChild(r);
+        });
+      } else {
+        box.appendChild(el("div","note","No projected rotation stored for this game."));
+      }
+      var outs=(side.players||[]).filter(function(p){ return p.status==="out"; })
+                                 .map(function(p){ return p.name; });
+      if(outs.length){
+        box.appendChild(el("div","rotout","Not projected to play: "+outs.join(", ")));
+      }
+      if(side.roster_names && side.roster_names.length){
+        box.appendChild(el("div","rotroster","Active roster ("+side.roster_names.length+"): "+
+          side.roster_names.map(function(p){ return p.pos ? (p.name+" ("+p.pos+")") : p.name; }).join(", ")));
+      }
+      det.appendChild(box);
+    });
+    var bn=bandNote(); if(bn){ det.appendChild(bn); }
+    if(PV.note){ det.appendChild(el("div","avnote", PV.note)); }
+    // PREVIEW FRESHNESS (B rung): when these assumptions were set, in plain ET, so a coach can
+    // judge staleness at a glance. Prefer this game's own preview stamp, fall back to the payload's.
+    var setUtc=(pv && pv.generated_utc) || PV.generated_utc;
+    var setEt=etStamp(setUtc);
+    if(setEt){ det.appendChild(el("div","avnote","Assumptions set "+setEt)); }
+    return det;
+  }
+
+  // Plain-language read of HOW SURE the call is — a coach glances for "coin flip vs lock",
+  // not a raw percentage. Derived from the SAME win probability the bar shows; it introduces
+  // NO new margin number (single canonical margin preserved). Graceful: renders nothing if
+  // win chance isn't available for this game.
+  // ONE RULE, TWO SURFACES: the card chip and the slate board's tier bands read the SAME
+  // confBucket() — a second copy of these thresholds is exactly the one-fact-two-rules defect the
+  // win-chance fix removed from this page, in miniature.
+  var CONF_TIERS=[
+    ["heavy","Heavy favorite","a win chance of 80% or better"],
+    ["strong","Strong favorite","a win chance of 70–79%"],
+    ["clear","Clear favorite","a win chance of 62–69%"],
+    ["slight","Slight edge","a win chance of 55–61%"],
+    ["toss","Coin flip","a win chance under 55% either way"]
+  ];
+  function confBucket(fav){
+    // read the PRINTED pair, not the underlying float: a 54.6% float printed as "55%" beside a
+    // "Coin flip" chip (bucket edge at 55) is the same one-fact-two-rules defect in miniature.
+    if(fav<55) return {key:"toss", label:"Coin flip", cls:"toss"};
+    if(fav<62) return {key:"slight", label:"Slight edge", cls:"lean"};
+    if(fav<70) return {key:"clear", label:"Clear favorite", cls:"lean"};
+    if(fav<80) return {key:"strong", label:"Strong favorite", cls:"fav"};
+    return {key:"heavy", label:"Heavy favorite", cls:"fav"};
+  }
+  function confChip(g){
+    var cs=winSplit(g);
+    if(!cs) return null;
+    var b=confBucket(Math.max(cs.home, cs.away));
+    return el("span","conf "+b.cls, b.label);
+  }
+
+  /* ================= SLATE BOARD (A9) — dense, banded, sortable, with movement =================
+     The cards below say a lot about ONE game each; nothing on this page let a reader see the whole
+     slate at once, and every number on it was a level with no direction. This table is the same
+     shape site/teams.html already uses (tier bands with a definition and a count, sortable
+     headings, sparkline-plus-arrow movement cells, a plain-English footer) rather than a second
+     style invented for this page.
+
+     Movement comes from g.move, baked from the append-only served-prediction snapshot: the value
+     we FIRST published for this game against the value the card prints now. It is not derived on
+     the client and it is never fabricated — a game we have no earlier snapshot for shows a dash.
+
+     WIN CHANCE ON THIS TABLE READS winSplit(), like everything else on the page, and registers
+     through winAssert so the table and the card are cross-checked against each other. */
+  var SVGNS="http://www.w3.org/2000/svg";
+  var boardFilter="", boardSort="Call move", boardDesc=true;
+  function sparkline(vals){
+    var pts=(vals||[]).filter(function(v){ return v!=null; });
+    if(pts.length<2) return null;
+    var W=58,H=16,p=2,n=pts.length;
+    var min=Math.min.apply(null,pts), max=Math.max.apply(null,pts), span=(max-min)||1;
+    function xs(i){ return p+(W-2*p)*(i/(n-1)); }
+    function ys(v){ return H-p-(H-2*p)*((v-min)/span); }
+    var svg=document.createElementNS(SVGNS,"svg");
+    svg.setAttribute("class","spark"); svg.setAttribute("width",W); svg.setAttribute("height",H);
+    svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("aria-hidden","true");
+    var d=pts.map(function(v,i){ return (i?"L":"M")+xs(i).toFixed(1)+" "+ys(v).toFixed(1); }).join(" ");
+    var path=document.createElementNS(SVGNS,"path"); path.setAttribute("d",d); svg.appendChild(path);
+    var net=pts[n-1]-pts[0];
+    var dot=document.createElementNS(SVGNS,"circle");
+    dot.setAttribute("cx",xs(n-1).toFixed(1)); dot.setAttribute("cy",ys(pts[n-1]).toFixed(1));
+    dot.setAttribute("r","2");
+    dot.setAttribute("fill", net>0.05?"var(--good)":(net<-0.05?"var(--bad)":"var(--dim)"));
+    svg.appendChild(dot);
+    return svg;
+  }
+  // a signed move, printed with its direction. null => "—" (we do not know, which is not zero).
+  function arrow(v, dp, unit){
+    if(v==null) return el("span","flat marr","—");
+    var t=(dp==null?1:dp);
+    if(v>=0.05) return el("span","up marr","▲ "+v.toFixed(t)+(unit||""));
+    if(v<=-0.05) return el("span","down marr","▼ "+Math.abs(v).toFixed(t)+(unit||""));
+    return el("span","flat marr","→ 0");
+  }
+  function moveCell(v, dp, unit, series, note){
+    var cell=el("td"); var wrap=el("div","mvcell");
+    if(series){ var sp=sparkline(series); if(sp) wrap.appendChild(sp); }
+    wrap.appendChild(arrow(v, dp, unit));
+    if(note){ var f=el("span","repoint","†"); f.title=note; wrap.appendChild(f); }
+    cell.appendChild(wrap); return cell;
+  }
+  // a micro-bar UNDER a printed digit — the picture is beside the number, never instead of it
+  function barUnder(cell, frac, cls){
+    var b=el("div"); b.style.height="3px"; b.style.marginTop="2px"; b.style.borderRadius="2px";
+    b.style.background="var(--line)";
+    var f=el("div"); f.style.height="3px"; f.style.borderRadius="2px";
+    f.style.width=Math.max(0,Math.min(100,frac*100)).toFixed(0)+"%";
+    f.style.background=cls||"var(--acc)"; b.appendChild(f); cell.appendChild(b); return cell;
+  }
+  function outCount(g){
+    var a=g.avail; if(!a) return null;
+    var n=0, saw=false;
+    ["home","away"].forEach(function(s){ if(a[s]&&a[s].out){ saw=true; n+=a[s].out.length; } });
+    return saw?n:null;
+  }
+  function favSide(g){
+    var s=winAssert(gkey(g), winSplit(g), "slate board");
+    if(!s) return null;
+    return s.home>=s.away ? {team:g.home, pct:s.home} : {team:g.away, pct:s.away};
+  }
+  function mv(g,k){ return (g.move && g.move[k]!=null) ? g.move[k] : null; }
+  var BOARD_COLS=[
+    {h:"Game",       l:true,  num:false, get:function(g){ return (g.away+"@"+g.home).toLowerCase(); }},
+    {h:"Tip",        l:true,  num:false, get:function(g){ return (g.date||"")+" "+(g.tip_et||""); }},
+    {h:"Call",       num:true, get:function(g){ return g.pred_margin==null?null:Math.abs(g.pred_margin); }},
+    {h:"Call move",  num:true, get:function(g){ return mv(g,"margin")==null?null:Math.abs(mv(g,"margin")); }},
+    {h:"Since we opened", num:true, get:function(g){
+        var o=g.move&&g.move.open; return (o&&o.margin!=null)?Math.abs(o.margin):null; }},
+    {h:"Win chance", num:true, get:function(g){ var f=favSide(g); return f?f.pct:null; }},
+    {h:"Win move",   num:true, get:function(g){ return mv(g,"win")==null?null:Math.abs(mv(g,"win")); }},
+    {h:"Total",      num:true, get:function(g){ return g.total; }},
+    {h:"Total move", num:true, get:function(g){ return mv(g,"total")==null?null:Math.abs(mv(g,"total")); }},
+    {h:"80% range",  num:true, get:function(g){ return (g.range80_lo==null||g.range80_hi==null)?null:(g.range80_hi-g.range80_lo); }},
+    {h:"One-possession finish", num:true, get:function(g){ return g.tails?g.tails.nail_pct:null; }},
+    {h:"Sidelined",  num:true, get:function(g){ return outCount(g); }},
+    {h:"Sidelined move", num:true, get:function(g){ return mv(g,"outs"); }}
+  ];
+  // A game with no value for the sorted column ALWAYS sinks, in both directions — floating a blank
+  // to the top of a reversed sort would read as "lowest", a claim the data does not make.
+  function sortBoard(rows){
+    var col=null; BOARD_COLS.forEach(function(c){ if(c.h===boardSort) col=c; });
+    if(!col) return rows;
+    return rows.slice().sort(function(a,b){
+      var x=col.get(a), y=col.get(b);
+      if(x==null&&y==null) return 0;
+      if(x==null) return 1;
+      if(y==null) return -1;
+      if(!col.num){ return boardDesc ? (x<y?1:x>y?-1:0) : (x<y?-1:x>y?1:0); }
+      return boardDesc ? y-x : x-y;
+    });
+  }
+  function boardRow(g){
+    var tr=el("tr");
+    var gm=el("td","l bmatch");
+    var a=document.createElement("a");
+    a.href="./games/"+g.game_id+".html"; a.textContent=g.away+" @ "+g.home;
+    gm.appendChild(a); tr.appendChild(gm);
+    var tip=el("td","l"); tip.appendChild(document.createTextNode((g.date||"").slice(5)));
+    if(g.tip_et){ tip.appendChild(el("span","bday", g.tip_et)); }
+    tr.appendChild(tip);
+    // CALL: the favourite and by how much — the same signed margin the card prints, re-expressed.
+    var fav = g.pred_margin==null ? null : (g.pred_margin>=0?g.home:g.away);
+    tr.appendChild(el("td", null, g.pred_margin==null?"—":(fav+" "+Math.abs(g.pred_margin).toFixed(1))));
+    // CALL MOVE: the change in the home margin since we first published this game, drawn as the
+    // saved day-by-day line beside the number.
+    tr.appendChild(moveCell(mv(g,"margin"), 1, "", g.move&&g.move.series,
+      (g.move&&g.move.margin_repoint) ? "This span crosses a margin-model repoint, so part of the move is us, not the game." : null));
+    // SINCE WE OPENED IT: the long span, first published day to today. It crosses whatever model
+    // changes happened in between and says so — kept separate from the pin-clean move beside it.
+    var o=g.move&&g.move.open;
+    var oc2=moveCell(o?o.margin:null, 1, "", null,
+      (o&&o.crosses_repoint) ? "This span reaches back past a change we made to the margin model, so part of it is us, not the game." : null);
+    if(o){ oc2.title="Since "+o.since+" ("+o.days+(o.days===1?" saved day":" saved days")+")"; }
+    tr.appendChild(oc2);
+    var f=favSide(g);
+    tr.appendChild(el("td", null, f?(f.team+" "+f.pct+"%"):"—"));
+    tr.appendChild(moveCell(mv(g,"win"), 1, " pts", null,
+      (g.move&&g.move.win_repoint) ? "This span crosses a change in how wide our confidence is, on 2026-08-08. Part of this move is that change and not this matchup." : null));
+    tr.appendChild(el("td", null, g.total==null?"—":g.total.toFixed(1)));
+    tr.appendChild(moveCell(mv(g,"total"), 1, "", null,
+      (g.move&&g.move.total_repoint) ? "The scoring-environment read is refreshed daily; this span crosses a refresh." : null));
+    var w=(g.range80_lo==null||g.range80_hi==null)?null:(g.range80_hi-g.range80_lo);
+    var rc=el("td", null, w==null?"—":(w.toFixed(0)+" pts"));
+    if(w!=null) barUnder(rc, w/45, "var(--acc)");
+    tr.appendChild(rc);
+    var nb=g.tails?g.tails.nail_pct:null;
+    var nc=el("td", null, nb==null?"—":(nb+"%"));
+    if(nb!=null) barUnder(nc, nb/40, "var(--warn)");
+    tr.appendChild(nc);
+    var oc=outCount(g);
+    tr.appendChild(el("td", null, oc==null?"—":String(oc)));
+    tr.appendChild(moveCell(mv(g,"outs"), 0, "", null, null));
+    return tr;
+  }
+  // THE LEDE: the single biggest mover on the slate, named with its magnitude. Measured on the
+  // margin move — the model's own output — never on the win chance, whose current span crosses a
+  // confidence-width repoint and would name the wrong game.
+  function biggestBy(rows, pick){
+    var best=null, bv=null;
+    rows.forEach(function(g){
+      var v=pick(g);
+      if(v==null) return;
+      if(bv==null || Math.abs(v)>Math.abs(bv)){ best=g; bv=v; }
+    });
+    return best ? {g:best, v:bv} : null;
+  }
+  function ledeLine(rows){
+    var p=el("p","biglede");
+    // FIRST CHOICE: the call itself, measured across the days our current margin model has been
+    // pointed at these games. A slate whose calls have genuinely held is a real answer, and the
+    // lede says so rather than inflating a rounding wobble into a headline.
+    var call=biggestBy(rows, function(g){ return (g.move&&g.move.margin_repoint)?null:mv(g,"margin"); });
+    if(call && Math.abs(call.v)>=0.1){
+      var g=call.g, toward=(call.v>=0?g.home:g.away);
+      p.appendChild(document.createTextNode("Biggest mover: "));
+      p.appendChild(el("b", null, g.away+" @ "+g.home));
+      p.appendChild(document.createTextNode(
+        " — our call has moved "+Math.abs(call.v).toFixed(1)+" points toward "+toward+" since "
+        +fmtDay(g.move.since)+", across the "+g.move.days
+        +(g.move.days===1?" saved day":" saved days")+" our current margin model has been on it. "
+        +"Nothing else on the slate has moved as far."));
+      return p;
+    }
+    // SECOND: the calls have held, so the biggest movement on the slate is who is available —
+    // which is a real, sourced change and the thing most likely to move the calls next.
+    var av=biggestBy(rows, function(g){ return mv(g,"outs"); });
+    var held=(call ? ("Every call on this slate has held since "+fmtDay(call.g.move.since)
+                      +" — not one has moved by as much as a tenth of a point. ") : "");
+    if(av && Math.abs(av.v)>=1){
+      var ag=av.g;
+      p.appendChild(document.createTextNode(held+"The biggest change is availability: "));
+      p.appendChild(el("b", null, ag.away+" @ "+ag.home));
+      p.appendChild(document.createTextNode(
+        " has "+Math.abs(av.v)+(av.v<0?" fewer":" more")
+        +(Math.abs(av.v)===1?" player":" players")
+        +" sidelined than when we first put the game on the board on "
+        +fmtDay(ag.move.out_since||ag.move.since)+"."));
+      return p;
+    }
+    p.appendChild(document.createTextNode(held ||
+      "No game on this slate has an earlier published call to measure against yet, so nothing here "
+      +"has a move to report. The moves appear once a game has been on the board for a second day."));
+    return p;
+  }
+  function slateBoard(rows){
+    var box=el("div");
+    box.appendChild(ledeLine(rows));
+    // FILTER — type a team, the board narrows. Same behaviour as the teams board's filter.
+    var fb=el("div","fbar");
+    var inp=document.createElement("input");
+    inp.type="search"; inp.placeholder="Filter by team…"; inp.value=boardFilter;
+    inp.setAttribute("aria-label","Filter the slate by team");
+    inp.addEventListener("input", function(){ boardFilter=inp.value; redraw(); });
+    fb.appendChild(inp);
+    var q=boardFilter.trim().toLowerCase();
+    var shown=rows.filter(function(g){
+      if(!q) return true;
+      return (g.home+" "+g.away+" "+(g.home_full||"")+" "+(g.away_full||"")).toLowerCase().indexOf(q)>=0;
+    });
+    fb.appendChild(el("span","fnote", shown.length+" of "+rows.length+" games shown"+
+      (q?" · click a heading to sort":" · click any heading to sort, click it again to reverse")));
+    box.appendChild(fb);
+    var wrap=el("div","boardwrap");
+    var t=el("table","brd");
+    var thead=el("thead"), hr=el("tr");
+    BOARD_COLS.forEach(function(c){
+      var th=el("th", (c.l?"l ":"")+"sortable"+(boardSort===c.h?" sorted":""), c.h);
+      th.title="Sort by "+c.h.toLowerCase();
+      th.addEventListener("click", function(){
+        if(boardSort===c.h){ boardDesc=!boardDesc; } else { boardSort=c.h; boardDesc=!!c.num; }
+        redraw();
+      });
+      hr.appendChild(th);
+    });
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb=el("tbody");
+    // TIER BANDS — plain language, each with what it means AND how many games are in it.
+    CONF_TIERS.forEach(function(tier){
+      var group=sortBoard(shown.filter(function(g){
+        var f=favSide(g); return f ? confBucket(f.pct).key===tier[0] : false;
+      }));
+      if(!group.length) return;
+      var hrow=el("tr","tier"); var hc=el("td"); hc.colSpan=BOARD_COLS.length;
+      hc.innerHTML='<span class="tlabel">'+tier[1]+'</span><span class="tmeaning">'+tier[2]+
+        '</span><span class="tcount">'+group.length+(group.length===1?' game':' games')+'</span>';
+      hrow.appendChild(hc); tb.appendChild(hrow);
+      group.forEach(function(g){ tb.appendChild(boardRow(g)); });
+    });
+    // games with no win chance cannot be banded; they still belong on the board
+    var unbanded=sortBoard(shown.filter(function(g){ return !favSide(g); }));
+    if(unbanded.length){
+      var ur=el("tr","tier"); var uc=el("td"); uc.colSpan=BOARD_COLS.length;
+      uc.innerHTML='<span class="tlabel">Not yet priced</span><span class="tmeaning">'+
+        'we hold no win chance for these games yet</span><span class="tcount">'+unbanded.length+
+        (unbanded.length===1?' game':' games')+'</span>';
+      ur.appendChild(uc); tb.appendChild(ur);
+      unbanded.forEach(function(g){ tb.appendChild(boardRow(g)); });
+    }
+    t.appendChild(tb); wrap.appendChild(t); box.appendChild(wrap);
+    // FOOTER — what the sort is doing and what the numbers rest on, in plain English.
+    box.appendChild(el("p","brdfoot",
+      "Games are grouped by how sure our call is, strongest group first, and inside each group "+
+      "sorted by "+boardSort.toLowerCase()+", "+(boardDesc?"largest first":"smallest first")+
+      " (click any heading to sort by it instead, click it again to reverse). "+
+      "The call is our own pre-game winning-margin number; the win chance is the same one the card "+
+      "below prints, from our model, not from the picture beside it. "+
+      "Every move is measured against a number we ourselves published earlier, from our saved daily "+
+      "record of what this board served — never against anybody's line. Call move covers only the "+
+      "days our current margin model has been on the game, so it is the game moving and not us; "+
+      "“Since we opened” reaches back to the first day the game appeared, whatever the model "+
+      "was then. A game with no earlier saved day shows a dash, because an unknown move is not a "+
+      "flat one. "+
+      "A † marks a span that crosses a change we made to the model, where part of the move is us "+
+      "rather than the matchup. The 80% range is how wide the likely final margin is; the "+
+      "one-possession share is how often a game shaped like this finishes within three points."));
+    return box;
+  }
+
+  function card(g, pdfByDate, genUtc){
+    var c=el("div","g"); c.setAttribute("data-k", g.date+"|"+g.away+"@"+g.home);
+    var h=el("div","gh");
+    h.appendChild(el("b", null, g.away+" @ "+g.home));
+    var rt=el("span"); rt.style.textAlign="right";
+    rt.appendChild(el("span","pill", g.date.slice(5)));
+    if(g.tip_et){ rt.appendChild(el("span","gtip", g.tip_et)); }
+    var st=el("span","hw-stamp"); st.style.display="block";
+    if(genUtc){ st.setAttribute("data-utc", genUtc); } st.setAttribute("data-fallback","");
+    rt.appendChild(st);
+    h.appendChild(rt);
+    c.appendChild(h);
+    // The three-line annotation is data, not browser arithmetic.  We still re-check the equality
+    // before rendering so a stale/mutated payload cannot put contradictory numbers on the card.
+    function marginAnnotation(x){
+      var a=x&&x.margin_annotation; if(!a) return null;
+      var n=Number(a.neutral_margin), s=Number(a.site_adjustment), f=Number(a.final_margin);
+      if(!isFinite(n)||!isFinite(s)||!isFinite(f)||Math.abs((n+s)-f)>0.011){
+        if(typeof console!=="undefined"&&console.error) console.error("margin annotation mismatch",x.game_id);
+        return null;
+      }
+      var box=el("div","mann"), signed=function(v){return (v>=0?"+":"")+v.toFixed(1);};
+      var lines=[
+        ["Neutral strength",a.neutral_call],
+        ["Site + calibration adjustment",signed(s)],
+        ["Final call",a.final_call]
+      ];
+      lines.forEach(function(line,i){var r=el("div",i===2?"final":null);r.appendChild(el("span",null,line[0]));r.appendChild(el("b",null,line[1]));box.appendChild(r);});
+      return box;
+    }
+    var ma=marginAnnotation(g);
+    // No annotation means no point estimate: the call, range and reconciliation are one component.
+    if(ma){
+      var callLine=el("div","call");
+      callLine.appendChild(document.createTextNode("Our call: "+g.call));
+      var cf=confChip(g); if(cf){ callLine.appendChild(cf); }
+      var st=STAKES[g.game_id];
+      if(st){ callLine.appendChild(el("span","conf lean",st.tier+" · #"+st.rank+" left")); }
+      c.appendChild(callLine);
+      c.appendChild(ma);
+    }
+
+    var kv=el("div","kv");
+    var k1=el("div","k"); k1.appendChild(el("div","kl","Combined total"));
+    k1.appendChild(el("div","kvv", g.total==null?"—":(g.total+" pts")));
+    if(g.total_lo!=null) k1.appendChild(el("div","note","range "+g.total_lo+"–"+g.total_hi));
+    kv.appendChild(k1);
+    var k2=el("div","k"); k2.appendChild(el("div","kl","Win chance"));
+    var ws=winAssert(gkey(g), winSplit(g), "win-chance pill");
+    if(ws){
+      var wpbox=el("div"); var wp=el("div","wp");
+      // BAR WIDTH keeps the unrounded value (the picture stays smooth); the LABELS print the
+      // rounded pair, which sums to exactly 100 because away is the complement of a single
+      // rounding. The old code rounded each side from its own float and could print 101%.
+      var hh=el("div","h"); hh.style.width=ws.raw+"%"; hh.textContent=g.home+" "+ws.home+"%";
+      var aa=el("div","a"); aa.textContent=ws.away+"% "+g.away;
+      wp.appendChild(hh); wp.appendChild(aa); wpbox.appendChild(wp); k2.appendChild(wpbox);
+    } else { k2.appendChild(el("div","kvv","—")); }
+    kv.appendChild(k2);
+    c.appendChild(kv);
+
+    // per-matchup expected tempo — sits right under the combined total so the reader sees WHY the
+    // game projects high/low-scoring (graceful: omitted when the pace read didn't cover this game).
+    var pl=paceLine(g); if(pl){ c.appendChild(pl); }
+
+    var hasDist=!!(ma && g.density && g.density.dens && g.density.dens.length);
+    if(ma) c.appendChild(el("div","note", hasDist
+      // the shading marks WHICH SIDE OF PICK'EM each bar falls on. It no longer claims to BE the
+      // win chance: the printed percentages come from the win-chance model (the same number the
+      // pill shows), and the drawn area is a picture of the margin, not a second answer.
+      ? "How the final margin could land — taller bars are more likely, and the shading splits at pick'em (left of the line the visitor wins, right of it the host does):"
+      : "Margin range (how much the result could swing):"));
+    if(ma) c.appendChild(densityStrip(g));
+
+    var sl=styleLine(g); if(sl){ c.appendChild(sl); }
+    var ab=availBlock(g); if(ab){ c.appendChild(ab); }
+    var rb=rotationBlock(g); if(rb){ c.appendChild(rb); }
+
+    var pw=el("div","pdfs");
+    if(g.game_id){ var dd=el("a",null,"deep dive →"); dd.href="./game.html?id="+encodeURIComponent(g.game_id); pw.appendChild(dd); }
+    // match THIS game's gameday PDF by matchup (away@home), not just the date, so a card
+    // links its OWN report — and only once that report exists in the folder.
+    var want=(g.away+"@"+g.home).replace(/\s/g,"");
+    (pdfByDate[g.date]||[]).forEach(function(p){
+      var key=((p.href||"").split("/").pop()||"").replace(/\.pdf$/i,"").replace(/\s/g,"");
+      var lab=(p.label||"").replace(/\s/g,"");
+      if(key===want || lab===want){
+        var a=el("a",null,"Game report (PDF)"); a.href=p.href; a.rel="noopener"; pw.appendChild(a);
+      }
+    });
+    if(pw.childNodes.length){ c.appendChild(pw); }
+    return c;
+  }
+
+  /* ---------- shared live runtime (poll own JSON, ETag, ago-chip, flash) ---------- */
+  var etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
+  function updAgo(){
+    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
+    var t = s<60 ? (s+"s ago") : (Math.floor(s/60)+"m "+(s%60)+"s ago");
+    var a=document.getElementById("ago");
+    if(a) a.innerHTML = lastFetch? ("live · updated <b>"+t+"</b>") : "";
+  }
+  function flash(){
+    var nodes=document.querySelectorAll("#main [data-k]"), nm={};
+    nodes.forEach(function(n){
+      var k=n.getAttribute("data-k"), h=n.innerHTML; nm[k]=h;
+      if(!first && cardHTML[k]!==undefined && cardHTML[k]!==h){ n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); }
+    });
+    cardHTML=nm; first=false;
+  }
+  function fmtDay(iso){
+    if(!iso) return "";
+    var dt=new Date(iso+"T12:00:00Z"); if(isNaN(dt.getTime())) return iso;
+    return dt.toLocaleDateString(undefined,{weekday:"long",month:"short",day:"numeric"});
+  }
+  function resultCard(r){
+    var c=el("div","res"); c.setAttribute("data-k","res|"+r.away+"@"+r.home);
+    var rh=el("div","rh");
+    rh.appendChild(el("span","rteam", r.away+" @ "+r.home));
+    if(r.home_score!=null){ rh.appendChild(el("span","rscore", r.away_score+"–"+r.home_score)); }
+    c.appendChild(rh);
+    if(r.winner_full){ c.appendChild(el("div","fin", "Final: "+r.winner_full+" by "+r.final_margin)); }
+    if(r.our_call){
+      var g=el("div","grade "+(r.correct===true?"good":(r.correct===false?"bad":"na")));
+      var mark=r.correct===true?"✓":(r.correct===false?"✗":"");
+      var msg="We called "+r.our_call+" "+mark;
+      if(r.miss!=null){ msg+=" — margin off by "+r.miss; }
+      g.textContent=msg;
+      c.appendChild(g);
+    } else {
+      c.appendChild(el("div","grade na","No pre-game call stored for this game."));
+    }
+    // per-game retro link (cross-lane render half of the "where we missed" A rung): the baker
+    // sets `retro_slug` (e.g. "g4018...") ONLY when site/games/retro/<id>.html actually exists,
+    // so this link is NEVER dead — honest omission when the field is absent (most games until
+    // retros accrue). Client strips the leading 'g' -> ./games/retro/<id>.html; href is built
+    // from an encoded id (textContent-safe).
+    if(r.retro_slug){
+      var rid=String(r.retro_slug).replace(/^g/,"");
+      if(rid){
+        var rp=el("div","pdfs");
+        var ra=el("a",null,"Where we missed →");
+        ra.href="./games/retro/"+encodeURIComponent(rid)+".html"; ra.rel="noopener";
+        rp.appendChild(ra); c.appendChild(rp);
+      }
+    }
+    return c;
+  }
+  function slateGrid(games, pdfByDate, genUtc){
+    var grid=el("div","grid");
+    games.forEach(function(g){ grid.appendChild(card(g, pdfByDate, genUtc)); });
+    return grid;
+  }
+  function redraw(){
+    if(!lastData) return;
+    render(lastData);
+    // keep the caret in the filter box across a re-render, so typing a team name is not one
+    // character per click
+    var i=document.querySelector(".fbar input");
+    if(i){ i.focus(); try{ i.setSelectionRange(i.value.length, i.value.length); }catch(e){} }
+  }
+  function render(d){
+    var main=document.getElementById("main"); main.innerHTML="";
+    // The win-chance render check is a WITHIN-RENDER consistency guard: it catches one game shown
+    // with two different win chances on one painting of the page. Its ledger has to be cleared at
+    // the start of each render — carrying the previous paint's values forward would fault the
+    // moment a poll legitimately moved a win chance, which is a change, not a disagreement.
+    WIN_SEEN={};
+    // This page DOES draw every range (densityStrip / marginBar), so the footer says where the width
+    // comes from and stops re-describing what the reader can already see — the "a single game's
+    // margin swings a lot" clause was the bar's job, said in words.
+    document.getElementById("foot").textContent="Baked "+(d.generated_et||d.generated_utc||"")+". Every band shown is calibrated from our own past accuracy. Win chance is recalibrated. Updates within ~2 min of a refresh.";
+    if(!d.available){ main.appendChild(el("p","empty", d.note||"No games on the board yet.")); flash(); return; }
+    main.appendChild(el("p","lede", d.source||""));
+    if(d.basis){ main.appendChild(el("p","note", d.basis)); }
+    var pdfByDate={}; (d.pdfs||[]).forEach(function(p){ (pdfByDate[p.date]=pdfByDate[p.date]||[]).push(p); });
+
+    // THE WHOLE SLATE AT ONCE (A9), above the per-game cards: tonight and every forward game on
+    // one dense, sortable, banded board with movement beside every number. The cards keep every
+    // detail they had — this adds the view the page never offered, it replaces nothing.
+    var boardRows=(d.today||[]).concat(d.upcoming||[]);
+    if(boardRows.length){ main.appendChild(slateBoard(boardRows)); }
+
+    // TODAY (always first) — honest empty label if today's slate isn't regenerated
+    main.appendChild(el("div","daylbl", "Tonight · "+fmtDay(d.slate_date)));
+    if(d.today && d.today.length){
+      main.appendChild(slateGrid(d.today, pdfByDate, d.generated_utc));
+    } else {
+      main.appendChild(el("div","todaynote", d.note||"No games scheduled for today, or today's projections haven't been regenerated yet."));
+    }
+
+    // YESTERDAY'S RESULTS — finals + how our call graded
+    if(d.yesterday && d.yesterday.length){
+      main.appendChild(el("div","daylbl", "Yesterday's results · "+fmtDay(d.yesterday_date)));
+      var rgrid=el("div","grid");
+      d.yesterday.forEach(function(r){ rgrid.appendChild(resultCard(r)); });
+      main.appendChild(rgrid);
+    }
+
+    // UPCOMING — the forward slate, grouped by day
+    if(d.upcoming && d.upcoming.length){
+      main.appendChild(el("div","daylbl","Upcoming"));
+      var byDay={}, order=[];
+      d.upcoming.forEach(function(g){ if(!byDay[g.date]){ byDay[g.date]=[]; order.push(g.date); } byDay[g.date].push(g); });
+      order.forEach(function(day){
+        main.appendChild(el("div","note", fmtDay(day)));
+        main.appendChild(slateGrid(byDay[day], pdfByDate, d.generated_utc));
+      });
+    }
+    flash();
+  }
+  function poll(){
+    var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
+    fetch(bust(URL),{headers:h,cache:"no-cache"}).then(function(r){
+      if(r.status===304){ return null; }
+      etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod;
+      return r.json();
+    }).then(function(d){ lastFetch=Date.now(); if(d){ lastData=d; render(d); } updAgo(); }).catch(function(e){
+      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load games. '+(e&&e.message?e.message:"")+'</p>'; }
+    });
+  }
+  // rotation-preview poll — independent of the slate poll so a missing/late preview.json can
+  // never block the cards (graceful: no preview, no rotation section). Re-renders the already
+  // fetched slate once a NEW preview lands so the rotation blocks appear without waiting a cycle.
+  function pollPreview(){
+    fetch(bust(PURL),{cache:"no-cache"}).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(p){
+        if(p && p.games && (!PV || PV.generated_utc!==p.generated_utc)){
+          PV=p;
+          if(lastData){ render(lastData); }
+        }
+      }).catch(function(){});
+  }
+  function loadLeverage(){
+    fetch(bust("./leverage.json"),{cache:"no-cache"}).then(function(r){return r.ok?r.json():null;})
+      .then(function(d){
+        if(!d || d.stale || !d.games) return;
+        STAKES={}; d.games.forEach(function(x){STAKES[x.game_id]=x;});
+        if(lastData) render(lastData);
+      }).catch(function(){});
+  }
+  // one-shot fetch of the per-team style read (matchup context line) — independent + graceful,
+  // re-renders once when it lands so the line appears without waiting on a slate poll. Styles
+  // change rarely (per game, not per minute) so a single load is enough.
+  function loadStyle(){
+    fetch(bust(CSURL),{cache:"no-cache"}).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(c){ if(c && c.teams){ CS=c; if(lastData){ render(lastData); } } }).catch(function(){});
+  }
+  // one-shot fetch of the per-matchup tempo read (expected-pace line) — independent + graceful,
+  // re-renders once when it lands. Pace changes per game, not per minute, so a single load suffices.
+  function loadTempo(){
+    fetch(bust(TVURL),{cache:"no-cache"}).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(t){ if(t && t.matchups){ TV=t; if(lastData){ render(lastData); } } }).catch(function(){});
+  }
+  poll(); pollPreview(); loadLeverage(); loadStyle(); loadTempo(); setInterval(poll,60000); setInterval(pollPreview,60000); setInterval(loadLeverage,300000); setInterval(updAgo,1000);
+})();
+</script>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="error-map.html">Error Map</a><a href="board.html">Board</a></div><div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div></footer><!--/hw-foot--></body>
 </html>
