@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-19T21:55:01+00:00",
+ "generated_utc": "2026-08-19T22:02:38+00:00",
  "freshness": {
-  "baked_utc": "2026-08-19T21:55:01+00:00",
-  "baked_et": "Aug 19, 5:55pm ET",
-  "revalidated_utc": "2026-08-19T21:55:01+00:00",
+  "baked_utc": "2026-08-19T22:02:38+00:00",
+  "baked_et": "Aug 19, 6:02pm ET",
+  "revalidated_utc": "2026-08-19T22:02:38+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-19",
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-19T21:55:01+00:00",
+  "generated_utc": "2026-08-19T22:02:38+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -808,7 +808,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T17:54:28-04:00",
+    "at_iso": "2026-08-19T18:02:10-04:00",
     "start_unknown": true
    },
    {
@@ -818,7 +818,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T17:54:28-04:00",
+    "at_iso": "2026-08-19T18:02:10-04:00",
     "start_unknown": true
    },
    {
@@ -828,7 +828,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T17:54:28-04:00",
+    "at_iso": "2026-08-19T18:02:10-04:00",
     "start_unknown": true
    },
    {
@@ -838,7 +838,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T17:54:28-04:00",
+    "at_iso": "2026-08-19T18:02:10-04:00",
     "start_unknown": true
    },
    {
@@ -848,7 +848,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T17:54:28-04:00",
+    "at_iso": "2026-08-19T18:02:10-04:00",
     "start_unknown": true
    }
   ],
@@ -2846,54 +2846,6 @@
       ]
      },
      {
-      "task_id": "six-franchises-carry-two-team-codes-each",
-      "family": "data",
-      "name": "The league has 15 teams and our tables carry 21 team codes",
-      "header": "The league has 15 teams and our tables carry 21 team codes",
-      "why": "Refresh the full-roster player ratings",
-      "priority": 2,
-      "seat": "data",
-      "status": "ready RE-MEASURED 2026-08-12: HALF FIXED, AND THE HALF THAT IS FIXED ANSWERS THIS ROW'S HARDEST QUESTION. FOR 2026 NOW CARRIES EXACTLY 15 CODES FOR 15 TEAMS - ATL, CHI, CON, DAL, GSV, IND, LAS, LVA, MIN, NYL, PHO, POR, SEA, TOR, WAS - with no minority twin anywhere. This row measured 21. AND NOTE WHICH WAY IT WENT, because this row's central warning was that a naive short-to-long or long-to-short map would be wrong for half the franchises: the repair did NOT follow the majority. This row records GS 282 against GSV 28, so GS was dominant - and the canonical set now uses GSV. Likewise LAS, LVA and NYL over the then-dominant LA, LV and NY, while PHO and WAS won over PHX and WSH. The rule the repair actually followed is THE LEAGUE'S OWN ABBREVIATION, not the row count, which is the right answer and is exactly what a majority-vote map would have got wrong six times. SO THE TARGET VOCABULARY IS NO LONGER A JUDGEMENT CALL - it is demonstrated, in a table, by a finished repair. Anyone fixing the remaining half should adopt the 2026 set verbatim rather than re-deriving it. THE REMAINING HALF IS , STILL AT 21 CODES with six stragglers beside their canonical twins: GS 2420, LA 2200, LV 1760, NY 3080, PHX 2640, WSH 1760. That table has no season column, so the split spans its whole history rather than 2026 alone. IT MATTERS MORE THAN THE GAME LOGS DID: player rating is the impact metric every CEO-facing surface leads with, so any team-level rollup of ratings silently splits six franchises across two codes. MEASUREMENT NOTE for whoever takes it: has NO season column - a WHERE season=2026 aborts the transaction and, in one connection, poisons every query after it. I lost a result to that. MAPPING FULLY VERIFIED 2026-08-12 - THE REPAIR IS NOW UNAMBIGUOUS, AND ONE GOTCHA IS NAMED. Checked every pair by PLAYER OVERLAP rather than by name similarity, because a code map is only safe if the two codes describe the same franchise: LA->LAS, LV->LVA, NY->NYL, PHX->PHO and WSH->WAS each share 100 PERCENT of their stale players with the canonical code. GS->GSV shares 6 of 7. THE SEVENTH RESOLVES CLEANLY: Nadia Fingall appears under GS on 110 ratings rows and never under GSV - but her 2026 GAME LOGS read GSV. So she is a Golden State player the ratings table simply never recorded under the canonical code, and GS->GSV is right for her too. All six pairs are safe. THE REPAIR IS THEREFORE: GS->GSV, LA->LAS, LV->LVA, NY->NYL, PHX->PHO, WSH->WAS on , taking 21 codes to 15, with the target set already demonstrated by 2026. Affected volume is small - 2420, 2200, 1760, 3080, 2640 and 1760 rows. THE GOTCHA, AND IT WOULD HAVE BITTEN: ops/repair_witness.py is the right tool here, but its own header warns that the SELECTION MUST BE STABLE UNDER THE REPAIR - the complement is re-evaluated from the same predicate afterwards, so a WHERE over a column the repair WRITES makes the changed rows migrate out of the selection and the witness cries wolf on a correct repair. The obvious predicate here is team_abbr IN (the six stale codes), and team_abbr is exactly what this repair writes. So the witness must be given a STABLE selection instead - a key or a captured row-id set - or its complement digest will fail on a repair that is right. That is the same trap that fired on the 12087-row note repair earlier this month. I DID NOT RUN IT. This UPDATEs the table behind the impact metric every CEO-facing surface leads with, and the correct witness predicate needs choosing rather than guessing. The mapping is proven; what remains is a careful five-minute repair with a stable selection and a pre-image. I ATTEMPTED THE REPAIR AND IT FAILED SAFELY, WHICH REVEALED THE DEFECT IS TWO PROBLEMS AND NOT ONE. 2026-08-12. The UPDATE aborted on a UNIQUE VIOLATION: the table's is (team_abbr, game_date, player_id, ), so relabelling GS to GSV collides wherever the same player on the same date under the same ALREADY has a canonical row. NO DAMAGE - the whole thing ran inside one transaction, so the pre-image table creation rolled back with it. Verified after: 714485 rows, 21 codes, non-team digest still , zero leftover bak tables. UNCHANGED. THE SPLIT, MEASURED: of 13860 stale rows, 3410 HAVE a canonical twin and 10450 DO NOT. And every one of the 3410 twins carries an IDENTICAL rating - 3410 of 3410, no exceptions. So: (A) 10450 rows are the ONLY record for their key and carry real data under a stale code. Relabelling them is collision-free by construction and is REQUIRED, or that data stays invisible to any canonical-code reader. (B) 3410 rows are EXACT DUPLICATES of a canonical row - same key, same rating. Relabelling them is impossible by the and pointless by the data; they should be retired, and retiring them loses nothing because the twin already holds the identical value. THAT IS WHY A NAIVE RELABEL WAS NEVER GOING TO WORK, and it is a sharper statement of this row's own warning: the trap is not only WHICH DIRECTION to map, it is that a quarter of the rows must not be mapped at all. DO IT AS ONE DELIBERATE CHANGE, not in halves: relabelling only the 10450 would leave the table at 21 codes with the duplicates still holding stale labels, which reads as a half-finished repair to the next person. Sequence: pre-image ALL 13860, retire the 3410 duplicates, relabel the 10450, then prove it with the non-team-column digest over the whole table - that predicate is STABLE because it excludes the mutated column, which is the stable-selection problem I flagged above, solved. THE DIGEST TECHNIQUE IS PROVEN AND CHEAP: md5 over ROW(all columns EXCEPT team_abbr) aggregated over all 714485 rows returns in 5.6 seconds and is what caught that the rollback was clean. RERANKED p2 - DIAGNOSIS COMPLETE, EXECUTION REMAINS, AND NOTHING IS LEFT TO DISCOVER. Everything a repair needs is now measured and on this row: the target vocabulary demonstrated by 2026; the six pairs verified by player overlap with the one GS-only player resolved through her game logs; the 13860 stale rows split into 10450 that MUST be relabelled and 3410 that must NOT be, because they are exact duplicates whose twins carry identical ratings 3410 of 3410; the that makes a naive UPDATE collide; and a proof technique that runs in 5.6 seconds and has already been shown to detect a clean rollback. WHY I AM NOT EXECUTING IT AT THIS SITTING, stated plainly rather than dressed up: it is a multi-step DELETE-then-UPDATE against the table behind the impact metric every CEO-facing surface leads with, the first attempt surprised me with a constraint I had not read, and the proof for a mixed delete-and-update needs designing rather than improvising - the whole-table digest I proved works for a pure UPDATE, but a DELETE changes the row set, so the before-digest must be taken over the rows that will REMAIN. That is a ten-minute design done rested and a way to corrupt an impact table done tired. THE ROW IS NOT BLOCKED AND NEEDS NO DECISION FROM ANYONE - it is ready-to-execute machine work with every input measured. It ranks p2 rather than p1 because the discovery is finished; a lane can pick it up and be done inside an hour with no re-measurement.",
-      "state": "ready now",
-      "row_state": "open",
-      "row_closed": false,
-      "pm_authored": false,
-      "event_utc": null,
-      "impact": "",
-      "rank_priority": 2.0,
-      "title": "The league has 15 teams and our tables carry 21 team codes",
-      "unlocks": "Six franchises carry TWO codes each GS and GSV LA and LAS LV and LVA NY and NYL PHO and PHX WAS and WSH.",
-      "owner": "MACHINE",
-      "feed_status": "QUEUED",
-      "tier": 1,
-      "group": "",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 270,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20six-franchises-carry-two-team-codes-each%3A%20top&body=The%20league%20has%2015%20teams%20and%20our%20tables%20carry%2021%20team%20codes%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20six-franchises-carry-two-team-codes-each%3A%20bump&body=The%20league%20has%2015%20teams%20and%20our%20tables%20carry%2021%20team%20codes%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20six-franchises-carry-two-team-codes-each%3A%20demote&body=The%20league%20has%2015%20teams%20and%20our%20tables%20carry%2021%20team%20codes%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20six-franchises-carry-two-team-codes-each%3A%20shelve&body=The%20league%20has%2015%20teams%20and%20our%20tables%20carry%2021%20team%20codes%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "the-live-predictions-snapshot-table-froze-on-13",
       "family": "data",
       "name": "The live predictions snapshot table stopped being written on 13 May",
@@ -2917,7 +2869,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 271,
+      "rank": 270,
       "actions": [
        {
         "verb": "top",
@@ -2965,7 +2917,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 275,
+      "rank": 274,
       "actions": [
        {
         "verb": "top",
@@ -3013,7 +2965,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 278,
+      "rank": 277,
       "actions": [
        {
         "verb": "top",
@@ -3061,7 +3013,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 280,
+      "rank": 279,
       "actions": [
        {
         "verb": "top",
@@ -3109,7 +3061,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 284,
+      "rank": 283,
       "actions": [
        {
         "verb": "top",
@@ -3157,7 +3109,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 285,
+      "rank": 284,
       "actions": [
        {
         "verb": "top",
@@ -3206,7 +3158,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Do NOT run the postseason backfill for 2002-2014 as this row proposes. RE- 2026-08-20T01 and the gap is bigger than filed in a way that the fix. spans ...",
-      "rank": 291,
+      "rank": 290,
       "actions": [
        {
         "verb": "top",
@@ -3254,7 +3206,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 296,
+      "rank": 295,
       "actions": [
        {
         "verb": "top",
@@ -3302,7 +3254,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 298,
+      "rank": 297,
       "actions": [
        {
         "verb": "top",
@@ -5371,7 +5323,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 295,
+      "rank": 294,
       "actions": [
        {
         "verb": "top",
@@ -5419,7 +5371,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 297,
+      "rank": 296,
       "actions": [
        {
         "verb": "top",
@@ -9944,7 +9896,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 276,
+      "rank": 275,
       "actions": [
        {
         "verb": "top",
@@ -9993,7 +9945,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Director must choose the totals model-of-record architecture: from-scratch trailing-40 mu or simulation plus one offset channel. Promotion also requires a ...",
-      "rank": 281,
+      "rank": 280,
       "actions": [
        {
         "verb": "top",
@@ -10041,7 +9993,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 282,
+      "rank": 281,
       "actions": [
        {
         "verb": "top",
@@ -10089,7 +10041,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 289,
+      "rank": 288,
       "actions": [
        {
         "verb": "top",
@@ -10137,7 +10089,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 290,
+      "rank": 289,
       "actions": [
        {
         "verb": "top",
@@ -10185,7 +10137,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 292,
+      "rank": 291,
       "actions": [
        {
         "verb": "top",
@@ -10206,6 +10158,54 @@
         "verb": "shelve",
         "icon": "🗄",
         "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-props-sig-is-frozen-against-a-moved-roster%3A%20shelve&body=Thirty-four%20players%20in%20the%20props%20source%20sit%20on%20teams%20they%20no%20longer%20play%20for%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       }
+      ]
+     },
+     {
+      "task_id": "one-rating-shadow-version-holds-every-row-twice",
+      "family": "modeling",
+      "name": "3 410 player-dates exist under both team codes in one version nothing may be deleted",
+      "header": "3 410 player-dates exist under both team codes in one version nothing may be deleted",
+      "why": "Refresh the full-roster player ratings",
+      "priority": 3,
+      "seat": "MACHINE",
+      "status": "queued",
+      "state": "",
+      "row_state": "queued",
+      "row_closed": false,
+      "pm_authored": false,
+      "event_utc": null,
+      "impact": "",
+      "rank_priority": 3.0,
+      "title": "3 410 player-dates exist under both team codes in one version nothing may be deleted",
+      "unlocks": "The other three affected versions have zero such twins.",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 299,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20one-rating-shadow-version-holds-every-row-twice%3A%20top&body=3%20410%20player-dates%20exist%20under%20both%20team%20codes%20in%20one%20version%20nothing%20may%20be%20deleted%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20one-rating-shadow-version-holds-every-row-twice%3A%20bump&body=3%20410%20player-dates%20exist%20under%20both%20team%20codes%20in%20one%20version%20nothing%20may%20be%20deleted%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20one-rating-shadow-version-holds-every-row-twice%3A%20demote&body=3%20410%20player-dates%20exist%20under%20both%20team%20codes%20in%20one%20version%20nothing%20may%20be%20deleted%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20one-rating-shadow-version-holds-every-row-twice%3A%20shelve&body=3%20410%20player-dates%20exist%20under%20both%20team%20codes%20in%20one%20version%20nothing%20may%20be%20deleted%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
        }
       ]
      },
@@ -16724,7 +16724,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 272,
+      "rank": 271,
       "actions": [
        {
         "verb": "top",
@@ -16772,7 +16772,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 273,
+      "rank": 272,
       "actions": [
        {
         "verb": "top",
@@ -16820,7 +16820,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 274,
+      "rank": 273,
       "actions": [
        {
         "verb": "top",
@@ -16868,7 +16868,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 277,
+      "rank": 276,
       "actions": [
        {
         "verb": "top",
@@ -16916,7 +16916,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 279,
+      "rank": 278,
       "actions": [
        {
         "verb": "top",
@@ -16964,7 +16964,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 283,
+      "rank": 282,
       "actions": [
        {
         "verb": "top",
@@ -17012,7 +17012,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 286,
+      "rank": 285,
       "actions": [
        {
         "verb": "top",
@@ -17060,7 +17060,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 287,
+      "rank": 286,
       "actions": [
        {
         "verb": "top",
@@ -17108,7 +17108,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 288,
+      "rank": 287,
       "actions": [
        {
         "verb": "top",
@@ -17156,7 +17156,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 293,
+      "rank": 292,
       "actions": [
        {
         "verb": "top",
@@ -17204,7 +17204,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 294,
+      "rank": 293,
       "actions": [
        {
         "verb": "top",
@@ -17252,7 +17252,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 299,
+      "rank": 298,
       "actions": [
        {
         "verb": "top",
@@ -19354,9 +19354,9 @@
     "target": 40,
     "count": 384,
     "ok": true,
-    "label": "384 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 55m ago.)",
+    "label": "384 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 1h ago.)",
     "as_of_utc": "2026-08-19T21:00:36Z",
-    "age_secs": 3321,
+    "age_secs": 3766,
     "stale": false
    },
    "source": "dispatch queue",
@@ -20060,10 +20060,10 @@
  "scout_heartbeat": {
   "alive": false,
   "last_poll_utc": "2026-08-17T22:58:52Z",
-  "age_s": 168977,
+  "age_s": 169435,
   "cycles": 17,
   "known": true,
-  "label": "scout: no poll for 168977s",
+  "label": "scout: no poll for 169435s",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
@@ -20113,13 +20113,13 @@
    "detail": "slate-refresh: STALE (#19): season impact feed is 71h old paged=True"
   },
   {
-   "time": "5:55pm",
+   "time": "6:00pm",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-19T21:55:04.660489+00:00",
+  "as_of": "2026-08-19T22:02:15.747548+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -20128,48 +20128,48 @@
     "does": "watches for your instructions",
     "active": false,
     "stale": true,
-    "age_label": "46h",
-    "state_text": "quiet · last seen 46h ago"
+    "age_label": "47h",
+    "state_text": "quiet · last seen 47h ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "4s",
-    "state_text": "on · seen 4s ago"
+    "age_label": "31s",
+    "state_text": "on · seen 31s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "39s",
-    "state_text": "on · seen 39s ago"
+    "age_label": "8m",
+    "state_text": "on · seen 8m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "15s",
-    "state_text": "on · seen 15s ago"
+    "age_label": "36s",
+    "state_text": "on · seen 36s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "39s",
-    "state_text": "on · seen 39s ago"
+    "age_label": "8m",
+    "state_text": "on · seen 8m ago"
    },
    {
     "name": "Q board",
     "does": "keeps your live queue board current",
     "active": true,
     "stale": false,
-    "age_label": "1m",
-    "state_text": "on · seen 1m ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    }
   ],
   "width": {
@@ -20403,9 +20403,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-19T21:54:59Z",
-  "session_age_secs": 27077,
-  "last_progress_age_secs": 10,
+  "last_heartbeat_utc": "2026-08-19T22:02:42Z",
+  "session_age_secs": 27535,
+  "last_progress_age_secs": 5,
   "last_spawn_attempt": "2026-08-19T14:21:31Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -20435,54 +20435,54 @@
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-08-19T21:55:01+00:00",
+   "as_of": "2026-08-19T22:02:10Z",
    "stale": false,
-   "revalidated": "2026-08-19T21:55:01+00:00",
+   "revalidated": "2026-08-19T22:02:38+00:00",
    "stale_reason": "",
-   "age_label": "0s",
+   "age_label": "28s",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
    "as_of": "2026-08-19T16:21:10Z",
    "stale": false,
-   "revalidated": "2026-08-19T21:55:01+00:00",
+   "revalidated": "2026-08-19T22:02:38+00:00",
    "stale_reason": "",
    "age_label": "5h",
    "stale_after": 43200
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-19T21:44:39+00:00",
+   "as_of": "2026-08-19T21:55:01+00:00",
    "stale": false,
-   "revalidated": "2026-08-19T21:55:01+00:00",
+   "revalidated": "2026-08-19T22:02:38+00:00",
    "stale_reason": "",
-   "age_label": "10m",
+   "age_label": "7m",
    "stale_after": 3600
   },
   "needs_anthony": {
    "source": "decision brief",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-19T21:55:01+00:00",
+   "revalidated": "2026-08-19T22:02:38+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-19T21:53:59Z",
+   "as_of": "2026-08-19T22:01:59Z",
    "stale": false,
-   "revalidated": "2026-08-19T21:55:01+00:00",
+   "revalidated": "2026-08-19T22:02:38+00:00",
    "stale_reason": "",
-   "age_label": "62s",
+   "age_label": "39s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-19T21:55:01+00:00",
+   "revalidated": "2026-08-19T22:02:38+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
@@ -20491,16 +20491,16 @@
    "source": "director inbox",
    "as_of": "2026-08-19T21:12:09Z",
    "stale": false,
-   "revalidated": "2026-08-19T21:55:01+00:00",
+   "revalidated": "2026-08-19T22:02:38+00:00",
    "stale_reason": "",
-   "age_label": "42m",
+   "age_label": "50m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-17T14:54:47Z",
    "stale": true,
-   "revalidated": "2026-08-19T21:55:01+00:00",
+   "revalidated": "2026-08-19T22:02:38+00:00",
    "stale_reason": "No new team updates in 55h — nothing was shipped in that window. The feed itself is current.",
    "age_label": "55h",
    "stale_after": 172800,
@@ -20508,22 +20508,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-19T21:44:39+00:00",
+   "as_of": "2026-08-19T21:55:01+00:00",
    "stale": false,
-   "revalidated": "2026-08-19T21:55:01+00:00",
+   "revalidated": "2026-08-19T22:02:38+00:00",
    "stale_reason": "",
-   "age_label": "10m",
+   "age_label": "7m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-19T21:55:04.660489+00:00",
+   "as_of": "2026-08-19T22:02:15.747548+00:00",
    "stale": false,
-   "revalidated": "2026-08-19T21:55:01+00:00",
+   "revalidated": "2026-08-19T22:02:38+00:00",
    "stale_reason": "",
-   "age_label": "4s",
+   "age_label": "31s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 19, 5:55pm ET"
+ "generated_et": "Aug 19, 6:02pm ET"
 }
