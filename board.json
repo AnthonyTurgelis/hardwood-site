@@ -1,20 +1,20 @@
 {
- "generated_utc": "2026-08-19T22:53:41+00:00",
+ "generated_utc": "2026-08-19T23:13:15+00:00",
  "freshness": {
-  "baked_utc": "2026-08-19T22:53:41+00:00",
-  "baked_et": "Aug 19, 6:53pm ET",
-  "revalidated_utc": "2026-08-19T22:53:41+00:00",
+  "baked_utc": "2026-08-19T23:13:15+00:00",
+  "baked_et": "Aug 19, 7:13pm ET",
+  "revalidated_utc": "2026-08-19T23:13:15+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-19",
  "day_summary": "Washington Mystics by 5.9 over Toronto Tempo is our strongest pick of tonight's 2 games - a 68% chance to win. Full game reports are ready.",
  "counts": {
-  "running": 5,
+  "running": 6,
   "done_today": 1,
   "maintenance": 0,
   "needs_anthony": 0,
   "lanes_today": 1,
-  "upcoming": 383
+  "upcoming": 382
  },
  "ship_checklist": {
   "known": true,
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-19T22:49:38+00:00",
+  "generated_utc": "2026-08-19T23:13:15+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -809,7 +809,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T18:15:51-04:00",
+    "at_iso": "2026-08-19T19:12:08-04:00",
     "start_unknown": true
    },
    {
@@ -819,7 +819,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T18:15:51-04:00",
+    "at_iso": "2026-08-19T19:12:08-04:00",
     "start_unknown": true
    },
    {
@@ -829,7 +829,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T18:15:51-04:00",
+    "at_iso": "2026-08-19T19:12:08-04:00",
     "start_unknown": true
    },
    {
@@ -839,7 +839,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T18:15:51-04:00",
+    "at_iso": "2026-08-19T19:12:08-04:00",
     "start_unknown": true
    },
    {
@@ -849,7 +849,17 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T18:15:51-04:00",
+    "at_iso": "2026-08-19T19:12:08-04:00",
+    "start_unknown": true
+   },
+   {
+    "name": "Claude serve history guard boundary",
+    "one_liner": "Running now.",
+    "chip": "IN-FLIGHT",
+    "team": "",
+    "kind": "lane",
+    "time": "",
+    "at_iso": "2026-08-19T19:12:08-04:00",
     "start_unknown": true
    }
   ],
@@ -2462,54 +2472,6 @@
       ]
      },
      {
-      "task_id": "no-served-prediction-as-of-exists-for-57-percent",
-      "family": "data",
-      "name": "No served-prediction snapshot exists for 57 percent of the 2026 season",
-      "header": "No served-prediction snapshot exists for 57 percent of the 2026 season",
-      "why": "Measured 2026-08-07T10 . The served-prediction record has TWO tables and a hole between them. stopped being written and has no writer anywhere in the repo. Its successor began and is current written ...",
-      "priority": 2,
-      "seat": "data",
-      "status": "open - SEVERITY NARROWED BY READING THE CONSUMERS, p1 to p2, 2026-08-07T11:20Z coord--visible. THE PUBLIC SURFACE IS ALREADY PROTECTED AND I SHOULD SAY SO. scripts/build_site.py around line 3052 to 3078 handles this gap EXPLICITLY and by design: it prefers but KEEPS the pinned join as the fallback, in its own words, for games older than the snapshot table, noting it starts 2026-07-23. It also enforces STRICT LESS-THAN in the lateral, asof_snapshot_at < tip_utc, so only a genuinely pre-tip row can be used. The author knew the start date and built for it. So the accuracy panel a reader opens is NOT reading a hole, and my original framing that anything joining this record either reads a hole or reconstructs from today model was TOO BROAD. WHAT REMAINS TRUE AND IS THE ACTUAL SCOPE: the gap bites any consumer that reads the snapshot table WITHOUT a fallback. Confirmed one such case already - the serve-start guard in model_vs_market_skill.py, filed separately, which cannot source a genuine pre-23-July serve date from a table that starts then and has no sig column. STILL TO CHECK: scripts/forward_bet_tracker.py, the third reader, has not been examined for a fallback. Do that before sizing this any further. THE TEN-WEEK HOLE IS STILL REAL as a fact about the warehouse - 188 of 330 games have no as-of row - it simply has fewer victims than I first claimed. ||| 🔴 CORRECTED 2026-08-07T11:30Z coord--visible - THE SUPERSESSION CLAIM IN THIS ROW IS WRONG, DO NOT ACT ON IT. I asserted is the successor to and that the fix is a freshness repoint. Reading the COLUMNS disproves it. carries odds_event_id, player_id, pred_type, pred_mean, player_name - PLAYER PROPS. carries game_id, pred_margin, total_mean, p_home_win - GAME-LEVEL board values. Different shapes, different jobs, NEITHER substitutes for the other. I inferred the relationship from one dying as the other started and that timing was a COINCIDENCE. Repointing anything from one to the other on the strength of this row would aim a props consumer at a game-level table and produce confident nonsense. See forward-bet-tracker-reads-a-dead-table-and-fails-silently for the corrected picture: a props feed died in mid-May, NOTHING replaced it, and its consumer degrades to silence.",
-      "state": "",
-      "row_state": "open",
-      "row_closed": false,
-      "pm_authored": false,
-      "event_utc": null,
-      "impact": "",
-      "rank_priority": 2.0,
-      "title": "No served-prediction snapshot exists for 57 percent of the 2026 season",
-      "unlocks": "The served-prediction record has TWO tables and a hole between them.",
-      "owner": "DIRECTOR",
-      "feed_status": "QUEUED",
-      "tier": 1,
-      "group": "",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 229,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20no-served-prediction-as-of-exists-for-57-percent%3A%20top&body=No%20served-prediction%20snapshot%20exists%20for%2057%20percent%20of%20the%202026%20season%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20no-served-prediction-as-of-exists-for-57-percent%3A%20bump&body=No%20served-prediction%20snapshot%20exists%20for%2057%20percent%20of%20the%202026%20season%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20no-served-prediction-as-of-exists-for-57-percent%3A%20demote&body=No%20served-prediction%20snapshot%20exists%20for%2057%20percent%20of%20the%202026%20season%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20no-served-prediction-as-of-exists-for-57-percent%3A%20shelve&body=No%20served-prediction%20snapshot%20exists%20for%2057%20percent%20of%20the%202026%20season%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "two-guards-on-one-page-disagree-about-what-a-ros",
       "family": "data",
       "name": "One guard admits her on game history, the next rejects her on roster membership, in the ...",
@@ -2533,7 +2495,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 232,
+      "rank": 231,
       "actions": [
        {
         "verb": "top",
@@ -2582,7 +2544,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The race itself is now closed by an advisory lock these rows are the residue it left behind.",
-      "rank": 240,
+      "rank": 239,
       "actions": [
        {
         "verb": "top",
@@ -2630,7 +2592,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 241,
+      "rank": 240,
       "actions": [
        {
         "verb": "top",
@@ -2678,7 +2640,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 253,
+      "rank": 252,
       "actions": [
        {
         "verb": "top",
@@ -2726,7 +2688,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 258,
+      "rank": 257,
       "actions": [
        {
         "verb": "top",
@@ -2774,7 +2736,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 262,
+      "rank": 261,
       "actions": [
        {
         "verb": "top",
@@ -2822,7 +2784,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 264,
+      "rank": 263,
       "actions": [
        {
         "verb": "top",
@@ -2871,7 +2833,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "TWO one CEO and one ops. 2026-08-20T03 by claude-props-edge-layer-dormant and it is bigger than this row's staleness alarm. THE - this row's own correction was ...",
-      "rank": 269,
+      "rank": 268,
       "actions": [
        {
         "verb": "top",
@@ -2919,7 +2881,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 273,
+      "rank": 272,
       "actions": [
        {
         "verb": "top",
@@ -2967,7 +2929,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 276,
+      "rank": 275,
       "actions": [
        {
         "verb": "top",
@@ -3015,7 +2977,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 278,
+      "rank": 277,
       "actions": [
        {
         "verb": "top",
@@ -3063,7 +3025,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 282,
+      "rank": 281,
       "actions": [
        {
         "verb": "top",
@@ -3111,7 +3073,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 283,
+      "rank": 282,
       "actions": [
        {
         "verb": "top",
@@ -3160,7 +3122,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Do NOT run the postseason backfill for 2002-2014 as this row proposes. RE- 2026-08-20T01 and the gap is bigger than filed in a way that the fix. spans ...",
-      "rank": 289,
+      "rank": 288,
       "actions": [
        {
         "verb": "top",
@@ -3208,7 +3170,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 294,
+      "rank": 293,
       "actions": [
        {
         "verb": "top",
@@ -3256,7 +3218,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 296,
+      "rank": 295,
       "actions": [
        {
         "verb": "top",
@@ -3305,7 +3267,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs a human to claim that two ids are one player. The detector is correct and is parked with cause. Owner: a human identity decision - a guard cannot supply ...",
-      "rank": 300,
+      "rank": 299,
       "actions": [
        {
         "verb": "top",
@@ -3353,7 +3315,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 303,
+      "rank": 302,
       "actions": [
        {
         "verb": "top",
@@ -3401,7 +3363,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 306,
+      "rank": 305,
       "actions": [
        {
         "verb": "top",
@@ -3449,7 +3411,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 312,
+      "rank": 311,
       "actions": [
        {
         "verb": "top",
@@ -3497,7 +3459,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 322,
+      "rank": 321,
       "actions": [
        {
         "verb": "top",
@@ -3545,7 +3507,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 329,
+      "rank": 328,
       "actions": [
        {
         "verb": "top",
@@ -3593,7 +3555,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 342,
+      "rank": 341,
       "actions": [
        {
         "verb": "top",
@@ -3641,7 +3603,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 355,
+      "rank": 354,
       "actions": [
        {
         "verb": "top",
@@ -3689,7 +3651,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 363,
+      "rank": 362,
       "actions": [
        {
         "verb": "top",
@@ -3738,7 +3700,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Lfb recon French box data usr bin bash-reachable from this box (Genius livestats 52 fields).",
-      "rank": 366,
+      "rank": 365,
       "actions": [
        {
         "verb": "top",
@@ -3786,7 +3748,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 367,
+      "rank": 366,
       "actions": [
        {
         "verb": "top",
@@ -5037,7 +4999,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 230,
+      "rank": 229,
       "actions": [
        {
         "verb": "top",
@@ -5085,7 +5047,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 237,
+      "rank": 236,
       "actions": [
        {
         "verb": "top",
@@ -5133,7 +5095,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 239,
+      "rank": 238,
       "actions": [
        {
         "verb": "top",
@@ -5181,7 +5143,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 242,
+      "rank": 241,
       "actions": [
        {
         "verb": "top",
@@ -5229,7 +5191,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 250,
+      "rank": 249,
       "actions": [
        {
         "verb": "top",
@@ -5277,7 +5239,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 266,
+      "rank": 265,
       "actions": [
        {
         "verb": "top",
@@ -5326,7 +5288,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "CEO Director) four views still name no reader and they split into TWO questions which is the part this row did not yet separate. (1) same class as the two ...",
-      "rank": 293,
+      "rank": 292,
       "actions": [
        {
         "verb": "top",
@@ -5374,7 +5336,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 295,
+      "rank": 294,
       "actions": [
        {
         "verb": "top",
@@ -5422,7 +5384,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 307,
+      "rank": 306,
       "actions": [
        {
         "verb": "top",
@@ -5470,7 +5432,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 311,
+      "rank": 310,
       "actions": [
        {
         "verb": "top",
@@ -5518,7 +5480,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 316,
+      "rank": 315,
       "actions": [
        {
         "verb": "top",
@@ -5566,7 +5528,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 340,
+      "rank": 339,
       "actions": [
        {
         "verb": "top",
@@ -5614,7 +5576,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 357,
+      "rank": 356,
       "actions": [
        {
         "verb": "top",
@@ -5662,7 +5624,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 358,
+      "rank": 357,
       "actions": [
        {
         "verb": "top",
@@ -5710,7 +5672,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 370,
+      "rank": 369,
       "actions": [
        {
         "verb": "top",
@@ -5758,7 +5720,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 380,
+      "rank": 379,
       "actions": [
        {
         "verb": "top",
@@ -9417,7 +9379,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 233,
+      "rank": 232,
       "actions": [
        {
         "verb": "top",
@@ -9465,7 +9427,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 236,
+      "rank": 235,
       "actions": [
        {
         "verb": "top",
@@ -9514,7 +9476,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Each was fixed by adding one more pin.",
-      "rank": 243,
+      "rank": 242,
       "actions": [
        {
         "verb": "top",
@@ -9562,7 +9524,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 244,
+      "rank": 243,
       "actions": [
        {
         "verb": "top",
@@ -9610,7 +9572,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 248,
+      "rank": 247,
       "actions": [
        {
         "verb": "top",
@@ -9659,7 +9621,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The fourth bar cannot be reproduced here and it is not composition. 2026-08-20T02 by claude-successor-fourth-bar sweeping the 2026 cut on the grain the ...",
-      "rank": 254,
+      "rank": 253,
       "actions": [
        {
         "verb": "top",
@@ -9707,7 +9669,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 261,
+      "rank": 260,
       "actions": [
        {
         "verb": "top",
@@ -9755,7 +9717,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 265,
+      "rank": 264,
       "actions": [
        {
         "verb": "top",
@@ -9804,7 +9766,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Which numbers are the floor - the pre- 0.25 gain or the leak-free 0.051. Filed ops scout outbox the availability floor names no . the floor is named ...",
-      "rank": 267,
+      "rank": 266,
       "actions": [
        {
         "verb": "top",
@@ -9852,7 +9814,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 274,
+      "rank": 273,
       "actions": [
        {
         "verb": "top",
@@ -9901,7 +9863,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Director must choose the totals model-of-record architecture: from-scratch trailing-40 mu or simulation plus one offset channel. Promotion also requires a ...",
-      "rank": 279,
+      "rank": 278,
       "actions": [
        {
         "verb": "top",
@@ -9949,7 +9911,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 280,
+      "rank": 279,
       "actions": [
        {
         "verb": "top",
@@ -9997,7 +9959,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 287,
+      "rank": 286,
       "actions": [
        {
         "verb": "top",
@@ -10045,7 +10007,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 288,
+      "rank": 287,
       "actions": [
        {
         "verb": "top",
@@ -10094,7 +10056,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Stop the props builder carrying team abbr forward. This row offers 'suppress or the props ' and . 'S 2026-08-20T02 the served is props minfix built ...",
-      "rank": 290,
+      "rank": 289,
       "actions": [
        {
         "verb": "top",
@@ -10142,7 +10104,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 298,
+      "rank": 297,
       "actions": [
        {
         "verb": "top",
@@ -10190,7 +10152,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 304,
+      "rank": 303,
       "actions": [
        {
         "verb": "top",
@@ -10238,7 +10200,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 305,
+      "rank": 304,
       "actions": [
        {
         "verb": "top",
@@ -10286,7 +10248,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 310,
+      "rank": 309,
       "actions": [
        {
         "verb": "top",
@@ -10334,7 +10296,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 315,
+      "rank": 314,
       "actions": [
        {
         "verb": "top",
@@ -10382,7 +10344,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 323,
+      "rank": 322,
       "actions": [
        {
         "verb": "top",
@@ -10431,7 +10393,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Upstream API returning 529 Overloaded - external, not a repo condition",
-      "rank": 331,
+      "rank": 330,
       "actions": [
        {
         "verb": "top",
@@ -10479,7 +10441,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 351,
+      "rank": 350,
       "actions": [
        {
         "verb": "top",
@@ -10527,7 +10489,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 352,
+      "rank": 351,
       "actions": [
        {
         "verb": "top",
@@ -10576,7 +10538,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Sample. Re-fires at decided games ( per team); currently 207. Owner: time. Unlocks: itself, at the game count - no action owed by anyone.",
-      "rank": 353,
+      "rank": 352,
       "actions": [
        {
         "verb": "top",
@@ -10625,7 +10587,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No free futures-market source exists to grade against at any Odds API tier. Our sim exists . Owner CEO - it is a spend scope decision not a build.",
-      "rank": 356,
+      "rank": 355,
       "actions": [
        {
         "verb": "top",
@@ -10674,7 +10636,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The defence-by-zone half needs the gated defender-attribution model AND the stats.wnba tracking wall. The offence half is already live and verified. Owner: the ...",
-      "rank": 359,
+      "rank": 358,
       "actions": [
        {
         "verb": "top",
@@ -10722,7 +10684,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 360,
+      "rank": 359,
       "actions": [
        {
         "verb": "top",
@@ -10770,7 +10732,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 361,
+      "rank": 360,
       "actions": [
        {
         "verb": "top",
@@ -10818,7 +10780,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 362,
+      "rank": 361,
       "actions": [
        {
         "verb": "top",
@@ -10866,7 +10828,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 364,
+      "rank": 363,
       "actions": [
        {
         "verb": "top",
@@ -10914,7 +10876,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 368,
+      "rank": 367,
       "actions": [
        {
         "verb": "top",
@@ -10962,7 +10924,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 369,
+      "rank": 368,
       "actions": [
        {
         "verb": "top",
@@ -11010,7 +10972,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 371,
+      "rank": 370,
       "actions": [
        {
         "verb": "top",
@@ -11058,7 +11020,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 372,
+      "rank": 371,
       "actions": [
        {
         "verb": "top",
@@ -11106,7 +11068,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 373,
+      "rank": 372,
       "actions": [
        {
         "verb": "top",
@@ -11155,7 +11117,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "No second-rebounder athlete id exists in the feed - 0 of 477,879 rows carry one. Descriptive board-duel is done; only the player-grain contest version is ...",
-      "rank": 374,
+      "rank": 373,
       "actions": [
        {
         "verb": "top",
@@ -11203,7 +11165,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 375,
+      "rank": 374,
       "actions": [
        {
         "verb": "top",
@@ -11251,7 +11213,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 376,
+      "rank": 375,
       "actions": [
        {
         "verb": "top",
@@ -11300,7 +11262,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The stats.wnba /stats/ tracking edge is unreachable from this box. The xFG-by-zone baseline shipped and is verified; only the contest-adjusted rim-defence ...",
-      "rank": 377,
+      "rank": 376,
       "actions": [
        {
         "verb": "top",
@@ -11348,7 +11310,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 378,
+      "rank": 377,
       "actions": [
        {
         "verb": "top",
@@ -15865,7 +15827,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 231,
+      "rank": 230,
       "actions": [
        {
         "verb": "top",
@@ -15913,7 +15875,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 234,
+      "rank": 233,
       "actions": [
        {
         "verb": "top",
@@ -15961,7 +15923,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 235,
+      "rank": 234,
       "actions": [
        {
         "verb": "top",
@@ -16009,7 +15971,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 238,
+      "rank": 237,
       "actions": [
        {
         "verb": "top",
@@ -16057,7 +16019,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 245,
+      "rank": 244,
       "actions": [
        {
         "verb": "top",
@@ -16105,7 +16067,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 246,
+      "rank": 245,
       "actions": [
        {
         "verb": "top",
@@ -16153,7 +16115,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 247,
+      "rank": 246,
       "actions": [
        {
         "verb": "top",
@@ -16201,7 +16163,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 249,
+      "rank": 248,
       "actions": [
        {
         "verb": "top",
@@ -16249,7 +16211,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 251,
+      "rank": 250,
       "actions": [
        {
         "verb": "top",
@@ -16297,7 +16259,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 252,
+      "rank": 251,
       "actions": [
        {
         "verb": "top",
@@ -16345,7 +16307,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 255,
+      "rank": 254,
       "actions": [
        {
         "verb": "top",
@@ -16393,7 +16355,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 256,
+      "rank": 255,
       "actions": [
        {
         "verb": "top",
@@ -16441,7 +16403,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 257,
+      "rank": 256,
       "actions": [
        {
         "verb": "top",
@@ -16489,7 +16451,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 259,
+      "rank": 258,
       "actions": [
        {
         "verb": "top",
@@ -16537,7 +16499,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 260,
+      "rank": 259,
       "actions": [
        {
         "verb": "top",
@@ -16585,7 +16547,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 263,
+      "rank": 262,
       "actions": [
        {
         "verb": "top",
@@ -16633,7 +16595,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 268,
+      "rank": 267,
       "actions": [
        {
         "verb": "top",
@@ -16681,7 +16643,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 270,
+      "rank": 269,
       "actions": [
        {
         "verb": "top",
@@ -16729,7 +16691,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 271,
+      "rank": 270,
       "actions": [
        {
         "verb": "top",
@@ -16777,7 +16739,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 272,
+      "rank": 271,
       "actions": [
        {
         "verb": "top",
@@ -16825,7 +16787,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 275,
+      "rank": 274,
       "actions": [
        {
         "verb": "top",
@@ -16873,7 +16835,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 277,
+      "rank": 276,
       "actions": [
        {
         "verb": "top",
@@ -16921,7 +16883,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 281,
+      "rank": 280,
       "actions": [
        {
         "verb": "top",
@@ -16969,7 +16931,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 284,
+      "rank": 283,
       "actions": [
        {
         "verb": "top",
@@ -17017,7 +16979,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 285,
+      "rank": 284,
       "actions": [
        {
         "verb": "top",
@@ -17065,7 +17027,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 286,
+      "rank": 285,
       "actions": [
        {
         "verb": "top",
@@ -17113,7 +17075,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 291,
+      "rank": 290,
       "actions": [
        {
         "verb": "top",
@@ -17161,7 +17123,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 292,
+      "rank": 291,
       "actions": [
        {
         "verb": "top",
@@ -17209,7 +17171,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 297,
+      "rank": 296,
       "actions": [
        {
         "verb": "top",
@@ -17257,7 +17219,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 299,
+      "rank": 298,
       "actions": [
        {
         "verb": "top",
@@ -17305,7 +17267,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 301,
+      "rank": 300,
       "actions": [
        {
         "verb": "top",
@@ -17353,7 +17315,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 302,
+      "rank": 301,
       "actions": [
        {
         "verb": "top",
@@ -17401,7 +17363,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 308,
+      "rank": 307,
       "actions": [
        {
         "verb": "top",
@@ -17449,7 +17411,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 309,
+      "rank": 308,
       "actions": [
        {
         "verb": "top",
@@ -17497,7 +17459,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 313,
+      "rank": 312,
       "actions": [
        {
         "verb": "top",
@@ -17545,7 +17507,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 314,
+      "rank": 313,
       "actions": [
        {
         "verb": "top",
@@ -17593,7 +17555,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 317,
+      "rank": 316,
       "actions": [
        {
         "verb": "top",
@@ -17641,7 +17603,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 318,
+      "rank": 317,
       "actions": [
        {
         "verb": "top",
@@ -17689,7 +17651,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 319,
+      "rank": 318,
       "actions": [
        {
         "verb": "top",
@@ -17737,7 +17699,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 320,
+      "rank": 319,
       "actions": [
        {
         "verb": "top",
@@ -17785,7 +17747,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 321,
+      "rank": 320,
       "actions": [
        {
         "verb": "top",
@@ -17833,7 +17795,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 324,
+      "rank": 323,
       "actions": [
        {
         "verb": "top",
@@ -17881,7 +17843,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 325,
+      "rank": 324,
       "actions": [
        {
         "verb": "top",
@@ -17929,7 +17891,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 326,
+      "rank": 325,
       "actions": [
        {
         "verb": "top",
@@ -17977,7 +17939,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 327,
+      "rank": 326,
       "actions": [
        {
         "verb": "top",
@@ -18025,7 +17987,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 328,
+      "rank": 327,
       "actions": [
        {
         "verb": "top",
@@ -18073,7 +18035,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 330,
+      "rank": 329,
       "actions": [
        {
         "verb": "top",
@@ -18121,7 +18083,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 332,
+      "rank": 331,
       "actions": [
        {
         "verb": "top",
@@ -18169,7 +18131,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 333,
+      "rank": 332,
       "actions": [
        {
         "verb": "top",
@@ -18217,7 +18179,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 334,
+      "rank": 333,
       "actions": [
        {
         "verb": "top",
@@ -18265,7 +18227,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 335,
+      "rank": 334,
       "actions": [
        {
         "verb": "top",
@@ -18313,7 +18275,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 336,
+      "rank": 335,
       "actions": [
        {
         "verb": "top",
@@ -18361,7 +18323,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 337,
+      "rank": 336,
       "actions": [
        {
         "verb": "top",
@@ -18409,7 +18371,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 338,
+      "rank": 337,
       "actions": [
        {
         "verb": "top",
@@ -18457,7 +18419,7 @@
       "group": "",
       "ceo_ask": true,
       "p0": false,
-      "rank": 339,
+      "rank": 338,
       "actions": [
        {
         "verb": "top",
@@ -18505,7 +18467,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 341,
+      "rank": 340,
       "actions": [
        {
         "verb": "top",
@@ -18553,7 +18515,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 343,
+      "rank": 342,
       "actions": [
        {
         "verb": "top",
@@ -18601,7 +18563,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 344,
+      "rank": 343,
       "actions": [
        {
         "verb": "top",
@@ -18649,7 +18611,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 345,
+      "rank": 344,
       "actions": [
        {
         "verb": "top",
@@ -18697,7 +18659,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 346,
+      "rank": 345,
       "actions": [
        {
         "verb": "top",
@@ -18745,7 +18707,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 347,
+      "rank": 346,
       "actions": [
        {
         "verb": "top",
@@ -18793,7 +18755,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 348,
+      "rank": 347,
       "actions": [
        {
         "verb": "top",
@@ -18841,7 +18803,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 349,
+      "rank": 348,
       "actions": [
        {
         "verb": "top",
@@ -18889,7 +18851,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 350,
+      "rank": 349,
       "actions": [
        {
         "verb": "top",
@@ -18938,7 +18900,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs a human sign-in; mostly self-heals now, with a small residual.",
-      "rank": 354,
+      "rank": 353,
       "actions": [
        {
         "verb": "top",
@@ -18987,7 +18949,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs unblocked runner (infra CEO decision).",
-      "rank": 365,
+      "rank": 364,
       "actions": [
        {
         "verb": "top",
@@ -19035,7 +18997,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 379,
+      "rank": 378,
       "actions": [
        {
         "verb": "top",
@@ -19083,7 +19045,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 381,
+      "rank": 380,
       "actions": [
        {
         "verb": "top",
@@ -19132,7 +19094,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "A one-time admin PowerShell run of register all persistence. is owed the box cannot self-elevate. Owner CEO - his hands one command. elevation was RE- and a ...",
-      "rank": 382,
+      "rank": 381,
       "actions": [
        {
         "verb": "top",
@@ -19180,7 +19142,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 383,
+      "rank": 382,
       "actions": [
        {
         "verb": "top",
@@ -19306,14 +19268,14 @@
      }
     ]
    },
-   "more_count": 373,
+   "more_count": 372,
    "floor": {
     "target": 40,
-    "count": 383,
+    "count": 381,
     "ok": true,
-    "label": "383 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 1h ago.)",
+    "label": "381 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 2h ago.)",
     "as_of_utc": "2026-08-19T21:00:36Z",
-    "age_secs": 6808,
+    "age_secs": 8053,
     "stale": false
    },
    "source": "dispatch queue",
@@ -20017,66 +19979,66 @@
  "scout_heartbeat": {
   "alive": false,
   "last_poll_utc": "2026-08-17T22:58:52Z",
-  "age_s": 172489,
+  "age_s": 173673,
   "cycles": 17,
   "known": true,
-  "label": "scout: no poll for 172489s",
+  "label": "scout: no poll for 173673s",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "6:38pm",
-   "text": "divergence alarm: clean (build code matches the shared branch",
-   "detail": "divergence_alarm: clean (build code matches the shared branch)"
-  },
-  {
-   "time": "6:38pm",
-   "text": "publish-health: public board FRESH again — flag cleared",
-   "detail": "publish-health: public board FRESH again — flag cleared"
-  },
-  {
-   "time": "6:38pm",
-   "text": "chain-health: CHAIN DOWN (#197): broken=drive paged=True",
-   "detail": "chain-health: CHAIN DOWN (#197): broken=drive paged=True"
-  },
-  {
-   "time": "6:38pm",
-   "text": "slate-refresh: STALE (#23): season impact feed is 72h old paged=True",
-   "detail": "slate-refresh: STALE (#23): season impact feed is 72h old paged=True"
-  },
-  {
-   "time": "6:40pm",
+   "time": "7:05pm",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
   },
   {
-   "time": "6:44pm",
+   "time": "7:06pm",
    "text": "divergence alarm: clean (build code matches the shared branch",
    "detail": "divergence_alarm: clean (build code matches the shared branch)"
   },
   {
-   "time": "6:44pm",
+   "time": "7:06pm",
    "text": "publish-health: clean (public board is fresh",
    "detail": "publish-health: clean (public board is fresh)"
   },
   {
-   "time": "6:44pm",
-   "text": "chain-health: CHAIN DOWN (#198): broken=drive paged=True",
-   "detail": "chain-health: CHAIN DOWN (#198): broken=drive paged=True"
+   "time": "7:06pm",
+   "text": "chain-health: CHAIN DOWN (#200): broken=drive paged=True",
+   "detail": "chain-health: CHAIN DOWN (#200): broken=drive paged=True"
   },
   {
-   "time": "6:44pm",
-   "text": "slate-refresh: STALE (#24): season impact feed is 72h old paged=True",
-   "detail": "slate-refresh: STALE (#24): season impact feed is 72h old paged=True"
+   "time": "7:06pm",
+   "text": "slate-refresh: STALE (#26): season impact feed is 72h old paged=True",
+   "detail": "slate-refresh: STALE (#26): season impact feed is 72h old paged=True"
   },
   {
-   "time": "6:50pm",
-   "text": "board-selfpolice: clean (live board matches repo truth",
-   "detail": "board-selfpolice: clean (live board matches repo truth)"
+   "time": "7:10pm",
+   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1021s old (live 2026-08-19T22:53:41+00:00; active ceiling 900s) -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1021s old (live 2026-08-19T22:53:41+00:00; active ceiling 900s) -> auto-repair"
+  },
+  {
+   "time": "7:13pm",
+   "text": "divergence alarm: clean (build code matches the shared branch",
+   "detail": "divergence_alarm: clean (build code matches the shared branch)"
+  },
+  {
+   "time": "7:13pm",
+   "text": "publish-health: PUBLIC BOARD STALE (#1): staleness=1165s threshold=900s live=2026-08-19T22:53:41+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 620s newer than live",
+   "detail": "publish-health: PUBLIC BOARD STALE (#1): staleness=1165s threshold=900s live=2026-08-19T22:53:41+00:00 | deploy stuck (guard/push failure): "
+  },
+  {
+   "time": "7:13pm",
+   "text": "chain-health: CHAIN DOWN (#201): broken=drive,board paged=True",
+   "detail": "chain-health: CHAIN DOWN (#201): broken=drive,board paged=True"
+  },
+  {
+   "time": "7:13pm",
+   "text": "slate-refresh: STALE (#27): season impact feed is 72h old paged=True",
+   "detail": "slate-refresh: STALE (#27): season impact feed is 72h old paged=True"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-19T22:53:33Z",
+  "as_of": "2026-08-19T23:13:06Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -20085,55 +20047,55 @@
     "does": "watches for your instructions",
     "active": false,
     "stale": true,
-    "age_label": "47h",
-    "state_text": "quiet · last seen 47h ago"
+    "age_label": "48h",
+    "state_text": "quiet · last seen 48h ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "4m",
-    "state_text": "on · seen 4m ago"
+    "age_label": "3m",
+    "state_text": "on · seen 3m ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "9m",
-    "state_text": "on · seen 9m ago"
+    "age_label": "19s",
+    "state_text": "on · seen 19s ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "1m",
-    "state_text": "on · seen 1m ago"
+    "age_label": "61s",
+    "state_text": "on · seen 61s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "9m",
-    "state_text": "on · seen 9m ago"
+    "age_label": "19s",
+    "state_text": "on · seen 19s ago"
    },
    {
     "name": "Q board",
     "does": "keeps your live queue board current",
     "active": true,
     "stale": false,
-    "age_label": "8s",
-    "state_text": "on · seen 8s ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    }
   ],
   "width": {
-   "running": 5,
-   "target": 2,
+   "running": 6,
+   "target": 3,
    "empty": 0,
-   "line": "5 of 2 jobs running.",
+   "line": "6 of 3 jobs running.",
    "reason": "Enough jobs are running for the work waiting.",
    "stale": false
   },
@@ -20360,10 +20322,10 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-19T22:15:56Z",
-  "session_age_secs": 30589,
-  "last_progress_age_secs": 2265,
-  "last_spawn_attempt": "2026-08-19T22:49:34Z",
+  "last_heartbeat_utc": "2026-08-19T23:13:20Z",
+  "session_age_secs": 31773,
+  "last_progress_age_secs": 5,
+  "last_spawn_attempt": "2026-08-19T23:07:32Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
@@ -20392,54 +20354,54 @@
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-08-19T22:15:51Z",
-   "stale": true,
-   "revalidated": "2026-08-19T22:53:41+00:00",
-   "stale_reason": "These readings may be out of date — last updated 37m ago.",
-   "age_label": "37m",
+   "as_of": "2026-08-19T23:13:15+00:00",
+   "stale": false,
+   "revalidated": "2026-08-19T23:13:15+00:00",
+   "stale_reason": "",
+   "age_label": "0s",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
    "as_of": "2026-08-19T16:21:10Z",
    "stale": false,
-   "revalidated": "2026-08-19T22:53:41+00:00",
+   "revalidated": "2026-08-19T23:13:15+00:00",
    "stale_reason": "",
    "age_label": "6h",
    "stale_after": 43200
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-19T22:49:38+00:00",
+   "as_of": "2026-08-19T22:59:33+00:00",
    "stale": false,
-   "revalidated": "2026-08-19T22:53:41+00:00",
+   "revalidated": "2026-08-19T23:13:15+00:00",
    "stale_reason": "",
-   "age_label": "4m",
+   "age_label": "13m",
    "stale_after": 3600
   },
   "needs_anthony": {
    "source": "decision brief",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-19T22:53:41+00:00",
+   "revalidated": "2026-08-19T23:13:15+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-19T22:49:29Z",
-   "stale": false,
-   "revalidated": "2026-08-19T22:53:41+00:00",
-   "stale_reason": "",
-   "age_label": "4m",
+   "as_of": "2026-08-19T23:13:57Z",
+   "stale": true,
+   "revalidated": "2026-08-19T23:13:15+00:00",
+   "stale_reason": "A newer update is being re-checked now.",
+   "age_label": "0s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-19T22:53:41+00:00",
+   "revalidated": "2026-08-19T23:13:15+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
@@ -20448,39 +20410,39 @@
    "source": "director inbox",
    "as_of": "2026-08-19T22:27:03Z",
    "stale": false,
-   "revalidated": "2026-08-19T22:53:41+00:00",
+   "revalidated": "2026-08-19T23:13:15+00:00",
    "stale_reason": "",
-   "age_label": "26m",
+   "age_label": "46m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-17T14:54:47Z",
    "stale": true,
-   "revalidated": "2026-08-19T22:53:41+00:00",
-   "stale_reason": "No new team updates in 55h — nothing was shipped in that window. The feed itself is current.",
-   "age_label": "55h",
+   "revalidated": "2026-08-19T23:13:15+00:00",
+   "stale_reason": "No new team updates in 56h — nothing was shipped in that window. The feed itself is current.",
+   "age_label": "56h",
    "stale_after": 172800,
    "quiet": true
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-19T22:49:38+00:00",
+   "as_of": "2026-08-19T22:59:33+00:00",
    "stale": false,
-   "revalidated": "2026-08-19T22:53:41+00:00",
+   "revalidated": "2026-08-19T23:13:15+00:00",
    "stale_reason": "",
-   "age_label": "4m",
+   "age_label": "13m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-19T22:53:33Z",
+   "as_of": "2026-08-19T23:13:06Z",
    "stale": false,
-   "revalidated": "2026-08-19T22:53:41+00:00",
+   "revalidated": "2026-08-19T23:13:15+00:00",
    "stale_reason": "",
-   "age_label": "8s",
+   "age_label": "19s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 19, 6:53pm ET"
+ "generated_et": "Aug 19, 7:13pm ET"
 }
