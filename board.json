@@ -1,15 +1,15 @@
 {
- "generated_utc": "2026-08-19T19:34:19+00:00",
+ "generated_utc": "2026-08-19T20:02:25+00:00",
  "freshness": {
-  "baked_utc": "2026-08-19T19:34:19+00:00",
-  "baked_et": "Aug 19, 3:34pm ET",
-  "revalidated_utc": "2026-08-19T19:34:19+00:00",
+  "baked_utc": "2026-08-19T20:02:25+00:00",
+  "baked_et": "Aug 19, 4:02pm ET",
+  "revalidated_utc": "2026-08-19T20:02:25+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-19",
  "day_summary": "Washington Mystics by 5.9 over Toronto Tempo is our strongest pick of tonight's 2 games - a 68% chance to win. Full game reports are ready.",
  "counts": {
-  "running": 6,
+  "running": 5,
   "done_today": 1,
   "maintenance": 0,
   "needs_anthony": 0,
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-19T19:34:19+00:00",
+  "generated_utc": "2026-08-19T20:02:25+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -808,7 +808,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T15:33:57-04:00",
+    "at_iso": "2026-08-19T16:02:06-04:00",
     "start_unknown": true
    },
    {
@@ -818,7 +818,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T15:33:57-04:00",
+    "at_iso": "2026-08-19T16:02:06-04:00",
     "start_unknown": true
    },
    {
@@ -828,7 +828,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T15:33:57-04:00",
+    "at_iso": "2026-08-19T16:02:06-04:00",
     "start_unknown": true
    },
    {
@@ -838,27 +838,17 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T15:33:57-04:00",
+    "at_iso": "2026-08-19T16:02:06-04:00",
     "start_unknown": true
    },
    {
-    "name": "Claude standings tiebreak wire",
+    "name": "Claude picture gate freshness claims",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T15:33:57-04:00",
-    "start_unknown": true
-   },
-   {
-    "name": "Codex board stale alert 193221",
-    "one_liner": "Running now.",
-    "chip": "IN-FLIGHT",
-    "team": "",
-    "kind": "lane",
-    "time": "",
-    "at_iso": "2026-08-19T15:33:57-04:00",
+    "at_iso": "2026-08-19T16:02:06-04:00",
     "start_unknown": true
    }
   ],
@@ -2302,7 +2292,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 203,
+      "rank": 202,
       "actions": [
        {
         "verb": "top",
@@ -2350,7 +2340,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 207,
+      "rank": 206,
       "actions": [
        {
         "verb": "top",
@@ -2398,7 +2388,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 217,
+      "rank": 216,
       "actions": [
        {
         "verb": "top",
@@ -2446,7 +2436,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 225,
+      "rank": 224,
       "actions": [
        {
         "verb": "top",
@@ -2494,7 +2484,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 229,
+      "rank": 228,
       "actions": [
        {
         "verb": "top",
@@ -2526,23 +2516,23 @@
       "why": "Today's report chain died on a single name and the cause is not the name. Two guards run on the same page in the same execution and were given different definitions of membership. The first resolves ...",
       "priority": 2,
       "seat": "data",
-      "status": "STANDS AS MECHANISM, WRONG AS DIAGNOSIS OF TODAY 2026-08-06T12:50Z. The two definitions of membership really do differ and that is worth fixing. But it is not why the report died. The report died because a player changed her name and nothing bridged it. See the retraction on the sibling row.MEASURED AND PRECISELY LOCATED 2026-08-12, DIAGNOSIS CONFIRMED. The helper is roster_truth.RosterTruth.resolve_team at scripts/roster_truth.py:320. Its stated priority is bdl_active by id, then bdl_active by name, then GAMELOG BY NAME - the third fallback is the season's game logs exactly as this row says. gamelog_by_nkey is built by mapping every 2026 name variant to that player's LATEST game-log team, so a player absent from the roster feed is certified to whichever team she last appeared for. The second guard, starter_fact_v1.assert_lineup_membership, reads alone and refuses. Neither is broken and they disagree by construction, which is this row's point. THE FIX IS SMALLER THAN IT LOOKS AND IT IS CONSUMER-SIDE, NOT A RESOLVER REWRITE. resolve_team ALREADY RETURNS ITS SOURCE - it hands back the pair team, source with source in bdl_id, bdl_name, gamelog_name, UNMAPPED. The information needed to tell identity evidence from membership evidence is therefore already at every call site; what is missing is that membership consumers do not DISCRIMINATE on it. A consumer deciding WHO A NAME REFERS TO may accept gamelog_name; a consumer deciding WHETHER SHE IS ON THE TEAM TODAY must treat gamelog_name as UNMAPPED, per the standing law that membership comes from the active players feed and never from game history. Enumerate the resolve_team call sites, split them by that question, and the two guards stop disagreeing. A LIVE MEASUREMENT THAT SHARPENS THE RANKING: today's actual report failure is a TRUE POSITIVE, not this disagreement. Emma Cechova, bdl_player_id 67040, is absent from the roster feed since 2026-08-07 BY ID and not merely by name, so the membership guard is right to refuse her and the reason she is in the lineup at all is precisely the gamelog fallback certifying her to MIN off her last appearance. That is this row's mechanism producing a real bad lineup, which is the strongest evidence for fixing it rather than the rename case, which is already handled. CAPABILITY LANDED 2026-08-12, CALL-SITE MIGRATION IS WHAT REMAINS - RERANKED TO p2 AND RESCOPED. scripts/roster_truth.py now carries Membership.resolve_membership beside resolve_team. It returns a team ONLY when the answer came from the roster feed, sources bdl_id or bdl_name, and returns None for gamelog_name while still REPORTING that source rather than swallowing it. The rule is named in code as MEMBERSHIP_SOURCES, and the law it expresses is the standing one: roster membership comes from the active players feed and never from game history. IT CHANGES NO BEHAVIOUR ANYWHERE AND THAT IS DELIBERATE. resolve_membership appears exactly once in the repo, at its own definition - every one of the 13 resolve_team call sites is untouched, so nothing on any surface moved. The reason is the hazard ops/team_attribution_reconcile.py names in its own header: a disposition keyed on resolve_team returned None would DELETE A ROSTERED PLAYER who is merely missing from one source. Classifying 13 consumers as identity or membership is a per-site judgement, and getting one backwards erases a woman from a page. So the capability lands first, correctly named and tested, and the sites move one at a time with evidence. TESTED AND PROVEN TO BITE: tests/test_resolve_membership_refuses_game_history.py, 5 passed, no database - the maps are set directly so the RULE is the subject and the test cannot pass merely because today's roster happens to be clean. It pins that a game-history-only player is refused, that both feed-backed sources still answer, that a RENAMED player is rescued by her id, and that MEMBERSHIP_SOURCES never silently grows. Mutation proof: widening MEMBERSHIP_SOURCES to include gamelog_name flips the refused player back to MIN, which is the defect restored and the test red. THE MIGRATION ORDER, cheapest evidence first: the sites that already keep the source variable are roster_truth.py:428 and 535, gameday_report.py:861, sentinel_sweep.py:1039 and team_attribution_reconcile.py:262. The ones that DISCARD it - availability_refresh.py:1266, build_site.py:2699, gameday_report.py:815, sentinel_sweep.py:1011, team_attribution_reconcile.py:198 - are where a wrong answer is currently invisible. Pass bdl_player_id wherever the caller has one or a rename reads as a departure.",
+      "status": "needs-verify",
       "state": "",
-      "row_state": "open",
+      "row_state": "needs-verify",
       "row_closed": false,
       "pm_authored": false,
-      "event_utc": null,
+      "event_utc": "2026-08-19T19:50:53Z",
       "impact": "",
       "rank_priority": 2.0,
       "title": "One guard admits her on game history, the next rejects her on roster membership, in the ...",
       "unlocks": "Today's report chain died on a single name and the cause is not the name.",
       "owner": "DIRECTOR",
-      "feed_status": "QUEUED",
+      "feed_status": "LANDED",
       "tier": 1,
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 232,
+      "rank": 231,
       "actions": [
        {
         "verb": "top",
@@ -2590,7 +2580,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 233,
+      "rank": 232,
       "actions": [
        {
         "verb": "top",
@@ -2638,7 +2628,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 234,
+      "rank": 233,
       "actions": [
        {
         "verb": "top",
@@ -2687,7 +2677,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "The race itself is now closed by an advisory lock these rows are the residue it left behind.",
-      "rank": 242,
+      "rank": 241,
       "actions": [
        {
         "verb": "top",
@@ -2735,7 +2725,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 243,
+      "rank": 242,
       "actions": [
        {
         "verb": "top",
@@ -2767,23 +2757,23 @@
       "why": "Measured on the live database while chasing why today's report died. The roster resolver already has a departure guard and it works: twenty two players who appear only in game history are dropped ...",
       "priority": 2,
       "seat": "data",
-      "status": "RETRACTED 2026-08-06T12:50Z - I had the central fact backwards. Megan Gustafson did not leave Portland. She changed her name. Same player id, 3934218, serving two names in the season: Megan Gustafson through 14 July and Megan DiLeo from 22 July, four games since, most recently 2 August. She is on the current active roster under the new name and she is a starter tonight. The evidence I called corroboration was one source counted twice. I said the roster feed and the game logs independently agreed she was gone. They key on the NAME, so they lost her at the same instant for the same reason - a rename reads exactly like a departure to both. That is a single failure wearing two faces, and I presented it as two witnesses. The rule I proposed on the strength of it, dropping a player on weeks of feed absence plus no appearances, would have deleted an active starter from tonight lineup. Do not build it. What is real: three player ids serve two names each this season - 3934218 Gustafson to DiLeo, 5349415 Florez and Florez Getino, 5107404 Sha Carter and Quionche Carter, the last genuinely departed under both spellings. The defect is that a rename is not bridged: the projection pool carries the retired name, the roster carries the new one, and the id cascade meant to rescue exactly this case does not fire because the two sides hold ids from different schemes. Bridge the rename and the report stops dying. Kayla Alexander remains genuinely unexplained and is the only name of the three that may really be a departure. ||| 2026-08-07 coord--visible: state declared partial. This row was excluded from the ready-set as BLOCKED by its narrative prose, and it is waiting on nothing. Residual work: the premise is retracted but the finding underneath is live: the roster feed and the game logs both key on NAME, so a rename reads as a departure to both. RE-MEASURED BY ID 2026-08-12 AND THE COUNT IS ONE, NOT TWO. This row states the right rule and then breaks it one sentence earlier, which is exactly why it is worth re-measuring rather than implementing. Measured against whose newest snapshot is today: MEGAN GUSTAFSON DID NOT LEAVE. She is bdl_player_id 579, she IS in today's snapshot, and the name changed to Megan DiLeo. Her last-by-id snapshot is 2026-08-12, not July. She is the SAME class of artefact this row correctly identifies for Alicia Florez - a person who looks departed because a STRING stopped matching - and the row files her as a genuine departure anyway. I made the identical error earlier tonight on the same name, which is the argument for the rule below. KAYLA ALEXANDER IS THE ONLY GENUINE ONE, and she is corroborated: bdl_player_id 337, last roster snapshot 2026-08-03, last game log 2026-07-20. Absent from the feed and not playing, by id. ALICIA FLOREZ GETINO IS A DUPLICATE ID, NOT A SPELLING, which is sharper than this row has it. TWO bdl ids carry the IDENTICAL full name Alicia Florez Getino on the SAME team_id 5: id 99338 runs 2026-05-16 through today, id 100493 stops 2026-08-03. So the split is at the identifier level and survives any amount of name normalisation - merging spellings would not have found it. The stale id is what looks like a departure. Dropping it would delete a current player exactly as this row warns. THE RULE THAT FOLLOWS, and it is stronger than the one filed: CORROBORATED ABSENCE MUST BE EVALUATED PER PERSON, AFTER ID RESOLUTION - never per name, and never per raw id either. Both false positives here are invisible to a name test AND one of them is invisible to a naive id test, because the person holds two ids. Sequence the check as resolve identity first, merge duplicate ids, THEN ask whether the resulting person is absent from the feed and not playing. Run it that way and it drops Kayla Alexander alone, which is the correct answer. Run it on names and it deletes a rostered player on her wedding. USE Membership.resolve_membership, added today at scripts/roster_truth.py, for the membership half of that test: it returns a team only on roster-feed evidence and None for game history, and it is guarded by tests/test_resolve_membership_refuses_game_history.py. IDENTITY BRIDGE BUILT 2026-08-12 - THE ASK THIS ROW PUTS AHEAD OF THE ABSENCE RULE IS NOW DONE. Membership.person_is_active in scripts/roster_truth.py answers whether the PERSON behind a name is on the current feed, returning True, False, or None. It works off two new maps loaded from ALL roster snapshots rather than only the newest: every id a name has ever been seen under, and the id set on the current snapshot. ONE RULE HANDLES BOTH FALSE POSITIVES this row names - call the person active if ANY id she has ever held is live. The rename resolves because her id persists across the name change; the duplicate resolves because her live id vindicates her stale one. NONE IS NOT FALSE, AND THAT IS THE SAFETY PROPERTY. An unidentifiable name, or an unreadable feed, answers UNKNOWN. I cannot find her must never be recorded as she left - that is the direction where being wrong deletes a rostered player from a live surface. VERIFIED AGAINST THE LIVE FEED, all six cases correct: Megan Gustafson True, Megan DiLeo True, Alicia Florez Getino True, Kayla Alexander False, an unknown name None. The sixth was my own expectation being wrong rather than the code - the short spelling Alicia Florez also answers True, because the feed itself has carried her under it, and True is the right answer. Maps loaded: 233 historical name to id entries against 207 ids on the current snapshot. IT DROPS NOBODY. person_is_active has no consumer anywhere in the repo yet, verified by grep, so no surface moved. Tests: tests/test_person_is_active_resolves_identity_first.py plus the membership test, 11 passed, no database - the maps are hand-set so the RULE is the subject and neither can pass merely because today's feed is clean. WHAT REMAINS, and it is now the only part left: arm corroborated absence ON TOP of this bridge - days absent from the feed, no appearances, team games missed - and measure it against the real slate before it runs. Run correctly it drops Kayla Alexander alone. The row's third ask, merge the split name, is better stated as merge the duplicate bdl ids 99338 and 100493, since both carry the identical full name and the split is at the identifier level.",
+      "status": "needs-verify",
       "state": "",
-      "row_state": "partial",
+      "row_state": "needs-verify",
       "row_closed": false,
       "pm_authored": false,
-      "event_utc": null,
+      "event_utc": "2026-08-19T20:02:32Z",
       "impact": "",
       "rank_priority": 2.0,
       "title": "The departure guard needs a transaction to drop anyone, two players left without one, and ...",
       "unlocks": "The roster resolver already has a departure guard and it works: twenty two players who appear only in game history are ...",
       "owner": "MACHINE",
-      "feed_status": "QUEUED",
+      "feed_status": "LANDED",
       "tier": 1,
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 259,
+      "rank": 258,
       "actions": [
        {
         "verb": "top",
@@ -2831,7 +2821,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 262,
+      "rank": 261,
       "actions": [
        {
         "verb": "top",
@@ -2879,7 +2869,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 264,
+      "rank": 263,
       "actions": [
        {
         "verb": "top",
@@ -2927,7 +2917,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 269,
+      "rank": 268,
       "actions": [
        {
         "verb": "top",
@@ -2975,7 +2965,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 270,
+      "rank": 269,
       "actions": [
        {
         "verb": "top",
@@ -3023,7 +3013,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 271,
+      "rank": 270,
       "actions": [
        {
         "verb": "top",
@@ -3071,7 +3061,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 275,
+      "rank": 274,
       "actions": [
        {
         "verb": "top",
@@ -3119,7 +3109,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 278,
+      "rank": 277,
       "actions": [
        {
         "verb": "top",
@@ -3167,7 +3157,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 280,
+      "rank": 279,
       "actions": [
        {
         "verb": "top",
@@ -3215,7 +3205,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 286,
+      "rank": 285,
       "actions": [
        {
         "verb": "top",
@@ -3263,7 +3253,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 287,
+      "rank": 286,
       "actions": [
        {
         "verb": "top",
@@ -5092,7 +5082,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 196,
+      "rank": 195,
       "actions": [
        {
         "verb": "top",
@@ -5140,7 +5130,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 215,
+      "rank": 214,
       "actions": [
        {
         "verb": "top",
@@ -5188,7 +5178,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 220,
+      "rank": 219,
       "actions": [
        {
         "verb": "top",
@@ -5236,7 +5226,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 230,
+      "rank": 229,
       "actions": [
        {
         "verb": "top",
@@ -5284,7 +5274,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 239,
+      "rank": 238,
       "actions": [
        {
         "verb": "top",
@@ -5332,7 +5322,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 241,
+      "rank": 240,
       "actions": [
        {
         "verb": "top",
@@ -5380,7 +5370,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 244,
+      "rank": 243,
       "actions": [
        {
         "verb": "top",
@@ -5428,7 +5418,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 252,
+      "rank": 251,
       "actions": [
        {
         "verb": "top",
@@ -5476,7 +5466,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 266,
+      "rank": 265,
       "actions": [
        {
         "verb": "top",
@@ -5524,7 +5514,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 282,
+      "rank": 281,
       "actions": [
        {
         "verb": "top",
@@ -9253,54 +9243,6 @@
       ]
      },
      {
-      "task_id": "the-sim-breaks-standings-ties-by-coin-flip-not-b",
-      "family": "modeling",
-      "name": "Ties are common in the sim and it settles them with noise, which moves the top-two odds",
-      "header": "Ties are common in the sim and it settles them with noise, which moves the top-two odds",
-      "why": "Simulate each team's title odds",
-      "priority": 1,
-      "seat": "MACHINE",
-      "status": "queued",
-      "state": "",
-      "row_state": "queued",
-      "row_closed": false,
-      "pm_authored": false,
-      "event_utc": null,
-      "impact": "",
-      "rank_priority": 1.0,
-      "title": "Ties are common in the sim and it settles them with noise, which moves the top-two odds",
-      "unlocks": "The season sim resolves tied records with random jitter.",
-      "owner": "MACHINE",
-      "feed_status": "QUEUED",
-      "tier": 1,
-      "group": "",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 194,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sim-breaks-standings-ties-by-coin-flip-not-b%3A%20top&body=Ties%20are%20common%20in%20the%20sim%20and%20it%20settles%20them%20with%20noise%2C%20which%20moves%20the%20top-two%20odds%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sim-breaks-standings-ties-by-coin-flip-not-b%3A%20bump&body=Ties%20are%20common%20in%20the%20sim%20and%20it%20settles%20them%20with%20noise%2C%20which%20moves%20the%20top-two%20odds%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sim-breaks-standings-ties-by-coin-flip-not-b%3A%20demote&body=Ties%20are%20common%20in%20the%20sim%20and%20it%20settles%20them%20with%20noise%2C%20which%20moves%20the%20top-two%20odds%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-sim-breaks-standings-ties-by-coin-flip-not-b%3A%20shelve&body=Ties%20are%20common%20in%20the%20sim%20and%20it%20settles%20them%20with%20noise%2C%20which%20moves%20the%20top-two%20odds%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "totals-emos-prereg-rolling-environment",
       "family": "modeling",
       "name": "Totals model with a rolling environment level and dispersion",
@@ -9324,7 +9266,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 195,
+      "rank": 194,
       "actions": [
        {
         "verb": "top",
@@ -9372,7 +9314,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 197,
+      "rank": 196,
       "actions": [
        {
         "verb": "top",
@@ -9420,7 +9362,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 199,
+      "rank": 198,
       "actions": [
        {
         "verb": "top",
@@ -9468,7 +9410,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 208,
+      "rank": 207,
       "actions": [
        {
         "verb": "top",
@@ -9516,7 +9458,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 211,
+      "rank": 210,
       "actions": [
        {
         "verb": "top",
@@ -9564,7 +9506,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 213,
+      "rank": 212,
       "actions": [
        {
         "verb": "top",
@@ -9613,7 +9555,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "I ran it read-only 40 deltas scanned 2 13 14 11 .",
-      "rank": 223,
+      "rank": 222,
       "actions": [
        {
         "verb": "top",
@@ -9662,7 +9604,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Which margin model the hard dependency attaches to - the market-fitted served incumbent or the unpromoted clean successor. Filed ops scout outbox the ...",
-      "rank": 226,
+      "rank": 225,
       "actions": [
        {
         "verb": "top",
@@ -9710,7 +9652,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 235,
+      "rank": 234,
       "actions": [
        {
         "verb": "top",
@@ -9758,7 +9700,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 238,
+      "rank": 237,
       "actions": [
        {
         "verb": "top",
@@ -9807,7 +9749,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Each was fixed by adding one more pin.",
-      "rank": 245,
+      "rank": 244,
       "actions": [
        {
         "verb": "top",
@@ -9855,7 +9797,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 246,
+      "rank": 245,
       "actions": [
        {
         "verb": "top",
@@ -9903,7 +9845,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 250,
+      "rank": 249,
       "actions": [
        {
         "verb": "top",
@@ -9951,7 +9893,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 255,
+      "rank": 254,
       "actions": [
        {
         "verb": "top",
@@ -9999,7 +9941,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 265,
+      "rank": 264,
       "actions": [
        {
         "verb": "top",
@@ -10048,7 +9990,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Which numbers are the floor - the pre- 0.25 gain or the leak-free 0.051. Filed ops scout outbox the availability floor names no . the floor is named ...",
-      "rank": 267,
+      "rank": 266,
       "actions": [
        {
         "verb": "top",
@@ -10096,7 +10038,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 276,
+      "rank": 275,
       "actions": [
        {
         "verb": "top",
@@ -10144,7 +10086,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 281,
+      "rank": 280,
       "actions": [
        {
         "verb": "top",
@@ -10192,7 +10134,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 283,
+      "rank": 282,
       "actions": [
        {
         "verb": "top",
@@ -10240,7 +10182,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 285,
+      "rank": 284,
       "actions": [
        {
         "verb": "top",
@@ -10261,6 +10203,54 @@
         "verb": "shelve",
         "icon": "🗄",
         "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-back-to-back-flattening-is-a-single-season%3A%20shelve&body=The%20rotation-flattening%20effect%20reproduces%20in%202025%20and%20vanishes%20across%20the%20other%20eleven%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       }
+      ]
+     },
+     {
+      "task_id": "the-served-playoff-odds-still-show-coin-flipped",
+      "family": "modeling",
+      "name": "The tie-break fix is in the builders; the live page still shows the numbers built before ...",
+      "header": "The tie-break fix is in the builders; the live page still shows the numbers built before ...",
+      "why": "Simulate each team's title odds",
+      "priority": 2,
+      "seat": "MACHINE",
+      "status": "queued",
+      "state": "",
+      "row_state": "queued",
+      "row_closed": false,
+      "pm_authored": false,
+      "event_utc": null,
+      "impact": "",
+      "rank_priority": 2.0,
+      "title": "The tie-break fix is in the builders; the live page still shows the numbers built before ...",
+      "unlocks": "The two season builders now seed by the league's tie-break cascade, but the playoff-odds and standings surfaces read a ...",
+      "owner": "MACHINE",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 290,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-served-playoff-odds-still-show-coin-flipped%3A%20top&body=The%20tie-break%20fix%20is%20in%20the%20builders%3B%20the%20live%20page%20still%20shows%20the%20numbers%20built%20before%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-served-playoff-odds-still-show-coin-flipped%3A%20bump&body=The%20tie-break%20fix%20is%20in%20the%20builders%3B%20the%20live%20page%20still%20shows%20the%20numbers%20built%20before%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-served-playoff-odds-still-show-coin-flipped%3A%20demote&body=The%20tie-break%20fix%20is%20in%20the%20builders%3B%20the%20live%20page%20still%20shows%20the%20numbers%20built%20before%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20the-served-playoff-odds-still-show-coin-flipped%3A%20shelve&body=The%20tie-break%20fix%20is%20in%20the%20builders%3B%20the%20live%20page%20still%20shows%20the%20numbers%20built%20before%20...%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
        }
       ]
      },
@@ -15099,7 +15089,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 198,
+      "rank": 197,
       "actions": [
        {
         "verb": "top",
@@ -15147,7 +15137,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 200,
+      "rank": 199,
       "actions": [
        {
         "verb": "top",
@@ -15195,7 +15185,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 201,
+      "rank": 200,
       "actions": [
        {
         "verb": "top",
@@ -15243,7 +15233,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 202,
+      "rank": 201,
       "actions": [
        {
         "verb": "top",
@@ -15291,7 +15281,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 204,
+      "rank": 203,
       "actions": [
        {
         "verb": "top",
@@ -15339,7 +15329,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 205,
+      "rank": 204,
       "actions": [
        {
         "verb": "top",
@@ -15387,7 +15377,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 206,
+      "rank": 205,
       "actions": [
        {
         "verb": "top",
@@ -15435,7 +15425,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 209,
+      "rank": 208,
       "actions": [
        {
         "verb": "top",
@@ -15483,7 +15473,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 210,
+      "rank": 209,
       "actions": [
        {
         "verb": "top",
@@ -15531,7 +15521,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 212,
+      "rank": 211,
       "actions": [
        {
         "verb": "top",
@@ -15579,7 +15569,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 214,
+      "rank": 213,
       "actions": [
        {
         "verb": "top",
@@ -15627,7 +15617,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 216,
+      "rank": 215,
       "actions": [
        {
         "verb": "top",
@@ -15675,7 +15665,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 218,
+      "rank": 217,
       "actions": [
        {
         "verb": "top",
@@ -15723,7 +15713,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 219,
+      "rank": 218,
       "actions": [
        {
         "verb": "top",
@@ -15771,7 +15761,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 221,
+      "rank": 220,
       "actions": [
        {
         "verb": "top",
@@ -15819,7 +15809,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 222,
+      "rank": 221,
       "actions": [
        {
         "verb": "top",
@@ -15867,7 +15857,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 224,
+      "rank": 223,
       "actions": [
        {
         "verb": "top",
@@ -15915,7 +15905,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 227,
+      "rank": 226,
       "actions": [
        {
         "verb": "top",
@@ -15963,7 +15953,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 228,
+      "rank": 227,
       "actions": [
        {
         "verb": "top",
@@ -16011,7 +16001,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 231,
+      "rank": 230,
       "actions": [
        {
         "verb": "top",
@@ -16059,7 +16049,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 236,
+      "rank": 235,
       "actions": [
        {
         "verb": "top",
@@ -16107,7 +16097,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 237,
+      "rank": 236,
       "actions": [
        {
         "verb": "top",
@@ -16155,7 +16145,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 240,
+      "rank": 239,
       "actions": [
        {
         "verb": "top",
@@ -16203,7 +16193,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 247,
+      "rank": 246,
       "actions": [
        {
         "verb": "top",
@@ -16251,7 +16241,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 248,
+      "rank": 247,
       "actions": [
        {
         "verb": "top",
@@ -16299,7 +16289,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 249,
+      "rank": 248,
       "actions": [
        {
         "verb": "top",
@@ -16347,7 +16337,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 251,
+      "rank": 250,
       "actions": [
        {
         "verb": "top",
@@ -16395,7 +16385,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 253,
+      "rank": 252,
       "actions": [
        {
         "verb": "top",
@@ -16443,7 +16433,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 254,
+      "rank": 253,
       "actions": [
        {
         "verb": "top",
@@ -16491,7 +16481,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 256,
+      "rank": 255,
       "actions": [
        {
         "verb": "top",
@@ -16539,7 +16529,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 257,
+      "rank": 256,
       "actions": [
        {
         "verb": "top",
@@ -16587,7 +16577,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 258,
+      "rank": 257,
       "actions": [
        {
         "verb": "top",
@@ -16635,7 +16625,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 260,
+      "rank": 259,
       "actions": [
        {
         "verb": "top",
@@ -16683,7 +16673,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 261,
+      "rank": 260,
       "actions": [
        {
         "verb": "top",
@@ -16731,7 +16721,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 263,
+      "rank": 262,
       "actions": [
        {
         "verb": "top",
@@ -16779,7 +16769,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 268,
+      "rank": 267,
       "actions": [
        {
         "verb": "top",
@@ -16827,7 +16817,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 272,
+      "rank": 271,
       "actions": [
        {
         "verb": "top",
@@ -16875,7 +16865,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 273,
+      "rank": 272,
       "actions": [
        {
         "verb": "top",
@@ -16923,7 +16913,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 274,
+      "rank": 273,
       "actions": [
        {
         "verb": "top",
@@ -16971,7 +16961,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 277,
+      "rank": 276,
       "actions": [
        {
         "verb": "top",
@@ -17019,7 +17009,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 279,
+      "rank": 278,
       "actions": [
        {
         "verb": "top",
@@ -17067,7 +17057,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 284,
+      "rank": 283,
       "actions": [
        {
         "verb": "top",
@@ -17115,7 +17105,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 288,
+      "rank": 287,
       "actions": [
        {
         "verb": "top",
@@ -17163,7 +17153,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 289,
+      "rank": 288,
       "actions": [
        {
         "verb": "top",
@@ -17211,7 +17201,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 290,
+      "rank": 289,
       "actions": [
        {
         "verb": "top",
@@ -19457,9 +19447,9 @@
     "target": 40,
     "count": 386,
     "ok": true,
-    "label": "386 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 2m ago.)",
-    "as_of_utc": "2026-08-19T19:32:28Z",
-    "age_secs": 148,
+    "label": "386 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
+    "as_of_utc": "2026-08-19T20:02:32Z",
+    "age_secs": 58,
     "stale": false
    },
    "source": "dispatch queue",
@@ -20163,66 +20153,66 @@
  "scout_heartbeat": {
   "alive": false,
   "last_poll_utc": "2026-08-17T22:58:52Z",
-  "age_s": 160535,
+  "age_s": 162221,
   "cycles": 17,
   "known": true,
-  "label": "scout: no poll for 160535s",
+  "label": "scout: no poll for 162221s",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "3:30pm",
-   "text": "publish-health: REPEAT-RAISE ESCALATION: raise #4 of this episode (first raised 2026-08-19T19:14:); 3 automatic republish attempts were all DEFERRED (another runner held the bake lock, or the publish guard held the push) — nothing here has attempted a push",
-   "detail": "publish-health: REPEAT-RAISE ESCALATION: raise #4 of this episode (first raised 2026-08-19T19:14:05Z); 3 automatic republish attempts were a"
-  },
-  {
-   "time": "3:30pm",
-   "text": "REAP-STRAGGLER: released session pid 2408 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confirmed dead); taskkill rc=0 SUCCESS: The process with PID 15256 (child process of PID 2408) has been termina [Part 2 hard-exit backstop]",
-   "detail": "REAP-STRAGGLER: released session_pid 2408 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confirm"
-  },
-  {
-   "time": "3:31pm",
-   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 2330s old (live 2026-08-19T18:51:52+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 1993s newer than live (repo 2026-08-19T19:25:05+00:00 vs live 2026-08-19T18:51:52+00:00) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 2330s old (live 2026-08-19T18:51:52+00:00; active ceiling 900s) | DEPLOY-LAG: re"
-  },
-  {
-   "time": "3:31pm",
+   "time": "3:51pm",
    "text": "board-selfpolice: auto-repair: DEFERRED rc=75 — the publish rate floor declined a slot, so no push was attempted. Nothing is wrong and nothing is quarantined; the next tick publishes.",
    "detail": "board-selfpolice: auto-repair: DEFERRED rc=75 — the publish rate floor declined a slot, so no push was attempted. Nothing is wrong and nothi"
   },
   {
-   "time": "3:32pm",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 2418s old (live 2026-08-19T18:51:52+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 1993s newer than live (repo 2026-08-19T19:25:05+00:00 vs live 2026-08-19T18:51:52+00:00",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 2418s old (live 2026-08-19T18:51:52+00:00; ac"
+   "time": "3:52pm",
+   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1071s old (live 2026-08-19T19:34:19+00:00; active ceiling 900s",
+   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1071s old (live 2026-08-19T19:34:19+00:00; ac"
   },
   {
-   "time": "3:34pm",
-   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 2533s old (live 2026-08-19T18:51:52+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 2383s newer than live (repo 2026-08-19T19:31:35+00:00 vs live 2026-08-19T18:51:52+00:00) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 2533s old (live 2026-08-19T18:51:52+00:00; active ceiling 900s) | DEPLOY-LAG: re"
+   "time": "3:52pm",
+   "text": "board-selfpolice: board-stale alert answered within the hold window and the condition is unchanged -- flag and log only, no duplicate inbox item",
+   "detail": "board-selfpolice: board-stale alert answered within the hold window and the condition is unchanged -- flag and log only, no duplicate inbox "
   },
   {
-   "time": "3:34pm",
-   "text": "divergence alarm: clean (build code matches the shared branch",
-   "detail": "divergence_alarm: clean (build code matches the shared branch)"
+   "time": "3:56pm",
+   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1283s old (live 2026-08-19T19:34:19+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 783s newer than live (repo 2026-08-19T19:47:22+00:00 vs live 2026-08-19T19:34:19+00:00) -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1283s old (live 2026-08-19T19:34:19+00:00; active ceiling 900s) | DEPLOY-LAG: re"
   },
   {
-   "time": "3:34pm",
-   "text": "publish-health: PUBLIC BOARD STALE (#5): staleness=2559s threshold=900s live=2026-08-19T18:51:52+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 2383s newer than live",
-   "detail": "publish-health: PUBLIC BOARD STALE (#5): staleness=2559s threshold=900s live=2026-08-19T18:51:52+00:00 | deploy stuck (guard/push failure): "
+   "time": "3:56pm",
+   "text": "board-selfpolice: auto-repair: DEFERRED rc=75 — the publish rate floor declined a slot, so no push was attempted. Nothing is wrong and nothing is quarantined; the next tick publishes.",
+   "detail": "board-selfpolice: auto-repair: DEFERRED rc=75 — the publish rate floor declined a slot, so no push was attempted. Nothing is wrong and nothi"
   },
   {
-   "time": "3:34pm",
-   "text": "chain-health: CHAIN DOWN (#180): broken=drive,board paged=True",
-   "detail": "chain-health: CHAIN DOWN (#180): broken=drive,board paged=True"
+   "time": "3:57pm",
+   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1370s old (live 2026-08-19T19:34:19+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 783s newer than live (repo 2026-08-19T19:47:22+00:00 vs live 2026-08-19T19:34:19+00:00",
+   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1370s old (live 2026-08-19T19:34:19+00:00; ac"
   },
   {
-   "time": "3:34pm",
-   "text": "slate-refresh: STALE (#6): season impact feed is 69h old paged=True",
-   "detail": "slate-refresh: STALE (#6): season impact feed is 69h old paged=True"
+   "time": "3:57pm",
+   "text": "board-selfpolice: board-stale alert answered within the hold window and the condition is unchanged -- flag and log only, no duplicate inbox item",
+   "detail": "board-selfpolice: board-stale alert answered within the hold window and the condition is unchanged -- flag and log only, no duplicate inbox "
+  },
+  {
+   "time": "4:01pm",
+   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1597s old (live 2026-08-19T19:34:19+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 1246s newer than live (repo 2026-08-19T19:55:05+00:00 vs live 2026-08-19T19:34:19+00:00) -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1597s old (live 2026-08-19T19:34:19+00:00; active ceiling 900s) | DEPLOY-LAG: re"
+  },
+  {
+   "time": "4:01pm",
+   "text": "board-selfpolice: auto-repair: DEFERRED rc=75 — the publish rate floor declined a slot, so no push was attempted. Nothing is wrong and nothing is quarantined; the next tick publishes.",
+   "detail": "board-selfpolice: auto-repair: DEFERRED rc=75 — the publish rate floor declined a slot, so no push was attempted. Nothing is wrong and nothi"
+  },
+  {
+   "time": "4:03pm",
+   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1720s old (live 2026-08-19T19:34:19+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 1246s newer than live (repo 2026-08-19T19:55:05+00:00 vs live 2026-08-19T19:34:19+00:00",
+   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1720s old (live 2026-08-19T19:34:19+00:00; ac"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-19T19:34:14Z",
+  "as_of": "2026-08-19T20:02:14Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -20231,55 +20221,55 @@
     "does": "watches for your instructions",
     "active": false,
     "stale": true,
-    "age_label": "44h",
-    "state_text": "quiet · last seen 44h ago"
+    "age_label": "45h",
+    "state_text": "quiet · last seen 45h ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "56s",
-    "state_text": "on · seen 56s ago"
+    "age_label": "8m",
+    "state_text": "on · seen 8m ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "4m",
-    "state_text": "on · seen 4m ago"
+    "age_label": "12m",
+    "state_text": "on · seen 12m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "13s",
-    "state_text": "on · seen 13s ago"
+    "age_label": "19s",
+    "state_text": "on · seen 19s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
-    "active": true,
-    "stale": false,
-    "age_label": "6m",
-    "state_text": "on · seen 6m ago"
+    "active": false,
+    "stale": true,
+    "age_label": "17m",
+    "state_text": "quiet · last seen 17m ago"
    },
    {
     "name": "Q board",
     "does": "keeps your live queue board current",
     "active": true,
     "stale": false,
-    "age_label": "13m",
-    "state_text": "on · seen 13m ago"
+    "age_label": "11m",
+    "state_text": "on · seen 11m ago"
    }
   ],
   "width": {
    "running": 6,
-   "target": 3,
+   "target": 2,
    "empty": 0,
-   "line": "6 of 3 jobs running.",
+   "line": "6 of 2 jobs running.",
    "reason": "Enough jobs are running for the work waiting.",
    "stale": false
   },
@@ -20506,25 +20496,25 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-19T19:33:30Z",
-  "session_age_secs": 18635,
-  "last_progress_age_secs": 57,
+  "last_heartbeat_utc": "2026-08-19T20:02:18Z",
+  "session_age_secs": 20321,
+  "last_progress_age_secs": 15,
   "last_spawn_attempt": "2026-08-19T14:21:31Z",
   "blocked_reason": "",
   "state": "ALIVE"
  },
  "pipe_health": {
-  "directives_pending": 1,
-  "last_processed_clock": "3:31pm",
-  "last_processed_iso": "2026-08-19T19:31:46Z",
+  "directives_pending": 2,
+  "last_processed_clock": "4:01pm",
+  "last_processed_iso": "2026-08-19T20:01:39Z",
   "last_processed_known": true,
-  "last_processed_display": "3:31pm",
+  "last_processed_display": "4:01pm",
   "last_processed_source": "directive_ledger.done",
-  "newest_directive_clock": "1:20pm",
-  "newest_directive_iso": "2026-08-19T17:20:13Z",
+  "newest_directive_clock": "3:43pm",
+  "newest_directive_iso": "2026-08-19T19:43:47Z",
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-08-19T19:31:46Z",
+  "as_of": "2026-08-19T20:01:39Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -20538,95 +20528,95 @@
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-08-19T19:33:57Z",
+   "as_of": "2026-08-19T20:02:06Z",
    "stale": false,
-   "revalidated": "2026-08-19T19:34:19+00:00",
+   "revalidated": "2026-08-19T20:02:25+00:00",
    "stale_reason": "",
-   "age_label": "22s",
+   "age_label": "19s",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
    "as_of": "2026-08-19T16:21:10Z",
    "stale": false,
-   "revalidated": "2026-08-19T19:34:19+00:00",
+   "revalidated": "2026-08-19T20:02:25+00:00",
    "stale_reason": "",
    "age_label": "3h",
    "stale_after": 43200
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-19T19:25:05+00:00",
+   "as_of": "2026-08-19T19:55:05+00:00",
    "stale": false,
-   "revalidated": "2026-08-19T19:34:19+00:00",
+   "revalidated": "2026-08-19T20:02:25+00:00",
    "stale_reason": "",
-   "age_label": "9m",
+   "age_label": "7m",
    "stale_after": 3600
   },
   "needs_anthony": {
    "source": "decision brief",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-19T19:34:19+00:00",
+   "revalidated": "2026-08-19T20:02:25+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-19T19:32:28Z",
-   "stale": false,
-   "revalidated": "2026-08-19T19:34:19+00:00",
-   "stale_reason": "",
-   "age_label": "1m",
+   "as_of": "2026-08-19T20:02:32Z",
+   "stale": true,
+   "revalidated": "2026-08-19T20:02:25+00:00",
+   "stale_reason": "A newer update is being re-checked now.",
+   "age_label": "0s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-19T19:34:19+00:00",
+   "revalidated": "2026-08-19T20:02:25+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-08-19T19:31:46Z",
+   "as_of": "2026-08-19T20:01:39Z",
    "stale": false,
-   "revalidated": "2026-08-19T19:34:19+00:00",
+   "revalidated": "2026-08-19T20:02:25+00:00",
    "stale_reason": "",
-   "age_label": "2m",
+   "age_label": "46s",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-17T14:54:47Z",
    "stale": true,
-   "revalidated": "2026-08-19T19:34:19+00:00",
-   "stale_reason": "No new team updates in 52h — nothing was shipped in that window. The feed itself is current.",
-   "age_label": "52h",
+   "revalidated": "2026-08-19T20:02:25+00:00",
+   "stale_reason": "No new team updates in 53h — nothing was shipped in that window. The feed itself is current.",
+   "age_label": "53h",
    "stale_after": 172800,
    "quiet": true
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-19T19:25:05+00:00",
+   "as_of": "2026-08-19T19:55:05+00:00",
    "stale": false,
-   "revalidated": "2026-08-19T19:34:19+00:00",
+   "revalidated": "2026-08-19T20:02:25+00:00",
    "stale_reason": "",
-   "age_label": "9m",
+   "age_label": "7m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-19T19:34:14Z",
+   "as_of": "2026-08-19T20:02:14Z",
    "stale": false,
-   "revalidated": "2026-08-19T19:34:19+00:00",
+   "revalidated": "2026-08-19T20:02:25+00:00",
    "stale_reason": "",
-   "age_label": "13s",
+   "age_label": "19s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 19, 3:34pm ET"
+ "generated_et": "Aug 19, 4:02pm ET"
 }
