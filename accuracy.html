@@ -169,6 +169,28 @@
   }).catch(function(){ var s=document.getElementById('gradecopy'); if(s) s.remove(); });
 })();
 </script>
+<!--accuracy-disagreement-ladders-->
+<section id="disagreement-ladders" class="dl-wrap" aria-labelledby="dl-title">
+  <style>
+    .dl-wrap{max-width:972px;margin:18px auto 4px;padding:0 14px}.dl-wrap h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 4px}.dl-intro,.dl-read{color:var(--muted);font-size:12px}.dl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:9px}.dl-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px;box-shadow:var(--shadow)}.dl-card h3{font-size:14px;margin:0 0 2px}.dl-card table{width:100%;border-collapse:collapse;margin-top:8px;font-variant-numeric:tabular-nums}.dl-card th,.dl-card td{text-align:right;padding:5px 4px;border-top:1px solid var(--line);font-size:11.5px}.dl-card th:first-child,.dl-card td:first-child{text-align:left}.dl-loss{color:var(--warn);font-weight:700}@media(max-width:680px){.dl-grid{grid-template-columns:1fr}}
+  </style>
+  <h2 id="dl-title">When our number disagrees with the closing price</h2>
+  <p class="dl-intro">Evaluation only: the closing price grades numbers that were already locked; it never enters the prediction.</p>
+  <div class="dl-grid" id="dl-grid"><p class="empty">Loading both disagreement ladders…</p></div>
+</section>
+<script>
+(function(){fetch('./accuracy.json',{cache:'no-cache'}).then(function(r){return r.json()}).then(function(d){
+  var grid=document.getElementById('dl-grid'), ladders=d.disagreement_ladders||[]; if(!grid)return;
+  if(ladders.length!==2){grid.innerHTML='<p class="empty">Disagreement grading is temporarily unavailable.</p>';return;}
+  grid.innerHTML=''; ladders.forEach(function(L){var card=document.createElement('article');card.className='dl-card';
+    var total=L.surface==='Combined total'; var rows=(L.rows||[]).map(function(x){
+      var rec=x.wins+'–'+x.losses+(x.pushes?'–'+x.pushes:'');
+      if(total){var lose=x.our_mae>x.market_mae;return '<tr><td>'+x.bucket+'</td><td>'+rec+'</td><td class="'+(lose?'dl-loss':'')+'">'+x.our_mae.toFixed(2)+'</td><td>'+x.market_mae.toFixed(2)+'</td></tr>';}
+      return '<tr><td>'+x.bucket+'</td><td>'+rec+'</td><td>'+x.beat_rate.toFixed(1)+'%</td><td>'+((x.mean_in_our_direction>0?'+':'')+x.mean_in_our_direction.toFixed(2))+'</td></tr>';});
+    card.innerHTML='<h3>'+L.surface+'</h3><div class="dl-read">'+L.plain_read+'</div><table><thead><tr><th>Gap</th><th>W–L</th>'+(total?'<th>Our error</th><th>Market error</th>':'<th>Beat rate</th><th>Pts our way</th>')+'</tr></thead><tbody>'+rows.join('')+'</tbody></table>';grid.appendChild(card);});
+}).catch(function(){var g=document.getElementById('dl-grid');if(g)g.innerHTML='<p class="empty">Disagreement grading is temporarily unavailable.</p>';});})();
+</script>
+<!--/accuracy-disagreement-ladders-->
 <main id="main"><p class="empty">Loading the scorecard…</p></main>
 <footer id="foot"></footer>
 <script src="./hardwood.js?v=e2e90a97"></script>
