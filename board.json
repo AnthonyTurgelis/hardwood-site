@@ -1,15 +1,15 @@
 {
- "generated_utc": "2026-08-19T21:18:41+00:00",
+ "generated_utc": "2026-08-19T21:39:50+00:00",
  "freshness": {
-  "baked_utc": "2026-08-19T21:18:41+00:00",
-  "baked_et": "Aug 19, 5:18pm ET",
-  "revalidated_utc": "2026-08-19T21:18:41+00:00",
+  "baked_utc": "2026-08-19T21:39:50+00:00",
+  "baked_et": "Aug 19, 5:39pm ET",
+  "revalidated_utc": "2026-08-19T21:39:50+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-19",
  "day_summary": "Washington Mystics by 5.9 over Toronto Tempo is our strongest pick of tonight's 2 games - a 68% chance to win. Full game reports are ready.",
  "counts": {
-  "running": 5,
+  "running": 6,
   "done_today": 1,
   "maintenance": 0,
   "needs_anthony": 0,
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-19T21:18:41+00:00",
+  "generated_utc": "2026-08-19T21:35:58+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -808,7 +808,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T17:15:39-04:00",
+    "at_iso": "2026-08-19T17:34:25-04:00",
     "start_unknown": true
    },
    {
@@ -818,7 +818,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T17:15:39-04:00",
+    "at_iso": "2026-08-19T17:34:25-04:00",
     "start_unknown": true
    },
    {
@@ -828,7 +828,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T17:15:39-04:00",
+    "at_iso": "2026-08-19T17:34:25-04:00",
     "start_unknown": true
    },
    {
@@ -838,7 +838,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T17:15:39-04:00",
+    "at_iso": "2026-08-19T17:34:25-04:00",
     "start_unknown": true
    },
    {
@@ -848,7 +848,17 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-19T17:15:39-04:00",
+    "at_iso": "2026-08-19T17:34:25-04:00",
+    "start_unknown": true
+   },
+   {
+    "name": "Claude alias vs departure fold",
+    "one_liner": "Running now.",
+    "chip": "IN-FLIGHT",
+    "team": "",
+    "kind": "lane",
+    "time": "",
+    "at_iso": "2026-08-19T17:34:25-04:00",
     "start_unknown": true
    }
   ],
@@ -3422,54 +3432,6 @@
       ]
      },
      {
-      "task_id": "canonical-resolvers-exist-and-consumers-bypass-t",
-      "family": "data",
-      "name": "Two rows, one cause: the fold is mandated, the readers skip it",
-      "header": "Two rows, one cause: the fold is mandated, the readers skip it",
-      "why": "Refresh who is available to play",
-      "priority": 2,
-      "seat": "Data",
-      "status": "open THIRD AND FOURTH INSTANCES MEASURED 2026-08-12, AND THE COVERAGE NUMBER THIS ROW NEEDS IS NOW ON THE RECORD. This row converged two instances onto one cause. Tonight I hit the same shape twice more WITHOUT KNOWING THIS ROW EXISTED, which is itself evidence the pattern is the dominant one: (3) roster_truth.resolve_team ranks bdl_active(id) > bdl_active(name) > GAMELOG(name), so a player absent from the roster feed is certified to her last appearance's team while starter_fact_v1.assert_lineup_membership reads the feed alone and refuses her - two guards, two answers, and the gameday chain died on the disagreement. The resolver already RETURNS its source, so the information to tell identity from membership was always at every call site; nothing consumed it. I added Membership.resolve_membership, which returns a team only on roster-feed evidence, tested and consuming nothing, so the 13 call sites can migrate one at a time. (4) the 2026 box spells Megan DiLeo while the 2026 play-by-play spells Megan Gustafson on the SAME espn id 3934218, and ALREADY holds both spellings against nba id 1629484. Same shape as this row's Stevens case: the map is correct and the joins that skip it lose her. THE COVERAGE MEASUREMENT, which is what turns this row from a diagnosis into a work list: GAMELOG_DEDUP_CTE is referenced by 8 of the 130 files that read . And I verified the bridge WORKS - run against the Stevens pair for 2025 it returns ONE set of 44 rows under the accented 1628922, which is the correct winner because that copy carries precise minutes while the other rounds them. So this row's exact-2x is real on the raw table and cured on the bridged path. THE COMMON SHAPE, worth stating once: in all four instances the RESOLVER IS CORRECT AND ALREADY EXISTS. Nothing needs building. What is missing every time is knowing WHICH CALLERS REACH IT, and because the resolver is right, the bypasses fail silently - which is why these surface as four unrelated bugs instead of one. The work is an enumeration per resolver: name-map, GAMELOG_DEDUP_CTE, resolve_membership, canonical_availability - list the readers, split them by the question they are actually asking, repoint the ones that skip it. THE 35 TRIAGE HAS A ONE-QUESTION TEST, MEASURED 2026-08-12, AND IT SHRINKS THIS ROW A LOT. THE SPLIT IS CROSS-SEASON ONLY. Measured on : WITHIN season 2026, ZERO players hold more than one player_id. Across ALL seasons, 154 do. So an id migration happens BETWEEN eras, never inside one. THAT MAKES THE TRIAGE A SINGLE QUESTION per file - does the aggregate SPAN SEASONS? A season-scoped GROUP BY player_id is SAFE and needs no fold, because no woman splits inside a season. Only career or multi-season aggregates split, and they split for 154 players. This row's own warning that the count is a starting point and not a verdict is exactly right, and this is the cheap test that separates them without reading 12 or 35 files line by line. WORKED EXAMPLE, VERIFIED ON THE SERVED ARTIFACT: scripts/build_season_impact_v1.py matches the unguarded grep, and it is FINE. site/season_impact.json lists Jewell Loyd at player_id 2987869 with gp 31 and total_min 845.1, and Azura Stevens at 3142010 with gp 24 - both current-season figures, and Loyd's 31 games and 845.0 minutes reproduce exactly from the database under that id. No player appears twice on the surface. The file aggregates by raw player_id and is CORRECT because it is season-scoped. MY OWN SCAN FOUND 12, NOT 35 - a stricter pattern requiring GROUP BY within 120 characters of player_id in the same file. Two of the 12 are the fold machinery itself, ops/identity_fold_lint.py and ops/identity_resolver.py, which legitimately name the column. So the real candidate set is small and the season-scope question resolves most of it. WHAT REMAINS AND WHERE TO POINT IT: apply the span-seasons question to the rest - analysis_scoring_leaders, build_season_impact_history, forward_bet_tracker, sentinel_sweep, validate_m11_box_calibration, analysis_rest_b2b, export_lab_kit and the two guards. The two most likely to genuinely span are build_season_impact_HISTORY, whose name says it, and analysis_scoring_leaders if it ever ranks career totals. Note that the two career surfaces I checked earlier are already folded - site/players.json via the union-find at build_site.py:3871 and compare_seasons.json via name keys - so the folded paths outnumber the unfolded ones on the surfaces that matter most. TRIAGE APPLIED AND COMPLETED 2026-08-12: TWELVE CANDIDATES, ZERO DEFECTS. I ran the span-seasons test over every file my scan flagged. SIX are season-scoped and therefore safe by the rule above - analysis_scoring_leaders, build_season_impact_history, build_season_impact_v1, surface_claim_contract_guard, validate_m11_box_calibration and the Collier probe. One, analysis_rest_b2b, has no matching query block at all. THREE flagged as possibly spanning and ALL THREE ARE FALSE POSITIVES on reading them: export_lab_kit queries and groups by DATE, not player_id on game logs, and my regex spanned two separate statements; forward_bet_tracker queries and IS scoped, by EXTRACT(YEAR FROM commence_time)=2026, which my season pattern did not recognise; sentinel_sweep has no GROUP BY there at all, my pattern joined fragments of concatenated strings. SO ON THE FILES THIS SCAN REACHES, THE ENFORCEMENT GAP IS EMPTY. Not one unfolded cross-season aggregate on . AND THE SYMMETRY IS THE LESSON, because this row already warned of it: an earlier scan in the same session flagged 12 unguarded availability readers that all turned out to be docstrings. Mine flagged 12 and all 12 cleared. A grep for a dangerous SHAPE over source text will keep producing a double-digit candidate list that reads as a backlog and verifies to nothing - the shape is common and the defect is rare. VERIFY EACH BEFORE FILING, which is what this row says and what the count now demonstrates twice. THE HONEST LIMIT ON MY RESULT: my scan required GROUP BY within 120 characters of player_id in the same file and returned 12, where this row's starting point was 35. The other 23 were matched by a broader pattern I did not reproduce, so THIS IS NOT A CLEAN BILL FOR ALL 35 - it is a clean bill for the 12 that a strict aggregate-shaped scan finds. Anyone re-running the wider scan should apply the same one-question test and should expect most of it to clear the same way.",
-      "state": "",
-      "row_state": "open",
-      "row_closed": false,
-      "pm_authored": false,
-      "event_utc": "2026-08-06T22:19:55Z",
-      "impact": "",
-      "rank_priority": 2.0,
-      "title": "Two rows, one cause: the fold is mandated, the readers skip it",
-      "unlocks": "(1) one-player-is-counted-twice-in-the-game-logs Azura Stevens appears under two id spaces and declares the pairing ( ...",
-      "owner": "MACHINE",
-      "feed_status": "QUEUED",
-      "tier": 1,
-      "group": "",
-      "ceo_ask": false,
-      "p0": false,
-      "rank": 299,
-      "actions": [
-       {
-        "verb": "top",
-        "icon": "⤒",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20canonical-resolvers-exist-and-consumers-bypass-t%3A%20top&body=Two%20rows%2C%20one%20cause%3A%20the%20fold%20is%20mandated%2C%20the%20readers%20skip%20it%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "bump",
-        "icon": "⬆",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20canonical-resolvers-exist-and-consumers-bypass-t%3A%20bump&body=Two%20rows%2C%20one%20cause%3A%20the%20fold%20is%20mandated%2C%20the%20readers%20skip%20it%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "demote",
-        "icon": "⬇",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20canonical-resolvers-exist-and-consumers-bypass-t%3A%20demote&body=Two%20rows%2C%20one%20cause%3A%20the%20fold%20is%20mandated%2C%20the%20readers%20skip%20it%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       },
-       {
-        "verb": "shelve",
-        "icon": "🗄",
-        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20canonical-resolvers-exist-and-consumers-bypass-t%3A%20shelve&body=Two%20rows%2C%20one%20cause%3A%20the%20fold%20is%20mandated%2C%20the%20readers%20skip%20it%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
-       }
-      ]
-     },
-     {
       "task_id": "the-tiebreak-trusts-a-write-clock-not-a-method",
       "family": "data",
       "name": "Which grade wins is decided by when it was written, not by which method wrote it",
@@ -3493,7 +3455,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 301,
+      "rank": 300,
       "actions": [
        {
         "verb": "top",
@@ -3542,7 +3504,7 @@
       "ceo_ask": false,
       "p0": false,
       "note": "Needs a human to claim that two ids are one player. The detector is correct and is parked with cause. Owner: a human identity decision - a guard cannot supply ...",
-      "rank": 304,
+      "rank": 303,
       "actions": [
        {
         "verb": "top",
@@ -3590,7 +3552,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 307,
+      "rank": 306,
       "actions": [
        {
         "verb": "top",
@@ -3638,7 +3600,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 310,
+      "rank": 309,
       "actions": [
        {
         "verb": "top",
@@ -3686,7 +3648,7 @@
       "group": "betting",
       "ceo_ask": false,
       "p0": false,
-      "rank": 316,
+      "rank": 315,
       "actions": [
        {
         "verb": "top",
@@ -3707,6 +3669,54 @@
         "verb": "shelve",
         "icon": "🗄",
         "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20forward-bet-tracker-reads-a-dead-table-and-fails%3A%20shelve&body=Forward%20bet%20tracking%20reads%20a%20table%20that%20died%20in%20May%20and%20returns%20empty%20without%20complaining%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       }
+      ]
+     },
+     {
+      "task_id": "work-the-remaining-fold-lint-candidates",
+      "family": "data",
+      "name": "The enumeration the umbrella row asked for, now that the lint labels every hit",
+      "header": "The enumeration the umbrella row asked for, now that the lint labels every hit",
+      "why": "The umbrella row canonical-resolvers-exist-and-consumers-bypass-them asked for 'an enumeration per resolver list the readers split them by the question they are actually asking repoint the ones that ...",
+      "priority": 3,
+      "seat": "MACHINE",
+      "status": "queued",
+      "state": "",
+      "row_state": "queued",
+      "row_closed": false,
+      "pm_authored": false,
+      "event_utc": null,
+      "impact": "",
+      "rank_priority": 3.0,
+      "title": "The enumeration the umbrella row asked for, now that the lint labels every hit",
+      "unlocks": "",
+      "owner": "DIRECTOR",
+      "feed_status": "QUEUED",
+      "tier": 1,
+      "group": "",
+      "ceo_ask": false,
+      "p0": false,
+      "rank": 325,
+      "actions": [
+       {
+        "verb": "top",
+        "icon": "⤒",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20work-the-remaining-fold-lint-candidates%3A%20top&body=The%20enumeration%20the%20umbrella%20row%20asked%20for%2C%20now%20that%20the%20lint%20labels%20every%20hit%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       },
+       {
+        "verb": "bump",
+        "icon": "⬆",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20work-the-remaining-fold-lint-candidates%3A%20bump&body=The%20enumeration%20the%20umbrella%20row%20asked%20for%2C%20now%20that%20the%20lint%20labels%20every%20hit%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       },
+       {
+        "verb": "demote",
+        "icon": "⬇",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20work-the-remaining-fold-lint-candidates%3A%20demote&body=The%20enumeration%20the%20umbrella%20row%20asked%20for%2C%20now%20that%20the%20lint%20labels%20every%20hit%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
+       },
+       {
+        "verb": "shelve",
+        "icon": "🗄",
+        "url": "https://github.com/AnthonyTurgelis/hardwood-site/issues/new?title=QUEUE%3A%20work-the-remaining-fold-lint-candidates%3A%20shelve&body=The%20enumeration%20the%20umbrella%20row%20asked%20for%2C%20now%20that%20the%20lint%20labels%20every%20hit%0A%0A%E2%80%94%20queue%20action%20from%20The%20Hardwood%20board%20%282026-08-19%29&labels=queue"
        }
       ]
      },
@@ -5562,7 +5572,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 300,
+      "rank": 299,
       "actions": [
        {
         "verb": "top",
@@ -5610,7 +5620,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 311,
+      "rank": 310,
       "actions": [
        {
         "verb": "top",
@@ -5658,7 +5668,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 315,
+      "rank": 314,
       "actions": [
        {
         "verb": "top",
@@ -5706,7 +5716,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 320,
+      "rank": 319,
       "actions": [
        {
         "verb": "top",
@@ -10328,7 +10338,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 308,
+      "rank": 307,
       "actions": [
        {
         "verb": "top",
@@ -10376,7 +10386,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 309,
+      "rank": 308,
       "actions": [
        {
         "verb": "top",
@@ -10424,7 +10434,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 314,
+      "rank": 313,
       "actions": [
        {
         "verb": "top",
@@ -10472,7 +10482,7 @@
       "group": "",
       "ceo_ask": false,
       "p0": false,
-      "rank": 319,
+      "rank": 318,
       "actions": [
        {
         "verb": "top",
@@ -17347,7 +17357,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 302,
+      "rank": 301,
       "actions": [
        {
         "verb": "top",
@@ -17395,7 +17405,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 303,
+      "rank": 302,
       "actions": [
        {
         "verb": "top",
@@ -17443,7 +17453,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 305,
+      "rank": 304,
       "actions": [
        {
         "verb": "top",
@@ -17491,7 +17501,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 306,
+      "rank": 305,
       "actions": [
        {
         "verb": "top",
@@ -17539,7 +17549,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 312,
+      "rank": 311,
       "actions": [
        {
         "verb": "top",
@@ -17587,7 +17597,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 313,
+      "rank": 312,
       "actions": [
        {
         "verb": "top",
@@ -17635,7 +17645,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 317,
+      "rank": 316,
       "actions": [
        {
         "verb": "top",
@@ -17683,7 +17693,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 318,
+      "rank": 317,
       "actions": [
        {
         "verb": "top",
@@ -17731,7 +17741,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 321,
+      "rank": 320,
       "actions": [
        {
         "verb": "top",
@@ -17779,7 +17789,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 322,
+      "rank": 321,
       "actions": [
        {
         "verb": "top",
@@ -17827,7 +17837,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 323,
+      "rank": 322,
       "actions": [
        {
         "verb": "top",
@@ -17875,7 +17885,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 324,
+      "rank": 323,
       "actions": [
        {
         "verb": "top",
@@ -17923,7 +17933,7 @@
       "group": "process",
       "ceo_ask": false,
       "p0": false,
-      "rank": 325,
+      "rank": 324,
       "actions": [
        {
         "verb": "top",
@@ -19449,9 +19459,9 @@
     "target": 40,
     "count": 386,
     "ok": true,
-    "label": "386 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 18m ago.)",
+    "label": "386 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 39m ago.)",
     "as_of_utc": "2026-08-19T21:00:36Z",
-    "age_secs": 1124,
+    "age_secs": 2390,
     "stale": false
    },
    "source": "dispatch queue",
@@ -20155,66 +20165,66 @@
  "scout_heartbeat": {
   "alive": false,
   "last_poll_utc": "2026-08-17T22:58:52Z",
-  "age_s": 166795,
+  "age_s": 168058,
   "cycles": 17,
   "known": true,
-  "label": "scout: no poll for 166795s",
+  "label": "scout: no poll for 168058s",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "5:10pm",
-   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1160s old (live 2026-08-19T20:51:21+00:00; active ceiling 900s) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1160s old (live 2026-08-19T20:51:21+00:00; active ceiling 900s) -> auto-repair"
+   "time": "5:19pm",
+   "text": "divergence alarm: clean (build code matches the shared branch",
+   "detail": "divergence_alarm: clean (build code matches the shared branch)"
   },
   {
-   "time": "5:10pm",
-   "text": "board-selfpolice: auto-repair: DEFERRED rc=75 — the publish rate floor declined a slot, so no push was attempted. Nothing is wrong and nothing is quarantined; the next tick publishes.",
-   "detail": "board-selfpolice: auto-repair: DEFERRED rc=75 — the publish rate floor declined a slot, so no push was attempted. Nothing is wrong and nothi"
+   "time": "5:19pm",
+   "text": "publish-health: public board FRESH again — flag cleared",
+   "detail": "publish-health: public board FRESH again — flag cleared"
   },
   {
-   "time": "5:12pm",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1240s old (live 2026-08-19T20:51:21+00:00; active ceiling 900s",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1240s old (live 2026-08-19T20:51:21+00:00; ac"
+   "time": "5:19pm",
+   "text": "chain-health: CHAIN DOWN (#189): broken=drive paged=True",
+   "detail": "chain-health: CHAIN DOWN (#189): broken=drive paged=True"
   },
   {
-   "time": "5:15pm",
-   "text": "divergence alarm: guard files CONVERGED again — flag cleared",
-   "detail": "divergence_alarm: guard files CONVERGED again — flag cleared"
+   "time": "5:19pm",
+   "text": "slate-refresh: STALE (#15): season impact feed is 71h old paged=True",
+   "detail": "slate-refresh: STALE (#15): season impact feed is 71h old paged=True"
   },
   {
-   "time": "5:15pm",
-   "text": "publish-health: PUBLIC BOARD STALE (#1): staleness=1423s threshold=900s live=2026-08-19T20:51:21+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 1071s newer than live",
-   "detail": "publish-health: PUBLIC BOARD STALE (#1): staleness=1423s threshold=900s live=2026-08-19T20:51:21+00:00 | deploy stuck (guard/push failure): "
-  },
-  {
-   "time": "5:15pm",
-   "text": "chain-health: CHAIN DOWN (#188): broken=drive,board paged=True",
-   "detail": "chain-health: CHAIN DOWN (#188): broken=drive,board paged=True"
-  },
-  {
-   "time": "5:15pm",
-   "text": "slate-refresh: STALE (#14): season impact feed is 70h old paged=True",
-   "detail": "slate-refresh: STALE (#14): season impact feed is 70h old paged=True"
-  },
-  {
-   "time": "5:15pm",
-   "text": "board-selfpolice: board fresh again — interrupt flag cleared",
-   "detail": "board-selfpolice: board fresh again — interrupt flag cleared"
-  },
-  {
-   "time": "5:15pm",
-   "text": "board-selfpolice: board-stale alert BOARD STALE ALERT .md RETIRED to inbox/processed (the board is clean; the episode record is preserved, not deleted",
-   "detail": "board-selfpolice: board-stale alert BOARD_STALE_ALERT_.md RETIRED to inbox/processed (the board is clean; the episode record is preserved, n"
-  },
-  {
-   "time": "5:15pm",
+   "time": "5:30pm",
    "text": "board-selfpolice: clean (live board matches repo truth",
    "detail": "board-selfpolice: clean (live board matches repo truth)"
+  },
+  {
+   "time": "5:35pm",
+   "text": "divergence alarm: clean (build code matches the shared branch",
+   "detail": "divergence_alarm: clean (build code matches the shared branch)"
+  },
+  {
+   "time": "5:35pm",
+   "text": "publish-health: PUBLIC BOARD STALE (#1): staleness=1021s threshold=900s live=2026-08-19T21:18:41+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 838s newer than live",
+   "detail": "publish-health: PUBLIC BOARD STALE (#1): staleness=1021s threshold=900s live=2026-08-19T21:18:41+00:00 | deploy stuck (guard/push failure): "
+  },
+  {
+   "time": "5:35pm",
+   "text": "chain-health: CHAIN DOWN (#190): broken=drive,board paged=True",
+   "detail": "chain-health: CHAIN DOWN (#190): broken=drive,board paged=True"
+  },
+  {
+   "time": "5:35pm",
+   "text": "slate-refresh: STALE (#16): season impact feed is 71h old paged=True",
+   "detail": "slate-refresh: STALE (#16): season impact feed is 71h old paged=True"
+  },
+  {
+   "time": "5:35pm",
+   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1021s old (live 2026-08-19T21:18:41+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 838s newer than live (repo 2026-08-19T21:32:39+00:00 vs live 2026-08-19T21:18:41+00:00) -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1021s old (live 2026-08-19T21:18:41+00:00; active ceiling 900s) | DEPLOY-LAG: re"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-19T21:18:32Z",
+  "as_of": "2026-08-19T21:39:25.317948+00:00",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -20231,47 +20241,47 @@
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "23s",
-    "state_text": "on · seen 23s ago"
+    "age_label": "25s",
+    "state_text": "on · seen 25s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "37s",
-    "state_text": "on · seen 37s ago"
+    "age_label": "1m",
+    "state_text": "on · seen 1m ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "4m",
+    "state_text": "on · seen 4m ago"
    },
    {
     "name": "Q board",
     "does": "keeps your live queue board current",
     "active": true,
     "stale": false,
-    "age_label": "15s",
-    "state_text": "on · seen 15s ago"
+    "age_label": "78s",
+    "state_text": "on · seen 78s ago"
    }
   ],
   "width": {
-   "running": 5,
+   "running": 6,
    "target": 3,
    "empty": 0,
-   "line": "5 of 3 jobs running.",
+   "line": "6 of 3 jobs running.",
    "reason": "Enough jobs are running for the work waiting.",
    "stale": false
   },
@@ -20488,9 +20498,9 @@
    },
    {
     "label": "5:15pm daily drop: regenerate reports on the final injury picture, post the Discord drop",
-    "ran_et": "",
+    "ran_et": "5:19pm",
     "next_et": "5:15pm",
-    "result": "scheduled"
+    "result": "done"
    }
   ],
   "scheduled_stale": false
@@ -20498,9 +20508,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-19T21:18:25Z",
-  "session_age_secs": 24895,
-  "last_progress_age_secs": 22,
+  "last_heartbeat_utc": "2026-08-19T21:39:17Z",
+  "session_age_secs": 26158,
+  "last_progress_age_secs": 33,
   "last_spawn_attempt": "2026-08-19T14:21:31Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -20530,54 +20540,54 @@
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-08-19T21:15:39Z",
+   "as_of": "2026-08-19T21:34:25Z",
    "stale": false,
-   "revalidated": "2026-08-19T21:18:41+00:00",
+   "revalidated": "2026-08-19T21:39:50+00:00",
    "stale_reason": "",
-   "age_label": "3m",
+   "age_label": "5m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
    "as_of": "2026-08-19T16:21:10Z",
    "stale": false,
-   "revalidated": "2026-08-19T21:18:41+00:00",
+   "revalidated": "2026-08-19T21:39:50+00:00",
    "stale_reason": "",
-   "age_label": "4h",
+   "age_label": "5h",
    "stale_after": 43200
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-19T21:09:12+00:00",
+   "as_of": "2026-08-19T21:35:58+00:00",
    "stale": false,
-   "revalidated": "2026-08-19T21:18:41+00:00",
+   "revalidated": "2026-08-19T21:39:50+00:00",
    "stale_reason": "",
-   "age_label": "9m",
+   "age_label": "3m",
    "stale_after": 3600
   },
   "needs_anthony": {
    "source": "decision brief",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-19T21:18:41+00:00",
+   "revalidated": "2026-08-19T21:39:50+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-19T21:15:20Z",
+   "as_of": "2026-08-19T21:33:09Z",
    "stale": false,
-   "revalidated": "2026-08-19T21:18:41+00:00",
+   "revalidated": "2026-08-19T21:39:50+00:00",
    "stale_reason": "",
-   "age_label": "3m",
+   "age_label": "6m",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-19T21:18:41+00:00",
+   "revalidated": "2026-08-19T21:39:50+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
@@ -20586,16 +20596,16 @@
    "source": "director inbox",
    "as_of": "2026-08-19T21:12:09Z",
    "stale": false,
-   "revalidated": "2026-08-19T21:18:41+00:00",
+   "revalidated": "2026-08-19T21:39:50+00:00",
    "stale_reason": "",
-   "age_label": "6m",
+   "age_label": "27m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-17T14:54:47Z",
    "stale": true,
-   "revalidated": "2026-08-19T21:18:41+00:00",
+   "revalidated": "2026-08-19T21:39:50+00:00",
    "stale_reason": "No new team updates in 54h — nothing was shipped in that window. The feed itself is current.",
    "age_label": "54h",
    "stale_after": 172800,
@@ -20603,22 +20613,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-19T21:09:12+00:00",
+   "as_of": "2026-08-19T21:35:58+00:00",
    "stale": false,
-   "revalidated": "2026-08-19T21:18:41+00:00",
+   "revalidated": "2026-08-19T21:39:50+00:00",
    "stale_reason": "",
-   "age_label": "9m",
+   "age_label": "3m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-19T21:18:32Z",
+   "as_of": "2026-08-19T21:39:25.317948+00:00",
    "stale": false,
-   "revalidated": "2026-08-19T21:18:41+00:00",
+   "revalidated": "2026-08-19T21:39:50+00:00",
    "stale_reason": "",
-   "age_label": "15s",
+   "age_label": "25s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 19, 5:18pm ET"
+ "generated_et": "Aug 19, 5:39pm ET"
 }
