@@ -1,0 +1,141 @@
+name: Product Surface Integrity
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: product-surface-integrity
+  cancel-in-progress: false
+
+jobs:
+  restore-reviewed-product:
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout current public main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fetch and validate the canonical product bundle
+        id: canonical
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_sha=$(curl -fsSL --max-time 30 \
+            https://api.github.com/repos/AnthonyTurgelis/hardwood-cron/branches/main \
+            | python -c 'import json,sys; print(json.load(sys.stdin)["commit"]["sha"])')
+          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
+
+          files=(
+            index.html
+            games.html
+            report_archive.html
+            game_report_v2.html
+            players.html
+            teams.html
+            standings.html
+            accuracy.html
+            deepdive.html
+            hw-product.css
+            hw-product.js
+            hw-dense.css
+            hw-command.js
+            hw-games.css
+            hw-games.js
+            hw-reports.css
+            hw-reports.js
+            hw-game-report.css
+            hw-game-report.js
+            hw-players.css
+            hw-players.js
+            hw-teams.css
+            hw-teams.js
+            hw-standings.css
+            hw-standings.js
+            hw-accuracy.css
+            hw-accuracy.js
+            hw-research.css
+            hw-research.js
+          )
+
+          rm -rf .canonical-product
+          mkdir .canonical-product
+          for file in "${files[@]}"; do
+            curl -fsSL --retry 3 --retry-all-errors --max-time 45 \
+              "https://raw.githubusercontent.com/AnthonyTurgelis/hardwood-cron/${source_sha}/site/${file}" \
+              -o ".canonical-product/${file}"
+            test -s ".canonical-product/${file}"
+          done
+
+          grep -Fq 'data-product="league-command-center"' .canonical-product/index.html
+          grep -Fq 'data-product="league-games"' .canonical-product/games.html
+          grep -Fq 'data-product="dense-reports"' .canonical-product/report_archive.html
+          grep -Fq 'data-product="dense-game-report"' .canonical-product/game_report_v2.html
+          grep -Fq 'data-product="dense-players"' .canonical-product/players.html
+          grep -Fq 'data-product="dense-teams"' .canonical-product/teams.html
+          grep -Fq 'data-product="dense-standings"' .canonical-product/standings.html
+          grep -Fq 'data-product="dense-accuracy"' .canonical-product/accuracy.html
+          grep -Fq 'data-product="dense-research"' .canonical-product/deepdive.html
+
+          for script in .canonical-product/*.js; do
+            node --check "$script"
+          done
+
+          for file in "${files[@]}"; do
+            install -m 0644 ".canonical-product/${file}" "$file"
+          done
+
+      - name: Restore drifted product files atomically
+        id: restore
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ steps.canonical.outputs.source_sha }}
+        run: |
+          set -euo pipefail
+          files=(
+            index.html games.html report_archive.html game_report_v2.html
+            players.html teams.html standings.html accuracy.html deepdive.html
+            hw-product.css hw-product.js hw-dense.css hw-command.js
+            hw-games.css hw-games.js hw-reports.css hw-reports.js
+            hw-game-report.css hw-game-report.js hw-players.css hw-players.js
+            hw-teams.css hw-teams.js hw-standings.css hw-standings.js
+            hw-accuracy.css hw-accuracy.js hw-research.css hw-research.js
+          )
+          git add -- "${files[@]}"
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Reviewed product bundle is already intact."
+            exit 0
+          fi
+          git config user.name "hardwood-product-integrity"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -m "site: restore reviewed dense product from ${SOURCE_SHA}"
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "public_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Verify the public repository tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'data-product="league-command-center"' index.html
+          grep -Fq 'data-product="league-games"' games.html
+          grep -Fq 'data-product="dense-reports"' report_archive.html
+          grep -Fq 'data-product="dense-game-report"' game_report_v2.html
+          grep -Fq 'data-product="dense-players"' players.html
+          grep -Fq 'data-product="dense-teams"' teams.html
+          grep -Fq 'data-product="dense-standings"' standings.html
+          grep -Fq 'data-product="dense-accuracy"' accuracy.html
+          grep -Fq 'data-product="dense-research"' deepdive.html
