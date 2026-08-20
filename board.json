@@ -1,9 +1,9 @@
 {
- "generated_utc": "2026-08-20T17:55:01+00:00",
+ "generated_utc": "2026-08-20T18:16:21+00:00",
  "freshness": {
-  "baked_utc": "2026-08-20T17:55:01+00:00",
-  "baked_et": "Aug 20, 1:55pm ET",
-  "revalidated_utc": "2026-08-20T17:55:01+00:00",
+  "baked_utc": "2026-08-20T18:16:21+00:00",
+  "baked_et": "Aug 20, 2:16pm ET",
+  "revalidated_utc": "2026-08-20T18:16:21+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-20",
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-20T17:55:01+00:00",
+  "generated_utc": "2026-08-20T18:16:21+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -1080,7 +1080,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-20T13:55:00-04:00",
+    "at_iso": "2026-08-20T14:14:21-04:00",
     "start_unknown": true
    },
    {
@@ -1090,27 +1090,27 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-20T13:55:00-04:00",
+    "at_iso": "2026-08-20T14:14:21-04:00",
     "start_unknown": true
    },
    {
-    "name": "Cc listener acceptance proofs",
+    "name": "Listener deploy",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-20T13:55:00-04:00",
+    "at_iso": "2026-08-20T14:14:21-04:00",
     "start_unknown": true
    },
    {
-    "name": "Opqt pretip artifact state",
+    "name": "Parquet unstamped column halt",
     "one_liner": "Running now.",
     "chip": "IN-FLIGHT",
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-20T13:55:00-04:00",
+    "at_iso": "2026-08-20T14:14:21-04:00",
     "start_unknown": true
    }
   ],
@@ -6228,9 +6228,9 @@
       "why": "Measured 2026-08-16T2145Z and it reaches backwards over a day of work. A win probability evaluation walks every clock state of every game so one game contributes hundreds of rows - and the . Counting ...",
       "priority": -90.0,
       "seat": "Modeling",
-      "status": "VERIFIED - arithmetic reproduced exactly on the live table; the remaining work is downstream consumers, not the eval table",
-      "state": "",
-      "row_state": "open",
+      "status": "gated: BLOCKED ON A DIRECTOR RULING - the row's two concrete halves are DONE and shipped, but its third ask is a modelling standard, not a machine call. DONE: arithmetic verified exactly against the warehouse, n_states 4907 and n_games 210 reproducing the row's own 0.90 figure; the floor-of-what defect fixed in , where a 200-state THIN gate was really a 3-game floor and 21 of 32 measured bands flip to THIN once it counts games; the Aug 16 prose readout corrected in , where n=99,288 was a clock-state count and the producing table persists no game count at all. REMAINING AND GATED: 'make clustered errors the default for any evaluation that walks within-game rows' is a change to the evaluation standard across every such evaluation, and grain and modelling rulings are the Director's decision rights, not the machine's. UNGATES WHEN: the Director rules on whether clustered standard errors become the default for within-game evaluations, and on whether the existing 200-DISTINCT-GAMES floor documented in fit_wp_home_decay_v1.py is the standard floor for all of them.",
+      "state": "gated",
+      "row_state": "gated",
       "row_closed": false,
       "pm_authored": false,
       "event_utc": "2026-08-17T12:54:59Z",
@@ -6239,11 +6239,12 @@
       "title": "Five thousand clock states are two hundred and ten games and the error bar is four times ...",
       "unlocks": "A win probability evaluation walks every clock state of every game so one game contributes hundreds of rows - and the .",
       "owner": "MACHINE",
-      "feed_status": "QUEUED",
+      "feed_status": "BLOCKED",
       "tier": 1,
       "group": "",
       "ceo_ask": false,
       "p0": false,
+      "note": "A win probability evaluation walks every clock state of every game so one game contributes hundreds of rows - and the .",
       "rank": 54,
       "actions": [
        {
@@ -6614,7 +6615,7 @@
       "seat": "Modeling",
       "status": "needs-verify",
       "state": "",
-      "row_state": "needs-verify",
+      "row_state": "gated",
       "row_closed": false,
       "pm_authored": false,
       "event_utc": "2026-08-17T12:56:10Z",
@@ -19032,7 +19033,7 @@
     "ok": true,
     "label": "371 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). This queue view is 8h old — a refresh is due.",
     "as_of_utc": "2026-08-20T09:35:03Z",
-    "age_secs": 30048,
+    "age_secs": 31383,
     "stale": true
    },
    "source": "dispatch queue",
@@ -20519,66 +20520,66 @@
  "scout_heartbeat": {
   "alive": false,
   "last_poll_utc": "2026-08-17T22:58:52Z",
-  "age_s": 240976,
+  "age_s": 242259,
   "cycles": 17,
   "known": true,
-  "label": "scout: no poll for 240976s",
+  "label": "scout: no poll for 242259s",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "1:22pm",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 16995s old (live 2026-08-20T12:37:18+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 15591s newer than live (repo 2026-08-20T16:57:09+00:00 vs live 2026-08-20T12:37:18+00:00",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 16995s old (live 2026-08-20T12:37:18+00:00; a"
+   "time": "2:06pm",
+   "text": "divergence alarm: DIVERGED (streak=2): site/index.html vs origin/gemini-dev — The publishing copy's board-build files no longer match the shared branch; the board will refuse to publish until they are reconciled.",
+   "detail": "divergence_alarm: DIVERGED (streak=2): site/index.html vs origin/gemini-dev — The publishing copy's board-build files no longer match the sh"
   },
   {
-   "time": "1:33pm",
-   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 17688s old (live 2026-08-20T12:37:18+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 15591s newer than live (repo 2026-08-20T16:57:09+00:00 vs live 2026-08-20T12:37:18+00:00) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 17688s old (live 2026-08-20T12:37:18+00:00; active ceiling 900s) | DEPLOY-LAG: r"
+   "time": "2:06pm",
+   "text": "divergence alarm: auto-reconcile fired: {'ok': False, 'action': 'baked', 'outcome': 'failed', 'published': False, 'note': \"the staleness guard held the push (this clone's build code does not match origin) — NO push was attempted · the durable push-failure marker is standing\"}",
+   "detail": "divergence_alarm: auto-reconcile fired: {'ok': False, 'action': 'baked', 'outcome': 'failed', 'published': False, 'note': \"the staleness gua"
   },
   {
-   "time": "1:33pm",
-   "text": "board-selfpolice: auto-repair rc= (publish gate abort",
-   "detail": "board-selfpolice: auto-repair rc= (publish gate abort) ::"
+   "time": "2:06pm",
+   "text": "publish-health: public board FRESH again — flag cleared",
+   "detail": "publish-health: public board FRESH again — flag cleared"
   },
   {
-   "time": "1:36pm",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 17856s old (live 2026-08-20T12:37:18+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 15591s newer than live (repo 2026-08-20T16:57:09+00:00 vs live 2026-08-20T12:37:18+00:00",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 17856s old (live 2026-08-20T12:37:18+00:00; a"
+   "time": "2:07pm",
+   "text": "publish-health: recorded board recovery to the handled-overnight digest + cancelled its alarms",
+   "detail": "publish-health: recorded board recovery to the handled-overnight digest + cancelled its alarms"
   },
   {
-   "time": "1:36pm",
-   "text": "board-selfpolice: board-stale alert already open (BOARD STALE ALERT .md) -- refreshing in place (restated 2 times) rather than filing a duplicate",
-   "detail": "board-selfpolice: board-stale alert already open (BOARD_STALE_ALERT_.md) -- refreshing in place (restated 2 times) rather than filing a dupl"
+   "time": "2:07pm",
+   "text": "chain-health: CHAIN DOWN (#242): broken=drive paged=True",
+   "detail": "chain-health: CHAIN DOWN (#242): broken=drive paged=True"
   },
   {
-   "time": "1:41pm",
-   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 18218s old (live 2026-08-20T12:37:18+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 15591s newer than live (repo 2026-08-20T16:57:09+00:00 vs live 2026-08-20T12:37:18+00:00) -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 18218s old (live 2026-08-20T12:37:18+00:00; active ceiling 900s) | DEPLOY-LAG: r"
+   "time": "2:07pm",
+   "text": "slate-refresh: STALE (#2): season impact feed is 91h old paged=False",
+   "detail": "slate-refresh: STALE (#2): season impact feed is 91h old paged=False"
   },
   {
-   "time": "1:51pm",
-   "text": "board-selfpolice: auto-repair: quarantined ['hw-command.js', 'hw-games.js', 'hw-reports.js', 'hw-research.js'] (gate-flagged, moved out of site/ + public clone); re-baking",
-   "detail": "board-selfpolice: auto-repair: quarantined ['hw-command.js', 'hw-games.js', 'hw-reports.js', 'hw-research.js'] (gate-flagged, moved out of s"
+   "time": "2:10pm",
+   "text": "board-selfpolice: auto-repair rc=2 (publish gate abort) :: push failed: CalledProcessError: Command '['git', '-C', 'C:\\\\Users\\\\antho\\\\hardwood-site', 'add', '-A']' returned non-zero exit status .",
+   "detail": "board-selfpolice: auto-repair rc=2 (publish gate abort) :: push failed: CalledProcessError: Command '['git', '-C', 'C:\\\\Users\\\\antho\\\\hardwo"
   },
   {
-   "time": "1:51pm",
-   "text": "board-selfpolice: auto-repair rc= (publish gate abort",
-   "detail": "board-selfpolice: auto-repair rc= (publish gate abort) ::"
+   "time": "2:11pm",
+   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1004s old (live 2026-08-20T17:55:01+00:00; active ceiling 900s",
+   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 1004s old (live 2026-08-20T17:55:01+00:00; ac"
   },
   {
-   "time": "1:52pm",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 18905s old (live 2026-08-20T12:37:18+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 15591s newer than live (repo 2026-08-20T16:57:09+00:00 vs live 2026-08-20T12:37:18+00:00",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 18905s old (live 2026-08-20T12:37:18+00:00; a"
+   "time": "2:11pm",
+   "text": "board-selfpolice: board-stale alert answered within the hold window and the condition is unchanged -- flag and log only, no duplicate inbox item",
+   "detail": "board-selfpolice: board-stale alert answered within the hold window and the condition is unchanged -- flag and log only, no duplicate inbox "
   },
   {
-   "time": "1:52pm",
-   "text": "board-selfpolice: board-stale alert already open (BOARD STALE ALERT .md) -- refreshing in place (restated 3 times) rather than filing a duplicate",
-   "detail": "board-selfpolice: board-stale alert already open (BOARD_STALE_ALERT_.md) -- refreshing in place (restated 3 times) rather than filing a dupl"
+   "time": "2:16pm",
+   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1257s old (live 2026-08-20T17:55:01+00:00; active ceiling 900s) -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 1257s old (live 2026-08-20T17:55:01+00:00; active ceiling 900s) -> auto-repair"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-20T17:54:33.297673+00:00",
+  "as_of": "2026-08-20T18:16:16Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -20587,55 +20588,55 @@
     "does": "watches for your instructions",
     "active": false,
     "stale": true,
-    "age_label": "66h",
-    "state_text": "quiet · last seen 66h ago"
+    "age_label": "67h",
+    "state_text": "quiet · last seen 67h ago"
    },
    {
     "name": "Floor manager",
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "35s",
-    "state_text": "on · seen 35s ago"
+    "age_label": "61s",
+    "state_text": "on · seen 61s ago"
    },
    {
     "name": "Status-page baker",
     "does": "rebuilds the live status page",
-    "active": false,
-    "stale": true,
-    "age_label": "49m",
-    "state_text": "quiet · last seen 49m ago"
+    "active": true,
+    "stale": false,
+    "age_label": "9m",
+    "state_text": "on · seen 9m ago"
    },
    {
     "name": "Two-way replies",
     "does": "routes your chat replies back in",
     "active": true,
     "stale": false,
-    "age_label": "57s",
-    "state_text": "on · seen 57s ago"
+    "age_label": "15s",
+    "state_text": "on · seen 15s ago"
    },
    {
     "name": "Inbox triage",
     "does": "reads new instructions the instant they land",
-    "active": false,
-    "stale": true,
-    "age_label": "48m",
-    "state_text": "quiet · last seen 48m ago"
+    "active": true,
+    "stale": false,
+    "age_label": "9m",
+    "state_text": "on · seen 9m ago"
    },
    {
     "name": "Q board",
     "does": "keeps your live queue board current",
     "active": true,
     "stale": false,
-    "age_label": "89s",
-    "state_text": "on · seen 89s ago"
+    "age_label": "2m",
+    "state_text": "on · seen 2m ago"
    }
   ],
   "width": {
-   "running": 3,
+   "running": 4,
    "target": 1,
    "empty": 0,
-   "line": "3 of 1 jobs running.",
+   "line": "4 of 1 jobs running.",
    "reason": "Enough jobs are running for the work waiting.",
    "stale": false
   },
@@ -20865,23 +20866,23 @@
   "last_heartbeat_utc": null,
   "session_age_secs": null,
   "last_progress_age_secs": null,
-  "last_spawn_attempt": "2026-08-20T17:54:49Z",
-  "blocked_reason": "no start attempt yet — rate floor holds the next one for up to 280s (one attempt guaranteed every 300s while the chair is empty)",
+  "last_spawn_attempt": "2026-08-20T18:12:37Z",
+  "blocked_reason": "no start attempt yet — rate floor holds the next one for up to 65s (one attempt guaranteed every 300s while the chair is empty)",
   "state": "UNKNOWN",
   "reason": "coordinator.lock absent or unreadable"
  },
  "pipe_health": {
-  "directives_pending": 3,
-  "last_processed_clock": "1:54pm",
-  "last_processed_iso": "2026-08-20T17:54:25Z",
+  "directives_pending": 0,
+  "last_processed_clock": "2:09pm",
+  "last_processed_iso": "2026-08-20T18:09:05Z",
   "last_processed_known": true,
-  "last_processed_display": "1:54pm",
+  "last_processed_display": "2:09pm",
   "last_processed_source": "directive_ledger.done",
-  "newest_directive_clock": "1:53pm",
-  "newest_directive_iso": "2026-08-20T17:53:05Z",
+  "newest_directive_clock": "",
+  "newest_directive_iso": null,
   "source": "director inbox",
   "anchor": "inbox files + live directive ledger",
-  "as_of": "2026-08-20T17:54:25Z",
+  "as_of": "2026-08-20T18:09:05Z",
   "state": "KNOWN",
   "reason": ""
  },
@@ -20895,72 +20896,72 @@
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-08-20T17:55:01+00:00",
+   "as_of": "2026-08-20T18:14:21Z",
    "stale": false,
-   "revalidated": "2026-08-20T17:55:01+00:00",
+   "revalidated": "2026-08-20T18:16:21+00:00",
    "stale_reason": "",
-   "age_label": "0s",
+   "age_label": "2m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
    "as_of": "2026-08-20T14:13:34Z",
    "stale": false,
-   "revalidated": "2026-08-20T17:55:01+00:00",
+   "revalidated": "2026-08-20T18:16:21+00:00",
    "stale_reason": "",
-   "age_label": "3h",
+   "age_label": "4h",
    "stale_after": 43200
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-20T16:57:09+00:00",
+   "as_of": "2026-08-20T18:01:00+00:00",
    "stale": false,
-   "revalidated": "2026-08-20T17:55:01+00:00",
+   "revalidated": "2026-08-20T18:16:21+00:00",
    "stale_reason": "",
-   "age_label": "57m",
+   "age_label": "15m",
    "stale_after": 3600
   },
   "needs_anthony": {
    "source": "decision brief",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-20T17:55:01+00:00",
+   "revalidated": "2026-08-20T18:16:21+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-20T17:49:32Z",
-   "stale": false,
-   "revalidated": "2026-08-20T17:55:01+00:00",
-   "stale_reason": "",
-   "age_label": "5m",
+   "as_of": "2026-08-20T18:16:30Z",
+   "stale": true,
+   "revalidated": "2026-08-20T18:16:21+00:00",
+   "stale_reason": "A newer update is being re-checked now.",
+   "age_label": "0s",
    "stale_after": 3600
   },
   "watch_list": {
    "source": "daily review",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-20T17:55:01+00:00",
+   "revalidated": "2026-08-20T18:16:21+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
   },
   "pipe_health": {
    "source": "director inbox",
-   "as_of": "2026-08-20T17:54:25Z",
+   "as_of": "2026-08-20T18:09:05Z",
    "stale": false,
-   "revalidated": "2026-08-20T17:55:01+00:00",
+   "revalidated": "2026-08-20T18:16:21+00:00",
    "stale_reason": "",
-   "age_label": "36s",
+   "age_label": "7m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-17T14:54:47Z",
    "stale": true,
-   "revalidated": "2026-08-20T17:55:01+00:00",
+   "revalidated": "2026-08-20T18:16:21+00:00",
    "stale_reason": "These readings may be out of date — last updated 75h ago.",
    "age_label": "75h",
    "stale_after": 172800,
@@ -20968,22 +20969,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-20T16:57:09+00:00",
+   "as_of": "2026-08-20T18:01:00+00:00",
    "stale": false,
-   "revalidated": "2026-08-20T17:55:01+00:00",
+   "revalidated": "2026-08-20T18:16:21+00:00",
    "stale_reason": "",
-   "age_label": "57m",
+   "age_label": "15m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-20T17:54:33.297673+00:00",
+   "as_of": "2026-08-20T18:16:16Z",
    "stale": false,
-   "revalidated": "2026-08-20T17:55:01+00:00",
+   "revalidated": "2026-08-20T18:16:21+00:00",
    "stale_reason": "",
-   "age_label": "35s",
+   "age_label": "15s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 20, 1:55pm ET"
+ "generated_et": "Aug 20, 2:16pm ET"
 }
