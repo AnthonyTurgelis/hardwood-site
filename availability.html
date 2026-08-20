@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Injuries &amp; Availability</title>
+<style>
+  :root{ --bg:#f6f7f9; --card:#ffffff; --ink:#16181d; --muted:#5b6472; --line:#e5e8ee; --accent:#2b6cb0; --shadow:0 1px 3px rgba(20,24,35,.08); --out:#cf222e; --warn:#9a6700; --good:#1f883d; --flash:rgba(43,108,176,.18); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#222a35; --accent:#58a6ff; --shadow:none; --out:#f85149; --warn:#d29922; --good:#3fb950; --flash:rgba(88,166,255,.24); } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1000px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0}
+  .sub{color:var(--muted);font-size:12px;max-width:1000px;margin:0 auto;padding:0 14px}
+  .ago{font-size:11px;color:var(--muted);white-space:nowrap}
+  .ago b{color:var(--good);font-variant-numeric:tabular-nums}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1000px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--accent);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
+  nav a.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  main{max-width:1000px;margin:0 auto;padding:8px 14px 48px}
+  .lede{color:var(--muted);font-size:12.5px;margin:6px 0 2px}
+  section{margin-top:16px}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 8px;font-weight:700}
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:13px 15px;box-shadow:var(--shadow);margin-top:10px}
+  .hero .line{font-size:14px;font-weight:640}
+  .hero .asof{font-size:11.5px;color:var(--muted);margin-top:4px}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:9px 11px;box-shadow:var(--shadow);text-align:center}
+  .tile .n{font-size:24px;font-weight:780;line-height:1;font-variant-numeric:tabular-nums}
+  .tile .k{font-size:11px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.03em}
+  .tile.out .n{color:var(--out)} .tile.q .n{color:var(--warn)} .tile.ok .n{color:var(--good)}
+  .grp{margin-top:16px}
+  .grp .gh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .grp .gh .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .grp.out .dot{background:var(--out)} .grp.dtd .dot{background:var(--warn)}
+  .grp .gt{font-size:13.5px;font-weight:700}
+  .grp .gc{font-size:11.5px;color:var(--muted)}
+  .grp .blurb{font-size:12px;color:var(--muted);margin:3px 0 8px}
+  .row{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 11px;margin-bottom:6px;box-shadow:var(--shadow)}
+  .row.flash{animation:fl 1.1s ease}
+  @keyframes fl{0%{background:var(--flash)}100%{background:var(--card)}}
+  .rtop{display:flex;justify-content:space-between;gap:4px 10px;align-items:baseline;flex-wrap:wrap}
+  .rname{font-weight:660;font-size:13px;min-width:0}
+  .team{display:inline-block;font-size:10.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1px 5px;margin-right:6px;vertical-align:middle;letter-spacing:.02em}
+  .chance{font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;margin-left:auto}
+  .chance b{color:var(--ink);font-weight:700}
+  .rnote{font-size:12px;color:var(--muted);margin-top:4px}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:5px;align-items:center}
+  .pill{font-size:10px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  .pill.ret{color:var(--ink)}
+  .pill.recon{border-color:var(--accent);color:var(--accent)}
+  .pill.stale{border-color:var(--warn);color:var(--warn)}
+  .pill.unk{border-style:dashed}
+  .pill.exp{border-color:var(--good);color:var(--good)}
+  .pill.exp.season{border-color:var(--out);color:var(--out);font-weight:700}
+  .implead{border-left:3px solid var(--out)}
+  .implead .unsz{font-size:11.5px;color:var(--muted);margin-top:5px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;box-shadow:var(--shadow)}
+  .chip .vs{color:var(--muted);font-size:10px;text-transform:uppercase;margin:0 6px}
+  .chip .lean{color:var(--out);font-weight:700}
+  .chnote{font-size:11.5px;color:var(--muted);margin-top:6px}
+  .short .row .rname{font-weight:480;font-size:12.5px}
+  .pill.tonite{border-color:var(--accent);color:var(--accent)}
+  .disc{font-size:12px;color:var(--muted);margin:22px 0 0;padding-left:10px;border-left:3px solid var(--line)}
+  .empty{color:var(--muted);font-style:italic}
+  footer{max-width:1000px;margin:0 auto;padding:22px 16px;color:var(--muted);font-size:11px}
+</style>
+<link rel="stylesheet" href="./hardwood.css">
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
+<body>
+<header>
+  <h1>The Hardwood — Injuries &amp; Availability</h1>
+  <span class="ago" id="ago"></span>
+</header>
+<div class="sub" id="sub">Loading…</div>
+<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="standings.html" aria-current="page">Standings &amp; Injuries</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
+<main id="main"><p class="empty">Loading the injury report…</p></main>
+<footer id="foot"></footer>
+<script src="./hardwood.js"></script>
+<script>
+(function(){
+  "use strict";
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+
+  // Order the injury list as a RETURN TIMELINE: soonest expected-back first, no-timeline last.
+  // Display-only ordinal (parses "Jul 19" / "Aug 3"); null/unparseable -> Infinity so it sinks to
+  // the bottom. A return month EARLIER than the report month season-wraps to next year (Dec -> Jan)
+  // so the ordering stays chronological. Never invents a date — only orders the ones on file.
+  var MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  function retOrd(ret, baseMonth){
+    if(!ret) return Infinity;
+    var m=/^\s*([A-Za-z]{3})[A-Za-z]*\.?\s+(\d{1,2})\s*$/.exec(String(ret));
+    if(!m) return Infinity;
+    var mi=MON[m[1].toLowerCase()]; if(mi==null) return Infinity;
+    var ord=mi*31+parseInt(m[2],10);
+    if(baseMonth!=null && mi<baseMonth) ord+=12*31;
+    return ord;
+  }
+  function baseMon(dateStr){
+    var m=/^\d{4}-(\d{2})-\d{2}/.exec(String(dateStr||""));
+    return m ? (parseInt(m[1],10)-1) : null;
+  }
+
+  function tile(cls,n,k){
+    var t=el("div","tile "+cls);
+    t.appendChild(el("div","n", (n==null?"—":String(n))));
+    t.appendChild(el("div","k", k));
+    return t;
+  }
+
+  function playerRow(p, gclass){
+    var row=el("div","row"); row.setAttribute("data-k","p|"+(p.team||"")+"|"+(p.player||""));
+    var top=el("div","rtop");
+    var left=el("div","rname");
+    if(p.team){ left.appendChild(el("span","team", p.team)); }
+    left.appendChild(document.createTextNode(p.player||"—"));
+    top.appendChild(left);
+    if(p.play_pct!=null){
+      var ch=el("div","chance"); ch.innerHTML="play chance <b>"+p.play_pct+"%</b>";
+      // A CATEGORY RATE, NOT A PER-PLAYER ESTIMATE. Every value this column can take is a constant
+      // keyed on the availability status - healthy, day-to-day, out - plus one fine tier for
+      // "probable". None of them is computed for the individual player. Two decimal places read as
+      // a measurement, so the derivation is one tap away rather than absent.
+      ch.title="Category rate: the share of players carrying this availability status who play. "
+              +"Not a per-player estimate.";
+      top.appendChild(ch);
+    }
+    row.appendChild(top);
+    if(p.note) row.appendChild(el("div","rnote", p.note));
+    var meta=el("div","meta");
+    // A reported return DATE (specific, authoritative) keeps its own pill (unchanged).
+    if(p["return"]) meta.appendChild(el("span","pill ret","expected back "+p["return"]));
+    // The empirical "expected back ~N games" range (baked; league-wide guide by injury TYPE, never a
+    // player-specific prognosis). It FILLS the gap for a no-date row, so the "no timeline" pill only
+    // shows when there is genuinely no empirical guide either (omit-not-invent). Renders baked text.
+    var eb=p.exp_back;
+    if(eb && eb.text){
+      var ep=el("span","pill exp"+(eb.season_ending?" season":""), eb.text);
+      ep.title = eb.season_ending
+        ? "Our injury-return study finds this injury type is typically season-ending."
+        : "A league-wide guide from our injury-return study: typical games missed for this injury type across 2023-25 (median, with a p25-p75 range). Not a player-specific prognosis.";
+      meta.appendChild(ep);
+    } else if(!p["return"]){
+      meta.appendChild(el("span","pill unk","no return timeline yet"));
+    }
+    if(p.updated) meta.appendChild(el("span","pill","updated "+p.updated));
+    if(p.reconciled_from_feed){ var rp=el("span","pill recon","read from the latest report");
+      rp.title="Our read is fresher than the raw feed — the latest official report moved this player to a less-restrictive status."; meta.appendChild(rp); }
+    if(p.stale){ var sp=el("span","pill stale","awaiting a fresh update");
+      sp.title="This row is waiting on a fresher update from the feed."; meta.appendChild(sp); }
+    if(meta.childNodes.length) row.appendChild(meta);
+    return row;
+  }
+
+  function groupSection(g, baseMonth){
+    var cls = g.status==="day-to-day" ? "dtd" : "out";
+    var s=el("section","grp "+cls); s.setAttribute("data-k","g|"+g.status);
+    var gh=el("div","gh");
+    gh.appendChild(el("span","dot"));
+    gh.appendChild(el("span","gt", g.label));
+    gh.appendChild(el("span","gc", "· "+g.count+(g.count===1?" player":" players")));
+    s.appendChild(gh);
+    if(g.blurb) s.appendChild(el("div","blurb", g.blurb));
+    // read the list as a return timeline: soonest back first, no-timeline last (stable within ties).
+    var ordered=(g.players||[]).slice().sort(function(a,b){
+      var oa=retOrd(a["return"], baseMonth), ob=retOrd(b["return"], baseMonth);
+      return oa===ob ? 0 : (oa<ob ? -1 : 1);
+    });
+    ordered.forEach(function(p){ s.appendChild(playerRow(p, cls)); });
+    return s;
+  }
+
+  function render(d){
+    document.getElementById("sub").textContent = (d.date||"") + " · a league-wide look at who's in, out, and questionable — the availability our projections use";
+    var main=document.getElementById("main"); main.innerHTML="";
+    main.appendChild(el("p","lede","Every player currently listed out or questionable across the league, reconciled from the official injury reports and our live feed."));
+
+    if(!d.groups || !d.groups.length){
+      var box=el("div","hero");
+      if(d.available===false){
+        // Feed miss / no snapshot — this is NOT a clean bill of health, so never show a false all-clear.
+        box.appendChild(el("div","line", "The availability read is refreshing."));
+        main.appendChild(box);
+        main.appendChild(el("p","empty", "We couldn't read the league availability just now — this page updates automatically on the next refresh."));
+      } else {
+        box.appendChild(el("div","line", d.headline || "Everyone available."));
+        main.appendChild(box);
+        main.appendChild(el("p","empty", d.empty_note || "No players are currently listed out or questionable across the league."));
+      }
+      document.getElementById("foot").textContent = "Baked " + (d.generated_et||d.generated_utc||"") + ". A readout of the availability our projections assume — not injury news, and never a betting call.";
+      flash(); return;
+    }
+
+    var hero=el("div","hero"); hero.setAttribute("data-k","hero");
+    hero.appendChild(el("div","line", d.headline || ""));
+    if(d.as_of) hero.appendChild(el("div","asof","As of "+d.as_of+"."));
+    main.appendChild(hero);
+
+    // Impact-first lead: the single biggest availability loss (baked; omitted when nobody is out
+    // in scope — never an invented line). Renders baked text only.
+    if(d.impact_lead && d.impact_lead.line){
+      var il=el("div","hero implead"); il.setAttribute("data-k","implead");
+      il.appendChild(el("div","line", d.impact_lead.line));
+      if(d.impact_lead.unsized_note) il.appendChild(el("div","unsz", d.impact_lead.unsized_note));
+      main.appendChild(il);
+    }
+
+    if(d.summary){
+      var tl=el("div","tiles"); tl.setAttribute("data-k","tiles");
+      tl.appendChild(tile("out", d.summary.out, "out"));
+      tl.appendChild(tile("q", d.summary.questionable, "questionable"));
+      tl.appendChild(tile("ok", d.summary.available, "available"));
+      main.appendChild(tl);
+    }
+
+    // Per-matchup short-handed comparison chips (baked; one chip per game with any absences —
+    // a full-strength-both-sides game is omitted at bake, never invented here). The baked `more`
+    // team gets the visual lean; labels render as baked text only.
+    if(d.matchup_chips && d.matchup_chips.length){
+      var mc=el("section","chips-sec"); mc.setAttribute("data-k","chips");
+      mc.appendChild(el("h2",null,"Tonight's matchups — who's more short-handed"));
+      var wrap=el("div","chips");
+      d.matchup_chips.forEach(function(c){
+        if(!c || !c.away || !c.home) return;
+        var ch=el("div","chip"); ch.setAttribute("data-k","c|"+(c.game||""));
+        ch.appendChild(el("span", c.more && c.more===c.away.team ? "side lean":"side", c.away.label||""));
+        ch.appendChild(el("span","vs","vs"));
+        ch.appendChild(el("span", c.more && c.more===c.home.team ? "side lean":"side", c.home.label||""));
+        wrap.appendChild(ch);
+      });
+      mc.appendChild(wrap);
+      if(d.chips_note) mc.appendChild(el("div","chnote", d.chips_note));
+      main.appendChild(mc);
+    }
+
+    // Per-team "who's short-handed" roll-up (baked; a team whose absences we can't size shows an
+    // honest "impact unknown" count, never a fake 0 minutes).
+    if(d.shorthanded && d.shorthanded.length){
+      var sh=el("section","short"); sh.setAttribute("data-k","short");
+      sh.appendChild(el("h2",null,"Who's short-handed"));
+      d.shorthanded.forEach(function(t){
+        var r=el("div","row"); r.setAttribute("data-k","t|"+(t.team||""));
+        var top=el("div","rtop");
+        var left=el("div","rname");
+        if(t.team){ left.appendChild(el("span","team", t.team)); }
+        left.appendChild(document.createTextNode(t.line||""));
+        top.appendChild(left);
+        if(t.tonight){ var tp=el("span","pill tonite","plays tonight"); top.appendChild(tp); }
+        r.appendChild(top);
+        sh.appendChild(r);
+      });
+      main.appendChild(sh);
+    }
+
+    var bm=baseMon(d.date);
+    d.groups.forEach(function(g){ main.appendChild(groupSection(g, bm)); });
+
+    if(d.note) main.appendChild(el("p","disc", d.note));
+    document.getElementById("foot").textContent = "Baked " + (d.generated_et||d.generated_utc||"") + ". A readout of the availability our projections assume — not injury news, and never a betting call.";
+    flash();
+  }
+  /* ---------- shared live runtime (mirrors accuracy.html / ledger.html) ---------- */
+  var URL="./availability.json", etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
+  function updAgo(){
+    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
+    var t = s<60 ? (s+"s ago") : (Math.floor(s/60)+"m "+(s%60)+"s ago");
+    var a=document.getElementById("ago"); if(a) a.innerHTML = lastFetch? ("live · updated <b>"+t+"</b>") : "";
+  }
+  function flash(){
+    var nodes=document.querySelectorAll("#main [data-k]"), nm={};
+    nodes.forEach(function(n){ var k=n.getAttribute("data-k"), h=n.innerHTML; nm[k]=h;
+      if(!first && cardHTML[k]!==undefined && cardHTML[k]!==h){ n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); } });
+    cardHTML=nm; first=false;
+  }
+  function poll(){
+    var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
+    fetch(URL,{headers:h,cache:"no-cache"}).then(function(r){
+      if(r.status===304) return null;
+      etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
+    }).then(function(d){ lastFetch=Date.now(); if(d){ render(d); } updAgo(); }).catch(function(e){
+      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the injury report. '+(e&&e.message?e.message:"")+'</p>'; }
+    });
+  }
+  poll(); setInterval(poll,60000); setInterval(updAgo,1000);
+})();
+</script>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="error-map.html">Error Map</a><a href="board.html">Board</a></div><div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div></footer><!--/hw-foot--></body>
+</html>

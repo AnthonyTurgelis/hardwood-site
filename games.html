@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Hardwood WNBA game board — every forecast, uncertainty range, total, availability read, leverage signal, result, and report in one compact view.">
+  <title>Games — Hardwood</title>
+  <link rel="stylesheet" href="hw-product.css">
+  <link rel="stylesheet" href="hw-dense.css">
+  <link rel="stylesheet" href="hw-games.css">
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
+<body class="hw-product" data-page="games-dense" data-section="games" data-product="league-games"><header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="games.html" aria-current="page">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="standings.html">Standings &amp; Injuries</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
+  <a class="hw-skip" href="#content">Skip to the game board</a>
+  <main class="hw-page" id="content">
+    <section class="hw-command" aria-labelledby="games-title">
+      <header class="hw-command-head hw-games-command-head">
+        <div class="hw-command-title">
+          <div class="hw-kicker">WNBA games</div>
+          <h1 id="games-title">Forecasts, context, and results.</h1>
+          <p>Every published call in a compact board. Open a row only when you need the full uncertainty, availability, movement, rotation, and report detail.</p>
+        </div>
+        <div class="hw-command-meta">
+          <span class="hw-fresh" data-games-fresh><span class="hw-fresh-dot"></span>Loading current data</span>
+          <a class="hw-button" href="daybyday.html">Day by day</a>
+          <a class="hw-button" href="report_archive.html">Report archive</a>
+          <a class="hw-button" href="availability.html">Availability</a>
+        </div>
+      </header>
+
+      <section class="hw-story-strip" id="games-stories" aria-label="Game-board headlines">
+        <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Published games</span></article>
+        <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Closest call</span></article>
+        <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Biggest favorite</span></article>
+        <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Highest total</span></article>
+        <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Highest stakes</span></article>
+      </section>
+
+      <section class="hw-module hw-games-controls" aria-label="Game filters">
+        <div class="hw-games-filterbar">
+          <label class="hw-field hw-games-search"><span>Search</span><input class="hw-input" id="games-dense-search" type="search" placeholder="Team, matchup, or call"></label>
+          <label class="hw-field"><span>Team</span><select class="hw-select" id="games-dense-team"><option value="">All teams</option></select></label>
+          <label class="hw-field"><span>State</span><select class="hw-select" id="games-dense-state"><option value="">All published</option><option value="upcoming">Upcoming</option><option value="final">Final</option></select></label>
+          <label class="hw-field"><span>Window</span><select class="hw-select" id="games-dense-window"><option value="">All dates</option><option value="next7">Next 7 days</option><option value="recent7">Past 7 days</option></select></label>
+          <label class="hw-field"><span>Sort</span><select class="hw-select" id="games-dense-sort"><option value="date">Date</option><option value="closest">Closest call</option><option value="favorite">Biggest favorite</option><option value="total">Highest total</option><option value="uncertainty">Widest range</option><option value="leverage">Highest stakes</option></select></label>
+          <button class="hw-button" id="games-dense-reset" type="button">Reset</button>
+        </div>
+      </section>
+
+      <div class="hw-command-grid hw-games-layout">
+        <section class="hw-module" aria-labelledby="board-heading">
+          <div class="hw-module-head"><h2 id="board-heading">Published game board</h2><span id="games-dense-count">Loading…</span></div>
+          <div class="hw-module-body flush">
+            <div class="hw-ledger-row hw-ledger-head" aria-hidden="true">
+              <span>Date / tip</span><span>Matchup</span><span>Call</span><span>Home win</span><span>Margin</span><span>80% range</span><span>Total</span><span>Context</span><span></span>
+            </div>
+            <div id="games-dense-list"><div class="hw-empty">Loading game forecasts…</div></div>
+          </div>
+        </section>
+
+        <aside class="hw-module" aria-labelledby="pulse-heading">
+          <div class="hw-module-head"><h2 id="pulse-heading">Slate pulse</h2><span>Recomputes with filters</span></div>
+          <div class="hw-module-body"><div class="hw-pulse-list" id="games-dense-pulse"><div class="hw-empty">Loading game stories…</div></div></div>
+        </aside>
+      </div>
+
+      <section class="hw-module" aria-labelledby="visual-heading">
+        <div class="hw-module-head">
+          <h2 id="visual-heading">Game landscape</h2>
+          <div class="hw-visual-tabs" role="tablist" aria-label="Choose a game visual">
+            <button class="hw-visual-tab active" type="button" role="tab" aria-selected="true" data-games-viz="margin-total">Margin vs total</button>
+            <button class="hw-visual-tab" type="button" role="tab" aria-selected="false" data-games-viz="confidence-range">Confidence vs uncertainty</button>
+          </div>
+        </div>
+        <div class="hw-module-body flush">
+          <div class="hw-viz hw-games-viz" id="games-dense-viz"><div class="hw-empty">Loading game visual…</div></div>
+          <div class="hw-viz-legend" id="games-dense-viz-legend"></div>
+          <div class="hw-data-note" id="games-dense-viz-note">Select a point to open that game’s detail row.</div>
+        </div>
+      </section>
+
+      <section class="hw-module" aria-labelledby="results-heading">
+        <div class="hw-module-head"><h2 id="results-heading">Recent graded calls</h2><a href="accuracy.html">Full model audit →</a></div>
+        <div class="hw-module-body flush hw-table-wrap">
+          <table class="hw-compact-table hw-results-table">
+            <thead><tr><th>Date</th><th>Matchup</th><th>Published call</th><th>Final</th><th class="num">Actual margin</th><th class="num">Miss</th><th>Winner</th><th>Report</th></tr></thead>
+            <tbody id="games-dense-results"><tr><td colspan="8"><div class="hw-empty">Loading graded calls…</div></td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+  <script src="hw-product.js"></script>
+  <script src="hw-games.js"></script>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="error-map.html">Error Map</a><a href="board.html">Board</a></div><div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div></footer><!--/hw-foot--></body>
+</html>

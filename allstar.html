@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — All-Star Game</title>
+<style>
+  :root{ --bg:#f4f6f8; --card:#fff; --card2:#f7f9fc; --ink:#161a21; --muted:#5a6675; --dim:#8a93a3;
+    --line:#e3e7ee; --line2:#d3d9e3; --acc:#2b6cb0; --good:#1f883d; --bad:#c62828; --warn:#9a6700;
+    --chip:#eef2f8; --shadow:0 1px 2px rgba(20,24,35,.06);
+    --fan:#2b6cb0; --fan2:rgba(43,108,176,.20); --fan3:rgba(43,108,176,.10);
+    --up:#b4530a; --down:#2f6fed; }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --card2:#1c2330; --ink:#e6edf3;
+    --muted:#9aa7b4; --dim:#6b7684; --line:#242c38; --line2:#39424f; --acc:#58a6ff; --good:#3fb950; --bad:#ff7b72;
+    --warn:#d29922; --chip:#21324a; --shadow:none;
+    --fan:#58a6ff; --fan2:rgba(88,166,255,.24); --fan3:rgba(88,166,255,.12);
+    --up:#e0913f; --down:#6ea0f5; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0}
+  .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto;padding:0 14px}
+  .ago{font-size:11px;color:var(--dim);white-space:nowrap}
+  .ago b{color:var(--good);font-variant-numeric:tabular-nums}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--acc);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 48px}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:22px 0 8px;font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);overflow:hidden}
+  .pad{padding:10px 12px}
+  .scroll{overflow-x:auto}
+  .note{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.55}
+  .ref{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
+  .ref b{color:var(--muted);font-weight:640}
+  .empty{color:var(--dim);font-style:italic}
+  /* event strip */
+  .event{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline}
+  .event .ei{display:inline-flex;flex-direction:column;line-height:1.25}
+  .event .ei b{font-size:14px}
+  .event .ei span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  /* FINAL RESULT — the game is over, so the outcome leads the page. Deliberately the
+     loudest block here: a reader must not be able to reach a projection without first
+     seeing what actually happened. */
+  .final{border:1px solid var(--line2);border-left:5px solid var(--acc);background:var(--card);border-radius:9px;padding:13px 15px;margin:12px 0 4px;box-shadow:var(--shadow)}
+  .final .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--acc);border-radius:999px;padding:2px 9px;margin-bottom:8px}
+  .final .score{margin:0 0 3px;font-size:22px;font-weight:760;line-height:1.25;font-variant-numeric:tabular-nums}
+  .final .when{font-size:11px;color:var(--dim);margin-bottom:9px}
+  .final p{margin:0 0 7px;font-size:12.5px;line-height:1.65;color:var(--ink)}
+  .final p:last-of-type{margin-bottom:0}
+  .final .ref{margin-top:9px;font-size:11px;color:var(--dim)}
+  /* correction notice — a retracted finding is louder than an honesty caveat, on purpose */
+  .retract{border:1px solid var(--bad);border-left:5px solid var(--bad);background:var(--card);border-radius:9px;padding:12px 15px;margin:12px 0 4px;box-shadow:var(--shadow)}
+  .retract h3{margin:0 0 7px;font-size:13.5px;line-height:1.35;color:var(--bad);font-weight:700}
+  .retract .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--bad);border-radius:999px;padding:2px 8px;margin-bottom:7px}
+  .retract p{margin:0 0 7px;font-size:12.5px;line-height:1.65;color:var(--ink)}
+  .retract p:last-of-type{margin-bottom:0}
+  /* honesty banner */
+  .banner{border:1px solid var(--line2);border-left:4px solid var(--warn);background:var(--card2);border-radius:9px;padding:10px 13px;margin:10px 0 2px}
+  .banner h3{margin:0 0 5px;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--warn)}
+  .banner ul{margin:4px 0 0;padding-left:17px;font-size:11.5px;color:var(--muted);line-height:1.6}
+  .banner li{margin:3px 0}
+  /* quantile fan */
+  .fanrow{padding:12px 12px 6px}
+  .fanhd{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .fanhd .nm{font-size:13px;font-weight:680}
+  .fanhd .md{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .fan{position:relative;height:44px;margin:4px 0 2px}
+  .fan .band{position:absolute;top:12px;height:20px;border-radius:4px}
+  .fan .b90{background:var(--fan3)}
+  .fan .b80{background:var(--fan3)}
+  .fan .b50{background:var(--fan2)}
+  .fan .med{position:absolute;top:6px;width:2px;height:32px;background:var(--fan);border-radius:2px}
+  .fan .tick{position:absolute;top:34px;font-size:9.5px;color:var(--dim);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .fan .medlab{position:absolute;top:-4px;font-size:11px;font-weight:700;color:var(--fan);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+  /* a fan whose range crosses zero gets the zero line, because the sign change is the finding */
+  .fan .zero{position:absolute;top:8px;width:1px;height:28px;background:var(--line2)}
+  .fan .zerolab{position:absolute;top:34px;font-size:9.5px;color:var(--dim);transform:translateX(-50%);white-space:nowrap}
+  /* the figure THIS page published, marked on the record it came from */
+  .fan .mark{position:absolute;top:4px;width:2px;height:36px;background:var(--warn);border-radius:2px}
+  .fan .marklab{position:absolute;top:-4px;font-size:10.5px;font-weight:700;color:var(--warn);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .width{display:inline-block;font-size:10.5px;font-weight:660;padding:1px 9px;border-radius:999px;background:var(--chip);color:var(--muted);font-variant-numeric:tabular-nums}
+  .qtab{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:10px}
+  .qtab span{display:inline-block;margin-right:14px}
+  .qtab b{color:var(--ink);font-weight:640}
+  /* tables */
+  table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+  th,td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;vertical-align:middle}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;background:var(--card2)}
+  td.nm{font-weight:660;text-align:left}
+  tr.grp th{background:var(--card2);color:var(--muted);font-size:9.5px;text-align:center;border-bottom:1px solid var(--line2)}
+  tr.grp th.g1{color:var(--acc)}
+  .chip{display:inline-block;font-size:10px;font-weight:660;padding:1px 7px;border-radius:999px;background:var(--chip);color:var(--muted);white-space:nowrap}
+  .chip.guess{background:rgba(154,103,0,.14);color:var(--warn)}
+  .chip.thin{background:rgba(198,40,40,.11);color:var(--bad)}
+  .chip.unk{background:var(--chip);color:var(--dim);font-style:italic}
+  .chip.up{background:rgba(180,83,10,.12);color:var(--up)}
+  .chip.down{background:rgba(47,111,237,.12);color:var(--down)}
+  .unk{color:var(--dim);font-style:italic;font-size:11.5px}
+  /* draft disagreement */
+  .dd .row{display:grid;grid-template-columns:minmax(130px,1.3fr) 1fr minmax(120px,auto);gap:10px;align-items:center;padding:5px 12px;border-bottom:1px solid var(--line)}
+  .dd .row:last-child{border-bottom:none}
+  .dd .who{font-weight:660;font-size:12.5px;overflow:hidden;text-overflow:ellipsis}
+  .dd .who i{display:block;font-style:normal;font-size:10px;color:var(--muted);font-weight:500}
+  .dd .track{position:relative;height:16px;background:linear-gradient(to right,var(--line) 0,var(--line) 100%);background-size:100% 1px;background-repeat:no-repeat;background-position:center}
+  .dd .track .zero{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line2)}
+  .dd .track .bar{position:absolute;top:3px;height:10px;border-radius:3px}
+  .dd .track .bar.up{background:var(--up)}
+  .dd .track .bar.down{background:var(--down)}
+  .dd .val{font-size:11.5px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .dd .val b{color:var(--ink)}
+  .ddkey{display:flex;gap:16px;flex-wrap:wrap;font-size:10.5px;color:var(--muted);padding:8px 12px 0}
+  .hl{font-size:16px;font-weight:720;line-height:1.35;margin-bottom:6px}
+  .hlp{font-size:12px;color:var(--muted);line-height:1.6;margin-top:6px}
+  /* fun cards */
+  .fun{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+  .fcard{border:1px solid var(--line);border-radius:9px;background:var(--card);padding:10px 12px}
+  .fcard .ft{font-size:12.5px;font-weight:680;margin-bottom:4px}
+  .fcard .fx{font-size:11.5px;color:var(--muted);line-height:1.55}
+  /* assumptions */
+  .asm{margin:0;padding-left:18px;font-size:12px;color:var(--muted);line-height:1.65}
+  .asm li{margin:5px 0}
+  .asm b{color:var(--ink);font-weight:640}
+  /* method blocks are ALWAYS OPEN: never a click, never a disclosure widget */
+  .method{margin-top:16px;border:1px solid var(--line);border-radius:9px;background:var(--card2);overflow:hidden}
+  .method .method-hd{padding:9px 12px;font-size:12px;font-weight:640;color:var(--muted)}
+  .method .method-body{padding:2px 14px 12px;font-size:11.5px;color:var(--muted);line-height:1.65}
+  .method .method-body li{margin:4px 0}
+  /* player props */
+  .propctl{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:9px 12px 3px}
+  .propctl .lbl{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin-right:3px}
+  .mbtn{font:inherit;font-size:11.5px;cursor:pointer;border:1px solid var(--line2);background:var(--card2);
+    color:var(--acc);padding:3px 10px;border-radius:999px;line-height:1.5}
+  .mbtn.on{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:640}
+  .clr{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px}
+  .odd{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .odd small{color:var(--dim);font-size:10px}
+  .psrch{font:inherit;font-size:11.5px;border:1px solid var(--line2);background:var(--card2);
+    color:var(--ink);padding:3px 9px;border-radius:999px;min-width:150px;margin-left:6px}
+  /* the flat, fully-expanded ladder — nothing behind a click */
+  .fxh{font-size:11.5px;font-weight:680;color:var(--muted);padding:8px 12px 4px;
+    text-transform:uppercase;letter-spacing:.03em}
+  table.fmv{font-size:12px;font-variant-numeric:tabular-nums}
+  table.fmv th,table.fmv td{padding:3px 8px;white-space:nowrap}
+  table.fmv thead th{position:sticky;top:0;background:var(--card2);z-index:2}
+  td.fmvc{font-weight:700;font-variant-numeric:tabular-nums}
+  .lft{text-align:left!important}
+  .dimc{color:var(--dim)}
+  .jump{display:flex;flex-wrap:wrap;gap:4px 10px;padding:8px 12px;border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);font-size:11px}
+  .jump .lbl{color:var(--dim);text-transform:uppercase;letter-spacing:.04em;font-size:10px}
+  a.jl{color:var(--acc);text-decoration:none}
+  a.jl:hover{text-decoration:underline}
+  .plblk{border-top:1px solid var(--line);padding-bottom:6px;scroll-margin-top:8px}
+  .plhd{padding:9px 12px 4px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+  .plhd .pln{font-size:14px;font-weight:700}
+  .plhd .plsub{font-size:11px;color:var(--dim)}
+  table.lad{font-size:11.5px;font-variant-numeric:tabular-nums}
+  table.lad th,table.lad td{padding:1px 8px;white-space:nowrap;line-height:1.5}
+  table.lad thead th{position:sticky;top:0;background:var(--card2);z-index:1}
+  table.lad tr.mstart td{border-top:1px solid var(--line)}
+  table.lad tr.key td{background:rgba(120,160,255,.13);font-weight:660}
+  td.lnc{font-weight:700}
+  .pdfbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px 2px}
+  .pdfbtn{display:inline-block;font:inherit;font-size:12px;font-weight:660;text-decoration:none;
+    background:var(--acc);color:#fff;padding:5px 13px;border-radius:999px;border:0;cursor:pointer}
+  table.flat tr[id]{scroll-margin-top:44px}
+  .pdfnote{font-size:10.5px;color:var(--dim)}
+  .propnote{font-size:10.5px;color:var(--dim);padding:0 12px 10px;line-height:1.55}
+  /* ONE FLAT BOOK-CHECK TABLE: one row per offered line, nothing behind a click */
+  table.flat{font-size:11.5px;font-variant-numeric:tabular-nums;width:100%}
+  table.flat th,table.flat td{padding:2px 7px;white-space:nowrap;line-height:1.5}
+  table.flat thead th{position:sticky;top:0;background:var(--card2);z-index:3;
+    border-bottom:1px solid var(--line2);font-size:10.5px;text-transform:uppercase;letter-spacing:.03em}
+  table.flat tr.pstart td{border-top:2px solid var(--line2)}
+  table.flat tr.mstart td{border-top:1px solid var(--line)}
+  table.flat tr.key td{background:rgba(120,160,255,.13);font-weight:660}
+  table.flat td.pl{font-weight:660;text-align:left}
+  table.flat td.met{font-weight:640;text-align:left}
+  table.flat td.fmvc{color:var(--acc);font-weight:700}
+  table.flat td.proj{font-weight:640}
+  .flatwrap{max-width:100%;overflow-x:auto}
+  @media print{
+    @page{size:letter portrait;margin:10mm}
+    html,body{background:#fff!important;color:#000!important}
+    nav,.propctl,.jump,.pdfbar,header .ago,.noprint{display:none!important}
+    .card,.banner,.method{border:1px solid #999!important;background:#fff!important;
+      box-shadow:none!important;break-inside:auto}
+    .flatwrap,.scroll{overflow:visible!important}
+    table.flat{font-size:8pt;width:100%}
+    table.flat thead{display:table-header-group}
+    table.flat tr{break-inside:avoid;page-break-inside:avoid}
+    table.flat thead th{position:static;background:#eee!important;color:#000!important;border-bottom:1px solid #000}
+    table.flat td,table.flat th{padding:1px 4px;color:#000!important}
+    table.flat tr.key td{background:#e8e8e8!important}
+    table.fmv{font-size:8pt}
+    a{color:#000!important;text-decoration:none}
+    .dimc,.propnote,.method,.method-body{color:#333!important}
+  }
+  footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
+</style>
+<link rel="stylesheet" href="./hardwood.css">
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
+<body>
+<header>
+  <h1>The Hardwood — All-Star Game</h1>
+  <span class="ago" id="ago"></span>
+</header>
+<div class="sub" id="sub">Our read on the 2026 All-Star Game. An exhibition is the hardest thing on the calendar to project — so this page shows ranges, not verdicts, and puts every assumption on the face of the output.</div>
+<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="standings.html">Standings &amp; Injuries</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
+<main id="main"><p class="empty">Loading the All-Star read…</p></main>
+<footer id="foot"></footer>
+<script src="./hardwood.js"></script>
+<script>
+(function(){
+  "use strict";
+  var DATA=null;
+
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  function has(v){ return v!==null && v!==undefined && v!==""; }
+  function num(v,d){ if(!has(v) || typeof v!=="number" || !isFinite(v)) return null;
+    return (typeof d==="number") ? v.toFixed(d) : String(v); }
+  function fmt(v,d,dash){ var s=num(v,d); return s===null ? (dash||"—") : s; }
+  function signed(v,d){ var s=num(Math.abs(v),d); if(s===null) return "—"; return (v>0?"+":v<0?"−":"")+s; }
+
+  // UNKNOWN with a stated reason — never a blank cell.
+  function unknown(reason){
+    var s=el("span","unk","UNKNOWN");
+    if(reason){ s.title=String(reason); s.textContent="UNKNOWN — "+reason; }
+    return s;
+  }
+  function unkCell(reason){ var td=el("td"); td.appendChild(unknown(reason)); return td; }
+
+  function section(title){ var h=el("h2",null,title); document.getElementById("main").appendChild(h); return h; }
+  function cardIn(parent,cls){ var c=el("div","card"+(cls?" "+cls:"")); parent.appendChild(c); return c; }
+
+  function naCard(parent,reason){
+    var c=cardIn(parent); var p=el("div","pad");
+    p.appendChild(unknown(reason || "this input did not reach the page"));
+    c.appendChild(p); return c;
+  }
+
+  // ---- quantile helpers -------------------------------------------------- //
+  // Accepts either {p5:..,p50:..} or [{q:5,v:..},..]; returns a sorted [{q,v}].
+  function qlist(src){
+    if(!src) return [];
+    var out=[];
+    if(Array.isArray(src)){
+      src.forEach(function(o){
+        if(!o) return;
+        var q=(o.q!==undefined?o.q:(o.quantile!==undefined?o.quantile:o.p));
+        var v=(o.v!==undefined?o.v:(o.value!==undefined?o.value:o.points));
+        if(typeof q==="number" && typeof v==="number") out.push({q:q<=1?q*100:q, v:v});
+      });
+    } else if(typeof src==="object"){
+      Object.keys(src).forEach(function(k){
+        var m=/^[pq]?(\d+(?:\.\d+)?)$/.exec(String(k));
+        var v=src[k];
+        if(m && typeof v==="number"){ var q=parseFloat(m[1]); out.push({q:q<=1?q*100:q, v:v}); }
+      });
+    }
+    out.sort(function(a,b){ return a.q-b.q; });
+    return out;
+  }
+  function pick(qs,q){ for(var i=0;i<qs.length;i++){ if(Math.abs(qs[i].q-q)<0.51) return qs[i].v; } return null; }
+
+  // A distribution is drawn as a fan: the 5-95 and 25-75 bands with the median tick.
+  // The WIDTH is the finding, so it is labelled explicitly.
+  function fanBlock(parent, opts){
+    var qs=opts.quantiles||[];
+    if(qs.length<2){ naCard(parent, opts.reason || "no distribution was published for this line"); return; }
+    var lo=qs[0].v, hi=qs[qs.length-1].v;
+    var p5=pick(qs,5), p10=pick(qs,10), p25=pick(qs,25), p50=pick(qs,50),
+        p75=pick(qs,75), p90=pick(qs,90), p95=pick(qs,95);
+    var med = (p50!==null?p50:qs[Math.floor(qs.length/2)].v);
+    var span=(hi-lo)||1;
+    var padF=0.06;
+    var aLo=lo-span*padF, aHi=hi+span*padF, aSpan=(aHi-aLo)||1;
+    function pct(v){ return ((v-aLo)/aSpan)*100; }
+
+    var wrap=el("div","fanrow");
+    var hd=el("div","fanhd");
+    hd.appendChild(el("div","nm",opts.title||""));
+    var outer = (p5!==null && p95!==null) ? (p95-p5) : (hi-lo);
+    var wlab=el("span","width","90% range spans "+fmt(outer,opts.dec===undefined?0:opts.dec)+" "+(opts.units||"points"));
+    hd.appendChild(wlab);
+    wrap.appendChild(hd);
+
+    var fan=el("div","fan");
+    function band(a,b,cls){
+      if(a===null||b===null) return;
+      var d=el("i",null); d=el("div","band "+cls);
+      d.style.left=pct(a)+"%"; d.style.width=Math.max(0.4,(pct(b)-pct(a)))+"%";
+      fan.appendChild(d);
+    }
+    band(p5!==null?p5:lo, p95!==null?p95:hi, "b90");
+    band(p10,p90,"b80");
+    band(p25,p75,"b50");
+    // Zero line — drawn ONLY when the drawn range actually straddles zero, so it can
+    // never imply a sign change the record does not contain.
+    if(opts.zero && aLo<0 && aHi>0){
+      var z=el("div","zero"); z.style.left=pct(0)+"%"; fan.appendChild(z);
+      if(has(opts.zero_label)){ var zl=el("div","zerolab",String(opts.zero_label)); zl.style.left=pct(0)+"%"; fan.appendChild(zl); }
+    }
+    var m=el("div","med"); m.style.left=pct(med)+"%"; fan.appendChild(m);
+    var ml=el("div","medlab",fmt(med,opts.dec===undefined?0:opts.dec)); ml.style.left=pct(med)+"%"; fan.appendChild(ml);
+    // Optional marker for a SEPARATE figure read against this record. Omitted outright
+    // when it falls off the drawn axis — a clamped marker would place it at a value it
+    // does not hold, which is worse than not drawing it.
+    if(opts.marker && typeof opts.marker.v==="number" && isFinite(opts.marker.v)
+       && opts.marker.v>=aLo && opts.marker.v<=aHi){
+      var mk=el("div","mark"); mk.style.left=pct(opts.marker.v)+"%"; fan.appendChild(mk);
+      if(has(opts.marker.label)){
+        var mkl=el("div","marklab",String(opts.marker.label)); mkl.style.left=pct(opts.marker.v)+"%"; fan.appendChild(mkl);
+      }
+    }
+    [[p5,"5th"],[p95,"95th"]].forEach(function(pr){
+      if(pr[0]===null) return;
+      var t=el("div","tick",fmt(pr[0],opts.dec===undefined?0:opts.dec)); t.style.left=pct(pr[0])+"%"; fan.appendChild(t);
+    });
+    wrap.appendChild(fan);
+
+    var qt=el("div","qtab");
+    qs.forEach(function(o){
+      var s=el("span"); s.appendChild(el("i",null,""));
+      s.textContent="";
+      var lab=el("span"); lab.textContent="";
+      s.appendChild(document.createTextNode(o.q+"th "));
+      var b=el("b",null,fmt(o.v,opts.dec===undefined?0:opts.dec)); s.appendChild(b);
+      qt.appendChild(s);
+    });
+    wrap.appendChild(qt);
+    if(opts.note) wrap.appendChild(el("div","note",opts.note));
+    if(opts.reference){ var r=el("div","ref"); r.appendChild(el("b",null,"Source: ")); r.appendChild(document.createTextNode(opts.reference)); wrap.appendChild(r); }
+    parent.appendChild(wrap);
+  }
+
+  // ---- sections ---------------------------------------------------------- //
+  function renderEvent(main){
+    var ev=DATA.event||{};
+    var c=cardIn(main); var p=el("div","pad event");
+    function item(v,l,reason){
+      var d=el("div","ei");
+      if(has(v)) d.appendChild(el("b",null,String(v)));
+      else { var b=el("b"); b.appendChild(unknown(reason)); d.appendChild(b); }
+      d.appendChild(el("span",null,l)); p.appendChild(d);
+    }
+    item(ev.title,"Event","event name not published to this page");
+    // A PLAYED game has a score, not a tip time. The tip time only renders while the
+    // bake carries no result — once it does, showing a future tip is the defect.
+    if(has(ev.final_score)){
+      item(ev.final_score,"Final score");
+      if(has(ev.played)) item(ev.played,"Played");
+    } else {
+      item(ev.tipoff,"Tip-off","tip time not published to this page");
+    }
+    item(ev.venue,"Venue","venue not published to this page");
+    item(ev.broadcast,"Broadcast","broadcast not published to this page");
+    if(has(ev.format)) item(ev.format,"Format");
+    c.appendChild(p);
+    if(has(ev.note)) { var n=el("div","pad"); n.appendChild(el("div","note",ev.note)); c.appendChild(n); }
+  }
+
+  // THE GAME IS OVER, so the result leads. This renders FIRST — above the correction, the
+  // headline and every distribution — because the page's whole job changed the moment the
+  // final buzzer went: it is now a record of what we said and what happened, not a forecast.
+  // Renders only when the bake carries a graded result, so an unplayed game degrades to the
+  // pre-game read rather than showing an empty score.
+  function renderResult(main){
+    var r=DATA.result;
+    if(!r || !has(r.headline)) return;
+    var b=el("div","final");
+    b.appendChild(el("span","tag",r.label||"Final"));
+    b.appendChild(el("div","score",String(r.headline)));
+    if(has(r.played)) b.appendChild(el("div","when",String(r.played)));
+    (r.lines||[]).forEach(function(t){ if(has(t)) b.appendChild(el("p",null,String(t))); });
+    if(has(r.reference)){ var rf=el("div","ref"); rf.appendChild(el("b",null,"Basis: ")); rf.appendChild(document.createTextNode(r.reference)); b.appendChild(rf); }
+    main.appendChild(b);
+  }
+
+  // A retracted finding is announced, never quietly deleted. This sits above the
+  // read-me banner so nobody can reach the affected cards without passing it, and it
+  // renders only when the bake actually carries a correction.
+  function renderRetraction(main){
+    var r=DATA.retraction;
+    if(!r || (!has(r.headline) && !(r.lines&&r.lines.length))) return;
+    var b=el("div","retract");
+    b.appendChild(el("span","tag","Correction"));
+    if(has(r.headline)) b.appendChild(el("h3",null,r.headline));
+    (r.lines||[]).forEach(function(t){ if(has(t)) b.appendChild(el("p",null,String(t))); });
+    if(has(r.reference)){ var rf=el("div","ref"); rf.appendChild(el("b",null,"Basis: ")); rf.appendChild(document.createTextNode(r.reference)); b.appendChild(rf); }
+    main.appendChild(b);
+  }
+
+  function renderBanner(main){
+    var b=el("div","banner");
+    b.appendChild(el("h3",null,"How to read this page"));
+    var ul=el("ul");
+    var lines=(DATA.read_me && DATA.read_me.length) ? DATA.read_me : [
+      // The FIRST thing a reader is told once the game is played: everything below the
+      // result is the pre-game read, kept as published rather than re-run against the
+      // outcome. Drops back to the pure pre-game wording if a bake carries no result.
+      (DATA.result && has(DATA.result.headline))
+        ? "The game has been PLAYED. The result is at the top of this page; everything below it is the read we published beforehand, kept exactly as published and not re-run against the outcome."
+        : "Everything below is a projection of a game that has not been played yet.",
+      "Everything here is a RANGE. The width of the range is the finding — a narrow number for an exhibition would be a bug, not skill.",
+      "The sample is thin: roughly 25 All-Star Games exist, and the format has changed repeatedly, so the effective sample inside any one format is single digits.",
+      "Player ratings were fit on regular-season basketball and are being applied OUTSIDE that regime. Treat every player line as directional.",
+      "Chemistry is neutralized outright — these are drafted teams with no shared history, so any chemistry term would be noise dressed as signal.",
+      "No bet, no pick, no edge. This is a projection audit for an exhibition, not a directional call."
+    ];
+    lines.forEach(function(t){ ul.appendChild(el("li",null,t)); });
+    b.appendChild(ul);
+    main.appendChild(b);
+  }
+
+  function renderTotal(main){
+    // Titled by whether the game has been played. Presenting a beaten projection under a
+    // live-sounding heading is the thing that made this page lie.
+    section(has((DATA.result||{}).headline)
+      ? "Total points — the range we published before the game"
+      : "Total points — the whole distribution");
+    var t=DATA.total||{};
+    var c=cardIn(main);
+    var qs=qlist(t.quantiles);
+    if(!qs.length){ var p=el("div","pad"); p.appendChild(unknown(t.unavailable_reason || "the total-points distribution was not produced in time for tip-off")); c.appendChild(p); return; }
+    // The post-game line goes ABOVE the chart, so the actual is read before the median.
+    if(has(t.postgame)){ var pg=el("div","pad"); pg.appendChild(el("div","note",String(t.postgame))); c.appendChild(pg); }
+    fanBlock(c,{title:t.label||"Combined final score",quantiles:qs,units:"points",dec:0,
+      note:t.note||"The bands are the 5-95, 10-90 and 25-75 intervals; the tick is the median. Read the band, not the tick.",
+      reference:t.reference});
+  }
+
+  function renderPace(main){
+    section("Pace — the exhibition multiplier");
+    var pc=DATA.pace||{};
+    if(pc.stale_input===true && has(pc.stale_note)){
+      var sb=el("div","banner");
+      sb.appendChild(el("h3",null,"Superseded input — read this before the pace line"));
+      sb.appendChild(el("div","fx",pc.stale_note));
+      main.appendChild(sb);
+    }
+    var c=cardIn(main); var p=el("div","pad");
+    if(!has(pc.multiplier) && !has(pc.lo)){
+      p.appendChild(unknown(pc.unavailable_reason || "the pace multiplier was not produced in time for tip-off"));
+      c.appendChild(p); return;
+    }
+    var g=el("div","event");
+    function it(v,l,reason,d){
+      var e=el("div","ei"); var b=el("b");
+      if(has(v) && typeof v==="number") b.textContent=fmt(v,d===undefined?2:d);
+      else if(has(v)) b.textContent=String(v);
+      else b.appendChild(unknown(reason));
+      e.appendChild(b); e.appendChild(el("span",null,l)); g.appendChild(e);
+    }
+    it(pc.multiplier,"Pace vs league average","not estimated",2);
+    if(has(pc.lo)&&has(pc.hi)){
+      var e=el("div","ei"); e.appendChild(el("b",null,fmt(pc.lo,3)+" to "+fmt(pc.hi,3)));
+      e.appendChild(el("span",null,"Interval")); g.appendChild(e);
+    } else {
+      var e2=el("div","ei"); var b2=el("b");
+      b2.appendChild(unknown(pc.interval_reason||"an interval for this multiplier was not established"));
+      e2.appendChild(b2); e2.appendChild(el("span",null,"Interval")); g.appendChild(e2);
+    }
+    it(pc.league_pace,"League pace this season","league pace not published to this page",1);
+    it(pc.n_games,"All-Star games in the sample","sample size not published",0);
+    p.appendChild(g);
+    if(has(pc.projected_pace)){
+      var pp=el("div","note");
+      var txt="That works out to about "+fmt(pc.projected_pace,1)+" possessions per 40 minutes";
+      if(has(pc.projected_pace_lo)&&has(pc.projected_pace_hi))
+        txt+=", with a range of "+fmt(pc.projected_pace_lo,1)+" to "+fmt(pc.projected_pace_hi,1);
+      txt+=".";
+      if(has(pc.n_basis)) txt+=" Measured on "+pc.n_basis+" format-matched games"+(has(pc.df)?" ("+pc.df+" degrees of freedom)":"")+".";
+      pp.textContent=txt; p.appendChild(pp);
+    }
+    var wt=pc.why_tighter;
+    if(wt && (has(wt.plain)||has(wt.finding))){
+      var wb=el("div","banner");
+      wb.appendChild(el("h3",null,"Why the pace band is tighter than the total band"));
+      if(has(wt.finding)) wb.appendChild(el("div","fx",wt.finding));
+      if(has(wt.plain)) wb.appendChild(el("div","hlp",wt.plain));
+      var wl=el("ul");
+      if(has(wt.share_of_total_variance_from_efficiency))
+        wl.appendChild(el("li",null,"Share of the total-points uncertainty coming from how EFFICIENT the game is: "+Math.round(wt.share_of_total_variance_from_efficiency*100)+"%."));
+      if(has(wt.share_of_total_variance_from_pace))
+        wl.appendChild(el("li",null,"Share coming from how FAST it is: "+Math.round(wt.share_of_total_variance_from_pace*100)+"%."));
+      if(has(wt.pace_cv)&&has(wt.efficiency_cv))
+        wl.appendChild(el("li",null,"Pace varies far less game to game than efficiency does ("+fmt(wt.pace_cv,4)+" against "+fmt(wt.efficiency_cv,4)+" on the same scale)."));
+      if(wl.childNodes.length) wb.appendChild(wl);
+      p.appendChild(wb);
+    }
+    if(has(pc.method)) p.appendChild(el("div","note",pc.method));
+    if(has(pc.note)) p.appendChild(el("div","note",pc.note));
+    if(has(pc.reference)){ var r=el("div","ref"); r.appendChild(el("b",null,"Source: ")); r.appendChild(document.createTextNode(pc.reference)); p.appendChild(r); }
+    c.appendChild(p);
+  }
+
+  function renderTeams(main){
+    section("Each side's score — as a distribution");
+    var teams=DATA.teams||[];
+    var c=cardIn(main);
+    if(!teams.length){ var p=el("div","pad"); p.appendChild(unknown((DATA.teams_unavailable_reason)||"per-team score distributions were not produced in time for tip-off")); c.appendChild(p); return; }
+    teams.forEach(function(t,i){
+      var qs=qlist(t.quantiles);
+      var title=(t.name||("Team "+(i+1)))+(has(t.captain)?" · drafted by "+t.captain:"");
+      fanBlock(c,{title:title,quantiles:qs,units:"points",dec:0,note:t.note,reference:t.reference,
+        reason:t.unavailable_reason||"no score distribution was published for this side"});
+    });
+    if(has(DATA.teams_note)){ var n=el("div","pad"); n.appendChild(el("div","note",DATA.teams_note)); c.appendChild(n); }
+  }
+
+  function renderRules(main){
+    section("Rule and format effects — one line, one uncertainty, each");
+    var rows=DATA.rules||[];
+    var c=cardIn(main);
+    if(!rows.length){ var p=el("div","pad"); p.appendChild(unknown((DATA.rules_unavailable_reason)||"the named rule-adjustment list was not produced in time for tip-off")); c.appendChild(p); return; }
+    var sc=el("div","scroll"); var tb=el("table");
+    var thead=el("thead"); var tr=el("tr");
+    ["Effect","Direction","Size","Uncertainty","Basis"].forEach(function(h){ tr.appendChild(el("th",null,h)); });
+    thead.appendChild(tr); tb.appendChild(thead);
+    var tbody=el("tbody");
+    rows.forEach(function(r){
+      var t=el("tr");
+      var nmc=el("td","nm");
+      nmc.appendChild(document.createTextNode(r.name||"Unnamed effect"));
+      if(r.is_guess===true){ nmc.appendChild(document.createTextNode(" ")); nmc.appendChild(el("span","chip guess","GUESS")); }
+      t.appendChild(nmc);
+      var d=el("td");
+      if(has(r.direction)){
+        var dir=String(r.direction).toLowerCase();
+        var cls=(dir.indexOf("up")>=0||dir.indexOf("more")>=0||dir.indexOf("+")>=0||dir.indexOf("faster")>=0||dir.indexOf("rais")>=0)?"up":
+                (dir.indexOf("down")>=0||dir.indexOf("less")>=0||dir.indexOf("-")>=0||dir.indexOf("slow")>=0||dir.indexOf("lower")>=0)?"down":"";
+        d.appendChild(el("span","chip"+(cls?" "+cls:""),String(r.direction)));
+      } else d.appendChild(unknown("direction not stated"));
+      t.appendChild(d);
+      var m=el("td");
+      if(has(r.magnitude)){
+        m.textContent=(typeof r.magnitude==="number"?signed(r.magnitude,1):String(r.magnitude))+(has(r.units)?" "+r.units:"");
+      } else m.appendChild(unknown(r.magnitude_reason||"no comparable regime in the history, so no size is estimable"));
+      t.appendChild(m);
+      var u=el("td");
+      if(has(r.uncertainty)) u.textContent=(typeof r.uncertainty==="number"?"±"+fmt(r.uncertainty,1):String(r.uncertainty));
+      else u.appendChild(unknown("uncertainty not stated"));
+      t.appendChild(u);
+      var b=el("td"); b.style.textAlign="left"; b.style.whiteSpace="normal";
+      b.textContent = has(r.basis)?String(r.basis):(has(r.note)?String(r.note):"");
+      if(!b.textContent){ b.textContent=""; b.appendChild(unknown("basis not stated")); }
+      t.appendChild(b);
+      tbody.appendChild(t);
+    });
+    tb.appendChild(tbody); sc.appendChild(tb); c.appendChild(sc);
+    var n=el("div","pad");
+    n.appendChild(el("div","note",DATA.rules_note||"Each effect carries its own direction, size and uncertainty and is never silently folded into a single number. Anything tagged GUESS has no historical comparable — the direction is a judgement, the size is not estimable."));
+    c.appendChild(n);
+  }
+
+  function renderDraftDisagreement(main){
+    section("Where the draft order disagrees most with our ratings");
+    var dd=DATA.draft_disagreement||{};
+    var rows=dd.rows||[];
+    var c=cardIn(main,"dd");
+    if(!rows.length){ var p=el("div","pad"); p.appendChild(unknown(dd.unavailable_reason||"the draft order or the player ratings did not reach this page in time for tip-off")); c.appendChild(p); return; }
+    var lede=el("div","pad");
+    lede.appendChild(el("div","note",dd.lede||"For every All-Star we compare where they went in the draft to where our impact rating would have taken them. A bar to the right means we rate the player higher than the draft did; to the left means the draft took them higher than we would have."));
+    c.appendChild(lede);
+    var maxAbs=1;
+    rows.forEach(function(r){ var d=(typeof r.delta==="number")?Math.abs(r.delta):0; if(d>maxAbs) maxAbs=d; });
+    rows.forEach(function(r){
+      var row=el("div","row");
+      var who=el("div","who"); who.appendChild(document.createTextNode(r.player||"Unnamed"));
+      var sub=el("i");
+      var bits=[];
+      if(has(r.team)) bits.push(String(r.team));
+      if(typeof r.draft_pick==="number") bits.push("pick "+r.draft_pick);
+      if(typeof r.our_rank==="number") bits.push("our rank "+r.our_rank);
+      sub.textContent=bits.join(" · ");
+      who.appendChild(sub); row.appendChild(who);
+      var tr=el("div","track"); tr.appendChild(el("div","zero"));
+      if(typeof r.delta==="number" && isFinite(r.delta)){
+        var w=(Math.abs(r.delta)/maxAbs)*48;
+        var bar=el("div","bar "+(r.delta>0?"up":"down"));
+        if(r.delta>0){ bar.style.left="50%"; } else { bar.style.left=(50-w)+"%"; }
+        bar.style.width=Math.max(0.6,w)+"%";
+        tr.appendChild(bar);
+      }
+      row.appendChild(tr);
+      var v=el("div","val");
+      if(typeof r.delta==="number" && isFinite(r.delta)){
+        var b=el("b",null,signed(r.delta,0)+" spots");
+        v.appendChild(b);
+        if(r.sample_flag){ v.appendChild(document.createTextNode(" ")); v.appendChild(el("span","chip thin",String(r.sample_flag))); }
+      } else v.appendChild(unknown("no rank for this player"));
+      row.appendChild(v);
+      c.appendChild(row);
+    });
+    var key=el("div","ddkey");
+    var k1=el("span"); k1.appendChild(el("span","chip up","right")); k1.appendChild(document.createTextNode(" we rate them higher than the draft did"));
+    var k2=el("span"); k2.appendChild(el("span","chip down","left")); k2.appendChild(document.createTextNode(" the draft took them higher than we would have"));
+    key.appendChild(k1); key.appendChild(k2); c.appendChild(key);
+    var n=el("div","pad");
+    n.appendChild(el("div","note",dd.note||"Our rank comes from a regular-season impact rating applied outside the regime it was fit in. Disagreement here is a conversation starter, not a verdict on anybody's draft."));
+    if(has(dd.reference)){ var r2=el("div","ref"); r2.appendChild(el("b",null,"Source: ")); r2.appendChild(document.createTextNode(dd.reference)); n.appendChild(r2); }
+    c.appendChild(n);
+  }
+
+  // ---- what the minute figures are worth ---------------------------------- //
+  // The minutes column publishes ONE figure per role group (as shipped: 18.5 for the ten
+  // starters, 17.9 for the twelve reserves) — 200 team minutes split evenly, then nudged
+  // slightly toward starters. Printed to one decimal it reads like a per-player forecast.
+  // It is not one, so this block says what it is, in the reader's own words.
+  //
+  // WHY THERE IS NO GIVE-OR-TAKE ON EACH ROW — adding one would be a NEW dishonesty:
+  //   * this table places nobody at a particular point in the rotation (all ten starters
+  //     carry the identical figure), so a per-row width would have to invent an ordering
+  //     the projection never made;
+  //   * the fitted width is not one number. Over the All-Star record it is tightest for
+  //     the middle of a rotation and widest at BOTH ends — a little over 1 minute in the
+  //     middle against roughly 3 minutes at either end — so a flat band misdescribes most
+  //     rows;
+  //   * and it would be the wrong size. The measured typical miss on a single player is
+  //     about 4 minutes, larger than the widest end of that fitted shape, so a tight
+  //     symmetric band would understate the real error while looking rigorous.
+  //
+  // Every figure below is MEASURED, not asserted, and RE-MEASURED for this block off the
+  // live All-Star record on 2026-07-30 rather than copied from a report. That re-measure
+  // mattered: two bases are in circulation, because the historical starter flag went
+  // 478 -> 500 non-null when the 2026 rows were backfilled mid-lane, taking the record from
+  // 42 team rotations to 44. The live table reads 500 of 500 flagged, so the 44-rotation
+  // basis is the one these sentences describe:
+  //   * fitted minute shape, 44 team rotations — busiest place averages 25.1 minutes,
+  //     least-used 10.4; the width is 1.0-1.1 minutes mid-rotation against 3.2 at either end;
+  //   * fitted starter-versus-reserve gap — mean 4.44 minutes, spread of outcomes 4.36,
+  //     swing -6.76 to +11.81, reserves ahead in 7 of the 44, and only 2 of those 7 by as
+  //     much as two minutes (the other five are near-ties, so "7 flips" alone would overstate
+  //     how often the order truly reverses);
+  //   * held-out per-player minute error — about 3.9 minutes.
+  // The per-table sentences are DERIVED from the payload's own rows so they cannot go stale
+  // if the minute split ever changes, and MINUTES_FACTS is overridable from
+  // players.minutes_trust — same payload-or-fallback pattern as renderBanner.
+  //
+  // TENSE: the 2026 game has been PLAYED (2026-07-25). This is a retrospective surface plus a
+  // method that gets reused at the next All-Star Game, so nothing here promises a coming game.
+  var MINUTES_TYPICAL_MISS = 4;
+  var MINUTES_FACTS = [
+    "Real All-Star rotations are nowhere near that even. Across the 44 team rotations on record the busiest player on a side has averaged about 25 minutes and the least-used about 10. Everyone here was handed the middle because the projection had no way of knowing who the coaches would lean on — not because the minutes were expected to be shared out equally.",
+    "Starters have out-played reserves by about four and a half minutes on average, but the edge swings hard: it has run as far as nearly seven minutes the other way and as far as nearly twelve minutes the expected way. In 7 of those 44 rotations the reserves played more — though five of those seven were near-ties of under two minutes, and only two were real reversals.",
+    "This year's game, now played, is the plainest illustration. One side's five starters played 28, 25, 23, 23 and 22 minutes; the other side's five played 24, 21, 18, 14 and 5. Aliyah Boston started and played 5 minutes, while Marina Mabrey came off the bench and played 21. That game sits inside the record these figures are fitted on, so read it as an illustration and not as a test we passed.",
+    "We do not print a give-or-take on each row, and it would flatter us to. The miss is smallest in the middle of a rotation and largest at both ends, this table puts nobody at either end, and even the direction of the starter edge is unreliable — one tidy figure on every row would claim more than we know."
+  ];
+
+  // Distinct published minute figures, largest first, with how many rows share each.
+  // Rows without a number contribute nothing — they are never counted or filled in.
+  function minuteGroups(rows){
+    var idx={}, out=[];
+    (rows||[]).forEach(function(r){
+      var v=r&&r.proj_minutes;
+      if(typeof v!=="number"||!isFinite(v)) return;
+      var k=v.toFixed(1);
+      if(!(k in idx)){ idx[k]=out.length; out.push({v:Number(k),n:0}); }
+      out[idx[k]].n++;
+    });
+    out.sort(function(a,b){ return b.v-a.v; });
+    return out;
+  }
+
+  function minutesTrustLines(rows, override){
+    var g=minuteGroups(rows);
+    if(!g.length) return [];   // nothing published -> nothing claimed about it
+    var total=0; g.forEach(function(x){ total+=x.n; });
+    var spread=g[0].v-g[g.length-1].v;
+    var lines=[];
+    if(g.length===1){
+      lines.push("All "+total+" players here are given the identical "+g[0].v.toFixed(1)
+        +" minutes — one figure shared out, not "+total+" separate projections.");
+    } else {
+      var parts=g.map(function(x){ return x.v.toFixed(1)+" for "+x.n+" of them"; });
+      lines.push("The "+total+" players here are given only "+(g.length===2?"two":String(g.length))
+        +" different minute figures — "+(parts.length===2?parts[0]+" and "+parts[1]:parts.join(", "))
+        +". Top to bottom this table spreads "+spread.toFixed(1)+" minutes.");
+    }
+    var miss="Read one line as a placeholder rather than a forecast: our typical miss on a "
+      +"single player's minutes, on games kept out of the fit, is about "+MINUTES_TYPICAL_MISS+" minutes";
+    // The "N times the spread" clause is only earned when the miss really does dwarf the
+    // spread. If the table ever publishes a wider split than our own error, the comparison
+    // is dropped rather than rounded into a claim ("roughly 0 times" would be nonsense).
+    var ratio=(spread>=0.05) ? (MINUTES_TYPICAL_MISS/spread) : null;
+    lines.push(ratio===null ? miss+", and this table shows no spread at all."
+      : (ratio>=1.5 ? miss+" — roughly "+Math.round(ratio)+" times the entire spread this table shows."
+                    : miss+"."));
+    var facts=(override&&override.length)?override:MINUTES_FACTS;
+    facts.forEach(function(t){ if(has(t)) lines.push(String(t)); });
+    return lines;
+  }
+
+  function minutesTrustBlock(parent, rows, override){
+    var lines=minutesTrustLines(rows, override);
+    if(!lines.length) return null;
+    var b=el("div","banner");
+    b.appendChild(el("h3",null,"What these minute figures are worth"));
+    var ul=el("ul");
+    lines.forEach(function(t){ ul.appendChild(el("li",null,t)); });
+    b.appendChild(ul);
+    parent.appendChild(b);
+    return b;
+  }
+
+  // ---- the pooled gap, DRAWN rather than only described -------------------- //
+  // The block above says in words that the starter edge swings hard. This DRAWS it,
+  // in this page's own fan — the same widget the total-points distribution uses —
+  // because the page's stated dialect is that everything on it is a range, and the
+  // gap was the last quantity on the surface living only in a sentence.
+  //
+  // WHAT IS DRAWN IS THE POOLED GAP, ONE READING PER TEAM ROTATION. It is NOT a
+  // per-player give-or-take and no row gains one: that refusal is unchanged, for the
+  // reasons written above, and is locked down by tests/test_allstar_minutes_honesty.js.
+  // Reading a table-level record is a different claim from pinning a width on a row.
+  //
+  // The distribution is READ from the payload and never computed here. What IS derived
+  // is the comparison against this table's own published split — derived precisely so
+  // it cannot go stale if the split ever changes, the same discipline as the sentences
+  // above. No payload -> nothing is drawn and the words stand alone (omit-not-invent).
+  function minutesGapFan(parent, gap, rows){
+    if(!gap || !gap.quantiles) return null;
+    var qs=qlist(gap.quantiles);
+    if(qs.length<2) return null;
+    var g=minuteGroups(rows);
+    if(!g.length) return null;              // nothing published -> nothing to read it against
+    var spread=g[0].v-g[g.length-1].v;
+    var samp=(gap.sample||[]).filter(function(v){ return typeof v==="number"&&isFinite(v); });
+    var lines=[];
+    if(has(gap.note)) lines.push(String(gap.note));
+    if(samp.length){
+      var wider=samp.filter(function(v){ return v>spread; }).length;
+      lines.push(spread<0.05
+        ? ("This table hands every player the same figure, so the gap it publishes is none at all — "
+           +"and in "+wider+" of these "+samp.length+" rotations the starters finished ahead.")
+        : (wider+" of these "+samp.length+" rotations finished further ahead than the "
+           +spread.toFixed(1)+" minutes this table publishes."));
+    }
+    lines.push("The published split is one flat figure handed to everyone in a role, not a "
+      +"forecast of any single night. Read it against the width of this record, not as a point on it.");
+    var c=cardIn(parent);
+    fanBlock(c,{title:gap.label||"How far ahead starters actually finish",
+      quantiles:qs, units:gap.units||"minutes", dec:1,
+      zero:true, zero_label:"even split",
+      marker:{v:spread, label:"published "+spread.toFixed(1)},
+      note:lines.join(" "), reference:gap.reference});
+    return c;
+  }
+
+  function renderPlayers(main){
+    section("The players — impact first, counting stats last");
+    var pl=DATA.players||{};
+    var rows=pl.rows||[];
+    var c=cardIn(main);
+    if(!rows.length){ var p=el("div","pad"); p.appendChild(unknown(pl.unavailable_reason||"per-player projections were not produced in time for tip-off")); c.appendChild(p); return; }
+    var rateCols=pl.rate_columns||[];
+    var countCols=pl.counting_columns||[];
+    var sc=el("div","scroll"); var tb=el("table");
+    var thead=el("thead");
+    var g=el("tr","grp");
+    var gp=el("th",null,""); gp.colSpan=2; g.appendChild(gp);
+    var g1=el("th","g1","Impact (leads)"); g1.colSpan=2; g.appendChild(g1);
+    if(rateCols.length){ var g2=el("th",null,"Context-adjusted rates"); g2.colSpan=rateCols.length; g.appendChild(g2); }
+    if(countCols.length){ var g3=el("th",null,"Counting (last)"); g3.colSpan=countCols.length; g.appendChild(g3); }
+    thead.appendChild(g);
+    var tr=el("tr");
+    ["Player","Side","Impact","Sample"].forEach(function(h){ tr.appendChild(el("th",null,h)); });
+    rateCols.forEach(function(h){ tr.appendChild(el("th",null,h.label||h.key||"")); });
+    countCols.forEach(function(h){ tr.appendChild(el("th",null,h.label||h.key||"")); });
+    thead.appendChild(tr); tb.appendChild(thead);
+    var tbody=el("tbody");
+    var minShared={};
+    minuteGroups(rows).forEach(function(x){ minShared[x.v.toFixed(1)]=x.n; });
+    rows.forEach(function(r){
+      var t=el("tr");
+      var nmc=el("td","nm"); nmc.textContent=r.player||"Unnamed";
+      if(typeof r.draft_pick==="number"){ nmc.appendChild(document.createTextNode(" ")); nmc.appendChild(el("span","chip","pick "+r.draft_pick)); }
+      t.appendChild(nmc);
+      var sd=el("td"); sd.style.textAlign="left";
+      if(has(r.team)) sd.textContent=String(r.team); else sd.appendChild(unknown("side not published"));
+      t.appendChild(sd);
+      var im=el("td");
+      if(typeof r.impact==="number"){
+        im.textContent=signed(r.impact,1);
+        if(has(r.impact_lo)&&has(r.impact_hi)) im.title="range "+fmt(r.impact_lo,1)+" to "+fmt(r.impact_hi,1);
+      } else im.appendChild(unknown(r.impact_reason||"no impact rating for this player"));
+      t.appendChild(im);
+      var sf=el("td");
+      if(has(r.sample_flag)) sf.appendChild(el("span","chip thin",String(r.sample_flag)));
+      else if(has(r.sample_note)) sf.appendChild(el("span","chip",String(r.sample_note)));
+      else sf.appendChild(el("span","chip unk","not flagged"));
+      t.appendChild(sf);
+      function cell(colset,key){
+        var v=(r[key]!==undefined)?r[key]:((r.rates&&r.rates[key]!==undefined)?r.rates[key]:((r.counting&&r.counting[key]!==undefined)?r.counting[key]:undefined));
+        return v;
+      }
+      rateCols.concat(countCols).forEach(function(col){
+        var k=col.key||col.label;
+        var v=cell(col,k);
+        if(typeof v==="number"){
+          var td=el("td",null,fmt(v, col.dec===undefined?1:col.dec));
+          // The minutes cell keeps the model's own number and gains NO band. What it gains
+          // is the fact that the number is shared, plus the measured size of the miss.
+          if(k==="proj_minutes"){
+            var shared=minShared[v.toFixed(1)]||1;
+            td.title=(shared>1 ? "One figure shared by "+shared+" players on this table. " : "")
+              +"Typical miss on a single player is about "+MINUTES_TYPICAL_MISS+" minutes.";
+          }
+          t.appendChild(td);
+        }
+        else if(has(v)){ t.appendChild(el("td",null,String(v))); }
+        else t.appendChild(unkCell(col.unavailable_reason||"not projected for an exhibition"));
+      });
+      tbody.appendChild(t);
+    });
+    tb.appendChild(tbody); sc.appendChild(tb); c.appendChild(sc);
+    var n=el("div","pad");
+    n.appendChild(el("div","note",pl.note||"Ordered by projected impact. Impact leads because it is the only column that answers 'did this player help the team win'; the counting stats sit last on purpose. Minutes in an All-Star Game are flattened relative to the regular season, which compresses every counting projection."));
+    if(has(pl.correction_note)) n.appendChild(el("div","note",pl.correction_note));
+    if(has(pl.out_note)) n.appendChild(el("div","note",pl.out_note));
+    if(has(pl.reference)){ var r3=el("div","ref"); r3.appendChild(el("b",null,"Source: ")); r3.appendChild(document.createTextNode(pl.reference)); n.appendChild(r3); }
+    c.appendChild(n);
+    minutesTrustBlock(main, rows, pl.minutes_trust);
+    minutesGapFan(main, pl.minutes_gap, rows);
+  }
+
+  function renderHeadline(main){
+    var h=DATA.headline;
+    if(!h||!has(h.finding)) return;
+    var c=cardIn(main);
+    var p=el("div","pad");
+    p.appendChild(el("div","hl",h.finding));
+    (h.points||[]).forEach(function(t){ p.appendChild(el("div","hlp",t)); });
+    c.appendChild(p);
+  }
+
+  function renderAlternatives(main){
+    var a=DATA.alternatives;
+    if(!a||!(a.rows||[]).length) return;
+    section("The same record, answered three ways");
+    var c=cardIn(main);
+    var sc=el("div","scroll"); var tb=el("table");
+    var thead=el("thead"); var tr=el("tr");
+    ["Which games we count","Games","Total"].forEach(function(x){ tr.appendChild(el("th",null,x)); });
+    thead.appendChild(tr); tb.appendChild(thead);
+    var tbody=el("tbody");
+    a.rows.forEach(function(r){
+      var t=el("tr");
+      var nm=el("td","nm",String(r.basis||""));
+      if(has(a.shipped) && String(r.basis||"").toLowerCase().indexOf("captain")>=0){
+        nm.appendChild(document.createTextNode(" ")); nm.appendChild(el("span","chip up","shipped"));
+      }
+      t.appendChild(nm);
+      var n=el("td"); if(typeof r.n==="number") n.textContent=String(r.n); else n.appendChild(unknown("count not stated")); t.appendChild(n);
+      var v=el("td"); if(typeof r.total==="number") v.textContent=fmt(r.total,1); else v.appendChild(unknown("not computed")); t.appendChild(v);
+      tbody.appendChild(t);
+    });
+    tb.appendChild(tbody); sc.appendChild(tb); c.appendChild(sc);
+    var n2=el("div","pad");
+    n2.appendChild(el("div","note",a.note||""));
+    if(has(a.shipped)) n2.appendChild(el("div","note","We ship the format-matched read: "+a.shipped+". The strict all-years number is shown above it so the choice is auditable rather than hidden."));
+    c.appendChild(n2);
+  }
+
+  function renderScenario(main){
+    var s=DATA.scenario;
+    if(!s||!has(s.text)) return;
+    var b=el("div","banner");
+    b.appendChild(el("h3",null,s.title||"An unconfirmed rule"));
+    if(has(s.status)) b.appendChild(el("div","fx",s.status));
+    var ul=el("ul");
+    ul.appendChild(el("li",null,s.text));
+    if(has(s.extra)) ul.appendChild(el("li",null,s.extra));
+    b.appendChild(ul);
+    main.appendChild(b);
+  }
+
+  function renderReconciliation(main){
+    var rc=DATA.reconciliation;
+    if(!rc) return;
+    var b=el("div","banner");
+    b.appendChild(el("h3",null,"Our number disagrees with the room — here is the disagreement"));
+    if(has(rc.headline)) b.appendChild(el("div","fx",rc.headline));
+    var ul=el("ul");
+    if(has(rc.detail)) ul.appendChild(el("li",null,rc.detail));
+    (rc.reasons||[]).forEach(function(t){ ul.appendChild(el("li",null,t)); });
+    if(has(rc.disposition)) ul.appendChild(el("li",null,rc.disposition));
+    b.appendChild(ul);
+    main.appendChild(b);
+  }
+
+  function renderCrossCheck(main){
+    var cc=DATA.cross_check;
+    if(!cc) return;
+    section("Cross-check — what everyone else has this game at");
+    var c=cardIn(main); var p=el("div","pad");
+    var g=el("div","event");
+    (cc.recent||[]).forEach(function(r){
+      var e=el("div","ei");
+      e.appendChild(el("b",null,has(r.combined)?String(r.combined):"—"));
+      e.appendChild(el("span",null,(r.year!=null?r.year:"")+" All-Star"));
+      g.appendChild(e);
+    });
+    (cc.market||[]).forEach(function(m){
+      var e=el("div","ei");
+      e.appendChild(el("b",null,has(m.total)?String(m.total):"—"));
+      e.appendChild(el("span",null,(m.book||"market")+" posted total"));
+      g.appendChild(e);
+    });
+    p.appendChild(g);
+    var lc=cc.league_context||{};
+    var extra=[];
+    if(has(lc["2026_ppg_per_team"])&&has(lc["2025_ppg_per_team"]))
+      extra.push("League scoring is up this season: "+lc["2026_ppg_per_team"]+" points per team per game, against "+lc["2025_ppg_per_team"]+" last season.");
+    if(has(cc.overlap_note)) extra.push(cc.overlap_note);
+    if(has(cc.note)) extra.push(cc.note);
+    extra.push("The posted totals are shown as a sanity anchor for our own number. They are not our projection and nothing on this page is a pick.");
+    extra.forEach(function(t){ p.appendChild(el("div","note",t)); });
+    c.appendChild(p);
+  }
+
+  function renderNotFitted(main){
+    var nf=DATA.not_fitted;
+    if(!nf||!(nf.rows||[]).length) return;
+    section("What we deliberately did not fit");
+    var c=cardIn(main); var p=el("div","pad");
+    if(has(nf.verdict)) p.appendChild(el("div","fx",nf.verdict));
+    var ul=el("ul","asm");
+    nf.rows.forEach(function(r){
+      var li=el("li");
+      li.appendChild(el("b",null,(r.item||"")+" — "));
+      li.appendChild(document.createTextNode(r.detail||""));
+      if(has(r.outcome)){ li.appendChild(document.createTextNode(" ")); li.appendChild(el("span","chip thin",String(r.outcome))); }
+      ul.appendChild(li);
+    });
+    p.appendChild(ul);
+    if(has(nf.params_fitted)&&has(nf.param_cap))
+      p.appendChild(el("div","note","Parameters fitted: "+nf.params_fitted+" of a pre-registered cap of "+nf.param_cap+"."));
+    if(has(nf.note)) p.appendChild(el("div","note",nf.note));
+    c.appendChild(p);
+  }
+
+  function renderUnknowns(main){
+    var uk=DATA.unknowns||[];
+    var dg=DATA.degradations||[];
+    if(!uk.length && !dg.length) return;
+    section("Known unknowns — what we could not confirm before tip-off");
+    var c=cardIn(main); var p=el("div","pad");
+    var ul=el("ul","asm");
+    uk.forEach(function(t){ ul.appendChild(el("li",null,t)); });
+    dg.forEach(function(t){
+      var li=el("li"); li.appendChild(el("span","chip thin","did not reach the model"));
+      li.appendChild(document.createTextNode(" "+t)); ul.appendChild(li);
+    });
+    p.appendChild(ul);
+    p.appendChild(el("div","note","Listed rather than resolved. An unconfirmed rule is shown as unconfirmed; none of these were guessed into the numbers above."));
+    c.appendChild(p);
+  }
+
+  function renderMoves(main){
+    var mv=DATA.roster_moves||[];
+    if(!mv.length) return;
+    var c=cardIn(document.getElementById("main")); var p=el("div","pad");
+    var ul=el("ul","asm");
+    mv.forEach(function(m){ if(has(m.text)) ul.appendChild(el("li",null,m.text)); });
+    if(!ul.childNodes.length) return;
+    p.appendChild(el("div","fx","Late roster changes"));
+    p.appendChild(ul); c.appendChild(p);
+  }
+
+  // ---- player props: the FULL FLAT ladder (nothing collapsed) ------------ //
+  // CEO directive 2026-07-25: this surface is used to check a book's posted
+  // numbers against ours, fast, during the game. Every player, every metric,
+  // every offered line renders AT ONCE — no expand/collapse gates any number.
+  // Everything below is READ from the payload — the page never recomputes a
+  // probability. Numeric guards are explicit typeof checks, never truthiness,
+  // because a legitimate 0 (a line nobody clears) must survive.
+
+  function pctTxt(v){ return (typeof v==="number"&&isFinite(v)) ? v.toFixed(1)+"%" : "—"; }
+  function decTxt(v){ return (typeof v==="number"&&isFinite(v)) ? v.toFixed(2) : "—"; }
+  function amTxt(v){
+    if(typeof v!=="number"||!isFinite(v)) return "—";
+    var r=Math.round(v); return (r>0?"+":"")+r;
+  }
+  function lnTxt(v){ return (typeof v==="number"&&isFinite(v)) ? String(v) : "—"; }
+  function n1(v){ return (typeof v==="number"&&isFinite(v)) ? v.toFixed(1) : null; }
+  function n2(v){ return (typeof v==="number"&&isFinite(v)) ? v.toFixed(2) : null; }
+  function clearedOf(ln){
+    if(!ln) return null;
+    if(typeof ln.pct_of_time_cleared==="number" && isFinite(ln.pct_of_time_cleared)) return ln.pct_of_time_cleared;
+    if(typeof ln.p_over==="number" && isFinite(ln.p_over)) return ln.p_over*100;
+    return null;
+  }
+  var ESCM={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"};
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){ return ESCM[c]; }); }
+  // the offered line whose clear rate sits closest to 50% — the crossing row
+  function nearest50Idx(lines){
+    var bi=-1, bd=Infinity;
+    (lines||[]).forEach(function(ln,i){
+      var c=clearedOf(ln); if(c===null) return;
+      var d=Math.abs(c-50); if(d<bd){ bd=d; bi=i; }
+    });
+    return bi;
+  }
+
+  // One flat, fully-expanded render. Built as markup (not 25k DOM calls) so a
+  // 3,000-row ladder paints in one pass instead of stuttering mid-scan.
+  function propsFlat(pr, host){
+    host.textContent="";
+    var mets=(pr.metrics||[]).filter(function(k){ return typeof k==="string"; });
+    // IMPACT LEADS THE ORDERING. Highest projected impact first, so the names
+    // worth checking against a book sit at the top of both the FMV grid and the
+    // flat table. A player with no impact number sorts last rather than first.
+    var players=(pr.players||[]).filter(function(p){ return p && p.metrics; }).slice();
+    players.sort(function(a,b){
+      // UN-ADJUSTED season impact. The exhibition-adjusted number this used to
+      // order by was retracted 2026-07-29; it is not read here as a fallback.
+      var av=(typeof a.impact==="number"&&isFinite(a.impact))?a.impact:-1e9;
+      var bv=(typeof b.impact==="number"&&isFinite(b.impact))?b.impact:-1e9;
+      if(bv!==av) return bv-av;
+      return String(a.name||"").localeCompare(String(b.name||""));
+    });
+    var labels=pr.metric_labels||{};
+    if(!mets.length || !players.length){
+      var pz=el("div","pad"); pz.appendChild(unknown("no prop line survived the simulation"));
+      host.appendChild(pz); return 0;
+    }
+    var h=[], rows=0;
+
+    // ---- 1. the FMV board: every player x every metric, fair line, one grid.
+    h.push('<div class="fxh">Fair lines (FMV) &mdash; every player, every metric, at a glance</div>');
+    h.push('<div class="scroll"><table class="fmv"><thead><tr>');
+    h.push('<th class="lft">Player</th><th class="lft">Side</th>');
+    mets.forEach(function(m){
+      h.push('<th title="'+esc(labels[m]||m)+'">'+esc(m)+'</th>');
+    });
+    h.push('</tr></thead><tbody>');
+    players.forEach(function(p,pi){
+      h.push('<tr data-pname="'+esc(String(p.name||"").toLowerCase())+'">');
+      h.push('<td class="nm lft"><a class="jl" href="#asgp'+pi+'">'+esc(p.name||"Unnamed")+'</a>'
+             +(p.starter===true?' <span class="chip">starter</span>':'')+'</td>');
+      h.push('<td class="lft dimc">'+esc(p.team||"—")+'</td>');
+      mets.forEach(function(m){
+        var mm=(p.metrics||{})[m]||null;
+        var fl=mm?mm.fair_line:null;
+        var s=n1(fl);
+        h.push('<td class="fmvc" data-met="'+esc(m)+'">'+(s!==null?s:'<span class="dimc">—</span>')+'</td>');
+      });
+      h.push('</tr>');
+    });
+    h.push('</tbody></table></div>');
+
+    // ---- 2. jump strip: 22 names, one click to a player's full ladder.
+    h.push('<div class="jump"><span class="lbl">Jump</span>');
+    players.forEach(function(p,pi){
+      h.push('<a class="jl" href="#asgp'+pi+'">'+esc(p.name||"Unnamed")+'</a>');
+    });
+    h.push('</div>');
+
+    // ---- 3. THE FLAT BOOK-CHECK TABLE.
+    // One row per offered line. Player, side, metric, projection, FMV, line,
+    // clear rate and both fair prices sit on EVERY row, so a row read alone is
+    // complete: nothing above it has to be scrolled back to, and a page break
+    // in print never orphans a number from its label. Impact leads the order.
+    h.push('<div class="fxh">Every offered line, one row each &mdash; impact-ranked, nothing hidden</div>');
+    h.push('<div class="flatwrap"><table class="flat"><thead><tr>'
+      +'<th class="lft">Player</th><th class="lft">Side</th><th>Impact</th><th>Min</th>'
+      +'<th class="lft">Metric</th><th>Proj</th><th>FMV</th><th>Line</th><th>% cleared</th>'
+      +'<th>Fair OVER</th><th>Fair UNDER</th>'
+      +'</tr></thead><tbody>');
+    players.forEach(function(p,pi){
+      var pnm=esc(p.name||"Unnamed");
+      var pnl=esc(String(p.name||"").toLowerCase());
+      var team=esc(p.team||"-");
+      var mn=p.minutes||{};
+      var mtxt=n1(mn.mean); mtxt=(mtxt!==null?mtxt:"-");
+      var ai=n2(p.impact); ai=(ai!==null?((p.impact>0?"+":"")+ai):"-");
+      var firstRow=true;
+      mets.forEach(function(m){
+        var mm=(p.metrics||{})[m];
+        var lines=(mm&&mm.lines)||[];
+        if(!mm||!lines.length) return;
+        var fl=n1(mm.fair_line);
+        var d=mm.distribution||{};
+        var md=n1(d.q50);
+        var ki=nearest50Idx(lines);
+        lines.forEach(function(ln,li){
+          if(!ln) return;
+          rows++;
+          var cls="lr"+(li===ki?" key":"")+(li===0?" mstart":"")+(firstRow?" pstart":"");
+          var idA=firstRow?(' id="asgp'+pi+'"'):"";
+          firstRow=false;
+          h.push('<tr class="'+cls+'"'+idA+' data-met="'+esc(m)+'" data-pname="'+pnl+'">');
+          h.push('<td class="pl lft">'+pnm+'</td>');
+          h.push('<td class="lft dimc">'+team+'</td>');
+          h.push('<td class="dimc">'+ai+'</td>');
+          h.push('<td class="dimc">'+mtxt+'</td>');
+          h.push('<td class="met lft">'+esc(m)+'</td>');
+          h.push('<td class="proj">'+(md!==null?md:'<span class="dimc">-</span>')+'</td>');
+          h.push('<td class="fmvc">'+(fl!==null?fl:'<span class="dimc">-</span>')+'</td>');
+          h.push('<td class="lnc">'+esc(lnTxt(ln.line))+'</td>');
+          h.push('<td class="clr">'+esc(pctTxt(clearedOf(ln)))+'</td>');
+          h.push('<td class="odd">'+esc(decTxt(ln.fair_decimal_over))+' <small>'+esc(amTxt(ln.fair_american_over))+'</small></td>');
+          h.push('<td class="odd">'+esc(decTxt(ln.fair_decimal_under))+' <small>'+esc(amTxt(ln.fair_american_under))+'</small></td>');
+          h.push('</tr>');
+        });
+      });
+      if(firstRow){
+        h.push('<tr class="lr pstart" id="asgp'+pi+'" data-pname="'+pnl+'">');
+        h.push('<td class="pl lft">'+pnm+'</td><td class="lft dimc">'+team+'</td>');
+        h.push('<td class="dimc">'+ai+'</td><td class="dimc">'+mtxt+'</td>');
+        h.push('<td class="lft dimc" colspan="7">no line survived the filter for this player</td></tr>');
+      }
+    });
+    h.push('</tbody></table></div>');
+    host.innerHTML=h.join("");
+    return rows;
+  }
+
+  // Filters HIDE nothing by default — every control starts wide open, and a
+  // filter only ever narrows what is already on screen.
+  function applyPropFilter(host, met, q){
+    var i, n;
+    var needle0=String(q||"").trim().toLowerCase();
+    var lad=host.querySelectorAll("tr.lr");
+    for(i=0;i<lad.length;i++){
+      n=lad[i];
+      var okm=(!met || n.getAttribute("data-met")===met);
+      var okn=(!needle0 || (n.getAttribute("data-pname")||"").indexOf(needle0)>=0);
+      n.style.display=(okm&&okn) ? "" : "none";
+    }
+    var fc=host.querySelectorAll("td.fmvc[data-met]");
+    for(i=0;i<fc.length;i++){
+      n=fc[i];
+      n.style.display=(!met || n.getAttribute("data-met")===met) ? "" : "none";
+    }
+    var fh=host.querySelectorAll("table.fmv thead th");
+    for(i=2;i<fh.length;i++){
+      n=fh[i];
+      n.style.display=(!met || n.textContent.trim()===met) ? "" : "none";
+    }
+    var needle=String(q||"").trim().toLowerCase();
+    var blk=host.querySelectorAll("table.fmv tbody tr");
+    for(i=0;i<blk.length;i++){
+      n=blk[i];
+      var nm=n.getAttribute("data-pname")||"";
+      n.style.display=(!needle || nm.indexOf(needle)>=0) ? "" : "none";
+    }
+  }
+
+  function renderProps(main){
+    section(has((DATA.result||{}).headline)
+      ? "Player props — the ladder we published before the game"
+      : "Player props — every number, all of it, no clicks");
+    var pr=DATA.props;
+    if(!pr || pr.available!==true || !((pr.players||[]).length)){
+      var c0=cardIn(main); var p0=el("div","pad");
+      p0.appendChild(unknown((pr&&pr.unavailable_reason)||"the simulated prop ladder did not reach this page"));
+      c0.appendChild(p0); return;
+    }
+
+    // MANDATORY honesty block — on the face of the section, above the numbers.
+    // If the payload ever drops it, a built-in floor renders instead: this page
+    // must never show a price without the exhibition + zero-vig caveats.
+    var rtf=(pr.read_this_first||[]).filter(function(t){ return has(t); });
+    if(!rtf.length) rtf=[
+      "THIS IS AN EXHIBITION. Every rate below was fit on regular-season play and is applied OUT OF REGIME. Nothing here is a regular-season-grade projection.",
+      "The team total this hangs off rests on n=5 format-matched games; the player level is thinner still. The WIDTH IS THE FINDING — a tight prop is a manufactured prop.",
+      "Odds shown are FAIR (zero vig). A real book prices worse on both sides. An edge exists only if the book's price beats fair by more than its hold.",
+      "Betting is a DOWNSTREAM READOUT of the impact model and the team projection — read those first, these second.",
+      "Kelsey Plum is OUT. Kahleah Copper is her replacement and was NOT drafted (no pick slot).",
+      "STL / BLK / TOV are NOT offered: the All-Star box record carries no steal, block or turnover column, so there is no basis to calibrate them. UNKNOWN, not guessed."
+    ];
+    // The minutes caveat is load-bearing and the payload does not always carry it, so a floor
+    // is appended when nothing in the block already covers it.
+    //
+    // CORRECTED 2026-07-30 — the old floor read "2018+ All-Star minutes are NULL in the source,
+    // so the minutes model is fitted on 1999-2017 and the starter/reserve gap is ASSERTED, not
+    // fitted." Half of that is no longer true and the page was publishing it as fact. The
+    // minutes backfill closed the modern-era hole: the live box record now carries minutes AND a
+    // starter flag on every row from 2018 onward (182 rows across 8 seasons, none missing),
+    // measured against the record on 2026-07-30. What REMAINS true is the part that matters —
+    // the shape in use was fitted before that recovery, and the published starter/reserve split
+    // is still asserted rather than fitted to the record. So the true half is kept and the false
+    // half is retired, rather than dropping the caveat wholesale.
+    //
+    // This mattered here specifically: the same page now DRAWS that recovered record above, so
+    // leaving the old line in place would have had the surface deny its own chart.
+    var saysMin=false;
+    rtf.forEach(function(t){ if(String(t).indexOf("1999-2017")>=0) saysMin=true; });
+    if(!saysMin) rtf.push("The minutes shape in use was fitted on the 1999-2017 games and the starter/reserve split is asserted, not fitted. The 2018 onward minutes have since been recovered, so that fuller record is what the range above is measured on.");
+    // FIRST line of the honesty block once the game is played: this ladder is a record, not
+    // a live price. It goes at the front because a reader who stops after one line must
+    // still learn the game is decided.
+    if(has(pr.postgame)) rtf.unshift(String(pr.postgame));
+    {
+      var b=el("div","banner");
+      b.appendChild(el("h3",null,"Read this first"));
+      var ul=el("ul");
+      rtf.forEach(function(t){ ul.appendChild(el("li",null,String(t))); });
+      b.appendChild(ul);
+      main.appendChild(b);
+    }
+
+    var c=cardIn(main);
+
+    // PRINT / SAVE AS PDF. The print stylesheet lays the SAME flat table across
+    // pages with the header row repeating, so the paper copy and the screen copy
+    // are the same numbers. Always offered; a baked PDF file, if the board has
+    // one, is an EXTRA link and never a precondition for printing.
+    {
+      var pw=el("div","pdfbar");
+      var pb=el("button","pdfbtn","Print / Save as PDF");
+      pb.type="button";
+      pb.onclick=function(){ try{ window.print(); }catch(e){} };
+      pw.appendChild(pb);
+      if(has(pr.pdf_href)){
+        var a=el("a","pdfbtn","Open the baked PDF");
+        a.href=String(pr.pdf_href); a.target="_blank"; a.rel="noopener";
+        pw.appendChild(a);
+      }
+      pw.appendChild(el("span","pdfnote","Prints every player, every metric, every line as one flat table, header repeating on each page."));
+      c.appendChild(pw);
+    }
+
+    var host=el("div");
+    var mets=(pr.metrics||[]).filter(function(k){ return typeof k==="string"; });
+    var state={met:null, q:""};
+
+    var ctl=el("div","propctl");
+    ctl.appendChild(el("span","lbl","Show"));
+    var btns=[];
+    function setMet(k,btn){
+      state.met=k;
+      btns.forEach(function(x){ x.className="mbtn"+(x===btn?" on":""); });
+      try{ applyPropFilter(host,state.met,state.q); }catch(e){}
+    }
+    var ball=el("button","mbtn on","All metrics");
+    ball.onclick=function(){ setMet(null,ball); };
+    btns.push(ball); ctl.appendChild(ball);
+    mets.forEach(function(k){
+      var b2=el("button","mbtn",k);
+      b2.title=((pr.metric_labels||{})[k])||k;
+      b2.onclick=function(){ setMet(k,b2); };
+      btns.push(b2); ctl.appendChild(b2);
+    });
+    var srch=el("input","psrch");
+    srch.type="search"; srch.placeholder="filter by player…"; srch.setAttribute("aria-label","filter by player");
+    srch.oninput=function(){ state.q=srch.value; try{ applyPropFilter(host,state.met,state.q); }catch(e){} };
+    ctl.appendChild(srch);
+    c.appendChild(ctl);
+    c.appendChild(host);
+
+    var rows=0;
+    try{ rows=propsFlat(pr,host); }
+    catch(e){
+      host.textContent=""; var pe=el("div","pad");
+      pe.appendChild(unknown("the prop ladder could not be drawn on this device"));
+      host.appendChild(pe);
+    }
+
+    var n=el("div","propnote");
+    var counts=[];
+    if(typeof pr.n_players==="number") counts.push(pr.n_players+" players");
+    if(typeof pr.n_lines==="number") counts.push(pr.n_lines+" priced lines");
+    if(typeof pr.sims==="number") counts.push(pr.sims.toLocaleString()+" simulations per player");
+    if(counts.length) n.appendChild(el("div",null,counts.join(" · ")+" — all of it on this page, nothing hidden."));
+    n.appendChild(el("div",null,"“FMV” is the fair line: where the clear rate crosses 50%, the number a zero-vig book would hang. “% cleared” is the share of simulations that finished ABOVE the line. The highlighted row in each metric is the offered line closest to that 50% crossing."));
+    if(has(pr.line_filter)) n.appendChild(el("div",null,String(pr.line_filter)));
+    n.appendChild(el("div",null,"Prices are FAIR (zero vig): decimal first, American second. A real book prices worse on BOTH sides, so an edge exists only where the book beats the fair price by more than its hold."));
+    if((pr.players_out||[]).length) n.appendChild(el("div",null,"Out: "+pr.players_out.join(", ")+"."));
+    if(pr.props_carried_forward===true || DATA.props_carried_forward===true)
+      n.appendChild(el("div",null,"Carried forward from the previous build — this ladder was not regenerated for the current bake."));
+    c.appendChild(n);
+
+    var unk=pr.unknowns||[], asm=pr.assumptions||[];
+    if(unk.length || asm.length){
+      var d2=el("div","method");
+      d2.appendChild(el("div","method-hd","What this prop ladder does not know, and what it assumed"));
+      var bb=el("div","method-body");
+      if(unk.length){
+        bb.appendChild(el("div",null,"UNKNOWN — stated, not guessed:"));
+        var ul2=el("ul");
+        unk.forEach(function(t){ ul2.appendChild(el("li",null,String(t))); });
+        bb.appendChild(ul2);
+      }
+      if(asm.length){
+        bb.appendChild(el("div",null,"Asserted, not fitted:"));
+        var ul3=el("ul");
+        asm.forEach(function(t){ ul3.appendChild(el("li",null,String(t))); });
+        bb.appendChild(ul3);
+      }
+      d2.appendChild(bb);
+      main.appendChild(d2);
+    }
+  }
+
+  function renderRosters(main){
+    var rs=DATA.rosters||[];
+    section("The sides, in draft order");
+    var c=cardIn(main);
+    if(!rs.length){ var p=el("div","pad"); p.appendChild(unknown(DATA.rosters_unavailable_reason||"the roster and draft-order file did not reach this page")); c.appendChild(p); return; }
+    var sc=el("div","scroll"); var tb=el("table");
+    var thead=el("thead"); var tr=el("tr");
+    ["Pick","Player","Club","Side","Role","Status"].forEach(function(h){ tr.appendChild(el("th",null,h)); });
+    thead.appendChild(tr); tb.appendChild(thead);
+    var tbody=el("tbody");
+    rs.forEach(function(t){
+      var side=(t&&(t.name||t.team))||"";
+      var players=(t&&(t.players||t.roster))||[];
+      if(!Array.isArray(players)) players=[];
+      players.forEach(function(pp){
+        var row=el("tr");
+        var pk=el("td");
+        if(typeof pp.draft_pick==="number") pk.textContent=String(pp.draft_pick);
+        else pk.appendChild(unknown(pp.draft_pick_reason||"no draft slot recorded"));
+        pk.style.textAlign="left"; row.appendChild(pk);
+        var nm=el("td","nm",pp.player||pp.name||"Unnamed");
+        if(pp.starter===true){ nm.appendChild(document.createTextNode(" ")); nm.appendChild(el("span","chip","starter")); }
+        row.appendChild(nm);
+        var cl=el("td"); cl.style.textAlign="left";
+        if(has(pp.club)) cl.textContent=String(pp.club); else cl.appendChild(unknown("club not recorded"));
+        row.appendChild(cl);
+        var sd=el("td"); sd.style.textAlign="left"; sd.textContent=side||""; if(!side) sd.appendChild(unknown("side not recorded")); row.appendChild(sd);
+        var rl=el("td"); rl.style.textAlign="left";
+        if(has(pp.role)) rl.textContent=String(pp.role); else rl.appendChild(unknown("not recorded"));
+        row.appendChild(rl);
+        var st=el("td"); st.style.textAlign="left";
+        if(has(pp.status)) st.appendChild(el("span","chip"+(String(pp.status).toLowerCase()==="out"?" thin":""),String(pp.status)));
+        else st.appendChild(el("span","chip unk","not stated"));
+        row.appendChild(st);
+        tbody.appendChild(row);
+      });
+    });
+    if(!tbody.childNodes.length){ var p2=el("div","pad"); p2.appendChild(unknown("the roster file carried no players")); c.appendChild(p2); return; }
+    tb.appendChild(tbody); sc.appendChild(tb); c.appendChild(sc);
+  }
+
+  function renderHistory(main){
+    var h=DATA.history||{};
+    var rows=h.rows||[];
+    section("Every All-Star Game we have on record");
+    var c=cardIn(main);
+    if(!rows.length){ var p=el("div","pad"); p.appendChild(unknown(h.unavailable_reason||"the All-Star history record did not reach this page")); c.appendChild(p); return; }
+    var kp=el("div","pad event");
+    function it(v,l,d,reason){
+      var e=el("div","ei"); var b=el("b");
+      if(typeof v==="number") b.textContent=fmt(v,d); else if(has(v)) b.textContent=String(v);
+      else b.appendChild(unknown(reason));
+      e.appendChild(b); e.appendChild(el("span",null,l)); kp.appendChild(e);
+    }
+    it(rows.length,"Games on record",0,"none");
+    it(h.mean_mult,"Average pace vs league",3,"not summarised");
+    it(h.mean_mult_comparable,"Average, comparable formats only",3,"not summarised");
+    it(h.n_comparable,"Comparable-format games",0,"not summarised");
+    c.appendChild(kp);
+    var maxT=1;
+    rows.forEach(function(r){ if(typeof r.total_points==="number" && r.total_points>maxT) maxT=r.total_points; });
+    var sc=el("div","scroll"); var tb=el("table");
+    var thead=el("thead"); var tr=el("tr");
+    ["Year","Total points","","Margin","Pace vs league","Format"].forEach(function(x){ tr.appendChild(el("th",null,x)); });
+    thead.appendChild(tr); tb.appendChild(thead);
+    var tbody=el("tbody");
+    rows.slice().reverse().forEach(function(r){
+      var t=el("tr");
+      var y=el("td","nm",has(r.year)?String(r.year):""); if(!has(r.year)) y.appendChild(unknown("year missing")); t.appendChild(y);
+      var tp=el("td");
+      if(typeof r.total_points==="number") tp.textContent=String(r.total_points);
+      else tp.appendChild(unknown("no final score on record"));
+      t.appendChild(tp);
+      var bc=el("td"); bc.style.width="34%"; bc.style.minWidth="120px";
+      if(typeof r.total_points==="number"){
+        var bar=el("div","pbar"); bar.style.position="relative"; bar.style.height="8px";
+        bar.style.borderRadius="4px"; bar.style.background="var(--line2)"; bar.style.overflow="hidden";
+        var i2=el("div"); i2.style.position="absolute"; i2.style.left="0"; i2.style.top="0"; i2.style.bottom="0";
+        i2.style.width=((r.total_points/maxT)*100)+"%"; i2.style.background="var(--fan)"; i2.style.borderRadius="4px";
+        bar.appendChild(i2); bc.appendChild(bar);
+      }
+      t.appendChild(bc);
+      var mg=el("td");
+      if(typeof r.margin==="number") mg.textContent=String(r.margin); else mg.appendChild(unknown("no margin on record"));
+      t.appendChild(mg);
+      var pm=el("td");
+      if(typeof r.pace_mult==="number"){
+        pm.textContent=fmt(r.pace_mult,3);
+        if(r.pace_comparable===false){ pm.appendChild(document.createTextNode(" ")); var ch=el("span","chip thin","not comparable"); if(has(r.unavailable_reason)) ch.title=String(r.unavailable_reason); pm.appendChild(ch); }
+      } else pm.appendChild(unknown(r.unavailable_reason||"pace not measurable for this game"));
+      t.appendChild(pm);
+      var f=el("td"); f.style.textAlign="left";
+      if(has(r.format)) f.appendChild(el("span","chip",String(r.format))); else f.appendChild(unknown("format not labelled"));
+      t.appendChild(f);
+      tbody.appendChild(t);
+    });
+    tb.appendChild(tbody); sc.appendChild(tb); c.appendChild(sc);
+    var n=el("div","pad");
+    n.appendChild(el("div","note",h.note||"The scatter across years IS the uncertainty."));
+    if(has(h.reference)){ var r4=el("div","ref"); r4.appendChild(el("b",null,"Source: ")); r4.appendChild(document.createTextNode(h.reference)); n.appendChild(r4); }
+    c.appendChild(n);
+  }
+
+  function renderFun(main){
+    var fun=DATA.fun||[];
+    if(!fun.length) return;
+    section("Front-office angles");
+    if(has(DATA.fun_caveat)){
+      var cav=el("div","banner");
+      cav.appendChild(el("h3",null,DATA.fun_caveat_title||"Read this first — the assumption these turn on"));
+      cav.appendChild(el("div","fx",DATA.fun_caveat));
+      if(has(DATA.fun_note)) cav.appendChild(el("div","hlp",DATA.fun_note));
+      document.getElementById("main").appendChild(cav);
+    }
+    var g=el("div","fun");
+    fun.forEach(function(f){
+      var c=el("div","fcard");
+      c.appendChild(el("div","ft",f.title||""));
+      c.appendChild(el("div","fx",f.text||""));
+      if(has(f.reference)){ var r=el("div","ref"); r.appendChild(el("b",null,"Source: ")); r.appendChild(document.createTextNode(f.reference)); c.appendChild(r); }
+      g.appendChild(c);
+    });
+    document.getElementById("main").appendChild(g);
+  }
+
+  function renderAssumptions(main){
+    section("Assumptions — stated, not buried");
+    var c=cardIn(main); var p=el("div","pad");
+    var list=DATA.assumptions||[];
+    if(!list.length){ p.appendChild(unknown("the assumptions list did not reach this page")); c.appendChild(p); return; }
+    var ul=el("ul","asm");
+    list.forEach(function(a){
+      var li=el("li");
+      if(typeof a==="string"){ li.textContent=a; }
+      else if(a && typeof a==="object"){
+        if(has(a.name)){ li.appendChild(el("b",null,a.name+": ")); }
+        li.appendChild(document.createTextNode(a.text||a.note||""));
+        if(a.is_guess===true){ li.appendChild(document.createTextNode(" ")); li.appendChild(el("span","chip guess","GUESS")); }
+      }
+      ul.appendChild(li);
+    });
+    p.appendChild(ul); c.appendChild(p);
+  }
+
+  function renderSample(main){
+    var s=DATA.sample||{};
+    var d=el("div","method");
+    d.appendChild(el("div","method-hd","Sample, method and what would make this wrong"));
+    var b=el("div","method-body");
+    var ul=el("ul");
+    var items=[];
+    // "on record", not "in the history file". The frozen history file holds the 21 games that
+    // existed when the projection was fitted; the 2026 row is added to the page from the graded
+    // box score without rewriting that file, so naming the file here would undercount the table
+    // the reader is looking at.
+    if(has(s.n_games)) items.push("All-Star games on record: "+s.n_games+".");
+    if(has(s.effective_n_note)) items.push(s.effective_n_note);
+    else items.push("The format has changed repeatedly, so the effective sample inside any single format is single digits. That is why the intervals are wide.");
+    (s.notes||[]).forEach(function(t){ items.push(t); });
+    (DATA.method||[]).forEach(function(t){ items.push(t); });
+    if(!items.length) items.push("Method detail did not reach this page.");
+    items.forEach(function(t){ ul.appendChild(el("li",null,t)); });
+    b.appendChild(ul);
+    if((DATA.sources||[]).length){
+      var sh=el("div","ref"); sh.appendChild(el("b",null,"Sources by surface"));
+      b.appendChild(sh);
+      var ul2=el("ul");
+      DATA.sources.forEach(function(x){
+        ul2.appendChild(el("li",null,(x.surface||"")+" — "+(x.reference||"")));
+      });
+      b.appendChild(ul2);
+    }
+    d.appendChild(b);
+    document.getElementById("main").appendChild(d);
+  }
+
+  function render(){
+    var main=document.getElementById("main");
+    main.textContent="";
+    if(!DATA){
+      var c=el("div","card"); var p=el("div","pad");
+      p.appendChild(unknown("the All-Star read could not be loaded from this site"));
+      c.appendChild(p); main.appendChild(c); return;
+    }
+    renderEvent(main);
+    renderResult(main);
+    renderRetraction(main);
+    renderHeadline(main);
+    renderBanner(main);
+    renderTotal(main);
+    renderAlternatives(main);
+    renderReconciliation(main);
+    renderCrossCheck(main);
+    renderPace(main);
+    renderTeams(main);
+    renderDraftDisagreement(main);
+    renderRules(main);
+    renderNotFitted(main);
+    renderScenario(main);
+    renderUnknowns(main);
+    renderPlayers(main);
+    renderProps(main);
+    renderRosters(main);
+    renderMoves(main);
+    renderHistory(main);
+    renderFun(main);
+    renderAssumptions(main);
+    renderSample(main);
+
+    // The standing subtitle promises a forecast. Once the game is played the page is a
+    // record of one, and the line above the fold has to say so.
+    var sub=document.getElementById("sub");
+    if(sub && has((DATA.result||{}).headline)){
+      sub.textContent="The 2026 All-Star Game has been played. This page leads with the result, then keeps the read we published before it — the ranges, the assumptions and the prop ladder exactly as they went out, so what we said can be checked against what happened.";
+    }
+
+    var foot=document.getElementById("foot");
+    foot.textContent="";
+    var stamp=DATA.generated_et||DATA.generated_utc;
+    foot.appendChild(document.createTextNode("The Hardwood · All-Star read"+(stamp?" · built "+stamp:"")));
+    var ago=document.getElementById("ago");
+    if(stamp) ago.textContent="built "+stamp;
+  }
+
+  function boot(){
+    var x=new XMLHttpRequest();
+    x.open("GET","./allstar.json?t="+Date.now(),true);
+    x.onreadystatechange=function(){
+      if(x.readyState!==4) return;
+      if(x.status>=200 && x.status<300){
+        try{ DATA=JSON.parse(x.responseText); }catch(e){ DATA=null; }
+      } else { DATA=null; }
+      try{ render(); }catch(e){
+        var main=document.getElementById("main");
+        main.textContent="";
+        var c=el("div","card"); var p=el("div","pad");
+        p.appendChild(unknown("this page hit an error while drawing the read"));
+        c.appendChild(p); main.appendChild(c);
+      }
+    };
+    x.send();
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",boot); else boot();
+})();
+</script>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="error-map.html">Error Map</a><a href="board.html">Board</a></div><div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div></footer><!--/hw-foot--></body>
+</html>

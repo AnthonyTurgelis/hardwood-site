@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Hardwood WNBA model accuracy, calibration, historical misses, player projection error, drift checks, and public game-by-game grading.">
+  <title>Accuracy — Hardwood</title>
+  <link rel="stylesheet" href="hw-product.css">
+  <link rel="stylesheet" href="hw-dense.css">
+  <link rel="stylesheet" href="hw-accuracy.css">
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
+<body class="hw-product" data-page="accuracy-dense" data-section="accuracy" data-product="dense-accuracy"><header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="standings.html">Standings &amp; Injuries</a><a class="hw-tab" href="accuracy.html" aria-current="page">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
+  <a class="hw-skip" href="#content">Skip to content</a>
+  <!--accuracy-disagreement-ladders-->
+<section id="disagreement-ladders" class="dl-wrap" aria-labelledby="dl-title">
+  <style>
+    .dl-wrap{max-width:972px;margin:18px auto 4px;padding:0 14px}.dl-wrap h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 4px}.dl-intro,.dl-read{color:var(--muted);font-size:12px}.dl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:9px}.dl-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px;box-shadow:var(--shadow)}.dl-card h3{font-size:14px;margin:0 0 2px}.dl-card table{width:100%;border-collapse:collapse;margin-top:8px;font-variant-numeric:tabular-nums}.dl-card th,.dl-card td{text-align:right;padding:5px 4px;border-top:1px solid var(--line);font-size:11.5px}.dl-card th:first-child,.dl-card td:first-child{text-align:left}.dl-loss{color:var(--warn);font-weight:700}@media(max-width:680px){.dl-grid{grid-template-columns:1fr}}
+  </style>
+  <h2 id="dl-title">When our number disagrees with the closing price</h2>
+  <p class="dl-intro">Evaluation only: the closing price grades numbers that were already locked; it never enters the prediction.</p>
+  <div class="dl-grid" id="dl-grid"><p class="empty">Loading both disagreement ladders…</p></div>
+</section>
+<script>
+(function(){fetch('./accuracy.json',{cache:'no-cache'}).then(function(r){return r.json()}).then(function(d){
+  var grid=document.getElementById('dl-grid'), ladders=d.disagreement_ladders||[]; if(!grid)return;
+  if(ladders.length!==2){grid.innerHTML='<p class="empty">Disagreement grading is temporarily unavailable.</p>';return;}
+  grid.innerHTML=''; ladders.forEach(function(L){var card=document.createElement('article');card.className='dl-card';
+    var total=L.surface==='Combined total'; var rows=(L.rows||[]).map(function(x){
+      var rec=x.wins+'–'+x.losses+(x.pushes?'–'+x.pushes:'');
+      if(total){var lose=x.our_mae>x.market_mae;return '<tr><td>'+x.bucket+'</td><td>'+rec+'</td><td class="'+(lose?'dl-loss':'')+'">'+x.our_mae.toFixed(2)+'</td><td>'+x.market_mae.toFixed(2)+'</td></tr>';}
+      return '<tr><td>'+x.bucket+'</td><td>'+rec+'</td><td>'+x.beat_rate.toFixed(1)+'%</td><td>'+((x.mean_in_our_direction>0?'+':'')+x.mean_in_our_direction.toFixed(2))+'</td></tr>';});
+    card.innerHTML='<h3>'+L.surface+'</h3><div class="dl-read">'+L.plain_read+'</div><table><thead><tr><th>Gap</th><th>W–L</th>'+(total?'<th>Our error</th><th>Market error</th>':'<th>Beat rate</th><th>Pts our way</th>')+'</tr></thead><tbody>'+rows.join('')+'</tbody></table>';grid.appendChild(card);});
+}).catch(function(){var g=document.getElementById('dl-grid');if(g)g.innerHTML='<p class="empty">Disagreement grading is temporarily unavailable.</p>';});})();
+</script>
+<!--/accuracy-disagreement-ladders-->
+<main class="hw-page hw-accuracy-page" id="content">
+    <header class="hw-command-head hw-accuracy-head">
+      <div class="hw-command-title">
+        <div class="hw-kicker">Model audit</div>
+        <h1>Accuracy, calibration, and every published miss</h1>
+        <p>Headline performance, uncertainty calibration, monthly movement, confidence reliability, retrospective drift checks, and the immutable game ledger.</p>
+      </div>
+      <div class="hw-command-meta">
+        <span class="hw-fresh" data-fresh><span class="hw-fresh-dot"></span>Loading</span>
+        <a class="hw-button" href="error-map.html">Error map</a>
+        <a class="hw-button" href="ledger.html">Full ledger</a>
+      </div>
+    </header>
+
+    <section class="hw-story-strip hw-accuracy-stories" id="accuracy-stories" aria-label="Model scorecard headlines">
+      <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Reading scorecard</span></article>
+    </section>
+
+    <section class="hw-accuracy-layout" aria-label="Published scorecard and selected metric detail">
+      <article class="hw-module hw-accuracy-board">
+        <div class="hw-module-head"><div><h2>Published scorecard</h2><span id="accuracy-count">Loading…</span></div><span>Unavailable surfaces stay visible</span></div>
+        <div class="hw-accuracy-toolbar">
+          <label><span>Search</span><input class="hw-command-search" id="accuracy-search" type="search" placeholder="Metric or note"></label>
+          <label><span>Source</span><select class="hw-accuracy-select" id="accuracy-kind"><option value="">All sources</option></select></label>
+          <label><span>Data state</span><select class="hw-accuracy-select" id="accuracy-state"><option value="">All states</option><option value="measured">Measured</option><option value="missing">Not yet tracked</option></select></label>
+          <button class="hw-button" id="accuracy-reset" type="button">Reset</button>
+        </div>
+        <div class="hw-accuracy-table-wrap">
+          <table class="hw-accuracy-table" id="accuracy-table">
+            <thead><tr><th>Surface</th><th class="num"><button type="button" data-sort="value">Value</button></th><th>Unit</th><th class="num"><button type="button" data-sort="n">N</button></th><th>Direction</th><th>Source</th><th>Coverage</th><th>State</th></tr></thead>
+            <tbody id="accuracy-surfaces"><tr><td colspan="8"><div class="hw-empty">Loading scorecard…</div></td></tr></tbody>
+          </table>
+        </div>
+      </article>
+
+      <aside class="hw-module hw-accuracy-inspector" id="accuracy-inspector" aria-live="polite">
+        <div class="hw-module-head"><h2>Metric inspector</h2><span>Select a row</span></div>
+        <div class="hw-empty">Choose a scorecard row to see its sample, time coverage, interpretation, and related audit context.</div>
+      </aside>
+    </section>
+
+    <section class="hw-module hw-accuracy-visuals" aria-label="Accuracy visual analysis">
+      <div class="hw-module-head hw-accuracy-viz-head">
+        <div><h2>Visual model audit</h2><span id="accuracy-viz-context">Monthly margin error</span></div>
+        <div class="hw-visual-tabs" role="tablist" aria-label="Accuracy visual">
+          <button class="hw-visual-tab active" type="button" data-accuracy-viz="monthly">Monthly error</button>
+          <button class="hw-visual-tab" type="button" data-accuracy-viz="intervals">Interval calibration</button>
+          <button class="hw-visual-tab" type="button" data-accuracy-viz="confidence">Win-probability reliability</button>
+          <button class="hw-visual-tab" type="button" data-accuracy-viz="margin">Predicted × actual margin</button>
+        </div>
+      </div>
+      <div class="hw-module-body"><div class="hw-accuracy-viz" id="accuracy-viz"><div class="hw-empty">Loading audit visual…</div></div></div>
+      <div class="hw-viz-legend" id="accuracy-viz-legend"><span><b>Published only:</b> no retrospective replacement of a call</span></div>
+    </section>
+
+    <section class="hw-command-grid equal hw-accuracy-analysis" aria-label="Backtest and misses">
+      <article class="hw-module hw-backtest-panel">
+        <div class="hw-module-head"><div><h2 id="accuracy-backtest-heading">Retrospective stability check</h2><span>Published versus current framework</span></div></div>
+        <div class="hw-backtest-body" id="accuracy-backtest"><div class="hw-empty">Loading stability audit…</div></div>
+      </article>
+
+      <article class="hw-module hw-miss-panel">
+        <div class="hw-module-head"><div><h2>Largest archived misses</h2><span id="accuracy-miss-count">Loading graded archive…</span></div></div>
+        <div class="hw-miss-list" id="accuracy-misses"><div class="hw-empty">Loading misses…</div></div>
+      </article>
+    </section>
+
+    <section class="hw-module hw-grade-ledger" aria-label="Recent graded forecasts">
+      <div class="hw-module-head"><div><h2>Immutable game-by-game grade ledger</h2><span id="accuracy-ledger-count">Loading…</span></div><span>Call stays attached to final</span></div>
+      <div class="hw-accuracy-ledger-toolbar"><label><span>Search</span><input class="hw-command-search" id="accuracy-ledger-search" type="search" placeholder="Matchup or call"></label><label><span>Result</span><select class="hw-accuracy-select" id="accuracy-ledger-result"><option value="">All graded</option><option value="correct">Winner correct</option><option value="miss">Winner missed</option></select></label></div>
+      <div class="hw-grade-table-wrap"><table class="hw-grade-table"><thead><tr><th>Date</th><th>Matchup</th><th>Published call</th><th class="num">Win chance</th><th>Final</th><th class="num">Pred margin</th><th class="num">Actual margin</th><th class="num">Absolute miss</th><th>Winner</th><th>Report</th></tr></thead><tbody id="accuracy-ledger"><tr><td colspan="10"><div class="hw-empty">Loading graded forecasts…</div></td></tr></tbody></table></div>
+    </section>
+
+    <section class="hw-module hw-market-withdrawn" id="accuracy-market"><div class="hw-empty">Loading market-comparison status…</div></section>
+
+    <div class="hw-data-note">Public grading rule: forecasts remain attached to their results. Missing forward-stored predictions are labelled unavailable, not reconstructed; withdrawn comparisons remain withdrawn when the measurement would be circular.</div>
+  </main>
+  <script src="hw-product.js"></script>
+  <script src="hw-accuracy.js"></script>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="error-map.html">Error Map</a><a href="board.html">Board</a></div><div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div></footer><!--/hw-foot--></body>
+</html>
