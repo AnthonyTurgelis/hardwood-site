@@ -1,109 +1,2332 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Hardwood WNBA research board — every published question, result, sample, update, source, and evidence view in one compact workspace.">
-  <title>Research — Hardwood</title>
-  <link rel="stylesheet" href="hw-product.css">
-  <link rel="stylesheet" href="hw-dense.css">
-  <link rel="stylesheet" href="hw-research.css">
-</head>
-<body class="hw-product" data-page="research-dense" data-section="research" data-product="dense-research">
-  <a class="hw-skip" href="#content">Skip to research board</a>
-  <main class="hw-page hw-research-page" id="content">
-    <header class="hw-command-head hw-research-head">
-      <div class="hw-command-title">
-        <div class="hw-kicker">WNBA research</div>
-        <h1>Evidence board and visual research lab</h1>
-        <p>Published questions, decisions, samples, movement, source files, and the evidence underneath them—negative findings included.</p>
-      </div>
-      <div class="hw-command-meta">
-        <span class="hw-fresh" data-fresh><span class="hw-fresh-dot"></span>Loading</span>
-        <a class="hw-button" href="situation.html">Situation explorer</a>
-        <a class="hw-button" href="explorer.html">Data explorer</a>
-        <a class="hw-button" href="primer.html">Methodology</a>
-      </div>
-    </header>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Deep Dives</title>
+<style>
+  /* Fallback tokens (hardwood.css wins the cascade when it loads; these keep the
+     page legible if it ever fails). */
+  :root{ --bg:#f4f6fa; --card:#fff; --card2:#f5f8fc; --chip:#eef2f8; --ink:#15181f;
+    --muted:#586074; --dim:#8993a6; --line:#e6eaf1; --line2:#d6dce6;
+    --acc:#2f6fed; --accent:#2f6fed; --accent-weak:rgba(47,111,237,.10);
+    --good:#1f8f3d; --bad:#c62828; --home:#2f6fed; --away:#b4530a;
+    --radius:10px; --shadow:0 1px 2px rgba(16,24,40,.06); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0b0e13; --card:#151a21; --card2:#1b212b;
+    --chip:#20293a; --ink:#e8edf4; --muted:#9aa6b4; --dim:#6b7684; --line:#232b37; --line2:#38424f;
+    --acc:#6ea8fe; --accent:#6ea8fe; --accent-weak:rgba(110,168,254,.16);
+    --good:#3fb950; --bad:#ff7b72; --home:#4a8cf0; --away:#c98209; --shadow:none; } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;overflow-x:hidden}
+  header{padding:10px 14px 4px;max-width:1080px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:18px;margin:0;font-weight:750;letter-spacing:-.01em}
+  .ago{font-size:11px;color:var(--dim);white-space:nowrap}
+  .sub{color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto;padding:0 14px}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1080px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--muted);border:1px solid var(--line);background:var(--card);padding:6px 11px;border-radius:999px;font-weight:600}
+  nav a.active{background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
+  main{max-width:1080px;margin:0 auto;padding:8px 14px 56px}
+  .empty{color:var(--dim);font-style:italic}
 
-    <section class="hw-story-strip hw-research-stories" id="research-stories" aria-label="Research headlines">
-      <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Reading research library</span></article>
-    </section>
+  /* --- section headings --- */
+  .sec{margin:18px 0 8px}
+  .sec-h{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 2px}
+  .sec-lede{color:var(--muted);font-size:12.5px;margin:2px 0 12px;max-width:780px}
 
-    <section class="hw-research-layout" aria-label="Research ledger and selected analysis">
-      <article class="hw-module hw-research-board">
-        <div class="hw-module-head">
-          <div><h2>Published research ledger</h2><span id="research-count">Loading…</span></div>
-          <span id="research-context">All records</span>
-        </div>
-        <div class="hw-research-toolbar">
-          <label><span>Search</span><input class="hw-command-search" id="research-search" type="search" placeholder="Question, finding, player, team, or method"></label>
-          <label><span>Evidence source</span><select class="hw-research-select" id="research-source"><option value="">All sources</option></select></label>
-          <label><span>Decision</span><select class="hw-research-select" id="research-verdict"><option value="">All decisions</option></select></label>
-          <label><span>Sample</span><select class="hw-research-select" id="research-sample"><option value="">All samples</option><option value="large">1,000+</option><option value="mid">250–999</option><option value="small">1–249</option><option value="unknown">Not published</option></select></label>
-          <label><span>Surface</span><select class="hw-research-select" id="research-kind"><option value="">All research</option><option value="dive">Published dives</option><option value="test">Research tests</option></select></label>
-          <label><span>Sort</span><select class="hw-research-select" id="research-sort"><option value="sample">Largest sample</option><option value="movement">Largest sample move</option><option value="newest">Newest evidence</option><option value="decision">Decision</option><option value="title">Title</option></select></label>
-          <button class="hw-button" id="research-reset" type="button">Reset</button>
-        </div>
+  /* --- a dive card --- */
+  .dive{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:13px 15px;margin:10px 0}
+  .dive-q{font-size:15px;font-weight:750;letter-spacing:-.01em;line-height:1.25}
+  .dive-src{color:var(--dim);font-size:10.5px;margin-top:3px;text-transform:uppercase;letter-spacing:.03em;font-variant-numeric:tabular-nums}
+  /* the as-of line — every dive says how old it is, on its face. A dive that is eleven days old
+     should LOOK eleven days old; a dive whose build time was never recorded says that instead of
+     staying silent, because silence reads as "current". */
+  .dive-asof{display:inline-block;margin-top:6px;font-size:10px;font-weight:600;color:var(--muted);background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em;font-variant-numeric:tabular-nums}
+  .dive-asof.aging{color:var(--ink);border-color:var(--acc)}
+  .dive-asof.unknown{font-style:italic}
+  /* the headline number line — the one answer, up top and bold */
+  .dhead{margin:11px 0 4px;padding:10px 12px;background:var(--accent-weak);border-left:3px solid var(--acc);border-radius:8px;font-size:13.5px;font-weight:600;line-height:1.4;color:var(--ink)}
+  /* a dive that ships written argument, not just tables — the paragraphs its builder resolved */
+  .dvbody p{margin:9px 0;font-size:12.5px;line-height:1.62;color:var(--ink);max-width:78ch}
+  /* the discount zone: the stretch of the axis between what a long two returns and what the step
+     back returns, drawn ON the bars rather than described beside them. Translucent (accent-weak is
+     rgba), so every bar it crosses still reads through it. */
+  .ppsshade{position:absolute;top:0;bottom:0;background:var(--accent-weak);border-left:1px dashed var(--acc);border-right:1px dashed var(--acc);pointer-events:none}
+  .barrow .bt>i.three{background:var(--good)}
+  /* Two seasons on ONE row, so the reader sees the shift instead of holding two charts in their
+     head. Prior season is the muted bar and sits on top; this season is the accent bar beneath.
+     Both are drawn as a SHARE of that season's team-games, never as raw counts — the seasons have
+     different numbers of games and an overlay of counts would draw the schedule, not the rotation. */
+  .dualrow{display:flex;align-items:center;gap:9px;margin:6px 0}
+  .dualrow .bl{flex:0 0 92px;font-size:11.5px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+  .dualrow .dt{flex:1 1 auto;min-width:60px;display:flex;flex-direction:column;gap:3px}
+  .dualrow .dt>span{position:relative;display:block;height:9px;border-radius:5px;background:var(--line2);overflow:hidden}
+  .dualrow .dt>span>i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;display:block}
+  .dualrow .dt>span.prior>i{background:var(--dim)}
+  .dualrow .dt>span.now>i{background:var(--acc)}
+  .dualrow .dv{flex:0 0 auto;font-size:11px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;min-width:96px;text-align:right}
+  .dualrow.thin .bl::after{content:" ·thin";color:var(--dim);font-weight:600}
+  .dualkey{display:flex;gap:14px;align-items:center;font-size:10.5px;color:var(--dim);margin:4px 0 8px 101px}
+  .dualkey b{display:inline-block;width:16px;height:8px;border-radius:4px;margin-right:5px;vertical-align:middle}
+  @media (max-width:560px){ .dualrow .bl{flex:0 1 92px;min-width:0} .dualrow .dv{min-width:0} .dualkey{margin-left:0} }
 
-        <div class="hw-research-table-wrap">
-          <table class="hw-research-table" id="research-table">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>Question / analysis</th>
-                <th>Decision</th>
-                <th>Evidence source</th>
-                <th class="num">Sample</th>
-                <th class="num">Δ sample</th>
-                <th>Updated</th>
-                <th>Finding</th>
-              </tr>
-            </thead>
-            <tbody id="research-body"><tr><td colspan="8"><div class="hw-empty">Loading research…</div></td></tr></tbody>
-          </table>
-        </div>
-        <div class="hw-mobile-research" id="research-mobile" aria-live="polite"><div class="hw-empty">Loading research…</div></div>
-      </article>
+  /* --- stat tiles --- */
+  .tiles{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:flex-end;margin:12px 0 4px}
+  .tile{display:flex;flex-direction:column;line-height:1.05}
+  .tile .tv{font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .tile .tl{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;margin-top:3px}
+  .tile.sm .tv{font-size:16px;font-weight:750}
 
-      <aside class="hw-module hw-research-inspector" id="research-inspector" aria-live="polite">
-        <div class="hw-module-head"><h2>Evidence inspector</h2><span>Select a row</span></div>
-        <div class="hw-empty">Choose any analysis to see its question, explicit decision, sample history, published evidence, source file, and caveats together.</div>
-      </aside>
-    </section>
+  /* --- sub-panel label --- */
+  .plab{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800;margin:15px 0 5px}
 
-    <section class="hw-command-grid equal hw-research-analysis" aria-label="Research analysis">
-      <article class="hw-module">
-        <div class="hw-module-head hw-research-viz-head">
-          <div><h2>Research landscape</h2><span id="research-viz-context">Sample size versus sample movement</span></div>
-          <div class="hw-visual-tabs" role="tablist" aria-label="Research visual">
-            <button class="hw-visual-tab active" type="button" data-research-viz="sample">Sample × movement</button>
-            <button class="hw-visual-tab" type="button" data-research-viz="outcomes">Decision mix</button>
-            <button class="hw-visual-tab" type="button" data-research-viz="sources">Evidence coverage</button>
-          </div>
-        </div>
-        <div class="hw-module-body"><div class="hw-research-viz" id="research-viz"><div class="hw-empty">Loading research landscape…</div></div></div>
-        <div class="hw-viz-legend" id="research-viz-legend"><span><b>Click:</b> inspect analysis</span><span><b>Orange:</b> selected analysis</span></div>
-      </article>
+  /* --- data grid --- */
+  .dtwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0;border:1px solid var(--line);border-radius:9px}
+  table.dt{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+  .dt th,.dt td{padding:5px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  .dt th{background:var(--card2);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+  .dt th.num,.dt td.num{text-align:right}
+  .dt tbody tr:last-child td{border-bottom:none}
+  .dt tbody tr:hover{background:var(--card2)}
+  .dt td.rowh{font-weight:700;color:var(--ink);text-transform:none}
+  .dt .cbig{font-weight:700;font-variant-numeric:tabular-nums}
+  .dt .csmall{font-size:10.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+  .dt td.thin,.dt td.thin .cbig{color:var(--dim);font-weight:500}
+  .dt td.thin .csmall{color:var(--line2)}
 
-      <article class="hw-module hw-research-watch">
-        <div class="hw-module-head"><div><h2>Evidence watch</h2><span>What changed and what did not ship</span></div><a href="primer.html">How gates work →</a></div>
-        <div class="hw-research-watch-grid">
-          <section>
-            <h3>Largest sample movement</h3>
-            <div class="hw-research-watch-list" id="research-sample-moves"><div class="hw-empty">Loading sample movement…</div></div>
-          </section>
-          <section>
-            <h3>Explicit no-promote findings</h3>
-            <div class="hw-research-watch-list" id="research-no-promote"><div class="hw-empty">Loading decisions…</div></div>
-          </section>
-        </div>
-      </article>
-    </section>
+  /* --- horizontal magnitude bar rows --- */
+  .barrow{display:flex;align-items:center;gap:9px;margin:5px 0}
+  .barrow .bl{flex:0 0 128px;font-size:11.5px;color:var(--ink);font-weight:600}
+  .barrow .bt{position:relative;flex:1 1 auto;height:11px;border-radius:6px;background:var(--line2);overflow:hidden;min-width:60px}
+  .barrow .bt>i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--acc);display:block}
+  .barrow .bt>i.neg{background:var(--away)}
+  .barrow .bv{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;min-width:52px;text-align:right}
+  .barrow .bn{flex:0 0 auto;font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums;min-width:44px;text-align:right}
+  /* A bar row's non-negotiable parts add up: a 128px label that cannot shrink, plus 60/52/44px
+     minimums and three 9px gaps, is ~333px before the card's own padding — so on a 320px phone the
+     trailing sample-size ("n=321") was pushed past the edge and clipped away. These only relax the
+     row UNDER PRESSURE (`0 1` still starts from 128px, the minimums still hold when there is room),
+     so a 375px+ phone and every desktop render are byte-identical to before. */
+  @media (max-width:560px){
+    .barrow .bl{flex:0 1 128px;min-width:0}
+    .barrow .bt{min-width:36px}
+    .barrow .bn{min-width:0}
+  }
 
-    <div class="hw-data-note">Research labels repeat the source’s own decision language. Missing sample sizes, dates, metrics, and source files stay missing rather than being reconstructed.</div>
-  </main>
-  <script src="hw-product.js"></script>
-  <script src="hw-research.js"></script>
-</body>
+  /* --- inline cell bar (reuses the hardwood .cellbar look) --- */
+  .cellbar{position:relative;width:52px;max-width:100%;height:4px;border-radius:2px;background:var(--line2);overflow:hidden;display:inline-block;vertical-align:middle;margin-left:7px}
+  .cellbar>i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:var(--acc)}
+
+  /* --- measured-range row ---------------------------------------------------------------------
+     Draws the interval a number actually lives in instead of writing the interval out as a
+     sentence. The shaded block is the 95% range, the bright tick is the measured value, the dark
+     tick is a reference the reader cares about (the number the board uses, or an even 50/50), and
+     the faint tick is the axis anchor. Same 128px label column as .barrow so a card that stacks
+     both reads as one ruler. */
+  .rngrow{display:flex;align-items:center;gap:9px;margin:7px 0}
+  .rngrow .bl{flex:0 0 128px;font-size:11.5px;color:var(--ink);font-weight:600}
+  .rngrow .rt{position:relative;flex:1 1 auto;height:13px;border-radius:7px;background:var(--line2);min-width:70px}
+  .rngrow .rt>.rspan{position:absolute;top:0;bottom:0;border-radius:7px;background:var(--acc);opacity:.42}
+  .rngrow .rt>.rpt{position:absolute;top:-3px;bottom:-3px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--acc)}
+  .rngrow .rt>.rref{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;background:var(--ink);opacity:.7}
+  .rngrow .rt>.ranch{position:absolute;top:0;bottom:0;width:1px;background:var(--dim);opacity:.55}
+  .rngrow .bv{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;min-width:104px;text-align:right}
+  .rnglegend{font-size:10px;color:var(--dim);margin:4px 0 2px;line-height:1.5}
+  @media (max-width:560px){ .rngrow .bl{flex:0 1 128px;min-width:0} .rngrow .bv{min-width:0} }
+
+  /* --- the hub board: what is inside this page, ABOVE the first card ---------------------------
+     The dives are long, so the breadth of the page was only discoverable by scrolling all of it.
+     This was a one-tap-row strip of pill links; it is now the same board the teams and players
+     pages run — one dense row per dive, every number carrying its movement, banded into
+     plain-English tiers with a count, filterable and sortable, with a footer that states the sort
+     logic and the basis in words. Built from the SAME index rows the cards are built from, and the
+     figures are lifted (never recomputed here) — see the hub-drift note in refresh_deep_dives.py. */
+  .dvbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0 4px}
+  .dvbar input{flex:0 1 250px;font:inherit;font-size:12px;padding:5px 9px;border:1px solid var(--line2);border-radius:8px;background:var(--card);color:var(--ink)}
+  .dvbar .cnt{font-size:11px;color:var(--dim)}
+  .dvlede{font-size:12.5px;color:var(--ink);background:var(--accent-weak);border-left:3px solid var(--acc);border-radius:7px;padding:8px 11px;margin:6px 0 2px;line-height:1.5}
+  .dvlede b{font-weight:750}
+  .dvwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);box-shadow:var(--shadow)}
+  table.dvboard{border-collapse:collapse;width:100%;font-size:12px;font-variant-numeric:tabular-nums}
+  .dvboard th,.dvboard td{padding:4px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:middle}
+  .dvboard th{background:var(--card2);color:var(--muted);font-size:9.5px;text-transform:uppercase;letter-spacing:.03em;font-weight:800;position:sticky;top:0;z-index:1}
+  .dvboard th.sortable{cursor:pointer;user-select:none}
+  .dvboard th.sortable:hover{color:var(--ink)}
+  .dvboard th.sorted{color:var(--acc)}
+  .dvboard td.num,.dvboard th.num{text-align:right}
+  .dvboard tbody tr:hover{background:var(--card2)}
+  .dvboard tr:last-child td{border-bottom:none}
+  .dvboard .rk{color:var(--dim);width:1.6em;text-align:right}
+  .dvboard .dvt{font-weight:650;color:var(--ink);text-decoration:none;max-width:330px;overflow:hidden;text-overflow:ellipsis;display:inline-block;vertical-align:bottom}
+  .dvboard .dvt:hover{color:var(--acc)}
+  .dvboard .dvq{display:block;color:var(--dim);font-weight:400;font-size:10.5px;max-width:330px;overflow:hidden;text-overflow:ellipsis}
+  .dvboard .nbarwrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+  .dvboard .nbar{flex:0 0 46px;height:6px;border-radius:3px;background:var(--line2);overflow:hidden}
+  .dvboard .nbar>i{display:block;height:100%;background:var(--acc);opacity:.55}
+  .dvboard .up{color:var(--good);font-weight:700}
+  .dvboard .down{color:var(--bad);font-weight:700}
+  .dvboard .flat{color:var(--dim)}
+  .dvboard .sparkwrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+  .dvboard svg.nspark{width:58px;height:16px;overflow:visible;display:block}
+  .dvboard svg.nspark path{fill:none;stroke:var(--acc);stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+  .dvboard svg.nspark circle{fill:var(--acc)}
+  .dvboard tr.tier td{background:var(--chip);border-bottom:1px solid var(--line2);padding:5px 9px;white-space:normal}
+  .dvboard .tlabel{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink)}
+  .dvboard .tmeaning{font-size:10.5px;color:var(--muted);margin-left:8px}
+  .dvboard .tcount{font-size:10px;color:var(--dim);float:right;font-weight:700}
+  .dvfoot{font-size:10.5px;color:var(--dim);line-height:1.6;margin:7px 0 2px;max-width:1080px}
+
+  /* --- plain-English read strip --- */
+  .read{margin:13px 0 2px}
+  .read p{margin:7px 0;font-size:12.5px;line-height:1.55;color:var(--ink)}
+  .read p .lead-k{font-weight:800;color:var(--muted);text-transform:uppercase;font-size:9.5px;letter-spacing:.05em;margin-right:6px}
+
+  /* --- collapsible provenance / caveats (long explanations, buried at the bottom) --- */
+  details.method{margin:12px 0 2px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card2);overflow:hidden}
+  details.method>summary{cursor:pointer;list-style:none;padding:8px 12px;font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:7px}
+  details.method>summary::-webkit-details-marker{display:none}
+  details.method>summary::before{content:"\25B8";font-size:10px;color:var(--dim)}
+  details.method[open]>summary::before{content:"\25BE"}
+  details.method>summary:hover{color:var(--ink)}
+  .method-body{padding:0 12px 11px;font-size:11.5px;color:var(--muted);line-height:1.6}
+  .method-body b{color:var(--ink)}
+  .method-body ul{margin:6px 0;padding-left:18px}
+  .method-body li{margin:4px 0}
+
+  /* --- We Tested It (preserved noise-investigation surface) --- */
+  .ti-item{background:var(--card);border:1px solid var(--line);border-radius:9px;box-shadow:var(--shadow);padding:11px 13px;margin:8px 0}
+  .ti-item .ti{font-weight:700;font-size:13.5px}
+  .ti-item .fresh{font-size:10px;font-weight:600;color:var(--muted);background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em;margin-left:8px}
+  .ti-item .body{margin-top:9px;font-size:12.5px;line-height:1.55}
+  .ti-item .body h3{font-size:13px;margin:13px 0 4px;font-weight:700}
+  .ti-item .body h4{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:11px 0 3px;font-weight:700}
+  .ti-item .body p{margin:7px 0}
+  .ti-item .body strong{font-weight:700;color:var(--ink)}
+  .ti-item .body code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:.9em;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .ti-item .body pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 13px;overflow-x:auto;margin:9px 0}
+  .ti-item .body pre code{background:none;border:none;padding:0;white-space:pre;display:block;font-size:11px;line-height:1.5}
+  .soon{background:var(--card);border:1px dashed var(--line2);border-radius:11px;padding:18px 16px;text-align:center;color:var(--muted);font-size:12.5px;max-width:620px;margin:10px 0}
+
+  /* --- We Tested It card: verdict chip (A+) + takeaway tile with a derived delta (A++) + an
+     interior peak callout and a verdict-threaded magnitude (A+++). All values are computed at
+     render time from the dive's OWN table rows; a card that can't pin an unambiguous value shows
+     nothing extra (omit-when-ambiguous). --- */
+  .item{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:13px 15px;margin:10px 0}
+  .item .dvhd{display:flex;justify-content:space-between;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .item .ti{font-weight:750;font-size:14px;letter-spacing:-.01em}
+  .item .chips{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .item .verdict{font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;border-radius:999px;padding:2px 9px;background:var(--chip);border:1px solid var(--line);color:var(--muted)}
+  .item .verdict.v-noise{color:var(--dim);border-color:var(--line2)}
+  .item .verdict.v-signal{color:var(--good);border-color:var(--good)}
+  .item .verdict.v-adopted{color:var(--acc);border-color:var(--acc)}
+  /* A+++: the SAME derived delta magnitude threaded flush against the verdict chip — a reused value
+     (never a second computation), so it can never disagree with the takeaway's delta. */
+  .item .verdict-mag{font-size:10px;font-weight:700;letter-spacing:.02em;white-space:nowrap;border-radius:999px;padding:2px 8px;background:var(--accent-weak);border:1px solid var(--line);color:var(--acc);font-variant-numeric:tabular-nums;margin-left:-3px}
+  .item .fresh{font-size:10px;font-weight:600;color:var(--muted);background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap;text-transform:uppercase;letter-spacing:.03em}
+  .item .takeaway{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:10px;padding:9px 11px;background:var(--accent-weak);border-left:3px solid var(--acc);border-radius:7px}
+  .item .takeaway-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--acc);white-space:nowrap}
+  .item .takeaway-t{font-size:13px;font-weight:600;color:var(--ink);line-height:1.4;flex:1 1 200px}
+  .item .takeaway-d{font-size:11px;font-weight:700;color:var(--acc);white-space:nowrap;font-variant-numeric:tabular-nums;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+  /* A+++: an interior min/max (peak-year) callout, derived from the SAME parsed rows; distinct class
+     so it never collides with the first-vs-last delta chip. */
+  .item .takeaway-pk{font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;background:var(--card2);border:1px dashed var(--line2);border-radius:999px;padding:2px 9px;max-width:100%}
+  /* This pill was sized for a short token ("peak 2019") but also carries a full phrase
+     ("bottomed 2019, 0.252 +/- 0.032 below the 2024 peak"), which at ~308px is wider than a small
+     phone. `nowrap` then pushed it off the right edge, where body{overflow-x:hidden} clipped it
+     unreachably. Keep the single line wherever it fits (desktop, and most phones); let the phrase
+     wrap inside its own pill only when the screen is genuinely too narrow for it. */
+  @media (max-width:560px){ .item .takeaway-pk{white-space:normal} }
+  /* A++++: a per-metric mini-sparkline of the SAME parsed series over the SAME time axis (drawn from
+     the parsed values at render time, never hardcoded). Theme-safe — strokes reuse the accent var. */
+  .item .takeaway-spark{flex:0 0 auto;display:block;width:72px;height:18px;overflow:visible}
+  .item .takeaway-spark .spark-line{fill:none;stroke:var(--acc);stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+  .item .takeaway-spark .spark-dot{fill:var(--acc)}
+  /* A+++++: the interior peak/valley vertex marked ON the line at the SAME tablePeak extreme point —
+     a ringed accent dot (halo separates it from the solid endpoint dot). Theme-safe: accent fill +
+     background-colored ring so it reads on either theme. Drawn ONLY when the peak callout qualified. */
+  .item .takeaway-spark .spark-peak{fill:var(--acc);stroke:var(--bg);stroke-width:1;vector-effect:non-scaling-stroke}
+  .item .body{margin-top:10px;font-size:13px;line-height:1.55}
+  .item .body h3{font-size:14px;margin:15px 0 4px;font-weight:700}
+  .item .body h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:13px 0 3px;font-weight:700}
+  .item .body p{margin:8px 0}
+  .item .body strong{font-weight:680;color:var(--ink)}
+  .item .body code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:.9em;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .item .body pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px 13px;overflow-x:auto;margin:9px 0}
+  .item .body pre code{background:none;border:none;padding:0;white-space:pre;display:block;font-size:11.5px;line-height:1.5}
+  .item .body .dtwrap{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:8px}
+  .item .body table.dtable{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+  .item .body .dtable th,.item .body .dtable td{padding:5px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  .item .body .dtable th{background:var(--card2);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.03em;font-weight:700}
+  .item .body .dtable th.num,.item .body .dtable td.num{text-align:right}
+  .item .body .dtable tbody tr:last-child td{border-bottom:none}
+  .item .body .dtable tbody tr:hover{background:var(--card2)}
+  footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
+</style>
+<link rel="stylesheet" href="./hardwood.css?v=04e913ef">
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
+<body>
+<header>
+  <h1>The Hardwood — Deep Dives</h1>
+  <span class="ago" id="ago"></span>
+</header>
+<div class="sub">Quantify the game on the fly — empirical answers from thousands of WNBA games.</div>
+<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="standings.html">Standings &amp; Injuries</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
+<main>
+  <div class="sec">
+    <div class="sec-h" id="hub-h">Deep Dives</div>
+    <div class="sec-lede" id="hub-lede"></div>
+  </div>
+  <div id="hub-board"></div>
+  <div id="hub"><p class="empty">Loading deep dives…</p></div>
+
+  <div class="sec" style="margin-top:26px">
+    <div class="sec-h">We Tested It</div>
+    <div class="sec-lede">Ideas we investigated — and, honestly, what turned out to be noise.</div>
+  </div>
+  <div id="tested"></div>
+</main>
+<footer id="foot"></footer>
+<script src="./hardwood.js?v=e2e90a97"></script>
+<script>
+(function(){
+  "use strict";
+  /* ---------- tiny DOM helpers (built entirely from textContent — no HTML injection) ---------- */
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
+  function frag(){ return document.createDocumentFragment ? document.createDocumentFragment() : document.createElement("div"); }
+
+  // Honest number formatting: null / undefined / NaN render as an em-dash (never 0, never blank).
+  function num(v,dp){ if(v==null||(typeof v==="number"&&!isFinite(v))) return "—"; var n=Number(v); if(!isFinite(n)) return "—"; return dp==null?String(n):n.toFixed(dp); }
+  function pct(v,dp){ if(v==null||(typeof v==="number"&&!isFinite(v))) return "—"; return Number(v).toFixed(dp==null?0:dp)+"%"; }
+  function sign(v,dp){ if(v==null||(typeof v==="number"&&!isFinite(v))) return "—"; var n=Number(v); return (n>0?"+":"")+n.toFixed(dp==null?1:dp); }
+
+  function tiles(defs){ // [{v,l,sm}]
+    var w=el("div","tiles");
+    defs.forEach(function(d){ if(!d) return; var t=el("div","tile"+(d.sm?" sm":"")); t.appendChild(el("div","tv",d.v)); t.appendChild(el("div","tl",d.l)); w.appendChild(t); });
+    return w;
+  }
+  function plab(txt){ return el("div","plab",txt); }
+  // horizontal magnitude bar row: label | track(fill scaled to |val|/max) | value | n
+  function barrow(label,val,maxAbs,valText,nText,neg){
+    var r=el("div","barrow"); r.appendChild(el("div","bl",label));
+    var bt=el("div","bt"), i=el("i",neg?"neg":null);
+    var frac=(maxAbs>0)?Math.min(1,Math.abs(val)/maxAbs):0;
+    i.style.width=(frac*100).toFixed(1)+"%"; bt.appendChild(i); r.appendChild(bt);
+    r.appendChild(el("div","bv",valText));
+    if(nText!=null) r.appendChild(el("div","bn",nText));
+    return r;
+  }
+  /* Draw the RANGE a measured number lives in, rather than writing the interval out in a sentence.
+     lo/hi/point/opts.ref/opts.anchor are all in the SAME units; the axis is derived from those
+     values (never hardcoded), so the bar can never disagree with the numbers beside it.
+       opts.ref     - a reference value to mark (e.g. the number the board actually uses)
+       opts.anchor  - a value the axis must contain (0 for a margin, 50 for a win rate), so the
+                      reader can see whether the range clears it
+       opts.fmt     - formatter for the endpoint text (defaults to 2dp) */
+  function rangerow(label, lo, hi, point, opts){
+    opts=opts||{};
+    var fmt=opts.fmt||function(v){ return num(v,2); };
+    var vals=[lo,hi,point,opts.ref,opts.anchor].filter(function(v){ return v!=null && isFinite(Number(v)); }).map(Number);
+    var r=el("div","rngrow"); r.appendChild(el("div","bl",label));
+    if(vals.length<2){ r.appendChild(el("div","rt")); r.appendChild(el("div","bv","—")); return r; }
+    var mn=Math.min.apply(null,vals), mx=Math.max.apply(null,vals);
+    var pad=((mx-mn)*0.18)||Math.abs(mx||1)*0.18||1; mn-=pad; mx+=pad;
+    function pos(v){ return Math.max(0,Math.min(100,(Number(v)-mn)/(mx-mn)*100)); }
+    var t=el("div","rt");
+    if(opts.anchor!=null){ var a=el("span","ranch"); a.style.left=pos(opts.anchor).toFixed(1)+"%"; t.appendChild(a); }
+    if(lo!=null&&hi!=null){ var s=el("span","rspan"); s.style.left=pos(lo).toFixed(1)+"%"; s.style.width=Math.max(0.6,pos(hi)-pos(lo)).toFixed(1)+"%"; t.appendChild(s); }
+    if(opts.ref!=null){ var rf=el("span","rref"); rf.style.left=pos(opts.ref).toFixed(1)+"%"; if(opts.refTitle) rf.title=opts.refTitle; t.appendChild(rf); }
+    if(point!=null){ var pt=el("span","rpt"); pt.style.left=pos(point).toFixed(1)+"%"; t.appendChild(pt); }
+    r.appendChild(t);
+    var txt=(point!=null?fmt(point):"—");
+    if(lo!=null&&hi!=null) txt+=" ("+fmt(lo)+" to "+fmt(hi)+")";
+    r.appendChild(el("div","bv",txt));
+    return r;
+  }
+  function methodBlock(title, buildBody){
+    var d=el("details","method"); d.appendChild(el("summary",null,title));
+    var b=el("div","method-body"); buildBody(b); d.appendChild(b); return d;
+  }
+  function provList(b, rows){ // rows: [[k,v]...]
+    rows.forEach(function(kv){ var p=el("p"); p.appendChild(el("b",null,kv[0]+": ")); p.appendChild(document.createTextNode(kv[1])); b.appendChild(p); });
+  }
+  function caveatList(b, arr, heading){
+    if(!arr||!arr.length) return;
+    if(heading) b.appendChild(el("p")).appendChild(el("b",null,heading));
+    var ul=el("ul"); arr.forEach(function(c){ ul.appendChild(el("li",null,c)); }); b.appendChild(ul);
+  }
+  function readStrip(sentences){
+    var w=el("div","read");
+    (sentences||[]).forEach(function(s){ var p=el("p"); p.appendChild(document.createTextNode(s)); w.appendChild(p); });
+    return w;
+  }
+
+  /* ============================ per-dive renderers ============================ */
+  // Each returns a DocumentFragment of the dive BODY (headline + grid(s) + read + provenance).
+
+  // -- quarter_scoreline -----------------------------------------------------
+  function renderQuarterScoreline(d){
+    var f=frag();
+    f.appendChild(el("div","dhead", d.headline||""));
+    // key tiles
+    var g=(d.winprob_grid||{});
+    function wp(bk,lead){ var a=(g[bk]||[]).filter(function(r){return r.lead===lead;})[0]; return a?a.emp:null; }
+    f.appendChild(tiles([
+      {v:"50%", l:"tied at any break"},
+      {v:pct(wp("Q1",6)), l:"up 6 after Q1"},
+      {v:pct(wp("Q3",6)), l:"up 6 after Q3"},
+      {v:num((d.scoring_by_quarter||{}).full_game,1), l:"pts / game"}
+    ]));
+    // Panel 1 — margin bands at each break
+    f.appendChild(plab("Where the game stands at each break (neutral floor)"));
+    var bt=d.band_table||{}, cols=[["tied","Tied"],["l1_3","1–3"],["l4_6","4–6"],["l7_10","7–10"],["l11p","11+"],["within3","Within 3"],["within6","Within 6"]];
+    var w1=el("div","dtwrap"), t1=el("table","dt"), hd1=el("tr"); hd1.appendChild(el("th",null,"Break"));
+    cols.forEach(function(c){ hd1.appendChild(el("th","num",c[1])); });
+    var th1=el("thead"); th1.appendChild(hd1); t1.appendChild(th1);
+    var tb1=el("tbody");
+    (d.breaks||["Q1","Half","Q3","Final"]).forEach(function(bk){
+      var row=bt[bk]||{}; var tr=el("tr"); tr.appendChild(el("td","rowh",bk));
+      cols.forEach(function(c){ tr.appendChild(el("td","num", num(row[c[0]])==="—"?"—":pct(row[c[0]]))); });
+      tb1.appendChild(tr);
+    });
+    t1.appendChild(tb1); w1.appendChild(t1); f.appendChild(w1);
+    // Panel 2 — win prob given lead (empirical primary, model dashed/muted)
+    f.appendChild(plab("Win probability given the lead — empirical (model)"));
+    var breaks2=["Q1","Half","Q3"], leads=[0,3,6,10];
+    var w2=el("div","dtwrap"), t2=el("table","dt"), hd2=el("tr"); hd2.appendChild(el("th",null,"Lead"));
+    breaks2.forEach(function(bk){ hd2.appendChild(el("th","num",bk==="Half"?"At half":("After "+bk))); });
+    var th2=el("thead"); th2.appendChild(hd2); t2.appendChild(th2);
+    var tb2=el("tbody");
+    leads.forEach(function(L){
+      var tr=el("tr"); tr.appendChild(el("td","rowh", L===0?"Tied":("Up "+L)));
+      breaks2.forEach(function(bk){
+        var rec=(g[bk]||[]).filter(function(r){return r.lead===L;})[0]||{};
+        var td=el("td","num"); var thin=(rec.n!=null && rec.n<100);
+        if(thin) td.className="num thin";
+        var big=el("span","cbig", pct(rec.emp)); td.appendChild(big);
+        var sm=el("span","csmall"," ("+ (rec.model==null?"—":pct(rec.model)) +")"); td.appendChild(sm);
+        if(rec.n!=null) td.setAttribute("title","n="+rec.n);
+        tr.appendChild(td);
+      });
+      tb2.appendChild(tr);
+    });
+    t2.appendChild(tb2); w2.appendChild(t2); f.appendChild(w2);
+    // Panel 3 — scoring by quarter bars
+    f.appendChild(plab("Scoring by quarter (both teams, pts)"));
+    var sc=d.scoring_by_quarter||{}, qk=["Q1","Q2","Q3","Q4"];
+    var maxS=Math.max.apply(null, qk.map(function(q){ return sc[q]||0; }))||1;
+    qk.forEach(function(q){ f.appendChild(barrow(q, sc[q]||0, maxS, num(sc[q],1), null)); });
+    // read
+    f.appendChild(readStrip(d.read));
+    // provenance + caveats
+    var pv=d.provenance||{};
+    f.appendChild(methodBlock("How this is computed · caveats", function(b){
+      provList(b, [
+        ["Source", (pv.source||"—")+" ("+(pv.seasons||"")+", n="+(pv.games!=null?pv.games:"—")+" games"+(pv.ot_games!=null?", "+pv.ot_games+" OT":"")+")"],
+        ["Method","Empirical band counts + an even-team Normal(0, s_k) overlay; strength isolated by a between/within margin-variance decomposition."],
+        ["Script", pv.script||"—"]
+      ]);
+      caveatList(b, d.caveats, "Honest limitations");
+      if(pv.note){ var p=el("p"); p.appendChild(el("b",null,"Note: ")); p.appendChild(document.createTextNode(pv.note)); b.appendChild(p); }
+    }));
+    return f;
+  }
+
+  // -- comeback --------------------------------------------------------------
+  function renderComeback(d){
+    var f=frag();
+    f.appendChild(el("div","dhead", d.headline||""));
+    var bc=d.biggest_comeback||{}, hs=d.hca_split_end_q3||{};
+    f.appendChild(tiles([
+      {v:num(bc.max_deficit_overcome)+" pts", l:"biggest comeback won"},
+      {v:num(bc.n_ge15), l:"comebacks of 15+"},
+      {v:pct(hs.home_trailing_winpct,1), l:"home trailing (end Q3)", sm:true},
+      {v:pct(hs.away_trailing_winpct,1), l:"away trailing (end Q3)", sm:true}
+    ]));
+    // grid: checkpoints x bands, comeback win% (empirical, model muted)
+    f.appendChild(plab("Comeback win% by deficit × time left — empirical (model)"));
+    var bands=(d.bands||[]).map(function(b){ return b.key; });
+    var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr"); hd.appendChild(el("th",null,"Trailing at"));
+    bands.forEach(function(k){ hd.appendChild(el("th","num","Down "+k)); });
+    var th=el("thead"); th.appendChild(hd); t.appendChild(th);
+    var tb=el("tbody");
+    (d.checkpoints||[]).forEach(function(cp){
+      var tr=el("tr"); tr.appendChild(el("td","rowh", cp.label||cp.key));
+      bands.forEach(function(k){
+        var b=(cp.bands||{})[k]||{}; var td=el("td","num"); if(b.thin) td.className="num thin";
+        var big=el("span","cbig", pct(b.winpct,1)); td.appendChild(big);
+        var sm=el("span","csmall"," ("+ (b.model==null?"—":pct(b.model,1)) +")"); td.appendChild(sm);
+        if(b.n!=null) td.setAttribute("title","n="+b.n);
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); w.appendChild(t); f.appendChild(w);
+    // point reads
+    if((d.point_reads||[]).length){
+      f.appendChild(plab("Quick reads (comeback win% · n)"));
+      // Reader-value gate: show EVERY point read (no silent cap — the list is short and each row
+      // is a real, distinct scenario a reader may be looking for).
+      (d.point_reads||[]).forEach(function(pr){
+        f.appendChild(barrow(pr.tag, pr.comeback_winpct||0, 50, pct(pr.comeback_winpct,1), "n="+(pr.n!=null?pr.n:"—")));
+      });
+    }
+    // When a lead becomes safe. `unrecoverable_first_lt5pct_band` was baked with the grid and never
+    // rendered: for each moment in the game it names the FIRST deficit band from which the trailing
+    // team has come back less than 5% of the time. Read down the column and it is the whole story
+    // of how a game closes. The winning percentage beside each band is looked up in the SAME grid
+    // the table above renders, so the two can never disagree.
+    var un=d.unrecoverable_first_lt5pct_band||{};
+    var cps=d.checkpoints||[];
+    if(cps.length && Object.keys(un).length){
+      f.appendChild(plab("When a lead is effectively safe (trailing team wins under 5% of the time)"));
+      var safeRows=cps.map(function(cp){
+        var band=un[cp.key];
+        var cell=band?((cp.bands||{})[band]||{}):{};
+        return {label:cp.label||cp.key, band:band, winpct:cell.winpct, n:cell.n};
+      });
+      f.appendChild(simpleTable([
+        {h:"Moment", rowh:true, get:function(r){ return r.label; }},
+        {h:"Lead that is safe", num:true, get:function(r){ return r.band?(r.band+" points"):"none this early"; }},
+        {h:"Trailing team still wins", num:true, get:function(r){ return r.band?pct(r.winpct,1):"—"; }},
+        {h:"Games", num:true, get:function(r){ return r.band?num(r.n):"—"; }}
+      ], safeRows));
+      var ul=el("div","rnglegend");
+      ul.appendChild(document.createTextNode(
+        "The lead you need to be safe shrinks as the clock does. Early in the game no lead is out of "
+        +"reach; by the last minute a single possession is close to decisive. A blank row is honest: "
+        +"at that point in the game, no deficit band we measure has fallen under 5%."));
+      f.appendChild(ul);
+    }
+    // read (built from the dive's own fields, not synthesized)
+    var reads=[]; if(d.headline) reads.push(d.headline); if(d.method_note) reads.push(d.method_note);
+    f.appendChild(readStrip(reads));
+    var pv=d.provenance||{};
+    f.appendChild(methodBlock("How this is computed", function(b){
+      provList(b, [
+        ["Source", (pv.source||"—")+" ("+(pv.seasons||"")+", n="+(pv.games!=null?pv.games:"—")+" games)"],
+        ["Method","STATE = score at time T (strictly before the outcome); OUTCOME = final W/L incl. OT — no leakage. Pooled over home+away trailing teams. 'model' = on-paper Normal(0, s_rem) at the band midpoint."],
+        ["Clock cells","Mid-Q4 (6:00/3:00/1:00) use the "+(pv.clock_games!=null?pv.clock_games:"—")+" clock-carrying games (2020–2026); quarter breaks pool all games."],
+        ["Script", pv.script||"—"]
+      ]);
+    }));
+    return f;
+  }
+
+  // -- homecourt -------------------------------------------------------------
+  function renderHomecourt(d){
+    var f=frag();
+    var h=d.headline||{};
+    // The board's home term is DERIVED each bake (vs_board), never typed. This block used to read
+    // headline.confirmed / headline.board_value_pts / headline.board_value_winpct -- a hardcoded
+    // 2.1 / 55.5% the board never held, printed as "Confirmed". Those fields are gone; the payload
+    // now publishes what the board actually applies beside what we measured, and says so only when
+    // the board's term could be derived.
+    var vb=d.vs_board||{};
+    var confMsg = "Measured: home is worth "+sign(h.home_margin,1)+" pts / "+pct((h.home_winpct!=null?h.home_winpct*100:null),1)+" win rate."
+      + (vb.board_home_pts!=null ? " The board applies "+sign(vb.board_home_pts,1)+" pts - "+vb.verdict+"." : "");
+    f.appendChild(el("div","dhead", confMsg));
+    if(vb.detail){ f.appendChild(el("div","rnglegend", vb.detail)); }
+    f.appendChild(tiles([
+      {v:sign(h.home_margin,1), l:"home margin (pts)"},
+      {v:pct((h.home_winpct!=null?h.home_winpct*100:null),1), l:"home win rate"},
+      {v:num(h.n), l:"games", sm:true}
+    ]));
+    // How sure are we? -- the 95% range this measurement lives in, DRAWN, with the value the board
+    // actually uses marked inside it. Both intervals are baked fields (headline.home_margin_ci95 /
+    // home_winpct_ci95); nothing here is re-derived.
+    if((h.home_margin_ci95||[]).length===2 || (h.home_winpct_ci95||[]).length===2){
+      f.appendChild(plab("How sure are we? The 95% range around each measurement"));
+      var mci=h.home_margin_ci95||[], wci=h.home_winpct_ci95||[];
+      if(mci.length===2){
+        f.appendChild(rangerow("Home margin (pts)", mci[0], mci[1], h.home_margin,
+          {ref:vb.board_home_pts, anchor:0, refTitle:"the home term the board applies",
+           fmt:function(v){ return sign(v,2); }}));
+      }
+      if(wci.length===2){
+        // No board reference tick on this row: the board carries a home term in POINTS, not a
+        // home win rate. The old dark tick here was the hardcoded 55.5% -- a number nothing set.
+        var p100=function(v){ return v==null?null:v*100; };
+        f.appendChild(rangerow("Home win rate", p100(wci[0]), p100(wci[1]), p100(h.home_winpct),
+          {anchor:50, fmt:function(v){ return pct(v,1); }}));
+      }
+      var lg=el("div","rnglegend");
+      lg.appendChild(document.createTextNode(
+        "Shaded block = the 95% range the true edge is in, from "+num(h.n)+" games. "
+        +"Bright tick = what we measured. Dark tick, where shown = the home term the board applies. "
+        +"Faint tick = the level that would mean home is worth nothing."));
+      f.appendChild(lg);
+    }
+    // offense/defense decomposition
+    var od=d.offense_defense||{};
+    if(od.hca_total!=null){
+      f.appendChild(plab("Where the edge comes from (within-team, quality-controlled)"));
+      var mx=Math.max(Math.abs(od.hca_from_offense||0), Math.abs(od.hca_from_defense||0))||1;
+      f.appendChild(barrow("Defense", od.hca_from_defense||0, mx, sign(od.hca_from_defense,2)+" pts", pct((od.defense_share!=null?od.defense_share*100:null),0)));
+      f.appendChild(barrow("Offense", od.hca_from_offense||0, mx, sign(od.hca_from_offense,2)+" pts", pct((od.offense_share!=null?od.offense_share*100:null),0)));
+    }
+    // What the home team actually DOES better -- the points-additive mechanism split that was baked
+    // and never shown. The two point channels sum to the margin of this sub-sample by construction
+    // (fg_points_diff is defined as sample_margin - ft_points_diff), so the panel draws how the
+    // number is built and then shows the addition, rather than asserting it.
+    var me=d.mechanism||{};
+    if(me.ft_points_diff!=null && me.fg_points_diff!=null){
+      f.appendChild(plab("What the home team actually does better (points)"));
+      var mxm2=Math.max(Math.abs(me.ft_points_diff||0), Math.abs(me.fg_points_diff||0))||1;
+      f.appendChild(barrow("From the line", me.ft_points_diff, mxm2, sign(me.ft_points_diff,2)+" pts"));
+      f.appendChild(barrow("From the field", me.fg_points_diff, mxm2, sign(me.fg_points_diff,2)+" pts"));
+      var sum=el("div","rnglegend");
+      sum.appendChild(document.createTextNode(
+        "These two channels are the whole margin: "+num(me.ft_points_diff,2)+" from the line and "
+        +num(me.fg_points_diff,2)+" from the field add to "
+        +num(Math.round((me.ft_points_diff+me.fg_points_diff)*100)/100,2)
+        +", against a measured home margin of "+sign(me.sample_margin,2)+" in the same "
+        +num(me.n)+" games. Free throws are the single biggest channel, and pace is not a channel at all."));
+      f.appendChild(sum);
+      f.appendChild(plab("And the habits underneath those points (home minus away, per game)"));
+      var mechRows=[
+        ["Free throws attempted", me.ft_attempts_diff, "more trips to the line for the home team"],
+        ["Shooting accuracy", me.fg_pct_diff_pp, "percentage points of field-goal accuracy ("+pct((me.home_fg_pct!=null?me.home_fg_pct*100:null),1)+" at home vs "+pct((me.away_fg_pct!=null?me.away_fg_pct*100:null),1)+" away)"],
+        ["Turnovers forced", me.turnover_diff, "more turnovers by the visiting team"],
+        ["Shots taken", me.fga_diff, "difference in field-goal attempts, effectively none"],
+        ["Possessions", me.pace_diff, "difference in pace ("+num(me.home_poss,1)+" vs "+num(me.away_poss,1)+"), effectively none"]
+      ].filter(function(r){ return r[1]!=null; });
+      if(mechRows.length){
+        f.appendChild(simpleTable([
+          {h:"Habit", rowh:true, get:function(r){ return r[0]; }},
+          {h:"Home edge", num:true, get:function(r){ return sign(r[1],2); }},
+          {h:"What that means", get:function(r){ return r[2]; }}
+        ], mechRows));
+      }
+    }
+    // quarter timing
+    var qt=d.quarter_timing||{};
+    if(qt.q1!=null){
+      f.appendChild(plab("Home edge by quarter (pts)"));
+      var qk=["q1","q2","q3","q4"], mxq=Math.max.apply(null,qk.map(function(q){return Math.abs(qt[q]||0);}))||1;
+      qk.forEach(function(q){ f.appendChild(barrow(q.toUpperCase(), qt[q]||0, mxq, sign(qt[q],2))); });
+    }
+    // trend by season
+    var tr=d.trend||{};
+    if((tr.by_season||[]).length){
+      f.appendChild(plab("Home margin by season (HCA is drifting down)"));
+      var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
+      ["Season","n","Margin","Win%"].forEach(function(x,i){ hd.appendChild(el("th",i?"num":null,x)); });
+      var th=el("thead"); th.appendChild(hd); t.appendChild(th); var tb=el("tbody");
+      var mxm=Math.max.apply(null, tr.by_season.map(function(s){return Math.abs(s.margin||0);}))||1;
+      tr.by_season.forEach(function(s){
+        var row=el("tr"); row.appendChild(el("td","rowh",num(s.season)));
+        row.appendChild(el("td","num",num(s.n)));
+        var mtd=el("td","num"); mtd.appendChild(document.createTextNode(sign(s.margin,2)));
+        var cb=el("span","cellbar"), ci=el("i"); ci.style.width=(Math.min(1,Math.abs(s.margin||0)/mxm)*100).toFixed(0)+"%"; cb.appendChild(ci); mtd.appendChild(cb);
+        row.appendChild(mtd);
+        row.appendChild(el("td","num",pct((s.winpct!=null?s.winpct*100:null),1)));
+        tb.appendChild(row);
+      });
+      t.appendChild(tb); w.appendChild(t); f.appendChild(w);
+    }
+    // The empty-arena test -- three era averages that were baked and only ever described in a
+    // sentence. 2020 was played without a crowd, which makes it the closest thing the league has to
+    // a control condition for home court, so it is drawn beside the two crowd eras.
+    if(tr.era_2015_2019_margin!=null && tr.era_2020_bubble_margin!=null && tr.era_2021_2026_margin!=null){
+      f.appendChild(plab("The empty-arena test: home margin by era (pts)"));
+      var eras=[
+        ["2015-2019 (crowds)", tr.era_2015_2019_margin],
+        ["2020 (no crowd)", tr.era_2020_bubble_margin],
+        ["2021-2026 (crowds)", tr.era_2021_2026_margin]
+      ];
+      var mxe=Math.max.apply(null, eras.map(function(e){ return Math.abs(e[1]||0); }))||1;
+      eras.forEach(function(e){ f.appendChild(barrow(e[0], e[1]||0, mxe, sign(e[1],2), null, (e[1]||0)<0)); });
+      var eg=el("div","rnglegend");
+      eg.appendChild(document.createTextNode(
+        "The season with no crowd is the weakest home edge on record ("+sign(tr.era_2020_bubble_margin,2)
+        +" pts, "+pct((tr.era_2020_bubble_winpct!=null?tr.era_2020_bubble_winpct*100:null),1)
+        +" win rate, a coin flip). Across the whole span home court has been shrinking by about "
+        +num(Math.abs(tr.ols_slope_pts_per_yr||0),2)+" points a year"
+        +(tr.early_minus_modern!=null?(", or "+num(tr.early_minus_modern,2)+" points from the early era to now"):"")+"."));
+      f.appendChild(eg);
+    }
+    // read
+    var reads=[]; if(h.one_liner) reads.push(h.one_liner);
+    reads.push("The edge is mostly defensive ("+pct((od.defense_share!=null?od.defense_share*100:null),0)+" of it) and front-loaded into Q1; it has been shrinking over time (the 2020 crowd-less bubble is a natural ~0-HCA control).");
+    f.appendChild(readStrip(reads));
+    var pv=d.provenance||{};
+    f.appendChild(methodBlock("Sources · caveats", function(b){
+      provList(b, [
+        ["Sources", (pv.sources||[]).join("; ")||"—"],
+        ["Method", pv.method||"—"],
+        ["Script", pv.script||"—"]
+      ]);
+      caveatList(b, pv.caveats, "Caveats");
+    }));
+    return f;
+  }
+
+  // -- rest ------------------------------------------------------------------
+  function renderRest(d){
+    var f=frag();
+    var h=d.headline||{};
+    f.appendChild(el("div","dhead", h.one_liner||""));
+    f.appendChild(tiles([
+      {v:sign(h.court_adjusted_cost_points,1)+" pts", l:"B2B cost (court-adj.)"},
+      {v:pct((h.b2b_winpct!=null?h.b2b_winpct*100:null),1), l:"B2B win rate"},
+      {v:num(h.b2b_n), l:"B2B team-games", sm:true}
+    ]));
+    // rest buckets — margin bars (signed)
+    if((d.rest_buckets||[]).length){
+      f.appendChild(plab("Average margin by days of rest"));
+      var mxb=Math.max.apply(null, d.rest_buckets.map(function(r){return Math.abs(r.avg_margin||0);}))||1;
+      var lbl={"0_days_off_b2b":"0 (back-to-back)","1_day_off":"1 day","2_days_off":"2 days","3plus_days_off":"3+ days"};
+      d.rest_buckets.forEach(function(r){
+        f.appendChild(barrow(lbl[r.bucket]||r.bucket, r.avg_margin||0, mxb, sign(r.avg_margin,2), "n="+(r.n!=null?r.n:"—"), (r.avg_margin||0)<0));
+      });
+    }
+    // b2b by court table
+    if((d.b2b_by_court||[]).length){
+      f.appendChild(plab("B2B vs rested, split by home/away"));
+      var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
+      ["Court","B2B?","n","Margin","Win%"].forEach(function(x,i){ hd.appendChild(el("th",i>1?"num":null,x)); });
+      var th=el("thead"); th.appendChild(hd); t.appendChild(th); var tb=el("tbody");
+      d.b2b_by_court.forEach(function(r){
+        var row=el("tr");
+        row.appendChild(el("td","rowh", (r.court||"").charAt(0).toUpperCase()+(r.court||"").slice(1)));
+        row.appendChild(el("td",null, r.is_b2b?"B2B":"rested"));
+        row.appendChild(el("td","num",num(r.n)));
+        row.appendChild(el("td","num",sign(r.avg_margin,2)));
+        row.appendChild(el("td","num",pct((r.winpct!=null?r.winpct*100:null),1)));
+        tb.appendChild(row);
+      });
+      t.appendChild(tb); w.appendChild(t); f.appendChild(w);
+    }
+    // Rest edge -- the home team's rest days minus the away team's, a baked table that was never
+    // rendered. Shown with its own honest caveat: it is noisy and non-monotone, so it is a texture
+    // panel, not a read to bet a game on.
+    if((d.rest_differential||[]).length){
+      f.appendChild(plab("Rest edge: home team's days off minus the away team's"));
+      var mxd=Math.max.apply(null, d.rest_differential.map(function(r){ return Math.abs(r.home_margin||0); }))||1;
+      d.rest_differential.forEach(function(r){
+        var lab=(r.restdiff>0?("Home +"+r.restdiff+" day"+(r.restdiff===1?"":"s")):
+                 r.restdiff<0?("Away +"+Math.abs(r.restdiff)+" day"+(Math.abs(r.restdiff)===1?"":"s")):"Even rest");
+        f.appendChild(barrow(lab, r.home_margin||0, mxd, sign(r.home_margin,2),
+                             "n="+(r.n!=null?r.n:"—"), (r.home_margin||0)<0));
+      });
+      var rl=el("div","rnglegend");
+      rl.appendChild(document.createTextNode(
+        "Home margin by rest edge. It does not climb cleanly with rest, and it should not be read as "
+        +"one: road-trip structure travels with rest, so this panel is texture. The back-to-back "
+        +"bucket above is the reliable read."));
+      f.appendChild(rl);
+    }
+    // player fatigue
+    var pf=d.player_fatigue||{};
+    if(pf.stars){
+      f.appendChild(plab("Star box line: rested vs on a B2B"));
+      f.appendChild(tiles([
+        {v:num(pf.stars.rested&&pf.stars.rested.avg_min,1), l:"min (rested)", sm:true},
+        {v:num(pf.stars.b2b&&pf.stars.b2b.avg_min,1), l:"min (B2B)", sm:true},
+        {v:num(pf.stars.rested&&pf.stars.rested.avg_pts,1), l:"pts (rested)", sm:true},
+        {v:num(pf.stars.b2b&&pf.stars.b2b.avg_pts,1), l:"pts (B2B)", sm:true}
+      ]));
+    }
+    // Everyone, not just the stars. The all-players split was baked alongside the stars split and
+    // never shown, so the "no box-visible fatigue" finding could only be checked for stars. Both
+    // groups now sit in one table, with the second-night change stated per measure.
+    var fatRows=[];
+    if(pf.all_players && pf.all_players.rested) fatRows.push(["Every player", pf.all_players]);
+    if(pf.stars && pf.stars.rested) fatRows.push(["Stars only", pf.stars]);
+    if(fatRows.length){
+      f.appendChild(plab("Does the second night show up in the box score?"));
+      var fdelta=function(g,k,dp){
+        var a=g[1].rested||{}, b=g[1].b2b||{};
+        if(a[k]==null||b[k]==null) return "—";
+        return sign((k==="ts_pct"?(b[k]-a[k])*100:(b[k]-a[k])), dp);
+      };
+      f.appendChild(simpleTable([
+        {h:"Group", rowh:true, get:function(g){ return g[0]; }},
+        {h:"Games rested", num:true, get:function(g){ return num((g[1].rested||{}).n); }},
+        {h:"Games B2B", num:true, get:function(g){ return num((g[1].b2b||{}).n); }},
+        {h:"Minutes", num:true, get:function(g){ return num((g[1].rested||{}).avg_min,1)+" to "+num((g[1].b2b||{}).avg_min,1); }},
+        {h:"Change", num:true, get:function(g){ return fdelta(g,"avg_min",2); }},
+        {h:"Points", num:true, get:function(g){ return num((g[1].rested||{}).avg_pts,1)+" to "+num((g[1].b2b||{}).avg_pts,1); }},
+        {h:"Change", num:true, get:function(g){ return fdelta(g,"avg_pts",2); }},
+        {h:"True shooting", num:true, get:function(g){ return pct(((g[1].rested||{}).ts_pct!=null?g[1].rested.ts_pct*100:null),1)+" to "+pct(((g[1].b2b||{}).ts_pct!=null?g[1].b2b.ts_pct*100:null),1); }},
+        {h:"Change", num:true, get:function(g){ return fdelta(g,"ts_pct",2); }}
+      ], fatRows));
+      var fl=el("div","rnglegend");
+      fl.appendChild(document.createTextNode(
+        "Every column moves by a fraction of a minute, a fraction of a point, or a fraction of a "
+        +"percentage point. Whatever a back-to-back costs a team, it does not show up as tired legs "
+        +"in the box score, for stars or for anybody else."));
+      f.appendChild(fl);
+    }
+    var reads=[]; if(h.one_liner) reads.push(h.one_liner); if(pf.finding) reads.push(pf.finding);
+    f.appendChild(readStrip(reads));
+    f.appendChild(methodBlock("Definitions · caveats", function(b){
+      var def=d.definitions||{};
+      provList(b, [
+        ["Sources", (d.source_tables||[]).join(", ")||"—"],
+        ["B2B", def.b2b||"—"],
+        ["Rest", def.rest||"—"],
+        ["Script", d.script||"—"]
+      ]);
+      caveatList(b, d.caveats, "Caveats");
+    }));
+    return f;
+  }
+
+  // -- clutch ----------------------------------------------------------------
+  function renderClutch(d){
+    var f=frag();
+    f.appendChild(el("div","dhead", d.headline||""));
+    var teams=d.team_by_net||[];
+    var best=teams[0]||{};
+    f.appendChild(tiles([
+      {v:num(d.reliability_split_half_ts_r,2), l:"split-half reliability (r)"},
+      // Names its OWN population. This is the split-half subset the r beside it is computed on
+      // (players with shots in both the odd- and even-game halves) — not the riser/fader pool, and
+      // not "everyone measured". Labelled "players measured" it read as both.
+      {v:num(d.reliability_n_players), l:"players the r is measured on", sm:true},
+      {v:best.team||"—", l:"best clutch net", sm:true},
+      {v:sign(best.clutch_net_per_game,2), l:"net pts / clutch game", sm:true}
+    ]));
+    // The stored riser/fader lists are the 12 EXTREMES of a much larger qualifying pool, so their
+    // LENGTH is not a population. The old caption read it as one — "top 8 of 12 measured", beside a
+    // tile saying 113 players were measured — which is a list length wearing a sample size. Name
+    // the real pool when the payload publishes it; otherwise say "stored" and claim nothing.
+    var pool=(typeof d.player_pool_n==="number" && d.player_pool_n>0)?d.player_pool_n:null;
+    var minShots=(d.thresholds&&d.thresholds.min_clutch_shots)||null;
+    function playerTable(label, arr){
+      if(!arr||!arr.length) return;
+      // Reader-value gate: the panel says how deep the cut goes — never a silent slice that hides
+      // real rows behind an unexplained cap.
+      var shown=Math.min(8,arr.length), tail="";
+      if(arr.length>8){
+        tail=pool?(" — the "+shown+" largest gaps among "+num(pool)+" players with "
+                   +(minShots?(minShots+"+ "):"")+"clutch shots")
+                 :(" — the "+shown+" largest gaps of the "+arr.length+" stored");
+      }
+      f.appendChild(plab(label+tail));
+      var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
+      ["Player","Team","Shots","Clutch TS%","Base TS%","Δ TS%"].forEach(function(x,i){ hd.appendChild(el("th",i>1?"num":null,x)); });
+      var th=el("thead"); th.appendChild(hd); t.appendChild(th); var tb=el("tbody");
+      arr.slice(0,8).forEach(function(p){
+        var tr=el("tr");
+        tr.appendChild(el("td","rowh",p.name||"—"));
+        tr.appendChild(el("td",null,p.team||"—"));
+        var std=el("td","num"+(p.thin?" thin":"")); std.appendChild(document.createTextNode(num(p.clutch_shots)));
+        if(p.thin) std.setAttribute("title","thin sample (<60 clutch shots)"); tr.appendChild(std);
+        tr.appendChild(el("td","num",pct(p.clutch_ts,1)));
+        tr.appendChild(el("td","num",pct(p.base_ts,1)));
+        tr.appendChild(el("td","num",sign(p.delta_ts,1)));
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb); w.appendChild(t); f.appendChild(w);
+    }
+    playerTable("Biggest clutch risers (true-shooting % vs their own non-clutch baseline)", d.player_risers);
+    playerTable("Biggest clutch faders", d.player_faders);
+    if(teams.length){
+      f.appendChild(plab("Team clutch record (last 5:00 of Q4/OT, within 5 pts)"));
+      var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
+      ["Team","Clutch G","W","L","Win%","Net / G"].forEach(function(x,i){ hd.appendChild(el("th",i?"num":null,x)); });
+      var th=el("thead"); th.appendChild(hd); t.appendChild(th); var tb=el("tbody");
+      teams.forEach(function(r){
+        var tr=el("tr");
+        tr.appendChild(el("td","rowh",r.team||"—"));
+        tr.appendChild(el("td","num",num(r.clutch_games)));
+        tr.appendChild(el("td","num",num(r.wins)));
+        tr.appendChild(el("td","num",num(r.losses)));
+        tr.appendChild(el("td","num",pct(r.win_pct,1)));
+        tr.appendChild(el("td","num",sign(r.clutch_net_per_game,2)));
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb); w.appendChild(t); f.appendChild(w);
+    }
+    var reads=[]; if(d.headline) reads.push(d.headline);
+    reads.push("Clutch splits are noisy: split-half reliability is r="+num(d.reliability_split_half_ts_r,2)+" (near-zero), so treat these as what happened, not a repeatable skill — history, not destiny.");
+    f.appendChild(readStrip(reads));
+    var pv=d.provenance||{};
+    f.appendChild(methodBlock("How this is computed · caveats", function(b){
+      provList(b, [
+        ["Source", (pv.source||"—")+" ("+(pv.seasons||"")+(pv.clutch_games!=null?", "+pv.clutch_games+" clutch games":"")+")"],
+        ["Clutch", d.clutch_definition||"last 5:00 of Q4/OT within 5 pts"],
+        ["Method", d.method_note||"—"],
+        ["Script", pv.script||"—"]
+      ]);
+    }));
+    return f;
+  }
+
+  // -- pace ------------------------------------------------------------------
+  function renderPace(d){
+    var f=frag();
+    var h=d.headline||{};
+    f.appendChild(el("div","dhead", h.text||""));
+    f.appendChild(tiles([
+      {v:num(h.pace_vs_win_r,2), l:"pace ↔ win% (r)"},
+      {v:num(h.net_eff_vs_win_r,2), l:"net-eff ↔ win% (r)"},
+      {v:num(h.fastest_minus_slowest_poss,1), l:"fastest − slowest poss/g", sm:true},
+      {v:num(h.points_per_possession_2026,3), l:"pts / possession (2026)", sm:true}
+    ]));
+
+    // Panel 1 — pace leaderboard (fastest→slowest), with win% alongside to show the disconnect
+    var pl=d.pace_leaderboard||[];
+    if(pl.length){
+      f.appendChild(plab("Pace leaderboard — possessions per game (fastest → slowest)"));
+      var w1=el("div","dtwrap"), t1=el("table","dt"), hd1=el("tr");
+      ["Team","Pace","Win%","G"].forEach(function(x,i){ hd1.appendChild(el("th",i?"num":null,x)); });
+      var th1=el("thead"); th1.appendChild(hd1); t1.appendChild(th1); var tb1=el("tbody");
+      var mxp=Math.max.apply(null, pl.map(function(r){return r.pace||0;}))||1;
+      pl.forEach(function(r){
+        var tr=el("tr");
+        tr.appendChild(el("td","rowh", r.name||r.team||"—"));
+        var ptd=el("td","num"); ptd.appendChild(document.createTextNode(num(r.pace,1)));
+        var cb=el("span","cellbar"), ci=el("i"); ci.style.width=(Math.min(1,(r.pace||0)/mxp)*100).toFixed(0)+"%"; cb.appendChild(ci); ptd.appendChild(cb);
+        tr.appendChild(ptd);
+        tr.appendChild(el("td","num", pct((r.win_pct!=null?r.win_pct*100:null),1)));
+        tr.appendChild(el("td","num", num(r.n)));
+        tb1.appendChild(tr);
+      });
+      t1.appendChild(tb1); w1.appendChild(t1); f.appendChild(w1);
+    }
+
+    // Panel 2 — net-efficiency leaderboard (the actual driver of winning)
+    var ef=d.efficiency_leaderboard||[];
+    if(ef.length){
+      f.appendChild(plab("Net-efficiency leaderboard — margin per 100 possessions (the real driver)"));
+      var w2=el("div","dtwrap"), t2=el("table","dt"), hd2=el("tr");
+      ["Team","Off","Def","Net","Win%"].forEach(function(x,i){ hd2.appendChild(el("th",i?"num":null,x)); });
+      var th2=el("thead"); th2.appendChild(hd2); t2.appendChild(th2); var tb2=el("tbody");
+      var mxn=Math.max.apply(null, ef.map(function(r){return Math.abs(r.net_eff||0);}))||1;
+      ef.forEach(function(r){
+        var tr=el("tr");
+        tr.appendChild(el("td","rowh", r.name||r.team||"—"));
+        tr.appendChild(el("td","num", num(r.off_eff,1)));
+        tr.appendChild(el("td","num", num(r.def_eff,1)));
+        var ntd=el("td","num"); ntd.appendChild(document.createTextNode(sign(r.net_eff,1)));
+        var cb=el("span","cellbar"), ci=el("i"); if((r.net_eff||0)<0) ci.style.background="var(--away)";
+        ci.style.width=(Math.min(1,Math.abs(r.net_eff||0)/mxn)*100).toFixed(0)+"%"; cb.appendChild(ci); ntd.appendChild(cb);
+        tr.appendChild(ntd);
+        tr.appendChild(el("td","num", pct((r.win_pct!=null?r.win_pct*100:null),1)));
+        tb2.appendChild(tr);
+      });
+      t2.appendChild(tb2); w2.appendChild(t2); f.appendChild(w2);
+    }
+
+    // Panel 3 — the pace-vs-wins point: correlation of each factor with winning (near-zero for pace)
+    var cr=(d.correlations||{}).all_seasons||{};
+    if(cr.pace_vs_win!=null || cr.net_eff_vs_win!=null){
+      f.appendChild(plab("What actually correlates with winning (all seasons, |r| bar)"));
+      var factors=[
+        ["Net efficiency", cr.net_eff_vs_win],
+        ["Offensive efficiency", cr.off_eff_vs_win],
+        ["Defensive efficiency", cr.def_eff_vs_win],
+        ["Pace (possessions/game)", cr.pace_vs_win]
+      ];
+      factors.forEach(function(fx){
+        if(fx[1]==null) return;
+        f.appendChild(barrow(fx[0], fx[1], 1, num(fx[1],2), null, (fx[1]||0)<0));
+      });
+    }
+
+    // Panel 4 -- this season against the league's own history. Every number here is a baked league
+    // field (league.*, headline.win_pct_per_net_point, correlations.2026 vs correlations.all_seasons)
+    // that the card never showed, so the reader could not tell whether 2026 is fast or normal.
+    var lgp=d.league||{};
+    if(lgp.pace_2026!=null && lgp.pace_all_seasons!=null){
+      f.appendChild(plab("Is 2026 fast? This season against the league's own history"));
+      var mxl=Math.max(lgp.pace_2026, lgp.pace_all_seasons, 1);
+      f.appendChild(barrow("Pace, 2026", lgp.pace_2026, mxl, num(lgp.pace_2026,1)+" poss"));
+      f.appendChild(barrow("Pace, all seasons", lgp.pace_all_seasons, mxl, num(lgp.pace_all_seasons,1)+" poss"));
+      if(lgp.points_per_100_2026!=null && lgp.points_per_100_all!=null){
+        var mxs=Math.max(lgp.points_per_100_2026, lgp.points_per_100_all, 1);
+        f.appendChild(barrow("Scoring, 2026", lgp.points_per_100_2026, mxs, num(lgp.points_per_100_2026,1)+" per 100"));
+        f.appendChild(barrow("Scoring, all seasons", lgp.points_per_100_all, mxs, num(lgp.points_per_100_all,1)+" per 100"));
+      }
+      var pl4=el("div","rnglegend"), pbits=[];
+      if((lgp.pace_range_2026||[]).length===2){
+        pbits.push("The fastest and slowest teams this season sit between "+num(lgp.pace_range_2026[0],1)
+                   +" and "+num(lgp.pace_range_2026[1],1)+" possessions a game"
+                   +(lgp.n_games_2026!=null?(", across "+num(lgp.n_games_2026)+" games"):"")+".");
+      }
+      if(h.win_pct_per_net_point!=null){
+        pbits.push("Each extra point of net efficiency has been worth about "
+                   +num(h.win_pct_per_net_point*100,1)+" percentage points of win rate.");
+      }
+      var c26=(d.correlations||{})["2026"]||{}, call=(d.correlations||{}).all_seasons||{};
+      if(c26.pace_vs_win!=null && call.pace_vs_win!=null){
+        pbits.push("One season can fool you: within 2026 alone the pace-to-winning link reads "
+                   +num(c26.pace_vs_win,2)+" across "+num(c26.n_team_seasons)+" teams, but over "
+                   +num(call.n_team_seasons)+" team-seasons it settles at "+num(call.pace_vs_win,2)
+                   +", which is nothing.");
+      }
+      pl4.appendChild(document.createTextNode(pbits.join(" ")));
+      f.appendChild(pl4);
+    }
+    // read
+    var reads=[]; if(h.text) reads.push(h.text);
+    reads.push("Pace inflates BOTH teams' point totals equally, so how fast a team plays is a style choice, not a skill signal — the slowest team here is the 2nd-best by net efficiency, the fastest is mid-pack. Points PER possession (efficiency), not raw tempo, is what separates winners.");
+    f.appendChild(readStrip(reads));
+
+    // provenance + caveats
+    var pv=d.provenance||{}, def=d.definitions||{};
+    f.appendChild(methodBlock("Definitions · how this is computed · caveats", function(b){
+      provList(b, [
+        ["Sources", (pv.sources||[]).join("; ")||"—"],
+        ["Net efficiency", def.net_eff||"—"],
+        ["Pace", def.pace||"—"],
+        ["Method", pv.method||"—"],
+        ["Script", pv.script||"—"]
+      ]);
+      caveatList(b, pv.caveats, "Honest limitations");
+    }));
+    return f;
+  }
+
+  // -- shared compact table builder (col spec -> styled .dt table) ------------
+  // cols: [{h, get(row), num?, rowh?}]. Reuses the .dt look every renderer above builds by hand,
+  // so a latent-field table is one line. Built entirely via el()/textContent (no HTML injection).
+  function simpleTable(cols, rows){
+    var w=el("div","dtwrap"), t=el("table","dt"), hd=el("tr");
+    cols.forEach(function(c){ hd.appendChild(el("th", c.num?"num":null, c.h)); });
+    var thead=el("thead"); thead.appendChild(hd); t.appendChild(thead);
+    var tb=el("tbody");
+    (rows||[]).forEach(function(r){
+      var tr=el("tr");
+      cols.forEach(function(c){ tr.appendChild(el("td", c.num?"num":(c.rowh?"rowh":null), c.get(r))); });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); w.appendChild(t); return w;
+  }
+
+  // -- scoringmix ------------------------------------------------------------
+  // Shares are baked in PERCENT units (38.2 = 38.2%); win_pct is a FRACTION (0.72); net_eff is
+  // signed pts/100. Every value below is a field ALREADY in deepdive_scoringmix.json.
+  function renderScoringmix(d){
+    var f=frag(); var h=d.headline||{}, lg=d.league||{};
+    f.appendChild(el("div","dhead", h.text||""));
+    f.appendChild(tiles([
+      {v:pct(lg.share_3p_2026,1), l:"points from 3 (2026)"},
+      {v:pct(lg.share_2p_2026,1), l:"points from 2"},
+      {v:pct(lg.share_ft_2026,1), l:"points from the line"},
+      {v:num(h.net_eff_vs_win_r,2), l:"net-eff ↔ win% (r)", sm:true},
+      {v:num(h.share3p_vs_win_r,2), l:"3P-share ↔ win% (r)", sm:true}
+    ]));
+    var lb=d.team_mix_leaderboard||[];
+    if(lb.length){
+      f.appendChild(plab("Team scoring mix — where each team's points come from"));
+      f.appendChild(simpleTable([
+        {h:"Team", rowh:true, get:function(r){return r.name||r.team;}},
+        {h:"From 3", num:true, get:function(r){return pct(r.share_3p,1);}},
+        {h:"From 2", num:true, get:function(r){return pct(r.share_2p,1);}},
+        {h:"From FT", num:true, get:function(r){return pct(r.share_ft,1);}},
+        {h:"Net", num:true, get:function(r){return sign(r.net_eff,1);}},
+        {h:"Win%", num:true, get:function(r){return pct((r.win_pct!=null?r.win_pct*100:null),1);}}
+      ], lb));
+    }
+    var tr=d.trend||[];
+    if(tr.length){
+      f.appendChild(plab("The 3-point era — league scoring mix by season"));
+      f.appendChild(simpleTable([
+        {h:"Season", num:true, get:function(r){return num(r.season);}},
+        {h:"G", num:true, get:function(r){return num(r.games);}},
+        {h:"From 3", num:true, get:function(r){return pct(r.share_3p,1);}},
+        {h:"From 2", num:true, get:function(r){return pct(r.share_2p,1);}},
+        {h:"From FT", num:true, get:function(r){return pct(r.share_ft,1);}}
+      ], tr));
+    }
+    var cr=(d.correlations||{}).all_seasons||{};
+    if(cr.net_eff_vs_win!=null){
+      f.appendChild(plab("What actually correlates with winning (all seasons, r)"));
+      [["Net efficiency", cr.net_eff_vs_win],["3P share ↔ offense", cr.share3p_vs_off_eff],
+       ["3P share ↔ net-eff", cr.share3p_vs_net_eff],["3P share ↔ win%", cr.share3p_vs_win]].forEach(function(x){
+        if(x[1]==null) return; f.appendChild(barrow(x[0], x[1], 1, num(x[1],2), null, (x[1]||0)<0));
+      });
+    }
+    var reads=[]; if(h.text) reads.push(h.text);
+    reads.push("Shooting more threes is a style, not a win signal — 3P-share barely correlates with winning ("+num((cr.share3p_vs_win),2)+"), while net efficiency all but decides it ("+num(cr.net_eff_vs_win,2)+").");
+    f.appendChild(readStrip(reads));
+    var pv=d.provenance||{}, def=d.definitions||{};
+    f.appendChild(methodBlock("Definitions · how this is computed · caveats", function(b){
+      provList(b, [
+        ["Sources", (pv.sources||[]).join("; ")||"—"],
+        ["Scoring mix", def.share_3p||"—"],
+        ["Net efficiency", def.net_eff||"—"],
+        ["Method", pv.method||"—"],
+        ["Script", pv.script||"—"]
+      ]);
+      caveatList(b, pv.caveats, "Honest limitations");
+    }));
+    return f;
+  }
+
+  // -- margins ---------------------------------------------------------------
+  function renderMargins(d){
+    var f=frag(); var h=d.headline||{};
+    f.appendChild(el("div","dhead", h.text||""));
+    f.appendChild(tiles([
+      {v:pct(h.share_one_possession,1), l:"one-possession (≤3)"},
+      {v:pct(h.share_within_6,1), l:"close (≤6)"},
+      {v:pct(h.share_blowout_20plus,1), l:"blowout (20+)"},
+      {v:num(h.mean_margin,1), l:"mean margin", sm:true},
+      {v:num(h.median_margin,1), l:"median margin", sm:true}
+    ]));
+    var bk=(d.distribution||{}).buckets||[];
+    if(bk.length){
+      f.appendChild(plab("Final-margin distribution (share of all games)"));
+      var mxs=Math.max.apply(null, bk.map(function(r){return r.share||0;}))||1;
+      bk.forEach(function(r){ f.appendChild(barrow(r.bucket, r.share||0, mxs, pct(r.share,1), "n="+(r.games!=null?r.games:"—"))); });
+    }
+    var tr=d.trend||[];
+    if(tr.length){
+      f.appendChild(plab("Are games getting closer? Margin by season"));
+      f.appendChild(simpleTable([
+        {h:"Season", num:true, get:function(r){return num(r.season);}},
+        {h:"G", num:true, get:function(r){return num(r.games);}},
+        {h:"Mean", num:true, get:function(r){return num(r.mean_margin,1);}},
+        {h:"Median", num:true, get:function(r){return num(r.median_margin,1);}},
+        {h:"Nailbiter%", num:true, get:function(r){return pct(r.share_nailbiter,1);}},
+        {h:"Blowout%", num:true, get:function(r){return pct(r.share_blowout,1);}}
+      ], tr));
+    }
+    var bl=d.biggest_blowouts||[];
+    if(bl.length){
+      f.appendChild(plab("Biggest blowouts on record"));
+      f.appendChild(simpleTable([
+        {h:"Date", rowh:true, get:function(r){return r.date;}},
+        {h:"Winner", get:function(r){return r.winner_name||r.winner;}},
+        {h:"Loser", get:function(r){return r.loser_name||r.loser;}},
+        {h:"Score", num:true, get:function(r){return r.score;}},
+        {h:"Margin", num:true, get:function(r){return num(r.margin);}}
+      ], bl));
+    }
+    var tt=d.team_tilt||[];
+    if(tt.length){
+      f.appendChild(plab("Team tilt — average final margin of the games a team plays"));
+      f.appendChild(simpleTable([
+        {h:"Team", rowh:true, get:function(r){return r.name||r.team;}},
+        {h:"Avg margin", num:true, get:function(r){return num(r.avg_margin,1);}},
+        {h:"G", num:true, get:function(r){return num(r.games);}}
+      ], tt));
+    }
+    var reads=[]; if(h.text) reads.push(h.text);
+    var ts=d.trend_summary||{}; if(ts.read) reads.push(ts.read);
+    f.appendChild(readStrip(reads));
+    var pv=d.provenance||{}, def=d.definitions||{}, val=d.validation||{};
+    f.appendChild(methodBlock("Definitions · validation · caveats", function(b){
+      provList(b, [
+        ["Sources", (pv.sources||[]).join("; ")||"—"],
+        ["One-possession", def.one_possession||"—"],
+        ["Blowout", def.blowout||"—"],
+        ["Validation", (val.method||"—")+(val.exact_agreement_pct!=null?(" — "+val.exact_agreement_pct+"% exact on "+(val.games_checked!=null?val.games_checked:"—")+" games"):"")],
+        ["Script", pv.script||"—"]
+      ]);
+      caveatList(b, pv.caveats, "Caveats");
+    }));
+    return f;
+  }
+
+  // -- scoringleaders --------------------------------------------------------
+  function renderScoringleaders(d){
+    var f=frag();
+    f.appendChild(el("div","dhead", typeof d.headline==="string"?d.headline:""));
+    var th=d.thresholds||{}, sp=d.span||{};
+    f.appendChild(tiles([
+      {v:num(th.qualified_players), l:"qualified players"},
+      {v:num(th.total_players), l:"players tracked", sm:true},
+      {v:num(th.qualified_games), l:"games to qualify", sm:true},
+      {v:num(sp.team_games), l:"team-games played", sm:true}
+    ]));
+    function leaderTable(label, arr, cols){ if(!arr||!arr.length) return; f.appendChild(plab(label)); f.appendChild(simpleTable(cols, arr)); }
+    leaderTable("Points per game", d.points_per_game, [
+      {h:"#", num:true, get:function(r){return num(r.rank);}},
+      {h:"Player", rowh:true, get:function(r){return r.player;}},
+      {h:"Team", get:function(r){return r.team;}},
+      {h:"G", num:true, get:function(r){return num(r.games);}},
+      {h:"MPG", num:true, get:function(r){return num(r.minutes_per_game,1);}},
+      {h:"PPG", num:true, get:function(r){return num(r.points_per_game,1);}}
+    ]);
+    leaderTable("True-shooting leaders (efficiency, 8+ PPG)", d.true_shooting_leaders, [
+      {h:"#", num:true, get:function(r){return num(r.rank);}},
+      {h:"Player", rowh:true, get:function(r){return r.player;}},
+      {h:"Team", get:function(r){return r.team;}},
+      {h:"PPG", num:true, get:function(r){return num(r.points_per_game,1);}},
+      {h:"TS%", num:true, get:function(r){return pct(r.true_shooting_pct,1);}},
+      {h:"Pts/shot", num:true, get:function(r){return num(r.points_per_shot,2);}}
+    ]);
+    leaderTable("Volume + efficiency (13+ shots / game)", d.high_volume_efficient, [
+      {h:"#", num:true, get:function(r){return num(r.rank);}},
+      {h:"Player", rowh:true, get:function(r){return r.player;}},
+      {h:"Team", get:function(r){return r.team;}},
+      {h:"PPG", num:true, get:function(r){return num(r.points_per_game,1);}},
+      {h:"TS%", num:true, get:function(r){return pct(r.true_shooting_pct,1);}},
+      {h:"Shots/G", num:true, get:function(r){return num(r.shot_attempts_per_game,1);}}
+    ]);
+    leaderTable("Single-game highs", d.single_game_highs, [
+      {h:"#", num:true, get:function(r){return num(r.rank);}},
+      {h:"Player", rowh:true, get:function(r){return r.player;}},
+      {h:"Opp", get:function(r){return r.opponent;}},
+      {h:"Date", get:function(r){return r.date;}},
+      {h:"Pts", num:true, get:function(r){return num(r.points);}},
+      {h:"Line", get:function(r){return r.line;}}
+    ]);
+    var pv=d.provenance||{}, def=d.definitions||{};
+    f.appendChild(methodBlock("Definitions · sources", function(b){
+      provList(b, [
+        ["Source", pv.source||"—"],
+        ["True shooting %", def.true_shooting_pct||"—"],
+        ["Shot attempts / game", def.shot_attempts_per_game||"—"],
+        ["Method", pv.method||"—"],
+        ["Regenerable", pv.regenerable||"—"]
+      ]);
+    }));
+    return f;
+  }
+
+  // -- scoreeffects ----------------------------------------------------------
+  // GARBAGE TIME (Deep Dive 3, shipped FLIPPED under ruling R-012). The authored copy said scoring
+  // gets EASIER once a game is decided; measurement says it is BELOW the quarter's own baseline at
+  // every threshold. Two things this renderer must keep on the face of the page, because they are
+  // the corrections: the sensitivity sweep (so a reader can see no fence rescues the old claim),
+  // and the fence's own provenance (hand-set, not fitted — the original called it fitted and no
+  // such fit exists). Nothing here is typed: every figure comes from d.bindings.
+  function renderGarbageTime(d){
+    var f=frag(), b=(d&&d.bindings)||{}, st=(d&&d.states)||{}, sn=(d&&d.sensitivity)||{},
+        fen=(d&&d.fence)||{}, win=(d&&d.window)||{};
+    f.appendChild(el("div","dhead", d.headline||""));
+    f.appendChild(tiles([
+      {v:num(b.gt_pts100,1), l:"pts/100 leading "+num(b.fence_lead)+"+ in Q4"},
+      {v:num(b.base_pts100,1), l:"pts/100 — the same quarter, all margins"},
+      {v:(b.gap!=null?"-"+num(b.gap,1):"—"), l:"the gap, per 100 possessions"},
+      {v:num(b.gt_efg,1)+" / "+num(b.comp_efg,1), l:"eFG% decided vs one-possession", sm:true},
+      {v:num(b.gt_ft_per_fga,3)+" / "+num(b.comp_ft_per_fga,3), l:"FT per FGA — where the gap is", sm:true}
+    ]));
+
+    var body=(d&&d.body)||[];
+    if(body.length){
+      var prose=el("div","dvbody");
+      body.forEach(function(p){ if(p) prose.appendChild(el("p",null,String(p))); });
+      f.appendChild(prose);
+    }
+
+    var rows=["garbage","competitive","baseline"].map(function(k){return st[k];}).filter(Boolean);
+    if(rows.length){
+      f.appendChild(plab("Fourth quarter, by score state"));
+      f.appendChild(simpleTable([
+        {h:"State", rowh:true, get:function(r){return r.label;}},
+        {h:"Poss", num:true, get:function(r){return num(r.possessions);}},
+        {h:"Pts/100", num:true, get:function(r){return num(r.pts_per100,1);}},
+        {h:"eFG%", num:true, get:function(r){return num(r.efg_pct,1);}},
+        {h:"FT/FGA", num:true, get:function(r){return num(r.ft_per_fga,3);}},
+        {h:"Sec/poss", num:true, get:function(r){return num(r.sec_per_poss,1);}}
+      ], rows));
+    }
+
+    // The sweep is the argument, not a footnote: it is what makes "different populations" unavailable.
+    var sw=(sn.by_lead)||[];
+    if(sw.length){
+      f.appendChild(plab("Does any threshold make scoring easier? — pts/100 by Q4 lead, against the "
+                         +num(b.base_pts100,1)+" baseline"));
+      f.appendChild(simpleTable([
+        {h:"Lead of", rowh:true, get:function(r){return num(r.lead)+"+";}},
+        {h:"Poss", num:true, get:function(r){return num(r.possessions);}},
+        {h:"Pts/100", num:true, get:function(r){return num(r.pts_per100,1);}},
+        {h:"vs baseline", get:function(r){return r.above_baseline?"above":"below";}}
+      ], sw));
+    }
+
+    var reads=[];
+    if(sn.any_threshold_above_baseline===false)
+      reads.push("Every threshold measured lands below the baseline for the quarter it happens in. "
+                 +"There is no cut at which the leader scores more, so this is not two populations "
+                 +"talking past each other.");
+    var cf=sn.copy_fence||{};
+    if(cf.pts_per100!=null)
+      reads.push("At "+num(cf.lead)+"+ inside the final "+num(cf.clock_minutes)+":00 — a narrower "
+                 +"fence, measured separately — the leader scores "+num(cf.pts_per100,1)
+                 +" per 100 against a "+num(cf.baseline_pts_per100,1)+" baseline for that same "
+                 +"window. Tighter fence, same answer.");
+    if(d.method_note) reads.push(d.method_note);
+    if(reads.length) f.appendChild(readStrip(reads));
+
+    f.appendChild(methodBlock("Where the line sits, and who drew it", function(bx){
+      provList(bx, [
+        ["The cut", (fen.lead!=null?("leading "+fen.lead+"+, "+(fen.scope||"")):"—")],
+        ["Fitted?", (fen.fitted===false?"No — hand-set, and named as one":"—")],
+        ["Defined in", fen.source||"—"],
+        ["Window", (win.games!=null?win.games+" regular-season games":"—")
+                   +(win.exhibition_rows_excluded!=null
+                     ? (", exhibition and All-Star play excluded ("+num(win.exhibition_rows_excluded)
+                        +" rows, "+num(win.exhibition_games_excluded)+" games)") : "")],
+        ["Share of the quarter", (b.gt_share_of_q4!=null
+          ? (b.gt_share_of_q4+"% of Q4 possessions, none of them fenced out of any published number")
+          : "—")]
+      ]);
+      if(fen.note){ var p=el("p"); p.appendChild(document.createTextNode(fen.note)); bx.appendChild(p); }
+    }));
+    return f;
+  }
+
+  function renderScoreeffects(d){
+    var f=frag();
+    f.appendChild(el("div","dhead", typeof d.headline==="string"?d.headline:""));
+    function statesTable(label, states){
+      if(!states) return;
+      var rows=["lead10","lead1_9","tied","trail1_9","trail10"].map(function(k){return states[k];}).filter(Boolean);
+      if(!rows.length) return;
+      f.appendChild(plab(label));
+      f.appendChild(simpleTable([
+        {h:"Score state", rowh:true, get:function(r){return r.label;}},
+        {h:"Poss", num:true, get:function(r){return num(r.possessions);}},
+        {h:"Sec/poss", num:true, get:function(r){return num(r.sec_per_poss,1);}},
+        {h:"Poss/48", num:true, get:function(r){return num(r.poss_per48,1);}},
+        {h:"3PA%", num:true, get:function(r){return pct(r.three_pa_pct,1);}},
+        {h:"FT/FGA", num:true, get:function(r){return num(r.ft_per_fga,3);}},
+        {h:"TOV/100", num:true, get:function(r){return num(r.tov_per100,1);}},
+        {h:"Pts/100", num:true, get:function(r){return num(r.pts_per100,1);}}
+      ], rows));
+    }
+    statesTable("How teams play by scoreboard state — full game", d.states_overall);
+    statesTable("Same states, fourth quarter only", d.states_q4);
+    var fd=d.findings||{}, reads=[];
+    if(d.method_note) reads.push(d.method_note);
+    ["confirmed_slowdown","confirmed_ease_off","confirmed_foul_game","not_confirmed_three_rate"].forEach(function(k){ if(fd[k]) reads.push(fd[k]); });
+    f.appendChild(readStrip(reads));
+    var sr=d.sim_recommendation||{}, win=d.window||{};
+    f.appendChild(methodBlock("Simulator recommendation · window · caveats", function(b){
+      provList(b, [
+        ["Window", (win.games!=null?win.games+" games":"—")+(win.pool_games!=null?(", "+win.pool_games+" pooled for robustness"):"")],
+        ["Proposal", sr.proposal||"—"],
+        ["Do NOT", sr.explicitly_do_not||"—"],
+        ["Why it matters", sr.why_it_matters||"—"],
+        ["Disposition", sr.disposition||"—"]
+      ]);
+      if(sr.caveats){ var p=el("p"); p.appendChild(el("b",null,"Caveat: ")); p.appendChild(document.createTextNode(sr.caveats)); b.appendChild(p); }
+    }));
+    return f;
+  }
+
+  // THE DESERVED DIVE HAD NO RENDERER, so its fifteen-team table shipped in the JSON and the card
+  // showed a single headline sentence. Two separate kinds of luck belong side by side here and
+  // neither was visible: whether a team is living on close games, and whether it drew a soft
+  // schedule. A team can be lucky in both ways, one way, or neither, and only the pair tells you
+  // which. Every column below is a field already in deepdive_deserved.json - nothing is derived
+  // in the browser.
+  function renderDeserved(d){
+    var f=frag();
+    var h=d.headline||{};
+    f.appendChild(el("div","dhead", (typeof h==="string")?h:(h.text||"")));
+    var rows=d.deserved_table||[];
+    if(!rows.length) return f;
+    // Only offer the schedule columns when the build actually carried them. The builder omits them
+    // rather than inventing a league average, so an absent value means "not measured" and the
+    // column disappears instead of rendering a misleading zero.
+    var hasSched=rows.some(function(r){ return r.sched_vs_league!=null; });
+    var cols=[
+      {h:"Team", rowh:true, get:function(r){ return r.team_name||r.team; }},
+      {h:"Deserved W", num:true, get:function(r){ return num(r.deserved_wins,1); }},
+      {h:"vs actual", num:true, get:function(r){ return sign(r.gap_vs_actual,1); }},
+      {h:"Close W-L", num:true, get:function(r){
+         return (r.close_w==null&&r.close_l==null)?"—":(num(r.close_w)+"-"+num(r.close_l)); }}
+    ];
+    if(hasSched){
+      cols.push({h:"Draw faced", num:true, get:function(r){
+        return r.sched_vs_league==null?"—":sign(r.sched_vs_league,2); }});
+    }
+    f.appendChild(plab("Who earned it — and who drew the soft schedule"));
+    f.appendChild(simpleTable(cols, rows));
+    // THE PLAYER GRAIN of the same question, and it is a genuinely different measurement - not the
+    // team number handed down. qoc is the exposure-weighted rating of the five opponents actually
+    // on the floor with that player, over their own stints, so a player whose team drew a hard
+    // schedule but who sat for the hard nights reads soft here, correctly.
+    var cf=d.competition_faced;
+    if(cf&&cf.hardest&&cf.hardest.length){
+      f.appendChild(plab("Players: the competition each one actually faced"));
+      var pcols=[
+        {h:"Player", rowh:true, get:function(r){ return r.player; }},
+        {h:"Stints", num:true, get:function(r){ return num(r.stints); }},
+        {h:"Opponent quality", num:true, get:function(r){ return sign(r.qoc,4); }}
+      ];
+      f.appendChild(simpleTable(pcols, cf.hardest));
+      if(cf.softest&&cf.softest.length){
+        f.appendChild(plab("And the softest assignments"));
+        f.appendChild(simpleTable(pcols, cf.softest));
+      }
+      f.appendChild(el("div","dvfoot","Measured at each player’s OWN stints — the average rating "
+        +"of the five opponents on the floor with them, not their team’s schedule handed down. "
+        +"Only players with enough floor time to rank are listed ("+num(cf.qualified_players)
+        +" qualified); without that filter the list is topped by someone with three stints."));
+    }
+    if(hasSched){
+      f.appendChild(el("div","dvfoot","“Draw faced” is the average opponent rating a team "
+        +"has actually played, in points above or below the league’s average draw, with each "
+        +"opponent valued as of the day before the game. Positive is a harder road. It is a team "
+        +"quantity and describes the schedule, not any individual player."));
+    }
+    return f;
+  }
+
+  // -- midrange --------------------------------------------------------------
+  // The mid-range exchange rate. Every figure here is a field ALREADY in deepdive_midrange.json:
+  // the builder resolves each binding from the play-by-play at build time and ships BOTH the
+  // template and the filled sentence, so this renderer only ever prints what it was handed.
+  //
+  // The reliability pair (.97 selection, .35 making) are REPLICATED FINDINGS printed as written,
+  // not quantities this dive recomputes — they are read from d.reliability and formatted exactly
+  // as the copy states them, never re-derived here.
+  //
+  // The chart is the argument: points per shot by distance, with the stretch of the axis between
+  // the long two and the three from 24-26 ft SHADED. Every band carries its own n beside it,
+  // because a bar with no sample size is a claim with no weight behind it.
+  function rNoLeadZero(v){ if(v==null||!isFinite(Number(v))) return "—"; var s=Number(v).toFixed(2); return s.replace(/^0\./,"."); }
+  function renderMidrange(d){
+    var f=frag(), b=(d&&d.bindings)||{}, rel=(d&&d.reliability)||{}, m=(d&&d.method)||{};
+    f.appendChild(el("div","dhead", d.headline||""));
+    f.appendChild(tiles([
+      {v:num(b.mid_pps,2), l:"pts / shot — mid-range"},
+      {v:num(b.three_pps,2), l:"pts / shot — three, 24-26 ft"},
+      {v:String(b.gap_pct||"—"), l:"more, one step back"},
+      {v:rNoLeadZero(rel.selection_r), l:"shot selection repeats (r)", sm:true},
+      {v:rNoLeadZero(rel.making_r), l:"shot making repeats (r)", sm:true}
+    ]));
+
+    // the written argument, as the builder resolved it (bindings already filled)
+    var body=(d&&d.body)||[];
+    if(body.length){
+      var prose=el("div","dvbody");
+      body.forEach(function(p){ if(p) prose.appendChild(el("p",null,String(p))); });
+      f.appendChild(prose);
+    }
+
+    // the chart — points per shot by distance, with the discount zone shaded
+    var rows=(d&&d.chart&&d.chart.rows)||d.bands||[];
+    if(rows.length){
+      f.appendChild(plab("Points per shot by distance — every band with its own sample"));
+      var maxPps=0;
+      rows.forEach(function(r){ if(r&&isFinite(Number(r.pps))&&Number(r.pps)>maxPps) maxPps=Number(r.pps); });
+      var sh=(d.chart&&d.chart.discount_shade)||null;
+      var lo=sh?Math.min(Number(sh.from_pps),Number(sh.to_pps)):null;
+      var hi=sh?Math.max(Number(sh.from_pps),Number(sh.to_pps)):null;
+      rows.forEach(function(r){
+        if(!r) return;
+        var row=barrow(r.band||"", Number(r.pps), maxPps, num(r.pps,2),
+                       (r.n!=null?("n = "+Number(r.n).toLocaleString()):null));
+        var track=row.children[1], bar=track&&track.children[0];
+        if(bar&&r.kind==="three") bar.className="three";
+        if(track&&maxPps>0&&lo!=null&&hi!=null&&isFinite(lo)&&isFinite(hi)){
+          var s=el("span","ppsshade");
+          s.style.left=((lo/maxPps)*100).toFixed(2)+"%";
+          s.style.width=(((hi-lo)/maxPps)*100).toFixed(2)+"%";
+          track.appendChild(s);
+        }
+        f.appendChild(row);
+      });
+      if(sh){
+        f.appendChild(el("div","dvfoot",
+          "Shaded: " + (sh.label||"the arc discount") + " — the stretch between " +
+          num(sh.from_pps,2) + " and " + num(sh.to_pps,2) + " points a shot. Blue bars are "
+          + "two-point attempts, green are threes. Twos and threes are kept on SEPARATE bands "
+          + "rather than merged into one distance axis: at 22-23 feet both a long two and a "
+          + "corner three exist, and averaging them would hide the whole point of the chart."));
+      }
+      f.appendChild(simpleTable([
+        {h:"Band", rowh:true, get:function(r){return r.band;}},
+        {h:"Shots", num:true, get:function(r){return r.n!=null?Number(r.n).toLocaleString():"—";}},
+        {h:"Pts / shot", num:true, get:function(r){return num(r.pps,3);}},
+        {h:"FG%", num:true, get:function(r){return pct(r.fg_pct,1);}}
+      ], rows));
+    }
+
+    if(d.method_footer) f.appendChild(el("div","dvfoot", d.method_footer));
+    var fence=[];
+    if(m.shots_considered!=null&&m.shots_with_stated_distance!=null){
+      fence.push("Of " + Number(m.shots_considered).toLocaleString() + " attempts, " +
+                 Number(m.shots_with_stated_distance).toLocaleString() + " state a distance in the "
+                 + "play text; only those are banded, and the unstated ones are overwhelmingly at "
+                 + "the rim — dropping them removes the most efficient shots in basketball "
+                 + "from the comparison, so it cannot flatter the argument.");
+    }
+    if(m.garbage_time_fenced!=null&&m.garbage_time_rule){
+      fence.push("Garbage time fenced (" + m.garbage_time_rule + "): " +
+                 Number(m.garbage_time_fenced).toLocaleString() + " shots.");
+    }
+    if(m.excluded&&m.excluded.exhibition_and_allstar_games!=null){
+      fence.push("Exhibition and All-Star games excluded: " +
+                 Number(m.excluded.exhibition_and_allstar_games).toLocaleString() +
+                 ". Postseason and preseason excluded.");
+    }
+    if(fence.length) f.appendChild(el("div","dvfoot", fence.join(" ")));
+    return f;
+  }
+
+  // -- playing_deeper ---------------------------------------------------------
+  // The league is playing deeper. Every figure printed here is a field ALREADY in
+  // deepdive_playing_deeper.json: the builder resolves the two bindings from the box scores at
+  // build time and ships BOTH the template and the filled sentence, so this renderer only ever
+  // prints what it was handed and can never disagree with the copy.
+  //
+  // The reliability numbers (.905 → .695 minutes, .49 bench, .95/.93/.90 skills) are REPLICATED
+  // FINDINGS printed as written — read from d.reliability, never re-derived here.
+  //
+  // The chart is the argument: the whole distribution of players-used per team-game, this season
+  // against the prior one, on shared rows so the rightward slide is visible rather than described.
+  // Thin buckets are DRAWN but LABELLED — a bar built on four team-games is not a shape you can
+  // read, and hiding it would quietly narrow the axis.
+  //
+  // The method footer is one line and the trailing "Glossary" is a real link, per the presentation
+  // standard — the long method lives on that page, not at the bottom of every article.
+  function renderPlayingDeeper(d){
+    var f=frag(), b=(d&&d.bindings)||{}, rel=(d&&d.reliability)||{}, m=(d&&d.method)||{},
+        rob=(d&&d.robustness)||{}, ch=(d&&d.chart)||{}, raw=(d&&d.bindings_raw)||{};
+    f.appendChild(el("div","dhead", d.headline||""));
+    f.appendChild(tiles([
+      {v:num(b.players_per_game_2026,2), l:"players used a game — now"},
+      {v:num(b.players_per_game_prior,2), l:"players used a game — prior"},
+      {v:(raw.shift!=null?"+"+num(raw.shift,2):"—"), l:"the shift, in players"},
+      {v:rNoLeadZero(rel.minutes_prior_r)+" → "+rNoLeadZero(rel.minutes_now_r), l:"minutes repeat (r)", sm:true},
+      {v:rNoLeadZero(rel.bench_minutes_r), l:"bench minutes repeat (r)", sm:true}
+    ]));
+
+    var body=(d&&d.body)||[];
+    if(body.length){
+      var prose=el("div","dvbody");
+      body.forEach(function(p){ if(p) prose.appendChild(el("p",null,String(p))); });
+      f.appendChild(prose);
+    }
+
+    // the chart — players used per team-game, both seasons, as a share of each season's games
+    var rows=(ch.rows)||(d.distribution&&d.distribution.series)||[];
+    var lbl=(ch.series_labels)||{};
+    var kPrior=null, kNow=null;
+    (m.seasons||[]).forEach(function(s,i){ if(i===0) kPrior=String(s); if(i===1) kNow=String(s); });
+    if(rows.length&&kPrior&&kNow){
+      f.appendChild(plab(ch.y_label ? (ch.x_label+" — "+ch.y_label) : "Players used in a team-game"));
+      var key=el("div","dualkey");
+      [["prior",lbl[kPrior]||kPrior],["now",lbl[kNow]||kNow]].forEach(function(p){
+        var w=el("span"); var sw=el("b"); sw.className=""; w.appendChild(sw);
+        sw.style.background=(p[0]==="now")?"var(--acc)":"var(--dim)";
+        w.appendChild(document.createTextNode(p[1])); key.appendChild(w);
+      });
+      f.appendChild(key);
+      var maxPct=0;
+      rows.forEach(function(r){
+        if(!r) return;
+        [r["pct_"+kPrior], r["pct_"+kNow]].forEach(function(v){
+          if(v!=null&&isFinite(Number(v))&&Number(v)>maxPct) maxPct=Number(v); });
+      });
+      rows.forEach(function(r){
+        if(!r) return;
+        var row=el("div","dualrow"+(r.thin?" thin":""));
+        row.appendChild(el("div","bl", String(r.players_used)+" players"));
+        var dt=el("div","dt");
+        [["prior",kPrior],["now",kNow]].forEach(function(p){
+          var s=el("span",p[0]), i=el("i");
+          var v=Number(r["pct_"+p[1]]||0);
+          i.style.width=(maxPct>0?Math.min(100,(v/maxPct)*100):0).toFixed(1)+"%";
+          s.appendChild(i); dt.appendChild(s);
+        });
+        row.appendChild(dt);
+        row.appendChild(el("div","dv", pct(r["pct_"+kPrior],1)+"  →  "+pct(r["pct_"+kNow],1)));
+        f.appendChild(row);
+      });
+      if(ch.caption) f.appendChild(el("div","dvfoot", ch.caption));
+    }
+
+    // the three alternative explanations, each MEASURED — the paragraph above claims they survive,
+    // so the numbers that back the claim are on the page rather than in a commit message.
+    var rkeys=["blowouts","expansion","season_shape"].filter(function(k){ return rob[k]; });
+    if(rkeys.length){
+      f.appendChild(plab("The obvious explanations, each measured"));
+      f.appendChild(simpleTable([
+        {h:"Check", rowh:true, get:function(r){return rob[r].check;}},
+        {h:"Prior", num:true, get:function(r){return num(rob[r].prior,2);}},
+        {h:"Now", num:true, get:function(r){return num(rob[r].current,2);}},
+        {h:"Shift", num:true, get:function(r){var v=Number(rob[r].shift); return (v>0?"+":"")+num(v,2);}}
+      ], rkeys));
+      f.appendChild(el("div","dvfoot", rkeys.map(function(k){ return rob[k].check+": "+rob[k].note; }).join(" · ")));
+    }
+
+    if(d.method_footer){
+      var mf=el("div","dvfoot");
+      var txt=String(d.method_footer), tail="Glossary.";
+      if(txt.indexOf(tail)>-1&&d.glossary_href){
+        mf.appendChild(document.createTextNode(txt.slice(0,txt.indexOf(tail))));
+        var a=document.createElement("a"); a.href=d.glossary_href; a.textContent="Glossary";
+        mf.appendChild(a); mf.appendChild(document.createTextNode("."));
+      } else { mf.textContent=txt; }
+      f.appendChild(mf);
+    }
+    var fence=[];
+    if(m.team_games) fence.push("Built on "+Number(m.team_games.current||0).toLocaleString()+
+      " team-games this season and "+Number(m.team_games.prior||0).toLocaleString()+" prior; the "
+      +"current season is still in progress.");
+    if(m.excluded){
+      if(m.excluded.exhibition_and_allstar_games!=null)
+        fence.push("Exhibition and All-Star games excluded: "+
+          Number(m.excluded.exhibition_and_allstar_games).toLocaleString()+".");
+      if(m.excluded.postseason_and_preseason_games!=null)
+        fence.push("Postseason and preseason games excluded: "+
+          Number(m.excluded.postseason_and_preseason_games).toLocaleString()+".");
+      if(m.excluded.dressed_but_did_not_play_rows!=null)
+        fence.push(Number(m.excluded.dressed_but_did_not_play_rows).toLocaleString()+
+          " box-score lines with no minutes are dressed, not used, and are not counted.");
+    }
+    if(m.garbage_time) fence.push("Garbage time: "+m.garbage_time+".");
+    if(fence.length) f.appendChild(el("div","dvfoot", fence.join(" ")));
+    return f;
+  }
+
+  var DIVE_RENDER={ quarter_scoreline:renderQuarterScoreline, comeback:renderComeback, homecourt:renderHomecourt, rest:renderRest, clutch:renderClutch, pace:renderPace, scoringmix:renderScoringmix, margins:renderMargins, scoringleaders:renderScoringleaders, scoreeffects:renderScoreeffects, deserved:renderDeserved, midrange:renderMidrange, playing_deeper:renderPlayingDeeper, garbage_time:renderGarbageTime };
+
+  /* ---- as-of: every dive wears its age ----------------------------------------------------
+     Silently stale is the banned state — an old number that presents itself as current. So each
+     card carries its build date AND how long ago that was, read from the dive's own generated_utc
+     (the same stamp build_site puts on every baked payload). A dive with no recorded build time
+     says exactly that: never blank, never a guessed date. */
+  function ageWords(days){
+    if(days<=0) return "today";
+    if(days===1) return "1 day old";
+    if(days<60) return days+" days old";
+    var mo=Math.round(days/30.4);
+    return mo<=1?"about a month old":("about "+mo+" months old");
+  }
+  function diveAsOf(data){
+    var raw=data&&(data.generated_utc||data.as_of_utc||data.as_of||data.generated_at);
+    if(!raw){
+      var u=el("span","dive-asof unknown","As-of not recorded");
+      u.title="This dive does not record when it was built, so its age cannot be shown.";
+      return u;
+    }
+    var t=new Date(String(raw));
+    if(isNaN(t.getTime())) return el("span","dive-asof unknown","As-of not recorded");
+    var days=Math.floor((Date.now()-t.getTime())/86400000);
+    var chip=el("span","dive-asof"+(days>=7?" aging":""),
+                "As of "+fmtDate(raw)+"  ·  "+ageWords(days));
+    chip.title="Built "+(data.generated_et||String(raw))+". Deep dives are built on demand, not "
+              +"on a daily schedule, so this figure is as of that date.";
+    return chip;
+  }
+
+  // A dive's anchor id, used by BOTH the card and the contents strip so a chip can never point at a
+  // card that does not exist. Slugs are generator-written, but this page never trusts an id it did
+  // not sanitise itself.
+  function diveAnchor(slug){ return "dive-"+String(slug||"").replace(/[^A-Za-z0-9_-]/g,""); }
+
+  function renderDiveCard(row, data){
+    var c=el("div","dive");
+    if(row.slug) c.id=diveAnchor(row.slug);
+    c.appendChild(el("div","dive-q", (data&&(data.question))||row.question||row.title||row.slug));
+    var srcbits=[]; if(row.source_table) srcbits.push(row.source_table); if(row.n!=null) srcbits.push("n = "+row.n);
+    if(srcbits.length) c.appendChild(el("div","dive-src", srcbits.join("  ·  ")));
+    if(data) c.appendChild(diveAsOf(data));
+    if(!data){
+      c.appendChild(el("p","empty","This dive's detail could not be loaded right now."));
+      return c;
+    }
+    var fn=DIVE_RENDER[row.slug];
+    if(fn){ c.appendChild(fn(data)); }
+    else {
+      // graceful generic fallback: show the dive's real one-line finding. headline is either a
+      // plain string or an object ({text:...} or {one_liner:...}); fall back to the index row's
+      // one_line so a card is never a bare placeholder.
+      var h=data.headline;
+      var hl=(typeof h==="string")?h:(h&&(h.text||h.one_liner));
+      if(!hl) hl=(typeof data.one_line==="string"?data.one_line:null)||row.one_line;
+      c.appendChild(el("div","dhead", hl||"Detail available in the source data."));
+    }
+    // a dive that lives on its own page (row.page, e.g. the Situation Explorer) gets a
+    // card link out to it — same graceful pattern as the data cards, never required.
+    if(row.page&&/^[\w.-]+\.html$/.test(row.page)){
+      var lk=document.createElement("a");
+      lk.className="dive-open"; lk.href="./"+row.page; lk.textContent="Open the explorer →";
+      lk.style.cssText="display:inline-block;margin-top:8px;font-weight:600;text-decoration:none;color:var(--acc)";
+      c.appendChild(lk);
+    }
+    return c;
+  }
+
+  /* ============================ the hub board ============================
+     One dense row per dive. EVERY figure here is LIFTED, never recomputed: the sample size and its
+     history come from the index rows, which refresh_deep_dives.py carries from each dive's own
+     `index_row` (the 2026-08-07 defect was the hub keeping its own copy of a dive's numbers and
+     letting them drift — six of thirteen rows disagreed with the dive they linked to). The build
+     date comes from the dive payload's own generated_utc, the same stamp the card below prints.
+     A dive that publishes no movement gets a dash, never a fabricated "held". */
+  // Default sort names itself in the footer, so it has to be a real sort and not the order the
+  // index happens to be written in — the band a dive sits in is cut on evidence, so the rows inside
+  // it are ranked on evidence too.
+  var hubRows=[], hubFilter="", hubSort="Evidence", hubDesc=true;
+
+  function fmtN(v){ return (v==null||!isFinite(v))?"—":Number(v).toLocaleString("en-US"); }
+  function daysSince(iso){
+    if(!iso) return null;
+    var t=new Date(String(iso).length===10?(String(iso)+"T00:00:00Z"):String(iso));
+    if(isNaN(t.getTime())) return null;
+    return Math.max(0, Math.floor((Date.now()-t.getTime())/86400000));
+  }
+  function agoWords(d){ return d==null?"—":(d===0?"today":(d===1?"yesterday":d+" days ago")); }
+
+  // Plain-English bands. The sample size is what a reader is really weighing when they choose which
+  // dive to trust, so the bands are cut on it, and each band SAYS what it means and how many dives
+  // sit in it.
+  var DVTIERS=[
+    ["wide",    "League-wide evidence", "thousands of games of play-by-play — the whole league, several seasons"],
+    ["season",  "Season-scale evidence", "hundreds of games — this season and the ones around it"],
+    ["focused", "Focused sample",       "under 200 games — read these as a direction, not a decimal"],
+    ["tool",    "Interactive tool",     "you choose the query, so there is no one fixed sample"]
+  ];
+  function dvTier(r){ if(r.n==null) return "tool"; if(r.n>=2000) return "wide"; if(r.n>=200) return "season"; return "focused"; }
+
+  // A movement figure and the day it happened, from two successive lifts of the dive's own n.
+  function deltaCellN(r){
+    var td=el("td","num");
+    if(r.delta==null){ td.appendChild(el("span","flat","—")); td.title="No earlier sample size is on record for this dive yet, so its move is unknown — which is not the same as no move."; return td; }
+    var s=el("span", r.delta>0?"up":(r.delta<0?"down":"flat"),
+             (r.delta>0?"▲ +":(r.delta<0?"▼ −":"→ "))+fmtN(Math.abs(r.delta)));
+    s.title="Games added to this dive's evidence at its last rebuild"+(r.stepDate?(", "+fmtDate(r.stepDate)):"")+".";
+    td.appendChild(s); return td;
+  }
+  function nspark(pts){
+    if(!pts||pts.length<2) return null;
+    var svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.setAttribute("class","nspark"); svg.setAttribute("viewBox","0 0 58 16"); svg.setAttribute("preserveAspectRatio","none");
+    var lo=Math.min.apply(null,pts), hi=Math.max.apply(null,pts), rng=(hi-lo)||1, d="";
+    for(var i=0;i<pts.length;i++){
+      var x=(58*i)/(pts.length-1), y=14-((pts[i]-lo)/rng)*12;
+      d+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1);
+    }
+    var p=document.createElementNS("http://www.w3.org/2000/svg","path"); p.setAttribute("d",d); svg.appendChild(p);
+    var c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    c.setAttribute("cx","58"); c.setAttribute("cy",(14-((pts[pts.length-1]-lo)/rng)*12).toFixed(1)); c.setAttribute("r","1.7");
+    svg.appendChild(c);
+    return svg;
+  }
+  function growthCell(r){
+    var td=el("td","num");
+    if(!r.hist||r.hist.length<2){ td.appendChild(el("span","flat","—")); td.title="We hold only one recorded sample size for this dive, so there is no line to draw yet."; return td; }
+    var wrap=el("div","sparkwrap");
+    var sp=nspark(r.hist.map(function(p){ return p[1]; })); if(sp) wrap.appendChild(sp);
+    var mv=r.growth;
+    var lab=el("span", mv>0?"up":(mv<0?"down":"flat"), (mv>0?"+":(mv<0?"−":""))+fmtN(Math.abs(mv)));
+    lab.title="Change in this dive's evidence across the "+r.hist.length+" rebuilds we have on record, "
+             +fmtDate(r.hist[0][0])+" to "+fmtDate(r.hist[r.hist.length-1][0])+".";
+    wrap.appendChild(lab); td.appendChild(wrap); return td;
+  }
+  function evidenceCell(r, maxN){
+    var td=el("td","num");
+    if(r.n==null){ td.appendChild(el("span","flat","—")); td.title="This card is an interactive tool — the sample is whatever you ask it for."; return td; }
+    var wrap=el("div","nbarwrap");
+    var bar=el("div","nbar"); var fill=document.createElement("i");
+    fill.style.width=Math.max(3, Math.round(100*r.n/(maxN||1)))+"%"; bar.appendChild(fill);
+    wrap.appendChild(bar); wrap.appendChild(el("span",null,fmtN(r.n)));
+    td.appendChild(wrap);
+    td.title=fmtN(r.n)+" games behind this answer; the bar is its share of the biggest dive on the page.";
+    return td;
+  }
+  function ageCell(days, iso, what){
+    var td=el("td","num");
+    if(days==null){ td.appendChild(el("span","flat","—")); td.title="Not recorded for this dive."; return td; }
+    var s=el("span", days<=2?"up":(days>=14?"down":null), agoWords(days));
+    s.title=what+(iso?(" "+fmtDate(iso)):"")+".";
+    td.appendChild(s); return td;
+  }
+
+  var DV_SORT={
+    "Dive":         {num:false, get:function(r){ return (r.row.title||r.row.slug||"").toLowerCase(); }},
+    "Evidence":     {num:true,  get:function(r){ return r.n; }},
+    "Last rebuild": {num:true,  get:function(r){ return r.delta; }},
+    "Since we started tracking": {num:true, get:function(r){ return r.hist&&r.hist.length>1?r.growth:null; }},
+    "Answer moved": {num:true,  get:function(r){ return r.answerDays==null?null:-r.answerDays; }},
+    "Built":        {num:true,  get:function(r){ return r.builtDays==null?null:-r.builtDays; }}
+  };
+  // A dive with no value for the sorted column always sinks, in BOTH directions — floating a blank
+  // to the top of a reversed sort would read as "smallest", a claim the data does not make.
+  function dvSorted(list){
+    var s=DV_SORT[hubSort];
+    var out=list.slice();
+    if(!s) return out;
+    out.sort(function(a,b){
+      var x=s.get(a), y=s.get(b);
+      if(x==null&&y==null) return 0;
+      if(x==null) return 1;
+      if(y==null) return -1;
+      if(!s.num){ return hubDesc?(x<y?1:(x>y?-1:0)):(x>y?1:(x<y?-1:0)); }
+      return hubDesc?(y-x):(x-y);
+    });
+    return out;
+  }
+
+  function hubLede(rows){
+    // The single biggest mover, with its magnitude. Movers are ranked on the size of the last
+    // recorded change in evidence; ties break to the bigger dive, then to the slug, so the sentence
+    // is the same on every bake with the same data.
+    var m=rows.filter(function(r){ return r.delta!=null&&r.delta!==0; })
+              .sort(function(a,b){ return Math.abs(b.delta)-Math.abs(a.delta) || (b.n||0)-(a.n||0)
+                                          || String(a.row.slug).localeCompare(String(b.row.slug)); })[0];
+    var p=el("div","dvlede");
+    if(!m){
+      p.appendChild(document.createTextNode("No dive has changed its evidence base since we began recording it — every answer below still rests on the sample it was built on."));
+      return p;
+    }
+    p.appendChild(document.createTextNode("Biggest mover: "));
+    p.appendChild(el("b", null, m.row.title||m.row.slug));
+    p.appendChild(document.createTextNode(" — "+(m.delta>0?"+":"−")+fmtN(Math.abs(m.delta))
+      +" games of evidence at its last rebuild"+(m.stepDate?(" on "+fmtDate(m.stepDate)):"")
+      +", now "+fmtN(m.n)+" in all"
+      +(m.growth&&m.hist&&m.hist.length>1?("; "+(m.growth>0?"+":"−")+fmtN(Math.abs(m.growth))+" since "+fmtDate(m.hist[0][0])):"")+"."));
+    return p;
+  }
+
+  function buildHubBoard(){
+    var host=document.getElementById("hub-board");
+    if(!host) return;
+    host.innerHTML="";
+    if(!hubRows.length) return;
+    host.appendChild(hubLede(hubRows));
+
+    var bar=el("div","dvbar");
+    var inp=document.createElement("input");
+    inp.type="search"; inp.placeholder="Filter dives — title, question or source"; inp.value=hubFilter;
+    inp.setAttribute("aria-label","Filter deep dives");
+    var cnt=el("span","cnt");
+    inp.addEventListener("input", function(){ hubFilter=inp.value; buildHubBoard(); var f=document.querySelector(".dvbar input"); if(f){ f.focus(); f.setSelectionRange(f.value.length,f.value.length); } });
+    bar.appendChild(inp); bar.appendChild(cnt); host.appendChild(bar);
+
+    var q=hubFilter.trim().toLowerCase();
+    var shown=hubRows.filter(function(r){
+      if(!q) return true;
+      return [r.row.title,r.row.question,r.row.one_line,r.row.source_table,r.row.slug]
+        .join(" ").toLowerCase().indexOf(q)>=0;
+    });
+    cnt.textContent=shown.length+" of "+hubRows.length+" dives"+(q?" match":" on the page");
+
+    var maxN=0; hubRows.forEach(function(r){ if(r.n!=null&&r.n>maxN) maxN=r.n; });
+    var wrap=el("div","dvwrap"); var t=el("table","dvboard");
+    var thead=el("thead"), hr=el("tr");
+    var HEADS=["#","Dive","Evidence","Last rebuild","Since we started tracking","Answer moved","Built","Source"];
+    HEADS.forEach(function(h){
+      var th=el("th",null,h);
+      if(h==="Evidence"||h==="Last rebuild"||h==="Since we started tracking"||h==="Answer moved"||h==="Built") th.className="num";
+      if(DV_SORT[h]){
+        th.className=(th.className?th.className+" ":"")+"sortable"+(hubSort===h?" sorted":"");
+        th.title="Sort by "+h.toLowerCase();
+        th.addEventListener("click", function(){
+          // First click on a name column reads A to Z, which is what a reader expects of a name;
+          // first click on a number or a date reads biggest / most recent first.
+          if(hubSort===h){ hubDesc=!hubDesc; } else { hubSort=h; hubDesc=(h!=="Dive"); }
+          buildHubBoard();
+        });
+      }
+      hr.appendChild(th);
+    });
+    thead.appendChild(hr); t.appendChild(thead);
+
+    var tb=el("tbody"), rank=0, drew=false;
+    DVTIERS.forEach(function(tier){
+      var group=dvSorted(shown.filter(function(r){ return dvTier(r)===tier[0]; }));
+      if(!group.length) return;
+      drew=true;
+      var hrow=el("tr","tier"); var hc=el("td"); hc.colSpan=HEADS.length;
+      var lab=el("span","tlabel",tier[1]), mean=el("span","tmeaning",tier[2]),
+          c=el("span","tcount",group.length+(group.length===1?" dive":" dives"));
+      hc.appendChild(lab); hc.appendChild(mean); hc.appendChild(c);
+      hrow.appendChild(hc); tb.appendChild(hrow);
+      group.forEach(function(r){
+        rank+=1;
+        var tr=el("tr");
+        tr.appendChild(el("td","rk",String(rank)));
+        var name=el("td");
+        var a=document.createElement("a");
+        a.className="dvt"; a.href="#"+diveAnchor(r.row.slug); a.textContent=r.row.title||r.row.slug;
+        if(r.row.one_line) a.title=r.row.one_line;
+        name.appendChild(a);
+        if(r.row.question) name.appendChild(el("span","dvq", r.row.question));
+        tr.appendChild(name);
+        tr.appendChild(evidenceCell(r, maxN));
+        tr.appendChild(deltaCellN(r));
+        tr.appendChild(growthCell(r));
+        tr.appendChild(ageCell(r.answerDays, r.row.one_line_changed, "This dive's headline finding last read differently on"));
+        tr.appendChild(ageCell(r.builtDays, r.builtIso, "This dive was last rebuilt on"));
+        tr.appendChild(el("td",null, r.row.source_table||"—"));
+        tb.appendChild(tr);
+      });
+    });
+    if(!drew){
+      var er=el("tr"); var ec=el("td"); ec.colSpan=HEADS.length;
+      ec.appendChild(el("span","flat","No dive matches that filter."));
+      er.appendChild(ec); tb.appendChild(er);
+    }
+    t.appendChild(tb); wrap.appendChild(t); host.appendChild(wrap);
+
+    host.appendChild(el("div","dvfoot",
+      // A date column sorted "biggest first" would be a lie about what the reader is looking at, so
+      // the recency columns name their direction in their own words.
+      "Sorted "+(hubSort?("by "+hubSort.toLowerCase()+", "
+                 +((hubSort==="Answer moved"||hubSort==="Built")?(hubDesc?"most recent first":"oldest first")
+                   :(hubSort==="Dive"?(hubDesc?"Z to A":"A to Z"):(hubDesc?"biggest first":"smallest first")))
+                 +", within each band (click any heading to change it; click again to reverse). ")
+                       :"by weight of evidence within each band — click any column heading to sort by it instead. ")
+      +"Bands are cut on how many games each answer rests on, and a dive with no fixed sample sits in its own band. "
+      +"Evidence is the number of games behind the dive, taken from the dive itself and never recounted here — the bar is that dive's share of the largest on the page. "
+      +"Last rebuild is how much evidence the dive gained the last time it was rebuilt, and the line beside it traces every rebuild we have on record, with the change across the whole line printed next to it. "
+      +"Answer moved is the day the dive's own headline sentence last read differently; Built is the day the dive itself was last rebuilt — dives are rebuilt on demand, not on a daily schedule. "
+      +"Anything we do not hold shows a dash rather than a zero: an unknown move is not a flat one. "
+      +"Every row links to the full dive further down this page."));
+  }
+
+  /* ============================ hub loader ============================ */
+  function loadHub(){
+    var hub=document.getElementById("hub");
+    fetch("./deepdive_index.json",{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; }).then(function(idx){
+      // Graceful degradation: a missing / gate-excluded / unparseable index degrades to the
+      // friendly empty state, never a raw parse-error line to the CEO.
+      if(!idx){ hub.innerHTML=""; hub.appendChild(el("div","soon","No deep dives are published yet.")); return; }
+      var lede=document.getElementById("hub-lede"); if(lede&&idx.lede) lede.textContent=idx.lede;
+      var dives=(idx.dives||[]);
+      if(!dives.length){ hub.innerHTML=""; hub.appendChild(el("div","soon","No deep dives are published yet.")); return; }
+      // fetch each dive's source JSON (graceful: a failed one still renders its card)
+      Promise.all(dives.map(function(row){
+        return fetch("./"+row.source_json,{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; });
+      })).then(function(datas){
+        hub.innerHTML="";
+        dives.forEach(function(row,i){ hub.appendChild(renderDiveCard(row, datas[i])); });
+        // The board, ABOVE the first card. The dives are long, so the breadth of this page used to
+        // be discoverable only by scrolling all of it. Built from the SAME index rows the cards are
+        // built from, and only for rows that actually rendered a card.
+        hubRows=dives.filter(function(row){ return row&&row.slug; }).map(function(row,i){
+          var data=datas[dives.indexOf(row)];
+          var hist=(row.n_history||[]).filter(function(p){ return p&&p.length===2&&p[1]!=null; });
+          var builtIso=data&&(data.generated_utc||data.as_of_utc||data.as_of||data.generated_at)||null;
+          return {
+            row: row,
+            n: (typeof row.n==="number")?row.n:null,
+            delta: (typeof row.n_delta==="number")?row.n_delta:null,
+            stepDate: hist.length?hist[hist.length-1][0]:null,
+            hist: hist,
+            growth: hist.length>1?(hist[hist.length-1][1]-hist[0][1]):null,
+            answerDays: daysSince(row.one_line_changed),
+            builtIso: builtIso,
+            builtDays: daysSince(builtIso)
+          };
+        });
+        buildHubBoard();
+      });
+    }).catch(function(e){
+      hub.innerHTML=""; hub.appendChild(el("div","soon","Could not load the deep dives. "+(e&&e.message?e.message:"")));
+    });
+  }
+
+  /* ============================ We Tested It (preserved) ============================ */
+  function inlineMd(node,text){
+    var i=0,n=text.length;
+    while(i<n){
+      var b=text.indexOf("**",i), c=text.indexOf("`",i), next=-1, kind=null;
+      if(b>=0&&(c<0||b<c)){ next=b; kind="b"; } else if(c>=0){ next=c; kind="c"; }
+      if(next<0){ node.appendChild(document.createTextNode(text.slice(i))); break; }
+      if(next>i){ node.appendChild(document.createTextNode(text.slice(i,next))); }
+      if(kind==="b"){ var end=text.indexOf("**",next+2); if(end<0){ node.appendChild(document.createTextNode(text.slice(next))); break; } node.appendChild(el("strong",null,text.slice(next+2,end))); i=end+2; }
+      else { var e2=text.indexOf("`",next+1); if(e2<0){ node.appendChild(document.createTextNode(text.slice(next))); break; } node.appendChild(el("code",null,text.slice(next+1,e2))); i=e2+1; }
+    }
+  }
+  function renderContent(body,paras,title){
+    (paras||[]).forEach(function(raw){
+      var t=(raw==null?"":String(raw)).replace(/^\s+/,"");
+      if(t.indexOf("```")===0){
+        var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
+        var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
+        var tbl=dataTable(inner, info);
+        if(tbl){ body.appendChild(tbl); return; }
+        var pre=el("pre"); pre.appendChild(el("code",null,inner)); body.appendChild(pre); return;
+      }
+      var hm=/^(#{1,6})\s+([^\n]*)([\s\S]*)$/.exec(t);
+      if(hm){
+        var level=hm[1].length, txt=hm[2].trim(), rest=hm[3].replace(/^\n+/,"");
+        if(!(level===1&&title&&txt.toLowerCase()===String(title).toLowerCase())){ var h=el(level<=2?"h3":"h4"); inlineMd(h,txt); body.appendChild(h); }
+        if(rest){ var rp=el("p"); inlineMd(rp,rest); body.appendChild(rp); } return;
+      }
+      var p=el("p"); inlineMd(p,t); body.appendChild(p);
+    });
+  }
+  var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function fmtDate(s){ var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(s||"")); if(!m) return String(s||""); var mo=MON[Number(m[2])-1]; return mo?(mo+" "+Number(m[3])+", "+m[1]):String(s); }
+  function loadTested(){
+    // Fetch the dive JSON and hand it to render() (the shared A+/A++/A+++ path). A failure here is
+    // secondary — it never blocks the hub above.
+    fetch("./deepdive.json",{cache:"no-cache"}).then(function(r){ return r.ok?r.json():null; }).then(function(d){
+      render(d||{available:false});
+    }).catch(function(){ /* We Tested It is secondary — a failure here never blocks the hub */ });
+  }
+
+  /* ============================ We Tested It: derived readouts (A+ / A++ / A+++) ============================ */
+  // Coach-readable headers for the raw column slugs the deep-dive tables carry (display only; an
+  // unknown slug falls back to a mechanical de-underscore so a new column never renders as jargon).
+  var HDR={
+    "season":"Season","games":"Games","ft_rate":"FT rate","ftr":"FT rate",
+    "fta_per_team_game":"FTA / team-game","pts_per_team_game":"Points / team-game",
+    "fga_per_team_game":"FGA / team-game","fg3a_per_team_game":"3PA / team-game",
+    "reb_per_team_game":"Rebounds / team-game","ast_per_team_game":"Assists / team-game",
+    "n":"Count","mae":"MAE","rmse":"RMSE"
+  };
+  function humanizeHeader(h){
+    var k=String(h).toLowerCase();
+    if(HDR[k]) return HDR[k];
+    var s=k.replace(/_per_team_game$/," / team-game").replace(/_per_game$/," / game")
+           .replace(/_pct$/," %").replace(/_/g," ").trim();
+    return s ? (s.charAt(0).toUpperCase()+s.slice(1)) : String(h);
+  }
+  function isNum(s){ return s!=="" && s!=null && isFinite(Number(s)); }
+
+  // Parse a fenced block as a whitespace-columned NUMERIC table. Returns {header,ncol,rows,colNum,dec}
+  // or null (real code / prose / ragged / non-numeric). SINGLE source of truth for "is a table": both
+  // the renderer (dataTable) and the derived readouts read it, so a delta/peak can only ever compute
+  // for a block that ACTUALLY renders as a table.
+  function parseTable(inner, info){
+    var lang=(info||"").trim().toLowerCase();
+    if(lang!=="" && lang!=="text") return null;
+    var lines=inner.split("\n").map(function(l){ return l.replace(/\s+$/,""); })
+                   .filter(function(l){ return l.trim()!==""; });
+    if(lines.length<3) return null;
+    var header=lines[0].trim().split(/\s+/);
+    var ncol=header.length;
+    if(ncol<2 || header.some(isNum)) return null;
+    var rows=[];
+    for(var i=1;i<lines.length;i++){
+      var cells=lines[i].trim().split(/\s+/);
+      if(cells.length!==ncol) return null;
+      rows.push(cells);
+    }
+    var colNum=[], numCount=0;
+    for(var c=0;c<ncol;c++){
+      var allNum=rows.every(function(r){ return isNum(r[c]); });
+      colNum.push(allNum); if(allNum) numCount++;
+    }
+    if(numCount < Math.ceil(ncol/2)) return null;
+    var dec=[];
+    for(var c2=0;c2<ncol;c2++){
+      if(!colNum[c2]){ dec.push(null); continue; }
+      var vals=rows.map(function(r){ return Number(r[c2]); });
+      var allInt=vals.every(function(v){ return isFinite(v) && Math.floor(v)===v; });
+      var maxAbs=vals.reduce(function(m,v){ return Math.max(m,Math.abs(v)); },0);
+      dec.push(allInt ? 0 : (maxAbs<1.5 ? 3 : 1));
+    }
+    return {header:header, ncol:ncol, rows:rows, colNum:colNum, dec:dec};
+  }
+
+  // Render a fenced numeric block as a styled <table> (humanized headers, sensible rounding), or
+  // null to fall back to <pre>. Built entirely from el()/textContent, so no author text is injected.
+  function dataTable(inner, info){
+    var p=parseTable(inner, info);
+    if(!p) return null;
+    var header=p.header, ncol=p.ncol, rows=p.rows, colNum=p.colNum, dec=p.dec;
+    var wrap=el("div","dtwrap"), t=el("table","dtable"), thead=el("thead"), hr=el("tr");
+    header.forEach(function(h,c){ hr.appendChild(el("th", colNum[c]?"num":null, humanizeHeader(h))); });
+    thead.appendChild(hr); t.appendChild(thead);
+    var tb=el("tbody");
+    rows.forEach(function(r){
+      var tr=el("tr");
+      r.forEach(function(cell,c){
+        tr.appendChild(el("td", colNum[c]?"num":null, colNum[c] ? Number(cell).toFixed(dec[c]) : cell));
+      });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); wrap.appendChild(t); return wrap;
+  }
+
+  // The dive's lede = its first real prose paragraph (skip the repeated H1 / any heading / any fence).
+  function ledeText(content){
+    var items=content||[];
+    for(var i=0;i<items.length;i++){
+      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
+      if(t==="" || t.indexOf("```")===0 || /^#{1,6}\s/.test(t)) continue;
+      return t;
+    }
+    return "";
+  }
+  // First sentence only. Split on a terminator FOLLOWED by whitespace/end so decimals (0.315) are
+  // never mistaken for a sentence break. Verbatim author text.
+  function firstSentence(t){
+    t=String(t||"").trim();
+    var m=/^([\s\S]*?[.!?])(?:\s|$)/.exec(t);
+    return m ? m[1] : t;
+  }
+  // Does this dive carry a block that actually renders as a table? (Takeaway tile is table-only.)
+  function hasDataTable(content){
+    var items=content||[];
+    for(var i=0;i<items.length;i++){
+      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
+      if(t.indexOf("```")!==0) continue;
+      var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
+      var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
+      if(dataTable(inner, info)) return true;
+    }
+    return false;
+  }
+
+  // Shared parse + STRICT single-metric / single-time-axis guard. Both the delta (A++) and the peak
+  // (A+++) read this SAME result, so they are derived from the exact same parsed rows under the exact
+  // same ambiguity rules. Returns {p, metricCol, timeCol, order} or null.
+  //   (a) the finding sentence names EXACTLY ONE numeric column (by its humanized label) = THE metric.
+  //       0 named => nothing to quantify; >1 named => ambiguous which is "the" metric => null.
+  //   (b) among the OTHER numeric columns, EXACTLY ONE is strictly monotonic = the time/order axis.
+  //       0 or >1 => no clear ordering => null.
+  function metricTimeAxis(content, findingText){
+    var items=content||[], p=null;
+    for(var i=0;i<items.length;i++){
+      var t=(items[i]==null?"":String(items[i])).replace(/^\s+/,"");
+      if(t.indexOf("```")!==0) continue;
+      var info=(/^```([^\n]*)/.exec(t)||[])[1]||"";
+      var inner=t.replace(/^```[^\n]*\n?/,"").replace(/\n?```\s*$/,"");
+      p=parseTable(inner, info);
+      if(p) break;
+    }
+    if(!p || p.rows.length<2) return null;
+    var lede=String(findingText||"").toLowerCase(), metricCol=-1, named=0;
+    for(var c=0;c<p.ncol;c++){
+      if(!p.colNum[c]) continue;
+      var label=humanizeHeader(p.header[c]).toLowerCase();
+      if(label && lede.indexOf(label)>=0){ named++; metricCol=c; }
+    }
+    if(named!==1) return null;
+    var timeCol=-1, monoCount=0;
+    for(var c2=0;c2<p.ncol;c2++){
+      if(!p.colNum[c2] || c2===metricCol) continue;
+      var inc=true, decr=true;
+      for(var r=1;r<p.rows.length;r++){
+        var prev=Number(p.rows[r-1][c2]), cur=Number(p.rows[r][c2]);
+        if(!(cur>prev)) inc=false;
+        if(!(cur<prev)) decr=false;
+      }
+      if(inc||decr){ monoCount++; timeCol=c2; }
+    }
+    if(monoCount!==1) return null;
+    var order=p.rows.map(function(_,k){ return k; })
+                    .sort(function(a,b){ return Number(p.rows[a][timeCol])-Number(p.rows[b][timeCol]); });
+    return {p:p, metricCol:metricCol, timeCol:timeCol, order:order};
+  }
+
+  // A++ rung: a mechanically-DERIVED first-vs-last trend delta, computed ONLY from the table's OWN
+  // rows (never hardcoded, never read out of the prose). Returns {label, latest, baseline, dir} or
+  // null (baseline===latest => no real trend => omit).
+  function tableDelta(content, findingText){
+    var ax=metricTimeAxis(content, findingText);
+    if(!ax) return null;
+    var p=ax.p, mc=ax.metricCol, order=ax.order;
+    var baseline=Number(p.rows[order[0]][mc]), latest=Number(p.rows[order[order.length-1]][mc]);
+    if(!isFinite(baseline) || !isFinite(latest) || baseline===latest) return null;
+    var d=p.dec[mc]; if(d==null) d=1;
+    return { label:humanizeHeader(p.header[mc]), latest:latest.toFixed(d),
+             baseline:baseline.toFixed(d), dir: latest>baseline ? "up" : "down" };
+  }
+
+  // A+++ rung: an interior MIN/MAX (peak-year) callout, derived from the SAME parsed rows + the SAME
+  // guard as the delta. Returns {label, kind, value, at} or null. Emitted ONLY when the metric's
+  // global extreme is STRICTLY INTERIOR (not the first or last row by time) AND unique — an extreme
+  // AT an endpoint is already told by the first-vs-last delta, and a series that both humps ABOVE and
+  // dips BELOW its endpoints has no single unambiguous peak, so both of those omit (omit-when-
+  // ambiguous). "kind" is "peaked" (interior max) or "bottomed" (interior min).
+  function tablePeak(content, findingText){
+    var ax=metricTimeAxis(content, findingText);
+    if(!ax) return null;
+    var p=ax.p, mc=ax.metricCol, tc=ax.timeCol, order=ax.order, n=order.length;
+    if(n<3) return null;                                   // need at least one interior row
+    var vals=order.map(function(k){ return Number(p.rows[k][mc]); });
+    if(vals.some(function(v){ return !isFinite(v); })) return null;
+    var iMax=0, iMin=0;
+    for(var i=1;i<n;i++){ if(vals[i]>vals[iMax]) iMax=i; if(vals[i]<vals[iMin]) iMin=i; }
+    var maxCount=vals.filter(function(v){ return v===vals[iMax]; }).length;
+    var minCount=vals.filter(function(v){ return v===vals[iMin]; }).length;
+    var first=vals[0], last=vals[n-1];
+    var hiInterior=(iMax>0 && iMax<n-1) && maxCount===1 && vals[iMax]>first && vals[iMax]>last;
+    var loInterior=(iMin>0 && iMin<n-1) && minCount===1 && vals[iMin]<first && vals[iMin]<last;
+    if(hiInterior===loInterior) return null;               // both or neither => omit
+    var pi=hiInterior ? iMax : iMin;
+    var dm=p.dec[mc]; if(dm==null) dm=1;
+    var dt=p.dec[tc]; if(dt==null) dt=0;
+    // A++++: a peak-DISTANCE-FROM-BASELINE read, computed ONLY from these same parsed rows and ONLY
+    // now that an interior peak already qualified (never an independent second computation). Baseline
+    // = the earliest-by-time value (order[0]), the SAME anchor the first-vs-last delta uses. Because
+    // an interior peak is STRICTLY above/below BOTH endpoints, its side vs the baseline is fixed:
+    // a "peaked" sits above the baseline, a "bottomed" sits below it.
+    var base=vals[0];
+    return { label:humanizeHeader(p.header[mc]), kind: hiInterior?"peaked":"bottomed",
+             value: vals[pi].toFixed(dm), at: Number(p.rows[order[pi]][tc]).toFixed(dt),
+             base: base.toFixed(dm), baseAt: Number(p.rows[order[0]][tc]).toFixed(dt),
+             dist: Math.abs(vals[pi]-base).toFixed(dm), rel: hiInterior ? "above" : "below" };
+  }
+
+  // A++++ rung: a per-metric MINI-SPARKLINE geometry, DERIVED from the SAME parsed rows + the SAME
+  // single-metric / single-time-axis guard the delta and peak read. Pure + deterministic: returns
+  // {label,w,h,pad,min,max,pts:[{t,v,x,y}]} or null — the render just draws these points, so the SVG
+  // can never disagree with the parsed data. Honest floor: 4+ points (fewer is not a trend worth a
+  // drawing; tablePeak needs 3 for an interior extreme, a line wants a couple more). x is placed by
+  // the ACTUAL time value (uneven gaps stay honest), y inverts so a higher value sits higher; a flat
+  // series pins to the mid-line. Coords round to 2dp so an independent recompute matches exactly.
+  function sparkline(content, findingText){
+    var ax=metricTimeAxis(content, findingText);
+    if(!ax) return null;
+    var p=ax.p, mc=ax.metricCol, tc=ax.timeCol, order=ax.order, n=order.length;
+    if(n<4) return null;                                   // 4+ points floor (stated)
+    var vals=order.map(function(k){ return Number(p.rows[k][mc]); });
+    var times=order.map(function(k){ return Number(p.rows[k][tc]); });
+    if(vals.some(function(v){ return !isFinite(v); }) || times.some(function(t){ return !isFinite(t); })) return null;
+    var vMin=Math.min.apply(null,vals), vMax=Math.max.apply(null,vals);
+    var tMin=times[0], tMax=times[n-1];
+    if(tMax===tMin) return null;                           // no time spread (guard already forbids, belt+braces)
+    var W=72, H=18, pad=2, span=vMax-vMin;
+    var pts=[];
+    for(var i=0;i<n;i++){
+      var x=pad+(W-2*pad)*((times[i]-tMin)/(tMax-tMin));
+      var y=span>0 ? (H-pad)-(H-2*pad)*((vals[i]-vMin)/span) : H/2;
+      pts.push({ t:times[i], v:vals[i], x:Number(x.toFixed(2)), y:Number(y.toFixed(2)) });
+    }
+    return { label:humanizeHeader(p.header[mc]), w:W, h:H, pad:pad, min:vMin, max:vMax, pts:pts };
+  }
+
+  // Build the sparkline SVG from sparkline() geometry. SVG-namespace aware with a plain-createElement
+  // fallback (the test DOM shim has no createElementNS), and every setAttribute is guarded so a shim
+  // without it never throws. Only NUMERIC geometry + the humanized label go in (no innerHTML, no
+  // table-derived string ever parsed as markup) — the label rides a <title> via textContent.
+  // A+++++: the optional `peak` arg is the SAME tablePeak() result. When it qualified, mark its
+  // interior extreme ON the line — the vertex point is LOOKED UP in sp.pts by the peak's own time
+  // value (never recomputed), so the drawn (x,y) is EXACTLY the sparkline point at the peak's index
+  // and can never disagree with the geometry. Omit the marker entirely when tablePeak omitted.
+  function sparkSvg(sp, peak){
+    if(!sp) return null;
+    var NS="http://www.w3.org/2000/svg";
+    var mk=document.createElementNS ? function(t){ return document.createElementNS(NS,t); }
+                                    : function(t){ return document.createElement(t); };
+    var svg=mk("svg");
+    if(svg.setAttribute){
+      svg.setAttribute("class","takeaway-spark");
+      svg.setAttribute("viewBox","0 0 "+sp.w+" "+sp.h);
+      svg.setAttribute("width",sp.w); svg.setAttribute("height",sp.h);
+      svg.setAttribute("preserveAspectRatio","none");
+      svg.setAttribute("role","img");
+      svg.setAttribute("aria-label",sp.label+" trend over "+sp.pts.length+" points");
+    } else { svg.className="takeaway-spark"; }
+    var title=mk("title"); title.textContent=sp.label+" over time ("+sp.pts.length+" points)"; svg.appendChild(title);
+    var poly=mk("polyline");
+    var ptsStr=sp.pts.map(function(q){ return q.x+","+q.y; }).join(" ");
+    if(poly.setAttribute){ poly.setAttribute("class","spark-line"); poly.setAttribute("points",ptsStr); }
+    else { poly.className="spark-line"; }
+    svg.appendChild(poly);
+    var last=sp.pts[sp.pts.length-1], dot=mk("circle");
+    if(dot.setAttribute){ dot.setAttribute("class","spark-dot"); dot.setAttribute("cx",last.x); dot.setAttribute("cy",last.y); dot.setAttribute("r","1.7"); }
+    else { dot.className="spark-dot"; }
+    svg.appendChild(dot);
+    // A+++++: mark the interior peak/valley vertex ON the line, at the SAME point tablePeak named.
+    // The vertex is found by matching the peak's time value (time is strictly monotonic => unique),
+    // so (cx,cy) is exactly sp.pts[peak-index] — same geometry, never a second computation.
+    if(peak && peak.at!=null){
+      var pt=null, pkt=Number(peak.at);
+      for(var j=0;j<sp.pts.length;j++){ if(sp.pts[j].t===pkt){ pt=sp.pts[j]; break; } }
+      if(pt){
+        var vtx=mk("circle");
+        if(vtx.setAttribute){
+          vtx.setAttribute("class","spark-peak");
+          vtx.setAttribute("cx",pt.x); vtx.setAttribute("cy",pt.y); vtx.setAttribute("r","2.1");
+        } else { vtx.className="spark-peak"; }
+        var vt=mk("title");
+        vt.textContent=(peak.kind==="peaked"?"peaked ":"bottomed ")+peak.at+", "+peak.value;
+        vtx.appendChild(vt);
+        svg.appendChild(vtx);
+      }
+    }
+    return svg;
+  }
+
+  // Per-dive VERDICT chip (A+ rung). FIXED vocabulary — NOISE / SIGNAL / ADOPTED — only SELECTED
+  // (never synthesized) from the dive's OWN conclusion prose; null (no chip) when the prose states no
+  // clear verdict (omit, never fabricate). Fences are excluded so a number in a table can't be
+  // misread as a verdict. Order matters: NOISE first (a noise dive may still call its baseline "core").
+  function verdictOf(content){
+    var s="";
+    (content||[]).forEach(function(raw){
+      var t=(raw==null?"":String(raw)).replace(/^\s+/,"");
+      if(t.indexOf("```")===0) return;
+      s+=" "+t;
+    });
+    s=s.toLowerCase();
+    if(/\b(proved|proven|shown to be|turned out to be|is|was|were|it's|just)\b[^.!?]*\bnoise\b/.test(s))
+      return {label:"NOISE", cls:"v-noise"};
+    if(/\b(have|has|we've|now)\b[^.!?]*\b(incorporated|adopted|folded in|added it|shipped|baked in|in production)\b/.test(s)
+       || /\b(adopted|incorporated|shipped)\b[^.!?]*\b(into|in)\b[^.!?]*\b(pipeline|core|model|production)\b/.test(s))
+      return {label:"ADOPTED", cls:"v-adopted"};
+    var negated=/\b(should not|shouldn't|do not recommend|don't recommend|not a real|no real (signal|effect))\b/.test(s);
+    if(!negated && /\b(we should|we recommend|should incorporate|should adjust|should add|recommend incorporating|real (signal|effect))\b/.test(s))
+      return {label:"SIGNAL", cls:"v-signal"};
+    return null;
+  }
+
+  // Render the "We Tested It" cards (verdict + takeaway + derived delta/peak + prose body). Targets
+  // the #tested section on the live hub page; falls back to #main for the standalone test harness.
+  function render(d){
+    var host=document.getElementById("tested")||document.getElementById("main");
+    if(!host) return;
+    host.innerHTML="";
+    if(d && d.available && (d.items||[]).length){
+      (d.items||[]).forEach(function(it){
+        var c=el("div","item");
+        var hd=el("div","dvhd");
+        hd.appendChild(el("div","ti", it.title||"We Tested It"));
+        var chips=el("div","chips");
+        // The finding lede + its derived delta are computed once and REUSED by both the header
+        // magnitude (A+++) and the takeaway tile (A++), so the two can never disagree.
+        var lede="", dl=null;
+        if(hasDataTable(it.content)){ lede=firstSentence(ledeText(it.content)); if(lede) dl=tableDelta(it.content, lede); }
+        var vd=verdictOf(it.content);
+        if(vd){
+          chips.appendChild(el("span","verdict "+vd.cls, vd.label));
+          // A+++: thread the SAME computed delta magnitude next to the verdict chip, ONLY when the
+          // takeaway delta itself qualified. Signed change of the metric, reusing dl's rounding.
+          if(dl){
+            var mag=Number(dl.latest)-Number(dl.baseline);
+            var dot=dl.latest.indexOf("."), dp=dot>=0?(dl.latest.length-dot-1):0;
+            chips.appendChild(el("span","verdict-mag", (mag>0?"+":"")+mag.toFixed(dp)+" "+dl.label));
+          }
+        }
+        if(it.as_of){ chips.appendChild(el("span","fresh","As of "+fmtDate(it.as_of))); }
+        if(chips.children.length){ hd.appendChild(chips); }
+        c.appendChild(hd);
+        if(it.content && it.content.length){
+          var body=el("div","body");
+          if(lede){
+            var tk=el("div","takeaway");
+            tk.appendChild(el("span","takeaway-k","The finding"));
+            var tt=el("span","takeaway-t"); inlineMd(tt, lede); tk.appendChild(tt);
+            if(dl){
+              tk.appendChild(el("span","takeaway-d",
+                dl.latest+" "+dl.label+", "+(dl.dir==="up"?"up from ":"down from ")+dl.baseline));
+              // A+++: an interior min/max callout from the SAME parsed rows; omitted unless the
+              // extreme is strictly interior + unambiguous. A++++: the peak carries its DISTANCE from
+              // the earliest-by-time baseline, computed from those same rows inside tablePeak().
+              var pk=tablePeak(it.content, lede);
+              if(pk){ tk.appendChild(el("span","takeaway-pk",
+                (pk.kind==="peaked"?"peaked ":"bottomed ")+pk.at+", "+pk.value+
+                " — "+pk.dist+" "+pk.rel+" the "+pk.baseAt+" baseline")); }
+              // A++++: a mini-sparkline of the SAME parsed series (same axis, drawn from parsed values).
+              // A+++++: pass the SAME pk so its interior extreme is marked ON the line (null-safe: no
+              // qualifying peak => no vertex dot; the vertex reuses the sparkline's own geometry).
+              var sp=sparkline(it.content, lede);
+              if(sp){ tk.appendChild(sparkSvg(sp, pk)); }
+            }
+            body.appendChild(tk);
+          }
+          renderContent(body, it.content, it.title);
+          c.appendChild(body);
+        }
+        host.appendChild(c);
+      });
+    } else {
+      host.appendChild(el("div","soon", (d&&d.placeholder)||"We are currently testing new ideas."));
+    }
+    var foot=document.getElementById("foot");
+    if(foot){ foot.textContent="Baked "+((d&&(d.generated_et||d.generated_utc))||"")+"."; }
+  }
+
+  var lastFetch=0;
+  function updAgo(){ var a=document.getElementById("ago"); if(!a) return; if(!lastFetch){ a.textContent=""; return; }
+    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000)); a.textContent="live · updated "+(s<60?(s+"s ago"):(Math.floor(s/60)+"m ago")); }
+  function poll(){ lastFetch=Date.now(); loadHub(); loadTested(); updAgo(); }
+  poll(); setInterval(poll,300000); setInterval(updAgo,1000);
+})();
+</script>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="error-map.html">Error Map</a><a href="board.html">Board</a></div><div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div></footer><!--/hw-foot--></body>
 </html>
