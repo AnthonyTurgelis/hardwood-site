@@ -1,32 +1,503 @@
-/* Dense Teams live renderer: same-origin published artifacts only. */
-(function(){
-'use strict';
-var $=function(id){return document.getElementById(id)},qa=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))},has=function(v){return v!==null&&v!==undefined&&v!==''},num=function(v){if(!has(v)||v===true||v===false)return null;var n=Number(v);return Number.isFinite(n)?n:null},esc=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})},fixed=function(v,d){var n=num(v);return n===null?'—':n.toFixed(d==null?1:d)},signed=function(v,d){var n=num(v);return n===null?'—':(n>0?'+':'')+n.toFixed(d==null?1:d)},prob=function(v){var n=num(v);if(n===null)return null;if(n>1&&n<=100)n/=100;return n>=0&&n<=1?n:null},pct=function(v,d){var n=prob(v);return n===null?'—':(n*100).toFixed(d==null?0:d)+'%'},first=function(o,ks){for(var i=0;i<ks.length;i++)if(o&&has(o[ks[i]]))return o[ks[i]];return null},rows=function(p,ks){if(Array.isArray(p))return p;for(var i=0;i<ks.length;i++){var v=p&&p[ks[i]];if(Array.isArray(v))return v;if(v&&typeof v==='object')return Object.keys(v).map(function(k){return Object.assign({key:k},v[k]||{})})}return []},fetchJSON=function(path){return fetch(path,{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error(path+' returned '+r.status);return r.json()}).catch(function(e){console.warn(e);return {}})},dateObj=function(v){if(!has(v))return null;var d=new Date(/^\d{4}-\d{2}-\d{2}$/.test(String(v))?String(v)+'T12:00:00':v);return isNaN(d.getTime())?null:d},shortDate=function(v){var d=dateObj(v);return d?d.toLocaleDateString(undefined,{month:'short',day:'numeric'}):String(v||'TBD')};
-var state={teams:[],filtered:[],selected:null,sort:'rank',dir:'asc',viz:'strength-title',payloads:{}};
-function teamMap(payload){var out={};rows(payload,['teams','rows','items']).forEach(function(r){var t=String(first(r,['team','team_abbr','abbr','key'])||'').toUpperCase();if(t)out[t]=r});return out}
-function availabilityMap(payload){var out={};rows(payload,['shorthanded','teams','rows','items']).forEach(function(r){var t=String(first(r,['team','team_abbr','abbr','key'])||'').toUpperCase();if(!t)return;out[t]={out:num(first(r,['out','out_count','n_out'])),minutes:num(first(r,['minutes_out','missing_minutes','min_out'])),line:first(r,['line','summary','note'])||'',names:Array.isArray(r.names)?r.names:[]}});return out}
-function playerMap(payload){var out={};var src=payload&&payload.ratings?payload.ratings:payload;rows(src,['players','rows','items']).forEach(function(r){var t=String(first(r,['team','team_abbr','abbr'])||'').toUpperCase();if(!t)return;(out[t]||(out[t]=[])).push({id:first(r,['id','player_id']),name:first(r,['name','player_name'])||'Player',impact:num(first(r,['rating','impact','impact_rating'])),pts:num(first(r,['pts','ppg'])),min:num(first(r,['minutes','proj_min','min_avg']))})});Object.keys(out).forEach(function(t){out[t].sort(function(a,b){return (b.impact==null?-999:b.impact)-(a.impact==null?-999:a.impact)})});return out}
-function games(payload){return rows(payload,['games','rows','items']).map(function(g){return {id:String(first(g,['game_id','id'])||''),home:String(first(g,['home','home_team','home_abbr'])||'').toUpperCase(),away:String(first(g,['away','away_team','away_abbr'])||'').toUpperCase(),date:first(g,['date','game_date']),tip:first(g,['tip_et','tip']),call:first(g,['call','predicted_winner']),final:has(first(g,['home_score','actual_home_score']))&&has(first(g,['away_score','actual_away_score']))}}).filter(function(g){return g.home&&g.away})}
-function normalize(tp,sp,ap,pp,gp){var standings=teamMap(sp),avail=availabilityMap(ap),players=playerMap(pp),gameList=games(gp),base=rows(tp,['teams','rows','items']),seen={},all=[];base.forEach(function(r,i){var t=String(first(r,['team','team_abbr','abbr','key'])||'').toUpperCase();if(!t||seen[t])return;seen[t]=1;var s=standings[t]||{},trend=r.trend||{},range=Array.isArray(s.proj_range_90)?[num(s.proj_range_90[0]),num(s.proj_range_90[1])]:[null,null];all.push({team:t,name:first(r,['team_full','team_name','name'])||first(s,['team_full','team_name','name'])||t,conf:first(s,['conference','conf'])||'—',rank:num(first(r,['rank','power_rank']))||i+1,wins:num(first(s,['wins','w'])),losses:num(first(s,['losses','l'])),gb:num(first(s,['games_back','gb'])),strength:num(first(r,['strength','rating','power'])),move:num(first(r,['churn','movement','strength_move'])),proj:num(first(s,['proj_median_wins','projected_wins','proj_wins'])),range:range,playoff:prob(first(s,['p_playoff','playoff_probability'])),title:prob(first(s,['p_title','title_probability'])),availability:avail[t]||null,players:players[t]||[],games:gameList.filter(function(g){return !g.final&&(g.home===t||g.away===t)}).sort(function(a,b){return (dateObj(a.date)||Infinity)-(dateObj(b.date)||Infinity)}),titleMove:num(first(trend,['title_move','move'])),moveDays:num(first(trend,['move_days','days']))})});Object.keys(standings).forEach(function(t){if(!seen[t]){var s=standings[t];all.push({team:t,name:first(s,['team_full','team_name','name'])||t,conf:first(s,['conference','conf'])||'—',rank:all.length+1,wins:num(s.wins),losses:num(s.losses),gb:num(s.games_back),strength:null,move:null,proj:num(s.proj_median_wins),range:Array.isArray(s.proj_range_90)?[num(s.proj_range_90[0]),num(s.proj_range_90[1])]:[null,null],playoff:prob(s.p_playoff),title:prob(s.p_title),availability:avail[t]||null,players:players[t]||[],games:gameList.filter(function(g){return !g.final&&(g.home===t||g.away===t)}),titleMove:null,moveDays:null})}});return all}
-function record(t){return t.wins===null||t.losses===null?'—':fixed(t.wins,0)+'-'+fixed(t.losses,0)}
-function availText(t){var a=t.availability;if(!a)return 'Not published';if(a.line)return a.line;return (a.out==null?'?':a.out)+' out'+(a.minutes==null?'':' · '+fixed(a.minutes,0)+' min missing')}
-function availState(t){var a=t.availability;if(!a)return 'unknown';var o=a.out||0,m=a.minutes||0;return o===0&&m===0?'clear':o>=4||m>=80?'heavy':'short'}
-function outlook(t){if(t.playoff===null&&t.title===null)return 'unknown';if(t.title!==null&&t.title>=.1)return 'title';if(t.playoff!==null&&t.playoff>=.5)return 'playoff';if(t.playoff!==null&&t.playoff>=.25)return 'bubble';return 'longshot'}
-function story(l,v,n){return '<article class="hw-story"><span class="hw-story-label">'+esc(l)+'</span><strong class="hw-story-value">'+esc(v)+'</strong><span class="hw-story-note">'+esc(n)+'</span></article>'}
-function renderStories(){var strength=state.teams.filter(function(t){return t.strength!==null}).sort(function(a,b){return b.strength-a.strength})[0],title=state.teams.filter(function(t){return t.title!==null}).sort(function(a,b){return b.title-a.title})[0],move=state.teams.filter(function(t){return t.move!==null}).sort(function(a,b){return Math.abs(b.move)-Math.abs(a.move)})[0],pressure=state.teams.filter(function(t){return t.availability&&t.availability.minutes!==null}).sort(function(a,b){return b.availability.minutes-a.availability.minutes})[0],proj=state.teams.filter(function(t){return t.proj!==null}).sort(function(a,b){return b.proj-a.proj})[0];$('teams-stories').innerHTML=[story('Strength leader',strength?strength.team:'—',strength?signed(strength.strength,1):'not published'),story('Title leader',title?title.team:'—',title?pct(title.title,1):'not published'),story('Largest movement',move?move.team:'—',move?signed(move.move,1):'not published'),story('Availability pressure',pressure?pressure.team:'—',pressure?fixed(pressure.availability.minutes,0)+' min missing':'not published'),story('Projected wins leader',proj?proj.team:'—',proj?fixed(proj.proj,1):'not published')].join('')}
-function filter(){var q=$('teams-search').value.trim().toLowerCase(),c=$('teams-conference').value,a=$('teams-availability').value,o=$('teams-outlook').value;state.filtered=state.teams.filter(function(t){return (!q||(t.team+' '+t.name).toLowerCase().indexOf(q)>=0)&&(!c||t.conf===c)&&(!a||availState(t)===a)&&(!o||outlook(t)===o)});var dir=state.dir==='asc'?1:-1;state.filtered.sort(function(x,y){var map={rank:[x.rank,y.rank],wins:[x.wins,y.wins],gb:[x.gb,y.gb],strength:[x.strength,y.strength],churn:[x.move,y.move],projWins:[x.proj,y.proj],playoff:[x.playoff,y.playoff],title:[x.title,y.title],missing:[x.availability&&x.availability.minutes,y.availability&&y.availability.minutes]},p=map[state.sort]||[x.rank,y.rank];if(p[0]==null)return p[1]==null?x.name.localeCompare(y.name):1;if(p[1]==null)return -1;return p[0]===p[1]?x.name.localeCompare(y.name):(p[0]-p[1])*dir})}
-function nextGame(t){var g=t.games[0];if(!g)return 'Not published';var opp=g.home===t.team?g.away:g.home;return (g.home===t.team?'vs ':'@ ')+opp+' · '+shortDate(g.date)}
-function row(t){var r=t.range[0]==null||t.range[1]==null?'—':fixed(t.range[0],0)+'–'+fixed(t.range[1],0);return '<tr'+(state.selected&&state.selected.team===t.team?' class="selected"':'')+'><td class="num">'+fixed(t.rank,0)+'</td><td><button class="hw-team-select" data-select-team="'+esc(t.team)+'"><strong>'+esc(t.name)+'</strong><span>'+esc(t.team)+'</span></button></td><td>'+esc(t.conf)+'</td><td class="num">'+esc(record(t))+'</td><td class="num">'+fixed(t.gb,1)+'</td><td class="num">'+signed(t.strength,1)+'</td><td class="num">'+signed(t.move,1)+'</td><td class="num">'+fixed(t.proj,1)+'</td><td>'+r+'</td><td class="num">'+pct(t.playoff,0)+'</td><td class="num">'+pct(t.title,1)+'</td><td>'+esc(availText(t))+'</td><td>'+esc(nextGame(t))+'</td><td>'+signed(t.move,1)+'</td></tr>'}
-function mobile(t){return '<button class="hw-mobile-team'+(state.selected&&state.selected.team===t.team?' selected':'')+'" data-select-team="'+esc(t.team)+'"><span class="hw-mobile-team-top"><strong>'+esc(t.name)+'</strong><span>#'+fixed(t.rank,0)+' · '+esc(record(t))+'</span></span><span class="hw-mobile-team-metrics"><span>Strength<b>'+signed(t.strength,1)+'</b></span><span>Proj wins<b>'+fixed(t.proj,1)+'</b></span><span>Playoff<b>'+pct(t.playoff,0)+'</b></span><span>Title<b>'+pct(t.title,1)+'</b></span></span><span class="hw-mobile-team-bottom"><span>'+esc(availText(t))+'</span><span>'+signed(t.move,1)+'</span></span></button>'}
-function renderBoard(){filter();$('teams-count').textContent=state.filtered.length+' of '+state.teams.length+' teams';$('teams-context').textContent=state.sort+' · '+state.dir;$('teams-body').innerHTML=state.filtered.map(row).join('')||'<tr><td colspan="14"><div class="hw-empty">No teams match.</div></td></tr>';$('teams-mobile').innerHTML=state.filtered.map(mobile).join('')||'<div class="hw-empty">No teams match.</div>';qa('[data-select-team]').forEach(function(b){b.addEventListener('click',function(){selectTeam(b.getAttribute('data-select-team'),true)})})}
-function metric(l,v,n){return '<div class="hw-team-inspector-metric"><span>'+esc(l)+'</span><strong>'+esc(v)+'</strong><small>'+esc(n||'')+'</small></div>'}
-function renderInspector(t){if(!t)return;var player=t.players.slice(0,6).map(function(p){return '<div class="hw-team-player"><div><strong>'+esc(p.name)+'</strong><small>'+fixed(p.pts,1)+' PTS · '+fixed(p.min,1)+' min</small></div><span>'+signed(p.impact,1)+'</span></div>'}).join(''),games=t.games.slice(0,4).map(function(g){var opp=g.home===t.team?g.away:g.home;return '<div class="hw-team-game"><div><strong>'+(g.home===t.team?'vs ':'@ ')+esc(opp)+'</strong><small>'+shortDate(g.date)+' · '+esc(g.tip||'time TBD')+'</small></div><span>'+esc(g.call||'call TBD')+'</span></div>'}).join('');$('team-inspector').innerHTML='<div class="hw-module-head"><h2>Team inspector</h2><span>'+esc(t.team)+'</span></div><div class="hw-team-inspector-body"><div class="hw-team-inspector-hero"><div><h3>'+esc(t.name)+'</h3><p>Power #'+fixed(t.rank,0)+' · '+esc(t.conf)+'</p></div><strong>'+esc(record(t))+'</strong></div><div class="hw-team-inspector-metrics">'+metric('Strength',signed(t.strength,1),'move '+signed(t.move,1))+metric('Projected wins',fixed(t.proj,1),t.range[0]==null?'range not published':fixed(t.range[0],0)+'–'+fixed(t.range[1],0))+metric('Playoff',pct(t.playoff,1),'simulated chance')+metric('Title',pct(t.title,1),'simulated chance')+metric('Availability',t.availability&&t.availability.minutes!==null?fixed(t.availability.minutes,0)+' min':'—',availText(t))+metric('Next game',nextGame(t),'published schedule')+'</div><section class="hw-team-inspector-section"><h3>Leading published players</h3>'+(player||'<div class="hw-empty">No player rows.</div>')+'</section><section class="hw-team-inspector-section"><h3>Next published games</h3>'+(games||'<div class="hw-empty">No upcoming games.</div>')+'</section></div>'}
-function selectTeam(code,scroll){var t=state.teams.find(function(x){return x.team===code});if(!t)return;state.selected=t;renderBoard();renderInspector(t);renderViz();if(scroll&&innerWidth<980)$('team-inspector').scrollIntoView({behavior:'smooth',block:'start'})}
-function extent(vals){var v=vals.filter(function(x){return x!==null&&isFinite(x)});if(!v.length)return [0,1];var lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),p=(hi-lo||1)*.12;return [lo-p,hi+p]}
-function scatter(xFn,yFn,xLab,yLab,xf,yf){var list=state.teams.filter(function(t){return xFn(t)!==null&&yFn(t)!==null});if(!list.length)return '<div class="hw-empty">Values not published.</div>';var W=760,H=290,L=52,R=18,T=15,B=38,xd=extent(list.map(xFn)),yd=extent(list.map(yFn)),sx=function(v){return L+(v-xd[0])/(xd[1]-xd[0])*(W-L-R)},sy=function(v){return H-B-(v-yd[0])/(yd[1]-yd[0])*(H-T-B)},out=['<svg viewBox="0 0 '+W+' '+H+'">'];for(var i=0;i<=4;i++){var xv=xd[0]+i/4*(xd[1]-xd[0]),yv=yd[0]+i/4*(yd[1]-yd[0]),x=sx(xv),y=sy(yv);out.push('<line class="grid" x1="'+x+'" y1="'+T+'" x2="'+x+'" y2="'+(H-B)+'"></line><line class="grid" x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'"></line>')}list.forEach(function(t){out.push('<circle class="point'+(state.selected&&state.selected.team===t.team?' selected':'')+'" data-viz-team="'+esc(t.team)+'" cx="'+sx(xFn(t)).toFixed(1)+'" cy="'+sy(yFn(t)).toFixed(1)+'" r="4"><title>'+esc(t.team+': '+xLab+' '+xf(xFn(t))+', '+yLab+' '+yf(yFn(t)))+'</title></circle><text class="team-label" x="'+(sx(xFn(t))+6)+'" y="'+(sy(yFn(t))+3)+'">'+esc(t.team)+'</text>')});out.push('</svg>');return out.join('')}
-function renderViz(){var html,context;if(state.viz==='wins-finish'){html=scatter(function(t){return t.wins},function(t){return t.proj},'Wins','Proj wins',function(v){return fixed(v,0)},function(v){return fixed(v,1)});context='Current wins versus simulated finish'}else if(state.viz==='pressure-strength'){html=scatter(function(t){return t.availability?t.availability.minutes:null},function(t){return t.strength},'Unavailable min','Strength',function(v){return fixed(v,0)},function(v){return signed(v,1)});context='Availability pressure versus team strength'}else{html=scatter(function(t){return t.strength},function(t){return t.title===null?null:t.title*100},'Strength','Title chance',function(v){return signed(v,1)},function(v){return fixed(v,1)+'%'});context='Strength versus simulated title chance'}$('team-viz-context').textContent=context;$('team-viz').innerHTML=html;qa('[data-viz-team]').forEach(function(p){p.addEventListener('click',function(){selectTeam(p.getAttribute('data-viz-team'),true)})})}
-function renderWatch(){var movers=state.teams.filter(function(t){return t.move!==null}).sort(function(a,b){return Math.abs(b.move)-Math.abs(a.move)}).slice(0,8),pressure=state.teams.filter(function(t){return t.availability&&t.availability.minutes!==null}).sort(function(a,b){return b.availability.minutes-a.availability.minutes}).slice(0,8);$('teams-movers').innerHTML=movers.map(function(t){return '<button class="hw-team-watch-row" data-select-team="'+esc(t.team)+'"><div><strong>'+esc(t.team)+' · '+esc(t.name)+'</strong><small>strength '+signed(t.strength,1)+'</small></div><span>'+signed(t.move,1)+'</span></button>'}).join('');$('teams-pressure').innerHTML=pressure.map(function(t){return '<button class="hw-team-watch-row" data-select-team="'+esc(t.team)+'"><div><strong>'+esc(t.team)+' · '+esc(t.name)+'</strong><small>'+esc(availText(t))+'</small></div><span>'+fixed(t.availability.minutes,0)+' min</span></button>'}).join('');qa('.hw-team-watch-row').forEach(function(b){b.addEventListener('click',function(){selectTeam(b.getAttribute('data-select-team'),true)})})}
-function bind(){['teams-search','teams-conference','teams-availability','teams-outlook'].forEach(function(id){var e=$(id);e.addEventListener(e.tagName==='INPUT'?'input':'change',renderBoard)});$('teams-reset').addEventListener('click',function(){['teams-search','teams-conference','teams-availability','teams-outlook'].forEach(function(id){$(id).value=''});state.sort='rank';state.dir='asc';renderBoard()});qa('[data-sort]').forEach(function(b){b.addEventListener('click',function(){var k=b.getAttribute('data-sort');if(state.sort===k)state.dir=state.dir==='asc'?'desc':'asc';else{state.sort=k;state.dir=(k==='rank'||k==='gb')?'asc':'desc'}renderBoard()})});qa('[data-team-viz]').forEach(function(b){b.addEventListener('click',function(){state.viz=b.getAttribute('data-team-viz');qa('[data-team-viz]').forEach(function(x){x.classList.toggle('active',x===b)});renderViz()})})}
-function boot(){bind();Promise.all(['teams.json','standings.json','availability.json','players.json','games.json'].map(fetchJSON)).then(function(p){state.payloads={teams:p[0],standings:p[1],availability:p[2],players:p[3],games:p[4]};state.teams=normalize(p[0],p[1],p[2],p[3],p[4]);var conf={};state.teams.forEach(function(t){if(t.conf&&t.conf!=='—')conf[t.conf]=1});$('teams-conference').innerHTML='<option value="">All conferences</option>'+Object.keys(conf).sort().map(function(c){return '<option>'+esc(c)+'</option>'}).join('');renderStories();renderWatch();renderBoard();renderViz();if(state.teams.length)selectTeam(state.teams.slice().sort(function(a,b){return a.rank-b.rank})[0].team,false)})}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-})();
+/* Dense Teams: same-origin public artifacts only. */
+(function () {
+  "use strict";
+
+  const FILES = {
+    teams: "teams.json",
+    standings: "standings.json",
+    availability: "availability.json",
+    players: "players.json",
+    games: "games.json",
+  };
+
+  const state = {
+    payloads: {},
+    teams: [],
+    filtered: [],
+    selected: null,
+    sortKey: "rank",
+    sortDir: "asc",
+    viz: "strength-title",
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const qa = (selector, root) => Array.from((root || document).querySelectorAll(selector));
+  const present = (value) => value !== null && value !== undefined && value !== "";
+  const number = (value) => {
+    if (!present(value) || value === true || value === false) return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const first = (row, keys) => {
+    for (const key of keys) {
+      if (row && present(row[key])) return row[key];
+    }
+    return null;
+  };
+  const escapeHTML = (value) => String(value == null ? "" : value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[char]);
+  const fixed = (value, digits = 1) => {
+    const parsed = number(value);
+    return parsed === null ? "—" : parsed.toFixed(digits);
+  };
+  const signed = (value, digits = 1) => {
+    const parsed = number(value);
+    return parsed === null ? "—" : `${parsed > 0 ? "+" : ""}${parsed.toFixed(digits)}`;
+  };
+  const probability = (value) => {
+    let parsed = number(value);
+    if (parsed === null) return null;
+    if (parsed > 1 && parsed <= 100) parsed /= 100;
+    return parsed >= 0 && parsed <= 1 ? parsed : null;
+  };
+  const percent = (value, digits = 0) => {
+    const parsed = probability(value);
+    return parsed === null ? "—" : `${(parsed * 100).toFixed(digits)}%`;
+  };
+  const rows = (payload, keys) => {
+    if (Array.isArray(payload)) return payload;
+    for (const key of keys) {
+      const value = payload && payload[key];
+      if (Array.isArray(value)) return value;
+      if (value && typeof value === "object") {
+        return Object.keys(value).map((name) => ({ key: name, ...value[name] }));
+      }
+    }
+    return [];
+  };
+  const fetchJSON = (path) => fetch(path, { cache: "no-store" })
+    .then((response) => {
+      if (!response.ok) throw new Error(`${path} returned ${response.status}`);
+      return response.json();
+    })
+    .catch((error) => {
+      console.warn(error);
+      return {};
+    });
+  const toDate = (value) => {
+    if (!present(value)) return null;
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  };
+  const dateText = (value) => {
+    const parsed = toDate(value);
+    return parsed
+      ? parsed.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+      : String(value || "Date not published");
+  };
+
+  function normalizeAvailability(payload) {
+    const output = {};
+    rows(payload, ["shorthanded", "teams", "rows", "items"]).forEach((row) => {
+      const team = String(first(row, ["team", "team_abbr", "abbr", "key"]) || "").toUpperCase();
+      if (!team) return;
+      const names = first(row, ["names", "out_names", "players"]);
+      const unsized = first(row, ["unsized", "unsized_names"]);
+      output[team] = {
+        out: number(first(row, ["out", "out_count", "n_out"])),
+        minutes_out: number(first(row, ["minutes_out", "missing_minutes", "min_out"])),
+        names: Array.isArray(names) ? names : [],
+        unsized: Array.isArray(unsized) ? unsized : [],
+        line: first(row, ["line", "summary", "note"]),
+      };
+    });
+    return output;
+  }
+
+  function normalizePlayers(payload) {
+    const output = {};
+    const source = payload && payload.ratings ? payload.ratings : payload;
+    rows(source, ["players", "rows", "items"]).forEach((row) => {
+      const team = String(first(row, ["team", "team_abbr", "abbr"]) || "").toUpperCase();
+      if (!team) return;
+      if (!output[team]) output[team] = [];
+      output[team].push({
+        id: first(row, ["id", "player_id"]),
+        name: first(row, ["name", "player_name"]) || "Player",
+        impact: number(first(row, ["rating", "impact", "impact_rating"])),
+        points: number(first(row, ["pts", "ppg"])),
+        minutes: number(first(row, ["minutes", "proj_min", "min_avg"])),
+        provisional: Boolean(first(row, ["impact_provisional", "thin", "provisional"])),
+      });
+    });
+    Object.values(output).forEach((list) => list.sort((a, b) => (b.impact ?? -999) - (a.impact ?? -999)));
+    return output;
+  }
+
+  function normalizeGames(payload) {
+    return rows(payload, ["games", "rows", "items"]).map((row) => {
+      const home = String(first(row, ["home", "home_team", "home_abbr"]) || "").toUpperCase();
+      const away = String(first(row, ["away", "away_team", "away_abbr"]) || "").toUpperCase();
+      const homeScore = number(first(row, ["home_score", "score_home"]));
+      const awayScore = number(first(row, ["away_score", "score_away"]));
+      const status = String(first(row, ["status", "game_status"]) || "").toLowerCase();
+      return {
+        home,
+        away,
+        date: first(row, ["date", "game_date", "tip_utc"]),
+        tip: first(row, ["tip_et", "tip", "time"]),
+        call: first(row, ["call", "predicted_winner"]),
+        margin: number(first(row, ["pred_margin", "predicted_margin"])),
+        pHome: probability(first(row, ["p_home_win", "home_win_probability"])),
+        final: (homeScore !== null && awayScore !== null) || status.includes("final"),
+      };
+    }).filter((game) => game.home || game.away);
+  }
+
+  function normalizeTeams(teamPayload, standingPayload, availabilityPayload, playerPayload, gamePayload) {
+    const standingMap = {};
+    rows(standingPayload, ["teams", "standings", "rows", "items"]).forEach((row) => {
+      const code = String(first(row, ["team", "team_abbr", "abbr", "key"]) || "").toUpperCase();
+      if (code) standingMap[code] = row;
+    });
+
+    const availability = normalizeAvailability(availabilityPayload);
+    const players = normalizePlayers(playerPayload);
+    const games = normalizeGames(gamePayload);
+    const base = rows(teamPayload, ["teams", "rows", "items"]).slice();
+    const existing = new Set(base.map((row) => String(first(row, ["team", "team_abbr", "abbr", "key"]) || "").toUpperCase()));
+    Object.keys(standingMap).forEach((code) => {
+      if (!existing.has(code)) base.push({ team: code });
+    });
+
+    const seen = new Set();
+    const output = [];
+    base.forEach((row, index) => {
+      const team = String(first(row, ["team", "team_abbr", "abbr", "key"]) || "").toUpperCase();
+      if (!team || seen.has(team)) return;
+      seen.add(team);
+      const standing = standingMap[team] || {};
+      const trend = first(row, ["trend", "history"]) || {};
+      let finishRange = first(standing, ["proj_range_90", "win_range_90", "range90"]);
+      if (!Array.isArray(finishRange)) {
+        finishRange = [first(standing, ["proj_lo", "range_lo"]), first(standing, ["proj_hi", "range_hi"])];
+      }
+      const playoffFromStanding = probability(first(standing, ["p_playoff", "playoff_probability"]));
+      const titleFromStanding = probability(first(standing, ["p_title", "title_probability"]));
+      output.push({
+        team,
+        name: first(row, ["team_full", "team_name", "name"]) || first(standing, ["team_full", "team_name", "name"]) || team,
+        conference: first(standing, ["conference", "conf"]),
+        rank: number(first(row, ["rank", "power_rank"])) || index + 1,
+        wins: number(first(standing, ["wins", "w"])),
+        losses: number(first(standing, ["losses", "l"])),
+        gb: number(first(standing, ["games_back", "gb"])),
+        strength: number(first(row, ["strength", "rating", "power"])),
+        churn: number(first(row, ["churn", "movement", "strength_move"])),
+        proj_median_wins: number(first(standing, ["proj_median_wins", "projected_wins", "proj_wins"])),
+        proj_range_90: [number(finishRange[0]), number(finishRange[1])],
+        p_playoff: playoffFromStanding !== null ? playoffFromStanding : probability(first(row, ["playoff_pct", "playoff"])),
+        p_title: titleFromStanding !== null ? titleFromStanding : probability(first(row, ["title_pct", "title"])),
+        trendStrength: Array.isArray(trend.strength) ? trend.strength.map(number).filter((value) => value !== null) : [],
+        titleMove: number(first(trend, ["title_move", "move"])),
+        moveDays: number(first(trend, ["move_days", "days"])),
+        availability: availability[team] || null,
+        players: players[team] || [],
+        games: games.filter((game) => !game.final && (game.home === team || game.away === team))
+          .sort((a, b) => (toDate(a.date)?.getTime() || Number.MAX_SAFE_INTEGER) - (toDate(b.date)?.getTime() || Number.MAX_SAFE_INTEGER)),
+      });
+    });
+    return output;
+  }
+
+  function record(team) {
+    return team.wins === null || team.losses === null ? "—" : `${team.wins}-${team.losses}`;
+  }
+  function unavailableMinutes(team) {
+    return team.availability ? team.availability.minutes_out : null;
+  }
+  function availabilityState(team) {
+    const availability = team.availability;
+    if (!availability) return "unknown";
+    const out = availability.out || 0;
+    const minutes = availability.minutes_out || 0;
+    if (out === 0 && minutes === 0) return "clear";
+    if (out >= 4 || minutes >= 80) return "heavy";
+    return "short";
+  }
+  function availabilityText(team) {
+    const availability = team.availability;
+    if (!availability) return "Not published";
+    if (availability.line) return availability.line;
+    if ((availability.out || 0) === 0 && (availability.minutes_out || 0) === 0) return "Rotation intact";
+    const parts = [];
+    if (availability.out !== null) parts.push(`${availability.out} out`);
+    if (availability.minutes_out !== null) parts.push(`${fixed(availability.minutes_out, 0)} min missing`);
+    return parts.join(" · ") || "Not published";
+  }
+  function outlookState(team) {
+    if (team.p_playoff === null && team.p_title === null) return "unknown";
+    if (team.p_title !== null && team.p_title >= 0.10) return "title";
+    if (team.p_playoff !== null && team.p_playoff >= 0.50) return "playoff";
+    if (team.p_playoff !== null && team.p_playoff >= 0.25) return "bubble";
+    return "longshot";
+  }
+  function nextGameText(team) {
+    const game = team.games[0];
+    if (!game) return "Not published";
+    const opponent = game.home === team.team ? game.away : game.home;
+    return `${game.home === team.team ? "vs" : "@"} ${opponent} · ${dateText(game.date)}`;
+  }
+
+  function story(label, value, note) {
+    return `<article class="hw-story"><span class="hw-story-label">${escapeHTML(label)}</span><strong class="hw-story-value">${escapeHTML(value)}</strong><span class="hw-story-note">${escapeHTML(note)}</span></article>`;
+  }
+  function renderStories() {
+    const strengthLeader = state.teams.filter((team) => team.strength !== null).sort((a, b) => b.strength - a.strength)[0];
+    const titleLeader = state.teams.filter((team) => team.p_title !== null).sort((a, b) => b.p_title - a.p_title)[0];
+    const mover = state.teams.filter((team) => team.churn !== null).sort((a, b) => Math.abs(b.churn) - Math.abs(a.churn))[0];
+    const pressure = state.teams.filter((team) => unavailableMinutes(team) !== null).sort((a, b) => unavailableMinutes(b) - unavailableMinutes(a))[0];
+    const projected = state.teams.filter((team) => team.proj_median_wins !== null).sort((a, b) => b.proj_median_wins - a.proj_median_wins)[0];
+    $("teams-stories").innerHTML = [
+      story("Strength leader", strengthLeader?.team || "Not published", strengthLeader ? signed(strengthLeader.strength, 1) : "No strength row"),
+      story("Title leader", titleLeader?.team || "Not published", titleLeader ? percent(titleLeader.p_title, 1) : "No title row"),
+      story("Largest movement", mover?.team || "Not published", mover ? signed(mover.churn, 1) : "No movement row"),
+      story("Availability pressure", pressure?.team || "Not published", pressure ? `${fixed(unavailableMinutes(pressure), 0)} min missing` : "No sized pressure"),
+      story("Projected wins leader", projected?.team || "Not published", projected ? fixed(projected.proj_median_wins, 1) : "No finish simulation"),
+    ].join("");
+  }
+
+  function filterTeams() {
+    const search = $("teams-search").value.trim().toLowerCase();
+    const conference = $("teams-conference").value;
+    const availability = $("teams-availability").value;
+    const outlook = $("teams-outlook").value;
+    state.filtered = state.teams.filter((team) => {
+      if (search && `${team.team} ${team.name}`.toLowerCase().indexOf(search) < 0) return false;
+      if (conference && team.conference !== conference) return false;
+      if (availability && availabilityState(team) !== availability) return false;
+      if (outlook && outlookState(team) !== outlook) return false;
+      return true;
+    });
+    const direction = state.sortDir === "asc" ? 1 : -1;
+    state.filtered.sort((a, b) => {
+      const map = {
+        rank: [a.rank, b.rank],
+        wins: [a.wins, b.wins],
+        gb: [a.gb, b.gb],
+        strength: [a.strength, b.strength],
+        churn: [a.churn, b.churn],
+        projWins: [a.proj_median_wins, b.proj_median_wins],
+        playoff: [a.p_playoff, b.p_playoff],
+        title: [a.p_title, b.p_title],
+        missing: [unavailableMinutes(a), unavailableMinutes(b)],
+      };
+      const pair = map[state.sortKey] || [a.rank, b.rank];
+      if (pair[0] === null) return pair[1] === null ? a.name.localeCompare(b.name) : 1;
+      if (pair[1] === null) return -1;
+      return pair[0] === pair[1] ? a.name.localeCompare(b.name) : (pair[0] - pair[1]) * direction;
+    });
+  }
+
+  function trendHTML(team) {
+    if (team.trendStrength.length < 2) return '<span class="hw-team-trend flat">—</span>';
+    const firstValue = team.trendStrength[0];
+    const lastValue = team.trendStrength[team.trendStrength.length - 1];
+    const change = lastValue - firstValue;
+    return `<span class="hw-team-trend ${change >= 0 ? "up" : "down"}">${change >= 0 ? "▲" : "▼"} ${escapeHTML(Math.abs(change).toFixed(1))}</span>`;
+  }
+
+  function teamRow(team) {
+    const selected = state.selected && state.selected.team === team.team;
+    const finish = team.proj_range_90[0] === null || team.proj_range_90[1] === null
+      ? "—"
+      : `${fixed(team.proj_range_90[0], 0)}–${fixed(team.proj_range_90[1], 0)}`;
+    return `<tr${selected ? ' class="selected"' : ""}>
+      <td class="num">${escapeHTML(fixed(team.rank, 0))}</td>
+      <td><button class="hw-team-select" type="button" data-select-team="${escapeHTML(team.team)}"><strong>${escapeHTML(team.name)}</strong><span>${escapeHTML(team.team)}</span></button></td>
+      <td>${escapeHTML(team.conference || "—")}</td>
+      <td class="num">${escapeHTML(record(team))}</td>
+      <td class="num">${escapeHTML(fixed(team.gb, 1))}</td>
+      <td class="num">${escapeHTML(signed(team.strength, 1))}</td>
+      <td class="num">${escapeHTML(signed(team.churn, 1))}</td>
+      <td class="num">${escapeHTML(fixed(team.proj_median_wins, 1))}</td>
+      <td>${escapeHTML(finish)}</td>
+      <td class="num">${escapeHTML(percent(team.p_playoff, 0))}</td>
+      <td class="num">${escapeHTML(percent(team.p_title, 1))}</td>
+      <td>${escapeHTML(availabilityText(team))}</td>
+      <td>${escapeHTML(nextGameText(team))}</td>
+      <td>${trendHTML(team)}</td>
+    </tr>`;
+  }
+
+  function mobileTeam(team) {
+    const selected = state.selected && state.selected.team === team.team;
+    return `<button type="button" class="hw-mobile-team${selected ? " selected" : ""}" data-select-team="${escapeHTML(team.team)}">
+      <span class="hw-mobile-team-top"><strong>${escapeHTML(team.name)}</strong><span>#${escapeHTML(fixed(team.rank, 0))} · ${escapeHTML(record(team))}</span></span>
+      <span class="hw-mobile-team-metrics"><span>Strength<b>${escapeHTML(signed(team.strength, 1))}</b></span><span>Proj wins<b>${escapeHTML(fixed(team.proj_median_wins, 1))}</b></span><span>Playoff<b>${escapeHTML(percent(team.p_playoff, 0))}</b></span><span>Title<b>${escapeHTML(percent(team.p_title, 1))}</b></span></span>
+      <span class="hw-mobile-team-bottom"><span>${escapeHTML(availabilityText(team))}</span><span>${trendHTML(team)}</span></span>
+    </button>`;
+  }
+
+  function bindSelections() {
+    qa("[data-select-team]").forEach((button) => button.addEventListener("click", () => selectTeam(button.dataset.selectTeam, true)));
+  }
+  function renderBoard() {
+    filterTeams();
+    $("teams-count").textContent = `${state.filtered.length} of ${state.teams.length} teams`;
+    $("teams-context").textContent = `${state.sortKey} · ${state.sortDir}`;
+    $("teams-body").innerHTML = state.filtered.map(teamRow).join("") || '<tr><td colspan="14"><div class="hw-empty">No teams match these filters.</div></td></tr>';
+    $("teams-mobile").innerHTML = state.filtered.map(mobileTeam).join("") || '<div class="hw-empty">No teams match these filters.</div>';
+    bindSelections();
+  }
+
+  function inspectorMetric(label, value, note) {
+    return `<div class="hw-team-inspector-metric"><span>${escapeHTML(label)}</span><strong>${escapeHTML(value)}</strong><small>${escapeHTML(note || "")}</small></div>`;
+  }
+  function renderInspector(team) {
+    if (!team) return;
+    const finish = team.proj_range_90[0] === null || team.proj_range_90[1] === null
+      ? "Not published"
+      : `${fixed(team.proj_range_90[0], 0)}–${fixed(team.proj_range_90[1], 0)} wins`;
+    const playerRows = team.players.slice(0, 7).map((player) => `<div class="hw-team-player"><div><strong>${escapeHTML(player.name)}</strong><small>${escapeHTML(player.provisional ? "Provisional" : "Firm")} · ${escapeHTML(fixed(player.points, 1))} PTS · ${escapeHTML(fixed(player.minutes, 1))} min</small></div><span>${escapeHTML(signed(player.impact, 1))}</span></div>`).join("");
+    const gameRows = team.games.slice(0, 4).map((game) => {
+      const opponent = game.home === team.team ? game.away : game.home;
+      return `<div class="hw-team-game"><div><strong>${escapeHTML(game.home === team.team ? "vs" : "@")} ${escapeHTML(opponent)}</strong><small>${escapeHTML(dateText(game.date))} · ${escapeHTML(game.tip || "time not published")}</small></div><span>${escapeHTML(game.call || "call not published")}</span></div>`;
+    }).join("");
+    $("team-inspector").innerHTML = `<div class="hw-module-head"><h2>Team inspector</h2><span>${escapeHTML(team.team)}</span></div><div class="hw-team-inspector-body">
+      <div class="hw-team-inspector-hero"><div><h3>${escapeHTML(team.name)}</h3><p>Power #${escapeHTML(fixed(team.rank, 0))} · ${escapeHTML(team.conference || "conference not published")}</p></div><strong>${escapeHTML(record(team))}</strong></div>
+      <div class="hw-team-inspector-metrics">${inspectorMetric("Strength", signed(team.strength, 1), `move ${signed(team.churn, 1)}`)}${inspectorMetric("Projected wins", fixed(team.proj_median_wins, 1), `90% finish ${finish}`)}${inspectorMetric("Playoff", percent(team.p_playoff, 1), "simulated chance")}${inspectorMetric("Title", percent(team.p_title, 1), "simulated chance")}${inspectorMetric("Availability", unavailableMinutes(team) === null ? "—" : `${fixed(unavailableMinutes(team), 0)} min`, availabilityText(team))}${inspectorMetric("Title move", signed(team.titleMove, 1), team.moveDays ? `${fixed(team.moveDays, 0)} days` : "window not published")}</div>
+      <section class="hw-team-inspector-section"><h3>Leading published players</h3>${playerRows || '<div class="hw-empty">No player rows were published for this team.</div>'}</section>
+      <section class="hw-team-inspector-section"><h3>Next published games</h3>${gameRows || '<div class="hw-empty">No upcoming games were published for this team.</div>'}</section>
+      <div class="hw-team-source"><span>Source</span><strong>Published team, standings, availability, player, and game artifacts</strong><small>Quantities stay separate; missing fields are not reconstructed.</small></div>
+    </div>`;
+  }
+
+  function extent(values) {
+    const valid = values.filter((value) => value !== null && Number.isFinite(value));
+    if (!valid.length) return null;
+    const min = Math.min(...valid);
+    const max = Math.max(...valid);
+    const padding = (max - min || 1) * 0.12;
+    return [min - padding, max + padding];
+  }
+  function scatterSVG(teams, xFn, yFn, xLabel, yLabel, xFormat, yFormat) {
+    const valid = teams.filter((team) => xFn(team) !== null && yFn(team) !== null);
+    if (!valid.length) return '<div class="hw-empty">This visual needs published values on both axes.</div>';
+    const width = 760;
+    const height = 300;
+    const margin = { left: 54, right: 20, top: 18, bottom: 42 };
+    const xExtent = extent(valid.map(xFn));
+    const yExtent = extent(valid.map(yFn));
+    const sx = (value) => margin.left + ((value - xExtent[0]) / (xExtent[1] - xExtent[0])) * (width - margin.left - margin.right);
+    const sy = (value) => height - margin.bottom - ((value - yExtent[0]) / (yExtent[1] - yExtent[0])) * (height - margin.top - margin.bottom);
+    const svg = [`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHTML(`${xLabel} versus ${yLabel}`)}">`];
+    for (let index = 0; index <= 5; index += 1) {
+      const xValue = xExtent[0] + (index / 5) * (xExtent[1] - xExtent[0]);
+      const yValue = yExtent[0] + (index / 5) * (yExtent[1] - yExtent[0]);
+      const x = sx(xValue);
+      const y = sy(yValue);
+      svg.push(`<line class="grid" x1="${x}" y1="${margin.top}" x2="${x}" y2="${height - margin.bottom}"></line><line class="grid" x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}"></line><text class="axis-label" x="${x}" y="${height - 18}" text-anchor="middle">${escapeHTML(xFormat(xValue))}</text><text class="axis-label" x="46" y="${y + 3}" text-anchor="end">${escapeHTML(yFormat(yValue))}</text>`);
+    }
+    valid.forEach((team) => {
+      const selected = state.selected && state.selected.team === team.team;
+      svg.push(`<circle class="point${selected ? " selected" : ""}" data-viz-team="${escapeHTML(team.team)}" cx="${sx(xFn(team)).toFixed(1)}" cy="${sy(yFn(team)).toFixed(1)}" r="${selected ? 5 : 3.8}"><title>${escapeHTML(`${team.name}: ${xLabel} ${xFormat(xFn(team))}, ${yLabel} ${yFormat(yFn(team))}`)}</title></circle><text class="team-label" x="${(sx(xFn(team)) + 6).toFixed(1)}" y="${(sy(yFn(team)) + 3).toFixed(1)}">${escapeHTML(team.team)}</text>`);
+    });
+    svg.push(`<text class="axis-label" x="${(margin.left + width - margin.right) / 2}" y="294" text-anchor="middle">${escapeHTML(xLabel)}</text><text class="axis-label" x="14" y="150" text-anchor="middle" transform="rotate(-90 14 150)">${escapeHTML(yLabel)}</text></svg>`);
+    return svg.join("");
+  }
+
+  function renderViz() {
+    let html;
+    let context;
+    if (state.viz === "wins-finish") {
+      html = scatterSVG(state.teams, (team) => team.wins, (team) => team.proj_median_wins, "Current wins", "Projected wins", (value) => fixed(value, 0), (value) => fixed(value, 1));
+      context = "Current wins versus simulated finish";
+    } else if (state.viz === "pressure-strength") {
+      html = scatterSVG(state.teams, unavailableMinutes, (team) => team.strength, "Unavailable projected minutes", "Team strength", (value) => fixed(value, 0), (value) => signed(value, 1));
+      context = "Availability pressure versus team strength";
+    } else {
+      html = scatterSVG(state.teams, (team) => team.strength, (team) => team.p_title === null ? null : team.p_title * 100, "Team strength", "Title chance", (value) => signed(value, 1), (value) => `${fixed(value, 1)}%`);
+      context = "Strength versus simulated title chance";
+    }
+    $("team-viz-context").textContent = context;
+    $("team-viz").innerHTML = html;
+    qa("[data-viz-team]").forEach((point) => point.addEventListener("click", () => selectTeam(point.dataset.vizTeam, true)));
+  }
+
+  function renderWatch() {
+    const movers = state.teams.filter((team) => team.churn !== null).sort((a, b) => Math.abs(b.churn) - Math.abs(a.churn)).slice(0, 8);
+    $("teams-movers").innerHTML = movers.map((team) => `<button class="hw-team-watch-row" type="button" data-select-team="${escapeHTML(team.team)}"><div><strong>${escapeHTML(team.team)} · ${escapeHTML(team.name)}</strong><small>strength ${escapeHTML(signed(team.strength, 1))}</small></div><span class="${team.churn >= 0 ? "up" : "down"}">${escapeHTML(signed(team.churn, 1))}</span></button>`).join("") || '<div class="hw-empty">No movement was published.</div>';
+    const pressure = state.teams.filter((team) => unavailableMinutes(team) !== null).sort((a, b) => unavailableMinutes(b) - unavailableMinutes(a)).slice(0, 8);
+    $("teams-pressure").innerHTML = pressure.map((team) => `<button class="hw-team-watch-row" type="button" data-select-team="${escapeHTML(team.team)}"><div><strong>${escapeHTML(team.team)} · ${escapeHTML(team.name)}</strong><small>${escapeHTML(availabilityText(team))}</small></div><span>${escapeHTML(fixed(unavailableMinutes(team), 0))} min</span></button>`).join("") || '<div class="hw-empty">No sized availability pressure was published.</div>';
+    bindSelections();
+  }
+
+  function selectTeam(code, scroll) {
+    const team = state.teams.find((candidate) => candidate.team === code);
+    if (!team) return;
+    state.selected = team;
+    renderBoard();
+    renderInspector(team);
+    renderViz();
+    if (scroll && window.innerWidth < 980) $("team-inspector").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function bindControls() {
+    ["teams-search", "teams-conference", "teams-availability", "teams-outlook"].forEach((id) => {
+      const element = $(id);
+      element.addEventListener(element.tagName === "INPUT" ? "input" : "change", renderBoard);
+    });
+    $("teams-reset").addEventListener("click", () => {
+      ["teams-search", "teams-conference", "teams-availability", "teams-outlook"].forEach((id) => { $(id).value = ""; });
+      state.sortKey = "rank";
+      state.sortDir = "asc";
+      renderBoard();
+    });
+    qa("[data-sort]").forEach((button) => button.addEventListener("click", () => {
+      const key = button.dataset.sort;
+      if (state.sortKey === key) state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
+      else {
+        state.sortKey = key;
+        state.sortDir = key === "rank" || key === "gb" ? "asc" : "desc";
+      }
+      qa("[data-sort]").forEach((other) => other.removeAttribute("data-dir"));
+      button.dataset.dir = state.sortDir;
+      renderBoard();
+    }));
+    qa("[data-team-viz]").forEach((button) => button.addEventListener("click", () => {
+      state.viz = button.dataset.teamViz;
+      qa("[data-team-viz]").forEach((other) => other.classList.toggle("active", other === button));
+      renderViz();
+    }));
+  }
+
+  function populateConferenceFilter() {
+    const conferences = [...new Set(state.teams.map((team) => team.conference).filter(Boolean))].sort();
+    $("teams-conference").innerHTML = '<option value="">All conferences</option>' + conferences.map((conference) => `<option>${escapeHTML(conference)}</option>`).join("");
+  }
+
+  function setFreshness(payloads) {
+    const stamps = payloads.map((payload) => first(payload, ["generated_utc", "generated", "built_utc", "as_of", "updated_utc"]))
+      .map(toDate).filter(Boolean).sort((a, b) => b - a);
+    const newest = stamps[0];
+    qa("[data-fresh]").forEach((element) => {
+      element.innerHTML = `<span class="hw-fresh-dot"></span>${newest ? `Updated ${dateText(newest)}` : "Build time not published"}`;
+      element.classList.toggle("warn", !newest);
+    });
+  }
+
+  function boot() {
+    bindControls();
+    const keys = Object.keys(FILES);
+    Promise.all(keys.map((key) => fetchJSON(FILES[key]))).then((payloads) => {
+      keys.forEach((key, index) => { state.payloads[key] = payloads[index]; });
+      state.teams = normalizeTeams(state.payloads.teams, state.payloads.standings, state.payloads.availability, state.payloads.players, state.payloads.games);
+      setFreshness(payloads);
+      populateConferenceFilter();
+      renderStories();
+      renderWatch();
+      renderBoard();
+      renderViz();
+      if (state.teams.length) selectTeam(state.teams.slice().sort((a, b) => a.rank - b.rank)[0].team, false);
+    });
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+}());
