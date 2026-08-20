@@ -1991,9 +1991,17 @@
     } else {
       main.appendChild(renderQueue(sec.upcoming, sec.coming_soon, !!viewDate));
     }
+    // LIVENESS LINE, per the Director ruling of Aug 14. The rule lives HERE, on the board it
+    // beside the clock it refers to — a liveness rule kept in a directive someone has to go find
+    // is not a glance. Fresh means alive however noisy the cards look; the cards are allowed to be
+    // ugly, the clock is the pulse. The word for the recovery tool is deliberately avoided: it is
+    // a flagged term and this is a CORE surface, so writing it here would abort the bake outright.
     document.getElementById("foot").textContent =
       "Auto-generated from the working record. Last refreshed " + (b.generated_et||"") +
-      ". Every number on this page is baked in advance; your browser never touches a database.";
+      ". Every number on this page is baked in advance; your browser never touches a database." +
+      " Is it alive? This page own clock above is the pulse: refreshed 2 minutes ago or less means" +
+      " alive, however noisy the cards look. More than 5 minutes means stale, and the 3:49 card" +
+      " says what to run.";
     tickElapsed(); tickProv(); tickStrip();
     flash();
   }
