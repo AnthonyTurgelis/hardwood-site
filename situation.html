@@ -66,6 +66,11 @@
   .ctx{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
   .prov{font-size:11px;color:var(--muted);background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:8px 11px;margin:8px 0;line-height:1.5}
   .prov b{color:var(--ink)}
+  .curve{margin:10px 0 2px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card2)}
+  .curve svg{display:block;width:100%;height:112px;overflow:visible}
+  .curve .axis{stroke:var(--line2);stroke-width:1}.curve .path{fill:none;stroke:var(--acc);stroke-width:2.5}
+  .curve .dot{fill:var(--card);stroke:var(--acc);stroke-width:1.5}.curve .now{fill:var(--acc);stroke:var(--card);stroke-width:2}
+  .curve text{fill:var(--dim);font-size:9px}.curve .caption{font-size:10.5px;color:var(--muted);margin-top:3px}
   .two{display:grid;grid-template-columns:1.3fr 1fr;gap:10px}
   @media (max-width:720px){ .two{grid-template-columns:1fr} }
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
@@ -201,6 +206,26 @@
     return (m<0?"down ":"up ")+Math.abs(m);
   }
 
+  function renderCurve(cp,margin){
+    var NS="http://www.w3.org/2000/svg", wrap=el("div","curve");
+    var svg=document.createElementNS(NS,"svg"), W=620, H=112, L=30, R=10, T=8, B=20;
+    svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("role","img");
+    svg.setAttribute("aria-label",cp.label+" measured win probability by score margin; current setting "+marginText(margin));
+    function x(m){ return L+(m+18)/36*(W-L-R); }
+    function y(p){ return T+(100-p)/100*(H-T-B); }
+    [0,50,100].forEach(function(p){
+      var ln=document.createElementNS(NS,"line"); ln.setAttribute("x1",L); ln.setAttribute("x2",W-R); ln.setAttribute("y1",y(p)); ln.setAttribute("y2",y(p)); ln.setAttribute("class","axis"); svg.appendChild(ln);
+      var tx=document.createElementNS(NS,"text"); tx.setAttribute("x",2); tx.setAttribute("y",y(p)+3); tx.textContent=p+"%"; svg.appendChild(tx);
+    });
+    var pts=cp.curve.map(function(p){ return x(p.margin)+","+y(p.winpct); }).join(" ");
+    var path=document.createElementNS(NS,"polyline"); path.setAttribute("points",pts); path.setAttribute("class","path"); svg.appendChild(path);
+    cp.curve.forEach(function(p){ var c=document.createElementNS(NS,"circle"); c.setAttribute("cx",x(p.margin)); c.setAttribute("cy",y(p.winpct)); c.setAttribute("r",2.5); c.setAttribute("class","dot"); svg.appendChild(c); });
+    var read=interp(cp.curve,margin), now=document.createElementNS(NS,"circle"); now.setAttribute("cx",x(margin)); now.setAttribute("cy",y(read.winpct)); now.setAttribute("r",5); now.setAttribute("class","now"); svg.appendChild(now);
+    [-18,0,18].forEach(function(m){ var tx=document.createElementNS(NS,"text"); tx.setAttribute("x",x(m)); tx.setAttribute("y",H-3); tx.setAttribute("text-anchor","middle"); tx.textContent=m===0?"tied":(m<0?"down "+(-m):"up "+m); svg.appendChild(tx); });
+    wrap.appendChild(svg); wrap.appendChild(el("div","caption","Measured game outcomes at "+cp.clock+". Dots are observed score bands; the large dot is your current setting."));
+    return wrap;
+  }
+
   // ---------- result panel ----------
   // ---------- the curve, drawn ----------
   // WHY THIS EXISTS. The page already READ this curve -- interp() walks it and nearestMeasured()
@@ -279,6 +304,7 @@
     var big=el("div","big "+cls, fmtPct(r.winpct));
     big.appendChild(el("small",null," chance your team wins"));
     pad.appendChild(big);
+    pad.appendChild(renderCurve(r.cp,st.margin));
     pad.appendChild(el("div","readline",
       marginText(st.margin).replace(/^./,function(c){return c.toUpperCase();})+" — "+r.cp.label.toLowerCase()+" ("+r.cp.clock+"): "+oneIn(r.winpct)+"."));
 

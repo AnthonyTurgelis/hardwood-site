@@ -1,32 +1,32 @@
 {
   "slug": "rest",
-  "generated_utc": "2026-08-19T18:58:33Z",
-  "generated_et": "Aug 19, 2:58pm ET",
+  "generated_utc": "2026-08-20T17:03:11Z",
+  "generated_et": "Aug 20, 1:03pm ET",
   "question": "How much does a back-to-back cost a WNBA team, and do stars get load-managed on the second night?",
   "source_tables": [
     "game results (schedule + final scores)",
     "player box scores"
   ],
   "script": "scripts/analysis_rest_b2b.py",
-  "generated_at": "2026-08-19T18:58:33Z",
-  "n_played_games": 2796,
-  "n_teamgames_with_rest": 5444,
+  "generated_at": "2026-08-20T17:03:11Z",
+  "n_played_games": 2798,
+  "n_teamgames_with_rest": 5448,
   "definitions": {
     "b2b": "0 days off \u2014 a team playing the very next calendar day (derived rest = 1 day between games).",
     "rest": "days between a team's consecutive games in a season, derived from the game schedule (authoritative).",
     "note": "the stored per-game rest column is intentionally NOT used: 2023-26 only + internally inconsistent (backfill artifact). Rest is recomputed from the schedule."
   },
   "headline": {
-    "b2b_avg_margin": -1.323,
-    "b2b_winpct": 0.4656,
-    "b2b_n": 189,
-    "rested_ref_avg_margin": 0.057,
-    "rested_ref_winpct": 0.5016,
-    "raw_cost_points": -1.38,
-    "raw_cost_winpct": -0.036,
-    "court_adjusted_cost_points": -0.765,
-    "court_adjusted_cost_winpct": -0.0209,
-    "b2b_share_road": 0.619,
+    "b2b_avg_margin": -1.374,
+    "b2b_winpct": 0.4632,
+    "b2b_n": 190,
+    "rested_ref_avg_margin": 0.058,
+    "rested_ref_winpct": 0.5017,
+    "raw_cost_points": -1.432,
+    "raw_cost_winpct": -0.0385,
+    "court_adjusted_cost_points": -0.8,
+    "court_adjusted_cost_winpct": -0.0228,
+    "b2b_share_road": 0.6211,
     "one_liner": "A back-to-back costs a WNBA team about 0.8 points and 2 percentage points of win probability once you adjust for the fact that b2b teams are usually the road team \u2014 a real but modest edge."
   },
   "index_row": {
@@ -35,20 +35,20 @@
     "question": "How much does a rest edge / a B2B cost?",
     "source_json": "deepdive_rest.json",
     "source_table": "game results + box scores",
-    "n": 2796
+    "n": 2798
   },
   "rest_buckets": [
     {
       "bucket": "0_days_off_b2b",
-      "n": 189,
-      "avg_margin": -1.323,
-      "winpct": 0.4656
+      "n": 190,
+      "avg_margin": -1.374,
+      "winpct": 0.4632
     },
     {
       "bucket": "1_day_off",
-      "n": 2615,
-      "avg_margin": -0.226,
-      "winpct": 0.4929
+      "n": 2616,
+      "avg_margin": -0.231,
+      "winpct": 0.4927
     },
     {
       "bucket": "2_days_off",
@@ -58,32 +58,32 @@
     },
     {
       "bucket": "3plus_days_off",
-      "n": 1260,
-      "avg_margin": 0.372,
-      "winpct": 0.5151
+      "n": 1262,
+      "avg_margin": 0.389,
+      "winpct": 0.5158
     }
   ],
   "b2b_by_court": [
     {
       "court": "away",
       "is_b2b": false,
-      "n": 2606,
-      "avg_margin": -2.107,
-      "winpct": 0.4413
+      "n": 2607,
+      "avg_margin": -2.102,
+      "winpct": 0.4415
     },
     {
       "court": "away",
       "is_b2b": true,
-      "n": 117,
-      "avg_margin": -3.231,
-      "winpct": 0.4188
+      "n": 118,
+      "avg_margin": -3.297,
+      "winpct": 0.4153
     },
     {
       "court": "home",
       "is_b2b": false,
-      "n": 2649,
-      "avg_margin": 2.185,
-      "winpct": 0.561
+      "n": 2651,
+      "avg_margin": 2.183,
+      "winpct": 0.5609
     },
     {
       "court": "home",
@@ -102,9 +102,9 @@
     },
     {
       "restdiff": -2,
-      "n": 143,
-      "home_margin": 2.329,
-      "home_winpct": 0.5594
+      "n": 144,
+      "home_margin": 2.236,
+      "home_winpct": 0.5556
     },
     {
       "restdiff": -1,
@@ -132,48 +132,48 @@
     },
     {
       "restdiff": 3,
-      "n": 186,
-      "home_margin": 1.667,
-      "home_winpct": 0.5323
+      "n": 187,
+      "home_margin": 1.717,
+      "home_winpct": 0.5348
     }
   ],
   "player_fatigue": {
     "all_players": {
       "rested": {
-        "n": 46896,
-        "avg_min": 20.799,
-        "avg_pts": 8.449,
+        "n": 46927,
+        "avg_min": 20.798,
+        "avg_pts": 8.448,
         "ts_pct": 0.5369
       },
       "b2b": {
-        "n": 1801,
-        "avg_min": 20.933,
-        "avg_pts": 8.53,
+        "n": 1811,
+        "avg_min": 20.928,
+        "avg_pts": 8.528,
         "ts_pct": 0.5394
       }
     },
     "stars": {
       "rested": {
-        "n": 11723,
-        "avg_min": 31.038,
-        "avg_pts": 15.249,
-        "ts_pct": 0.5579
+        "n": 11740,
+        "avg_min": 31.036,
+        "avg_pts": 15.251,
+        "ts_pct": 0.558
       },
       "b2b": {
-        "n": 441,
-        "avg_min": 30.864,
-        "avg_pts": 15.367,
-        "ts_pct": 0.5566
+        "n": 443,
+        "avg_min": 30.862,
+        "avg_pts": 15.345,
+        "ts_pct": 0.557
       }
     },
     "finding": "No box-visible fatigue: minutes, points and TS% are ~flat b2b vs rested, even for stars."
   },
   "caveats": [
-    "B2B is rare in the WNBA (n=189 team-games over 11 seasons) \u2014 treat the b2b bucket as a gross estimate, not a precise per-team number.",
+    "B2B is rare in the WNBA (n=190 team-games over 11 seasons) \u2014 treat the b2b bucket as a gross estimate, not a precise per-team number.",
     "Confound handled: b2b teams skew road (62% of b2b games). Raw margin overstates the pure b2b cost; the court-adjusted number is the honest one.",
     "Rest-differential (home rest - away rest) is noisy and non-monotone \u2014 confounded by road-trip/schedule structure. Shown but flagged; the b2b bucket is the reliable read.",
     "Team-strength confound not removed: rest state is quasi-random across a season so bias is small, but a single b2b bucket does not adjust for opponent quality.",
-    "Player age x b2b interaction NOT built: the box-score data carries no clean age field and b2b star-games (n=441) are too thin to split by age \u2014 omitted rather than invented.",
+    "Player age x b2b interaction NOT built: the box-score data carries no clean age field and b2b star-games (n=443) are too thin to split by age \u2014 omitted rather than invented.",
     "6 legacy team abbreviations in the box scores do not map to the game results (relocations/renames) and drop from the player join \u2014 negligible coverage loss."
   ]
 }
