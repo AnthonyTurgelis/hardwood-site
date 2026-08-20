@@ -1,0 +1,14 @@
+# Mirrors hardwood-cron/.gitattributes. This repo had NO attributes file, so with
+# core.autocrlf=true git was free to apply EOL conversion to published binaries —
+# `git add` on the PDF tree emitted "LF will be replaced by CRLF" on ~190 files.
+# The bytes on disk are currently intact, but a fresh clone or checkout could mangle
+# every published PDF, and a corrupted download is indistinguishable from a working
+# one until a reader opens it.
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
