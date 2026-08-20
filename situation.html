@@ -31,6 +31,8 @@
   th:first-child,td:first-child{text-align:left}
   th{color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;background:var(--card2)}
   td .cn{display:block;font-size:9.5px;color:var(--dim)}
+  .curvewrap{ margin:14px 0 4px; }
+  .curvecap{ font-size:12px; opacity:.62; margin-top:2px; line-height:1.45; }
   .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
   .empty{color:var(--dim);font-style:italic}
   /* controls */
@@ -200,6 +202,74 @@
   }
 
   // ---------- result panel ----------
+  // ---------- the curve, drawn ----------
+  // WHY THIS EXISTS. The page already READ this curve -- interp() walks it and nearestMeasured()
+  // finds the sample -- and then printed a single number. The one thing a Savant-style surface is
+  // FOR is showing you the shape you are sitting on: a reader cannot see that 4 points down at the
+  // half is a gentle slope while 4 points down with two minutes left is a cliff, if all they are
+  // ever shown is one percentage. The data was already in the feed; nothing new is fetched.
+  //
+  // SAMPLE SIZE IS DRAWN, NOT JUST FOOTNOTED. Each measured spot is a dot sized by its own n, so
+  // the thin ends of the dial LOOK thin. The tied point carries n = null by construction (it is the
+  // definitional 50%, not an observation) and is drawn hollow so it cannot be read as a measurement.
+  function curveSvg(cp, eff, winpct){
+    var NS="http://www.w3.org/2000/svg", W=560, H=132, L=34, R=10, T=10, B=22;
+    var pts=[], mins=null, maxs=null;
+    for(var i=0;i<cp.curve.length;i++){
+      var c=cp.curve[i];
+      if(c.winpct==null) continue;
+      pts.push(c);
+      if(c.n!=null){ if(mins===null||c.n<mins) mins=c.n; if(maxs===null||c.n>maxs) maxs=c.n; }
+    }
+    if(pts.length<2) return null;
+    var m0=pts[0].margin, m1=pts[pts.length-1].margin;
+    function X(m){ return L + (m-m0)/(m1-m0) * (W-L-R); }
+    function Y(p){ return T + (100-p)/100 * (H-T-B); }
+    function mk(t,a){ var e=document.createElementNS(NS,t); for(var k in a) e.setAttribute(k,a[k]); return e; }
+
+    var svg=mk("svg",{viewBox:"0 0 "+W+" "+H,width:"100%",height:"auto",role:"img",
+                      "aria-label":"Win percentage against margin at "+cp.label+
+                                   ". Your spot: "+eff.toFixed(1)+" points, "+winpct.toFixed(1)+" percent."});
+    // even line
+    svg.appendChild(mk("line",{x1:L,x2:W-R,y1:Y(50),y2:Y(50),stroke:"currentColor",
+                               "stroke-opacity":".22","stroke-dasharray":"3 4"}));
+    ["100","50","0"].forEach(function(v){
+      var t=mk("text",{x:L-6,y:Y(+v)+4,"text-anchor":"end","font-size":"10",
+                       fill:"currentColor","fill-opacity":".55"});
+      t.textContent=v+"%"; svg.appendChild(t);
+    });
+    var d="";
+    for(var j=0;j<pts.length;j++) d += (j?" L ":"M ")+X(pts[j].margin).toFixed(1)+" "+Y(pts[j].winpct).toFixed(1);
+    svg.appendChild(mk("path",{d:d,fill:"none",stroke:"currentColor","stroke-width":"2",
+                               "stroke-opacity":".75"}));
+    for(var k2=0;k2<pts.length;k2++){
+      var c2=pts[k2];
+      var rad = c2.n==null ? 3 : (maxs>mins ? 2.5 + 3.5*Math.sqrt((c2.n-mins)/(maxs-mins)) : 4);
+      var dot=mk("circle",{cx:X(c2.margin).toFixed(1),cy:Y(c2.winpct).toFixed(1),r:rad.toFixed(1),
+                           fill: c2.n==null ? "none" : "currentColor",
+                           stroke:"currentColor","stroke-width":"1.2",
+                           "fill-opacity": c2.n==null ? "0" : ".55"});
+      var ttl=document.createElementNS(NS,"title");
+      ttl.textContent = c2.spot+": "+c2.winpct.toFixed(1)+"%"+
+        (c2.n==null ? " (tied is 50% by definition, not a measured sample)"
+                    : " from "+c2.n.toLocaleString()+" games");
+      dot.appendChild(ttl); svg.appendChild(dot);
+    }
+    // the reader's own spot
+    var xe=Math.max(L,Math.min(W-R,X(eff)));
+    svg.appendChild(mk("line",{x1:xe,x2:xe,y1:T,y2:H-B,stroke:"currentColor","stroke-opacity":".35"}));
+    svg.appendChild(mk("circle",{cx:xe,cy:Y(winpct),r:5,fill:"currentColor"}));
+    var lab=mk("text",{x:Math.min(xe+8,W-R-56),y:Math.max(T+12,Y(winpct)-9),"font-size":"11",
+                       fill:"currentColor","font-weight":"600"});
+    lab.textContent="you, "+winpct.toFixed(0)+"%"; svg.appendChild(lab);
+    [[m0,"behind"],[0,"tied"],[m1,"ahead"]].forEach(function(pr){
+      var t2=mk("text",{x:X(pr[0]),y:H-6,"text-anchor":pr[0]===0?"middle":(pr[0]<0?"start":"end"),
+                        "font-size":"10",fill:"currentColor","fill-opacity":".55"});
+      t2.textContent=pr[1]; svg.appendChild(t2);
+    });
+    return svg;
+  }
+
   function renderResult(data,st){
     var r=computeRead(data,st);
     var box=el("div","card");
@@ -215,6 +285,19 @@
     if(r.n!=null){
       pad.appendChild(el("div","basis",
         "Resting on "+r.n.toLocaleString()+" real games where a team sat "+r.spot+" at this point (nearest measured spot on the dial)."));
+    }
+
+    // The picture of the curve the number came from. Added after the basis line so the reader sees
+    // the claim, then what it rests on, then the shape - and drawn from the SAME cp.curve the
+    // number was interpolated along, so the dot and the sentence can never disagree.
+    var _svg = curveSvg(r.cp, r.eff!=null ? r.eff : st.margin, r.winpct);
+    if(_svg){
+      var fig=el("div","curvewrap");
+      fig.appendChild(_svg);
+      fig.appendChild(el("div","curvecap",
+        "Every dot is a measured spot on the dial, sized by how many games sit behind it — the thin "
+        + "ends really are thin. Hover a dot for its sample. Tied is 50% by definition, so it is drawn hollow."));
+      pad.appendChild(fig);
     }
 
     if(r.shift!==0){
