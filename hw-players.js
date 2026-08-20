@@ -217,14 +217,7 @@
     qa("[data-player-viz]").forEach(function(btn){btn.addEventListener("click",function(){state.viz=btn.getAttribute("data-player-viz");renderViz();});});
   }
   function init(){
-    Promise.all([fetchJSON("players.json"),fetchJSON("availability.json"),fetchJSON("season_impact.json"),fetchJSON("player_impact.json")]).then(function(v){state.sources={players:v[0],availability:v[1],season:v[2],impact:v[3]};state.players=mergeSources(v[0],v[1],v[2],v[3]);populateTeams();renderStories();renderWatches();setFresh(state.sources);bind();
-    var paramId = new URLSearchParams(location.search).get("player_id") || new URLSearchParams(location.search).get("player");
-    var initialSelected = null;
-    if (paramId) {
-      initialSelected = state.players.find(function(p){return String(p.id) === paramId || p.name.toLowerCase() === paramId.toLowerCase();});
-    }
-    state.selected = initialSelected || state.players.find(function(p){return p.impact!==null&&!p.provisional;})||state.players[0]||null;
-    renderTable();renderInspector(state.selected);renderViz();}).catch(function(err){console.error(err);$("players-body").innerHTML='<tr><td colspan="15"><div class="hw-empty">The player workspace could not load its published artifacts.</div></td></tr>';});
+    Promise.all([fetchJSON("players.json"),fetchJSON("availability.json"),fetchJSON("season_impact.json"),fetchJSON("player_impact.json")]).then(function(v){state.sources={players:v[0],availability:v[1],season:v[2],impact:v[3]};state.players=mergeSources(v[0],v[1],v[2],v[3]);populateTeams();renderStories();renderWatches();setFresh(state.sources);bind();state.selected=state.players.find(function(p){return p.impact!==null&&!p.provisional;})||state.players[0]||null;renderTable();renderInspector(state.selected);renderViz();}).catch(function(err){console.error(err);$("players-body").innerHTML='<tr><td colspan="15"><div class="hw-empty">The player workspace could not load its published artifacts.</div></td></tr>';});
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
