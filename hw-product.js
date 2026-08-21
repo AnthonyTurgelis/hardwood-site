@@ -19,7 +19,14 @@
     ["Data explorer","explorer.html","Browse the published data"],
     ["Game reports","report_archive.html","Pre-tip reports and disclosure archive"],
     ["Methodology","primer.html","Definitions and how to read the numbers"],
-    ["Operations board","board.html","Internal build and queue view"]
+    ["Operations board","board.html","Internal build and queue view"],
+    // These two are carried by the STATIC footer that retireDuplicateChrome() removes below, and
+    // they are the only two of its eight links this shell did not already reach. Without them,
+    // removing that footer would make review.html unreachable from every dense page and drop the
+    // Error Map deep-link -- which is the "newest page reachable from none of them" complaint
+    // chrome_inject.py was written to fix, reappearing in a new costume.
+    ["Daily Review","review.html","The day's slate, graded"],
+    ["Error Map","accuracy.html#accuracy-viz","Where the model misses, by situation"]
   ];
   var FILE_GROUPS={
     "index.html":"home","":"home",
@@ -71,6 +78,34 @@
     var footer=document.createElement("footer");footer.className="hw-footer";
     footer.innerHTML='<div class="hw-footer-inner"><div><strong>Hardwood</strong>WNBA predictions, player intelligence, public grading, and research.</div><div class="hw-footer-links"><a href="games.html">Games</a><a href="players.html">Players</a><a href="teams.html">Teams</a><a href="standings.html">Standings</a><a href="accuracy.html">Accuracy</a><a href="deepdive.html">Research</a><a href="report_archive.html">Reports</a><a href="primer.html">Methodology</a><a href="board.html">Operations</a></div></div>';
     document.body.appendChild(footer);
+    retireDuplicateChrome();
+  }
+
+  // TWO SYSTEMS EACH OWN "THE NAV", AND ON NINE PAGES BOTH OF THEM FIRE.
+  //
+  // scripts/chrome_inject.py bakes one canonical static header, nav and footer into every page --
+  // it exists because the site once had 31 distinct chrome blocks and no two pages shared a
+  // header. installShell() then inserts the dense product's own topbar ABOVE that header and
+  // appends its own footer BELOW that footer. Measured on the live site 2026-08-21: every dense
+  // page rendered two navigation bars and the wordmark twice. Neither module referenced the other.
+  //
+  // The shell wins here because it is what the dense product is designed around -- mobile toggle,
+  // Tools menu, section-aware aria-current. But it wins ONLY at runtime: the static block stays in
+  // the HTML, so chrome_inject keeps its single registry and its byte-for-byte parity gate stays
+  // green, the ~105 non-dense pages are untouched, and a reader with JS disabled still gets a nav
+  // rather than a page with no way out.
+  //
+  // WHAT IS DELIBERATELY KEPT: the ethos line. It is page-specific published copy, not duplicated
+  // chrome, and chrome_inject's own author refused to delete mastheads for exactly this reason --
+  // losing published words to tidy a tab row trades one defect for a worse one.
+  function retireDuplicateChrome(){
+    qa("header.hw-chrome nav.hw-nav, header.hw-chrome .mark, footer.hw-chrome-foot")
+      .forEach(function(el){ if(el&&el.parentNode) el.parentNode.removeChild(el); });
+    // A static header left holding nothing but whitespace still paints margin above the content.
+    qa("header.hw-chrome").forEach(function(el){
+      if(el&&!el.textContent.trim()&&!el.querySelector("img,svg")&&el.parentNode)
+        el.parentNode.removeChild(el);
+    });
   }
 
   function setFresh(payloads){
