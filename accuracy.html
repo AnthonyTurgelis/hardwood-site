@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="hw-dense.css">
   <link rel="stylesheet" href="hw-accuracy.css">
 <!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
-<body class="hw-product" data-page="accuracy-dense" data-section="accuracy" data-product="dense-accuracy"><header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="standings.html">Standings &amp; Injuries</a><a class="hw-tab" href="accuracy.html" aria-current="page">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
+<body class="hw-product" data-page="accuracy-dense" data-section="accuracy" data-product="dense-accuracy"><header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026</a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html" aria-current="page">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
   <a class="hw-skip" href="#content">Skip to content</a>
   <!--accuracy-disagreement-ladders-->
 <section id="disagreement-ladders" class="dl-wrap" aria-labelledby="dl-title">
@@ -115,5 +115,44 @@
   </main>
   <script src="hw-product.js"></script>
   <script src="hw-accuracy.js"></script>
-<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="accuracy.html#accuracy-viz">Error Map</a><a href="board.html">Board</a></div><div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div></footer><!--/hw-foot--></body>
+  <script>
+  (function(){
+    "use strict";
+    var root=document.getElementById("accuracy-market");
+    if(!root||typeof fetch!=="function")return;
+
+    function stampOf(market){
+      var totals=market&&market.totals&&typeof market.totals==="object"?market.totals:{};
+      return totals.measured_utc||totals.generated_utc||market.measured_utc||market.generated_utc||market.generated||market.as_of||null;
+    }
+    function dateOf(value){var d=value?new Date(value):null;return d&&!isNaN(d.getTime())?d:null;}
+    function ageText(date){
+      if(!date)return "time not published";
+      var seconds=Math.max(0,(Date.now()-date.getTime())/1000);
+      if(seconds<90)return "just now";
+      if(seconds<3600)return Math.floor(seconds/60)+"m ago";
+      if(seconds<86400)return Math.floor(seconds/3600)+"h ago";
+      return Math.floor(seconds/86400)+"d ago";
+    }
+    function decorate(market){
+      var head=root.querySelector(".hw-module-head");
+      if(!head)return;
+      var current=dateOf(stampOf(market)),hours=current?(Date.now()-current.getTime())/36e5:null;
+      var label=current?"Market audit updated "+ageText(current):"Market audit time not published";
+      var badge=head.querySelector("[data-market-fresh]");
+      if(!badge){badge=document.createElement("span");badge.className="hw-fresh";badge.setAttribute("data-market-fresh","");head.appendChild(badge);}
+      var html='<span class="hw-fresh-dot"></span>'+label;
+      if(badge.innerHTML!==html)badge.innerHTML=html;
+      badge.classList.toggle("warn",!current||hours>24);
+    }
+    function watch(market){
+      decorate(market);
+      if(typeof MutationObserver!=="function")return;
+      var observer=new MutationObserver(function(){decorate(market);});
+      observer.observe(root,{childList:true,subtree:true});
+    }
+    fetch("market_grade.json",{cache:"no-store"}).then(function(response){if(!response.ok)throw new Error("market_grade.json returned "+response.status);return response.json();}).then(watch).catch(function(){watch(null);});
+  })();
+  </script>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></div><div>Projections published pre-tip, graded publicly.</div></footer><!--/hw-foot--></body>
 </html>
