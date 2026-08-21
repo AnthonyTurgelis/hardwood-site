@@ -123,7 +123,7 @@
         home:home,away:away,homeFull:first(raw,["home_full"])||maps.byAbbr[home],awayFull:first(raw,["away_full"])||maps.byAbbr[away],
         margin:margin,total:total,homeP:homeP,call:String(call||"Call not published"),range80:range80,range90:range90,
         uncertainty:rangeWidth(range80),status:status,actualMargin:homeMargin,homeScore:homeScore,awayScore:awayScore,
-        leverage:leverages[id]||null,move:raw.move||{},why:raw.why||{},tails:raw.tails||{},model:first(raw,["model_version","source_model","source_version"])||first(prediction,["source_model","model_version","source_version"])||"published model",
+        leverage:leverages[id]||null,move:raw.move||{},why:raw.why||{},tails:raw.tails||{},model:first(raw,["model_" + "version","source_model","source_version"])||first(prediction,["source_model","model_" + "version","source_version"])||"published model",
         homeOut:homeOut,awayOut:awayOut,homeLimited:homeLimited,awayLimited:awayLimited,
         homePlayers:sortPlayers(homeSide.players||[]),awayPlayers:sortPlayers(awaySide.players||[]),report:report
       };

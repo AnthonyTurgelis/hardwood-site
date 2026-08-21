@@ -13,7 +13,7 @@
   var signed=function(value,digits){var parsed=num(value);return parsed===null?"—":(parsed>0?"+":"")+parsed.toFixed(digits==null?1:digits);};
   var human=function(value){return String(value||"").replace(/[_-]+/g," ").replace(/\b\w/g,function(c){return c.toUpperCase();});};
   var normalize=function(value){return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();};
-  var truncate=function(value,max){var text=String(value||"").replace(/\s+/g," ").trim();return text.length>max?text.slice(0,max-1).trim()+"…":text;};
+  var truncText=function(value,max){var text=String(value||"").replace(/\s+/g," ").trim();return text.length>max?text.slice(0,max-1).trim()+"…":text;};
   var safeHref=function(value){var text=String(value||"");return text&&!/^javascript:/i.test(text)?esc(text):"#";};
   var dateObj=function(value){if(!has(value))return null;var parsed=new Date(value);return Number.isNaN(parsed.getTime())?null:parsed;};
   var dateText=function(value){var parsed=dateObj(value);return parsed?parsed.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}):String(value||"—");};
@@ -107,11 +107,11 @@
   function deltaClass(record){return record.nDelta===null?"flat":record.nDelta>0?"up":record.nDelta<0?"down":"flat";}
   function tableRow(record){
     var selected=state.selected&&state.selected.id===record.id;
-    return '<tr'+(selected?' class="selected"':'')+' data-research-row="'+esc(record.id)+'"><td><span class="hw-research-kind">'+esc(record.kindLabel)+'</span></td><td><button class="hw-research-select-row" type="button" data-select-research="'+esc(record.id)+'"><strong>'+esc(record.title)+'</strong><small>'+esc(truncate(record.question,110))+'</small></button></td><td>'+badge(record)+'</td><td>'+esc(record.source)+'</td><td class="num">'+(record.n===null?'—':esc(record.n.toLocaleString()))+'</td><td class="num"><span class="hw-research-delta '+deltaClass(record)+'">'+esc(deltaText(record))+'</span></td><td>'+esc(dateText(record.asOf))+'</td><td><span class="hw-research-finding">'+esc(truncate(record.conclusion,150))+'</span></td></tr>';
+    return '<tr'+(selected?' class="selected"':'')+' data-research-row="'+esc(record.id)+'"><td><span class="hw-research-kind">'+esc(record.kindLabel)+'</span></td><td><button class="hw-research-select-row" type="button" data-select-research="'+esc(record.id)+'"><strong>'+esc(record.title)+'</strong><small>'+esc(truncText(record.question,110))+'</small></button></td><td>'+badge(record)+'</td><td>'+esc(record.source)+'</td><td class="num">'+(record.n===null?'—':esc(record.n.toLocaleString()))+'</td><td class="num"><span class="hw-research-delta '+deltaClass(record)+'">'+esc(deltaText(record))+'</span></td><td>'+esc(dateText(record.asOf))+'</td><td><span class="hw-research-finding">'+esc(truncText(record.conclusion,150))+'</span></td></tr>';
   }
   function mobileRow(record){
     var selected=state.selected&&state.selected.id===record.id;
-    return '<button type="button" class="hw-mobile-research-row'+(selected?' selected':'')+'" data-select-research="'+esc(record.id)+'"><span class="hw-mobile-research-top"><strong>'+esc(record.title)+'</strong>'+badge(record)+'</span><span class="hw-mobile-research-meta">'+esc(record.kindLabel)+' · '+esc(record.source)+' · '+(record.n===null?'sample not published':record.n.toLocaleString()+' observations')+'</span><span class="hw-mobile-research-finding">'+esc(truncate(record.conclusion,180))+'</span><span class="hw-mobile-research-bottom"><span>'+esc(dateText(record.asOf))+'</span><span class="hw-research-delta '+deltaClass(record)+'">'+esc(deltaText(record))+'</span></span></button>';
+    return '<button type="button" class="hw-mobile-research-row'+(selected?' selected':'')+'" data-select-research="'+esc(record.id)+'"><span class="hw-mobile-research-top"><strong>'+esc(record.title)+'</strong>'+badge(record)+'</span><span class="hw-mobile-research-meta">'+esc(record.kindLabel)+' · '+esc(record.source)+' · '+(record.n===null?'sample not published':record.n.toLocaleString()+' observations')+'</span><span class="hw-mobile-research-finding">'+esc(truncText(record.conclusion,180))+'</span><span class="hw-mobile-research-bottom"><span>'+esc(dateText(record.asOf))+'</span><span class="hw-research-delta '+deltaClass(record)+'">'+esc(deltaText(record))+'</span></span></button>';
   }
   function renderBoard(){
     applyFilters();
@@ -204,10 +204,33 @@
     out=out||[];if(!object||typeof object!=="object"||depth>2)return out;
     Object.keys(object).forEach(function(key){var value=object[key],next=path?path+" · "+human(key):human(key);if(Array.isArray(value)&&value.length>=2&&value.every(function(row){return row&&typeof row==="object"&&!Array.isArray(row);}))out.push({label:next,rows:value});else if(value&&typeof value==="object"&&!Array.isArray(value))collectArrays(value,next,depth+1,out);});return out;
   }
+  // A DENSE INSPECTOR THAT SILENTLY DROPS COLUMNS IS WORSE THAN A WIDE ONE (2026-08-20).
+  // The cap here was 7 and the tables it renders are built from whatever the source file
+  // happens to carry, so it truncated by position with no way for a reader to know. On the
+  // deserved-wins source that cost exactly the two columns the page exists to show -
+  // opp_quality_faced and sched_vs_league, fields 8 and 9 of 9. The wrapper is overflow:auto,
+  // so width was never the constraint it was protecting. It still caps, because an arbitrary
+  // JSON can be arbitrarily wide - but it now says so when it bites.
+  //
+  // Rendering only candidates[0] was the same defect in the other axis: score is rows x cols,
+  // so a small companion table can never win against the main one and simply never appeared.
+  // The player competition lists lost 105 to 18 and were invisible for that reason alone.
+  // The caps are MEASURED, not guessed: across all 17 deepdive_*.json sources on 2026-08-20
+  // the widest table carries 12 columns and the richest source yields 5 tables, so 14 and 6
+  // clear every source today with headroom. Both still disclose when they bite, because the
+  // failure being fixed here is silent truncation, not truncation.
+  var GENERIC_MAX_COLS=14,GENERIC_MAX_TABLES=6;
+  function genericTableBlock(candidate){
+    var hidden=(candidate.allKeys||candidate.keys).length-candidate.keys.length;
+    var note=hidden>0?'<small class="hw-source-note">'+esc(hidden+' more column'+(hidden===1?'':'s')+' in the source file')+'</small>':"";
+    return '<div class="hw-source-block"><h4>'+esc(candidate.label)+'</h4>'+note+'<div class="hw-source-table-wrap"><table class="hw-source-table"><thead><tr>'+candidate.keys.map(function(key){return '<th>'+esc(human(key))+'</th>';}).join("")+'</tr></thead><tbody>'+candidate.rows.slice(0,15).map(function(row){return '<tr>'+candidate.keys.map(function(key){return '<td>'+esc(has(row[key])?valueFormat(key,row[key]):'—')+'</td>';}).join("")+'</tr>';}).join("")+'</tbody></table></div></div>';
+  }
   function genericTable(payload){
-    var candidates=collectArrays(payload,"",0,[]).filter(function(candidate){return !/history|caveat|source/i.test(candidate.label);}).map(function(candidate){var keys={};candidate.rows.slice(0,20).forEach(function(row){Object.keys(row).forEach(function(key){var value=row[key];if(value===null||typeof value==="string"||typeof value==="number"||typeof value==="boolean")keys[key]=true;});});candidate.keys=Object.keys(keys).slice(0,7);candidate.score=Math.min(candidate.rows.length,20)*candidate.keys.length;return candidate;}).filter(function(candidate){return candidate.keys.length>=2;}).sort(function(a,b){return b.score-a.score;});
-    var best=candidates[0];if(!best)return "";
-    return '<div class="hw-source-block"><h4>'+esc(best.label)+'</h4><div class="hw-source-table-wrap"><table class="hw-source-table"><thead><tr>'+best.keys.map(function(key){return '<th>'+esc(human(key))+'</th>';}).join("")+'</tr></thead><tbody>'+best.rows.slice(0,15).map(function(row){return '<tr>'+best.keys.map(function(key){return '<td>'+esc(has(row[key])?valueFormat(key,row[key]):'—')+'</td>';}).join("")+'</tr>';}).join("")+'</tbody></table></div></div>';
+    var candidates=collectArrays(payload,"",0,[]).filter(function(candidate){return !/history|caveat|source/i.test(candidate.label);}).map(function(candidate){var keys={};candidate.rows.slice(0,20).forEach(function(row){Object.keys(row).forEach(function(key){var value=row[key];if(value===null||typeof value==="string"||typeof value==="number"||typeof value==="boolean")keys[key]=true;});});candidate.allKeys=Object.keys(keys);candidate.keys=candidate.allKeys.slice(0,GENERIC_MAX_COLS);candidate.score=Math.min(candidate.rows.length,20)*candidate.keys.length;return candidate;}).filter(function(candidate){return candidate.keys.length>=2;}).sort(function(a,b){return b.score-a.score;});
+    if(!candidates.length)return "";
+    var extra=candidates.length-GENERIC_MAX_TABLES;
+    var more=extra>0?'<div class="hw-source-block"><small class="hw-source-note">'+esc(extra+' further table'+(extra===1?'':'s')+' in the source file')+'</small></div>':"";
+    return candidates.slice(0,GENERIC_MAX_TABLES).map(genericTableBlock).join("")+more;
   }
   function provenanceBlock(payload){
     var provenance=payload&&payload.provenance;if(!provenance||typeof provenance!=="object")return "";
@@ -238,7 +261,7 @@
     var width=820,height=285,left=62,right=22,top=18,bottom=42,xd=extent(points.map(function(point){return point.x;}),false),yd=extent(points.map(function(point){return point.y;}),true),sx=function(value){return scale(value,xd,[left,width-right]);},sy=function(value){return scale(value,yd,[height-bottom,top]);},out=['<svg viewBox="0 0 '+width+' '+height+'" role="img" aria-label="Research sample size versus sample movement">'];
     [0,.25,.5,.75,1].forEach(function(q){var xv=xd[0]+q*(xd[1]-xd[0]),yv=yd[0]+q*(yd[1]-yd[0]),x=sx(xv),y=sy(yv);out.push('<line class="grid" x1="'+x+'" y1="'+top+'" x2="'+x+'" y2="'+(height-bottom)+'"></line><line class="grid" x1="'+left+'" y1="'+y+'" x2="'+(width-right)+'" y2="'+y+'"></line><text class="axis-label" x="'+x+'" y="'+(height-15)+'" text-anchor="middle">'+esc(Math.round(Math.pow(10,xv)).toLocaleString())+'</text><text class="axis-label" x="'+(left-7)+'" y="'+(y+3)+'" text-anchor="end">'+esc(signed(yv,0))+'</text>');});
     if(yd[0]<0&&yd[1]>0){var zero=sy(0);out.push('<line class="zero" x1="'+left+'" y1="'+zero+'" x2="'+(width-right)+'" y2="'+zero+'"></line>');}
-    points.forEach(function(point){var selected=state.selected&&state.selected.id===point.record.id,klass=point.y>0?"up":point.y<0?"down":"flat",radius=Math.max(3,Math.min(7,3+Math.log10(point.record.n)/2));out.push('<g class="research-point '+klass+(selected?' selected':'')+'" data-viz-record="'+esc(point.record.id)+'"><circle cx="'+sx(point.x).toFixed(1)+'" cy="'+sy(point.y).toFixed(1)+'" r="'+radius.toFixed(1)+'"><title>'+esc(point.record.title+' · n '+point.record.n.toLocaleString()+' · Δ '+signed(point.record.nDelta,0))+'</title></circle><text x="'+(sx(point.x)+7).toFixed(1)+'" y="'+(sy(point.y)+3).toFixed(1)+'">'+esc(point.record.slug||truncate(point.record.title,12))+'</text></g>');});
+    points.forEach(function(point){var selected=state.selected&&state.selected.id===point.record.id,klass=point.y>0?"up":point.y<0?"down":"flat",radius=Math.max(3,Math.min(7,3+Math.log10(point.record.n)/2));out.push('<g class="research-point '+klass+(selected?' selected':'')+'" data-viz-record="'+esc(point.record.id)+'"><circle cx="'+sx(point.x).toFixed(1)+'" cy="'+sy(point.y).toFixed(1)+'" r="'+radius.toFixed(1)+'"><title>'+esc(point.record.title+' · n '+point.record.n.toLocaleString()+' · Δ '+signed(point.record.nDelta,0))+'</title></circle><text x="'+(sx(point.x)+7).toFixed(1)+'" y="'+(sy(point.y)+3).toFixed(1)+'">'+esc(point.record.slug||truncText(point.record.title,12))+'</text></g>');});
     out.push('<text class="axis-label" x="'+((left+width-right)/2)+'" y="'+(height-2)+'" text-anchor="middle">Published sample (log scale)</text><text class="axis-label" x="14" y="'+((top+height-bottom)/2)+'" transform="rotate(-90 14 '+((top+height-bottom)/2)+')" text-anchor="middle">Sample movement</text></svg>');return out.join("");
   }
   function barView(records,key,label){
@@ -259,7 +282,7 @@
   function renderWatch(){
     var movers=state.records.filter(function(record){return record.nDelta!==null;}).sort(function(a,b){return Math.abs(b.nDelta)-Math.abs(a.nDelta);}).slice(0,9),negative=state.records.filter(function(record){return record.decision.key==="no-promote";}).sort(function(a,b){return (dateObj(b.asOf)||0)-(dateObj(a.asOf)||0);}).slice(0,9);
     $("research-sample-moves").innerHTML=movers.map(function(record){return watchRow(record,deltaText(record),(record.n===null?'sample not published':'n '+record.n.toLocaleString())+' · '+record.source);}).join("")||'<div class="hw-empty compact">No sample movement was published.</div>';
-    $("research-no-promote").innerHTML=negative.map(function(record){return watchRow(record,"No promote",truncate(record.conclusion,95));}).join("")||'<div class="hw-empty compact">No explicit no-promote result was published.</div>';
+    $("research-no-promote").innerHTML=negative.map(function(record){return watchRow(record,"No promote",truncText(record.conclusion,95));}).join("")||'<div class="hw-empty compact">No explicit no-promote result was published.</div>';
     qa(".hw-research-watch-row[data-select-research]").forEach(function(button){button.addEventListener("click",function(){selectRecord(button.getAttribute("data-select-research"),true);});});
   }
 

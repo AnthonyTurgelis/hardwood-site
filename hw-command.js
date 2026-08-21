@@ -58,7 +58,7 @@
     }
     return [];
   }
-  function truncate(value,max){var text=String(value||"").replace(/\s+/g," ").trim();return text.length>max?text.slice(0,max-1).trim()+"…":text;}
+  function truncText(value,max){var text=String(value||"").replace(/\s+/g," ").trim();return text.length>max?text.slice(0,max-1).trim()+"…":text;}
   function fetchJSON(path){return fetch(path,{cache:"no-store"}).then(function(response){if(!response.ok)throw new Error(path+" returned "+response.status);return response.json();}).catch(function(error){console.warn(error);return {};});}
 
   function installShell(){
@@ -125,7 +125,7 @@
         actual:actual,
         status:status,
         report:"game_report_v2.html?game_id="+encodeURIComponent(id),
-        model:String(first(game,["model_version","source_model","source_version"])||first(predictions,["source_model","model_version","source_version"])||"published model")
+        model:String(first(game,["model_" + "version","source_model","source_version"])||first(predictions,["source_model","model_" + "version","source_version"])||"published model")
       };
     });
   }
@@ -222,7 +222,7 @@
       var verdict="Finding";
       if(/no-promote|did not help|turned out to be noise|\bis a null\b|\bwas noise\b|tied a flat|worse than/.test(lower))verdict="No promote";
       else if(/promot|sharpen|improv|beat the baseline|production/.test(lower))verdict="Positive";
-      return {title:String(item.title||"Untitled research"),asOf:item.as_of,summary:truncate(paragraphs[0]||paragraphs[1]||"",150),verdict:verdict};
+      return {title:String(item.title||"Untitled research"),asOf:item.as_of,summary:truncText(paragraphs[0]||paragraphs[1]||"",150),verdict:verdict};
     });
   }
 
@@ -292,7 +292,7 @@
     var widest=state.games.slice().filter(function(game){return game.low!==null&&game.high!==null;}).sort(function(a,b){return (b.high-b.low)-(a.high-a.low);})[0];
     if(widest)items.push(pulseItem("Uncertainty",widest.away+" @ "+widest.home+" has the widest published 80% range",fixed(widest.high-widest.low,1)+" points wide around a "+signed(widest.margin,1)+" call",widest.report));
     var impactLead=state.payloads.availability&&state.payloads.availability.impact_lead;
-    if(impactLead&&impactLead.line)items.push(pulseItem("Availability","Largest current absence",truncate(impactLead.line,180),"availability.html"));
+    if(impactLead&&impactLead.line)items.push(pulseItem("Availability","Largest current absence",truncText(impactLead.line,180),"availability.html"));
     var calibration=calibrationRows(state.payloads.accuracy);
     if(calibration.length){var worst=calibration.slice().sort(function(a,b){return Math.abs(b.actual-b.target)-Math.abs(a.actual-a.target);})[0];items.push(pulseItem("Model",worst.label,fixed(worst.actual,1)+"% actual versus "+fixed(worst.target,1)+"% target","accuracy.html"));}
     $("command-pulse").innerHTML=items.length?items.slice(0,6).join(""):'<div class="hw-empty">No league pulse could be derived from the current artifacts.</div>';
@@ -324,7 +324,7 @@
     var ordered=state.availability.slice().sort(function(a,b){return Number(b.tonight)-Number(a.tonight)||(b.minutes==null?-1:b.minutes)-(a.minutes==null?-1:a.minutes);}).slice(0,12);
     $("command-availability").innerHTML=ordered.length?ordered.map(function(team){
       var names=team.names.slice(0,3).join(", ");if(team.unsized.length)names+=(names?"; ":"")+team.unsized.length+" unsized";
-      return '<tr><td><span class="hw-name">'+esc(team.team)+'</span><span class="hw-sub">'+(team.tonight?"plays today":"next slate")+'</span></td><td class="num">'+esc(fixed(team.out,0))+'</td><td class="num">'+esc(team.minutes===null?"—":fixed(team.minutes,0))+'</td><td title="'+esc(team.line||names)+'">'+esc(truncate(names||team.line,42))+'</td></tr>';
+      return '<tr><td><span class="hw-name">'+esc(team.team)+'</span><span class="hw-sub">'+(team.tonight?"plays today":"next slate")+'</span></td><td class="num">'+esc(fixed(team.out,0))+'</td><td class="num">'+esc(team.minutes===null?"—":fixed(team.minutes,0))+'</td><td title="'+esc(team.line||names)+'">'+esc(truncText(names||team.line,42))+'</td></tr>';
     }).join(""):'<tr><td colspan="4"><div class="hw-empty">Availability summary is unavailable.</div></td></tr>';
   }
 
