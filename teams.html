@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="hw-product.css">
   <link rel="stylesheet" href="hw-dense.css">
   <link rel="stylesheet" href="hw-teams.css">
-<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
-<body class="hw-product" data-page="teams-dense" data-section="teams" data-product="dense-teams"><header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html" aria-current="page">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="standings.html">Standings &amp; Injuries</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
+</head>
+<body class="hw-product" data-page="teams-dense" data-section="teams" data-product="dense-teams">
   <a class="hw-skip" href="#content">Skip to content</a>
   <main class="hw-page hw-teams-page" id="content">
     <header class="hw-command-head hw-teams-head">
@@ -40,6 +40,9 @@
           <label><span>Conference</span><select class="hw-teams-select" id="teams-conference"><option value="">All conferences</option></select></label>
           <label><span>Availability</span><select class="hw-teams-select" id="teams-availability"><option value="">All availability</option><option value="clear">Rotation intact</option><option value="short">Shorthanded</option><option value="heavy">Heavy losses</option><option value="unknown">Unknown</option></select></label>
           <label><span>Outlook</span><select class="hw-teams-select" id="teams-outlook"><option value="">All outlooks</option><option value="title">Title ≥ 10%</option><option value="playoff">Playoff ≥ 50%</option><option value="bubble">Playoff 25–50%</option><option value="longshot">Playoff &lt; 25%</option><option value="unknown">Unknown</option></select></label>
+          <label id="teams-sort-wrap" style="display:none"><span>Sort</span><select class="hw-teams-select" id="teams-sort"><option value="rank">Power #</option><option value="wins">Record</option><option value="gb">GB</option><option value="strength">Strength</option><option value="churn">Recent move</option><option value="projWins">Proj wins</option><option value="playoff">Playoff</option><option value="title">Title</option><option value="missing">Availability</option></select></label>
+          <label id="teams-sort-dir-wrap" style="display:none"><span>Direction</span><select class="hw-teams-select" id="teams-sort-dir"><option value="asc">Ascending</option><option value="desc">Descending</option></select></label>
+          <button class="hw-button" id="teams-export" type="button" aria-label="Download filtered teams CSV" title="Download the currently filtered and sorted team ledger as CSV">CSV</button>
           <button class="hw-button" id="teams-reset" type="button">Reset</button>
         </div>
 
@@ -80,12 +83,12 @@
         <div class="hw-module-head hw-team-viz-head">
           <div><h2>League team landscape</h2><span id="team-viz-context">Strength versus title chance</span></div>
           <div class="hw-visual-tabs" role="tablist" aria-label="Team visual">
-            <button class="hw-visual-tab active" type="button" data-team-viz="strength-title">Strength × title</button>
-            <button class="hw-visual-tab" type="button" data-team-viz="wins-finish">Wins × finish</button>
-            <button class="hw-visual-tab" type="button" data-team-viz="pressure-strength">Roster pressure × strength</button>
+            <button class="hw-visual-tab active" id="team-viz-tab-strength-title" type="button" role="tab" aria-selected="true" aria-controls="team-viz" tabindex="0" data-team-viz="strength-title">Strength × title</button>
+            <button class="hw-visual-tab" id="team-viz-tab-wins-finish" type="button" role="tab" aria-selected="false" aria-controls="team-viz" tabindex="-1" data-team-viz="wins-finish">Wins × finish</button>
+            <button class="hw-visual-tab" id="team-viz-tab-pressure-strength" type="button" role="tab" aria-selected="false" aria-controls="team-viz" tabindex="-1" data-team-viz="pressure-strength">Roster pressure × strength</button>
           </div>
         </div>
-        <div class="hw-module-body"><div class="hw-team-viz" id="team-viz"><div class="hw-empty">Loading team landscape…</div></div></div>
+        <div class="hw-module-body"><div class="hw-team-viz" id="team-viz" role="tabpanel" aria-labelledby="team-viz-tab-strength-title"><div class="hw-empty">Loading team landscape…</div></div></div>
         <div class="hw-viz-legend" id="team-viz-legend"><span><b>Hover:</b> team and values</span><span><b>Orange:</b> selected team</span></div>
       </article>
 
@@ -108,5 +111,6 @@
   </main>
   <script src="hw-product.js"></script>
   <script src="hw-teams.js"></script>
-<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="review.html">Daily Review</a><a href="report_archive.html">Report Archive</a><a href="deepdive.html">Deep Dives</a><a href="compare.html">Compare</a><a href="situation.html">Situations</a><a href="explorer.html">Data Explorer</a><a href="accuracy.html#accuracy-viz">Error Map</a><a href="board.html">Board</a></div><div>The Hardwood - a WNBA prediction and simulation project. Not affiliated with the WNBA.</div></footer><!--/hw-foot--></body>
+  <script src="hw-analyst-state.js"></script>
+</body>
 </html>
