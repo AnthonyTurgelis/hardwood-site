@@ -13,12 +13,23 @@
   var initials=function(name){return String(name||"?").trim().split(/\s+/).slice(0,2).map(function(x){return x.charAt(0);}).join("").toUpperCase();};
   var norm=function(v){return String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();};
   var safeHref=function(v){var s=String(v||"");return s&&!/^javascript:/i.test(s)?esc(s):"#";};
+  var parseStamp=function(v){if(!has(v))return null;var text=String(v);var d=new Date(/^\d{4}-\d{2}-\d{2}$/.test(text)?text+"T12:00:00":text);return isNaN(d.getTime())?null:d;};
   var dataRootRaw=new URLSearchParams(location.search).get("dataRoot")||"";
   var dataRoot=dataRootRaw?dataRootRaw.replace(/\/+$/,"")+"/":"";
   var fetchJSON=function(path){return fetch(dataRoot+path,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error(path+" returned "+r.status);return r.json();}).catch(function(err){console.warn(err);return {};});};
   var dateValue=function(payload){return payload&&((payload.generated_utc)||(payload.generated_at)||(payload.as_of)||(payload.date));};
-  var ageText=function(v){if(!v)return "time not published";var d=new Date(v);if(isNaN(d.getTime()))return String(v);var s=Math.max(0,(Date.now()-d.getTime())/1000);if(s<90)return "just now";if(s<3600)return Math.floor(s/60)+"m ago";if(s<86400)return Math.floor(s/3600)+"h ago";return Math.floor(s/86400)+"d ago";};
+  var ageText=function(v){var d=parseStamp(v);if(!d)return "time not published";var s=Math.max(0,(Date.now()-d.getTime())/1000);if(s<90)return "just now";if(s<3600)return Math.floor(s/60)+"m ago";if(s<86400)return Math.floor(s/3600)+"h ago";return Math.floor(s/86400)+"d ago";};
   var state={players:[],filtered:[],selected:null,sort:{key:"impact",dir:"desc"},viz:"impact-minutes",sources:{}};
+  var SORT_KEYS=["rank","gp","minutes","pts","reb","ast","impact","impactRank","seasonRate","seasonVolume","basis","trend"];
+  var SORT_LABELS={rank:"Score #",gp:"GP",minutes:"Proj min",pts:"PTS",reb:"REB",ast:"AST",impact:"Impact",impactRank:"Impact #",seasonRate:"Season rate",seasonVolume:"Season total",basis:"Basis",trend:"Trend"};
+  var VIZ_KEYS=["impact-minutes","season","ranks"];
+  var SOURCE_LABELS={players:"player board",availability:"availability",season:"season impact",impact:"per-100 impact"};
+
+  function param(name){return new URL(location.href).searchParams.get(name);}
+  function replaceParam(name,value){var url=new URL(location.href);if(value===null||value===undefined||value==="")url.searchParams.delete(name);else url.searchParams.set(name,String(value));var query=url.searchParams.toString();history.replaceState(history.state,"",url.pathname+(query?"?"+query:"")+url.hash);}
+  function validSelectValue(id,value){var el=$(id);return el&&Array.prototype.some.call(el.options,function(option){return option.value===value;});}
+  function defaultSortDir(key){return key==="rank"||key==="impactRank"?"asc":"desc";}
+  function editableTarget(target){return target&&target.closest&&Boolean(target.closest("input, textarea, select, [contenteditable='true']"));}
 
   function sourcePlayers(payload){return payload&&payload.ratings&&Array.isArray(payload.ratings.players)?payload.ratings.players:(Array.isArray(payload&&payload.players)?payload.players:[]);}
   function rows(payload,key){return Array.isArray(payload&&payload[key])?payload[key]:[];}
@@ -110,22 +121,24 @@
     var selected=state.selected&&String(state.selected.id)===String(p.id);
     return '<tr'+(selected?' class="selected"':'')+' data-player-id="'+esc(p.id)+'">'
       +'<td class="num hw-rank">'+esc(fixed(p.rank,0))+'</td>'
-      +'<td><button class="hw-player-select" type="button" data-select-player="'+esc(p.id)+'"><span class="hw-player-namecell"><span class="hw-player-avatar">'+esc(initials(p.name))+'</span><span><strong class="hw-name">'+esc(p.name)+'</strong><span class="hw-sub">'+esc(p.whyImpact||p.why||"")+'</span></span></span></button></td>'
+      +'<td><button class="hw-player-select" type="button" aria-controls="player-inspector" aria-pressed="'+String(Boolean(selected))+'" data-select-player="'+esc(p.id)+'"><span class="hw-player-namecell"><span class="hw-player-avatar">'+esc(initials(p.name))+'</span><span><strong class="hw-name">'+esc(p.name)+'</strong><span class="hw-sub">'+esc(p.whyImpact||p.why||"")+'</span></span></span></button></td>'
       +'<td>'+esc(p.team)+'</td><td><span class="hw-status-pill '+statusClass(p)+'">'+esc(statusLabel(p))+'</span></td>'
       +'<td class="num">'+esc(fixed(p.gp,0))+'</td><td class="num">'+esc(fixed(p.minutes,1))+'</td><td class="num">'+esc(fixed(p.pts,1))+'</td><td class="num">'+esc(fixed(p.reb,1))+'</td><td class="num">'+esc(fixed(p.ast,1))+'</td>'
       +'<td class="num '+(p.impact!==null&&p.impact>=0?'hw-positive':'hw-negative')+'">'+esc(signed(p.impact,1))+'</td><td class="num">'+esc(fixed(p.impactRank,0))+'</td>'
       +'<td class="num">'+esc(signed(p.seasonRate,2))+'</td><td class="num">'+esc(signed(p.seasonVolume,1))+'</td>'
       +'<td class="num"><span class="hw-basis-pill '+basisClass(p)+'">'+esc(fixed(p.basis,0))+'</span></td><td>'+trendHTML(p)+'</td></tr>';
   }
-  function mobileHTML(p){var selected=state.selected&&String(state.selected.id)===String(p.id);return '<button type="button" class="hw-mobile-player'+(selected?' selected':'')+'" data-select-player="'+esc(p.id)+'"><span class="hw-mobile-player-top"><strong>'+esc(p.name)+'</strong><span>'+esc(p.team)+' · #'+esc(fixed(p.rank,0))+'</span></span><span class="hw-mobile-player-metrics"><span>PTS<b>'+esc(fixed(p.pts,1))+'</b></span><span>Impact<b>'+esc(signed(p.impact,1))+'</b></span><span>Proj min<b>'+esc(fixed(p.minutes,1))+'</b></span><span>Season total<b>'+esc(signed(p.seasonVolume,1))+'</b></span></span><span class="hw-mobile-player-bottom"><span>'+esc(statusLabel(p))+' · '+esc(basisLabel(p))+'</span><span>'+trendHTML(p)+'</span></span></button>';}
+  function mobileHTML(p){var selected=state.selected&&String(state.selected.id)===String(p.id);return '<button type="button" class="hw-mobile-player'+(selected?' selected':'')+'" aria-controls="player-inspector" aria-pressed="'+String(Boolean(selected))+'" data-select-player="'+esc(p.id)+'"><span class="hw-mobile-player-top"><strong>'+esc(p.name)+'</strong><span>'+esc(p.team)+' · #'+esc(fixed(p.rank,0))+'</span></span><span class="hw-mobile-player-metrics"><span>PTS<b>'+esc(fixed(p.pts,1))+'</b></span><span>Impact<b>'+esc(signed(p.impact,1))+'</b></span><span>Proj min<b>'+esc(fixed(p.minutes,1))+'</b></span><span>Season total<b>'+esc(signed(p.seasonVolume,1))+'</b></span></span><span class="hw-mobile-player-bottom"><span>'+esc(statusLabel(p))+' · '+esc(basisLabel(p))+'</span><span>'+trendHTML(p)+'</span></span></button>';}
+  function syncSortControls(){var sort=$("players-sort"),dir=$("players-sort-dir");if(sort)sort.value=state.sort.key;if(dir)dir.value=state.sort.dir;qa("[data-sort]").forEach(function(btn){var key=btn.getAttribute("data-sort"),active=key===state.sort.key,th=btn.closest("th");btn.removeAttribute("data-dir");if(active)btn.setAttribute("data-dir",state.sort.dir);if(th)th.setAttribute("aria-sort",active?(state.sort.dir==="asc"?"ascending":"descending"):"none");});}
   function renderTable(){
     filterPlayers();
     $("players-count").textContent=state.filtered.length+" of "+state.players.length+" players";
-    $("players-context").textContent=state.sort.key+" · "+state.sort.dir;
+    $("players-context").textContent=(SORT_LABELS[state.sort.key]||state.sort.key)+" · "+(state.sort.dir==="asc"?"ascending":"descending");
     $("players-body").innerHTML=state.filtered.map(rowHTML).join("")||'<tr><td colspan="15"><div class="hw-empty">No published players match these filters.</div></td></tr>';
     $("players-mobile").innerHTML=state.filtered.map(mobileHTML).join("")||'<div class="hw-empty">No published players match these filters.</div>';
     qa("[data-select-player]").forEach(function(btn){btn.addEventListener("click",function(){selectPlayer(btn.getAttribute("data-select-player"));});});
-    qa("[data-sort]").forEach(function(btn){var key=btn.getAttribute("data-sort");btn.removeAttribute("data-dir");if(key===state.sort.key)btn.setAttribute("data-dir",state.sort.dir);});
+    syncSortControls();
+    var exportButton=$("players-export");if(exportButton)exportButton.setAttribute("aria-label",state.filtered.length?"Download filtered players CSV; "+state.filtered.length+" rows in current view":"No filtered player rows available to export");
   }
   function findPlayer(id){return state.players.find(function(p){return String(p.id)===String(id);})||null;}
   function line(label,value){return '<div class="hw-player-inspector-line"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong></div>';}
@@ -154,7 +167,7 @@
       +'<section class="hw-player-inspector-section"><h3>Separate per-100 impact study</h3>'+line("Published row",impactStudy)+'<p class="hw-player-inspector-copy">'+esc(impactSplit)+'</p></section>'
       +'<div class="hw-player-inspector-actions"><a href="'+safeHref(p.profile)+'">Open profile</a><a href="compare.html?players='+encodeURIComponent(p.name)+'">Compare</a><a href="impact.html">Season impact board</a></div></div>';
   }
-  function selectPlayer(id){var p=findPlayer(id);if(!p)return;state.selected=p;renderTable();renderInspector(p);renderViz();}
+  function selectPlayer(id,writeState){var p=findPlayer(id);if(!p)return;state.selected=p;if(writeState!==false)replaceParam("player",p.id);renderTable();renderInspector(p);renderViz();}
 
   function story(label,value,note){return '<article class="hw-story"><span class="hw-story-label">'+esc(label)+'</span><strong class="hw-story-value">'+esc(value)+'</strong><span class="hw-story-note">'+esc(note)+'</span></article>';}
   function maxBy(list,key,guard){var valid=list.filter(function(p){return num(p[key])!==null&&(!guard||guard(p));});return valid.sort(function(a,b){return b[key]-a[key];})[0]||null;}
@@ -186,13 +199,15 @@
     var W=860,H=310,L=58,R=18,T=18,B=38,xd=extent(points.map(function(p){return p.x;})),yd=extent(points.map(function(p){return p.y;}));
     if(opts.rank){xd=[Math.min.apply(null,points.map(function(p){return p.x;}))-1,Math.max.apply(null,points.map(function(p){return p.x;}))+1];yd=[Math.min.apply(null,points.map(function(p){return p.y;}))-1,Math.max.apply(null,points.map(function(p){return p.y;}))+1];}
     var sx=function(v){return scale(v,xd,[L,W-R]);},sy=function(v){return scale(v,yd,[H-B,T]);};
-    var out=['<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(opts.aria)+'">'];
+    var selectedInPlot=state.selected&&points.some(function(pt){return String(pt.p.id)===String(state.selected.id);});
+    var out=['<svg viewBox="0 0 '+W+' '+H+'" role="group" aria-label="'+esc(opts.aria)+'">'];
     [0,.25,.5,.75,1].forEach(function(q){var xv=xd[0]+(xd[1]-xd[0])*q,yv=yd[0]+(yd[1]-yd[0])*q,x=sx(xv),y=sy(yv);out.push('<line x1="'+x+'" x2="'+x+'" y1="'+T+'" y2="'+(H-B)+'" class="hw-svg-grid"/>');out.push('<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" class="hw-svg-grid"/>');out.push(svgText(x,H-14,opts.xfmt(xv),"middle"));out.push(svgText(8,y+3,opts.yfmt(yv),"start"));});
     if(opts.zero&&xd[0]<0&&xd[1]>0){var zx=sx(0);out.push('<line x1="'+zx+'" x2="'+zx+'" y1="'+T+'" y2="'+(H-B)+'" class="hw-zero-line"/>');}
     if(opts.rank){var m0=Math.max(xd[0],yd[0]),m1=Math.min(xd[1],yd[1]);out.push('<line x1="'+sx(m0)+'" y1="'+sy(m0)+'" x2="'+sx(m1)+'" y2="'+sy(m1)+'" class="hw-rank-diagonal"/>');}
-    points.forEach(function(pt){var selected=state.selected&&String(state.selected.id)===String(pt.p.id),r=Math.max(2.6,Math.min(6.5,2.7+(pt.size||0)/10));out.push('<circle class="hw-point'+(selected?' selected':'')+'" cx="'+sx(pt.x).toFixed(1)+'" cy="'+sy(pt.y).toFixed(1)+'" r="'+r.toFixed(1)+'" data-viz-player="'+esc(pt.p.id)+'"><title>'+esc(pt.p.name+' · '+opts.xtip(pt.x)+' · '+opts.ytip(pt.y))+'</title></circle>');});
+    points.forEach(function(pt,index){var selected=state.selected&&String(state.selected.id)===String(pt.p.id),r=Math.max(2.6,Math.min(6.5,2.7+(pt.size||0)/10)),description=pt.p.name+' · '+opts.xtip(pt.x)+' · '+opts.ytip(pt.y),focusable=selected||(!selectedInPlot&&index===0);out.push('<g class="hw-player-point" tabindex="'+(focusable?'0':'-1')+'" role="button" aria-controls="player-inspector" aria-pressed="'+String(Boolean(selected))+'" aria-label="'+esc('Select '+description)+'" data-viz-player="'+esc(pt.p.id)+'"><title>'+esc(description)+'</title><circle class="hw-point'+(selected?' selected':'')+'" cx="'+sx(pt.x).toFixed(1)+'" cy="'+sy(pt.y).toFixed(1)+'" r="'+r.toFixed(1)+'"></circle></g>');});
     out.push(svgText((L+W-R)/2,H-1,opts.xlabel,"middle","hw-svg-axis"));out.push('<text x="12" y="'+((T+H-B)/2)+'" transform="rotate(-90 12 '+((T+H-B)/2)+')" text-anchor="middle" class="hw-svg-axis">'+esc(opts.ylabel)+'</text></svg>');return out.join("");
   }
+  function bindVizPoints(){var points=qa("[data-viz-player]");points.forEach(function(node,index){node.addEventListener("click",function(){selectPlayer(node.getAttribute("data-viz-player"));});node.addEventListener("keydown",function(event){if(event.key==="Enter"||event.key===" "){event.preventDefault();selectPlayer(node.getAttribute("data-viz-player"));return;}var next=index;if(event.key==="ArrowRight"||event.key==="ArrowDown")next=(index+1)%points.length;else if(event.key==="ArrowLeft"||event.key==="ArrowUp")next=(index-1+points.length)%points.length;else if(event.key==="Home")next=0;else if(event.key==="End")next=points.length-1;else return;event.preventDefault();node.setAttribute("tabindex","-1");points[next].setAttribute("tabindex","0");points[next].focus();});});}
   function renderViz(){
     var mode=state.viz,points=[],opts;
     if(mode==="season"){
@@ -206,25 +221,34 @@
       opts={aria:"Player impact versus projected minutes",xlabel:"Board impact",ylabel:"Projected minutes",xfmt:function(v){return signed(v,1);},yfmt:function(v){return fixed(v,0);},xtip:function(v){return signed(v,1)+" impact";},ytip:function(v){return fixed(v,1)+" projected minutes";},zero:true};$("player-viz-context").textContent="Impact versus projected minutes";
     }
     $("player-viz").innerHTML=renderScatter(points,opts);
-    qa("[data-viz-player]").forEach(function(node){node.addEventListener("click",function(){selectPlayer(node.getAttribute("data-viz-player"));});});
-    qa("[data-player-viz]").forEach(function(btn){btn.classList.toggle("active",btn.getAttribute("data-player-viz")===state.viz);btn.setAttribute("aria-selected",btn.classList.contains("active")?"true":"false");});
+    bindVizPoints();
+    qa("[data-player-viz]").forEach(function(btn){var active=btn.getAttribute("data-player-viz")===state.viz;btn.classList.toggle("active",active);btn.setAttribute("aria-pressed",String(active));});
   }
-  function setFresh(sources){var dates=Object.keys(sources).map(function(k){return dateValue(sources[k]);}).filter(Boolean).map(function(v){return new Date(v);}).filter(function(d){return !isNaN(d.getTime());});var newest=dates.length?new Date(Math.max.apply(null,dates.map(function(d){return d.getTime();}))):null;var label=newest?"Updated "+ageText(newest.toISOString()):"Update time unavailable";qa("[data-fresh]").forEach(function(el){el.innerHTML='<span class="hw-fresh-dot"></span>'+esc(label);});}
+
+  function setFresh(sources){var readings=[],undated=[];Object.keys(sources).forEach(function(key){var raw=dateValue(sources[key]),d=parseStamp(raw);if(d)readings.push({key:key,raw:raw,date:d});else undated.push(key);});readings.sort(function(a,b){return a.date-b.date;});var floor=readings[0]||null,hours=floor?(Date.now()-floor.date.getTime())/36e5:null,label=floor?"Oldest source updated "+ageText(floor.raw)+" · "+SOURCE_LABELS[floor.key]:"Update time unavailable";if(undated.length)label+=" · "+undated.length+" undated";var detail=readings.map(function(item){return SOURCE_LABELS[item.key]+": "+String(item.raw);});if(undated.length)detail.push("Undated: "+undated.map(function(key){return SOURCE_LABELS[key];}).join(", "));qa("[data-fresh]").forEach(function(el){el.innerHTML='<span class="hw-fresh-dot"></span>'+esc(label);el.classList.toggle("warn",!floor||hours>24||undated.length>0);el.title=detail.join(" · ");});}
+
+  function cellText(cell){return String(cell&&((cell.innerText)||(cell.textContent))||"").replace(/\s+/g," ").trim();}
+  function csvCell(value){var text=String(value==null?"":value);return /[",\r\n]/.test(text)?'"'+text.replace(/"/g,'""')+'"':text;}
+  function renderedPlayerRows(){var table=$("players-table");if(!table)return [];var header=qa("thead th",table).map(cellText),body=qa("tbody tr",table).filter(function(row){return !row.querySelector(".hw-empty");}).map(function(row){return Array.prototype.slice.call(row.children).filter(function(cell){return /^(TD|TH)$/.test(cell.tagName);}).map(cellText);});return header.length?[header].concat(body):[];}
+  function exportPlayersCsv(){var button=$("players-export");if(!button||typeof Blob!=="function"||!window.URL||typeof window.URL.createObjectURL!=="function")return;var output=renderedPlayerRows(),count=Math.max(0,output.length-1);if(!count){button.setAttribute("aria-label","No filtered player rows available to export");return;}var csv=output.map(function(row){return row.map(csvCell).join(",");}).join("\r\n"),blob=new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}),href=window.URL.createObjectURL(blob),link=document.createElement("a"),now=new Date(),stamp=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");link.href=href;link.download="hardwood-players-"+stamp+".csv";link.hidden=true;document.body.appendChild(link);link.click();link.remove();window.setTimeout(function(){window.URL.revokeObjectURL(href);},0);button.setAttribute("aria-label","Download filtered players CSV; "+count+" rows in current view");}
+
   function populateTeams(){var teams={};state.players.forEach(function(p){if(p.team&&p.team!=="—")teams[p.team]=1;});$("players-team").innerHTML='<option value="">All teams</option>'+Object.keys(teams).sort().map(function(t){return '<option value="'+esc(t)+'">'+esc(t)+'</option>';}).join("");}
+  function hydrateState(){var q=param("q"),team=param("team"),status=param("status"),basis=param("basis"),sort=param("sort"),dir=param("dir"),viz=param("viz"),player=param("player");if(q!==null)$("players-search").value=q;if(team&&validSelectValue("players-team",team))$("players-team").value=team;else if(team)replaceParam("team","");if(status&&validSelectValue("players-status",status))$("players-status").value=status;else if(status)replaceParam("status","");if(basis&&validSelectValue("players-basis",basis))$("players-basis").value=basis;else if(basis)replaceParam("basis","");if(sort&&SORT_KEYS.indexOf(sort)>=0)state.sort.key=sort;else if(sort)replaceParam("sort","");if(dir==="asc"||dir==="desc")state.sort.dir=dir;else if(dir)replaceParam("dir","");if(viz&&VIZ_KEYS.indexOf(viz)>=0)state.viz=viz;else if(viz)replaceParam("viz","");var selected=player?findPlayer(player):null;if(player&&!selected)replaceParam("player","");state.selected=selected||state.players.find(function(p){return p.impact!==null&&!p.provisional;})||state.players[0]||null;}
+  function writeSortState(){var isDefault=state.sort.key==="impact"&&state.sort.dir==="desc";replaceParam("sort",isDefault?"":state.sort.key);replaceParam("dir",isDefault?"":state.sort.dir);}
   function bind(){
-    ["players-team","players-status","players-basis"].forEach(function(id){$(id).addEventListener("change",renderTable);});$("players-search").addEventListener("input",renderTable);$("players-reset").addEventListener("click",function(){$("players-search").value="";$("players-team").value="";$("players-status").value="";$("players-basis").value="";state.sort={key:"impact",dir:"desc"};renderTable();});
-    qa("[data-sort]").forEach(function(btn){btn.addEventListener("click",function(){var key=btn.getAttribute("data-sort");if(state.sort.key===key)state.sort.dir=state.sort.dir==="asc"?"desc":"asc";else state.sort={key:key,dir:(key==="rank"||key==="impactRank"?"asc":"desc")};renderTable();});});
-    qa("[data-player-viz]").forEach(function(btn){btn.addEventListener("click",function(){state.viz=btn.getAttribute("data-player-viz");renderViz();});});
+    var search=$("players-search");search.setAttribute("aria-keyshortcuts","/");if(!search.title)search.title="Press / to focus search; Esc clears search";
+    [{id:"players-team",param:"team"},{id:"players-status",param:"status"},{id:"players-basis",param:"basis"}].forEach(function(spec){$(spec.id).addEventListener("change",function(){renderTable();replaceParam(spec.param,$(spec.id).value);});});
+    search.addEventListener("input",function(){renderTable();replaceParam("q",search.value.trim());});
+    $("players-reset").addEventListener("click",function(){$("players-search").value="";$("players-team").value="";$("players-status").value="";$("players-basis").value="";state.sort={key:"impact",dir:"desc"};["q","team","status","basis","sort","dir"].forEach(function(key){replaceParam(key,"");});renderTable();});
+    $("players-export").addEventListener("click",exportPlayersCsv);
+    $("players-sort").addEventListener("change",function(){state.sort.key=$("players-sort").value;state.sort.dir=defaultSortDir(state.sort.key);renderTable();writeSortState();});
+    $("players-sort-dir").addEventListener("change",function(){state.sort.dir=$("players-sort-dir").value;renderTable();writeSortState();});
+    qa("[data-sort]").forEach(function(btn){btn.addEventListener("click",function(){var key=btn.getAttribute("data-sort");if(state.sort.key===key)state.sort.dir=state.sort.dir==="asc"?"desc":"asc";else state.sort={key:key,dir:defaultSortDir(key)};renderTable();writeSortState();});});
+    qa("[data-player-viz]").forEach(function(btn){btn.addEventListener("click",function(){state.viz=btn.getAttribute("data-player-viz");replaceParam("viz",state.viz==="impact-minutes"?"":state.viz);renderViz();});});
+    document.addEventListener("keydown",function(event){if(event.key==="/"&&!event.metaKey&&!event.ctrlKey&&!event.altKey&&!editableTarget(event.target)){event.preventDefault();search.focus();if(search.select)search.select();return;}if(event.key==="Escape"&&document.activeElement===search&&search.value){event.preventDefault();search.value="";renderTable();replaceParam("q","");}});
   }
   function init(){
-    Promise.all([fetchJSON("players.json"),fetchJSON("availability.json"),fetchJSON("season_impact.json"),fetchJSON("player_impact.json")]).then(function(v){state.sources={players:v[0],availability:v[1],season:v[2],impact:v[3]};state.players=mergeSources(v[0],v[1],v[2],v[3]);populateTeams();renderStories();renderWatches();setFresh(state.sources);bind();
-    var paramId = new URLSearchParams(location.search).get("player_id") || new URLSearchParams(location.search).get("player");
-    var initialSelected = null;
-    if (paramId) {
-      initialSelected = state.players.find(function(p){return String(p.id) === paramId || p.name.toLowerCase() === paramId.toLowerCase();});
-    }
-    state.selected = initialSelected || state.players.find(function(p){return p.impact!==null&&!p.provisional;})||state.players[0]||null;
-    renderTable();renderInspector(state.selected);renderViz();}).catch(function(err){console.error(err);$("players-body").innerHTML='<tr><td colspan="15"><div class="hw-empty">The player workspace could not load its published artifacts.</div></td></tr>';});
+    Promise.all([fetchJSON("players.json"),fetchJSON("availability.json"),fetchJSON("season_impact.json"),fetchJSON("player_impact.json")]).then(function(v){state.sources={players:v[0],availability:v[1],season:v[2],impact:v[3]};state.players=mergeSources(v[0],v[1],v[2],v[3]);populateTeams();hydrateState();renderStories();renderWatches();setFresh(state.sources);bind();renderTable();renderInspector(state.selected);renderViz();}).catch(function(err){console.error(err);$("players-body").innerHTML='<tr><td colspan="15"><div class="hw-empty">The player workspace could not load its published artifacts.</div></td></tr>';});
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();

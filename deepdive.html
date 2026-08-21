@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="hw-product.css">
   <link rel="stylesheet" href="hw-dense.css">
   <link rel="stylesheet" href="hw-research.css">
-<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
-<body class="hw-product" data-page="research-dense" data-section="research" data-product="dense-research"><header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026</a><a class="hw-tab" href="deepdive.html" aria-current="page">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
+</head>
+<body class="hw-product" data-page="research-dense" data-section="research" data-product="dense-research">
   <a class="hw-skip" href="#content">Skip to research board</a>
   <main class="hw-page hw-research-page" id="content">
     <header class="hw-command-head hw-research-head">
@@ -43,6 +43,7 @@
           <label><span>Sample</span><select class="hw-research-select" id="research-sample"><option value="">All samples</option><option value="large">1,000+</option><option value="mid">250–999</option><option value="small">1–249</option><option value="unknown">Not published</option></select></label>
           <label><span>Surface</span><select class="hw-research-select" id="research-kind"><option value="">All research</option><option value="dive">Published dives</option><option value="test">Research tests</option></select></label>
           <label><span>Sort</span><select class="hw-research-select" id="research-sort"><option value="sample">Largest sample</option><option value="movement">Largest sample move</option><option value="newest">Newest evidence</option><option value="decision">Decision</option><option value="title">Title</option></select></label>
+          <button class="hw-button" id="research-export" type="button">CSV</button>
           <button class="hw-button" id="research-reset" type="button">Reset</button>
         </div>
 
@@ -76,10 +77,10 @@
       <article class="hw-module">
         <div class="hw-module-head hw-research-viz-head">
           <div><h2>Research landscape</h2><span id="research-viz-context">Sample size versus sample movement</span></div>
-          <div class="hw-visual-tabs" role="tablist" aria-label="Research visual">
-            <button class="hw-visual-tab active" type="button" data-research-viz="sample">Sample × movement</button>
-            <button class="hw-visual-tab" type="button" data-research-viz="outcomes">Decision mix</button>
-            <button class="hw-visual-tab" type="button" data-research-viz="sources">Evidence coverage</button>
+          <div class="hw-visual-tabs" role="group" aria-label="Research visual">
+            <button class="hw-visual-tab active" type="button" aria-pressed="true" data-research-viz="sample">Sample × movement</button>
+            <button class="hw-visual-tab" type="button" aria-pressed="false" data-research-viz="outcomes">Decision mix</button>
+            <button class="hw-visual-tab" type="button" aria-pressed="false" data-research-viz="sources">Evidence coverage</button>
           </div>
         </div>
         <div class="hw-module-body"><div class="hw-research-viz" id="research-viz"><div class="hw-empty">Loading research landscape…</div></div></div>
@@ -105,5 +106,5 @@
   </main>
   <script src="hw-product.js"></script>
   <script src="hw-research.js"></script>
-<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></div><div>Projections published pre-tip, graded publicly.</div></footer><!--/hw-foot--></body>
+</body>
 </html>

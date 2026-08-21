@@ -58,7 +58,7 @@
     }
     return [];
   }
-  function truncText(value,max){var text=String(value||"").replace(/\s+/g," ").trim();return text.length>max?text.slice(0,max-1).trim()+"…":text;}
+  function truncate(value,max){var text=String(value||"").replace(/\s+/g," ").trim();return text.length>max?text.slice(0,max-1).trim()+"…":text;}
   function fetchJSON(path){return fetch(path,{cache:"no-store"}).then(function(response){if(!response.ok)throw new Error(path+" returned "+response.status);return response.json();}).catch(function(error){console.warn(error);return {};});}
 
   function installShell(){
@@ -91,6 +91,27 @@
     });
   }
 
+  function callInputsHTML(game){
+    var payload=game&&game.callInputs;
+    if(!payload||!Array.isArray(payload.components))return "";
+    var precision=Number(payload.precision),factor=Number.isInteger(precision)&&precision>=0&&precision<=15?Math.pow(10,precision):null;
+    var target=number(game.margin),published=number(payload.published),total=number(payload.total),sumScaled=0,valid=factor!==null&&target!==null&&published!==null&&total!==null,chips=[];
+    payload.components.forEach(function(component){
+      var value=number(component&&component.value);
+      var scaled=value===null||factor===null?null:Math.round(value*factor);
+      if(value===null||scaled===null||Math.abs(value*factor-scaled)>1e-7){valid=false;return;}
+      sumScaled+=scaled;
+      if(scaled)chips.push('<span class="hw-call-breakdown-chip" title="'+esc(component.note||component.label||"")+'">'+esc(component.label||"Component")+' '+esc(signed(value,precision))+'</span>');
+    });
+    var targetTenths=Math.round(target*10),publishedTenths=Math.round(published*10),totalTenths=precision>0?(function(){var scale=Math.pow(10,precision-1),absolute=Math.abs(Math.round(total*factor)),rounded=Math.floor(absolute/scale)+(absolute%scale*2>=scale?1:0);return total<0?-rounded:rounded;}()):Math.round(total*10);
+    if(!valid||sumScaled!==Math.round(total*factor)||totalTenths!==targetTenths||publishedTenths!==targetTenths){
+      var name=String(game.away||"")+" @ "+String(game.home||"");
+      console.error("Call breakdown withheld for "+name+": components "+(total===null?"unknown":total)+" vs displayed call "+target);
+      return '<span class="hw-call-breakdown withheld">breakdown withheld — components do not add up</span>';
+    }
+    return '<span class="hw-call-breakdown">'+chips.join(" · ")+' = '+esc(signed(total,precision))+' · '+esc(game.call||signed(target,1))+'</span>';
+  }
+
   function normalizeGames(gamesPayload,previewPayload){
     var previewMap={};
     rows(previewPayload,["games","rows","items"]).forEach(function(game){var id=String(first(game,["game_id","id","key"])||"");if(id)previewMap[id]=game;});
@@ -117,6 +138,7 @@
         home:String(first(game,["home","home_team","home_abbr"])||first(preview,["home","home_team","home_abbr"])||"TBD"),
         away:String(first(game,["away","away_team","away_abbr"])||first(preview,["away","away_team","away_abbr"])||"TBD"),
         call:first(game,["call","predicted_winner"])||first(predictions,["winner","predicted_winner","pick"]),
+        callInputs:first(game,["call_inputs"])||first(predictions,["call_inputs"]),
         margin:number(margin),
         total:number(total),
         homeP:probability(homeP),
@@ -125,7 +147,7 @@
         actual:actual,
         status:status,
         report:"game_report_v2.html?game_id="+encodeURIComponent(id),
-        model:String(first(game,["model_" + "version","source_model","source_version"])||first(predictions,["source_model","model_" + "version","source_version"])||"published model")
+        model:String(first(game,["model_version","source_model","source_version"])||first(predictions,["source_model","model_version","source_version"])||"published model")
       };
     });
   }
@@ -222,7 +244,7 @@
       var verdict="Finding";
       if(/no-promote|did not help|turned out to be noise|\bis a null\b|\bwas noise\b|tied a flat|worse than/.test(lower))verdict="No promote";
       else if(/promot|sharpen|improv|beat the baseline|production/.test(lower))verdict="Positive";
-      return {title:String(item.title||"Untitled research"),asOf:item.as_of,summary:truncText(paragraphs[0]||paragraphs[1]||"",150),verdict:verdict};
+      return {title:String(item.title||"Untitled research"),asOf:item.as_of,summary:truncate(paragraphs[0]||paragraphs[1]||"",150),verdict:verdict};
     });
   }
 
@@ -276,7 +298,7 @@
       var homeP=game.homeP;
       var favored=game.margin===null?game.call:(game.margin>=0?game.home:game.away);
       var tip=[shortDate(game.date),game.tip].filter(Boolean).join(" ");
-      return '<div class="hw-game-row"><span>'+esc(tip||game.status)+'</span><span><strong>'+esc(game.away+' @ '+game.home)+'</strong><span class="hw-sub">'+esc(game.status)+'</span></span><span><strong>'+esc(favored||"—")+'</strong><span class="hw-sub">'+esc(game.call||"")+'</span></span><span class="num">'+esc(pct(homeP,0))+'<span class="hw-sub">home</span></span><span class="num">'+esc(signed(game.margin,1))+'</span><span>'+gameRangeHTML(game)+'</span><span><a class="hw-link" href="'+safeHref(game.report)+'">Open →</a></span></div>';
+      return '<div class="hw-game-row"><span>'+esc(tip||game.status)+'</span><span><strong>'+esc(game.away+' @ '+game.home)+'</strong><span class="hw-sub">'+esc(game.status)+'</span></span><span><strong>'+esc(favored||"—")+'</strong><span class="hw-sub">'+esc(game.call||"")+'</span>'+callInputsHTML(game)+'</span><span class="num">'+esc(pct(homeP,0))+'<span class="hw-sub">home</span></span><span class="num">'+esc(signed(game.margin,1))+'</span><span>'+gameRangeHTML(game)+'</span><span><a class="hw-link" href="'+safeHref(game.report)+'">Open →</a></span></div>';
     }).join(""):'<div class="hw-empty">No game forecasts are currently published.</div>';
   }
 
@@ -292,7 +314,7 @@
     var widest=state.games.slice().filter(function(game){return game.low!==null&&game.high!==null;}).sort(function(a,b){return (b.high-b.low)-(a.high-a.low);})[0];
     if(widest)items.push(pulseItem("Uncertainty",widest.away+" @ "+widest.home+" has the widest published 80% range",fixed(widest.high-widest.low,1)+" points wide around a "+signed(widest.margin,1)+" call",widest.report));
     var impactLead=state.payloads.availability&&state.payloads.availability.impact_lead;
-    if(impactLead&&impactLead.line)items.push(pulseItem("Availability","Largest current absence",truncText(impactLead.line,180),"availability.html"));
+    if(impactLead&&impactLead.line)items.push(pulseItem("Availability","Largest current absence",truncate(impactLead.line,180),"availability.html"));
     var calibration=calibrationRows(state.payloads.accuracy);
     if(calibration.length){var worst=calibration.slice().sort(function(a,b){return Math.abs(b.actual-b.target)-Math.abs(a.actual-a.target);})[0];items.push(pulseItem("Model",worst.label,fixed(worst.actual,1)+"% actual versus "+fixed(worst.target,1)+"% target","accuracy.html"));}
     $("command-pulse").innerHTML=items.length?items.slice(0,6).join(""):'<div class="hw-empty">No league pulse could be derived from the current artifacts.</div>';
@@ -324,7 +346,7 @@
     var ordered=state.availability.slice().sort(function(a,b){return Number(b.tonight)-Number(a.tonight)||(b.minutes==null?-1:b.minutes)-(a.minutes==null?-1:a.minutes);}).slice(0,12);
     $("command-availability").innerHTML=ordered.length?ordered.map(function(team){
       var names=team.names.slice(0,3).join(", ");if(team.unsized.length)names+=(names?"; ":"")+team.unsized.length+" unsized";
-      return '<tr><td><span class="hw-name">'+esc(team.team)+'</span><span class="hw-sub">'+(team.tonight?"plays today":"next slate")+'</span></td><td class="num">'+esc(fixed(team.out,0))+'</td><td class="num">'+esc(team.minutes===null?"—":fixed(team.minutes,0))+'</td><td title="'+esc(team.line||names)+'">'+esc(truncText(names||team.line,42))+'</td></tr>';
+      return '<tr><td><span class="hw-name">'+esc(team.team)+'</span><span class="hw-sub">'+(team.tonight?"plays today":"next slate")+'</span></td><td class="num">'+esc(fixed(team.out,0))+'</td><td class="num">'+esc(team.minutes===null?"—":fixed(team.minutes,0))+'</td><td title="'+esc(team.line||names)+'">'+esc(truncate(names||team.line,42))+'</td></tr>';
     }).join(""):'<tr><td colspan="4"><div class="hw-empty">Availability summary is unavailable.</div></td></tr>';
   }
 
