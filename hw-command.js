@@ -46,7 +46,7 @@
   function probability(value){var n=number(value);if(n===null)return null;if(n>1&&n<=100)n/=100;return n>=0&&n<=1?n:null;}
   function pct(value,digits){var n=probability(value);return n===null?"—":(n*100).toFixed(digits==null?0:digits)+"%";}
   function pctRaw(value,digits){var n=number(value);return n===null?"—":n.toFixed(digits==null?0:digits)+"%";}
-  function dateObject(value){if(!has(value))return null;var d=new Date(value);return Number.isNaN(d.getTime())?null:d;}
+  function dateObject(value){if(!has(value))return null;var text=String(value);var d=new Date(/^\d{4}-\d{2}-\d{2}$/.test(text)?text+"T12:00:00":text);return Number.isNaN(d.getTime())?null:d;}
   function shortDate(value){var d=dateObject(value);return d?d.toLocaleDateString(undefined,{month:"short",day:"numeric"}):String(value||"—");}
   function ageText(value){var d=dateObject(value);if(!d)return "time not published";var seconds=Math.max(0,(Date.now()-d.getTime())/1000);if(seconds<90)return "just now";if(seconds<3600)return Math.floor(seconds/60)+"m ago";if(seconds<86400)return Math.floor(seconds/3600)+"h ago";return Math.floor(seconds/86400)+"d ago";}
   function rows(payload,keys){
@@ -80,14 +80,14 @@
   }
 
   function setFresh(payloads){
-    var dates=[];
-    payloads.forEach(function(payload){var stamp=first(payload,["generated_utc","generated","built_utc","as_of","updated_utc"]);var d=dateObject(stamp);if(d)dates.push(d);});
-    dates.sort(function(a,b){return b-a;});
+    var dates=[],undated=0;
+    payloads.forEach(function(payload){var stamp=first(payload,["generated_utc","generated","built_utc","as_of","updated_utc"]);var d=dateObject(stamp);if(d)dates.push(d);else undated++;});
+    dates.sort(function(a,b){return a-b;});
     qa("[data-fresh]").forEach(function(element){
       if(!dates.length){element.classList.add("warn");element.innerHTML='<span class="hw-fresh-dot"></span>Build time not published';return;}
-      var hours=(Date.now()-dates[0].getTime())/36e5;
-      element.classList.toggle("warn",hours>24);
-      element.innerHTML='<span class="hw-fresh-dot"></span>Updated '+ageText(dates[0].toISOString());
+      var floor=dates[0],hours=(Date.now()-floor.getTime())/36e5;
+      element.classList.toggle("warn",hours>24||undated>0);
+      element.innerHTML='<span class="hw-fresh-dot"></span>Oldest source updated '+ageText(floor.toISOString())+(undated?' · '+undated+' undated':'');
     });
   }
 
