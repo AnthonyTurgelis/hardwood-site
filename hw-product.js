@@ -19,14 +19,7 @@
     ["Data explorer","explorer.html","Browse the published data"],
     ["Game reports","report_archive.html","Pre-tip reports and disclosure archive"],
     ["Methodology","primer.html","Definitions and how to read the numbers"],
-    ["Operations board","board.html","Internal build and queue view"],
-    // These two are carried by the STATIC footer that retireDuplicateChrome() removes below, and
-    // they are the only two of its eight links this shell did not already reach. Without them,
-    // removing that footer would make review.html unreachable from every dense page and drop the
-    // Error Map deep-link -- which is the "newest page reachable from none of them" complaint
-    // chrome_inject.py was written to fix, reappearing in a new costume.
-    ["Daily Review","review.html","The day's slate, graded"],
-    ["Error Map","accuracy.html#accuracy-viz","Where the model misses, by situation"]
+    ["Operations board","board.html","Internal build and queue view"]
   ];
   var FILE_GROUPS={
     "index.html":"home","":"home",
@@ -75,10 +68,21 @@
     var toggle=$("hw-mobile-toggle"),primary=$("hw-primary");
     if(toggle&&primary)toggle.addEventListener("click",function(){var open=primary.classList.toggle("open");toggle.setAttribute("aria-expanded",String(open));toggle.textContent=open?"×":"☰";});
     document.addEventListener("click",function(e){qa(".hw-tools[open]").forEach(function(d){if(!d.contains(e.target))d.removeAttribute("open");});});
+    // RETIRE FIRST, AND THE ORDER IS LOad-BEARING. The footer check below RETURNS, and on a dense
+    // page a baked footer is the normal case -- so retiring after it meant the duplicate nav and
+    // wordmark were never removed on exactly the pages this fix exists for. It shipped that way
+    // for one commit and the suite still passed, because the suite grepped for the CALL and not
+    // for whether the call is reachable.
+    retireDuplicateChrome();
+    // THE STATIC FOOTER IS THE REGISTRY, SO IT WINS. site/nav.json carries 23 footer links on
+    // main and chrome_inject bakes them in; the shell's own footer lists 9 and is hard-coded here.
+    // Removing the registry footer to stop the duplication would strand the difference -- which is
+    // exactly the "reachable from none of them" defect chrome_inject exists to prevent. So when a
+    // baked footer is present the shell adds none, and the page ends with exactly one.
+    if(qa("footer.hw-chrome-foot").length) return;
     var footer=document.createElement("footer");footer.className="hw-footer";
     footer.innerHTML='<div class="hw-footer-inner"><div><strong>Hardwood</strong>WNBA predictions, player intelligence, public grading, and research.</div><div class="hw-footer-links"><a href="games.html">Games</a><a href="players.html">Players</a><a href="teams.html">Teams</a><a href="standings.html">Standings</a><a href="accuracy.html">Accuracy</a><a href="deepdive.html">Research</a><a href="report_archive.html">Reports</a><a href="primer.html">Methodology</a><a href="board.html">Operations</a></div></div>';
     document.body.appendChild(footer);
-    retireDuplicateChrome();
   }
 
   // TWO SYSTEMS EACH OWN "THE NAV", AND ON NINE PAGES BOTH OF THEM FIRE.
@@ -99,7 +103,7 @@
   // chrome, and chrome_inject's own author refused to delete mastheads for exactly this reason --
   // losing published words to tidy a tab row trades one defect for a worse one.
   function retireDuplicateChrome(){
-    qa("header.hw-chrome nav.hw-nav, header.hw-chrome .mark, footer.hw-chrome-foot")
+    qa("header.hw-chrome nav.hw-nav, header.hw-chrome .mark")
       .forEach(function(el){ if(el&&el.parentNode) el.parentNode.removeChild(el); });
     // A static header left holding nothing but whitespace still paints margin above the content.
     qa("header.hw-chrome").forEach(function(el){
