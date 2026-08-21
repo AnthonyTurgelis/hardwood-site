@@ -1,15 +1,15 @@
 {
- "generated_utc": "2026-08-21T07:21:45+00:00",
+ "generated_utc": "2026-08-21T07:33:44+00:00",
  "freshness": {
-  "baked_utc": "2026-08-21T07:21:45+00:00",
-  "baked_et": "Aug 21, 3:21am ET",
-  "revalidated_utc": "2026-08-21T07:21:45+00:00",
+  "baked_utc": "2026-08-21T07:33:44+00:00",
+  "baked_et": "Aug 21, 3:33am ET",
+  "revalidated_utc": "2026-08-21T07:33:44+00:00",
   "stale_after_secs": 300
  },
  "date": "2026-08-21",
  "day_summary": "Minnesota Lynx by 6.2 over Washington Mystics is our strongest pick of tonight's 3 games - a 69% chance to win. Full game reports are ready.",
  "counts": {
-  "running": 2,
+  "running": 3,
   "done_today": 0,
   "maintenance": 0,
   "needs_anthony": 0,
@@ -104,7 +104,7 @@
   "total": 13,
   "label": "9 of 13",
   "all_done": false,
-  "generated_utc": "2026-08-21T07:21:45+00:00",
+  "generated_utc": "2026-08-21T07:33:44+00:00",
   "href": "./ship_checklist.html"
  },
  "actions_minutes": {
@@ -1111,7 +1111,7 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-21T03:10:25-04:00",
+    "at_iso": "2026-08-21T03:23:44-04:00",
     "start_unknown": true
    },
    {
@@ -1121,7 +1121,17 @@
     "team": "",
     "kind": "lane",
     "time": "",
-    "at_iso": "2026-08-21T03:10:25-04:00",
+    "at_iso": "2026-08-21T03:23:44-04:00",
+    "start_unknown": true
+   },
+   {
+    "name": "Child handtyped exhibition predicates",
+    "one_liner": "Running now.",
+    "chip": "IN-FLIGHT",
+    "team": "",
+    "kind": "lane",
+    "time": "",
+    "at_iso": "2026-08-21T03:23:44-04:00",
     "start_unknown": true
    }
   ],
@@ -2827,18 +2837,18 @@
       "why": "Found by the league-prior lane and explicitly left unresolved because it could not be ruled in or out inside its budget. has NO is exhibition column so no exhibition predicate is even expressible ...",
       "priority": 1,
       "seat": "MACHINE",
-      "status": "open",
+      "status": "needs-verify",
       "state": "",
-      "row_state": "open",
+      "row_state": "needs-verify",
       "row_closed": false,
       "pm_authored": false,
-      "event_utc": "2026-08-12T17:13:19Z",
+      "event_utc": "2026-08-21T07:22:07Z",
       "impact": "",
       "rank_priority": 1.0,
       "title": "The table feeding half of a prior-less player's probabilities cannot be filtered for ...",
       "unlocks": "Has NO is exhibition column so no exhibition predicate is even expressible against it.",
       "owner": "MACHINE",
-      "feed_status": "QUEUED",
+      "feed_status": "LANDED",
       "tier": 1,
       "group": "",
       "ceo_ask": false,
@@ -3697,7 +3707,7 @@
       "seat": "data",
       "status": "open - TRIAGED THE SAME SESSION AND THE DANGEROUS SUBSET IS EXACTLY ONE, p2 to p4, 2026-08-07T11:45Z coord--visible. THE HEADLINE NUMBER DESERVED THE CAUTION I PUT ON IT. I said 142 is not 142 problems and that the dangerous subset is tables carrying a RECENCY EXPECTATION with no repo builder. scripts/freshness_gate.py is where recency expectations are actually recorded, as FeedSpecs. Intersecting the two: of 29 declared FeedSpecs, 28 point at tables WITH a repo-resident builder. EXACTLY ONE does not, and it is - the table already found dead and already filed. SO THE SYSTEMIC EXPOSURE IS LARGELY THEORETICAL AND THE PLATFORM IS IN BETTER SHAPE THAN MY HEADLINE IMPLIED. The 142 off-repo-only tables are overwhelmingly NOT monitored for freshness, which is consistent with them being one-shot or historical builds that never need refreshing - exactly the benign case named when this was filed. WHAT STILL STANDS, and it is narrower: LAW B assumes every artifact is re-runnable from source, and for 142 tables the source lives outside this repo. That remains true and remains a real dependency on the unversioned workspace surviving. It is a preservation concern, not a live outage. RESIDUAL WORK IF ANYONE WANTS IT: the freshness gate only covers 29 tables, so a table could need recency WITHOUT a FeedSpec and be invisible to this test. Widening that coverage would be the real follow-on, not porting 142 builders. || REOPENED 2026-08-20T09:00Z BY ITS OWN RESIDUAL, with evidence. This row was triaged down to a single dangerous table on the reasoning that the dangerous subset is tables carrying a RECENCY EXPECTATION, and the test for that was whether scripts/freshness_gate.py declares a FeedSpec: 28 of 29 FeedSpecs point at tables with a repo-resident builder, exactly one does not, and that one was already filed. The row then named its own residual in as many words - the freshness gate covers only 29 tables, so a table could need recency WITHOUT a FeedSpec and be invisible to the test. Two instances of exactly that turned up today, both blocking queued work. ONE: the whole family - v1, v2, v3 and the action-class profile - stops at season 2025, was built 2026-05-24, and NOTHING IN THE REPO WRITES IT. Grepped every insert against those names: only readers exist. It blocks bk-action-type-value-decomposition-on-wnba-vaep, whose remaining work was described as a surface wire. TWO: stops at 2025-09-11 and its successor's own docstring records that its generating code is not in the repo. It sent me looking for a rebuild that cannot be run. NEITHER HAS A FEEDSPEC, so neither was visible to the triage test, and both are off-repo artifacts frozen mid-season. The exposure is no longer theoretical and the follow-on the row already recommended - widening freshness coverage beyond the 29 declared feeds - is the thing that would have caught both.",
       "state": "",
-      "row_state": "open",
+      "row_state": "gated",
       "row_closed": false,
       "pm_authored": false,
       "event_utc": null,
@@ -5717,12 +5727,12 @@
       "why": "CEO ask via Director section C ranked behind the news-layer build. Player card supplemental tab showing every info injection that mentions her - coach quotes lineup news injury notes minutes chatter ...",
       "priority": 3,
       "seat": "viz",
-      "status": "needs-verify - per-player signal slices and timeline UI landed",
+      "status": "needs-verify",
       "state": "",
       "row_state": "needs-verify",
       "row_closed": false,
       "pm_authored": false,
-      "event_utc": null,
+      "event_utc": "2026-08-21T07:25:56Z",
       "impact": "",
       "rank_priority": 3.0,
       "title": "Every mention of a player, on her card, filterable",
@@ -19483,9 +19493,9 @@
     "target": 40,
     "count": 381,
     "ok": true,
-    "label": "381 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue updated just now.)",
-    "as_of_utc": "2026-08-21T07:22:07Z",
-    "age_secs": 38,
+    "label": "381 things are lined up in the work queue — a healthy runway (we keep at least 40 ready). (Queue last updated 8m ago.)",
+    "as_of_utc": "2026-08-21T07:25:56Z",
+    "age_secs": 538,
     "stale": false
    },
    "source": "dispatch queue",
@@ -20972,66 +20982,66 @@
  "scout_heartbeat": {
   "alive": false,
   "last_poll_utc": "2026-08-17T22:58:52Z",
-  "age_s": 289381,
+  "age_s": 290102,
   "cycles": 17,
   "known": true,
-  "label": "scout: no poll for 289381s",
+  "label": "scout: no poll for 290102s",
   "anchor": "heartbeat.json+scout.log"
  },
  "scout_activity": [
   {
-   "time": "3:15am",
-   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 38027s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 36037s newer than live (repo 2026-08-21T06:42:34+00:00 vs live 2026-08-20T20:41:57+00:00) | DATA-SURFACE-LAG: live availability.json is 35806s (9.9h) behind repo (repo 2026-08-21T06:46: vs live 2026-08-20T20:49:) | GAMES-DATE: live slate date '2026-08-20' != local today '2026-08-21' -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 38027s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: r"
+   "time": "3:24am",
+   "text": "chain-health: CHAIN DOWN (#297): broken=drive,board paged=True",
+   "detail": "chain-health: CHAIN DOWN (#297): broken=drive,board paged=True"
   },
   {
-   "time": "3:16am",
+   "time": "3:24am",
+   "text": "slate-refresh: STALE (#57): season impact feed is 105h old paged=True",
+   "detail": "slate-refresh: STALE (#57): season impact feed is 105h old paged=True"
+  },
+  {
+   "time": "3:26am",
+   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 38635s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 38388s newer than live (repo 2026-08-21T07:21:45+00:00 vs live 2026-08-20T20:41:57+00:00) | DATA-SURFACE-LAG: live availability.json is 38172s (10.6h) behind repo (repo 2026-08-21T07:25: vs live 2026-08-20T20:49:) | GAMES-DATE: live slate date '2026-08-20' != local today '2026-08-21' -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 38635s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: r"
+  },
+  {
+   "time": "3:26am",
    "text": "board-selfpolice: auto-repair: deferred public commit push rc=1 :: hint: See the 'Note about fast-forwards' in 'git push --help' for details.",
    "detail": "board-selfpolice: auto-repair: deferred public commit push rc=1 :: hint: See the 'Note about fast-forwards' in 'git push --help' for details"
   },
   {
-   "time": "3:17am",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 38116s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 36037s newer than live (repo 2026-08-21T06:42:34+00:00 vs live 2026-08-20T20:41:57+00:00) | DATA-SURFACE-LAG: live availability.json is 35806s (9.9h) behind repo (repo 2026-08-21T06:46: vs live 2026-08-20T20:49:) | GAMES-DATE: live slate date '2026-08-20' != local today '2026-08-21'",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 38116s old (live 2026-08-20T20:41:57+00:00; a"
+   "time": "3:28am",
+   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 38762s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 38388s newer than live (repo 2026-08-21T07:21:45+00:00 vs live 2026-08-20T20:41:57+00:00) | DATA-SURFACE-LAG: live availability.json is 38172s (10.6h) behind repo (repo 2026-08-21T07:25: vs live 2026-08-20T20:49:) | GAMES-DATE: live slate date '2026-08-20' != local today '2026-08-21'",
+   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 38762s old (live 2026-08-20T20:41:57+00:00; a"
   },
   {
-   "time": "3:17am",
-   "text": "board-selfpolice: board-stale alert answered within the hold window and the condition is unchanged -- flag and log only, no duplicate inbox item",
-   "detail": "board-selfpolice: board-stale alert answered within the hold window and the condition is unchanged -- flag and log only, no duplicate inbox "
+   "time": "3:30am",
+   "text": "publish-health: PUBLIC BOARD STALE (#81): staleness=38883s threshold=900s live=2026-08-20T20:41:57+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 38388s newer than live",
+   "detail": "publish-health: PUBLIC BOARD STALE (#81): staleness=38883s threshold=900s live=2026-08-20T20:41:57+00:00 | deploy stuck (guard/push failure)"
   },
   {
-   "time": "3:18am",
-   "text": "publish-health: PUBLIC BOARD STALE (#79): staleness=38189s threshold=900s live=2026-08-20T20:41:57+00:00 | deploy stuck (guard/push failure): the board is being built fresh locally but is not reaching the public site (local build is 36037s newer than live",
-   "detail": "publish-health: PUBLIC BOARD STALE (#79): staleness=38189s threshold=900s live=2026-08-20T20:41:57+00:00 | deploy stuck (guard/push failure)"
+   "time": "3:31am",
+   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 38935s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 38388s newer than live (repo 2026-08-21T07:21:45+00:00 vs live 2026-08-20T20:41:57+00:00) | DATA-SURFACE-LAG: live availability.json is 38172s (10.6h) behind repo (repo 2026-08-21T07:25: vs live 2026-08-20T20:49:) | GAMES-DATE: live slate date '2026-08-20' != local today '2026-08-21' -> auto-repair",
+   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 38935s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: r"
   },
   {
-   "time": "3:18am",
-   "text": "REAP-STRAGGLER: released session pid 7724 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confirmed dead); taskkill rc=0 SUCCESS: The process with PID 11572 (child process of PID 7724) has been termina [Part 2 hard-exit backstop]",
-   "detail": "REAP-STRAGGLER: released session_pid 7724 (session=cc-old) lingered 120s past its release marker and is not the live owner - reaped (confirm"
-  },
-  {
-   "time": "3:20am",
-   "text": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 38323s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 36037s newer than live (repo 2026-08-21T06:42:34+00:00 vs live 2026-08-20T20:41:57+00:00) | DATA-SURFACE-LAG: live availability.json is 35806s (9.9h) behind repo (repo 2026-08-21T06:46: vs live 2026-08-20T20:49:) | GAMES-DATE: live slate date '2026-08-20' != local today '2026-08-21' -> auto-repair",
-   "detail": "board-selfpolice: MISMATCH: LIVE-FRESHNESS: public board is 38323s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: r"
-  },
-  {
-   "time": "3:20am",
+   "time": "3:31am",
    "text": "board-selfpolice: auto-repair: deferred public commit push rc=1 :: hint: See the 'Note about fast-forwards' in 'git push --help' for details.",
    "detail": "board-selfpolice: auto-repair: deferred public commit push rc=1 :: hint: See the 'Note about fast-forwards' in 'git push --help' for details"
   },
   {
-   "time": "3:21am",
-   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 38396s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 36037s newer than live (repo 2026-08-21T06:42:34+00:00 vs live 2026-08-20T20:41:57+00:00) | DATA-SURFACE-LAG: live availability.json is 35806s (9.9h) behind repo (repo 2026-08-21T06:46: vs live 2026-08-20T20:49:) | GAMES-DATE: live slate date '2026-08-20' != local today '2026-08-21'",
-   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 38396s old (live 2026-08-20T20:41:57+00:00; a"
+   "time": "3:32am",
+   "text": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 39026s old (live 2026-08-20T20:41:57+00:00; active ceiling 900s) | DEPLOY-LAG: repo board is 38388s newer than live (repo 2026-08-21T07:21:45+00:00 vs live 2026-08-20T20:41:57+00:00) | DATA-SURFACE-LAG: live availability.json is 38172s (10.6h) behind repo (repo 2026-08-21T07:25: vs live 2026-08-20T20:49:) | GAMES-DATE: live slate date '2026-08-20' != local today '2026-08-21'",
+   "detail": "board-selfpolice: BOARD STALE (coordinator-flag, NO CEO ping): LIVE-FRESHNESS: public board is 39026s old (live 2026-08-20T20:41:57+00:00; a"
   },
   {
-   "time": "3:21am",
-   "text": "board-selfpolice: board-stale alert answered within the hold window and the condition is unchanged -- flag and log only, no duplicate inbox item",
-   "detail": "board-selfpolice: board-stale alert answered within the hold window and the condition is unchanged -- flag and log only, no duplicate inbox "
+   "time": "3:32am",
+   "text": "board-selfpolice: board-stale alert already open (BOARD STALE ALERT .md) -- refreshing in place (restated 2 times) rather than filing a duplicate",
+   "detail": "board-selfpolice: board-stale alert already open (BOARD_STALE_ALERT_.md) -- refreshing in place (restated 2 times) rather than filing a dupl"
   }
  ],
  "helpers": {
-  "as_of": "2026-08-21T07:21:22.493375+00:00",
+  "as_of": "2026-08-21T07:33:35Z",
   "stale": false,
   "status": "Helper processes and the work queue are reporting in.",
   "agents": [
@@ -21048,8 +21058,8 @@
     "does": "counts running jobs, refills empty lanes",
     "active": true,
     "stale": false,
-    "age_label": "31s",
-    "state_text": "on · seen 31s ago"
+    "age_label": "30s",
+    "state_text": "on · seen 30s ago"
    },
    {
     "name": "Status-page baker",
@@ -21072,23 +21082,23 @@
     "does": "reads new instructions the instant they land",
     "active": true,
     "stale": false,
-    "age_label": "7m",
-    "state_text": "on · seen 7m ago"
+    "age_label": "9m",
+    "state_text": "on · seen 9m ago"
    },
    {
     "name": "Q board",
     "does": "keeps your live queue board current",
     "active": true,
     "stale": false,
-    "age_label": "3m",
-    "state_text": "on · seen 3m ago"
+    "age_label": "19s",
+    "state_text": "on · seen 19s ago"
    }
   ],
   "width": {
-   "running": 2,
+   "running": 3,
    "target": 2,
    "empty": 0,
-   "line": "2 of 2 jobs running.",
+   "line": "3 of 2 jobs running.",
    "reason": "Enough jobs are running for the work waiting.",
    "stale": false
   },
@@ -21315,9 +21325,9 @@
  "coordinator_heartbeat": {
   "known": true,
   "alive": true,
-  "last_heartbeat_utc": "2026-08-21T07:21:35Z",
-  "session_age_secs": 27447,
-  "last_progress_age_secs": 18,
+  "last_heartbeat_utc": "2026-08-21T07:33:49Z",
+  "session_age_secs": 28168,
+  "last_progress_age_secs": 5,
   "last_spawn_attempt": "2026-08-20T22:51:34Z",
   "blocked_reason": "",
   "state": "ALIVE"
@@ -21347,45 +21357,45 @@
  "section_sources": {
   "running_now": {
    "source": "live lane ledger",
-   "as_of": "2026-08-21T07:10:25Z",
+   "as_of": "2026-08-21T07:23:44Z",
    "stale": false,
-   "revalidated": "2026-08-21T07:21:45+00:00",
+   "revalidated": "2026-08-21T07:33:44+00:00",
    "stale_reason": "",
-   "age_label": "11m",
+   "age_label": "10m",
    "stale_after": 1200
   },
   "done_today": {
    "source": "work record",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-21T07:21:45+00:00",
+   "revalidated": "2026-08-21T07:33:44+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 43200
   },
   "today_games": {
    "source": "tonight's slate",
-   "as_of": "2026-08-21T06:42:34+00:00",
+   "as_of": "2026-08-21T07:21:45+00:00",
    "stale": false,
-   "revalidated": "2026-08-21T07:21:45+00:00",
+   "revalidated": "2026-08-21T07:33:44+00:00",
    "stale_reason": "",
-   "age_label": "39m",
+   "age_label": "11m",
    "stale_after": 3600
   },
   "needs_anthony": {
    "source": "decision brief",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-21T07:21:45+00:00",
+   "revalidated": "2026-08-21T07:33:44+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
   },
   "upcoming": {
    "source": "dispatch queue",
-   "as_of": "2026-08-21T07:22:07Z",
+   "as_of": "2026-08-21T07:34:49Z",
    "stale": true,
-   "revalidated": "2026-08-21T07:21:45+00:00",
+   "revalidated": "2026-08-21T07:33:44+00:00",
    "stale_reason": "A newer update is being re-checked now.",
    "age_label": "0s",
    "stale_after": 3600
@@ -21394,7 +21404,7 @@
    "source": "daily review",
    "as_of": null,
    "stale": true,
-   "revalidated": "2026-08-21T07:21:45+00:00",
+   "revalidated": "2026-08-21T07:33:44+00:00",
    "stale_reason": "We cannot tell how current this is — no source time was recorded.",
    "age_label": null,
    "stale_after": 57600
@@ -21403,16 +21413,16 @@
    "source": "director inbox",
    "as_of": "2026-08-21T07:01:12Z",
    "stale": false,
-   "revalidated": "2026-08-21T07:21:45+00:00",
+   "revalidated": "2026-08-21T07:33:44+00:00",
    "stale_reason": "",
-   "age_label": "20m",
+   "age_label": "32m",
    "stale_after": 28800
   },
   "agent_updates": {
    "source": "the team's updates feed",
    "as_of": "2026-08-17T14:54:47Z",
    "stale": true,
-   "revalidated": "2026-08-21T07:21:45+00:00",
+   "revalidated": "2026-08-21T07:33:44+00:00",
    "stale_reason": "No new team updates in 88h — nothing was shipped in that window. The feed itself is current.",
    "age_label": "88h",
    "stale_after": 172800,
@@ -21420,22 +21430,22 @@
   },
   "reports": {
    "source": "tonight's slate",
-   "as_of": "2026-08-21T06:42:34+00:00",
+   "as_of": "2026-08-21T07:21:45+00:00",
    "stale": false,
-   "revalidated": "2026-08-21T07:21:45+00:00",
+   "revalidated": "2026-08-21T07:33:44+00:00",
    "stale_reason": "",
-   "age_label": "39m",
+   "age_label": "12m",
    "stale_after": 86400
   },
   "helpers": {
    "source": "the live ops readout",
-   "as_of": "2026-08-21T07:21:22.493375+00:00",
+   "as_of": "2026-08-21T07:33:35Z",
    "stale": false,
-   "revalidated": "2026-08-21T07:21:45+00:00",
+   "revalidated": "2026-08-21T07:33:44+00:00",
    "stale_reason": "",
-   "age_label": "31s",
+   "age_label": "19s",
    "stale_after": 900
   }
  },
- "generated_et": "Aug 21, 3:21am ET"
+ "generated_et": "Aug 21, 3:33am ET"
 }
