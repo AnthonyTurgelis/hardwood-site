@@ -204,10 +204,33 @@
     out=out||[];if(!object||typeof object!=="object"||depth>2)return out;
     Object.keys(object).forEach(function(key){var value=object[key],next=path?path+" · "+human(key):human(key);if(Array.isArray(value)&&value.length>=2&&value.every(function(row){return row&&typeof row==="object"&&!Array.isArray(row);}))out.push({label:next,rows:value});else if(value&&typeof value==="object"&&!Array.isArray(value))collectArrays(value,next,depth+1,out);});return out;
   }
+  // A DENSE INSPECTOR THAT SILENTLY DROPS COLUMNS IS WORSE THAN A WIDE ONE (2026-08-20).
+  // The cap here was 7 and the tables it renders are built from whatever the source file
+  // happens to carry, so it truncated by position with no way for a reader to know. On the
+  // deserved-wins source that cost exactly the two columns the page exists to show -
+  // opp_quality_faced and sched_vs_league, fields 8 and 9 of 9. The wrapper is overflow:auto,
+  // so width was never the constraint it was protecting. It still caps, because an arbitrary
+  // JSON can be arbitrarily wide - but it now says so when it bites.
+  //
+  // Rendering only candidates[0] was the same defect in the other axis: score is rows x cols,
+  // so a small companion table can never win against the main one and simply never appeared.
+  // The player competition lists lost 105 to 18 and were invisible for that reason alone.
+  // The caps are MEASURED, not guessed: across all 17 deepdive_*.json sources on 2026-08-20
+  // the widest table carries 12 columns and the richest source yields 5 tables, so 14 and 6
+  // clear every source today with headroom. Both still disclose when they bite, because the
+  // failure being fixed here is silent truncation, not truncation.
+  var GENERIC_MAX_COLS=14,GENERIC_MAX_TABLES=6;
+  function genericTableBlock(candidate){
+    var hidden=(candidate.allKeys||candidate.keys).length-candidate.keys.length;
+    var note=hidden>0?'<small class="hw-source-note">'+esc(hidden+' more column'+(hidden===1?'':'s')+' in the source file')+'</small>':"";
+    return '<div class="hw-source-block"><h4>'+esc(candidate.label)+'</h4>'+note+'<div class="hw-source-table-wrap"><table class="hw-source-table"><thead><tr>'+candidate.keys.map(function(key){return '<th>'+esc(human(key))+'</th>';}).join("")+'</tr></thead><tbody>'+candidate.rows.slice(0,15).map(function(row){return '<tr>'+candidate.keys.map(function(key){return '<td>'+esc(has(row[key])?valueFormat(key,row[key]):'—')+'</td>';}).join("")+'</tr>';}).join("")+'</tbody></table></div></div>';
+  }
   function genericTable(payload){
-    var candidates=collectArrays(payload,"",0,[]).filter(function(candidate){return !/history|caveat|source/i.test(candidate.label);}).map(function(candidate){var keys={};candidate.rows.slice(0,20).forEach(function(row){Object.keys(row).forEach(function(key){var value=row[key];if(value===null||typeof value==="string"||typeof value==="number"||typeof value==="boolean")keys[key]=true;});});candidate.keys=Object.keys(keys).slice(0,7);candidate.score=Math.min(candidate.rows.length,20)*candidate.keys.length;return candidate;}).filter(function(candidate){return candidate.keys.length>=2;}).sort(function(a,b){return b.score-a.score;});
-    var best=candidates[0];if(!best)return "";
-    return '<div class="hw-source-block"><h4>'+esc(best.label)+'</h4><div class="hw-source-table-wrap"><table class="hw-source-table"><thead><tr>'+best.keys.map(function(key){return '<th>'+esc(human(key))+'</th>';}).join("")+'</tr></thead><tbody>'+best.rows.slice(0,15).map(function(row){return '<tr>'+best.keys.map(function(key){return '<td>'+esc(has(row[key])?valueFormat(key,row[key]):'—')+'</td>';}).join("")+'</tr>';}).join("")+'</tbody></table></div></div>';
+    var candidates=collectArrays(payload,"",0,[]).filter(function(candidate){return !/history|caveat|source/i.test(candidate.label);}).map(function(candidate){var keys={};candidate.rows.slice(0,20).forEach(function(row){Object.keys(row).forEach(function(key){var value=row[key];if(value===null||typeof value==="string"||typeof value==="number"||typeof value==="boolean")keys[key]=true;});});candidate.allKeys=Object.keys(keys);candidate.keys=candidate.allKeys.slice(0,GENERIC_MAX_COLS);candidate.score=Math.min(candidate.rows.length,20)*candidate.keys.length;return candidate;}).filter(function(candidate){return candidate.keys.length>=2;}).sort(function(a,b){return b.score-a.score;});
+    if(!candidates.length)return "";
+    var extra=candidates.length-GENERIC_MAX_TABLES;
+    var more=extra>0?'<div class="hw-source-block"><small class="hw-source-note">'+esc(extra+' further table'+(extra===1?'':'s')+' in the source file')+'</small></div>':"";
+    return candidates.slice(0,GENERIC_MAX_TABLES).map(genericTableBlock).join("")+more;
   }
   function provenanceBlock(payload){
     var provenance=payload&&payload.provenance;if(!provenance||typeof provenance!=="object")return "";
