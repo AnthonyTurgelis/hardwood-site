@@ -108,9 +108,9 @@
   #field .work{margin-top:3px}
   #field details{margin-left:0}
 </style>
-<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-badge{font-size:.7em;letter-spacing:.05em;vertical-align:super}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center}</style><!--/hw-chrome-style--></head>
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
 <body class="hw-product" data-page="opqt" data-section="international" data-product="dense-research">
-<header class="hw-chrome"><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-brand" href="index.html">The Hardwood</a><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html" aria-current="page">OPQT 2026<span class="hw-badge">LIVE</span></a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
+<header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html" aria-current="page">OPQT 2026</a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
 <header>
   <div class="kicker">The Federation Desk · The Hardwood</div>
   <h1>Olympic Pre-Qualifying Tournament — Guadalajara 2026</h1>
@@ -580,6 +580,32 @@ function playerRow(p){
 // One player's detail, rendered from the feed payload alone — identity, roster state, the OPQT
 // line impact-first, then each finished box. The same no-imputation rule as the table: an absent
 // value is a dash with its why, never a number and never the word null.
+// A career line renders only the numbers a source actually published. A null stays absent rather
+// than rendering 0.0, which on a reader page is indistinguishable from a measurement of nothing.
+function statLine(r){
+  if (!r || typeof r !== "object") return "";
+  const bits = [];
+  const num = (v, dp) => (v === null || v === undefined || v === "") ? null : Number(v).toFixed(dp);
+  const gp = num(r.gp, 0); if (gp) bits.push(gp + " GP");
+  const trio = [num(r.ppg, 1), num(r.rpg, 1), num(r.apg, 1)];
+  if (trio.every(Boolean)) bits.push(trio.join(" / ") + " per game");
+  const per36 = [num(r.pts36, 1), num(r.reb36, 1), num(r.ast36, 1)];
+  if (per36.every(Boolean)) bits.push(per36.join(" / ") + " per 36");
+  const per40 = [num(r.pts40, 1), num(r.reb40, 1), num(r.ast40, 1)];
+  if (per40.every(Boolean)) bits.push(per40.join(" / ") + " per 40");
+  return bits.length ? bits.join(" · ") : "no published line";
+}
+
+// One competition group. An empty group renders NOTHING rather than an empty heading, which would
+// read as "we looked and she has no career here".
+function careerGroup(title, rows){
+  const clean = (rows || []).filter(x => x && String(x).trim() && !/^\s*—/.test(String(x)));
+  if (!clean.length) return "";
+  return `<div class="work"><b>${title}</b>` +
+    clean.map(r => `<div>${r}</div>`).join("") + `</div>`;
+}
+
+
 function playerInspectorHTML(p){
   const s = tourStats(p);
   const iv = (v, fmt, why) => v === null
@@ -589,11 +615,50 @@ function playerInspectorHTML(p){
     : "minutes not published for a finished game — a per-40 has no base";
   const bio = [p.pos, p.height_ftin, p.club ? `${p.club}${p.league ? " (" + p.league + ")" : ""}` : null]
     .filter(Boolean).join(" · ");
-  const rating = p.rating_is_measured
-    ? `<div>rating <b>${p.rating.toFixed(4)}</b> <span class="hint">${p.rating_basis}</span></div>`
-    : `<div><span class="empty" title="${p.rating_basis}">no measured rating</span></div>`;
+  // HOW GOOD, IN THE READER'S LANGUAGE. This printed p.rating.toFixed(4) -- literally -0.0047 on
+  // a reader page, which is the banned raw-float class and tells nobody anything. The board shows
+  // one decimal, so this does too. AND a rating that rounds to zero is not a measurement worth
+  // printing: the on-court estimate is shrunk toward league average by its own sample, so a thin
+  // basis collapses to signed zero. In that case the honest render is the provenance chip ALONE,
+  // which says where the number came from instead of implying a precision we do not have.
+  const dossier = (p.dossier_row || null);
+  const tier = dossier ? (dossier.provenance_tier || null) : null;
+  const tierChip = t2 => {
+    if (!t2) return "";
+    const words = {
+      "blend_exact": "measured WNBA record",
+      "tier3_tier_mean": "group prior — not a measurement of this player",
+      "translation": "translation estimate",
+    };
+    return `<span class="chip" title="${dossier && dossier.provenance_note ? dossier.provenance_note : "how this number was arrived at"}">${words[t2] || String(t2).replace(/_/g, " ")}</span>`;
+  };
+  const shown = (p.rating_is_measured && p.rating !== null && p.rating !== undefined)
+    ? Number(p.rating).toFixed(1) : null;
+  const meaningful = shown !== null && Math.abs(Number(shown)) >= 0.05;
+  const rating = meaningful
+    ? `<div>impact <b>${sgn1(Number(p.rating))}</b> ${tierChip(tier)} <span class="hint">${p.rating_basis}</span></div>`
+    : `<div>${tierChip(tier) || `<span class="empty" title="${p.rating_basis}">no measured rating</span>`}
+       <span class="hint">${p.rating_is_measured
+          ? "her on-court sample is too thin to separate her from league average yet, so no number is printed"
+          : p.rating_basis}</span></div>`;
+
+  // THE FULL CAREER, NOT THIS EVENT. `work` read only this tournament's boxes plus prior-qualifier
+  // boxes -- three games at most -- while the dossier beside it holds every prior tournament, the
+  // club seasons and the college lines. Grouped by competition, newest first, dense.
+  const careerBlocks = dossier ? [
+    careerGroup("FIBA tournaments", (dossier.fiba_tournament_history || []).map(r =>
+      `${r.season || r.year || ""} ${r.tournament_name || r.competition || ""} — ${statLine(r)}`)),
+    careerGroup("Club seasons", (dossier.intl_club_leagues || []).map(r =>
+      typeof r === "string" ? r : `${r.season || ""} ${r.comp || r.league || ""} ${r.team || ""} — ${statLine(r)}`)),
+    careerGroup("College", (dossier.ncaa_career_lines || []).map(r =>
+      typeof r === "string" ? r : `${r.seasons || r.season || ""} ${r.team || r.ncaa_team || ""} — ${statLine(r)}`)),
+  ].join("") : "";
+
   const work = (p.boxes || []).concat(p.prior_boxes || []).map(boxLine).join("")
-    + (p.form_line ? `<div class="work">Form line — ${p.form_line}</div>` : "");
+    + careerBlocks
+    + (p.form_line ? `<div class="work">Form line — ${p.form_line}</div>` : "")
+    + (dossier && dossier.boardLink
+        ? `<div class="work"><a href="${dossier.boardLink}">Her WNBA player page</a></div>` : "");
   return `<div class="card"><div class="pad">
       <b>${p.name}</b> <span class="hint">${p.team}${bio ? " · " + bio : ""}</span>
     </div>
@@ -855,13 +920,33 @@ fetch("./opqt.json?v=" + Date.now())
         .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }),
       fetch("./fiba_dossier.json?v=" + Date.now())
         .then(r => r.ok ? r.json() : null).catch(() => null),
+      // THIRD, AND OPTIONAL: the WNBA board, read ONLY to decide whether a cross-link has a real
+      // target. Measured 2026-08-22: not one of the 94 certified players is on the current WNBA
+      // board, so linking every "measured" player to a player page would have produced 94 links
+      // to nothing. A link is drawn only where the name actually resolves.
+      fetch("./players.json?v=" + Date.now())
+        .then(r => r.ok ? r.json() : null).catch(() => null),
     ])
-      .then(([p, dossier]) => {
+      .then(([p, dossier, board]) => {
+        const wnbaByName = {};
+        ((board && board.ratings && board.ratings.players) || []).forEach(w => {
+          if (w && w.name) wnbaByName[String(w.name).toLowerCase()] = w;
+        });
         if (dossier && dossier.players) {
           const byName = {};
-          dossier.players.forEach(d => { if (d && d.player_name) byName[String(d.player_name).toLowerCase()] = d; });
+          dossier.players.forEach(d => {
+            if (!d || !d.player_name) return;
+            const key = String(d.player_name).toLowerCase();
+            const w = wnbaByName[key];
+            if (w && w.id) d.boardLink = "player.html?player_id=" + encodeURIComponent(w.id);
+            byName[key] = d;
+          });
           p.dossier = byName;
           p.dossier_counts = dossier.summary_counts || null;
+          // Bind the row onto each roster player so the inspector does not have to look it up.
+          (p.teams || []).forEach(tm => (tm.players || []).forEach(pl => {
+            if (pl && pl.name) pl.dossier_row = byName[String(pl.name).toLowerCase()] || null;
+          }));
         }
         document.getElementById("field").innerHTML = fieldBlock(p);
         wireSort(document.getElementById("field"));
@@ -878,6 +963,6 @@ fetch("./opqt.json?v=" + Date.now())
       `<div class="card"><div class="pad err">Projection unavailable — ${e && e.message ? e.message : "read failed"}.</div></div>`;
   });
 </script>
-<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot-->  <script src="hw-product.js"></script>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></div><div>Projections published pre-tip, graded publicly.</div></footer><!--/hw-foot-->  <script src="hw-product.js"></script>
 </body>
 </html>
