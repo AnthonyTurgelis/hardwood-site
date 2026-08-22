@@ -116,7 +116,7 @@
         </aside>
       </section>
 
-      <div class="hw-data-note">The forecast and ranges come from the dated game artifact (<span id="gr-artifact-link"></span>, graded against <a href="finals.json">finals.json</a>). A final score is joined afterward only for grading; this page does not recompute or rewrite the pre-tip call.</div>
+      <div class="hw-data-note">The forecast and ranges come from the dated game file (<span id="gr-artifact-link"></span>, graded against <a href="finals.json">finals.json</a>). A final score is joined afterward only for grading; this page does not recompute or rewrite the pre-tip call.</div>
     </article>
   </main>
   <script src="hw-product.js"></script>
@@ -133,17 +133,17 @@
       var rows=(list||[]).map(function(p){
         return '<li><strong>'+esc(p.name||"Unnamed player")+'</strong> — '+esc(p.status||"status not published")+' · '+(p.return?'expected back '+esc(p.return):'return not published')+'</li>';
       }).join("");
-      return '<article><strong>'+esc(label)+'</strong>'+(rows?'<ul class="hw-report-availability">'+rows+'</ul>':'<p>No listed absences in the published artifact.</p>')+'</article>';
+      return '<article><strong>'+esc(label)+'</strong>'+(rows?'<ul class="hw-report-availability">'+rows+'</ul>':'<p>No listed absences in the published report.</p>')+'</article>';
     }
     function availabilityHTML(game){
       var block=game&&game.availability;
       if(!block||(!Array.isArray(block.home)&&!Array.isArray(block.away)))
-        return '<div class="hw-empty compact">The artifact carries no availability block for this game — absence of the layer is stated, never papered over.</div>';
+        return '<div class="hw-empty compact">The game file carries no availability block for this game — absence of the data is stated, never papered over.</div>';
       return sideHTML(game.away_full||game.away||"Away",block.away)+sideHTML(game.home_full||game.home||"Home",block.home);
     }
     function paceHTML(game){
       var pace=game&&game.pace;
-      if(!pace)return '<div class="hw-empty compact">Pace and possession context is not computed in this game artifact — said out loud, never invented.</div>';
+      if(!pace)return '<div class="hw-empty compact">Pace and possession context is not computed in this report — said out loud, never invented.</div>';
       return '<article><strong>'+esc(pace.possessions!=null?pace.possessions:"—")+' possessions</strong><p>'+esc(pace.note||"")+'</p></article>';
     }
     function stretchHTML(game){
