@@ -194,12 +194,55 @@
   function callInputsLine(game){
     var line=callInputsHTML(game);
     return line?'<li><b>Call = its inputs</b><span>'+line+'</span></li>':"";
+  // RENDER-TIME RECONCILIATION - the same refusal game.html makes, on the surface that carries
+  // the most traffic. THE PRODUCT LAW: every call renders with the components that build it, and
+  // those components must SUM EXACTLY to the call. The publish boundary already blocks a bake
+  // whose annotations do not reconcile (game_annotation.assert_publishable, raised from
+  // build_site.py and gameday_report.py and caught nowhere). This is the browser-side half, and
+  // it exists because a payload can be truncated, edited in transit, or served from a stale cache
+  // long after the bake proved it added up.
+  //
+  // OMIT, NEVER INVENT, AND NEVER THROW. A chain that does not reconcile is DROPPED, and the card
+  // falls back to naming the model - the same fallback an absent chain has always taken. The
+  // reader then sees the call without its breakdown: never an error, never a blank card, never a
+  // page taken down over a data defect. The LOUD half of the law lives at the publish boundary on
+  // purpose; a second blocker in the browser would trade a missing breakdown for a dead board,
+  // which is strictly the worse failure.
+  //
+  // Deliberately NOT ported from game.html: its +/-4.38 home-court band clamp. That is a refusal
+  // about DRAWING a waterfall bar whose step is implausibly large, not about the arithmetic; this
+  // surface renders labelled text rows, and applying it here would omit chains that reconcile
+  // perfectly.
+  var CHAIN_TOL=1e-6,CHAIN_PUBLISHED_TOL=0.05,CHAIN_MAX_STEPS=6;
+  function whyChain(why){
+    var steps=why&&Array.isArray(why.steps)?why.steps:[];
+    // Base + at least one adjustment + total. Positional, not label-matched: the baker owns the
+    // wording and has to stay free to change it without silently emptying this block. The ceiling
+    // is here so a runaway chain cannot render a partial set of rows that no longer sums.
+    if(steps.length<3||steps.length>CHAIN_MAX_STEPS)return null;
+    var values=[],index,value;
+    for(index=0;index<steps.length;index++){
+      value=number(steps[index].value);
+      if(value===null)return null;                    // an unparseable leg is not a chain
+      values.push(value);
+    }
+    var total=values[values.length-1],sum=0;
+    for(index=0;index<values.length-1;index++)sum+=values[index];
+    if(Math.abs(sum-total)>CHAIN_TOL)return null;     // the parts do not add up -> render nothing
+    var published=number(why.published);
+    if(published===null)return null;
+    // The chain total and the published margin are the same quantity at two precisions, so they
+    // must agree to within half a display step. A tolerance on the difference, deliberately not a
+    // re-rounding comparison: the baker rounds half-away-from-zero and JS rounds half-toward
+    // +Infinity, so an exact .x5 total would refuse a perfectly valid chain.
+    if(Math.abs(total-published)>CHAIN_PUBLISHED_TOL+CHAIN_TOL)return null;
+    return steps;
   }
 
   function whyLine(game){
-    var steps=game.why&&Array.isArray(game.why.steps)?game.why.steps:[];
-    if(!steps.length)return '<li><b>Model</b><span>'+esc(game.model)+'</span></li>';
-    return steps.slice(0,5).map(function(step){return '<li><b>'+esc(step.label||"Component")+'</b><span>'+esc(step.value||"")+(step.detail?' · '+esc(step.detail):'')+'</span></li>';}).join("");
+    var steps=whyChain(game.why);
+    if(!steps)return '<li><b>Model</b><span>'+esc(game.model)+'</span></li>';
+    return steps.map(function(step){return '<li><b>'+esc(step.label||"Component")+'</b><span>'+esc(step.value||"")+(step.detail?' · '+esc(step.detail):'')+'</span></li>';}).join("");
   }
 
   function movementLines(game){
@@ -373,6 +416,6 @@
     });
   }
 
-  window.HardwoodGames={normalizeGames:normalizeGames,archiveResults:archiveResults,rangeWidth:rangeWidth};
+  window.HardwoodGames={normalizeGames:normalizeGames,archiveResults:archiveResults,rangeWidth:rangeWidth,whyChain:whyChain,whyLine:whyLine};
   boot();
 })();

@@ -636,7 +636,15 @@
       renderWatch();
       renderBoard();
       renderViz();
-      if (state.teams.length) selectTeam(state.teams.slice().sort((a, b) => a.rank - b.rank)[0].team, false);
+      if (state.teams.length) {
+        const paramTeam = new URLSearchParams(location.search).get("team");
+        let initialTeam = null;
+        if (paramTeam) {
+          const match = state.teams.find(t => t.team.toLowerCase() === paramTeam.toLowerCase() || t.name.toLowerCase() === paramTeam.toLowerCase());
+          if (match) initialTeam = match.team;
+        }
+        selectTeam(initialTeam || state.teams.slice().sort((a, b) => a.rank - b.rank)[0].team, false);
+      }
     });
   }
 

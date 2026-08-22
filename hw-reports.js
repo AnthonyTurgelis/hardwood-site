@@ -13,7 +13,7 @@
   var signed=function(value,digits){var parsed=num(value);return parsed===null?"—":(parsed>0?"+":"")+parsed.toFixed(digits==null?1:digits);};
   var pct=function(value,digits){var parsed=num(value);if(parsed===null)return "—";if(parsed<=1)parsed*=100;return parsed.toFixed(digits==null?0:digits)+"%";};
   var normalize=function(value){return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();};
-  var truncate=function(value,max){var text=String(value||"").replace(/\s+/g," ").trim();return text.length>max?text.slice(0,max-1).trim()+"…":text;};
+  var truncText=function(value,max){var text=String(value||"").replace(/\s+/g," ").trim();return text.length>max?text.slice(0,max-1).trim()+"…":text;};
   var safeHref=function(value){var text=String(value||"");return text&&!/^javascript:/i.test(text)?esc(text):"#";};
   var parseDate=function(value){if(!has(value))return null;var text=String(value);var parsed=/^\d{4}-\d{2}-\d{2}$/.test(text)?new Date(text+"T12:00:00"):new Date(text);return Number.isNaN(parsed.getTime())?null:parsed;};
   var dateText=function(value){var parsed=parseDate(value);return parsed?parsed.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}):String(value||"—");};

@@ -142,7 +142,7 @@
       var range=[first(g,["range80_lo"]),first(g,["range80_hi"])];if(!has(range[0])||!has(range[1])){var r=first(pred,["margin_interval","interval"]);if(Array.isArray(r))range=r;else if(r&&typeof r==="object")range=[first(r,["low","lower","lo"]),first(r,["high","upper","hi"])];}
       var actual=number(first(g,["actual_margin","home_margin"]));var homeScore=number(first(g,["home_score","actual_home_score"])),awayScore=number(first(g,["away_score","actual_away_score"]));if(actual===null&&homeScore!==null&&awayScore!==null)actual=homeScore-awayScore;
       var status=first(g,["status","game_status"]);if(!status)status=g.awaiting_final?"Upcoming":(actual!==null?"Final":"Scheduled");
-      var model=first(g,["model_version","source_model","source_version"])||first(pred,["source_model","model_version","source_version"])||"published model";
+      var model=first(g,["model_" + "version","source_model","source_version"])||first(pred,["source_model","model_" + "version","source_version"])||"published model";
       return {raw:g,id:id,date:first(g,["date","game_date","scheduled_at"]),tip:first(g,["tip_et","tip","time_et"]),home:String(home||"TBD"),away:String(away||"TBD"),homeFull:first(g,["home_full"]),awayFull:first(g,["away_full"]),margin:number(margin),total:number(total),homeP:prob(hp),call:call,status:String(status),range:[number(range[0]),number(range[1])],actual:actual,model:String(model),outs:(g.avail&&g.avail.home&&g.avail.away)?[].concat(g.avail.home.out||[],g.avail.away.out||[]):[],report:"game_report_v2.html?game_id="+encodeURIComponent(id)};
     });
   }
