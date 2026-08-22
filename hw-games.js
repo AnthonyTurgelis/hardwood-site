@@ -121,6 +121,9 @@
       var homeSide=previewSides.home||{},awaySide=previewSides.away||{};
       var homeOut=(rawAvail.home&&rawAvail.home.out)||homeSide.out||[];
       var awayOut=(rawAvail.away&&rawAvail.away.out)||awaySide.out||[];
+      var homeStatuses=(rawAvail.home&&rawAvail.home.statuses)||[];
+      var awayStatuses=(rawAvail.away&&rawAvail.away.statuses)||[];
+      var availAsOf=(rawAvail.home&&rawAvail.home.as_of)||(rawAvail.away&&rawAvail.away.as_of)||"";
       var homeLimited=(rawAvail.home&&rawAvail.home.limited)||homeSide.limited||[];
       var awayLimited=(rawAvail.away&&rawAvail.away.limited)||awaySide.limited||[];
       var report=archive.reports[matchupKey(date,away,home)]||("game_report_v2.html?game_id="+encodeURIComponent(id));
@@ -131,6 +134,7 @@
         uncertainty:rangeWidth(range80),status:status,actualMargin:homeMargin,homeScore:homeScore,awayScore:awayScore,
         leverage:leverages[id]||null,move:raw.move||{},why:raw.why||{},callInputs:first(raw,["call_inputs"])||first(prediction,["call_inputs"])||null,tails:raw.tails||{},model:first(raw,["model_version","source_model","source_version"])||first(prediction,["source_model","model_version","source_version"])||"published model",
         homeOut:homeOut,awayOut:awayOut,homeLimited:homeLimited,awayLimited:awayLimited,
+        homeStatuses:homeStatuses,awayStatuses:awayStatuses,availAsOf:availAsOf,
         homePlayers:sortPlayers(homeSide.players||[]),awayPlayers:sortPlayers(awaySide.players||[]),report:report
       };
     });
@@ -166,7 +170,27 @@
     return visible.map(function(player){return '<div class="hw-rotation-row"><span>'+esc(first(player,["name","player_name"])||"Unknown")+'</span><span>'+esc(fixed(first(player,["min","minutes"]),1))+'</span><span>'+esc(fixed(first(player,["pts","points"]),1))+'</span></div>';}).join("");
   }
 
-  function availabilityLine(team,out,limited){
+  // THE READER'S WORD, NOT OURS. The payload was upgraded to carry a per-player `statuses` list --
+  // name, the status word, and a play percentage -- while this line still read the older `out` and
+  // `limited` arrays of bare names. So a reader could not tell questionable from probable, which is
+  // the exact distinction the product rank-2 row asks the card to show.
+  // The old shape stays as the fallback: an older cached payload must not blank the panel.
+  // WHEN IT WAS READ, on the surface itself. "Timestamped" was part of the ask, and a status with
+  // no read-time cannot be told apart from a stale one by anyone looking at it.
+  function availAsOfLine(game){
+    if(!game||!game.availAsOf)return "";
+    var d=new Date(game.availAsOf);
+    var when=isNaN(d.getTime())?String(game.availAsOf):d.toLocaleString();
+    return '<p class="hw-avail-asof">Injury and lineup status read '+esc(when)+'</p>';
+  }
+  function statusPct(s){var n=Number(s&&s.play_pct);return isFinite(n)?" ("+Math.round(n)+"% to play)":"";}
+  function availabilityLine(team,out,limited,statuses){
+    if(statuses&&statuses.length){
+      var parts=statuses.map(function(s){
+        return esc(String(s.name||""))+" — "+esc(String(s.status||"unstated"))+statusPct(s);
+      });
+      return '<li><b>'+esc(team)+'</b><span>'+parts.join(" · ")+'</span></li>';
+    }
     var text=[];if(out&&out.length)text.push("Out: "+out.join(", "));if(limited&&limited.length)text.push("Limited: "+limited.join(", "));return '<li><b>'+esc(team)+'</b><span>'+esc(text.join(" · ")||"No listed restrictions")+'</span></li>';
   }
 
@@ -194,6 +218,8 @@
   function callInputsLine(game){
     var line=callInputsHTML(game);
     return line?'<li><b>Call = its inputs</b><span>'+line+'</span></li>':"";
+  }
+
   // RENDER-TIME RECONCILIATION - the same refusal game.html makes, on the surface that carries
   // the most traffic. THE PRODUCT LAW: every call renders with the components that build it, and
   // those components must SUM EXACTLY to the call. The publish boundary already blocks a bake
@@ -273,7 +299,7 @@
         '<li><b>Close-game</b><span>'+esc(nail===null?"Not published":nail.toFixed(0)+"%")+'</span></li>'+
         '<li><b>Blowout</b><span>'+esc(blow===null?"Not published":blow.toFixed(0)+"%")+'</span></li>'+
       '</ul></div></section>'+
-      '<section class="hw-game-detail-panel"><h3>Availability and projected rotation</h3><div class="hw-game-detail-body"><ul class="hw-detail-list">'+availabilityLine(game.away,game.awayOut,game.awayLimited)+availabilityLine(game.home,game.homeOut,game.homeLimited)+'</ul><div class="hw-rotation-sides"><div class="hw-rotation-side"><strong>'+esc(game.away)+' · min · pts</strong>'+rotationRows(game.awayPlayers)+'</div><div class="hw-rotation-side"><strong>'+esc(game.home)+' · min · pts</strong>'+rotationRows(game.homePlayers)+'</div></div></div></section>'+
+      '<section class="hw-game-detail-panel"><h3>Availability and projected rotation</h3>'+availAsOfLine(game)+'<div class="hw-game-detail-body"><ul class="hw-detail-list">'+availabilityLine(game.away,game.awayOut,game.awayLimited,game.awayStatuses)+availabilityLine(game.home,game.homeOut,game.homeLimited,game.homeStatuses)+'</ul><div class="hw-rotation-sides"><div class="hw-rotation-side"><strong>'+esc(game.away)+' · min · pts</strong>'+rotationRows(game.awayPlayers)+'</div><div class="hw-rotation-side"><strong>'+esc(game.home)+' · min · pts</strong>'+rotationRows(game.homePlayers)+'</div></div></div></section>'+
       '<section class="hw-game-detail-panel"><h3>Movement, stakes, and model</h3><div class="hw-game-detail-body"><ul class="hw-detail-list">'+callInputsLine(game)+movementLines(game)+whyLine(game)+'</ul><div class="hw-game-actions"><a class="hw-button" href="'+safeHref(game.report)+'">Open report</a><a class="hw-button" href="daybyday.html">Day by day</a><a class="hw-button" href="availability.html">Availability board</a></div></div></section>'+
     '</div>';
   }
