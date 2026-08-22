@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A Hardwood deep dive into what fourth-quarter garbage-time possessions are actually worth.">
+  <title>Garbage Time — Hardwood</title>
+  <link rel="stylesheet" href="hw-product.css">
+  <link rel="stylesheet" href="hw-dense.css">
+  <style>
+    .gt-article{display:grid;gap:10px;max-width:1180px}
+    .gt-lede{padding:14px 16px;border-left:3px solid var(--dense-bad);background:linear-gradient(90deg,rgba(255,120,109,.11),var(--dense-panel))}
+    .gt-lede-label{color:var(--dense-bad);font-size:9px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}
+    .gt-lede p{margin:5px 0 0;color:var(--dense-text);font-size:clamp(15px,1.55vw,19px);line-height:1.34}
+    .gt-window{display:flex;align-items:center;gap:7px;flex-wrap:wrap;color:var(--dense-muted);font-size:10px}
+    .gt-window b{color:var(--dense-text)}
+    .gt-copy{display:grid;gap:9px;max-width:920px}
+    .gt-copy p{margin:0;color:var(--dense-text);font-size:13px;line-height:1.55}
+    .gt-copy p:first-child{font-size:15px;line-height:1.48}
+    .gt-finding{color:var(--dense-bad);font-weight:850}
+    .gt-chart{margin:0}
+    .gt-chart svg{display:block;width:100%;height:auto;min-height:270px;background:#09131d}
+    .gt-chart figcaption{padding:7px 9px;border-top:1px solid var(--dense-line-soft);color:var(--dense-muted);font-size:10px}
+    .gt-chart figcaption strong{color:var(--dense-text)}
+    .gt-axis{fill:var(--dense-muted);font:11px var(--hw-sans)}
+    .gt-axis-title{fill:var(--dense-text);font:700 11px var(--hw-sans)}
+    .gt-gridline{stroke:#26384a;stroke-width:1;stroke-dasharray:3 4}
+    .gt-baseline{stroke:var(--dense-accent);stroke-width:2;stroke-dasharray:5 4}
+    .gt-bar{fill:var(--dense-bad);fill-opacity:.82}
+    .gt-bar.above{fill:var(--dense-good)}
+    .gt-bar-value{fill:var(--dense-text);font:700 10px var(--hw-sans)}
+    .gt-state-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+    .gt-state{min-width:0;padding:9px;border:1px solid var(--dense-line-soft);background:var(--dense-panel)}
+    .gt-state h3{margin:0 0 7px;font-size:12px}
+    .gt-state dl{display:grid;grid-template-columns:1fr auto;gap:4px 8px;margin:0;font-size:10px}
+    .gt-state dt{color:var(--dense-muted)}
+    .gt-state dd{margin:0;text-align:right;font-weight:800}
+    .gt-state dd.gt-bad{color:var(--dense-bad)}
+    .gt-warning{border-left-color:var(--dense-bad);background:rgba(255,120,109,.08)}
+    .gt-smallprint{display:grid;gap:7px;color:var(--dense-muted);font-size:10px;line-height:1.5}
+    .gt-smallprint p{margin:0}
+    .gt-smallprint strong{color:var(--dense-text)}
+    .gt-provenance{overflow-wrap:anywhere;font-family:var(--hw-mono);font-size:9px}
+    @media(max-width:760px){
+      .gt-state-grid{grid-template-columns:1fr}
+      .gt-chart svg{min-height:230px}
+      .gt-axis,.gt-axis-title{font-size:9px}
+    }
+  </style>
+</head>
+<body class="hw-product" data-page="garbage-time" data-section="research" data-product="dense-research">
+  <a class="hw-skip" href="#content">Skip to deep dive</a>
+  <main class="hw-page" id="content">
+    <div class="hw-loading">Loading deep dive…</div>
+  </main>
+  <script src="hw-product.js"></script>
+  <script>
+(function(){
+  "use strict";
+
+  function esc(value){
+    return String(value == null ? "" : value).replace(/[&<>"']/g,function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function has(value){return value !== null && value !== undefined && value !== "";}
+  function number(value){
+    if(value === null || value === undefined || value === "") return null;
+    var n=Number(value); return Number.isFinite(n) ? n : null;
+  }
+  function fixed(value,digits){
+    var n=number(value); return n === null ? "—" : n.toFixed(digits == null ? 2 : digits);
+  }
+  function comma(value){
+    var n=number(value); return n === null ? "not published" : Math.round(n).toLocaleString();
+  }
+  function missing(value,label){
+    return has(value) ? esc(value) : esc(label+" not published");
+  }
+  function stateMetric(state,label,value,digits,suffix){
+    return "<dt>"+esc(label)+"</dt><dd>"+(number(value) === null ? esc(label+" not published") : fixed(value,digits)+esc(suffix||""))+"</dd>";
+  }
+  function sensitivitySummary(data){
+    var rows=data.sensitivity&&Array.isArray(data.sensitivity.by_lead)?data.sensitivity.by_lead:[];
+    if(!rows.length) return "Sensitivity not published";
+    var above=rows.filter(function(row){return row.above_baseline===true;}).length;
+    if(above===0) return "All thresholds below baseline";
+    if(above===rows.length) return "All thresholds above baseline";
+    return above+" of "+rows.length+" thresholds above baseline";
+  }
+  function chart(data){
+    var rows=data.sensitivity&&Array.isArray(data.sensitivity.by_lead)?data.sensitivity.by_lead:[];
+    var baseline=number(data.states&&data.states.baseline&&data.states.baseline.pts_per100);
+    var values=rows.map(function(r){return number(r.pts_per100);}).filter(function(v){return v!==null;});
+    if(baseline!==null) values.push(baseline);
+    if(!values.length) return '<div class="hw-empty">Sensitivity evidence not published.</div>';
+    var min=Math.min.apply(null,values),max=Math.max.apply(null,values);
+    var lo=Math.floor(Math.min(100,min)-1),hi=Math.ceil(Math.max(116,max)+1),span=Math.max(1,hi-lo);
+    var width=760,left=145,right=70,top=29,rowHeight=37,bottom=55,height=top+Math.max(1,rows.length)*rowHeight+bottom;
+    var plot=width-left-right;
+    function x(v){return left+(v-lo)/span*plot;}
+    var leadValues=rows.map(function(row){return number(row.lead);}).filter(function(v){return v!==null;});
+    var leadText=leadValues.length?"from "+Math.min.apply(null,leadValues)+" through "+Math.max.apply(null,leadValues)+" points":"not published";
+    var ticks=[];
+    for(var t=Math.ceil(lo/5)*5;t<=hi;t+=5){
+      ticks.push('<line class="gt-gridline" x1="'+x(t).toFixed(1)+'" y1="'+top+'" x2="'+x(t).toFixed(1)+'" y2="'+(height-bottom)+'"></line>');
+      ticks.push('<text class="gt-axis" x="'+x(t).toFixed(1)+'" y="'+(height-31)+'" text-anchor="middle">'+t+'</text>');
+    }
+    var baselineLine=baseline===null?"":'<line class="gt-baseline" x1="'+x(baseline).toFixed(1)+'" y1="'+(top-10)+'" x2="'+x(baseline).toFixed(1)+'" y2="'+(height-bottom+6)+'"></line><text class="gt-axis-title" x="'+(x(baseline)+5).toFixed(1)+'" y="17">Baseline '+fixed(baseline,2)+'</text>';
+    var marks=rows.map(function(row,i){
+      var y=top+i*rowHeight+9,val=number(row.pts_per100),start=x(lo),end=val===null?start:x(val);
+      var label=has(row.lead)?esc(row.lead)+"+": "Not published";
+      var value=val===null?"not published":fixed(val,2)+" · n="+comma(row.possessions);
+      var barClass=row.above_baseline===true?"gt-bar above":"gt-bar";
+      return '<text class="gt-axis" x="'+(left-10)+'" y="'+(y+10)+'" text-anchor="end">'+label+' lead</text>'+
+        (val===null?'<text class="gt-bar-value" x="'+(start+5)+'" y="'+(y+10)+'">'+value+'</text>':'<rect class="'+barClass+'" x="'+start.toFixed(1)+'" y="'+y+'" width="'+Math.max(2,end-start).toFixed(1)+'" height="18" rx="2"></rect><text class="gt-bar-value" x="'+(end+7).toFixed(1)+'" y="'+(y+13)+'">'+value+'</text>');
+    }).join("");
+    return '<figure class="gt-chart" data-testid="sensitivity-chart">'+
+      '<svg viewBox="0 0 '+width+' '+height+'" role="img" aria-labelledby="gt-chart-title gt-chart-desc">'+
+      '<title id="gt-chart-title">Does the finding survive a different lead threshold?</title>'+
+      '<desc id="gt-chart-desc">Leading-team points per 100 possessions for fourth-quarter lead thresholds '+leadText+'. Possession counts are shown beside each value.</desc>'+
+      ticks.join("")+baselineLine+marks+
+      '<line class="gt-gridline" x1="'+left+'" y1="'+(height-bottom+6)+'" x2="'+(width-right)+'" y2="'+(height-bottom+6)+'"></line>'+
+      '<text class="gt-axis-title" x="'+(left+plot/2)+'" y="'+(height-8)+'" text-anchor="middle">Leading-team points per 100 possessions</text>'+
+      '<text class="gt-axis-title" transform="translate(17 '+(top+(height-bottom-top)/2)+') rotate(-90)" text-anchor="middle">Q4 lead threshold (points)</text>'+
+      '</svg><figcaption><strong>Question:</strong> Does the conclusion hold when the garbage-time threshold moves? Every bar is measured against the same-quarter baseline of '+fixed(baseline,2)+' — '+esc(sensitivitySummary(data))+'; bar color follows the artifact&#39;s above-baseline flag. n is possessions, not games.</figcaption></figure>';
+  }
+  function stateCard(state){
+    state=state||{};
+    return '<article class="gt-state"><h3>'+esc(state.label||"State not published")+'</h3><dl>'+
+      stateMetric(state,"Points / 100",state.pts_per100,2)+
+      stateMetric(state,"eFG%",state.efg_pct,2,"%")+
+      stateMetric(state,"Free throws / FGA",state.ft_per_fga,3)+
+      stateMetric(state,"Seconds / possession",state.sec_per_poss,2)+
+      "<dt>Possessions</dt><dd>"+esc(comma(state.possessions))+"</dd>"+
+      '</dl></article>';
+  }
+  function renderGarbageTime(data){
+    data=data||{};
+    var root=document.getElementById("content");
+    var windowData=data.window||{}, fence=data.fence||{}, states=data.states||{};
+    var asOfHuman=has(data.generated_et)?data.generated_et:"timestamp not published";
+    var asOfMachine=has(data.generated_utc)?data.generated_utc:"not published";
+    var seasons=Array.isArray(windowData.seasons)&&windowData.seasons.length?windowData.seasons.join(", "):"not published";
+    var regular=windowData.regular_season_only===true?"regular-season":"season scope not published";
+    var body=Array.isArray(data.body)?data.body:[];
+    var fitted=fence.fitted===false?"Not fitted":(fence.fitted===true?"Fitted boundary":"Fitted status not published");
+    var ruling=data.provenance&&data.provenance.ruling;
+    var rulingBadge=has(ruling)?'<span class="hw-badge bad">'+esc(ruling)+'</span>':"";
+    var sensitivityRows=data.sensitivity&&Array.isArray(data.sensitivity.by_lead)?data.sensitivity.by_lead:[];
+    var cutLabel=sensitivityRows.length===1?"1 measured cut":sensitivityRows.length+" measured cuts";
+    root.innerHTML=
+      '<header class="hw-command-head"><div class="hw-command-title"><div class="hw-kicker">Deep dive · game context</div><h1>'+esc(data.title||"Untitled deep dive")+'</h1><p>'+esc(data.dek||"Dek not published")+'</p></div>'+
+      '<div class="hw-command-meta">'+rulingBadge+'<span class="hw-badge" data-as-of="'+esc(asOfMachine)+'">As of '+esc(asOfHuman)+'</span></div></header>'+
+      '<article class="gt-article">'+
+      '<section class="gt-lede" aria-label="Finding"><div class="gt-lede-label">The finding</div><p>'+esc(data.headline||"Headline not published")+'</p></section>'+
+      '<div class="gt-window" aria-label="Measured window"><span><b>Measured window</b></span><span>'+esc(seasons)+' seasons</span><span>·</span><span><b>'+comma(windowData.games)+' '+esc(regular)+' games</b></span><span>·</span><span>Events: '+comma(windowData.events)+'</span><span>·</span><span>'+comma(windowData.exhibition_rows_excluded)+' exhibition rows excluded across '+comma(windowData.exhibition_games_excluded)+' games</span></div>'+
+      '<section class="hw-module"><div class="hw-module-head"><div><h2>Threshold test</h2><span>One question, '+esc(cutLabel)+'</span></div><span class="gt-finding">'+esc(sensitivitySummary(data))+'</span></div><div class="hw-module-body">'+chart(data)+'</div></section>'+
+      '<section class="gt-copy" aria-label="Evidence">'+body.map(function(paragraph){return "<p>"+esc(paragraph)+"</p>";}).join("")+'</section>'+
+      '<section class="hw-module"><div class="hw-module-head"><div><h2>What changes when the game is decided?</h2><span>Counting statistics follow the story</span></div></div><div class="hw-module-body"><div class="gt-state-grid">'+
+      stateCard(states.garbage)+stateCard(states.competitive)+stateCard(states.baseline)+
+      '</div></div></section>'+
+      '<section class="hw-note gt-warning" aria-label="Fence status"><strong>Fence status</strong><div class="gt-window"><span>Lead: '+missing(fence.lead,"Lead")+'</span><span>·</span><span>Scope: '+missing(fence.scope,"Scope")+'</span><span>·</span><span>'+esc(fitted)+'</span></div><p>'+missing(fence.note,"Fence note")+'</p></section>'+
+      '<section class="hw-module"><div class="hw-module-head"><h2>Method and provenance</h2><span>Read before reusing the number</span></div><div class="hw-module-body gt-smallprint">'+
+      '<p><strong>Method.</strong> '+missing(data.method_note,"Method")+'</p>'+
+      '<p><strong>Fence.</strong> Scope: '+missing(fence.scope,"Fence scope")+'. Source: <span class="gt-provenance">'+missing(fence.source,"Fence source")+'</span>.</p>'+
+      '<p><strong>Window exclusions.</strong> '+(has(windowData.exhibition_rows_excluded)?comma(windowData.exhibition_rows_excluded)+" exhibition rows and "+comma(windowData.exhibition_games_excluded)+" exhibition games were excluded.":"Exhibition exclusions: not published.")+'</p>'+
+      '<p><strong>Provenance.</strong> Ruling '+missing(data.provenance&&data.provenance.ruling,"Ruling")+' · '+missing(data.provenance&&data.provenance.adjudication,"Adjudication")+' · '+missing(data.provenance&&data.provenance.note,"Provenance note")+'</p>'+
+      '</div></section></article>';
+    return root;
+  }
+
+  window.GarbageTimePage={render:renderGarbageTime};
+  function boot(){
+    fetch("deepdive_garbage_time.json",{cache:"no-store"}).then(function(response){
+      if(!response.ok)throw new Error("deepdive_garbage_time.json returned "+response.status);
+      return response.json();
+    }).then(renderGarbageTime).catch(function(){
+      var root=document.getElementById("content");
+      if(root)root.innerHTML='<div class="hw-empty">This deep dive could not be loaded. The published artifact is unavailable.</div>';
+    });
+  }
+  boot();
+})();
+  </script>
+</body>
+</html>

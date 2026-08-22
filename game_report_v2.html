@@ -72,7 +72,7 @@
           </section>
 
           <section class="hw-module">
-            <div class="hw-module-head"><div><h2>Projected rotations</h2><span>Minutes, impact, and box-score production</span></div><span id="gr-minutes-check">Minutes check pending</span></div>
+            <div class="hw-module-head"><div><h2>Projected rotations</h2><span>Impact first; minutes and box-score production follow</span></div><span id="gr-minutes-check">Minutes check pending</span></div>
             <div class="hw-report-rotations" id="gr-rotations"><div class="hw-empty">Loading rotations…</div></div>
           </section>
         </div>
@@ -86,6 +86,17 @@
           <section class="hw-module">
             <div class="hw-module-head"><h2>Availability and setup</h2><span>Published context</span></div>
             <div class="hw-report-context" id="gr-context"><div class="hw-empty compact">Loading setup…</div></div>
+            <div class="hw-report-context" id="gr-analyst-availability"><div class="hw-empty compact">Loading availability…</div></div>
+          </section>
+
+          <section class="hw-module">
+            <div class="hw-module-head"><h2>Pace and environment</h2><span>Rendered only where computed</span></div>
+            <div class="hw-report-context" id="gr-analyst-pace"><div class="hw-empty compact">Loading…</div></div>
+          </section>
+
+          <section class="hw-module">
+            <div class="hw-module-head"><h2>Deciding stretch</h2><span>Only where the data supports it</span></div>
+            <div class="hw-report-context" id="gr-analyst-stretch"><div class="hw-empty compact">Loading…</div></div>
           </section>
 
           <section class="hw-module">
@@ -105,10 +116,65 @@
         </aside>
       </section>
 
-      <div class="hw-data-note">The forecast and ranges come from the dated game artifact. A final score is joined afterward only for grading; this page does not recompute or rewrite the pre-tip call.</div>
+      <div class="hw-data-note">The forecast and ranges come from the dated game artifact (<span id="gr-artifact-link"></span>, graded against <a href="finals.json">finals.json</a>). A final score is joined afterward only for grading; this page does not recompute or rewrite the pre-tip call.</div>
     </article>
   </main>
   <script src="hw-product.js"></script>
   <script src="hw-game-report.js"></script>
+  <script>
+  /* Analyst layers (hwAnalystLayers): renders the availability block the game artifact already
+     publishes (status + expected return per player), and holds honest slots for pace/possession
+     context and the deciding stretch — each renders its value where the artifact computes one
+     and states the absence where it does not. Nothing here recomputes or invents a number. */
+  (function(){
+    "use strict";
+    var esc=function(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});};
+    function sideHTML(label,list){
+      var rows=(list||[]).map(function(p){
+        return '<li><strong>'+esc(p.name||"Unnamed player")+'</strong> — '+esc(p.status||"status not published")+' · '+(p.return?'expected back '+esc(p.return):'return not published')+'</li>';
+      }).join("");
+      return '<article><strong>'+esc(label)+'</strong>'+(rows?'<ul class="hw-report-availability">'+rows+'</ul>':'<p>No listed absences in the published artifact.</p>')+'</article>';
+    }
+    function availabilityHTML(game){
+      var block=game&&game.availability;
+      if(!block||(!Array.isArray(block.home)&&!Array.isArray(block.away)))
+        return '<div class="hw-empty compact">The artifact carries no availability block for this game — absence of the layer is stated, never papered over.</div>';
+      return sideHTML(game.away_full||game.away||"Away",block.away)+sideHTML(game.home_full||game.home||"Home",block.home);
+    }
+    function paceHTML(game){
+      var pace=game&&game.pace;
+      if(!pace)return '<div class="hw-empty compact">Pace and possession context is not computed in this game artifact — said out loud, never invented.</div>';
+      return '<article><strong>'+esc(pace.possessions!=null?pace.possessions:"—")+' possessions</strong><p>'+esc(pace.note||"")+'</p></article>';
+    }
+    function stretchHTML(game){
+      var stretch=game&&game.stretch;
+      if(!stretch)return '<div class="hw-empty compact">No play-by-play stretch data is published for this game — a deciding stretch is never reconstructed from thin air.</div>';
+      return '<article><strong>'+esc(stretch.label||"Deciding stretch")+'</strong><p>'+esc(stretch.detail||"")+'</p></article>';
+    }
+    function boot(){
+      var params=new URLSearchParams(location.search),raw=params.get("game_id")||params.get("id"),id=/^[A-Za-z0-9_.-]+$/.test(String(raw||""))?raw:null;
+      if(!id)return;
+      var link=document.getElementById("gr-artifact-link");
+      if(link)link.innerHTML='<a href="games/'+encodeURIComponent(id)+'.json">games/'+esc(id)+'.json</a>';
+      fetch("games/"+encodeURIComponent(id)+".json",{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("artifact "+r.status);return r.json();}).then(function(game){
+        var set=function(elId,html){var el=document.getElementById(elId);if(el)el.innerHTML=html;};
+        set("gr-analyst-availability",availabilityHTML(game));
+        set("gr-analyst-pace",paceHTML(game));
+        set("gr-analyst-stretch",stretchHTML(game));
+      }).catch(function(){
+        // One source feeds all three layers: a failed read leaves every slot UNKNOWN, never
+        // an eternal spinner and never the "not computed" copy that belongs to a read artifact.
+        // The visible words are the reader's: the consequence, not the implementation model.
+        var msg='<div class="hw-empty compact">Game detail data is temporarily unavailable. No value is shown until the source is readable.</div>';
+        ["gr-analyst-availability","gr-analyst-pace","gr-analyst-stretch"].forEach(function(elId){
+          var el=document.getElementById(elId);
+          if(el)el.innerHTML=msg;
+        });
+      });
+    }
+    window.hwAnalystLayers={availabilityHTML:availabilityHTML,paceHTML:paceHTML,stretchHTML:stretchHTML};
+    if(typeof document!=="undefined"&&document.readyState==="loading"&&typeof location!=="undefined")document.addEventListener("DOMContentLoaded",boot);else if(typeof location!=="undefined")boot();
+  })();
+  </script>
 </body>
 </html>

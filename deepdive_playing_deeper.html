@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A Hardwood deep dive into rotation depth, role predictability, and what deeper teams change downstream.">
+  <title>Playing Deeper — Hardwood</title>
+  <link rel="stylesheet" href="hw-product.css">
+  <link rel="stylesheet" href="hw-dense.css">
+  <style>
+    .pd-article{display:grid;gap:10px;max-width:1180px}
+    .pd-question{padding:14px 16px;border-left:3px solid var(--dense-accent);background:linear-gradient(90deg,rgba(255,177,92,.1),var(--dense-panel))}
+    .pd-question-label{color:var(--dense-accent);font-size:9px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}
+    .pd-question h2{margin:5px 0 0;font-size:clamp(19px,2.1vw,27px);line-height:1.14}
+    .pd-question p{margin:8px 0 0;color:var(--dense-muted);font-size:13px;line-height:1.45}
+    .pd-context{display:flex;align-items:center;gap:7px;flex-wrap:wrap;color:var(--dense-muted);font-size:10px}
+    .pd-context b{color:var(--dense-text)}
+    .pd-copy{display:grid;gap:9px;max-width:920px}
+    .pd-copy p{margin:0;color:var(--dense-text);font-size:13px;line-height:1.55}
+    .pd-copy p:first-child{font-size:15px;line-height:1.48}
+    .pd-chart{margin:0}
+    .pd-chart svg{display:block;width:100%;height:auto;min-height:300px;background:#09131d}
+    .pd-chart figcaption{padding:7px 9px;border-top:1px solid var(--dense-line-soft);color:var(--dense-muted);font-size:10px}
+    .pd-chart figcaption strong{color:var(--dense-text)}
+    .pd-axis{fill:var(--dense-muted);font:10px var(--hw-sans)}
+    .pd-axis-title{fill:var(--dense-text);font:700 11px var(--hw-sans)}
+    .pd-gridline{stroke:#26384a;stroke-width:1;stroke-dasharray:3 4}
+    .pd-bar{fill-opacity:.82}
+    .pd-series-0{fill:var(--dense-accent)}
+    .pd-series-1{fill:var(--dense-good)}
+    .pd-series-n{fill:var(--dense-muted)}
+    .pd-bar-value{fill:var(--dense-text);font:700 9px var(--hw-sans)}
+    .pd-thin{fill:var(--dense-bad);font:700 9px var(--hw-sans)}
+    .pd-table{display:none}
+    .pd-legend{display:flex;gap:12px;flex-wrap:wrap;padding:8px 9px;border-bottom:1px solid var(--dense-line-soft);color:var(--dense-muted);font-size:10px}
+    .pd-legend b{display:inline-block;width:8px;height:8px;margin-right:4px;border-radius:2px}
+    .pd-legend .pd-series-0{background:var(--dense-accent)}
+    .pd-legend .pd-series-1{background:var(--dense-good)}
+    .pd-legend .pd-series-n{background:var(--dense-muted)}
+    .pd-reliability{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+    .pd-metric{min-width:0;padding:9px;border:1px solid var(--dense-line-soft);background:var(--dense-panel)}
+    .pd-metric strong{display:block;color:var(--dense-muted);font-size:10px;font-weight:700}
+    .pd-metric span{display:block;margin-top:3px;color:var(--dense-text);font-size:20px;font-weight:850}
+    .pd-metric small{display:block;margin-top:3px;color:var(--dense-muted);font-size:9px}
+    .pd-robustness{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+    .pd-check{min-width:0;padding:9px;border:1px solid var(--dense-line-soft);background:var(--dense-panel)}
+    .pd-check h3{margin:0 0 7px;font-size:12px}
+    .pd-check dl{display:grid;grid-template-columns:1fr auto;gap:4px 8px;margin:0;font-size:10px}
+    .pd-check dt{color:var(--dense-muted)}
+    .pd-check dd{margin:0;text-align:right;font-weight:800}
+    .pd-check-note{margin:8px 0 0;color:var(--dense-muted);font-size:10px;line-height:1.45}
+    .pd-breach{border-left-color:var(--dense-bad);background:rgba(255,120,109,.08)}
+    .pd-breach ul{margin:7px 0 0;padding-left:18px;color:var(--dense-text);font-size:11px;line-height:1.45}
+    .pd-breach li+li{margin-top:4px}
+    .pd-breach-detail{display:block;color:var(--dense-muted);font-family:var(--hw-mono);font-size:9px}
+    .pd-smallprint{display:grid;gap:7px;color:var(--dense-muted);font-size:10px;line-height:1.5}
+    .pd-smallprint p{margin:0}
+    .pd-smallprint strong{color:var(--dense-text)}
+    .pd-provenance{overflow-wrap:anywhere;font-family:var(--hw-mono);font-size:9px}
+    @media(max-width:760px){
+      .pd-reliability,.pd-robustness{grid-template-columns:1fr 1fr}
+      .pd-chart svg{min-height:260px}
+      .pd-axis,.pd-axis-title{font-size:9px}
+    }
+    @media(max-width:640px){
+      .pd-chart svg{display:none}
+      .pd-chart .pd-legend{display:none}
+      .pd-table{display:table;width:100%;border-collapse:collapse;font-size:11px}
+      .pd-table caption{padding:7px 9px;color:var(--dense-muted);font-size:10px;text-align:left}
+      .pd-table th,.pd-table td{padding:5px 8px;border-top:1px solid var(--dense-line-soft);text-align:right;font-variant-numeric:tabular-nums}
+      .pd-table thead th{color:var(--dense-muted);font-size:10px}
+      .pd-table tbody th{color:var(--dense-text);text-align:left;font-weight:800}
+      .pd-table td small{display:block;color:var(--dense-muted);font-size:9px;font-weight:500}
+      .pd-row-thin th span{color:var(--dense-bad);font-size:9px;font-weight:800;text-transform:uppercase}
+    }
+    @media(max-width:460px){
+      .pd-reliability,.pd-robustness{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body class="hw-product" data-page="playing-deeper" data-section="research" data-product="dense-research">
+  <a class="hw-skip" href="#content">Skip to deep dive</a>
+  <main class="hw-page" id="content">
+    <div class="hw-loading">Loading deep dive…</div>
+  </main>
+  <script src="hw-product.js"></script>
+  <script>
+(function(){
+  "use strict";
+
+  function esc(value){
+    return String(value == null ? "" : value).replace(/[&<>"']/g,function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function has(value){return value !== null && value !== undefined && value !== "";}
+  function number(value){
+    if(value === null || value === undefined || value === "") return null;
+    var n=Number(value); return Number.isFinite(n) ? n : null;
+  }
+  function fixed(value,digits){
+    var n=number(value); return n === null ? "—" : n.toFixed(digits == null ? 2 : digits);
+  }
+  function comma(value){
+    var n=number(value); return n === null ? "not published" : Math.round(n).toLocaleString();
+  }
+  function missing(value,label){
+    return has(value) ? esc(value) : esc(label+" not published");
+  }
+  function metric(label,value,note){
+    return '<article class="pd-metric"><strong>'+esc(label)+'</strong><span>'+fixed(value,3)+'</span>'+
+      (has(note)?'<small>'+esc(note)+'</small>':"")+'</article>';
+  }
+  function table(chartData,keys,labels){
+    var rows=Array.isArray(chartData.rows)?chartData.rows:[];
+    return '<table class="pd-table"><caption>'+esc(chartData.y_label||"Y axis not published")+' by '+esc(chartData.x_label||"X axis not published")+'</caption><thead><tr><th scope="col">'+esc(chartData.x_label||"X axis not published")+'</th>'+
+      keys.map(function(key){return '<th scope="col">'+esc(labels[key])+'</th>';}).join("")+'</tr></thead><tbody>'+
+      rows.map(function(row){
+        return '<tr'+(row.thin===true?' class="pd-row-thin"':"")+'><th scope="row">'+esc(row.players_used)+(row.thin===true?' <span>thin</span>':"")+'</th>'+
+          keys.map(function(key){
+            var pct=number(row["pct_"+key]);
+            return '<td>'+(pct===null?"not published":fixed(pct,1)+'%<small>n='+comma(row["n_"+key])+'</small>')+'</td>';
+          }).join("")+'</tr>';
+      }).join("")+'</tbody></table>';
+  }
+  function chart(data){
+    var chartData=data.chart||{}, rows=Array.isArray(chartData.rows)?chartData.rows:[];
+    var labels=chartData.series_labels&&typeof chartData.series_labels==="object"?chartData.series_labels:{};
+    var keys=Object.keys(labels).filter(function(key){return has(labels[key]);});
+    if(!rows.length||!keys.length) return '<div class="hw-empty">Distribution not published.</div>';
+    var maxPct=0;
+    rows.forEach(function(row){
+      keys.forEach(function(key){
+        var value=number(row["pct_"+key]); if(value!==null) maxPct=Math.max(maxPct,value);
+      });
+    });
+    if(!maxPct) maxPct=1;
+    var width=820,left=58,right=22,top=34,bottom=58,plotHeight=250,height=top+plotHeight+bottom;
+    var plotWidth=width-left-right,groupWidth=plotWidth/rows.length;
+    function y(value){return top+plotHeight-(value/maxPct)*plotHeight;}
+    var ticks=[],tickCount=4;
+    for(var i=0;i<=tickCount;i++){
+      var tick=maxPct*i/tickCount,ty=y(tick);
+      ticks.push('<line class="pd-gridline" x1="'+left+'" y1="'+ty.toFixed(1)+'" x2="'+(width-right)+'" y2="'+ty.toFixed(1)+'"></line>');
+      ticks.push('<text class="pd-axis" x="'+(left-7)+'" y="'+(ty+3).toFixed(1)+'" text-anchor="end">'+tick.toFixed(1)+'%</text>');
+    }
+    var legend=keys.map(function(key,index){
+      return '<span data-series="'+esc(key)+'"><b class="pd-series-'+(index<2?index:"n")+'"></b>'+esc(labels[key])+'</span>';
+    }).join("");
+    var marks=rows.map(function(row,rowIndex){
+      var groupX=left+rowIndex*groupWidth,barWidth=Math.min(25,(groupWidth-12)/Math.max(1,keys.length));
+      var bars=keys.map(function(key,index){
+        var pct=number(row["pct_"+key]),n=row["n_"+key],barHeight=pct===null?0:(maxPct?pct/maxPct*plotHeight:0);
+        var x=groupX+6+index*barWidth,barY=top+plotHeight-barHeight;
+        var value=pct===null?"not published":fixed(pct,1)+"% · n="+comma(n);
+        var labelY=Math.max(top+10,barY-4)-(barHeight<26?index*12:0);
+        return '<g data-series="'+esc(key)+'" data-players-used="'+esc(row.players_used)+'">'+
+          (pct===null?'<text class="pd-bar-value" x="'+(x+barWidth/2).toFixed(1)+'" y="'+(top+plotHeight-5)+'" text-anchor="middle">'+esc(value)+'</text>':
+          '<rect class="pd-bar pd-series-'+(index<2?index:"n")+'" x="'+x.toFixed(1)+'" y="'+barY.toFixed(1)+'" width="'+Math.max(4,barWidth-2).toFixed(1)+'" height="'+Math.max(2,barHeight).toFixed(1)+'" rx="2"><title>'+esc(value)+'</title></rect>'+
+          '<text class="pd-bar-value" x="'+(x+barWidth/2).toFixed(1)+'" y="'+labelY.toFixed(1)+'" text-anchor="middle">'+esc(value)+'</text>')+
+          '</g>';
+      }).join("");
+      var thin=row.thin===true?'<text class="pd-thin" x="'+(groupX+groupWidth/2).toFixed(1)+'" y="'+(height-10)+'" text-anchor="middle">Thin sample: '+esc(row.players_used)+' players</text>':"";
+      return bars+'<text class="pd-axis" x="'+(groupX+groupWidth/2).toFixed(1)+'" y="'+(height-28)+'" text-anchor="middle">'+esc(row.players_used)+' players</text>'+thin;
+    }).join("");
+    return '<figure class="pd-chart" data-testid="distribution-chart">'+
+      '<svg viewBox="0 0 '+width+' '+height+'" role="img" aria-labelledby="pd-chart-title pd-chart-desc">'+
+      '<title id="pd-chart-title">'+esc(chartData.caption||"Distribution not published")+'</title>'+
+      '<desc id="pd-chart-desc">'+esc(chartData.x_label||"X axis not published")+' by '+esc(chartData.y_label||"Y axis not published")+'.</desc>'+
+      ticks.join("")+marks+
+      '<line class="pd-gridline" x1="'+left+'" y1="'+(top+plotHeight)+'" x2="'+(width-right)+'" y2="'+(top+plotHeight)+'"></line>'+
+      '<text class="pd-axis-title" x="'+(left+plotWidth/2)+'" y="'+(height-2)+'" text-anchor="middle">'+esc(chartData.x_label||"X axis not published")+'</text>'+
+      '<text class="pd-axis-title" transform="translate(14 '+(top+plotHeight/2)+') rotate(-90)" text-anchor="middle">'+esc(chartData.y_label||"Y axis not published")+'</text>'+
+      '</svg>'+table(chartData,keys,labels)+'<div class="pd-legend">'+legend+'</div><figcaption><strong>Question:</strong> '+esc(data.question||"Question not published")+' '+esc(chartData.caption||"Chart caption not published")+'</figcaption></figure>';
+  }
+  function reliability(data){
+    var value=data.reliability||{};
+    return '<div class="pd-reliability">'+
+      metric("Minutes · prior",value.minutes_prior_r,"season-over-season reliability")+
+      metric("Minutes · current",value.minutes_now_r,"season-over-season reliability")+
+      metric("Bench minutes",value.bench_minutes_r,"season-over-season reliability")+
+      metric("Assist rate",value.assist_rate_r,"season-over-season reliability")+
+      metric("Defensive rebounding",value.dreb_r,"season-over-season reliability")+
+      metric("Shot volume",value.shot_volume_r,"season-over-season reliability")+
+      metric("Free-throw trips",value.ft_trips_r,"season-over-season reliability")+
+      '</div>';
+  }
+  function robustness(data){
+    var checks=data.robustness&&typeof data.robustness==="object"?data.robustness:{};
+    var keys=Object.keys(checks);
+    if(!keys.length) return '<div class="hw-empty">Robustness checks not published.</div>';
+    return '<div class="pd-robustness" data-robustness-count="'+keys.length+'">'+keys.map(function(key){
+      var item=checks[key]||{},samples=item.n_team_games||{};
+      return '<article class="pd-check" data-check="'+esc(key)+'"><h3>'+missing(item.check,"Robustness check")+'</h3><dl>'+
+        '<dt>Prior</dt><dd>'+fixed(item.prior,2)+'</dd>'+
+        '<dt>Current</dt><dd>'+fixed(item.current,2)+'</dd>'+
+        '<dt>Shift</dt><dd>'+fixed(item.shift,2)+'</dd>'+
+        '<dt>Prior team-games</dt><dd>n='+comma(samples.prior)+'</dd>'+
+        '<dt>Current team-games</dt><dd>n='+comma(samples.current)+'</dd>'+
+        '</dl><p class="pd-check-note">'+missing(item.note,"Robustness note")+'</p></article>';
+    }).join("")+'</div>';
+  }
+  function breaches(label,items){
+    if(!Array.isArray(items)||!items.length) return '<div class="hw-empty">No '+esc(label.toLowerCase())+' published.</div>';
+    return '<section class="hw-note pd-breach" role="alert"><strong>'+esc(label)+'</strong><ul>'+
+      items.map(function(item){
+        if(item&&typeof item==="object"){
+          return '<li>'+Object.keys(item).map(function(key){
+            return '<span class="pd-breach-detail">'+esc(key)+': '+esc(item[key])+'</span>';
+          }).join("")+'</li>';
+        }
+        return '<li>'+esc(item)+'</li>';
+      }).join("")+'</ul></section>';
+  }
+  function renderPlayingDeeper(data){
+    data=data||{};
+    var root=document.getElementById("content"),method=data.method||{},bindings=data.bindings||{};
+    var asOfHuman=has(data.generated_et)?data.generated_et:"timestamp not published";
+    var asOfMachine=has(data.generated_utc)?data.generated_utc:"not published";
+    var seasons=Array.isArray(method.seasons)&&method.seasons.length?method.seasons.join(", "):"not published";
+    var body=Array.isArray(data.body)?data.body:[];
+    var teamGames=method.team_games||{};
+    var teams=method.teams||{};
+    root.innerHTML=
+      '<header class="hw-command-head"><div class="hw-command-title"><div class="hw-kicker">Deep dive · research question</div><h1>'+esc(data.question||"Question not published")+'</h1><p>'+esc(data.dek||"Dek not published")+'</p></div>'+
+      '<div class="hw-command-meta"><span class="hw-badge" data-as-of="'+esc(asOfMachine)+'">As of '+esc(asOfHuman)+'</span></div></header>'+
+      '<article class="pd-article">'+
+      '<section class="pd-question" aria-label="Answer"><div class="pd-question-label">'+esc(data.title||"Finding")+'</div><h2>'+esc(data.headline||"Headline not published")+'</h2></section>'+
+      '<div class="pd-context" aria-label="Measured context"><span><b>Seasons</b> '+esc(seasons)+'</span><span>·</span><span><b>Team-games</b> prior '+comma(teamGames.prior)+', current '+comma(teamGames.current)+'</span><span>·</span><span><b>Teams</b> prior '+comma(teams.prior)+', current '+comma(teams.current)+'</span><span>·</span><span>'+ (method.current_season_in_progress===true?"Current season in progress":"Season status not published")+'</span></div>'+
+      '<section class="hw-module"><div class="hw-module-head"><div><h2>Distribution of players used</h2><span>'+esc((data.chart&&data.chart.kind)||"Chart kind not published")+'</span></div></div><div class="hw-module-body">'+chart(data)+'</div></section>'+
+      '<section class="hw-module"><div class="hw-module-head"><div><h2>What gets harder to predict?</h2><span>Reliability evidence</span></div></div><div class="hw-module-body">'+reliability(data)+'</div></section>'+
+      '<section class="pd-copy" aria-label="Story">'+body.map(function(paragraph){return "<p>"+esc(paragraph)+"</p>";}).join("")+'</section>'+
+      '<section class="hw-module"><div class="hw-module-head"><div><h2>Robustness checks</h2><span>Falsification attempts</span></div><span>Robustness checks published: '+Object.keys(data.robustness||{}).length+'</span></div><div class="hw-module-body">'+robustness(data)+'</div></section>'+
+      '<section class="hw-module"><div class="hw-module-head"><div><h2>Integrity watch</h2><span>Published breach state</span></div></div><div class="hw-module-body">'+breaches("Oracle breaches",data.oracle_breaches)+breaches("Robustness breaches",data.robustness_breaches)+'</div></section>'+
+      '<section class="hw-module"><div class="hw-module-head"><h2>Method and provenance</h2><span>Read before reusing the number</span></div><div class="hw-module-body pd-smallprint">'+
+      '<p><strong>Method.</strong> '+missing(data.method_footer,"Method footer")+'</p>'+
+      '<p><strong>Reliability source.</strong> <span class="pd-provenance">'+missing(data.reliability&&data.reliability.source,"Reliability source")+'</span></p>'+
+      '<p><strong>Reliability note.</strong> '+missing(data.reliability&&data.reliability.note,"Reliability note")+'</p>'+
+      '<p><strong>Glossary.</strong> '+(has(data.glossary_href)?'<a href="'+esc(data.glossary_href)+'">Read the full method in the Glossary</a>':missing(data.glossary_href,"Glossary link"))+'</p>'+
+      '<p><strong>Bindings.</strong> Current '+missing(bindings.players_per_game_2026,"Current players-per-game")+' · prior '+missing(bindings.players_per_game_prior,"Prior players-per-game")+' · as-of date '+missing(bindings.as_of_date,"As-of date")+'</p>'+
+      '</div></section></article>';
+    return root;
+  }
+
+  window.PlayingDeeperPage={render:renderPlayingDeeper};
+  function boot(){
+    fetch("deepdive_playing_deeper.json",{cache:"no-store"}).then(function(response){
+      if(!response.ok)throw new Error("deepdive_playing_deeper.json returned "+response.status);
+      return response.json();
+    }).then(renderPlayingDeeper).catch(function(){
+      var root=document.getElementById("content");
+      if(root)root.innerHTML='<div class="hw-empty">This deep dive could not be loaded. The published artifact is unavailable.</div>';
+    });
+  }
+  boot();
+})();
+  </script>
+</body>
+</html>

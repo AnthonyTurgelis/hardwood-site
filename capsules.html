@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team Capsules | The Hardwood</title>
+  <meta name="description" content="Dense, impact-first reads of the first team capsule batch.">
+  <link rel="stylesheet" href="hw-product.css">
+  <link rel="stylesheet" href="hw-dense.css">
+  <style>
+    .tc-intro{display:grid;gap:8px;max-width:920px}
+    .tc-intro h1{margin:0;font-size:clamp(23px,3vw,35px);line-height:1.08}
+    .tc-intro p{margin:0;color:var(--dense-muted);font-size:13px;line-height:1.5}
+    .tc-meta{display:flex;gap:8px;flex-wrap:wrap;color:var(--dense-muted);font-size:10px}
+    .tc-meta b{color:var(--dense-text)}
+    .tc-capsules{display:grid;gap:10px}
+    .tc-capsule{overflow:hidden}
+    .tc-capsule-head{display:flex;justify-content:space-between;gap:12px;padding:12px;border-bottom:1px solid var(--dense-line-soft)}
+    .tc-capsule-head h2{margin:2px 0 0;font-size:20px}
+    .tc-team-mark{color:var(--dense-accent);font:800 11px var(--hw-mono);letter-spacing:.05em}
+    .tc-record{text-align:right;color:var(--dense-muted);font-size:11px;white-space:nowrap}
+    .tc-record strong{display:block;color:var(--dense-text);font-size:15px}
+    .tc-impact{padding:11px 12px;border-left:3px solid var(--dense-accent);background:rgba(87,190,255,.08)}
+    .tc-label{color:var(--dense-muted);font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+    .tc-impact-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
+    .tc-player{min-width:0;padding:8px;border:1px solid var(--dense-line-soft);background:var(--dense-panel)}
+    .tc-player strong{display:block;overflow-wrap:anywhere;font-size:12px}
+    .tc-player b{display:block;margin-top:3px;font-size:20px}
+    .tc-player small,.tc-note{display:block;margin-top:3px;color:var(--dense-muted);font-size:9px;line-height:1.4}
+    .tc-thin{color:var(--dense-bad);font-weight:800;text-transform:uppercase}
+    .tc-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px 12px}
+    .tc-block{min-width:0;padding:9px;border:1px solid var(--dense-line-soft);background:var(--dense-panel)}
+    .tc-block h3{margin:0 0 7px;font-size:12px}
+    .tc-block p{margin:4px 0;color:var(--dense-text);font-size:11px;line-height:1.45}
+    .tc-block p small{color:var(--dense-muted);font-size:10px}
+    .tc-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:7px}
+    .tc-stat{min-width:0}
+    .tc-stat span{display:block;color:var(--dense-muted);font-size:9px}
+    .tc-stat b{display:block;margin-top:2px;font-size:14px}
+    .tc-basis{padding:10px 12px;border-top:1px solid var(--dense-line-soft);color:var(--dense-muted);font-size:10px;line-height:1.5}
+    .tc-basis strong{color:var(--dense-text)}
+    .tc-source-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+    .tc-source{min-width:0;padding:8px;border:1px solid var(--dense-line-soft);background:var(--dense-panel)}
+    .tc-source strong{display:block;color:var(--dense-text);font-size:10px}
+    .tc-source time{display:block;margin-top:4px;overflow-wrap:anywhere;color:var(--dense-muted);font:9px var(--hw-mono)}
+    .tc-gap{color:var(--dense-bad)}
+    .tc-cap{color:var(--dense-muted)}
+    @media(max-width:760px){
+      .tc-capsule-head{align-items:flex-start}
+      .tc-impact-grid,.tc-source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .tc-columns{grid-template-columns:1fr}
+    }
+    @media(max-width:460px){
+      .tc-impact-grid,.tc-source-grid,.tc-stats{grid-template-columns:1fr}
+      .tc-capsule-head{display:block}
+      .tc-record{margin-top:7px;text-align:left}
+    }
+  </style>
+</head>
+<body class="hw-product" data-page="capsules" data-section="teams" data-product="dense-research">
+  <a class="hw-skip" href="#content">Skip to team capsules</a>
+  <main class="hw-page" id="content">
+    <div class="hw-loading">Loading team capsules…</div>
+  </main>
+  <script src="hw-product.js"></script>
+  <script>
+(function(){
+  "use strict";
+
+  function esc(value){
+    return String(value == null ? "" : value).replace(/[&<>"']/g,function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function has(value){return value !== null && value !== undefined && value !== "";}
+  function number(value){
+    if(value === null || value === undefined || value === "") return null;
+    var n=Number(value); return Number.isFinite(n)?n:null;
+  }
+  function fixed(value,digits){
+    var n=number(value); return n===null?"not published":n.toFixed(digits==null?2:digits);
+  }
+  function comma(value){
+    var n=number(value); return n===null?"not published":Math.round(n).toLocaleString();
+  }
+  function signed(value,digits){
+    var n=number(value); return n===null?"not published":(n>0?"+":"")+n.toFixed(digits==null?2:digits);
+  }
+  function missing(value,label){return has(value)?esc(value):esc(label+" not published");}
+  function arrayRows(data){return Array.isArray(data&&data.teams)?data.teams:[];}
+  function sourceRows(fixture,source){
+    if(source==="player_impact") return Array.isArray(fixture[source]&&fixture[source].players)?fixture[source].players:[];
+    if(source==="coach_style") return fixture[source]&&fixture[source].teams&&typeof fixture[source].teams==="object"?fixture[source].teams:{};
+    return arrayRows(fixture[source]);
+  }
+  function sourceHas(fixture,source,team){
+    var rows=sourceRows(fixture,source);
+    if(Array.isArray(rows)) return rows.some(function(row){return row.team===team;});
+    return Object.prototype.hasOwnProperty.call(rows,team);
+  }
+  function missingSources(fixture,team){
+    return ["standings","player_impact","coach_style","tempo"].filter(function(source){
+      return !sourceHas(fixture,source,team);
+    });
+  }
+  function gapLabel(source){
+    return source==="player_impact"?"missing impact data":source;
+  }
+  function rankedTeams(fixture){
+    return arrayRows(fixture.teams).slice().sort(function(a,b){return (a.rank||999)-(b.rank||999);});
+  }
+  var BATCH_LIMIT=6;
+  function selectBatch(fixture){
+    return rankedTeams(fixture).filter(function(row){
+      return ["teams","standings","player_impact","coach_style","tempo"].every(function(source){
+        return sourceHas(fixture,source,row.team);
+      });
+    }).slice(0,BATCH_LIMIT);
+  }
+  function teamRow(fixture,source,team){
+    var rows=sourceRows(fixture,source);
+    if(Array.isArray(rows)) return rows.find(function(row){return row.team===team;})||null;
+    return rows[team]||null;
+  }
+  function etClock(utc){
+    if(typeof utc!=="string"||!utc) return "Generated time not published";
+    var instant=new Date(utc);
+    if(isNaN(instant.getTime())) return "Generated time not published";
+    var parts;
+    try{
+      parts=new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",hour12:true}).formatToParts(instant);
+    }catch(err){return "Generated time not published";}
+    var p={};
+    parts.forEach(function(part){p[part.type]=part.value;});
+    if(!p.month||!p.day||!p.hour||!p.minute||!p.dayPeriod) return "Generated time not published";
+    return p.month+" "+p.day+", "+p.hour+":"+p.minute+p.dayPeriod.toLowerCase()+" ET";
+  }
+  function sourceCard(name,label,data){
+    return '<article class="tc-source" data-source="'+esc(name)+'"><strong>'+esc(label)+'</strong><time data-generated-utc="'+esc(data&&data.generated_utc||"")+'">'+esc(etClock(data&&data.generated_utc))+'</time></article>';
+  }
+  function impactPlayers(fixture,team){
+    return (fixture.player_impact&&Array.isArray(fixture.player_impact.players)?fixture.player_impact.players:[])
+      .filter(function(row){return row.team===team.team;})
+      .sort(function(a,b){return (a.rank==null?Infinity:a.rank)-(b.rank==null?Infinity:b.rank);})
+      .slice(0,3);
+  }
+  function impactBlock(fixture,team){
+    var impact=fixture.player_impact||{}, players=impactPlayers(fixture,team);
+    if(!players.length) return '<section class="tc-impact"><div class="tc-label">Impact first · points per 100</div><div class="hw-empty">Impact data not published.</div></section>';
+    return '<section class="tc-impact"><div class="tc-label">Impact first · points per 100</div><div class="tc-impact-grid">'+players.map(function(player){
+      return '<article class="tc-player"><strong>'+missing(player.name,"Player")+'</strong><b>'+signed(player.impact,2)+'</b><small>games '+comma(player.games)+' · stints '+comma(player.stints)+(player.thin===true?' · <span class="tc-thin">Thin sample</span>':"")+'</small></article>';
+    }).join("")+'</div><span class="tc-note">Rank floor: '+missing(impact.rank_floor_games,"Impact rank floor")+' games; thin rows stay visible and are labelled.</span></section>';
+  }
+  function whatItDoes(fixture,team){
+    var coach=teamRow(fixture,"coach_style",team.team)||{}, pace=teamRow(fixture,"tempo",team.team)||{}, league=(fixture.tempo&&fixture.tempo.league)||{};
+    var history=coach.has_history===false?'<p><strong>History:</strong> '+missing(fixture.coach_style&&fixture.coach_style.card&&fixture.coach_style.card.has_history_note,"Coach history")+'</p>':"";
+    return '<section class="tc-block"><h3>What it does</h3><p><strong>Coach:</strong> '+missing(coach.coach,"Coach")+' · <strong>Style:</strong> '+missing(coach.style,"Style")+'</p>'+
+      history+
+      '<p><strong>Pace:</strong> '+fixed(pace.pace,1)+' possessions/game · '+missing(pace.tier_label,"Pace tier")+' · n='+comma(pace.n_games)+'</p>'+
+      '<p><small>Recent '+fixed(pace.pace_recent,1)+' · change '+signed(pace.pace_delta,1)+' · '+missing(pace.pace_trend,"Pace trend")+'</small></p>'+
+      '<p><small>League mean '+fixed(league.pace_mean,1)+' · standard deviation '+fixed(league.pace_std,2)+' · '+comma(league.n_teams)+' teams</small></p></section>';
+  }
+  function whatChanged(fixture,team,standing){
+    var trend=team.trend||{}, range=standing&&Array.isArray(standing.proj_range_90)?standing.proj_range_90:[];
+    return '<section class="tc-block"><h3>What changed</h3><p><strong>Strength:</strong> '+fixed(team.strength,1)+' · <strong>Churn:</strong> '+signed(team.churn,2)+'</p>'+
+      '<p><strong>Title chance:</strong> '+fixed(team.title_pct,1)+'% · <strong>Playoff chance:</strong> '+fixed(team.playoff_pct,1)+'%</p>'+
+      '<p><strong>Title trend:</strong> '+fixed(trend.title&&trend.title[0],2)+' → '+fixed(trend.title&&trend.title[trend.title.length-1],2)+' over '+missing(trend.days,"Trend window")+' days; title move '+signed(trend.title_move,2)+'.</p>'+
+      '<p><strong>Strength trend:</strong> '+fixed(trend.strength&&trend.strength[0],2)+' → '+fixed(trend.strength&&trend.strength[trend.strength.length-1],2)+'; rank move '+(number(trend.rank_move)===null?"not published":(trend.rank_move>0?"+":"")+trend.rank_move)+' over '+missing(trend.move_days,"Move window")+' days.</p>'+
+      '<p><strong>Projection range:</strong> '+(range.length===2?fixed(range[0],1)+'–'+fixed(range[1],1)+' wins':"not published")+'</p></section>';
+  }
+  function basis(fixture,team,standing){
+    var players=impactPlayers(fixture,team);
+    var games=players.reduce(function(sum,row){return sum+(number(row.games)||0);},0);
+    var stints=players.reduce(function(sum,row){return sum+(number(row.stints)||0);},0);
+    var pace=teamRow(fixture,"tempo",team.team)||{};
+    var sourceFreshness=[
+      ["teams","Teams",fixture.teams],
+      ["standings","Standings",fixture.standings],
+      ["player_impact","Player impact",fixture.player_impact],
+      ["coach_style","Coach style",fixture.coach_style],
+      ["tempo","Tempo",fixture.tempo],
+    ].map(function(item){
+      return '<span data-capsule-source="'+esc(item[0])+'" data-generated-utc="'+esc(item[2]&&item[2].generated_utc||"")+'"><strong>'+esc(item[1])+'</strong> '+esc(etClock(item[2]&&item[2].generated_utc))+'</span>';
+    }).join(" · ");
+    return '<div class="tc-basis"><strong>What this number rests on:</strong> the '+players.length+' shown impact players · shown player-games '+comma(games)+' · shown stints '+comma(stints)+' · pace n_games '+comma(pace.n_games)+' · projection range from the standings simulation, not a median-only claim.<br><span class="tc-note">Source clocks: '+sourceFreshness+'</span></div>';
+  }
+  function capsule(fixture,team){
+    var standing=teamRow(fixture,"standings",team.team)||{};
+    return '<article class="hw-module tc-capsule" data-team="'+esc(team.team)+'"><header class="tc-capsule-head"><div><span class="tc-team-mark">'+esc(team.team)+' · rank '+missing(team.rank,"Rank")+'</span><h2>'+missing(team.team_full,"Team")+'</h2><span class="tc-note">'+missing(standing.conference,"Conference")+' conference · strength '+fixed(team.strength,1)+'</span></div><div class="tc-record"><strong>'+missing(standing.wins,"Wins")+'–'+missing(standing.losses,"Losses")+'</strong> '+fixed(standing.win_pct*100,1)+'% win rate</div></header>'+
+      impactBlock(fixture,team)+'<div class="tc-columns">'+whatItDoes(fixture,team)+whatChanged(fixture,team,standing)+'</div>'+basis(fixture,team,standing)+'</article>';
+  }
+  function renderCapsules(fixture){
+    fixture=fixture||{};
+    var teams=rankedTeams(fixture),batch=selectBatch(fixture),covered=batch.map(function(row){return row.team;});
+    var uncovered=teams.filter(function(row){return covered.indexOf(row.team)<0;});
+    var sourceGaps=uncovered.map(function(row){
+      var missingList=missingSources(fixture,row.team);
+      var reason=missingList.length?"missing "+missingList.map(gapLabel).join(", "):"outside the first "+BATCH_LIMIT+"-team batch cap";
+      return '<li><strong>'+esc(row.team)+'</strong> — <span class="'+(missingList.length?"tc-gap":"tc-cap")+'">'+esc(reason)+'</span></li>';
+    }).join("");
+    var sourceLabels=[
+      ["teams","Teams / change","teams"],
+      ["standings","Standings / projection","standings"],
+      ["player_impact","Player impact / basis","player_impact"],
+      ["coach_style","Coach style","coach_style"],
+      ["tempo","Tempo / pace","tempo"],
+    ];
+    var sourceCards=sourceLabels.map(function(item){return sourceCard(item[0],item[1],fixture[item[2]]);}).join("");
+    var rule="first up to "+BATCH_LIMIT+" teams by rank with a row in every source";
+    var body='<header class="hw-command-head"><div class="tc-intro"><div class="hw-kicker">Teams · first capsule batch</div><h1>What each team does, what changed, and what the number rests on</h1><p>Impact leads each capsule. Counting stats and projections follow only after the player signal, style read, and pace context are visible.</p></div><div class="hw-command-meta"><span class="hw-badge">First batch: '+batch.length+' of the league\'s '+teams.length+' teams</span></div></header>'+
+      '<section class="hw-module"><div class="hw-module-body"><div class="tc-meta"><span><b>Selection rule</b> '+esc(rule)+'</span><span>·</span><span><b>Not yet covered</b> '+uncovered.length+' teams</span></div><p class="tc-note">The batch is a format sample, not a complete league view. Each team below has one stated reason: a named source gap or the batch cap.</p>'+ (uncovered.length?'<ul class="tc-note">'+sourceGaps+'</ul>':'<p class="tc-note">None.</p>')+'</div></section>'+
+      '<section class="tc-capsules" aria-label="Team capsules">'+batch.map(function(team){return capsule(fixture,team);}).join("")+'</section>'+
+      '<section class="hw-module"><div class="hw-module-head"><div><h2>Artifact freshness</h2><span>Each source carries its own clock</span></div></div><div class="hw-module-body"><div class="tc-source-grid">'+sourceCards+'</div></div></section>';
+    var root=document.getElementById("content");
+    if(root)root.innerHTML=body;
+    return root;
+  }
+  window.TeamCapsulesPage={render:renderCapsules};
+  function boot(){
+    var names=["teams","standings","player_impact","coach_style","tempo"];
+    Promise.all(names.map(function(name){
+      return fetch(name+".json",{cache:"no-store"}).then(function(response){
+        if(!response.ok)throw new Error(name+".json returned "+response.status);
+        return response.json();
+      });
+    })).then(function(values){
+      var fixture={};
+      names.forEach(function(name,index){fixture[name]=values[index];});
+      renderCapsules(fixture);
+    }).catch(function(){
+      var root=document.getElementById("content");
+      if(root)root.innerHTML='<div class="hw-empty">The capsule artifacts could not be loaded. Nothing was guessed.</div>';
+    });
+  }
+  boot();
+})();
+  </script>
+</body>
+</html>
