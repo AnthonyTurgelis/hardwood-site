@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="hw-product.css">
   <link rel="stylesheet" href="hw-dense.css">
   <link rel="stylesheet" href="hw-players.css">
-<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
-<body class="hw-product" data-page="players-dense" data-section="players" data-product="dense-players"><header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html" aria-current="page">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026</a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-badge{font-size:.7em;letter-spacing:.05em;vertical-align:super}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center}</style><!--/hw-chrome-style--></head>
+<body class="hw-product" data-page="players-dense" data-section="players" data-product="dense-players"><header class="hw-chrome"><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-brand" href="index.html">The Hardwood</a><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html" aria-current="page">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026<span class="hw-badge">LIVE</span></a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
   <a class="hw-skip" href="#content">Skip to content</a>
   <main class="hw-page hw-players-page" id="content">
     <header class="hw-command-head hw-players-head">
@@ -40,6 +40,9 @@
           <label><span>Team</span><select class="hw-players-select" id="players-team"><option value="">All teams</option></select></label>
           <label><span>Availability</span><select class="hw-players-select" id="players-status"><option value="">All states</option><option value="available">Available</option><option value="limited">Limited</option><option value="out">Out</option><option value="unknown">Unknown</option></select></label>
           <label><span>Basis</span><select class="hw-players-select" id="players-basis"><option value="">All samples</option><option value="firm">Firm</option><option value="provisional">Provisional</option><option value="career">Career-backed</option><option value="thin">Thin / light</option></select></label>
+          <label class="hw-players-mobile-sort"><span>Sort</span><select class="hw-players-select" id="players-sort"><option value="impact">Impact</option><option value="rank">Score #</option><option value="gp">GP</option><option value="minutes">Proj min</option><option value="pts">PTS</option><option value="reb">REB</option><option value="ast">AST</option><option value="impactRank">Impact #</option><option value="seasonRate">Season rate</option><option value="seasonVolume">Season total</option><option value="basis">Basis</option><option value="trend">Trend</option></select></label>
+          <label class="hw-players-mobile-sort"><span>Direction</span><select class="hw-players-select" id="players-sort-dir"><option value="desc">Descending</option><option value="asc">Ascending</option></select></label>
+          <button class="hw-button" id="players-export" type="button" aria-label="Download filtered players CSV" title="Download the currently filtered and sorted player ledger as CSV">CSV</button>
           <button class="hw-button" id="players-reset" type="button">Reset</button>
         </div>
 
@@ -80,14 +83,14 @@
       <article class="hw-module">
         <div class="hw-module-head hw-player-viz-head">
           <div><h2>Player landscape</h2><span id="player-viz-context">Impact versus projected minutes</span></div>
-          <div class="hw-visual-tabs" role="tablist" aria-label="Player visual">
-            <button class="hw-visual-tab active" type="button" data-player-viz="impact-minutes">Impact × role</button>
-            <button class="hw-visual-tab" type="button" data-player-viz="season">Season rate × total</button>
-            <button class="hw-visual-tab" type="button" data-player-viz="ranks">Impact rank × scoring rank</button>
+          <div class="hw-visual-tabs" role="group" aria-label="Player visual">
+            <button class="hw-visual-tab active" type="button" aria-pressed="true" data-player-viz="impact-minutes">Impact × role</button>
+            <button class="hw-visual-tab" type="button" aria-pressed="false" data-player-viz="season">Season rate × total</button>
+            <button class="hw-visual-tab" type="button" aria-pressed="false" data-player-viz="ranks">Impact rank × scoring rank</button>
           </div>
         </div>
         <div class="hw-module-body"><div class="hw-player-viz" id="player-viz"><div class="hw-empty">Loading player landscape…</div></div></div>
-        <div class="hw-viz-legend" id="player-viz-legend"><span><b>Hover:</b> player and values</span><span><b>Orange:</b> selected player</span></div>
+        <div class="hw-viz-legend" id="player-viz-legend"><span><b>Point:</b> player and values</span><span><b>Keyboard:</b> arrows move · Enter selects</span><span><b>Orange:</b> selected player</span></div>
       </article>
 
       <article class="hw-module hw-player-watch">
@@ -109,5 +112,5 @@
   </main>
   <script src="hw-product.js"></script>
   <script src="hw-players.js"></script>
-<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></div><div>Projections published pre-tip, graded publicly.</div></footer><!--/hw-foot--></body>
+<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot--></body>
 </html>

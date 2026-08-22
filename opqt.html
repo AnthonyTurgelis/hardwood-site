@@ -35,6 +35,46 @@
   table.sortable th[aria-sort="ascending"]::after{content:" \25B2";font-size:8px}
   table.sortable th[aria-sort="descending"]::after{content:" \25BC";font-size:8px}
   .scroll{overflow-x:auto}
+  /* Sticky headers: the header row stays readable while the data scrolls under it. Sticky needs a
+     scrolling ancestor to pin against, so the primary card's scroll region is height-bounded. */
+  .scroll thead th{position:sticky;top:0;background:var(--card);z-index:2}
+  .tall{max-height:72vh;overflow:auto}
+  /* The sticky compact pagebar: filters + freshness. The freshness is the FEED's as_of, never a
+     clock — fresh-or-loud is a property of the artifact, not of the moment the page was opened. */
+  #pagebar{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;
+    max-width:1080px;margin:0 auto;padding:6px 14px}
+  #pagebar .chip{font:inherit;font-size:11.5px;color:var(--acc);background:var(--card);
+    border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;min-height:28px}
+  #pagebar .chip[aria-pressed="true"]{background:var(--acc);color:#fff;border-color:var(--acc)}
+  #teamfilter{font:inherit;font-size:12px;color:var(--ink);background:var(--card);
+    border:1px solid var(--line);border-radius:6px;padding:5px 8px;width:130px;min-width:0}
+  #asof{margin-left:auto;font-size:10.5px;color:var(--dim);font-variant-numeric:tabular-nums;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  /* Table + inspector: the table dominates the width, the inspector rides beside it and collapses
+     below it on a narrow viewport. minmax(0,1fr) so the table column can shrink instead of
+     overflowing the page at 1024/390. */
+  .split{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:10px;align-items:start}
+  #inspector{position:sticky;top:52px;min-width:0}
+  #primary{min-width:0}
+  tbody tr.sel td{background:var(--card2)}
+  #primary tbody tr{cursor:pointer}
+  @media (max-width:960px){ .split{grid-template-columns:minmax(0,1fr)} #inspector{position:static} }
+.rbadge{font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--line);
+  border-radius:999px;padding:1px 6px;color:var(--dim);white-space:nowrap}
+.rbadge.certified{color:var(--dim)}
+.rbadge.announced,.rbadge.notfinal,.rbadge.notannounced,.rbadge.pool,.rbadge.incomplete{color:var(--warn,#b58900);border-color:var(--warn,#b58900)}
+.rbadge.out{color:var(--bad,#dc322f);border-color:var(--bad,#dc322f);font-weight:700}
+.rbadge.precautionary,.rbadge.questionable{color:var(--warn,#b58900);border-color:var(--warn,#b58900);font-style:italic}
+.rbadge.unverified{color:var(--bad,#dc322f);border-color:var(--bad,#dc322f);background:var(--card2)}
+/* The phone acceptance: secondary bio columns collapse so the impact stat is the first visible
+   metric after the player, and every tappable row meets the 44px touch target. Stat cells never
+   collapse — absence must stay visible at every width. */
+@media (max-width:430px){
+  .sec{display:none}
+  #field tr[data-player] td{padding-top:12px;padding-bottom:12px;min-height:44px}
+  #primary tbody td{padding-top:12px;padding-bottom:12px;min-height:44px}
+}
   .rank{display:inline-block;min-width:22px;padding:1px 5px;border-radius:5px;background:var(--chip);color:var(--muted);font-size:10.5px;font-weight:700;text-align:center;margin-right:6px}
   .flag{color:var(--dim);text-decoration:none;font-size:10px;vertical-align:super}
   .flag:hover{color:var(--acc)}
@@ -66,14 +106,21 @@
   #field .work{margin-top:3px}
   #field details{margin-left:0}
 </style>
-<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-badge{font-size:.7em;letter-spacing:.05em;vertical-align:super}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center}</style><!--/hw-chrome-style--></head>
 <body>
 <header>
   <div class="kicker">The Federation Desk · The Hardwood</div>
   <h1>Olympic Pre-Qualifying Tournament — Guadalajara 2026</h1>
 </header>
 <div class="sub" id="sub">Loading…</div>
-<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html" aria-current="page">OPQT 2026</a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
+<div id="pagebar" hidden>
+  <button class="chip" type="button" data-filter-group="" aria-pressed="true">All</button>
+  <button class="chip" type="button" data-filter-group="A" aria-pressed="false">Group A</button>
+  <button class="chip" type="button" data-filter-group="B" aria-pressed="false">Group B</button>
+  <input id="teamfilter" type="search" placeholder="Filter teams" aria-label="Filter teams">
+  <span id="asof"></span>
+</div>
+<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-brand" href="index.html">The Hardwood</a><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html" aria-current="page">OPQT 2026<span class="hw-badge">LIVE</span></a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
 <main id="main"><div class="card"><div class="pad empty">Loading the projection…</div></div></main>
 
 <script>
@@ -136,7 +183,9 @@ const ROSTER_SOURCE = {
 };
 function rosterCell(t){
   const s = ROSTER_SOURCE[t.roster_status];
-  if (!s) return `<td class="l empty" data-s="-1" title="roster source not published">—</td>`;
+  // A state the page does not recognise is flagged in words — a silent dash would let a stale or
+  // renamed feed state pass as "nothing to see", which is the one answer this cell may not give.
+  if (!s) return `<td class="l prov" data-s="-1" title="roster state not recognised — treat as stale until the feed names it">Unverified</td>`;
   // The size rides with the label, so a certified ten reads as a certified ten and not as a short
   // twelve. Basketball New Zealand named ten; that is the roster, not a gap in it.
   const size = (typeof t.n_named === "number" && isFinite(t.n_named)) ? " " + t.n_named : "";
@@ -198,7 +247,7 @@ function record(t, d){
 function groupTable(d, code){
   const rows = d.teams.filter(t => t.group === code)
                       .sort((a,b) => b.p_title - a.p_title);
-  return `<div class="card"><div class="scroll"><table class="sortable">
+  return `<div class="card" data-group="${code}"><div class="scroll tall"><table class="sortable">
     <thead><tr>
       <th class="l">Rank</th><th class="l">Group ${code}</th><th>W-L</th>
       <th>Adv%</th><th>Final%</th><th>Title%</th><th class="l">Roster</th>
@@ -206,8 +255,10 @@ function groupTable(d, code){
     <tbody>${rows.map(t => {
       const r = record(t, d);
       return `<tr>
-        <td class="l" data-s="${req(t.fiba_rank,"fiba_rank")}"><span class="rank">${t.fiba_rank}</span></td>
-        <td class="l" data-s="0">${tapLink(t, req(t.name,"name"), "the certified squad this number was built on")}${TIERED_HEAVY(t) ? FLAG : ""}</td>
+        <td class="l" data-s="${req(t.fiba_rank,"fiba_rank")}" data-team="${req(t.team,"team")}"><span class="rank">${t.fiba_rank}</span></td>
+        <td class="l" data-s="0">${tapLink(t, req(t.name,"name"),
+          (ROSTER_SOURCE[t.roster_status] ? ROSTER_SOURCE[t.roster_status].label.toLowerCase() : "unverified")
+          + " squad this number was built on")}${TIERED_HEAVY(t) ? FLAG : ""}</td>
         <td data-s="${r.w - r.l}">${r.w}-${r.l}</td>
         <td data-s="${req(t.p_advance,"p_advance")}">${pct1(t.p_advance,"p_advance")}</td>
         <td data-s="${req(t.p_final,"p_final")}">${pct1(t.p_final,"p_final")}</td>
@@ -216,6 +267,73 @@ function groupTable(d, code){
       </tr>`;
     }).join("")}
     </tbody></table></div></div>`;
+}
+
+// THE PRIMARY REGION composes the conformance-pinned groupTable rather than rendering the rows a
+// second way: tests/test_opqt_groups_table_conformance.py owns that row's shape, and two render
+// variants of one row is the drift this repo names most often.
+function primaryTable(d){
+  return `<div id="primary">${groupTable(d, "A")}${groupTable(d, "B")}</div>`;
+}
+
+// Freshness is the FEED's as_of. Nothing here reads a clock.
+// Human surfaces speak ET (America/New_York, DST-correct — never the browser's zone); raw UTC
+// stays machine/provenance-only. An unreadable instant says so in words, never "Invalid Date".
+function etTime(iso){
+  const d = new Date(iso || "");
+  if (!iso || isNaN(d.getTime())) return "build time not published";
+  return new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York",
+      month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true})
+    .format(d).replace(/\s(AM|PM)$/, (m, ap) => ap.toLowerCase()) + " ET";
+}
+// "built <ET time>" for a readable instant; the sentinel stands alone (never "built build time…").
+function builtLine(iso){
+  const t = etTime(iso);
+  return t === "build time not published" ? t : `built ${t}`;
+}
+// The parenthetical ISO date is the SAME ET instant's calendar date — one human date/time truth,
+// never the UTC date component wearing a provenance costume beside a different ET date.
+function freshnessLine(d){
+  const dt = new Date(String(d.built_at || ""));
+  const asOfDate = d.built_at && !isNaN(dt.getTime())
+    ? new Intl.DateTimeFormat("en-CA", {timeZone: "America/New_York",
+        year: "numeric", month: "2-digit", day: "2-digit"}).format(dt)
+    : "";
+  return `built ${etTime(d.built_at)}${asOfDate ? ` (${asOfDate})` : ""}`
+    + ` · FIBA ranking ${req(d.ranking_edition,"ranking_edition")}`
+    + ` · ${Number(req(d.sims,"sims")).toLocaleString()} sims`;
+}
+
+// THE INSPECTOR: one selected team's detail beside/below the table — the derivation surface that
+// used to demand a scroll hunt through cards. It reads the same feed objects the table reads.
+function inspectorHTML(d, code){
+  const t = TEAMS_BY_CODE[code];
+  if (!t) return `<div class="card"><div class="pad empty">Tap a team row for its detail.</div></div>`;
+  const r = record(t, d);
+  const s = ROSTER_SOURCE[t.roster_status];
+  const games = (d.games || []).filter(g => g.team_a === t.team || g.team_b === t.team).map(g => {
+    const opp = g.team_a === t.team ? g.team_b : g.team_a;
+    const grade = (d.grades || []).find(x => x.team_a === g.team_a && x.team_b === g.team_b);
+    const line = `<b>${req(g.favorite,"favorite")} −${req(g.line,"line").toFixed(1)}</b>`;
+    const score = grade ? ` · final ${grade.score_a}–${grade.score_b}` : "";
+    return `<div class="game"><div class="row">${etLabel(g.tip_utc)} — vs ${opp} — ${line}${score}</div></div>`;
+  }).join("");
+  return `<div class="card"><div class="pad">
+      <b>${req(t.name,"name")}</b> <span class="hint">${t.team} · Group ${req(t.group,"group")}</span>
+    </div>
+    <div class="pad kv">
+      <div class="i"><b>${r.w}-${r.l}</b><span>record</span></div>
+      <div class="i"><b>${pct1(t.p_advance,"p_advance")}</b><span>advance</span></div>
+      <div class="i"><b>${pct1(t.p_final,"p_final")}</b><span>final</span></div>
+      <div class="i"><b>${pct1(t.p_title,"p_title")}</b><span>title</span></div>
+      <div class="i"><b>${req(t.fiba_rank,"fiba_rank")}</b><span>FIBA rank</span></div>
+      <div class="i"><b>${req(t.fiba_points,"fiba_points").toFixed(1)}</b><span>FIBA pts</span></div>
+      <div class="i"><b>${req(t.rating,"rating").toFixed(1)}</b><span>rating</span></div>
+    </div>
+    <div class="pad meta">${s
+      ? tapLink(t, `${s.label}${typeof t.n_named === "number" ? " " + t.n_named : ""}`, s.note + " — tap for the squad")
+      : `<span class="empty" title="roster source not published">—</span>`}</div>
+    ${games}</div>`;
 }
 
 // THE PRODUCT PROMISE, MECHANICALLY: the call equals the sum of its named parts, and the page
@@ -327,8 +445,35 @@ function ledger(d){
 // that is the normal case, not breakage.
 //
 // A dash here always means "not published". It never means nothing, and it never means none.
-const DASH = (why) => `<td class="empty" title="${why}">—</td>`;
-const DASHL = (why) => `<td class="l empty" title="${why}">—</td>`;
+const DASH = (why, cls) => `<td class="empty${cls ? " " + cls : ""}" title="${why}">—</td>`;
+const DASHL = (why, cls) => `<td class="l empty${cls ? " " + cls : ""}" title="${why}">—</td>`;
+
+// THE ROSTER OVERLAY — every state the WC feed can ship, worn as a visible badge driven by the
+// feed value alone. Confirmed OUT and precautionary availability are different facts and never
+// share a word or a hook. A state this map does not know is flagged UNVERIFIED in warn colour —
+// stale or renamed feed vocabulary must be loud, never a silent dash and never a hidden row.
+const ROSTER_BADGE = {
+  FINAL_CERTIFIED: {word: "certified",     cls: "certified", note: "final game roster, certified by FIBA"},
+  FINAL_LIKELY:    {word: "announced",     cls: "announced", note: "squad announced by the federation, not yet certified"},
+  POOL:            {word: "pool",          cls: "pool",      note: "training pool, wider than the roster to be certified"},
+  INCOMPLETE:      {word: "incomplete",    cls: "incomplete",note: "roster only partly published"},
+  OUT:             {word: "out",           cls: "out",       note: "confirmed out — ruled off this roster"},
+  PRECAUTIONARY:   {word: "precautionary", cls: "precautionary", note: "precautionary availability — not a confirmed absence"},
+  QUESTIONABLE:    {word: "questionable",  cls: "questionable",  note: "availability in question — not a confirmed absence"},
+  // The WC source-state feed's own vocabulary: a sourced provisional list and a known source
+  // state with no list yet. Both are KNOWN conditions — neither is stale data, and an absent
+  // list never infers an OUT.
+  ANNOUNCED_NOT_FINAL: {word: "announced · not final", cls: "notfinal",
+    note: "squad announced by the source, still provisional — not the final list"},
+  NOT_ANNOUNCED:       {word: "not announced",         cls: "notannounced",
+    note: "source state known — no roster announced yet; the absence of a list is not an absence of players"},
+};
+function rosterBadge(status){
+  const b = ROSTER_BADGE[status];
+  if (!b) return `<span class="rbadge unverified" data-roster="unverified"
+    title="roster state ${status ? "'" + status + "' not recognised" : "absent"} — treat as stale until the feed names it">unverified</span>`;
+  return `<span class="rbadge ${b.cls}" data-roster="${b.cls}" title="${b.note}">${b.word}</span>`;
+}
 
 // Impact leads, counting stats last. The box is a RESULT and is labelled with the competition it
 // was won in — a prior qualifier is not this tournament and must never be read as one.
@@ -347,22 +492,57 @@ function boxLine(b){
   return `<div class="work">${b.competition.replace("FIBA_","")} — ${bits.join(" · ")}${src}</div>`;
 }
 
+// The OPQT line — this tournament's finished boxes only, aggregated with a hard no-imputation
+// rule. gp is a COUNT and is always real, zero included. Minutes are the SUMMED published
+// minutes; if any finished box shipped without minutes, the total is null and every per-40 is
+// null with it — a rate without a real minute base is an invention, not a measurement.
+// Prior-qualifier boxes never enter these columns (label law: a prior competition is not this one).
+function tourStats(p){
+  // A feed box with minutes: 0.0 is a rostered DNP — coverage, not an appearance. It never
+  // enters gp or the per-40 base. An untimed box (minutes null) is a played game whose minutes
+  // were not published: it counts as played but forbids any per-40. Every finished box, DNP
+  // included, still shows in the work column.
+  const boxes = (p.boxes || []).filter(b => b.competition === "FIBA_OPQT")
+    .filter(b => !(typeof b.minutes === "number" && b.minutes <= 0));
+  const gp = boxes.length;
+  const timed = gp > 0 && boxes.every(b => typeof b.minutes === "number");
+  const min = timed ? boxes.reduce((s, b) => s + b.minutes, 0) : null;
+  const per40 = k => {
+    if (min === null || min <= 0) return null;
+    let s = 0;
+    for (const b of boxes){ if (typeof b[k] !== "number") return null; s += b[k]; }
+    return s * 40 / min;
+  };
+  return {gp, min, pm40: per40("plus_minus"), eff40: per40("eff"),
+          pts40: per40("pts"), reb40: per40("reb"), ast40: per40("ast")};
+}
+
+// A stat cell prints a value or a why — never a blank, and never a sort key of zero for an
+// absence: zero reads as measured, and sorting must not be able to disguise an unplayed or
+// untimed row as a measured one. Absences sink (data-s=-1e9) but the row itself stays put and
+// states its own condition.
+function statCell(v, fmt, why){
+  return v === null
+    ? `<td class="empty" data-stat data-s="-1e9" title="${why}">—</td>`
+    : `<td data-stat data-s="${v}">${fmt(v)}</td>`;
+}
+
 function playerRow(p){
   // Height and the full name were the two gaps named out loud, so they lead the row.
   const ht = p.height_cm
-    ? `<td data-s="${p.height_cm}">${p.height_cm}<span class="hint"> ${p.height_ftin}</span></td>`
-    : DASH("height not published for this player");
-  const pos = p.pos ? `<td class="l" data-s="0">${p.pos}</td>` : DASHL("position not published");
-  const age = p.age ? `<td data-s="${p.age}">${p.age}</td>` : DASH("date of birth not published");
+    ? `<td class="sec" data-s="${p.height_cm}">${p.height_cm}<span class="hint"> ${p.height_ftin}</span></td>`
+    : DASH("height not published for this player", "sec");
+  const pos = p.pos ? `<td class="l sec" data-s="0">${p.pos}</td>` : DASHL("position not published", "sec");
+  const age = p.age ? `<td class="sec" data-s="${p.age}">${p.age}</td>` : DASH("date of birth not published", "sec");
   const club = p.club
-    ? `<td class="l" data-s="0">${p.club}<span class="hint"> ${p.league || ""}</span></td>`
-    : DASHL("club not published");
+    ? `<td class="l sec" data-s="0">${p.club}<span class="hint"> ${p.league || ""}</span></td>`
+    : DASHL("club not published", "sec");
 
   // A group prior is not a player measurement (level-match law). 92 of the 94 share one anchor
   // value; printing it 92 times would look like 92 findings and would be team-to-player paint.
   const rating = p.rating_is_measured
-    ? `<td data-s="${p.rating}" title="${p.rating_basis}">${p.rating.toFixed(4)}</td>`
-    : DASH(p.rating_basis);
+    ? `<td class="sec" data-s="${p.rating}" title="${p.rating_basis}">${p.rating.toFixed(4)}</td>`
+    : DASH(p.rating_basis, "sec");
 
   // The derivation sits one tap away, never inline on the row.
   const boxes = (p.boxes || []).concat(p.prior_boxes || []);
@@ -372,10 +552,72 @@ function playerRow(p){
     ? `<details><summary>${(p.boxes||[]).length ? "box" : "recent form"}</summary>${work}</details>`
     : `<span class="empty" title="no finished game and no published form line for this player">—</span>`;
 
-  return `<tr>
-    <td class="l" data-s="0">${p.name}</td>
-    ${pos}${ht}${age}${club}${rating}
+  // The tournament line, impact first at every width — the impact pair leads the visible
+  // columns, the sample size (gp, real minutes) rides with it, counting rates trail.
+  const s = tourStats(p);
+  const minWhy = s.gp === 0
+    ? "no finished OPQT game yet"
+    : "minutes not published for a finished game — a per-40 has no base";
+  const statCells = statCell(s.pm40, sgn1, minWhy)
+    + statCell(s.eff40, v => v.toFixed(1), minWhy)
+    + `<td data-s="${s.gp}">${s.gp}</td>`
+    + statCell(s.min, v => v.toFixed(1), minWhy)
+    + statCell(s.pts40, v => v.toFixed(1), minWhy)
+    + statCell(s.reb40, v => v.toFixed(1), minWhy)
+    + statCell(s.ast40, v => v.toFixed(1), minWhy);
+
+  // team+name is the row key: fiba_id is null for most of the field, and a null key would collide
+  // every unidentified player onto one inspector entry.
+  return `<tr data-player="${p.team}:${p.name}" tabindex="0" aria-selected="false">
+    <td class="l" data-s="0">${p.name} ${rosterBadge(p.roster_status)}</td>
+    ${pos}${ht}${age}${club}${rating}${statCells}
     <td class="l" data-s="${boxes.length}">${tap}</td></tr>`;
+}
+
+// One player's detail, rendered from the feed payload alone — identity, roster state, the OPQT
+// line impact-first, then each finished box. The same no-imputation rule as the table: an absent
+// value is a dash with its why, never a number and never the word null.
+function playerInspectorHTML(p){
+  const s = tourStats(p);
+  const iv = (v, fmt, why) => v === null
+    ? `<b class="empty" title="${why}">—</b>` : `<b>${fmt(v)}</b>`;
+  const minWhy = s.gp === 0
+    ? "no finished OPQT game yet"
+    : "minutes not published for a finished game — a per-40 has no base";
+  const bio = [p.pos, p.height_ftin, p.club ? `${p.club}${p.league ? " (" + p.league + ")" : ""}` : null]
+    .filter(Boolean).join(" · ");
+  const rating = p.rating_is_measured
+    ? `<div>rating <b>${p.rating.toFixed(4)}</b> <span class="hint">${p.rating_basis}</span></div>`
+    : `<div><span class="empty" title="${p.rating_basis}">no measured rating</span></div>`;
+  const work = (p.boxes || []).concat(p.prior_boxes || []).map(boxLine).join("")
+    + (p.form_line ? `<div class="work">Form line — ${p.form_line}</div>` : "");
+  return `<div class="card"><div class="pad">
+      <b>${p.name}</b> <span class="hint">${p.team}${bio ? " · " + bio : ""}</span>
+    </div>
+    <div class="pad meta">roster ${String(p.roster_status).replace(/_/g, " ").toLowerCase()}</div>
+    <div class="pad kv">
+      <div class="i"><b>${s.gp}</b><span>GP</span></div>
+      <div class="i">${iv(s.min, v => v.toFixed(1), minWhy)}<span>Min</span></div>
+      <div class="i">${iv(s.pm40, sgn1, minWhy)}<span>+/−40</span></div>
+      <div class="i">${iv(s.eff40, v => v.toFixed(1), minWhy)}<span>EFF40</span></div>
+      <div class="i">${iv(s.pts40, v => v.toFixed(1), minWhy)}<span>P40</span></div>
+      <div class="i">${iv(s.reb40, v => v.toFixed(1), minWhy)}<span>R40</span></div>
+      <div class="i">${iv(s.ast40, v => v.toFixed(1), minWhy)}<span>A40</span></div>
+    </div>
+    <div class="pad">${rating}${work}</div></div>`;
+}
+
+// The team header wears the same roster-state vocabulary as the badges — a hard-coded
+// "certified" would falsely certify a provisional or unannounced roster the moment this overlay
+// is reused on one. NOT_ANNOUNCED states its condition and manufactures no player count.
+function teamRosterLine(t){
+  const states = [...new Set((t.players || []).map(p => p.roster_status))];
+  const status = t.roster_status || (states.length === 1 ? states[0] : null);
+  if (status === "NOT_ANNOUNCED") return "roster not announced";
+  const b = status && ROSTER_BADGE[status];
+  if (b) return `${t.n_players} ${b.word}`;
+  if (states.length > 1) return `${t.n_players} rostered · mixed roster states`;
+  return `${t.n_players} rostered · roster state unverified`;
 }
 
 function teamBlock(t){
@@ -393,14 +635,21 @@ function teamBlock(t){
          panel down, which the DOM test caught as eight missing #team- anchors. So it is looked up by
          code, and it DEGRADES rather than throws: a squad list must never fail to render because a
          header stat is missing, exactly as ROSTER_SOURCE above degrades to a dash. -->
-    <div class="pad"><b>${t.name}</b> <span class="hint">${t.team} · ${t.n_players} certified${
+    <div class="pad"><b>${t.name}</b> <span class="hint">${t.team} · ${teamRosterLine(t)}${
       (() => { const s = TEAMS_BY_CODE[t.team];
                return (s && isFinite(s.fiba_points) && isFinite(s.rating))
                  ? ` · FIBA ${s.fiba_points.toFixed(1)} pts · rating ${s.rating.toFixed(1)}` : ""; })()
     }</span></div>
     <div class="scroll"><table class="sortable">
-      <thead><tr><th class="l">Player</th><th class="l">Pos</th><th>Ht cm</th><th>Age</th>
-        <th class="l">Club</th><th>Rating</th><th class="l">Show the work</th></tr></thead>
+      <thead><tr><th class="l">Player</th><th class="l sec">Pos</th><th class="sec">Ht cm</th><th class="sec">Age</th>
+        <th class="l sec">Club</th><th class="sec">Rating</th>
+        <th title="plus-minus per 40 published minutes">+/−40</th>
+        <th title="efficiency per 40 published minutes">EFF40</th>
+        <th title="OPQT appearances — a zero-minute DNP is not a game played">GP</th><th title="summed published minutes">Min</th>
+        <th title="points per 40 published minutes">P40</th>
+        <th title="rebounds per 40 published minutes">R40</th>
+        <th title="assists per 40 published minutes">A40</th>
+        <th class="l">Show the work</th></tr></thead>
       <tbody>${t.players.map(playerRow).join("")}</tbody>
     </table></div></div>`;
 }
@@ -410,8 +659,8 @@ function fieldBlock(p){
   // Every absence on this surface is stated as a number, in the reader's words, at the top.
   const notes = [
     `Bio detail — full name, height, position, club — is published for <b>${c.n_with_bio}</b> of
-     <b>${c.n_roster}</b> players. The other <b>${c.n_without_bio}</b> carry the certified roster
-     line only; a dash is a field we have not published, not a zero.`,
+     <b>${c.n_roster}</b> players. The other <b>${c.n_without_bio}</b> carry the roster line
+     only; a dash is a field we have not published, not a zero.`,
     `<b>${c.n_measured_rating}</b> of ${c.n_roster} carry a rating measured on their own record.
      The rest are senior national-team players with no WNBA minutes, so they inherit a group prior
      — that is not a measurement of the player and is not printed as one.`,
@@ -420,11 +669,11 @@ function fieldBlock(p){
   if (p.prior_box_off_roster && p.prior_box_off_roster.length){
     const who = p.prior_box_off_roster.slice(0,3).map(r => r.player).join(", ");
     notes.push(`<b>${p.prior_box_off_roster.length}</b> players we hold a prior-qualifier box for
-      (${who}…) are <b>not</b> on these certified rosters and are not shown — they are not at this
+      (${who}…) are <b>not</b> on these rosters and are not shown — they are not at this
       tournament.`);
   }
   return `<div class="card"><div class="pad meta">${notes.map(n => `<div>${n}</div>`).join("")}
-    <div>Roster ${p.roster_check.replace(/_/g," ")} · built ${p.built_at}</div></div></div>
+    <div>Roster ${p.roster_check.replace(/_/g," ")} · ${builtLine(p.built_at)}</div></div></div>
     ${p.teams.map(teamBlock).join("")}`;
 }
 
@@ -436,6 +685,12 @@ function render(d){
   document.getElementById("sub").textContent =
     `Arena Astros, Guadalajara · August 17–23 · eight teams, one ticket to the 2028 Olympic Qualifying Tournaments`;
 
+  const pagebar = document.getElementById("pagebar");
+  if (pagebar){
+    pagebar.hidden = false;
+    document.getElementById("asof").textContent = freshnessLine(d);
+  }
+
   document.getElementById("main").innerHTML = `
     <div class="card"><div class="pad">
       <div class="lede">${req(fav.name,"favorite_team")} ${pct1(fav.p_title,"favorite_title_pct")} to take
@@ -444,8 +699,10 @@ function render(d){
     </div></div>
 
     <h2>The groups</h2>
-    ${groupTable(d, "A")}
-    ${groupTable(d, "B")}
+    <div class="split">
+      ${primaryTable(d)}
+      <aside id="inspector" aria-label="Team detail">${inspectorHTML(d, fav.team)}</aside>
+    </div>
 
     <h2>Every group game</h2>
     ${gameStrip(d)}
@@ -460,13 +717,89 @@ function render(d){
     ${ledger(d)}
 
     <div class="card"><div class="pad meta">
-      Simulated ${Number(req(d.sims,"sims")).toLocaleString()} · built ${req(d.built_at,"built_at")} ·
+      Simulated ${Number(req(d.sims,"sims")).toLocaleString()} · ${builtLine(req(d.built_at,"built_at"))} ·
       FIBA ranking ${req(d.ranking_edition,"ranking_edition")}<br>
       <a href="opqt_notes.html">Notes on this field</a>
     </div></div>`;
 
   wireSort(document);
   wireRosterTaps();
+  wireInspect(d);
+  wireFilter();
+}
+
+// Row tap -> inspector. The name/roster taps keep their own meaning (they reach the squad), so a
+// click that lands on a link is left alone.
+function wireInspect(d){
+  const prim = document.getElementById("primary");
+  const insp = document.getElementById("inspector");
+  if (!prim || !insp) return;
+  prim.addEventListener("click", e => {
+    if (e.target.closest && e.target.closest("a")) return;
+    const tr = e.target.closest ? e.target.closest("tbody tr") : null;
+    const cell = tr && tr.querySelector("[data-team]");
+    if (!cell) return;
+    prim.querySelectorAll("tr.sel").forEach(x => x.classList.remove("sel"));
+    tr.classList.add("sel");
+    insp.innerHTML = inspectorHTML(d, cell.dataset.team);
+    wireSort(insp);
+  });
+}
+
+// The pagebar filters DISPLAY only — nothing is re-fetched, nothing re-derived, and clearing the
+// filter restores every row. A hidden provisional row is still in the DOM and still sorts.
+function wireFilter(){
+  const pb = document.getElementById("pagebar");
+  if (!pb) return;
+  const apply = () => {
+    const on = pb.querySelector('.chip[aria-pressed="true"]');
+    const grp = on ? on.dataset.filterGroup : "";
+    const q = (document.getElementById("teamfilter").value || "").trim().toLowerCase();
+    document.querySelectorAll("#primary [data-group]").forEach(card => {
+      card.style.display = (!grp || card.dataset.group === grp) ? "" : "none";
+    });
+    document.querySelectorAll("#primary tbody tr").forEach(row => {
+      row.style.display = (!q || row.textContent.toLowerCase().includes(q)) ? "" : "none";
+    });
+  };
+  pb.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => {
+    pb.querySelectorAll(".chip").forEach(o => o.setAttribute("aria-pressed", "false"));
+    c.setAttribute("aria-pressed", "true");
+    apply();
+  }));
+  document.getElementById("teamfilter").addEventListener("input", apply);
+}
+
+// Player row tap -> inspector, same contract as the team rows: a click that lands on a link or
+// the show-the-work details keeps its own meaning; anything else on the row renders that player's
+// feed detail into the inspector.
+function wirePlayerInspect(p){
+  const field = document.getElementById("field");
+  const insp = document.getElementById("inspector");
+  if (!field || !insp) return;
+  const byId = {};
+  p.teams.forEach(t => t.players.forEach(pl => byId[pl.team + ":" + pl.name] = pl));
+  const select = tr => {
+    const pl = byId[tr.dataset.player];
+    if (!pl) return;
+    field.querySelectorAll("tr.sel").forEach(x => { x.classList.remove("sel"); x.setAttribute("aria-selected", "false"); });
+    tr.classList.add("sel");
+    tr.setAttribute("aria-selected", "true");
+    insp.innerHTML = playerInspectorHTML(pl);
+  };
+  field.addEventListener("click", e => {
+    if (e.target.closest && (e.target.closest("a") || e.target.closest("details"))) return;
+    const tr = e.target.closest ? e.target.closest("tr[data-player]") : null;
+    if (tr) select(tr);
+  });
+  // Keyboard parity: a focused row opens its inspector on Enter or Space, same as a tap.
+  field.addEventListener("keydown", e => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const tr = e.target.closest ? e.target.closest("tr[data-player]") : null;
+    if (!tr) return;
+    e.preventDefault();
+    select(tr);
+  });
 }
 
 // A TAP MAY NOT DO NOTHING. The field loads on its own fetch AFTER the projection is on screen, so
@@ -499,6 +832,7 @@ fetch("./opqt.json?v=" + Date.now())
       .then(p => {
         document.getElementById("field").innerHTML = fieldBlock(p);
         wireSort(document.getElementById("field"));
+        wirePlayerInspect(p);
       })
       .catch(e => {
         document.getElementById("field").innerHTML =
@@ -511,5 +845,5 @@ fetch("./opqt.json?v=" + Date.now())
       `<div class="card"><div class="pad err">Projection unavailable — ${e && e.message ? e.message : "read failed"}.</div></div>`;
   });
 </script>
-<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></div><div>Projections published pre-tip, graded publicly.</div></footer><!--/hw-foot--></body>
+<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot--></body>
 </html>

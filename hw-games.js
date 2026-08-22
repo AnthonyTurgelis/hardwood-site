@@ -11,6 +11,8 @@
     teams:"teams.json"
   };
   var state={games:[],filtered:[],results:[],viz:"margin-total",payloads:[]};
+  var FILTER_PARAMS={"games-dense-search":"q","games-dense-team":"team","games-dense-state":"state","games-dense-window":"window","games-dense-sort":"sort"};
+  var VIZ_KEYS=["margin-total","confidence-range"];
 
   function $(id){return document.getElementById(id);}
   function qa(selector,root){return Array.prototype.slice.call((root||document).querySelectorAll(selector));}
@@ -46,6 +48,10 @@
   function outsCount(game){return (game.awayOut||[]).length+(game.homeOut||[]).length;}
   function movementMagnitude(game){var move=game.move||{};return Math.max(Math.abs(number(move.margin)||0),Math.abs(number(move.win)||0),Math.abs(number(move.total)||0));}
   function sortPlayers(players){return (players||[]).slice().sort(function(a,b){return (number(b.min)||-1)-(number(a.min)||-1);});}
+  function param(name){return new URL(location.href).searchParams.get(name);}
+  function replaceParam(name,value){var url=new URL(location.href);if(value===null||value===undefined||value==="")url.searchParams.delete(name);else url.searchParams.set(name,String(value));var query=url.searchParams.toString();history.replaceState(history.state,"",url.pathname+(query?"?"+query:"")+url.hash);}
+  function validSelectValue(id,value){var element=$(id);return element&&Array.prototype.some.call(element.options,function(option){return option.value===value;});}
+  function editableTarget(target){return target&&target.closest&&Boolean(target.closest("input, textarea, select, [contenteditable='true']"));}
 
   function teamMaps(payload){
     var byAbbr={},byName={};
@@ -123,7 +129,7 @@
         home:home,away:away,homeFull:first(raw,["home_full"])||maps.byAbbr[home],awayFull:first(raw,["away_full"])||maps.byAbbr[away],
         margin:margin,total:total,homeP:homeP,call:String(call||"Call not published"),range80:range80,range90:range90,
         uncertainty:rangeWidth(range80),status:status,actualMargin:homeMargin,homeScore:homeScore,awayScore:awayScore,
-        leverage:leverages[id]||null,move:raw.move||{},why:raw.why||{},tails:raw.tails||{},model:first(raw,["model_" + "version","source_model","source_version"])||first(prediction,["source_model","model_" + "version","source_version"])||"published model",
+        leverage:leverages[id]||null,move:raw.move||{},why:raw.why||{},callInputs:first(raw,["call_inputs"])||first(prediction,["call_inputs"])||null,tails:raw.tails||{},model:first(raw,["model_version","source_model","source_version"])||first(prediction,["source_model","model_version","source_version"])||"published model",
         homeOut:homeOut,awayOut:awayOut,homeLimited:homeLimited,awayLimited:awayLimited,
         homePlayers:sortPlayers(homeSide.players||[]),awayPlayers:sortPlayers(awaySide.players||[]),report:report
       };
@@ -164,55 +170,36 @@
     var text=[];if(out&&out.length)text.push("Out: "+out.join(", "));if(limited&&limited.length)text.push("Limited: "+limited.join(", "));return '<li><b>'+esc(team)+'</b><span>'+esc(text.join(" · ")||"No listed restrictions")+'</span></li>';
   }
 
-  // RENDER-TIME RECONCILIATION - the same refusal game.html makes, on the surface that carries
-  // the most traffic. THE PRODUCT LAW: every call renders with the components that build it, and
-  // those components must SUM EXACTLY to the call. The publish boundary already blocks a bake
-  // whose annotations do not reconcile (game_annotation.assert_publishable, raised from
-  // build_site.py and gameday_report.py and caught nowhere). This is the browser-side half, and
-  // it exists because a payload can be truncated, edited in transit, or served from a stale cache
-  // long after the bake proved it added up.
-  //
-  // OMIT, NEVER INVENT, AND NEVER THROW. A chain that does not reconcile is DROPPED, and the card
-  // falls back to naming the model - the same fallback an absent chain has always taken. The
-  // reader then sees the call without its breakdown: never an error, never a blank card, never a
-  // page taken down over a data defect. The LOUD half of the law lives at the publish boundary on
-  // purpose; a second blocker in the browser would trade a missing breakdown for a dead board,
-  // which is strictly the worse failure.
-  //
-  // Deliberately NOT ported from game.html: its +/-4.38 home-court band clamp. That is a refusal
-  // about DRAWING a waterfall bar whose step is implausibly large, not about the arithmetic; this
-  // surface renders labelled text rows, and applying it here would omit chains that reconcile
-  // perfectly.
-  var CHAIN_TOL=1e-6,CHAIN_PUBLISHED_TOL=0.05,CHAIN_MAX_STEPS=6;
-  function whyChain(why){
-    var steps=why&&Array.isArray(why.steps)?why.steps:[];
-    // Base + at least one adjustment + total. Positional, not label-matched: the baker owns the
-    // wording and has to stay free to change it without silently emptying this block. The ceiling
-    // is here so a runaway chain cannot render a partial set of rows that no longer sums.
-    if(steps.length<3||steps.length>CHAIN_MAX_STEPS)return null;
-    var values=[],index,value;
-    for(index=0;index<steps.length;index++){
-      value=number(steps[index].value);
-      if(value===null)return null;                    // an unparseable leg is not a chain
-      values.push(value);
+  function callInputsHTML(game){
+    var payload=game&&game.callInputs;
+    if(!payload||!Array.isArray(payload.components))return "";
+    var precision=Number(payload.precision),factor=Number.isInteger(precision)&&precision>=0&&precision<=15?Math.pow(10,precision):null;
+    var target=number(game.margin),published=number(payload.published),total=number(payload.total),sumScaled=0,valid=factor!==null&&target!==null&&published!==null&&total!==null,chips=[];
+    payload.components.forEach(function(component){
+      var value=number(component&&component.value);
+      var scaled=value===null||factor===null?null:Math.round(value*factor);
+      if(value===null||scaled===null||Math.abs(value*factor-scaled)>1e-7){valid=false;return;}
+      sumScaled+=scaled;
+      if(scaled)chips.push('<span class="hw-call-breakdown-chip" title="'+esc(component.note||component.label||"")+'">'+esc(component.label||"Component")+' '+esc(signed(value,precision))+'</span>');
+    });
+    var targetTenths=Math.round(target*10),publishedTenths=Math.round(published*10),totalTenths=precision>0?(function(){var scale=Math.pow(10,precision-1),absolute=Math.abs(Math.round(total*factor)),rounded=Math.floor(absolute/scale)+(absolute%scale*2>=scale?1:0);return total<0?-rounded:rounded;}()):Math.round(total*10);
+    if(!valid||sumScaled!==Math.round(total*factor)||totalTenths!==targetTenths||publishedTenths!==targetTenths){
+      var name=String(game.away||"")+" @ "+String(game.home||"");
+      console.error("Call breakdown withheld for "+name+": components "+(total===null?"unknown":total)+" vs displayed call "+target);
+      return '<span class="hw-call-breakdown withheld">breakdown withheld — components do not add up</span>';
     }
-    var total=values[values.length-1],sum=0;
-    for(index=0;index<values.length-1;index++)sum+=values[index];
-    if(Math.abs(sum-total)>CHAIN_TOL)return null;     // the parts do not add up -> render nothing
-    var published=number(why.published);
-    if(published===null)return null;
-    // The chain total and the published margin are the same quantity at two precisions, so they
-    // must agree to within half a display step. A tolerance on the difference, deliberately not a
-    // re-rounding comparison: the baker rounds half-away-from-zero and JS rounds half-toward
-    // +Infinity, so an exact .x5 total would refuse a perfectly valid chain.
-    if(Math.abs(total-published)>CHAIN_PUBLISHED_TOL+CHAIN_TOL)return null;
-    return steps;
+    return '<span class="hw-call-breakdown">'+chips.join(" · ")+' = '+esc(signed(total,precision))+' · '+esc(game.call||signed(target,1))+'</span>';
+  }
+
+  function callInputsLine(game){
+    var line=callInputsHTML(game);
+    return line?'<li><b>Call = its inputs</b><span>'+line+'</span></li>':"";
   }
 
   function whyLine(game){
-    var steps=whyChain(game.why);
-    if(!steps)return '<li><b>Model</b><span>'+esc(game.model)+'</span></li>';
-    return steps.map(function(step){return '<li><b>'+esc(step.label||"Component")+'</b><span>'+esc(step.value||"")+(step.detail?' · '+esc(step.detail):'')+'</span></li>';}).join("");
+    var steps=game.why&&Array.isArray(game.why.steps)?game.why.steps:[];
+    if(!steps.length)return '<li><b>Model</b><span>'+esc(game.model)+'</span></li>';
+    return steps.slice(0,5).map(function(step){return '<li><b>'+esc(step.label||"Component")+'</b><span>'+esc(step.value||"")+(step.detail?' · '+esc(step.detail):'')+'</span></li>';}).join("");
   }
 
   function movementLines(game){
@@ -244,17 +231,17 @@
         '<li><b>Blowout</b><span>'+esc(blow===null?"Not published":blow.toFixed(0)+"%")+'</span></li>'+
       '</ul></div></section>'+
       '<section class="hw-game-detail-panel"><h3>Availability and projected rotation</h3><div class="hw-game-detail-body"><ul class="hw-detail-list">'+availabilityLine(game.away,game.awayOut,game.awayLimited)+availabilityLine(game.home,game.homeOut,game.homeLimited)+'</ul><div class="hw-rotation-sides"><div class="hw-rotation-side"><strong>'+esc(game.away)+' · min · pts</strong>'+rotationRows(game.awayPlayers)+'</div><div class="hw-rotation-side"><strong>'+esc(game.home)+' · min · pts</strong>'+rotationRows(game.homePlayers)+'</div></div></div></section>'+
-      '<section class="hw-game-detail-panel"><h3>Movement, stakes, and model</h3><div class="hw-game-detail-body"><ul class="hw-detail-list">'+movementLines(game)+whyLine(game)+'</ul><div class="hw-game-actions"><a class="hw-button" href="'+safeHref(game.report)+'">Open report</a><a class="hw-button" href="daybyday.html">Day by day</a><a class="hw-button" href="availability.html">Availability board</a></div></div></section>'+
+      '<section class="hw-game-detail-panel"><h3>Movement, stakes, and model</h3><div class="hw-game-detail-body"><ul class="hw-detail-list">'+callInputsLine(game)+movementLines(game)+whyLine(game)+'</ul><div class="hw-game-actions"><a class="hw-button" href="'+safeHref(game.report)+'">Open report</a><a class="hw-button" href="daybyday.html">Day by day</a><a class="hw-button" href="availability.html">Availability board</a></div></div></section>'+
     '</div>';
   }
 
   function gameRow(game){
-    var awayP=game.homeP===null?null:1-game.homeP,context=gameContext(game),id=cleanId(game.id||matchupText(game.away,game.home)+game.date);
+    var context=gameContext(game),id=cleanId(game.id||matchupText(game.away,game.home)+game.date);
     var mobile=["Margin "+signed(game.margin),"Total "+fixed(game.total,1),"Range "+(game.range80[0]===null?"—":signed(game.range80[0])+"…"+signed(game.range80[1])),outsCount(game)+" out"].join(" · ");
     return '<details class="hw-game-detail" id="game-'+esc(id)+'" data-game-id="'+esc(game.id)+'"><summary class="hw-ledger-row">'+
       '<span class="hw-ledger-date"><strong>'+esc(dateShort(game.date))+'</strong><small>'+esc(game.tip||game.status)+'</small></span>'+
       '<span class="hw-ledger-matchup"><strong>'+esc(matchupText(game.away,game.home))+'</strong><small>'+esc((game.awayFull||game.away)+" at "+(game.homeFull||game.home))+'</small></span>'+
-      '<span class="hw-ledger-call">'+esc(game.call)+'</span>'+ 
+      '<span class="hw-ledger-call">'+esc(game.call)+callInputsHTML(game)+'</span>'+ 
       '<span class="hw-ledger-num">'+esc(pct(game.homeP))+'</span>'+ 
       '<span class="hw-ledger-num">'+esc(signed(game.margin))+'</span>'+ 
       '<span class="hw-range-cell">'+rangeBar(game.range80,game.margin)+'</span>'+ 
@@ -305,10 +292,14 @@
     return list;
   }
 
+  function bindGameDetails(){qa(".hw-game-detail").forEach(function(detail){detail.addEventListener("toggle",function(){var id=detail.getAttribute("data-game-id");if(detail.open)replaceParam("game",id);else if(param("game")===id)replaceParam("game","");});});}
   function renderBoard(){
     state.filtered=filteredGames();
     $("games-dense-count").textContent=state.filtered.length+" of "+state.games.length+" games";
     $("games-dense-list").innerHTML=state.filtered.length?state.filtered.map(gameRow).join(""):'<div class="hw-empty">No published games match these filters.</div>';
+    bindGameDetails();
+    var selected=param("game");if(selected&&!qGame(selected))replaceParam("game","");
+    var exportButton=$("games-dense-export");if(exportButton)exportButton.setAttribute("aria-label",state.filtered.length?"Download filtered games CSV; "+state.filtered.length+" rows in current view":"No filtered game rows available to export");
     renderPulse(state.filtered);renderViz();
   }
 
@@ -324,19 +315,20 @@
     }else{xValues=[50,100];yValues=extent(games.map(function(game){return game.uncertainty;}),.12);xLabel="Favorite win probability";yLabel="80% range width";}
     function x(value){return pad.left+(value-xValues[0])/(xValues[1]-xValues[0]||1)*innerW;}
     function y(value){return pad.top+innerH-(value-yValues[0])/(yValues[1]-yValues[0]||1)*innerH;}
-    var xTicks=axisTicks(xValues[0],xValues[1],6),yTicks=axisTicks(yValues[0],yValues[1],5),svg='<svg viewBox="0 0 '+width+' '+height+'" role="img" aria-label="'+esc(xLabel)+' by '+esc(yLabel)+'">';
+    var activeId=param("game"),activeInPlot=activeId&&games.some(function(game){return String(game.id)===String(activeId);});
+    var xTicks=axisTicks(xValues[0],xValues[1],6),yTicks=axisTicks(yValues[0],yValues[1],5),svg='<svg viewBox="0 0 '+width+' '+height+'" role="group" aria-label="'+esc(xLabel)+' by '+esc(yLabel)+'">';
     yTicks.forEach(function(tick){var py=y(tick);svg+='<line class="hw-gridline" x1="'+pad.left+'" y1="'+py+'" x2="'+(width-pad.right)+'" y2="'+py+'"></line><text class="hw-axis-label" x="'+(pad.left-8)+'" y="'+(py+3)+'" text-anchor="end">'+esc(fixed(tick,1))+'</text>';});
     xTicks.forEach(function(tick){var px=x(tick);svg+='<line class="hw-gridline" x1="'+px+'" y1="'+pad.top+'" x2="'+px+'" y2="'+(height-pad.bottom)+'"></line><text class="hw-axis-label" x="'+px+'" y="'+(height-pad.bottom+16)+'" text-anchor="middle">'+esc(fixed(tick,1))+'</text>';});
     svg+='<line class="hw-axis" x1="'+pad.left+'" y1="'+(height-pad.bottom)+'" x2="'+(width-pad.right)+'" y2="'+(height-pad.bottom)+'"></line><line class="hw-axis" x1="'+pad.left+'" y1="'+pad.top+'" x2="'+pad.left+'" y2="'+(height-pad.bottom)+'"></line><text class="hw-axis-label" x="'+(pad.left+innerW/2)+'" y="'+(height-6)+'" text-anchor="middle">'+esc(xLabel)+'</text><text class="hw-axis-label" transform="translate(12 '+(pad.top+innerH/2)+') rotate(-90)" text-anchor="middle">'+esc(yLabel)+'</text>';
     if(state.viz==="margin-total"&&xValues[0]<0&&xValues[1]>0)svg+='<line class="hw-diagonal" x1="'+x(0)+'" y1="'+pad.top+'" x2="'+x(0)+'" y2="'+(height-pad.bottom)+'"></line>';
-    games.forEach(function(game,index){var xv=state.viz==="margin-total"?game.margin:Math.max(game.homeP,1-game.homeP)*100,yv=state.viz==="margin-total"?game.total:game.uncertainty,px=x(xv),py=y(yv),label=game.away+"@"+game.home,anchor=px>width-110?"end":"start",dx=anchor==="end"?-7:7;
-      svg+='<g class="hw-games-point" tabindex="0" role="button" data-game-id="'+esc(game.id)+'" transform="translate('+px.toFixed(1)+' '+py.toFixed(1)+')"><title>'+esc(label+" · "+xLabel+" "+fixed(xv,1)+" · "+yLabel+" "+fixed(yv,1))+'</title><circle r="4.2"></circle>'+(games.length<=28||index<14?'<text x="'+dx+'" y="3" text-anchor="'+anchor+'">'+esc(label)+'</text>':'')+'</g>';});
+    games.forEach(function(game,index){var xv=state.viz==="margin-total"?game.margin:Math.max(game.homeP,1-game.homeP)*100,yv=state.viz==="margin-total"?game.total:game.uncertainty,px=x(xv),py=y(yv),label=game.away+"@"+game.home,anchor=px>width-110?"end":"start",dx=anchor==="end"?-7:7,active=String(game.id)===String(activeId),focusable=active||(!activeInPlot&&index===0),description=label+" · "+xLabel+" "+fixed(xv,1)+" · "+yLabel+" "+fixed(yv,1);
+      svg+='<g class="hw-games-point" tabindex="'+(focusable?'0':'-1')+'" role="button" aria-controls="game-'+esc(cleanId(game.id||label+game.date))+'" aria-pressed="'+String(Boolean(active))+'" aria-label="'+esc('Open '+description)+'" data-game-id="'+esc(game.id)+'" transform="translate('+px.toFixed(1)+' '+py.toFixed(1)+')"><title>'+esc(description)+'</title><circle r="4.2"></circle>'+(games.length<=28||index<14?'<text x="'+dx+'" y="3" text-anchor="'+anchor+'">'+esc(label)+'</text>':'')+'</g>';});
     svg+='</svg>';$("games-dense-viz").innerHTML=svg;
-    $("games-dense-viz-legend").innerHTML='<span><b>'+games.length+'</b> plotted games</span><span>Tap a point to open the report row</span><span>Missing values are not imputed</span>';
-    qa(".hw-games-point",$("games-dense-viz")).forEach(function(point){function open(){openGame(point.getAttribute("data-game-id"));}point.addEventListener("click",open);point.addEventListener("keydown",function(event){if(event.key==="Enter"||event.key===" "){event.preventDefault();open();}});});
+    $("games-dense-viz-legend").innerHTML='<span><b>'+games.length+'</b> plotted games</span><span><b>Keyboard:</b> arrows move · Enter opens</span><span>Missing values are not imputed</span>';
+    var points=qa(".hw-games-point",$("games-dense-viz"));points.forEach(function(point,index){function open(){openGame(point.getAttribute("data-game-id"),true,true);}point.addEventListener("click",open);point.addEventListener("keydown",function(event){if(event.key==="Enter"||event.key===" "){event.preventDefault();open();return;}var next=index;if(event.key==="ArrowRight"||event.key==="ArrowDown")next=(index+1)%points.length;else if(event.key==="ArrowLeft"||event.key==="ArrowUp")next=(index-1+points.length)%points.length;else if(event.key==="Home")next=0;else if(event.key==="End")next=points.length-1;else return;event.preventDefault();point.setAttribute("tabindex","-1");points[next].setAttribute("tabindex","0");points[next].focus();});});
   }
 
-  function openGame(gameId){var detail=qGame(gameId);if(!detail)return;detail.open=true;detail.scrollIntoView({behavior:"smooth",block:"center"});}
+  function openGame(gameId,scroll,writeState){var detail=qGame(gameId);if(!detail)return false;detail.open=true;if(writeState!==false)replaceParam("game",gameId);if(scroll!==false)detail.scrollIntoView({behavior:"smooth",block:"center"});return true;}
   function qGame(gameId){return qa(".hw-game-detail").find(function(detail){return detail.getAttribute("data-game-id")===String(gameId);})||null;}
 
   function renderResults(){
@@ -346,13 +338,30 @@
     $("games-dense-results").innerHTML=rowsHtml||'<tr><td colspan="8"><div class="hw-empty">No archived calls have a matching final yet.</div></td></tr>';
   }
 
+  function csvCell(value){var text=String(value==null?"":value);return /[",\r\n]/.test(text)?'"'+text.replace(/"/g,'""')+'"':text;}
+  function exportGamesCsv(){var button=$("games-dense-export");if(!button||typeof Blob!=="function"||!window.URL||typeof window.URL.createObjectURL!=="function")return;if(!state.filtered.length){button.setAttribute("aria-label","No filtered game rows available to export");return;}var output=[["Date","Tip","Away","Home","Status","Call","Home win","Margin","80% low","80% high","Total","Unavailable","Leverage","Report"]];state.filtered.forEach(function(game){output.push([dateKey(game.date),game.tip||"",game.away,game.home,game.status,game.call,game.homeP===null?"":pct(game.homeP,1),game.margin===null?"":game.margin,game.range80[0]===null?"":game.range80[0],game.range80[1]===null?"":game.range80[1],game.total===null?"":game.total,outsCount(game),game.leverage&&number(game.leverage.leverage)!==null?number(game.leverage.leverage):"",game.report]);});var csv=output.map(function(row){return row.map(csvCell).join(",");}).join("\r\n"),blob=new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}),href=window.URL.createObjectURL(blob),link=document.createElement("a"),now=new Date(),stamp=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");link.href=href;link.download="hardwood-games-"+stamp+".csv";link.hidden=true;document.body.appendChild(link);link.click();link.remove();window.setTimeout(function(){window.URL.revokeObjectURL(href);},0);button.setAttribute("aria-label","Download filtered games CSV; "+state.filtered.length+" rows in current view");}
+
   function populateTeams(games){var teams={};games.forEach(function(game){teams[game.away]=true;teams[game.home]=true;});$("games-dense-team").innerHTML='<option value="">All teams</option>'+Object.keys(teams).sort().map(function(team){return '<option value="'+esc(team)+'">'+esc(team)+'</option>';}).join("");}
-  function setFreshness(payloads){var stamps=[];payloads.forEach(function(payload){["generated_utc","generated","built_utc","as_of","updated_utc"].forEach(function(key){var parsed=parseDate(payload&&payload[key]);if(parsed)stamps.push(parsed);});});stamps.sort(function(a,b){return b-a;});var latest=stamps[0],target=$("games-dense-list")&&document.querySelector("[data-games-fresh]");if(!target)return;if(!latest){target.classList.add("warn");target.innerHTML='<span class="hw-fresh-dot"></span>Build time not published';return;}var hours=(Date.now()-latest.getTime())/36e5;target.classList.toggle("warn",hours>24);target.innerHTML='<span class="hw-fresh-dot"></span>Updated '+ageText(latest.toISOString());}
+  function hydrateState(){Object.keys(FILTER_PARAMS).forEach(function(id){var name=FILTER_PARAMS[id],value=param(name),element=$(id);if(value===null)return;if(element.tagName==="SELECT"&&!validSelectValue(id,value)){replaceParam(name,"");return;}element.value=value;});var viz=param("viz");if(viz&&VIZ_KEYS.indexOf(viz)>=0)state.viz=viz;else if(viz)replaceParam("viz","");}
+  function setFreshness(payloads){
+    var stamps=[],undated=0;
+    payloads.forEach(function(payload){var stamp=first(payload,["generated_utc","generated","built_utc","as_of","as_of_date","updated_utc"]),parsed=parseDate(stamp);if(parsed)stamps.push(parsed);else undated++;});
+    stamps.sort(function(a,b){return a-b;});
+    var floor=stamps[0],target=$("games-dense-list")&&document.querySelector("[data-games-fresh]");
+    if(!target)return;
+    if(!floor){target.classList.add("warn");target.innerHTML='<span class="hw-fresh-dot"></span>Build time not published';return;}
+    var hours=(Date.now()-floor.getTime())/36e5;
+    target.classList.toggle("warn",hours>24||undated>0);
+    target.innerHTML='<span class="hw-fresh-dot"></span>Oldest source updated '+ageText(floor.toISOString())+(undated?' · '+undated+' undated':'');
+  }
 
   function bind(){
-    ["games-dense-search","games-dense-team","games-dense-state","games-dense-window","games-dense-sort"].forEach(function(id){var element=$(id);element.addEventListener(id==="games-dense-search"?"input":"change",renderBoard);});
-    $("games-dense-reset").addEventListener("click",function(){$("games-dense-search").value="";$("games-dense-team").value="";$("games-dense-state").value="";$("games-dense-window").value="";$("games-dense-sort").value="date";renderBoard();});
-    qa("[data-games-viz]").forEach(function(button){button.addEventListener("click",function(){state.viz=button.getAttribute("data-games-viz");qa("[data-games-viz]").forEach(function(other){var active=other===button;other.classList.toggle("active",active);other.setAttribute("aria-selected",String(active));});renderViz();});});
+    var search=$("games-dense-search");search.setAttribute("aria-keyshortcuts","/");if(!search.title)search.title="Press / to focus search; Esc clears search";
+    Object.keys(FILTER_PARAMS).forEach(function(id){var element=$(id),eventName=id==="games-dense-search"?"input":"change";element.addEventListener(eventName,function(){renderBoard();replaceParam(FILTER_PARAMS[id],element.value);});});
+    $("games-dense-export").addEventListener("click",exportGamesCsv);
+    $("games-dense-reset").addEventListener("click",function(){$("games-dense-search").value="";$("games-dense-team").value="";$("games-dense-state").value="";$("games-dense-window").value="";$("games-dense-sort").value="date";["q","team","state","window","sort","game"].forEach(function(name){replaceParam(name,"");});renderBoard();});
+    qa("[data-games-viz]").forEach(function(button){button.addEventListener("click",function(){state.viz=button.getAttribute("data-games-viz");replaceParam("viz",state.viz==="margin-total"?"":state.viz);qa("[data-games-viz]").forEach(function(other){var active=other===button;other.classList.toggle("active",active);other.setAttribute("aria-pressed",String(active));});renderViz();});});
+    document.addEventListener("keydown",function(event){if(event.key==="/"&&!event.metaKey&&!event.ctrlKey&&!event.altKey&&!editableTarget(event.target)){event.preventDefault();search.focus();if(search.select)search.select();return;}if(event.key==="Escape"&&document.activeElement===search&&search.value){event.preventDefault();search.value="";renderBoard();replaceParam("q","");}});
   }
 
   function boot(){
@@ -360,10 +369,10 @@
     Promise.all(Object.keys(FILES).map(function(key){return fetchJSON(FILES[key]);})).then(function(payloadList){
       var payload={};Object.keys(FILES).forEach(function(key,index){payload[key]=payloadList[index];});state.payloads=payloadList;
       var normalized=normalizeGames(payload.games,payload.preview,payload.leverage,payload.finals,payload.archive,payload.teams);state.games=normalized.games;state.results=archiveResults(normalized.archive,normalized.finals,normalized.maps);
-      populateTeams(state.games);setFreshness(payloadList);renderStories(state.games);renderBoard();renderResults();
+      populateTeams(state.games);hydrateState();setFreshness(payloadList);renderStories(state.games);renderBoard();renderResults();qa("[data-games-viz]").forEach(function(button){var active=button.getAttribute("data-games-viz")===state.viz;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));});var selected=param("game");if(selected&&!openGame(selected,false,false))replaceParam("game","");
     });
   }
 
-  window.HardwoodGames={normalizeGames:normalizeGames,archiveResults:archiveResults,rangeWidth:rangeWidth,whyChain:whyChain,whyLine:whyLine};
+  window.HardwoodGames={normalizeGames:normalizeGames,archiveResults:archiveResults,rangeWidth:rangeWidth};
   boot();
 })();

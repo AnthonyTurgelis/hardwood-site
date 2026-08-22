@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="hw-product.css">
   <link rel="stylesheet" href="hw-dense.css">
   <link rel="stylesheet" href="hw-games.css">
-<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
-<body class="hw-product" data-page="games-dense" data-section="games" data-product="league-games"><header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html" aria-current="page">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026</a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-badge{font-size:.7em;letter-spacing:.05em;vertical-align:super}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center}</style><!--/hw-chrome-style--></head>
+<body class="hw-product" data-page="games-dense" data-section="games" data-product="league-games"><header class="hw-chrome"><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-brand" href="index.html">The Hardwood</a><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html" aria-current="page">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026<span class="hw-badge">LIVE</span></a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
   <a class="hw-skip" href="#content">Skip to the game board</a>
   <main class="hw-page" id="content">
     <section class="hw-command" aria-labelledby="games-title">
@@ -42,6 +42,7 @@
           <label class="hw-field"><span>State</span><select class="hw-select" id="games-dense-state"><option value="">All published</option><option value="upcoming">Upcoming</option><option value="final">Final</option></select></label>
           <label class="hw-field"><span>Window</span><select class="hw-select" id="games-dense-window"><option value="">All dates</option><option value="next7">Next 7 days</option><option value="recent7">Past 7 days</option></select></label>
           <label class="hw-field"><span>Sort</span><select class="hw-select" id="games-dense-sort"><option value="date">Date</option><option value="closest">Closest call</option><option value="favorite">Biggest favorite</option><option value="total">Highest total</option><option value="uncertainty">Widest range</option><option value="leverage">Highest stakes</option></select></label>
+          <button class="hw-button" id="games-dense-export" type="button" aria-label="Download filtered games CSV" title="Download the currently filtered and sorted game board as CSV">CSV</button>
           <button class="hw-button" id="games-dense-reset" type="button">Reset</button>
         </div>
       </section>
@@ -66,15 +67,15 @@
       <section class="hw-module" aria-labelledby="visual-heading">
         <div class="hw-module-head">
           <h2 id="visual-heading">Game landscape</h2>
-          <div class="hw-visual-tabs" role="tablist" aria-label="Choose a game visual">
-            <button class="hw-visual-tab active" type="button" role="tab" aria-selected="true" data-games-viz="margin-total">Margin vs total</button>
-            <button class="hw-visual-tab" type="button" role="tab" aria-selected="false" data-games-viz="confidence-range">Confidence vs uncertainty</button>
+          <div class="hw-visual-tabs" role="group" aria-label="Choose a game visual">
+            <button class="hw-visual-tab active" type="button" aria-pressed="true" data-games-viz="margin-total">Margin vs total</button>
+            <button class="hw-visual-tab" type="button" aria-pressed="false" data-games-viz="confidence-range">Confidence vs uncertainty</button>
           </div>
         </div>
         <div class="hw-module-body flush">
           <div class="hw-viz hw-games-viz" id="games-dense-viz"><div class="hw-empty">Loading game visual…</div></div>
           <div class="hw-viz-legend" id="games-dense-viz-legend"></div>
-          <div class="hw-data-note" id="games-dense-viz-note">Select a point to open that game’s detail row.</div>
+          <div class="hw-data-note" id="games-dense-viz-note">Tab into the plot once; use arrows to move between games and Enter to open the matching detail row.</div>
         </div>
       </section>
 
@@ -91,5 +92,5 @@
   </main>
   <script src="hw-product.js"></script>
   <script src="hw-games.js"></script>
-<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></div><div>Projections published pre-tip, graded publicly.</div></footer><!--/hw-foot--></body>
+<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot--></body>
 </html>

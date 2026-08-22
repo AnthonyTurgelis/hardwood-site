@@ -5,6 +5,7 @@
   const FILES = {
     teams: "teams.json",
     standings: "standings.json",
+    finals: "finals.json",
     availability: "availability.json",
     players: "players.json",
     games: "games.json",
@@ -18,6 +19,7 @@
     sortKey: "rank",
     sortDir: "asc",
     viz: "strength-title",
+    recordMeta: { active: false, recordsAsOf: null, outlookAsOf: null, gameCount: null },
   };
 
   const $ = (id) => document.getElementById(id);
@@ -81,7 +83,8 @@
     });
   const toDate = (value) => {
     if (!present(value)) return null;
-    const parsed = new Date(value);
+    const text = String(value);
+    const parsed = new Date(/^\d{4}-\d{2}-\d{2}$/.test(text) ? `${text}T12:00:00` : text);
     return Number.isNaN(parsed.getTime()) ? null : parsed;
   };
   const dateText = (value) => {
@@ -89,6 +92,15 @@
     return parsed
       ? parsed.toLocaleDateString(undefined, { month: "short", day: "numeric" })
       : String(value || "Date not published");
+  };
+  const ageText = (value) => {
+    const parsed = toDate(value);
+    if (!parsed) return "time not published";
+    const seconds = Math.max(0, (Date.now() - parsed.getTime()) / 1000);
+    if (seconds < 90) return "just now";
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    return `${Math.floor(seconds / 86400)}d ago`;
   };
 
   function normalizeAvailability(payload) {
@@ -149,9 +161,84 @@
     }).filter((game) => game.home || game.away);
   }
 
-  function normalizeTeams(teamPayload, standingPayload, availabilityPayload, playerPayload, gamePayload) {
+  function finalRecordSnapshot(payload) {
+    const byTeam = {};
+    let gameCount = 0;
+    let asOf = null;
+    let maxDate = null;
+    rows(payload, ["games", "rows", "items"]).forEach((game) => {
+      const home = String(first(game, ["home", "home_team", "home_abbr"]) || "").toUpperCase();
+      const away = String(first(game, ["away", "away_team", "away_abbr"]) || "").toUpperCase();
+      const homeScore = number(first(game, ["home_score", "actual_home_score"]));
+      const awayScore = number(first(game, ["away_score", "actual_away_score"]));
+      if (!home || !away || homeScore === null || awayScore === null || homeScore === awayScore) return;
+      if (!byTeam[home]) byTeam[home] = { wins: 0, losses: 0, gp: 0 };
+      if (!byTeam[away]) byTeam[away] = { wins: 0, losses: 0, gp: 0 };
+      byTeam[home].gp += 1;
+      byTeam[away].gp += 1;
+      if (homeScore > awayScore) {
+        byTeam[home].wins += 1;
+        byTeam[away].losses += 1;
+      } else {
+        byTeam[away].wins += 1;
+        byTeam[home].losses += 1;
+      }
+      const rawDate = first(game, ["date", "game_date"]);
+      const parsedDate = toDate(rawDate);
+      if (parsedDate && (!maxDate || parsedDate.getTime() > maxDate.getTime())) {
+        maxDate = parsedDate;
+        asOf = String(rawDate);
+      }
+      gameCount += 1;
+    });
+    return { byTeam, gameCount, asOf };
+  }
+
+  function currentStandingRows(standingPayload, finalsPayload) {
+    const source = rows(standingPayload, ["teams", "standings", "rows", "items"]);
+    const progress = standingPayload && standingPayload.progress ? standingPayload.progress : {};
+    const results = finalRecordSnapshot(finalsPayload);
+    const claimedPlayed = number(progress.games_played);
+    const useFinals = source.length > 0
+      && results.gameCount >= (claimedPlayed === null ? 0 : claimedPlayed)
+      && source.every((row) => Boolean(results.byTeam[String(first(row, ["team", "team_abbr", "abbr", "key"]) || "").toUpperCase()]));
+    let patched = source.map((row, index) => {
+      const code = String(first(row, ["team", "team_abbr", "abbr", "key"]) || "").toUpperCase();
+      const current = useFinals ? results.byTeam[code] : null;
+      return {
+        ...row,
+        team: code,
+        wins: current ? current.wins : number(first(row, ["wins", "w"])),
+        losses: current ? current.losses : number(first(row, ["losses", "l"])),
+        _sourceIndex: index,
+      };
+    });
+    if (useFinals) {
+      const ordered = patched.slice().sort((a, b) => {
+        const aGames = a.wins + a.losses;
+        const bGames = b.wins + b.losses;
+        const aPct = aGames > 0 ? a.wins / aGames : -1;
+        const bPct = bGames > 0 ? b.wins / bGames : -1;
+        return bPct - aPct || a._sourceIndex - b._sourceIndex;
+      });
+      const leader = ordered[0];
+      patched = patched.map((row) => ({
+        ...row,
+        games_back: leader ? ((leader.wins - row.wins) + (row.losses - leader.losses)) / 2 : null,
+      }));
+    }
+    state.recordMeta = {
+      active: useFinals,
+      recordsAsOf: useFinals ? results.asOf : (progress.standings_asof || null),
+      outlookAsOf: progress.outlook_asof || first(standingPayload, ["generated_utc", "generated"]) || null,
+      gameCount: useFinals ? results.gameCount : claimedPlayed,
+    };
+    return patched;
+  }
+
+  function normalizeTeams(teamPayload, standingPayload, finalsPayload, availabilityPayload, playerPayload, gamePayload) {
     const standingMap = {};
-    rows(standingPayload, ["teams", "standings", "rows", "items"]).forEach((row) => {
+    currentStandingRows(standingPayload, finalsPayload).forEach((row) => {
       const code = String(first(row, ["team", "team_abbr", "abbr", "key"]) || "").toUpperCase();
       if (code) standingMap[code] = row;
     });
@@ -244,6 +331,19 @@
     return `${game.home === team.team ? "vs" : "@"} ${opponent} · ${dateText(game.date)}`;
   }
 
+  function recordNote() {
+    const meta = state.recordMeta || {};
+    const records = meta.recordsAsOf ? dateText(meta.recordsAsOf) : "date not published";
+    const outlook = meta.outlookAsOf ? dateText(meta.outlookAsOf) : "date not published";
+    return meta.active
+      ? `Records through ${records} use published finals; projected wins, playoff odds, and title odds remain the ${outlook} simulation.`
+      : `Records ${records} · simulation ${outlook}. Current-record repair is withheld unless published finals fully cover the standings snapshot.`;
+  }
+  function renderRecordNote() {
+    const note = $("teams-record-note");
+    if (note) note.textContent = recordNote();
+  }
+
   function story(label, value, note) {
     return `<article class="hw-story"><span class="hw-story-label">${escapeHTML(label)}</span><strong class="hw-story-value">${escapeHTML(value)}</strong><span class="hw-story-note">${escapeHTML(note)}</span></article>`;
   }
@@ -311,9 +411,9 @@
       <td class="num">${escapeHTML(fixed(team.rank, 0))}</td>
       <td><button class="hw-team-select" type="button" data-select-team="${escapeHTML(team.team)}"><strong>${escapeHTML(team.name)}</strong><span>${escapeHTML(team.team)}</span></button></td>
       <td>${escapeHTML(team.conference || "—")}</td>
+      <td class="num">${escapeHTML(signed(team.strength, 1))}</td>
       <td class="num">${escapeHTML(record(team))}</td>
       <td class="num">${escapeHTML(fixed(team.gb, 1))}</td>
-      <td class="num">${escapeHTML(signed(team.strength, 1))}</td>
       <td class="num">${escapeHTML(signed(team.churn, 1))}</td>
       <td class="num">${escapeHTML(fixed(team.proj_median_wins, 1))}</td>
       <td>${escapeHTML(finish)}</td>
@@ -364,7 +464,7 @@
       <div class="hw-team-inspector-metrics">${inspectorMetric("Strength", signed(team.strength, 1), `move ${signed(team.churn, 1)}`)}${inspectorMetric("Projected wins", fixed(team.proj_median_wins, 1), `90% finish ${finish}`)}${inspectorMetric("Playoff", percent(team.p_playoff, 1), "simulated chance")}${inspectorMetric("Title", percent(team.p_title, 1), "simulated chance")}${inspectorMetric("Availability", unavailableMinutes(team) === null ? "—" : `${fixed(unavailableMinutes(team), 0)} min`, availabilityText(team))}${inspectorMetric("Title move", signed(team.titleMove, 1), team.moveDays ? `${fixed(team.moveDays, 0)} days` : "window not published")}</div>
       <section class="hw-team-inspector-section"><h3>Leading published players</h3>${playerRows || '<div class="hw-empty">No player rows were published for this team.</div>'}</section>
       <section class="hw-team-inspector-section"><h3>Next published games</h3>${gameRows || '<div class="hw-empty">No upcoming games were published for this team.</div>'}</section>
-      <div class="hw-team-source"><span>Source</span><strong>Published team, standings, availability, player, and game artifacts</strong><small>Quantities stay separate; missing fields are not reconstructed.</small></div>
+      <div class="hw-team-source"><span>Source</span><strong>Published team, standings, finals, availability, player, and game artifacts</strong><small>Current records may use complete finals; simulation quantities stay on the dated standings outlook.</small></div>
     </div>`;
   }
 
@@ -386,7 +486,8 @@
     const yExtent = extent(valid.map(yFn));
     const sx = (value) => margin.left + ((value - xExtent[0]) / (xExtent[1] - xExtent[0])) * (width - margin.left - margin.right);
     const sy = (value) => height - margin.bottom - ((value - yExtent[0]) / (yExtent[1] - yExtent[0])) * (height - margin.top - margin.bottom);
-    const svg = [`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHTML(`${xLabel} versus ${yLabel}`)}">`];
+    const selectedInPlot = state.selected && valid.some((team) => state.selected.team === team.team);
+    const svg = [`<svg viewBox="0 0 ${width} ${height}" role="group" aria-label="${escapeHTML(`${xLabel} versus ${yLabel}`)}">`];
     for (let index = 0; index <= 5; index += 1) {
       const xValue = xExtent[0] + (index / 5) * (xExtent[1] - xExtent[0]);
       const yValue = yExtent[0] + (index / 5) * (yExtent[1] - yExtent[0]);
@@ -394,12 +495,39 @@
       const y = sy(yValue);
       svg.push(`<line class="grid" x1="${x}" y1="${margin.top}" x2="${x}" y2="${height - margin.bottom}"></line><line class="grid" x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}"></line><text class="axis-label" x="${x}" y="${height - 18}" text-anchor="middle">${escapeHTML(xFormat(xValue))}</text><text class="axis-label" x="46" y="${y + 3}" text-anchor="end">${escapeHTML(yFormat(yValue))}</text>`);
     }
-    valid.forEach((team) => {
+    valid.forEach((team, index) => {
       const selected = state.selected && state.selected.team === team.team;
-      svg.push(`<circle class="point${selected ? " selected" : ""}" data-viz-team="${escapeHTML(team.team)}" cx="${sx(xFn(team)).toFixed(1)}" cy="${sy(yFn(team)).toFixed(1)}" r="${selected ? 5 : 3.8}"><title>${escapeHTML(`${team.name}: ${xLabel} ${xFormat(xFn(team))}, ${yLabel} ${yFormat(yFn(team))}`)}</title></circle><text class="team-label" x="${(sx(xFn(team)) + 6).toFixed(1)}" y="${(sy(yFn(team)) + 3).toFixed(1)}">${escapeHTML(team.team)}</text>`);
+      const description = `${team.name}: ${xLabel} ${xFormat(xFn(team))}, ${yLabel} ${yFormat(yFn(team))}`;
+      const focusable = selected || (!selectedInPlot && index === 0);
+      svg.push(`<circle class="point${selected ? " selected" : ""}" tabindex="${focusable ? "0" : "-1"}" role="button" aria-controls="team-inspector" aria-pressed="${String(Boolean(selected))}" aria-label="${escapeHTML(`Select ${description}`)}" data-viz-team="${escapeHTML(team.team)}" cx="${sx(xFn(team)).toFixed(1)}" cy="${sy(yFn(team)).toFixed(1)}" r="${selected ? 5 : 3.8}"><title>${escapeHTML(description)}</title></circle><text class="team-label" x="${(sx(xFn(team)) + 6).toFixed(1)}" y="${(sy(yFn(team)) + 3).toFixed(1)}">${escapeHTML(team.team)}</text>`);
     });
     svg.push(`<text class="axis-label" x="${(margin.left + width - margin.right) / 2}" y="294" text-anchor="middle">${escapeHTML(xLabel)}</text><text class="axis-label" x="14" y="150" text-anchor="middle" transform="rotate(-90 14 150)">${escapeHTML(yLabel)}</text></svg>`);
     return svg.join("");
+  }
+
+  function bindVizPoints() {
+    const points = qa("[data-viz-team]");
+    points.forEach((point, index) => {
+      point.addEventListener("click", () => selectTeam(point.dataset.vizTeam, true));
+      point.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          event.stopPropagation();
+          selectTeam(point.dataset.vizTeam, true);
+          return;
+        }
+        let next = index;
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % points.length;
+        else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index - 1 + points.length) % points.length;
+        else if (event.key === "Home") next = 0;
+        else if (event.key === "End") next = points.length - 1;
+        else return;
+        event.preventDefault();
+        point.setAttribute("tabindex", "-1");
+        points[next].setAttribute("tabindex", "0");
+        points[next].focus();
+      });
+    });
   }
 
   function renderViz() {
@@ -417,7 +545,7 @@
     }
     $("team-viz-context").textContent = context;
     $("team-viz").innerHTML = html;
-    qa("[data-viz-team]").forEach((point) => point.addEventListener("click", () => selectTeam(point.dataset.vizTeam, true)));
+    bindVizPoints();
   }
 
   function renderWatch() {
@@ -473,12 +601,25 @@
   }
 
   function setFreshness(payloads) {
-    const stamps = payloads.map((payload) => first(payload, ["generated_utc", "generated", "built_utc", "as_of", "updated_utc"]))
-      .map(toDate).filter(Boolean).sort((a, b) => b - a);
-    const newest = stamps[0];
+    const stamps = [];
+    let undated = 0;
+    payloads.forEach((payload) => {
+      const stamp = first(payload, ["generated_utc", "generated", "built_utc", "as_of", "as_of_date", "updated_utc"]);
+      const parsed = toDate(stamp);
+      if (parsed) stamps.push(parsed);
+      else undated += 1;
+    });
+    stamps.sort((a, b) => a - b);
+    const floor = stamps[0];
     qa("[data-fresh]").forEach((element) => {
-      element.innerHTML = `<span class="hw-fresh-dot"></span>${newest ? `Updated ${dateText(newest)}` : "Build time not published"}`;
-      element.classList.toggle("warn", !newest);
+      if (!floor) {
+        element.innerHTML = '<span class="hw-fresh-dot"></span>Build time not published';
+        element.classList.add("warn");
+        return;
+      }
+      const hours = (Date.now() - floor.getTime()) / 36e5;
+      element.innerHTML = `<span class="hw-fresh-dot"></span>Oldest source updated ${escapeHTML(ageText(floor.toISOString()))}${undated ? ` · ${undated} undated` : ""}`;
+      element.classList.toggle("warn", hours > 24 || undated > 0);
     });
   }
 
@@ -487,22 +628,15 @@
     const keys = Object.keys(FILES);
     Promise.all(keys.map((key) => fetchJSON(FILES[key]))).then((payloads) => {
       keys.forEach((key, index) => { state.payloads[key] = payloads[index]; });
-      state.teams = normalizeTeams(state.payloads.teams, state.payloads.standings, state.payloads.availability, state.payloads.players, state.payloads.games);
+      state.teams = normalizeTeams(state.payloads.teams, state.payloads.standings, state.payloads.finals, state.payloads.availability, state.payloads.players, state.payloads.games);
       setFreshness(payloads);
+      renderRecordNote();
       populateConferenceFilter();
       renderStories();
       renderWatch();
       renderBoard();
       renderViz();
-      if (state.teams.length) {
-        const paramTeam = new URLSearchParams(location.search).get("team");
-        let initialTeam = null;
-        if (paramTeam) {
-          const match = state.teams.find(t => t.team.toLowerCase() === paramTeam.toLowerCase() || t.name.toLowerCase() === paramTeam.toLowerCase());
-          if (match) initialTeam = match.team;
-        }
-        selectTeam(initialTeam || state.teams.slice().sort((a, b) => a.rank - b.rank)[0].team, false);
-      }
+      if (state.teams.length) selectTeam(state.teams.slice().sort((a, b) => a.rank - b.rank)[0].team, false);
     });
   }
 

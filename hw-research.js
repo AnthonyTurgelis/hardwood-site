@@ -3,6 +3,8 @@
   "use strict";
 
   var FILES={index:"deepdive_index.json",ledger:"deepdive.json"};
+  var SOURCE_LABELS={index:"research index",ledger:"research ledger"};
+  var VIZ_KEYS=["sample","outcomes","sources"];
   var state={records:[],filtered:[],selected:null,sourceCache:{},viz:"sample",sort:"sample",payloads:{}};
   var $=function(id){return document.getElementById(id);};
   var qa=function(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));};
@@ -13,13 +15,17 @@
   var signed=function(value,digits){var parsed=num(value);return parsed===null?"—":(parsed>0?"+":"")+parsed.toFixed(digits==null?1:digits);};
   var human=function(value){return String(value||"").replace(/[_-]+/g," ").replace(/\b\w/g,function(c){return c.toUpperCase();});};
   var normalize=function(value){return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();};
-  var truncText=function(value,max){var text=String(value||"").replace(/\s+/g," ").trim();return text.length>max?text.slice(0,max-1).trim()+"…":text;};
+  var truncate=function(value,max){var text=String(value||"").replace(/\s+/g," ").trim();return text.length>max?text.slice(0,max-1).trim()+"…":text;};
   var safeHref=function(value){var text=String(value||"");return text&&!/^javascript:/i.test(text)?esc(text):"#";};
   var dateObj=function(value){if(!has(value))return null;var parsed=new Date(value);return Number.isNaN(parsed.getTime())?null:parsed;};
   var dateText=function(value){var parsed=dateObj(value);return parsed?parsed.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}):String(value||"—");};
   var ageText=function(value){var parsed=dateObj(value);if(!parsed)return "time not published";var seconds=Math.max(0,(Date.now()-parsed.getTime())/1000);if(seconds<90)return "just now";if(seconds<3600)return Math.floor(seconds/60)+"m ago";if(seconds<86400)return Math.floor(seconds/3600)+"h ago";return Math.floor(seconds/86400)+"d ago";};
   var fetchJSON=function(path){return fetch(path,{cache:"no-store"}).then(function(response){if(!response.ok)throw new Error(path+" returned "+response.status);return response.json();});};
   var rows=function(payload,keys){if(Array.isArray(payload))return payload;for(var index=0;index<keys.length;index++){var value=payload&&payload[keys[index]];if(Array.isArray(value))return value;}return [];};
+  var param=function(name){return new URL(location.href).searchParams.get(name);};
+  var replaceParam=function(name,value){var url=new URL(location.href);if(value===null||value===undefined||value==="")url.searchParams.delete(name);else url.searchParams.set(name,String(value));var query=url.searchParams.toString();history.replaceState(history.state,"",url.pathname+(query?"?"+query:"")+url.hash);};
+  var validSelectValue=function(id,value){var element=$(id);return element&&Array.prototype.some.call(element.options,function(option){return option.value===value;});};
+  var editableTarget=function(target){return target&&target.closest&&Boolean(target.closest("input, textarea, select, [contenteditable='true']"));};
 
   function stripMarkdown(value){
     return String(value||"")
@@ -107,11 +113,11 @@
   function deltaClass(record){return record.nDelta===null?"flat":record.nDelta>0?"up":record.nDelta<0?"down":"flat";}
   function tableRow(record){
     var selected=state.selected&&state.selected.id===record.id;
-    return '<tr'+(selected?' class="selected"':'')+' data-research-row="'+esc(record.id)+'"><td><span class="hw-research-kind">'+esc(record.kindLabel)+'</span></td><td><button class="hw-research-select-row" type="button" data-select-research="'+esc(record.id)+'"><strong>'+esc(record.title)+'</strong><small>'+esc(truncText(record.question,110))+'</small></button></td><td>'+badge(record)+'</td><td>'+esc(record.source)+'</td><td class="num">'+(record.n===null?'—':esc(record.n.toLocaleString()))+'</td><td class="num"><span class="hw-research-delta '+deltaClass(record)+'">'+esc(deltaText(record))+'</span></td><td>'+esc(dateText(record.asOf))+'</td><td><span class="hw-research-finding">'+esc(truncText(record.conclusion,150))+'</span></td></tr>';
+    return '<tr'+(selected?' class="selected"':'')+' data-research-row="'+esc(record.id)+'"><td><span class="hw-research-kind">'+esc(record.kindLabel)+'</span></td><td><button class="hw-research-select-row" type="button" aria-controls="research-inspector" aria-pressed="'+String(Boolean(selected))+'" data-select-research="'+esc(record.id)+'"><strong>'+esc(record.title)+'</strong><small>'+esc(truncate(record.question,110))+'</small></button></td><td>'+badge(record)+'</td><td>'+esc(record.source)+'</td><td class="num">'+(record.n===null?'—':esc(record.n.toLocaleString()))+'</td><td class="num"><span class="hw-research-delta '+deltaClass(record)+'">'+esc(deltaText(record))+'</span></td><td>'+esc(dateText(record.asOf))+'</td><td><span class="hw-research-finding">'+esc(truncate(record.conclusion,150))+'</span></td></tr>';
   }
   function mobileRow(record){
     var selected=state.selected&&state.selected.id===record.id;
-    return '<button type="button" class="hw-mobile-research-row'+(selected?' selected':'')+'" data-select-research="'+esc(record.id)+'"><span class="hw-mobile-research-top"><strong>'+esc(record.title)+'</strong>'+badge(record)+'</span><span class="hw-mobile-research-meta">'+esc(record.kindLabel)+' · '+esc(record.source)+' · '+(record.n===null?'sample not published':record.n.toLocaleString()+' observations')+'</span><span class="hw-mobile-research-finding">'+esc(truncText(record.conclusion,180))+'</span><span class="hw-mobile-research-bottom"><span>'+esc(dateText(record.asOf))+'</span><span class="hw-research-delta '+deltaClass(record)+'">'+esc(deltaText(record))+'</span></span></button>';
+    return '<button type="button" class="hw-mobile-research-row'+(selected?' selected':'')+'" aria-controls="research-inspector" aria-pressed="'+String(Boolean(selected))+'" data-select-research="'+esc(record.id)+'"><span class="hw-mobile-research-top"><strong>'+esc(record.title)+'</strong>'+badge(record)+'</span><span class="hw-mobile-research-meta">'+esc(record.kindLabel)+' · '+esc(record.source)+' · '+(record.n===null?'sample not published':record.n.toLocaleString()+' observations')+'</span><span class="hw-mobile-research-finding">'+esc(truncate(record.conclusion,180))+'</span><span class="hw-mobile-research-bottom"><span>'+esc(dateText(record.asOf))+'</span><span class="hw-research-delta '+deltaClass(record)+'">'+esc(deltaText(record))+'</span></span></button>';
   }
   function renderBoard(){
     applyFilters();
@@ -119,7 +125,8 @@
     $("research-context").textContent=state.sort+" · "+(filters().source||"all sources");
     $("research-body").innerHTML=state.filtered.map(tableRow).join("")||'<tr><td colspan="8"><div class="hw-empty">No published research matches these filters.</div></td></tr>';
     $("research-mobile").innerHTML=state.filtered.map(mobileRow).join("")||'<div class="hw-empty">No published research matches these filters.</div>';
-    qa("[data-select-research]").forEach(function(button){button.addEventListener("click",function(){selectRecord(button.getAttribute("data-select-research"),true);});});
+    qa("[data-select-research]").forEach(function(button){button.addEventListener("click",function(){selectRecord(button.getAttribute("data-select-research"),true,true);});});
+    var exportButton=$("research-export");if(exportButton)exportButton.setAttribute("aria-label",state.filtered.length?"Download filtered research CSV; "+state.filtered.length+" rows in current view":"No research rows available to export");
   }
 
   function story(label,value,note){return '<article class="hw-story"><span class="hw-story-label">'+esc(label)+'</span><strong class="hw-story-value">'+esc(value)+'</strong><span class="hw-story-note">'+esc(note)+'</span></article>';}
@@ -204,21 +211,6 @@
     out=out||[];if(!object||typeof object!=="object"||depth>2)return out;
     Object.keys(object).forEach(function(key){var value=object[key],next=path?path+" · "+human(key):human(key);if(Array.isArray(value)&&value.length>=2&&value.every(function(row){return row&&typeof row==="object"&&!Array.isArray(row);}))out.push({label:next,rows:value});else if(value&&typeof value==="object"&&!Array.isArray(value))collectArrays(value,next,depth+1,out);});return out;
   }
-  // A DENSE INSPECTOR THAT SILENTLY DROPS COLUMNS IS WORSE THAN A WIDE ONE (2026-08-20).
-  // The cap here was 7 and the tables it renders are built from whatever the source file
-  // happens to carry, so it truncated by position with no way for a reader to know. On the
-  // deserved-wins source that cost exactly the two columns the page exists to show -
-  // opp_quality_faced and sched_vs_league, fields 8 and 9 of 9. The wrapper is overflow:auto,
-  // so width was never the constraint it was protecting. It still caps, because an arbitrary
-  // JSON can be arbitrarily wide - but it now says so when it bites.
-  //
-  // Rendering only candidates[0] was the same defect in the other axis: score is rows x cols,
-  // so a small companion table can never win against the main one and simply never appeared.
-  // The player competition lists lost 105 to 18 and were invisible for that reason alone.
-  // The caps are MEASURED, not guessed: across all 17 deepdive_*.json sources on 2026-08-20
-  // the widest table carries 12 columns and the richest source yields 5 tables, so 14 and 6
-  // clear every source today with headroom. Both still disclose when they bite, because the
-  // failure being fixed here is silent truncation, not truncation.
   var GENERIC_MAX_COLS=14,GENERIC_MAX_TABLES=6;
   function genericTableBlock(candidate){
     var hidden=(candidate.allKeys||candidate.keys).length-candidate.keys.length;
@@ -247,9 +239,9 @@
     state.sourceCache[path].then(function(payload){if(!state.selected||state.selected.id!==record.id)return;var target=$("research-source-detail");if(!target)return;if(payload&&payload._load_error)target.innerHTML='<div class="hw-empty compact">The published source file could not be loaded: '+esc(payload._load_error)+'</div>';else target.innerHTML=sourceDetail(payload);});
   }
 
-  function selectRecord(id,scroll){
+  function selectRecord(id,scroll,writeState){
     var record=state.records.find(function(candidate){return candidate.id===id;});if(!record)return;state.selected=record;renderBoard();renderInspector(record);renderViz();
-    if(record.slug&&history&&history.replaceState){var params=new URLSearchParams(location.search);params.set("dive",record.slug);history.replaceState(null,"","?"+params.toString());}
+    if(writeState!==false)replaceParam("dive",record.slug||record.id);
     if(scroll&&window.innerWidth<980)$("research-inspector").scrollIntoView({behavior:"smooth",block:"start"});
   }
 
@@ -258,32 +250,32 @@
   function sampleScatter(records){
     var points=records.filter(function(record){return record.n!==null&&record.n>0&&record.nDelta!==null;}).map(function(record){return {record:record,x:Math.log10(record.n),y:record.nDelta};});
     if(!points.length)return '<div class="hw-empty">No dives publish both a current sample and sample movement.</div>';
-    var width=820,height=285,left=62,right=22,top=18,bottom=42,xd=extent(points.map(function(point){return point.x;}),false),yd=extent(points.map(function(point){return point.y;}),true),sx=function(value){return scale(value,xd,[left,width-right]);},sy=function(value){return scale(value,yd,[height-bottom,top]);},out=['<svg viewBox="0 0 '+width+' '+height+'" role="img" aria-label="Research sample size versus sample movement">'];
+    var width=820,height=285,left=62,right=22,top=18,bottom=42,xd=extent(points.map(function(point){return point.x;}),false),yd=extent(points.map(function(point){return point.y;}),true),sx=function(value){return scale(value,xd,[left,width-right]);},sy=function(value){return scale(value,yd,[height-bottom,top]);},out=['<svg viewBox="0 0 '+width+' '+height+'" role="group" aria-label="Research sample size versus sample movement">'];
     [0,.25,.5,.75,1].forEach(function(q){var xv=xd[0]+q*(xd[1]-xd[0]),yv=yd[0]+q*(yd[1]-yd[0]),x=sx(xv),y=sy(yv);out.push('<line class="grid" x1="'+x+'" y1="'+top+'" x2="'+x+'" y2="'+(height-bottom)+'"></line><line class="grid" x1="'+left+'" y1="'+y+'" x2="'+(width-right)+'" y2="'+y+'"></line><text class="axis-label" x="'+x+'" y="'+(height-15)+'" text-anchor="middle">'+esc(Math.round(Math.pow(10,xv)).toLocaleString())+'</text><text class="axis-label" x="'+(left-7)+'" y="'+(y+3)+'" text-anchor="end">'+esc(signed(yv,0))+'</text>');});
     if(yd[0]<0&&yd[1]>0){var zero=sy(0);out.push('<line class="zero" x1="'+left+'" y1="'+zero+'" x2="'+(width-right)+'" y2="'+zero+'"></line>');}
-    points.forEach(function(point){var selected=state.selected&&state.selected.id===point.record.id,klass=point.y>0?"up":point.y<0?"down":"flat",radius=Math.max(3,Math.min(7,3+Math.log10(point.record.n)/2));out.push('<g class="research-point '+klass+(selected?' selected':'')+'" data-viz-record="'+esc(point.record.id)+'"><circle cx="'+sx(point.x).toFixed(1)+'" cy="'+sy(point.y).toFixed(1)+'" r="'+radius.toFixed(1)+'"><title>'+esc(point.record.title+' · n '+point.record.n.toLocaleString()+' · Δ '+signed(point.record.nDelta,0))+'</title></circle><text x="'+(sx(point.x)+7).toFixed(1)+'" y="'+(sy(point.y)+3).toFixed(1)+'">'+esc(point.record.slug||truncText(point.record.title,12))+'</text></g>');});
+    points.forEach(function(point,index){var selected=state.selected&&state.selected.id===point.record.id,klass=point.y>0?"up":point.y<0?"down":"flat",radius=Math.max(3,Math.min(7,3+Math.log10(point.record.n)/2)),label=point.record.title+' · n '+point.record.n.toLocaleString()+' · Δ '+signed(point.record.nDelta,0);out.push('<g class="research-point '+klass+(selected?' selected':'')+'" tabindex="'+(index===0?'0':'-1')+'" role="button" aria-label="'+esc(label)+'" aria-controls="research-inspector" data-viz-record="'+esc(point.record.id)+'"><circle cx="'+sx(point.x).toFixed(1)+'" cy="'+sy(point.y).toFixed(1)+'" r="'+radius.toFixed(1)+'"><title>'+esc(label)+'</title></circle><text x="'+(sx(point.x)+7).toFixed(1)+'" y="'+(sy(point.y)+3).toFixed(1)+'">'+esc(point.record.slug||truncate(point.record.title,12))+'</text></g>');});
     out.push('<text class="axis-label" x="'+((left+width-right)/2)+'" y="'+(height-2)+'" text-anchor="middle">Published sample (log scale)</text><text class="axis-label" x="14" y="'+((top+height-bottom)/2)+'" transform="rotate(-90 14 '+((top+height-bottom)/2)+')" text-anchor="middle">Sample movement</text></svg>');return out.join("");
   }
   function barView(records,key,label){
     var counts={};records.forEach(function(record){var value=key(record)||"Not published";counts[value]=(counts[value]||0)+1;});var entries=Object.keys(counts).map(function(name){return {name:name,count:counts[name]};}).sort(function(a,b){return b.count-a.count||a.name.localeCompare(b.name);}),max=entries.length?entries[0].count:1;
     return '<div class="hw-research-bars">'+entries.map(function(entry){return '<div class="hw-research-bar"><span>'+esc(entry.name)+'</span><div><i style="width:'+(entry.count/max*100).toFixed(1)+'%"></i></div><strong>'+entry.count+'</strong></div>';}).join("")+'</div><div class="hw-data-note">'+esc(label)+'</div>';
   }
+  function bindVizPoints(){var points=qa("[data-viz-record]");points.forEach(function(point,index){point.addEventListener("click",function(){selectRecord(point.getAttribute("data-viz-record"),true,true);});point.addEventListener("keydown",function(event){var next=index;if(event.key==="ArrowRight"||event.key==="ArrowDown")next=(index+1)%points.length;else if(event.key==="ArrowLeft"||event.key==="ArrowUp")next=(index-1+points.length)%points.length;else if(event.key==="Home")next=0;else if(event.key==="End")next=points.length-1;else if(event.key==="Enter"||event.key===" "){event.preventDefault();selectRecord(point.getAttribute("data-viz-record"),true,true);return;}else return;event.preventDefault();point.setAttribute("tabindex","-1");points[next].setAttribute("tabindex","0");points[next].focus();});});}
   function renderViz(){
     var html,context;
     if(state.viz==="outcomes"){html=barView(state.records,function(record){return record.decision.label;},"Counts repeat explicit source-language decisions; they are not re-graded here.");context="Decision mix across the complete research ledger";}
     else if(state.viz==="sources"){html=barView(state.records,function(record){return record.source;},"Evidence-source coverage across published dives and research records.");context="Research coverage by evidence source";}
     else{html=sampleScatter(state.records);context="Published sample size versus sample movement";}
-    $("research-viz-context").textContent=context;$("research-viz").innerHTML=html;
-    qa("[data-viz-record]").forEach(function(node){node.addEventListener("click",function(){selectRecord(node.getAttribute("data-viz-record"),true);});});
-    qa("[data-research-viz]").forEach(function(button){var active=button.getAttribute("data-research-viz")===state.viz;button.classList.toggle("active",active);button.setAttribute("aria-selected",active?"true":"false");});
+    $("research-viz-context").textContent=context;$("research-viz").innerHTML=html;bindVizPoints();
+    qa("[data-research-viz]").forEach(function(button){var active=button.getAttribute("data-research-viz")===state.viz;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));});
   }
 
   function watchRow(record,value,note){return '<button type="button" class="hw-research-watch-row" data-select-research="'+esc(record.id)+'"><div><strong>'+esc(record.title)+'</strong><small>'+esc(note)+'</small></div><span>'+esc(value)+'</span></button>';}
   function renderWatch(){
     var movers=state.records.filter(function(record){return record.nDelta!==null;}).sort(function(a,b){return Math.abs(b.nDelta)-Math.abs(a.nDelta);}).slice(0,9),negative=state.records.filter(function(record){return record.decision.key==="no-promote";}).sort(function(a,b){return (dateObj(b.asOf)||0)-(dateObj(a.asOf)||0);}).slice(0,9);
     $("research-sample-moves").innerHTML=movers.map(function(record){return watchRow(record,deltaText(record),(record.n===null?'sample not published':'n '+record.n.toLocaleString())+' · '+record.source);}).join("")||'<div class="hw-empty compact">No sample movement was published.</div>';
-    $("research-no-promote").innerHTML=negative.map(function(record){return watchRow(record,"No promote",truncText(record.conclusion,95));}).join("")||'<div class="hw-empty compact">No explicit no-promote result was published.</div>';
-    qa(".hw-research-watch-row[data-select-research]").forEach(function(button){button.addEventListener("click",function(){selectRecord(button.getAttribute("data-select-research"),true);});});
+    $("research-no-promote").innerHTML=negative.map(function(record){return watchRow(record,"No promote",truncate(record.conclusion,95));}).join("")||'<div class="hw-empty compact">No explicit no-promote result was published.</div>';
+    qa(".hw-research-watch-row[data-select-research]").forEach(function(button){button.addEventListener("click",function(){selectRecord(button.getAttribute("data-select-research"),true,true);});});
   }
 
   function populateFilters(){
@@ -292,20 +284,28 @@
     $("research-verdict").innerHTML='<option value="">All decisions</option>'+Object.keys(decisions).sort(function(a,b){return decisions[a].localeCompare(decisions[b]);}).map(function(key){return '<option value="'+esc(key)+'">'+esc(decisions[key])+'</option>';}).join("");
   }
   function setFreshness(indexPayload,ledgerPayload){
-    var stamps=[indexPayload&&indexPayload.generated_utc,ledgerPayload&&ledgerPayload.generated_utc].map(dateObj).filter(Boolean).sort(function(a,b){return b-a;}),newest=stamps[0];qa("[data-fresh]").forEach(function(element){element.innerHTML='<span class="hw-fresh-dot"></span>'+(newest?'Updated '+ageText(newest.toISOString()):'Build time not published');element.classList.toggle("warn",!newest);});
+    var inputs=[{name:"index",raw:indexPayload&&indexPayload.generated_utc},{name:"ledger",raw:ledgerPayload&&ledgerPayload.generated_utc}],readings=[],undated=[];inputs.forEach(function(input){var parsed=dateObj(input.raw);if(parsed)readings.push({name:input.name,raw:input.raw,date:parsed});else undated.push(input.name);});readings.sort(function(a,b){return a.date-b.date;});var floor=readings[0]||null,hours=floor?(Date.now()-floor.date.getTime())/36e5:null;qa("[data-fresh]").forEach(function(element){if(!floor){element.innerHTML='<span class="hw-fresh-dot"></span>Research source time not published';element.classList.add("warn");return;}element.innerHTML='<span class="hw-fresh-dot"></span>Oldest source updated '+esc(ageText(floor.raw))+' · '+esc(SOURCE_LABELS[floor.name])+(undated.length?' · '+undated.length+' undated':'');element.classList.toggle("warn",hours>24||undated.length>0);element.title=readings.map(function(item){return SOURCE_LABELS[item.name]+': '+String(item.raw);}).concat(undated.length?["Undated: "+undated.map(function(name){return SOURCE_LABELS[name];}).join(", ")]:[]).join(" · ");});
   }
+
+  function csvCell(value){var text=String(value==null?"":value);return /[",\r\n]/.test(text)?'"'+text.replace(/"/g,'""')+'"':text;}
+  function downloadCsv(rowsOut,filename){if(!rowsOut.length||typeof Blob!=="function"||!window.URL||typeof window.URL.createObjectURL!=="function")return;var csv=rowsOut.map(function(row){return row.map(csvCell).join(",");}).join("\r\n"),blob=new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}),href=window.URL.createObjectURL(blob),link=document.createElement("a");link.href=href;link.download=filename;link.hidden=true;document.body.appendChild(link);link.click();link.remove();window.setTimeout(function(){window.URL.revokeObjectURL(href);},0);}
+  function dateStamp(){var now=new Date();return now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");}
+  function exportResearch(){if(!state.filtered.length)return;var out=[["Type","Title","Question","Decision","Evidence source","Sample","Sample delta","Updated","Finding","Source JSON"]];state.filtered.forEach(function(record){out.push([record.kindLabel,record.title,record.question,record.decision.label,record.source,record.n===null?"":record.n,record.nDelta===null?"":record.nDelta,record.asOf||"",record.conclusion,record.sourceJson||""]);});downloadCsv(out,"hardwood-research-"+dateStamp()+".csv");}
+
+  function hydrateState(){var q=param("q"),source=param("source"),verdict=param("verdict"),sample=param("sample"),kind=param("kind"),sort=param("sort"),viz=param("viz");if(q!==null)$("research-search").value=q;if(source&&validSelectValue("research-source",source))$("research-source").value=source;else if(source)replaceParam("source","");if(verdict&&validSelectValue("research-verdict",verdict))$("research-verdict").value=verdict;else if(verdict)replaceParam("verdict","");if(sample&&validSelectValue("research-sample",sample))$("research-sample").value=sample;else if(sample)replaceParam("sample","");if(kind&&validSelectValue("research-kind",kind))$("research-kind").value=kind;else if(kind)replaceParam("kind","");if(sort&&validSelectValue("research-sort",sort))$("research-sort").value=sort;else if(sort)replaceParam("sort","");if(viz&&VIZ_KEYS.indexOf(viz)>=0)state.viz=viz;else if(viz)replaceParam("viz","");}
+  function initialRecord(){var requested=param("dive");if(requested){var found=state.records.find(function(record){return record.slug===requested||record.id===requested;});if(found)return found;replaceParam("dive","");}return state.records.find(function(record){return record.kind==="dive"&&record.n!==null;})||state.records[0]||null;}
+  function writeFilterParam(id,name,defaultValue){var value=$(id).value;replaceParam(name,value===defaultValue?"":value);}
   function bind(){
-    ["research-source","research-verdict","research-sample","research-kind","research-sort"].forEach(function(id){$(id).addEventListener("change",function(){renderBoard();});});
-    $("research-search").addEventListener("input",renderBoard);
-    $("research-reset").addEventListener("click",function(){["research-search","research-source","research-verdict","research-sample","research-kind"].forEach(function(id){$(id).value="";});$("research-sort").value="sample";renderBoard();});
-    qa("[data-research-viz]").forEach(function(button){button.addEventListener("click",function(){state.viz=button.getAttribute("data-research-viz");renderViz();});});
-  }
-  function initialRecord(){
-    var requested=new URLSearchParams(location.search).get("dive");if(requested){var found=state.records.find(function(record){return record.slug===requested||record.id===requested;});if(found)return found;}
-    return state.records.find(function(record){return record.kind==="dive"&&record.n!==null;})||state.records[0]||null;
+    var search=$("research-search");search.setAttribute("aria-keyshortcuts","/");if(!search.title)search.title="Press / to focus research search; Esc clears search";
+    [["research-source","source",""],["research-verdict","verdict",""],["research-sample","sample",""],["research-kind","kind",""],["research-sort","sort","sample"]].forEach(function(spec){$(spec[0]).addEventListener("change",function(){renderBoard();writeFilterParam(spec[0],spec[1],spec[2]);});});
+    search.addEventListener("input",function(){renderBoard();replaceParam("q",search.value.trim());});
+    $("research-export").addEventListener("click",exportResearch);
+    $("research-reset").addEventListener("click",function(){["research-search","research-source","research-verdict","research-sample","research-kind"].forEach(function(id){$(id).value="";});$("research-sort").value="sample";state.viz="sample";state.selected=state.records.find(function(record){return record.kind==="dive"&&record.n!==null;})||state.records[0]||null;["q","source","verdict","sample","kind","sort","dive","viz"].forEach(function(name){replaceParam(name,"");});renderBoard();renderInspector(state.selected);renderViz();});
+    qa("[data-research-viz]").forEach(function(button){button.addEventListener("click",function(){state.viz=button.getAttribute("data-research-viz");replaceParam("viz",state.viz==="sample"?"":state.viz);renderViz();});});
+    document.addEventListener("keydown",function(event){if(event.key==="/"&&!event.metaKey&&!event.ctrlKey&&!event.altKey&&!editableTarget(event.target)){event.preventDefault();search.focus();if(search.select)search.select();return;}if(event.key==="Escape"&&document.activeElement===search&&search.value){event.preventDefault();search.value="";renderBoard();replaceParam("q","");}});
   }
   function boot(){
-    Promise.all([fetchJSON(FILES.index),fetchJSON(FILES.ledger)]).then(function(payloads){state.payloads={index:payloads[0],ledger:payloads[1]};state.records=mergeResearch(payloads[0],payloads[1]);populateFilters();setFreshness(payloads[0],payloads[1]);bind();renderStories();renderWatch();state.selected=initialRecord();renderBoard();renderInspector(state.selected);renderViz();}).catch(function(error){console.error(error);$("research-body").innerHTML='<tr><td colspan="8"><div class="hw-empty">The research board could not load its published artifacts.</div></td></tr>';$("research-mobile").innerHTML='<div class="hw-empty">The research board could not load its published artifacts.</div>';});
+    Promise.all([fetchJSON(FILES.index),fetchJSON(FILES.ledger)]).then(function(payloads){state.payloads={index:payloads[0],ledger:payloads[1]};state.records=mergeResearch(payloads[0],payloads[1]);populateFilters();hydrateState();setFreshness(payloads[0],payloads[1]);bind();renderStories();renderWatch();state.selected=initialRecord();renderBoard();renderInspector(state.selected);renderViz();}).catch(function(error){console.error(error);$("research-body").innerHTML='<tr><td colspan="8"><div class="hw-empty">The research board could not load its published artifacts.</div></td></tr>';$("research-mobile").innerHTML='<div class="hw-empty">The research board could not load its published artifacts.</div>';});
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
 }());

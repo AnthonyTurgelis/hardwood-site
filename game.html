@@ -188,13 +188,13 @@
   .smval{font-size:11px;font-variant-numeric:tabular-nums;color:var(--muted);width:2.6em;text-align:right;flex:none}
 </style>
 <link rel="stylesheet" href="./hardwood.css?v=04e913ef">
-<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-badge{font-size:.7em;letter-spacing:.05em;vertical-align:super}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center}</style><!--/hw-chrome-style--></head>
 <body>
 <header>
   <h1>The Hardwood — Game</h1>
   <span class="ago" id="ago"></span>
 </header>
-<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026</a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
+<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-brand" href="index.html">The Hardwood</a><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026<span class="hw-badge">LIVE</span></a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
 <main id="main"><p class="empty">Loading game…</p></main>
 <footer id="foot"></footer>
 <script src="./hardwood.js?v=e2e90a97"></script>
@@ -337,17 +337,6 @@
     leg.appendChild(key("lpt","our number"));
     wrap.appendChild(leg);
     return wrap;
-  }
-
-  function marginAnnotation(d){
-    var a=d&&d.margin_annotation; if(!a) return null;
-    var n=Number(a.neutral_margin),s=Number(a.site_adjustment),f=Number(a.final_margin);
-    if(!isFinite(n)||!isFinite(s)||!isFinite(f)||Math.abs((n+s)-f)>.011) return null;
-    var box=el("div","why"), signed=function(v){return(v>=0?"+":"")+v.toFixed(1)};
-    [["Neutral strength",a.neutral_call],["Site + calibration adjustment",signed(s)],["Final call",a.final_call]].forEach(function(x,i){
-      var r=el("div","wrow"+(i===2?" wtot":""));r.appendChild(el("div","wlab",x[0]));r.appendChild(el("div","wval",x[1]));box.appendChild(r);
-    });
-    return box;
   }
 
   // ---- WHY-CHAIN-BEGIN (exercised directly by scripts/test_game_card_chain.py - the test extracts
@@ -846,19 +835,17 @@
     var back=el("a","back","← Back to all games"); back.href="./games.html"; main.appendChild(back);
     var hero=el("div","hero");
     hero.appendChild(el("div","mu", (d.away_full||d.away)+" @ "+(d.home_full||d.home)));
-    var ann=marginAnnotation(d);
-    if(ann) hero.appendChild(el("div","call","Our call: "+d.call));
+    hero.appendChild(el("div","call","Our call: "+(d.call||"—")));
     // THE ANSWER, LED WITH: the call above, and immediately under it the one line that says what
     // drives it. Everything else on this page is support for these two lines.
     var lead=leadLine(d);
     if(lead) hero.appendChild(el("div","lead", lead));
     // ...and immediately under the lead, the range that answer lives inside — drawn, not narrated.
-    var mr=ann?marginRangeBar(d):null; if(mr) hero.appendChild(mr);
-    if(ann) hero.appendChild(ann);
+    var mr=marginRangeBar(d); if(mr) hero.appendChild(mr);
     // ...and under that, HOW the number was built — drawn, on the card, not listed in an appendix.
     // The row this answers reads "show how each game prediction is built, right on the game card":
     // the derivation being correct and reconciling was never the gap, being three taps away was.
-    var wc=ann?whyChainBar(d):null; if(wc) hero.appendChild(wc);
+    var wc=whyChainBar(d); if(wc) hero.appendChild(wc);
     hero.appendChild(el("div","sub", d.date||""));
     main.appendChild(hero);
 
@@ -960,5 +947,5 @@
   load();
 })();
 </script>
-<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></div><div>Projections published pre-tip, graded publicly.</div></footer><!--/hw-foot--></body>
+<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot--></body>
 </html>
