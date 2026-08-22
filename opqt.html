@@ -667,6 +667,22 @@ function fieldBlock(p){
     `<b>${c.n_measured_rating}</b> of ${c.n_roster} carry a rating measured on their own record.
      The rest are senior national-team players with no WNBA minutes, so they inherit a group prior
      — that is not a measurement of the player and is not printed as one.`,
+    // CAREER CONTEXT, stated as a number like every other absence on this surface. The page
+    // reported 10 of 94 with bio detail and 2 of 94 with a measured rating and stopped there,
+    // which read as "we hold almost nothing about this field". We hold a great deal: college
+    // lines for 44 and international club seasons for 19. Rendered from the SAME payload this
+    // section already fetches, which regenerates from its builder every bake — not from a
+    // second file that would freeze at whenever someone last ran it.
+    (c.n_with_any_career_lines != null
+      ? `<b>${c.n_with_any_career_lines}</b> of ${c.n_roster} carry a published career line —
+         <b>${c.n_with_ncaa_lines}</b> with college seasons and
+         <b>${c.n_with_intl_club_lines}</b> with international club seasons. A player with none
+         is one we hold no published record for, not one who has not played.`
+      : null),
+    (p.dossier_counts
+      ? `The dossier holds FIBA tournament history for <b>${p.dossier_counts.players_with_fiba_history}</b>
+         and box scores for <b>${p.dossier_counts.players_with_fiba_boxes}</b> of ${c.n_roster}.`
+      : null),
     p.boxscore_note,
   ];
   if (p.prior_box_off_roster && p.prior_box_off_roster.length){
@@ -675,7 +691,7 @@ function fieldBlock(p){
       (${who}…) are <b>not</b> on these rosters and are not shown — they are not at this
       tournament.`);
   }
-  return `<div class="card"><div class="pad meta">${notes.map(n => `<div>${n}</div>`).join("")}
+  return `<div class="card"><div class="pad meta">${notes.filter(Boolean).map(n => `<div>${n}</div>`).join("")}
     <div>Roster ${p.roster_check.replace(/_/g," ")} · ${builtLine(p.built_at)}</div></div></div>
     ${p.teams.map(teamBlock).join("")}`;
 }
@@ -830,9 +846,23 @@ fetch("./opqt.json?v=" + Date.now())
     // payload that fails to read must never take the projection down with it, and the reverse
     // ordering — one Promise.all over both — would do exactly that. The field states its own
     // failure inside its own section.
-    return fetch("./opqt_players.json?v=" + Date.now())
-      .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-      .then(p => {
+    // TWO PAYLOADS, ONE SECTION, AND THE ROSTER STILL DECIDES. opqt_players.json is the spine and
+    // is required; fiba_dossier.json adds per-player career depth and is OPTIONAL by construction --
+    // it resolves to null on any failure so a dossier that has not shipped can never take the field
+    // down with it. That is the same posture the comment above states for the projection.
+    return Promise.all([
+      fetch("./opqt_players.json?v=" + Date.now())
+        .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); }),
+      fetch("./fiba_dossier.json?v=" + Date.now())
+        .then(r => r.ok ? r.json() : null).catch(() => null),
+    ])
+      .then(([p, dossier]) => {
+        if (dossier && dossier.players) {
+          const byName = {};
+          dossier.players.forEach(d => { if (d && d.player_name) byName[String(d.player_name).toLowerCase()] = d; });
+          p.dossier = byName;
+          p.dossier_counts = dossier.summary_counts || null;
+        }
         document.getElementById("field").innerHTML = fieldBlock(p);
         wireSort(document.getElementById("field"));
         wirePlayerInspect(p);
