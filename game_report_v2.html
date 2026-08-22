@@ -116,15 +116,15 @@
         </aside>
       </section>
 
-      <div class="hw-data-note">The forecast and ranges come from the dated game file (<span id="gr-artifact-link"></span>, graded against <a href="finals.json">finals.json</a>). A final score is joined afterward only for grading; this page does not recompute or rewrite the pre-tip call.</div>
+      <div class="hw-data-note">The forecast and ranges come from the dated game record (<span id="gr-artifact-link"></span>, graded against <a href="finals.json">finals.json</a>). A final score is joined afterward only for grading; this page does not recompute or rewrite the pre-tip call.</div>
     </article>
   </main>
   <script src="hw-product.js"></script>
   <script src="hw-game-report.js"></script>
   <script>
-  /* Analyst layers (hwAnalystLayers): renders the availability block the game artifact already
+  /* Analyst layers (hwAnalystLayers): renders the availability block the game file already
      publishes (status + expected return per player), and holds honest slots for pace/possession
-     context and the deciding stretch — each renders its value where the artifact computes one
+     context and the deciding stretch — each renders its value where the game file computes one
      and states the absence where it does not. Nothing here recomputes or invents a number. */
   (function(){
     "use strict";
@@ -138,7 +138,7 @@
     function availabilityHTML(game){
       var block=game&&game.availability;
       if(!block||(!Array.isArray(block.home)&&!Array.isArray(block.away)))
-        return '<div class="hw-empty compact">The game file carries no availability block for this game — absence of the data is stated, never papered over.</div>';
+        return '<div class="hw-empty compact">This report has no availability section for this game — the gap is stated, never papered over.</div>';
       return sideHTML(game.away_full||game.away||"Away",block.away)+sideHTML(game.home_full||game.home||"Home",block.home);
     }
     function paceHTML(game){

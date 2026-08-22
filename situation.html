@@ -31,6 +31,8 @@
   th:first-child,td:first-child{text-align:left}
   th{color:var(--dim);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;background:var(--card2)}
   td .cn{display:block;font-size:9.5px;color:var(--dim)}
+  .curvewrap{ margin:14px 0 4px; }
+  .curvecap{ font-size:12px; opacity:.62; margin-top:2px; line-height:1.45; }
   .note{font-size:10.5px;color:var(--dim);margin-top:6px;line-height:1.5}
   .empty{color:var(--dim);font-style:italic}
   /* controls */
@@ -64,19 +66,24 @@
   .ctx{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
   .prov{font-size:11px;color:var(--muted);background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:8px 11px;margin:8px 0;line-height:1.5}
   .prov b{color:var(--ink)}
+  .curve{margin:10px 0 2px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card2)}
+  .curve svg{display:block;width:100%;height:112px;overflow:visible}
+  .curve .axis{stroke:var(--line2);stroke-width:1}.curve .path{fill:none;stroke:var(--acc);stroke-width:2.5}
+  .curve .dot{fill:var(--card);stroke:var(--acc);stroke-width:1.5}.curve .now{fill:var(--acc);stroke:var(--card);stroke-width:2}
+  .curve text{fill:var(--dim);font-size:9px}.curve .caption{font-size:10.5px;color:var(--muted);margin-top:3px}
   .two{display:grid;grid-template-columns:1.3fr 1fr;gap:10px}
   @media (max-width:720px){ .two{grid-template-columns:1fr} }
   footer{max-width:1080px;margin:0 auto;padding:16px 14px;color:var(--dim);font-size:11px}
 </style>
 <link rel="stylesheet" href="./hardwood.css?v=04e913ef">
-<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-badge{font-size:.7em;letter-spacing:.05em;vertical-align:super}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center}</style><!--/hw-chrome-style--></head>
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
 <body>
 <header>
   <h1>The Hardwood — Situation Explorer</h1>
   <span class="ago" id="ago"></span>
 </header>
 <div class="sub">Set the score, the clock, the floor and the matchup — and read what actually happened from that exact spot across a decade of real games. Every number is measured, never a formula.</div>
-<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-brand" href="index.html">The Hardwood</a><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026<span class="hw-badge">LIVE</span></a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
+<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026</a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
 <main id="main"><p class="empty">Loading the situation explorer…</p></main>
 <footer id="foot"></footer>
 <script src="./hardwood.js?v=e2e90a97"></script>
@@ -199,7 +206,95 @@
     return (m<0?"down ":"up ")+Math.abs(m);
   }
 
+  function renderCurve(cp,margin){
+    var NS="http://www.w3.org/2000/svg", wrap=el("div","curve");
+    var svg=document.createElementNS(NS,"svg"), W=620, H=112, L=30, R=10, T=8, B=20;
+    svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("role","img");
+    svg.setAttribute("aria-label",cp.label+" measured win probability by score margin; current setting "+marginText(margin));
+    function x(m){ return L+(m+18)/36*(W-L-R); }
+    function y(p){ return T+(100-p)/100*(H-T-B); }
+    [0,50,100].forEach(function(p){
+      var ln=document.createElementNS(NS,"line"); ln.setAttribute("x1",L); ln.setAttribute("x2",W-R); ln.setAttribute("y1",y(p)); ln.setAttribute("y2",y(p)); ln.setAttribute("class","axis"); svg.appendChild(ln);
+      var tx=document.createElementNS(NS,"text"); tx.setAttribute("x",2); tx.setAttribute("y",y(p)+3); tx.textContent=p+"%"; svg.appendChild(tx);
+    });
+    var pts=cp.curve.map(function(p){ return x(p.margin)+","+y(p.winpct); }).join(" ");
+    var path=document.createElementNS(NS,"polyline"); path.setAttribute("points",pts); path.setAttribute("class","path"); svg.appendChild(path);
+    cp.curve.forEach(function(p){ var c=document.createElementNS(NS,"circle"); c.setAttribute("cx",x(p.margin)); c.setAttribute("cy",y(p.winpct)); c.setAttribute("r",2.5); c.setAttribute("class","dot"); svg.appendChild(c); });
+    var read=interp(cp.curve,margin), now=document.createElementNS(NS,"circle"); now.setAttribute("cx",x(margin)); now.setAttribute("cy",y(read.winpct)); now.setAttribute("r",5); now.setAttribute("class","now"); svg.appendChild(now);
+    [-18,0,18].forEach(function(m){ var tx=document.createElementNS(NS,"text"); tx.setAttribute("x",x(m)); tx.setAttribute("y",H-3); tx.setAttribute("text-anchor","middle"); tx.textContent=m===0?"tied":(m<0?"down "+(-m):"up "+m); svg.appendChild(tx); });
+    wrap.appendChild(svg); wrap.appendChild(el("div","caption","Measured game outcomes at "+cp.clock+". Dots are observed score bands; the large dot is your current setting."));
+    return wrap;
+  }
+
   // ---------- result panel ----------
+  // ---------- the curve, drawn ----------
+  // WHY THIS EXISTS. The page already READ this curve -- interp() walks it and nearestMeasured()
+  // finds the sample -- and then printed a single number. The one thing a Savant-style surface is
+  // FOR is showing you the shape you are sitting on: a reader cannot see that 4 points down at the
+  // half is a gentle slope while 4 points down with two minutes left is a cliff, if all they are
+  // ever shown is one percentage. The data was already in the feed; nothing new is fetched.
+  //
+  // SAMPLE SIZE IS DRAWN, NOT JUST FOOTNOTED. Each measured spot is a dot sized by its own n, so
+  // the thin ends of the dial LOOK thin. The tied point carries n = null by construction (it is the
+  // definitional 50%, not an observation) and is drawn hollow so it cannot be read as a measurement.
+  function curveSvg(cp, eff, winpct){
+    var NS="http://www.w3.org/2000/svg", W=560, H=132, L=34, R=10, T=10, B=22;
+    var pts=[], mins=null, maxs=null;
+    for(var i=0;i<cp.curve.length;i++){
+      var c=cp.curve[i];
+      if(c.winpct==null) continue;
+      pts.push(c);
+      if(c.n!=null){ if(mins===null||c.n<mins) mins=c.n; if(maxs===null||c.n>maxs) maxs=c.n; }
+    }
+    if(pts.length<2) return null;
+    var m0=pts[0].margin, m1=pts[pts.length-1].margin;
+    function X(m){ return L + (m-m0)/(m1-m0) * (W-L-R); }
+    function Y(p){ return T + (100-p)/100 * (H-T-B); }
+    function mk(t,a){ var e=document.createElementNS(NS,t); for(var k in a) e.setAttribute(k,a[k]); return e; }
+
+    var svg=mk("svg",{viewBox:"0 0 "+W+" "+H,width:"100%",height:"auto",role:"img",
+                      "aria-label":"Win percentage against margin at "+cp.label+
+                                   ". Your spot: "+eff.toFixed(1)+" points, "+winpct.toFixed(1)+" percent."});
+    // even line
+    svg.appendChild(mk("line",{x1:L,x2:W-R,y1:Y(50),y2:Y(50),stroke:"currentColor",
+                               "stroke-opacity":".22","stroke-dasharray":"3 4"}));
+    ["100","50","0"].forEach(function(v){
+      var t=mk("text",{x:L-6,y:Y(+v)+4,"text-anchor":"end","font-size":"10",
+                       fill:"currentColor","fill-opacity":".55"});
+      t.textContent=v+"%"; svg.appendChild(t);
+    });
+    var d="";
+    for(var j=0;j<pts.length;j++) d += (j?" L ":"M ")+X(pts[j].margin).toFixed(1)+" "+Y(pts[j].winpct).toFixed(1);
+    svg.appendChild(mk("path",{d:d,fill:"none",stroke:"currentColor","stroke-width":"2",
+                               "stroke-opacity":".75"}));
+    for(var k2=0;k2<pts.length;k2++){
+      var c2=pts[k2];
+      var rad = c2.n==null ? 3 : (maxs>mins ? 2.5 + 3.5*Math.sqrt((c2.n-mins)/(maxs-mins)) : 4);
+      var dot=mk("circle",{cx:X(c2.margin).toFixed(1),cy:Y(c2.winpct).toFixed(1),r:rad.toFixed(1),
+                           fill: c2.n==null ? "none" : "currentColor",
+                           stroke:"currentColor","stroke-width":"1.2",
+                           "fill-opacity": c2.n==null ? "0" : ".55"});
+      var ttl=document.createElementNS(NS,"title");
+      ttl.textContent = c2.spot+": "+c2.winpct.toFixed(1)+"%"+
+        (c2.n==null ? " (tied is 50% by definition, not a measured sample)"
+                    : " from "+c2.n.toLocaleString()+" games");
+      dot.appendChild(ttl); svg.appendChild(dot);
+    }
+    // the reader's own spot
+    var xe=Math.max(L,Math.min(W-R,X(eff)));
+    svg.appendChild(mk("line",{x1:xe,x2:xe,y1:T,y2:H-B,stroke:"currentColor","stroke-opacity":".35"}));
+    svg.appendChild(mk("circle",{cx:xe,cy:Y(winpct),r:5,fill:"currentColor"}));
+    var lab=mk("text",{x:Math.min(xe+8,W-R-56),y:Math.max(T+12,Y(winpct)-9),"font-size":"11",
+                       fill:"currentColor","font-weight":"600"});
+    lab.textContent="you, "+winpct.toFixed(0)+"%"; svg.appendChild(lab);
+    [[m0,"behind"],[0,"tied"],[m1,"ahead"]].forEach(function(pr){
+      var t2=mk("text",{x:X(pr[0]),y:H-6,"text-anchor":pr[0]===0?"middle":(pr[0]<0?"start":"end"),
+                        "font-size":"10",fill:"currentColor","fill-opacity":".55"});
+      t2.textContent=pr[1]; svg.appendChild(t2);
+    });
+    return svg;
+  }
+
   function renderResult(data,st){
     var r=computeRead(data,st);
     var box=el("div","card");
@@ -209,12 +304,26 @@
     var big=el("div","big "+cls, fmtPct(r.winpct));
     big.appendChild(el("small",null," chance your team wins"));
     pad.appendChild(big);
+    pad.appendChild(renderCurve(r.cp,st.margin));
     pad.appendChild(el("div","readline",
       marginText(st.margin).replace(/^./,function(c){return c.toUpperCase();})+" — "+r.cp.label.toLowerCase()+" ("+r.cp.clock+"): "+oneIn(r.winpct)+"."));
 
     if(r.n!=null){
       pad.appendChild(el("div","basis",
         "Resting on "+r.n.toLocaleString()+" real games where a team sat "+r.spot+" at this point (nearest measured spot on the dial)."));
+    }
+
+    // The picture of the curve the number came from. Added after the basis line so the reader sees
+    // the claim, then what it rests on, then the shape - and drawn from the SAME cp.curve the
+    // number was interpolated along, so the dot and the sentence can never disagree.
+    var _svg = curveSvg(r.cp, r.eff!=null ? r.eff : st.margin, r.winpct);
+    if(_svg){
+      var fig=el("div","curvewrap");
+      fig.appendChild(_svg);
+      fig.appendChild(el("div","curvecap",
+        "Every dot is a measured spot on the dial, sized by how many games sit behind it — the thin "
+        + "ends really are thin. Hover a dot for its sample. Tied is 50% by definition, so it is drawn hollow."));
+      pad.appendChild(fig);
     }
 
     if(r.shift!==0){
@@ -593,5 +702,5 @@
   load();
 })();
 </script>
-<!--hw-foot--><footer class="hw-chrome-foot"><span>Projections published pre-tip, graded publicly.</span><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></footer><!--/hw-foot--></body>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></div><div>Projections published pre-tip, graded publicly.</div></footer><!--/hw-foot--></body>
 </html>

@@ -62,7 +62,7 @@
     var margin=game.margin||{};
     var rangeMatches=!rangeText||(has(margin.lo80)&&has(margin.hi80)&&rangeText.indexOf(String(Math.abs(Math.round(margin.lo80))))>=0&&rangeText.indexOf(String(Math.abs(Math.round(margin.hi80))))>=0);
     if(callMatches&&winMatches)return {key:"match",label:"Archive matched",note:rangeMatches?"Call, confidence, and range are attached to the dated archive.":"Call and confidence match; range wording differs."};
-    return {key:"mismatch",label:"Archive differs",note:"The dated archive and game artifact do not match exactly; both remain visible."};
+    return {key:"mismatch",label:"Archive differs",note:"The dated archive and game file do not match exactly; both remain visible."};
   }
 
   function story(label,value,note){return '<article class="hw-story"><span class="hw-story-label">'+esc(label)+'</span><strong class="hw-story-value">'+esc(value)+'</strong><span class="hw-story-note">'+esc(note)+'</span></article>';}
@@ -172,7 +172,7 @@
   function fail(message){$("report-loading").hidden=true;$("game-report").hidden=true;$("report-error").hidden=false;$("report-error").innerHTML='<h1>Report unavailable</h1><p>'+esc(message)+'</p><a class="hw-button primary" href="games.html">Back to games</a>';}
   function boot(){
     var id=gameId();if(!id){fail("Open this page from a game row so the report has a valid game ID.");return;}
-    Promise.all([fetchJSON("games/"+encodeURIComponent(id)+".json"),fetchJSON("finals.json").catch(function(){return {};}),fetchJSON("report_archive.json").catch(function(){return {};})]).then(function(payloads){var game=payloads[0],final=findFinal(payloads[1],game),archive=findArchive(payloads[2],game);render(game,final,archive,id);}).catch(function(error){fail(error&&error.message?error.message:"The published game artifact could not be loaded.");});
+    Promise.all([fetchJSON("games/"+encodeURIComponent(id)+".json"),fetchJSON("finals.json").catch(function(){return {};}),fetchJSON("report_archive.json").catch(function(){return {};})]).then(function(payloads){var game=payloads[0],final=findFinal(payloads[1],game),archive=findArchive(payloads[2],game);render(game,final,archive,id);}).catch(function(error){fail(error&&error.message?error.message:"The published game file could not be loaded.");});
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
 }());

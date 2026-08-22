@@ -1,135 +1,289 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Hardwood WNBA availability board — current player statuses, return timelines, team minutes lost, matchup pressure, and source freshness in one dense analyst view.">
-  <title>Availability — Hardwood</title>
-  <link rel="stylesheet" href="hw-product.css">
-  <link rel="stylesheet" href="hw-dense.css">
-  <style>
-    .hw-availability-page{display:grid;gap:9px}.hw-availability-head{padding:2px 0 8px}.hw-availability-stories{grid-template-columns:repeat(6,minmax(0,1fr))}
-    .hw-avail-controls{position:sticky;top:53px;z-index:24;background:rgba(8,16,24,.97);backdrop-filter:blur(10px)}.hw-avail-toolbar{display:flex;gap:6px;align-items:end;flex-wrap:wrap;padding:7px 8px}.hw-avail-toolbar label{display:grid;gap:2px;color:var(--dense-muted);font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.hw-avail-toolbar label:first-child{flex:1 1 190px}.hw-avail-toolbar .hw-command-search{width:100%}.hw-avail-select{min-width:116px;min-height:27px;padding:0 7px;border:1px solid var(--dense-line);border-radius:4px;background:#09131d;color:var(--dense-text);font-size:10px}
-    .hw-avail-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(350px,.72fr);gap:8px;align-items:start}.hw-avail-table-wrap{overflow:auto;max-height:680px;scrollbar-color:#405268 #0b1722}.hw-avail-table{width:100%;min-width:1140px;border-collapse:separate;border-spacing:0;font-size:9px;font-variant-numeric:tabular-nums}.hw-avail-table th{position:sticky;top:0;z-index:4;padding:5px 6px;border-bottom:1px solid var(--dense-line);background:#0f1c29;color:var(--dense-muted);font-size:8px;letter-spacing:.07em;text-align:left;text-transform:uppercase;white-space:nowrap}.hw-avail-table th button{all:unset;cursor:pointer}.hw-avail-table th button[data-dir="asc"]:after{content:" ▲"}.hw-avail-table th button[data-dir="desc"]:after{content:" ▼"}.hw-avail-table td{padding:5px 6px;border-bottom:1px solid var(--dense-line-soft);background:var(--dense-panel);vertical-align:middle}.hw-avail-table tbody tr:nth-child(even) td{background:#0e1a26}.hw-avail-table tbody tr:hover td,.hw-avail-table tbody tr.selected td{background:#172b3d}.hw-avail-table .num{text-align:right}.hw-avail-player{all:unset;display:grid;gap:1px;width:100%;cursor:pointer;color:inherit}.hw-avail-player strong{font-size:9px}.hw-avail-player small{color:var(--dense-muted);font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hw-avail-player:hover strong{color:var(--dense-accent)}
-    .hw-status-pill,.hw-source-pill{display:inline-flex;align-items:center;min-height:17px;padding:0 5px;border:1px solid var(--dense-line);border-radius:999px;color:var(--dense-muted);font-size:7px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.hw-status-pill.out{color:var(--dense-bad);border-color:rgba(255,120,109,.42)}.hw-status-pill.dtd{color:var(--dense-warn);border-color:rgba(242,196,90,.42)}.hw-source-pill.reconciled{color:var(--dense-blue);border-color:rgba(101,167,255,.42)}.hw-source-pill.stale{color:var(--dense-warn);border-color:rgba(242,196,90,.42)}
-    .hw-mobile-avail{display:none}.hw-avail-inspector{position:sticky;top:98px;max-height:calc(100vh - 110px);overflow:auto;scrollbar-color:#405268 #0b1722}.hw-avail-inspector-body{display:grid;gap:8px;padding:8px}.hw-avail-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;padding:8px;border:1px solid var(--dense-line-soft);background:#0b1722}.hw-avail-hero h3{margin:0;font-size:15px}.hw-avail-hero p{margin:2px 0 0;color:var(--dense-muted);font-size:8px}.hw-avail-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.hw-avail-metric{padding:7px;border:1px solid var(--dense-line-soft);background:#0b1722}.hw-avail-metric span{display:block;color:var(--dense-muted);font-size:7px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.hw-avail-metric strong{display:block;margin:2px 0;font-size:12px}.hw-avail-metric small{display:block;color:var(--dense-muted);font-size:8px;line-height:1.35}.hw-avail-section{padding:7px;border:1px solid var(--dense-line-soft);background:#0b1722}.hw-avail-section h3{margin:0 0 5px;color:var(--dense-muted);font-size:8px;letter-spacing:.07em;text-transform:uppercase}.hw-avail-section p{margin:0;color:var(--dense-muted);font-size:8px;line-height:1.5}.hw-avail-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.hw-avail-actions a{display:grid;place-items:center;min-height:29px;border:1px solid var(--dense-line);border-radius:4px;color:var(--dense-accent);font-size:8px;font-weight:800;text-align:center}
-    .hw-avail-secondary{align-items:start}.hw-team-pressure-table{width:100%;border-collapse:collapse;font-size:9px;font-variant-numeric:tabular-nums}.hw-team-pressure-table th,.hw-team-pressure-table td{padding:5px 6px;border-bottom:1px solid var(--dense-line-soft);text-align:left}.hw-team-pressure-table th{color:var(--dense-muted);font-size:8px;text-transform:uppercase;letter-spacing:.07em}.hw-team-pressure-table .num{text-align:right}.hw-team-pressure-table a{color:var(--dense-accent)}.hw-matchup-list{display:grid;padding:6px 8px}.hw-matchup-row{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:7px;align-items:center;padding:6px 0;border-top:1px solid var(--dense-line-soft);font-size:9px}.hw-matchup-row:first-child{border-top:0}.hw-matchup-row .vs{color:var(--dense-muted);font-size:7px;text-transform:uppercase}.hw-matchup-side{display:grid}.hw-matchup-side:last-child{text-align:right}.hw-matchup-side strong{font-size:9px}.hw-matchup-side small{color:var(--dense-muted);font-size:7px}.hw-matchup-side.hot strong{color:var(--dense-warn)}
-    @media(max-width:1220px){.hw-availability-stories{grid-template-columns:repeat(3,minmax(0,1fr))}.hw-avail-layout{grid-template-columns:1fr}.hw-avail-inspector{position:static;max-height:none}}
-    @media(max-width:760px){.hw-avail-controls{top:59px}.hw-avail-toolbar{align-items:stretch}.hw-avail-toolbar label{flex:1 1 125px}.hw-avail-toolbar label:first-child{flex-basis:100%}.hw-avail-table-wrap{display:none}.hw-mobile-avail{display:grid}.hw-mobile-avail-row{display:grid;gap:5px;width:100%;padding:8px;border:0;border-top:1px solid var(--dense-line-soft);background:var(--dense-panel);color:var(--dense-text);text-align:left}.hw-mobile-avail-row:first-child{border-top:0}.hw-mobile-avail-row:hover,.hw-mobile-avail-row.selected{background:#172b3d}.hw-mobile-avail-top,.hw-mobile-avail-bottom{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.hw-mobile-avail-top strong{font-size:11px}.hw-mobile-avail-top span,.hw-mobile-avail-bottom{color:var(--dense-muted);font-size:8px}.hw-mobile-avail-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.hw-mobile-avail-metrics span{display:grid;color:var(--dense-muted);font-size:7px}.hw-mobile-avail-metrics b{color:var(--dense-text);font-size:9px}.hw-avail-actions{grid-template-columns:1fr}.hw-avail-secondary{grid-template-columns:1fr}.hw-matchup-row{grid-template-columns:1fr auto 1fr}}
-    @media(max-width:430px){.hw-availability-stories{grid-template-columns:1fr 1fr}.hw-mobile-avail-metrics{grid-template-columns:1fr 1fr}}
-  </style>
-</head>
-<body class="hw-product" data-page="availability-dense" data-section="availability" data-product="dense-availability">
-  <a class="hw-skip" href="#content">Skip to availability board</a>
-  <main class="hw-page hw-availability-page" id="content">
-    <header class="hw-command-head hw-availability-head">
-      <div class="hw-command-title">
-        <div class="hw-kicker">Availability</div>
-        <h1>League availability and rotation pressure</h1>
-        <p>Current player status, return timeline, team minutes lost, and matchup pressure from the exact availability read used by Hardwood projections.</p>
-      </div>
-      <div class="hw-command-meta">
-        <span class="hw-fresh" id="availability-fresh"><span class="hw-fresh-dot"></span>Loading source time</span>
-        <a class="hw-button" href="players.html">Player board</a>
-        <a class="hw-button" href="games.html">Game board</a>
-      </div>
-    </header>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hardwood — Injuries &amp; Availability</title>
+<style>
+  :root{ --bg:#f6f7f9; --card:#ffffff; --ink:#16181d; --muted:#5b6472; --line:#e5e8ee; --accent:#2b6cb0; --shadow:0 1px 3px rgba(20,24,35,.08); --out:#cf222e; --warn:#9a6700; --good:#1f883d; --flash:rgba(43,108,176,.18); }
+  @media (prefers-color-scheme:dark){ :root{ --bg:#0d1117; --card:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#222a35; --accent:#58a6ff; --shadow:none; --out:#f85149; --warn:#d29922; --good:#3fb950; --flash:rgba(88,166,255,.24); } }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+  header{padding:10px 14px 4px;max-width:1000px;margin:0 auto;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0}
+  .sub{color:var(--muted);font-size:12px;max-width:1000px;margin:0 auto;padding:0 14px}
+  .ago{font-size:11px;color:var(--muted);white-space:nowrap}
+  .ago b{color:var(--good);font-variant-numeric:tabular-nums}
+  nav{display:flex;gap:5px;flex-wrap:wrap;max-width:1000px;margin:6px auto 0;padding:0 14px}
+  nav a{font-size:12px;text-decoration:none;color:var(--accent);border:1px solid var(--line);background:var(--card);padding:4px 10px;border-radius:999px}
+  nav a.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  main{max-width:1000px;margin:0 auto;padding:8px 14px 48px}
+  .lede{color:var(--muted);font-size:12.5px;margin:6px 0 2px}
+  section{margin-top:16px}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 8px;font-weight:700}
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:13px 15px;box-shadow:var(--shadow);margin-top:10px}
+  .hero .line{font-size:14px;font-weight:640}
+  .hero .asof{font-size:11.5px;color:var(--muted);margin-top:4px}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:9px 11px;box-shadow:var(--shadow);text-align:center}
+  .tile .n{font-size:24px;font-weight:780;line-height:1;font-variant-numeric:tabular-nums}
+  .tile .k{font-size:11px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.03em}
+  .tile.out .n{color:var(--out)} .tile.q .n{color:var(--warn)} .tile.ok .n{color:var(--good)}
+  .grp{margin-top:16px}
+  .grp .gh{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .grp .gh .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .grp.out .dot{background:var(--out)} .grp.dtd .dot{background:var(--warn)}
+  .grp .gt{font-size:13.5px;font-weight:700}
+  .grp .gc{font-size:11.5px;color:var(--muted)}
+  .grp .blurb{font-size:12px;color:var(--muted);margin:3px 0 8px}
+  .row{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 11px;margin-bottom:6px;box-shadow:var(--shadow)}
+  .row.flash{animation:fl 1.1s ease}
+  @keyframes fl{0%{background:var(--flash)}100%{background:var(--card)}}
+  .rtop{display:flex;justify-content:space-between;gap:4px 10px;align-items:baseline;flex-wrap:wrap}
+  .rname{font-weight:660;font-size:13px;min-width:0}
+  .team{display:inline-block;font-size:10.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1px 5px;margin-right:6px;vertical-align:middle;letter-spacing:.02em}
+  .chance{font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;margin-left:auto}
+  .chance b{color:var(--ink);font-weight:700}
+  .rnote{font-size:12px;color:var(--muted);margin-top:4px}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:5px;align-items:center}
+  .pill{font-size:10px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+  .pill.ret{color:var(--ink)}
+  .pill.recon{border-color:var(--accent);color:var(--accent)}
+  .pill.stale{border-color:var(--warn);color:var(--warn)}
+  .pill.unk{border-style:dashed}
+  .pill.exp{border-color:var(--good);color:var(--good)}
+  .pill.exp.season{border-color:var(--out);color:var(--out);font-weight:700}
+  .implead{border-left:3px solid var(--out)}
+  .implead .unsz{font-size:11.5px;color:var(--muted);margin-top:5px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12px;box-shadow:var(--shadow)}
+  .chip .vs{color:var(--muted);font-size:10px;text-transform:uppercase;margin:0 6px}
+  .chip .lean{color:var(--out);font-weight:700}
+  .chnote{font-size:11.5px;color:var(--muted);margin-top:6px}
+  .short .row .rname{font-weight:480;font-size:12.5px}
+  .pill.tonite{border-color:var(--accent);color:var(--accent)}
+  .disc{font-size:12px;color:var(--muted);margin:22px 0 0;padding-left:10px;border-left:3px solid var(--line)}
+  .empty{color:var(--muted);font-style:italic}
+  footer{max-width:1000px;margin:0 auto;padding:22px 16px;color:var(--muted);font-size:11px}
+</style>
+<link rel="stylesheet" href="./hardwood.css?v=04e913ef">
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
+<body>
+<header>
+  <h1>The Hardwood — Injuries &amp; Availability</h1>
+  <span class="ago" id="ago"></span>
+</header>
+<div class="sub" id="sub">Loading…</div>
+<!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="opqt.html">OPQT 2026</a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav-->
+<main id="main"><p class="empty">Loading the injury report…</p></main>
+<footer id="foot"></footer>
+<script src="./hardwood.js?v=e2e90a97"></script>
+<script>
+(function(){
+  "use strict";
+  function el(t,c,x){ var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; }
 
-    <section class="hw-story-strip hw-availability-stories" id="availability-stories" aria-label="Availability headlines">
-      <article class="hw-story"><span class="hw-story-label">Loading</span><strong class="hw-story-value">—</strong><span class="hw-story-note">Reading availability</span></article>
-    </section>
+  // Order the injury list as a RETURN TIMELINE: soonest expected-back first, no-timeline last.
+  // Display-only ordinal (parses "Jul 19" / "Aug 3"); null/unparseable -> Infinity so it sinks to
+  // the bottom. A return month EARLIER than the report month season-wraps to next year (Dec -> Jan)
+  // so the ordering stays chronological. Never invents a date — only orders the ones on file.
+  var MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  function retOrd(ret, baseMonth){
+    if(!ret) return Infinity;
+    var m=/^\s*([A-Za-z]{3})[A-Za-z]*\.?\s+(\d{1,2})\s*$/.exec(String(ret));
+    if(!m) return Infinity;
+    var mi=MON[m[1].toLowerCase()]; if(mi==null) return Infinity;
+    var ord=mi*31+parseInt(m[2],10);
+    if(baseMonth!=null && mi<baseMonth) ord+=12*31;
+    return ord;
+  }
+  function baseMon(dateStr){
+    var m=/^\d{4}-(\d{2})-\d{2}/.exec(String(dateStr||""));
+    return m ? (parseInt(m[1],10)-1) : null;
+  }
 
-    <section class="hw-module hw-avail-controls" aria-label="Availability filters">
-      <div class="hw-avail-toolbar">
-        <label><span>Search</span><input class="hw-command-search" id="availability-search" type="search" placeholder="Player, team, or note"></label>
-        <label><span>Team</span><select class="hw-avail-select" id="availability-team"><option value="">All teams</option></select></label>
-        <label><span>Status</span><select class="hw-avail-select" id="availability-status"><option value="">Out + questionable</option><option value="out">Out</option><option value="day-to-day">Questionable / day-to-day</option></select></label>
-        <label><span>Slate</span><select class="hw-avail-select" id="availability-scope"><option value="">All teams</option><option value="tonight">Plays tonight</option><option value="later">Not tonight</option></select></label>
-        <label><span>Sort</span><select class="hw-avail-select" id="availability-sort"><option value="return">Expected return</option><option value="team">Team</option><option value="player">Player</option><option value="status">Status</option><option value="play">Category play rate</option><option value="updated">Updated</option></select></label>
-        <label><span>Direction</span><select class="hw-avail-select" id="availability-dir"><option value="asc">Ascending</option><option value="desc">Descending</option></select></label>
-        <button class="hw-button" id="availability-export" type="button" aria-label="Download filtered availability CSV">CSV</button>
-        <button class="hw-button" id="availability-reset" type="button">Reset</button>
-      </div>
-    </section>
+  function tile(cls,n,k){
+    var t=el("div","tile "+cls);
+    t.appendChild(el("div","n", (n==null?"—":String(n))));
+    t.appendChild(el("div","k", k));
+    return t;
+  }
 
-    <section class="hw-avail-layout" aria-label="Player availability ledger and inspector">
-      <article class="hw-module">
-        <div class="hw-module-head"><div><h2>Player availability ledger</h2><span id="availability-count">Loading…</span></div><span id="availability-context">Expected return · ascending</span></div>
-        <div class="hw-avail-table-wrap">
-          <table class="hw-avail-table" id="availability-table">
-            <thead><tr><th>Player</th><th><button type="button" data-sort="team">Team</button></th><th><button type="button" data-sort="status">Status</button></th><th class="num"><button type="button" data-sort="play">Category play rate</button></th><th><button type="button" data-sort="return">Expected back</button></th><th>Empirical return guide</th><th><button type="button" data-sort="updated">Updated</button></th><th>Source state</th></tr></thead>
-            <tbody id="availability-body"><tr><td colspan="8"><div class="hw-empty">Loading players…</div></td></tr></tbody>
-          </table>
-        </div>
-        <div class="hw-mobile-avail" id="availability-mobile"><div class="hw-empty">Loading players…</div></div>
-      </article>
+  function playerRow(p, gclass){
+    var row=el("div","row"); row.setAttribute("data-k","p|"+(p.team||"")+"|"+(p.player||""));
+    var top=el("div","rtop");
+    var left=el("div","rname");
+    if(p.team){ left.appendChild(el("span","team", p.team)); }
+    left.appendChild(document.createTextNode(p.player||"—"));
+    top.appendChild(left);
+    if(p.play_pct!=null){
+      var ch=el("div","chance"); ch.innerHTML="play chance <b>"+p.play_pct+"%</b>";
+      // A CATEGORY RATE, NOT A PER-PLAYER ESTIMATE. Every value this column can take is a constant
+      // keyed on the availability status - healthy, day-to-day, out - plus one fine tier for
+      // "probable". None of them is computed for the individual player. Two decimal places read as
+      // a measurement, so the derivation is one tap away rather than absent.
+      ch.title="Category rate: the share of players carrying this availability status who play. "
+              +"Not a per-player estimate.";
+      top.appendChild(ch);
+    }
+    row.appendChild(top);
+    if(p.note) row.appendChild(el("div","rnote", p.note));
+    var meta=el("div","meta");
+    // A reported return DATE (specific, authoritative) keeps its own pill (unchanged).
+    if(p["return"]) meta.appendChild(el("span","pill ret","expected back "+p["return"]));
+    // The empirical "expected back ~N games" range (baked; league-wide guide by injury TYPE, never a
+    // player-specific prognosis). It FILLS the gap for a no-date row, so the "no timeline" pill only
+    // shows when there is genuinely no empirical guide either (omit-not-invent). Renders baked text.
+    var eb=p.exp_back;
+    if(eb && eb.text){
+      var ep=el("span","pill exp"+(eb.season_ending?" season":""), eb.text);
+      ep.title = eb.season_ending
+        ? "Our injury-return study finds this injury type is typically season-ending."
+        : "A league-wide guide from our injury-return study: typical games missed for this injury type across 2023-25 (median, with a p25-p75 range). Not a player-specific prognosis.";
+      meta.appendChild(ep);
+    } else if(!p["return"]){
+      meta.appendChild(el("span","pill unk","no return timeline yet"));
+    }
+    if(p.updated) meta.appendChild(el("span","pill","updated "+p.updated));
+    if(p.reconciled_from_feed){ var rp=el("span","pill recon","read from the latest report");
+      rp.title="Our read is fresher than the raw feed — the latest official report moved this player to a less-restrictive status."; meta.appendChild(rp); }
+    if(p.stale){ var sp=el("span","pill stale","awaiting a fresh update");
+      sp.title="This row is waiting on a fresher update from the feed."; meta.appendChild(sp); }
+    if(meta.childNodes.length) row.appendChild(meta);
+    return row;
+  }
 
-      <aside class="hw-module hw-avail-inspector" id="availability-inspector" aria-live="polite">
-        <div class="hw-module-head"><h2>Availability inspector</h2><span>Select a player</span></div>
-        <div class="hw-empty">Choose a player to inspect the current status, source note, return timeline, category rate, and team pressure together.</div>
-      </aside>
-    </section>
+  function groupSection(g, baseMonth){
+    var cls = g.status==="day-to-day" ? "dtd" : "out";
+    var s=el("section","grp "+cls); s.setAttribute("data-k","g|"+g.status);
+    var gh=el("div","gh");
+    gh.appendChild(el("span","dot"));
+    gh.appendChild(el("span","gt", g.label));
+    gh.appendChild(el("span","gc", "· "+g.count+(g.count===1?" player":" players")));
+    s.appendChild(gh);
+    if(g.blurb) s.appendChild(el("div","blurb", g.blurb));
+    // read the list as a return timeline: soonest back first, no-timeline last (stable within ties).
+    var ordered=(g.players||[]).slice().sort(function(a,b){
+      var oa=retOrd(a["return"], baseMonth), ob=retOrd(b["return"], baseMonth);
+      return oa===ob ? 0 : (oa<ob ? -1 : 1);
+    });
+    ordered.forEach(function(p){ s.appendChild(playerRow(p, cls)); });
+    return s;
+  }
 
-    <section class="hw-command-grid equal hw-avail-secondary" aria-label="Team and matchup availability pressure">
-      <article class="hw-module">
-        <div class="hw-module-head"><h2>Team rotation pressure</h2><span>Published minutes lost</span></div>
-        <div class="hw-module-body flush hw-table-wrap"><table class="hw-team-pressure-table"><thead><tr><th>Team</th><th>Slate</th><th class="num">Out</th><th class="num">Min out</th><th class="num">Unsized</th><th>Detail</th></tr></thead><tbody id="availability-teams"><tr><td colspan="6"><div class="hw-empty">Loading team pressure…</div></td></tr></tbody></table></div>
-      </article>
-      <article class="hw-module">
-        <div class="hw-module-head"><h2>Tonight's matchup pressure</h2><span>Who is more short-handed</span></div>
-        <div class="hw-matchup-list" id="availability-matchups"><div class="hw-empty">Loading matchup pressure…</div></div>
-      </article>
-    </section>
+  function render(d){
+    document.getElementById("sub").textContent = (d.date||"") + " · a league-wide look at who's in, out, and questionable — the availability our projections use";
+    var main=document.getElementById("main"); main.innerHTML="";
+    main.appendChild(el("p","lede","Every player currently listed out or questionable across the league, reconciled from the official injury reports and our live feed."));
 
-    <div class="hw-data-note" id="availability-note">Category play rate is a historical rate for the published availability status, not a player-specific probability. Empirical return guides are league-wide injury-type context, not player-specific medical prognoses.</div>
-  </main>
+    if(!d.groups || !d.groups.length){
+      var box=el("div","hero");
+      if(d.available===false){
+        // Feed miss / no snapshot — this is NOT a clean bill of health, so never show a false all-clear.
+        box.appendChild(el("div","line", "The availability read is refreshing."));
+        main.appendChild(box);
+        main.appendChild(el("p","empty", "We couldn't read the league availability just now — this page updates automatically on the next refresh."));
+      } else {
+        box.appendChild(el("div","line", d.headline || "Everyone available."));
+        main.appendChild(box);
+        main.appendChild(el("p","empty", d.empty_note || "No players are currently listed out or questionable across the league."));
+      }
+      document.getElementById("foot").textContent = "Baked " + (d.generated_et||d.generated_utc||"") + ". A readout of the availability our projections assume — not injury news, and never a betting call.";
+      flash(); return;
+    }
 
-  <script src="hw-product.js"></script>
-  <script>
-  (function(){
-    "use strict";
-    var URL="availability.json",state={payload:null,players:[],filtered:[],selected:null,sort:{key:"return",dir:"asc"},lastChecked:null,sourceGenerated:null,etag:null,lastModified:null};
-    var $=function(id){return document.getElementById(id);},qa=function(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));};
-    var has=function(v){return v!==null&&v!==undefined&&v!=="";},esc=function(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});};
-    var number=function(v){if(!has(v)||v===true||v===false)return null;var n=Number(v);return Number.isFinite(n)?n:null;};
-    var parseDate=function(v){if(!has(v))return null;var text=String(v),d=new Date(/^\d{4}-\d{2}-\d{2}$/.test(text)?text+"T12:00:00":text);return isNaN(d.getTime())?null:d;};
-    var ageText=function(v){var d=v instanceof Date?v:parseDate(v);if(!d)return "time not published";var s=Math.max(0,(Date.now()-d.getTime())/1000);if(s<90)return "just now";if(s<3600)return Math.floor(s/60)+"m ago";if(s<86400)return Math.floor(s/3600)+"h ago";return Math.floor(s/86400)+"d ago";};
-    var MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
-    function returnOrd(ret,baseMonth){if(!ret)return Infinity;var m=/^\s*([A-Za-z]{3})[A-Za-z]*\.?\s+(\d{1,2})\s*$/.exec(String(ret));if(!m)return Infinity;var mi=MON[m[1].toLowerCase()];if(mi==null)return Infinity;var ord=mi*31+parseInt(m[2],10);if(baseMonth!=null&&mi<baseMonth)ord+=12*31;return ord;}
-    function baseMonth(date){var m=/^\d{4}-(\d{2})-\d{2}/.exec(String(date||""));return m?parseInt(m[1],10)-1:null;}
-    function param(name){return new URL(location.href).searchParams.get(name);}
-    function replaceParam(name,value){var url=new URL(location.href);if(value===null||value===undefined||value==="")url.searchParams.delete(name);else url.searchParams.set(name,String(value));var query=url.searchParams.toString();history.replaceState(history.state,"",url.pathname+(query?"?"+query:"")+url.hash);}
-    function validSelect(id,value){var el=$(id);return el&&Array.prototype.some.call(el.options,function(option){return option.value===value;});}
-    function sourceState(p){return p.stale?"stale":p.reconciled?"reconciled":"published";}
-    function statusLabel(p){return p.status==="out"?"Out":"Questionable";}
-    function statusClass(p){return p.status==="out"?"out":"dtd";}
-    function normalize(d){var pressure={};(d.shorthanded||[]).forEach(function(t){pressure[String(t.team||"").toUpperCase()]=t;});var bm=baseMonth(d.date),out=[];(d.groups||[]).forEach(function(group){(group.players||[]).forEach(function(p){var team=String(p.team||"").toUpperCase(),tp=pressure[team]||null;out.push({player:String(p.player||"Unknown player"),team:team,status:String(group.status||"").toLowerCase(),statusLabel:group.label||group.status||"Unknown",play:number(p.play_pct),returnText:p["return"]||null,returnOrd:returnOrd(p["return"],bm),note:p.note||"",updated:p.updated||"",stale:Boolean(p.stale),reconciled:Boolean(p.reconciled_from_feed),guide:p.exp_back&&p.exp_back.text?p.exp_back.text:"",guideSeason:Boolean(p.exp_back&&p.exp_back.season_ending),tonight:Boolean(tp&&tp.tonight),teamPressure:tp});});});return out;}
-    function story(label,value,note){return '<article class="hw-story"><span class="hw-story-label">'+esc(label)+'</span><strong class="hw-story-value">'+esc(value)+'</strong><span class="hw-story-note">'+esc(note)+'</span></article>';}
-    function renderStories(){var d=state.payload||{},s=d.summary||{},pressure=(d.shorthanded||[]).slice().sort(function(a,b){return (number(b.minutes_out)||-1)-(number(a.minutes_out)||-1);})[0],impact=d.impact_lead||{};$("availability-stories").innerHTML=[story("Out",has(s.out)?s.out:"—","published players"),story("Questionable",has(s.questionable)?s.questionable:"—","published players"),story("Available",has(s.available)?s.available:"—","published players"),story("Teams affected",has(s.teams)?s.teams:"—",state.players.length+" restricted rows"),story("Largest team pressure",pressure?pressure.team:"—",pressure&&number(pressure.minutes_out)!==null?Math.round(number(pressure.minutes_out))+" min out":"size not published"),story("Biggest absence tonight",impact.player||"—",impact.line||"No sized absence published")].join("");}
-    function sortValue(p,key){return {return:p.returnOrd,team:p.team,player:p.player,status:p.status,play:p.play,updated:p.updated}[key];}
-    function compare(a,b){var av=sortValue(a,state.sort.key),bv=sortValue(b,state.sort.key),dir=state.sort.dir==="asc"?1:-1;if(av===null||av===undefined||av===Infinity)return bv===null||bv===undefined||bv===Infinity?a.player.localeCompare(b.player):1;if(bv===null||bv===undefined||bv===Infinity)return -1;if(typeof av==="string")return (av.localeCompare(bv)||a.player.localeCompare(b.player))*dir;if(av===bv)return a.player.localeCompare(b.player);return (av-bv)*dir;}
-    function filterPlayers(){var q=$("availability-search").value.trim().toLowerCase(),team=$("availability-team").value,status=$("availability-status").value,scope=$("availability-scope").value;state.filtered=state.players.filter(function(p){if(q&&(p.player+" "+p.team+" "+p.note+" "+p.guide).toLowerCase().indexOf(q)<0)return false;if(team&&p.team!==team)return false;if(status&&p.status!==status)return false;if(scope==="tonight"&&!p.tonight)return false;if(scope==="later"&&p.tonight)return false;return true;}).sort(compare);}
-    function row(p){var selected=state.selected&&state.selected.player===p.player&&state.selected.team===p.team;return '<tr'+(selected?' class="selected"':'')+'><td><button class="hw-avail-player" type="button" aria-controls="availability-inspector" aria-pressed="'+String(Boolean(selected))+'" data-select-player="'+esc(p.team+'|'+p.player)+'"><strong>'+esc(p.player)+'</strong><small>'+esc(p.note||"No source note published")+'</small></button></td><td><a class="hw-link" href="teams.html?team='+encodeURIComponent(p.team)+'">'+esc(p.team||"—")+'</a></td><td><span class="hw-status-pill '+statusClass(p)+'">'+esc(statusLabel(p))+'</span></td><td class="num">'+(p.play===null?'—':esc(p.play.toFixed(0)+'%'))+'</td><td>'+esc(p.returnText||"No dated return")+'</td><td>'+esc(p.guide||"No empirical guide")+'</td><td>'+esc(p.updated||"—")+'</td><td><span class="hw-source-pill '+sourceState(p)+'">'+esc(sourceState(p))+'</span></td></tr>';}
-    function mobileRow(p){var selected=state.selected&&state.selected.player===p.player&&state.selected.team===p.team;return '<button type="button" class="hw-mobile-avail-row'+(selected?' selected':'')+'" aria-controls="availability-inspector" aria-pressed="'+String(Boolean(selected))+'" data-select-player="'+esc(p.team+'|'+p.player)+'"><span class="hw-mobile-avail-top"><strong>'+esc(p.player)+'</strong><span>'+esc(p.team)+' · '+esc(statusLabel(p))+'</span></span><span class="hw-mobile-avail-metrics"><span>Category rate<b>'+(p.play===null?'—':esc(p.play.toFixed(0)+'%'))+'</b></span><span>Expected back<b>'+esc(p.returnText||"none")+'</b></span><span>Updated<b>'+esc(p.updated||"—")+'</b></span></span><span class="hw-mobile-avail-bottom"><span>'+esc(p.guide||"No empirical return guide")+'</span><span>'+esc(sourceState(p))+'</span></span></button>';}
-    function syncSort(){$("availability-sort").value=state.sort.key;$("availability-dir").value=state.sort.dir;qa("[data-sort]").forEach(function(btn){var active=btn.getAttribute("data-sort")===state.sort.key,th=btn.closest("th");btn.removeAttribute("data-dir");if(active)btn.setAttribute("data-dir",state.sort.dir);if(th)th.setAttribute("aria-sort",active?(state.sort.dir==="asc"?"ascending":"descending"):"none");});}
-    function renderLedger(){filterPlayers();$("availability-count").textContent=state.filtered.length+" of "+state.players.length+" restricted players";$("availability-context").textContent=$("availability-sort").options[$("availability-sort").selectedIndex].text+" · "+(state.sort.dir==="asc"?"ascending":"descending");$("availability-body").innerHTML=state.filtered.map(row).join("")||'<tr><td colspan="8"><div class="hw-empty">No players match these filters.</div></td></tr>';$("availability-mobile").innerHTML=state.filtered.map(mobileRow).join("")||'<div class="hw-empty">No players match these filters.</div>';bindSelections();syncSort();$("availability-export").setAttribute("aria-label",state.filtered.length?"Download filtered availability CSV; "+state.filtered.length+" rows in current view":"No filtered availability rows available to export");}
-    function findPlayer(key){var parts=String(key||"").split("|"),team=parts.shift(),name=parts.join("|");return state.players.find(function(p){return p.team===team&&p.player===name;})||null;}
-    function metric(label,value,note){return '<div class="hw-avail-metric"><span>'+esc(label)+'</span><strong>'+esc(value)+'</strong><small>'+esc(note||"")+'</small></div>';}
-    function renderInspector(p){if(!p)return;var tp=p.teamPressure||{},rateNote="Historical share of players with this published status who play; not a player-specific estimate.";$("availability-inspector").innerHTML='<div class="hw-module-head"><h2>Availability inspector</h2><span>'+esc(p.team)+'</span></div><div class="hw-avail-inspector-body"><div class="hw-avail-hero"><div><h3>'+esc(p.player)+'</h3><p>'+esc(p.team)+' · '+esc(statusLabel(p))+(p.tonight?' · team plays tonight':'')+'</p></div><span class="hw-status-pill '+statusClass(p)+'">'+esc(statusLabel(p))+'</span></div><div class="hw-avail-metrics">'+metric("Expected back",p.returnText||"No dated return",p.returnText?"reported timeline":"no reported date")+metric("Category play rate",p.play===null?"—":p.play.toFixed(0)+"%",rateNote)+metric("Empirical return guide",p.guide||"Not published",p.guideSeason?"source marks season-ending":"league-wide injury-type context")+metric("Team pressure",number(tp.minutes_out)===null?"—":Math.round(number(tp.minutes_out))+" min",has(tp.out)?String(tp.out)+" out":"team roll-up not published")+'</div><section class="hw-avail-section"><h3>Source note</h3><p>'+esc(p.note||"No explanatory source note was published for this row.")+'</p></section><section class="hw-avail-section"><h3>Source state</h3><p>Updated '+esc(p.updated||"date not published")+' · '+esc(sourceState(p))+(p.reconciled?' · current page read was reconciled from the latest report':'')+(p.stale?' · source marks this row as awaiting a fresh update':'')+'.</p></section><div class="hw-avail-actions"><a href="players.html?q='+encodeURIComponent(p.player)+'&team='+encodeURIComponent(p.team)+'">Open player board</a><a href="teams.html?team='+encodeURIComponent(p.team)+'">Open team board</a></div></div>';}
-    function selectPlayer(key,scroll,writeState){var p=findPlayer(key);if(!p)return;state.selected=p;if(writeState!==false)replaceParam("player",p.team+'|'+p.player);renderLedger();renderInspector(p);if(scroll&&window.innerWidth<980)$("availability-inspector").scrollIntoView({behavior:"smooth",block:"start"});}
-    function bindSelections(){qa("[data-select-player]").forEach(function(btn){btn.addEventListener("click",function(){selectPlayer(btn.getAttribute("data-select-player"),true,true);});});}
-    function renderTeams(){var list=(state.payload&&state.payload.shorthanded||[]).slice().sort(function(a,b){if(Boolean(a.tonight)!==Boolean(b.tonight))return a.tonight?-1:1;var av=number(a.minutes_out),bv=number(b.minutes_out);if(av===null)return bv===null?String(a.team).localeCompare(String(b.team)):1;if(bv===null)return -1;return bv-av;});$("availability-teams").innerHTML=list.map(function(t){return '<tr><td><a href="teams.html?team='+encodeURIComponent(t.team||'')+'">'+esc(t.team||'—')+'</a></td><td>'+(t.tonight?'Tonight':'Later')+'</td><td class="num">'+esc(has(t.out)?t.out:'—')+'</td><td class="num">'+esc(number(t.minutes_out)===null?'—':Math.round(number(t.minutes_out)))+'</td><td class="num">'+esc((t.unsized||[]).length)+'</td><td>'+esc(t.line||'—')+'</td></tr>';}).join("")||'<tr><td colspan="6"><div class="hw-empty">No team pressure rows published.</div></td></tr>';}
-    function renderMatchups(){var chips=state.payload&&state.payload.matchup_chips||[];$("availability-matchups").innerHTML=chips.map(function(c){var away=c.away||{},home=c.home||{};return '<div class="hw-matchup-row"><span class="hw-matchup-side'+(c.more===away.team?' hot':'')+'"><strong>'+esc(away.team||'—')+'</strong><small>'+esc(away.label||'No pressure line')+'</small></span><span class="vs">vs</span><span class="hw-matchup-side'+(c.more===home.team?' hot':'')+'"><strong>'+esc(home.team||'—')+'</strong><small>'+esc(home.label||'No pressure line')+'</small></span></div>';}).join("")||'<div class="hw-empty">No matchup pressure rows published.</div>';}
-    function populateTeams(){var teams={};state.players.forEach(function(p){if(p.team)teams[p.team]=1;});$("availability-team").innerHTML='<option value="">All teams</option>'+Object.keys(teams).sort().map(function(t){return '<option value="'+esc(t)+'">'+esc(t)+'</option>';}).join("");}
-    function hydrate(){var q=param("q"),team=param("team"),status=param("status"),scope=param("scope"),sort=param("sort"),dir=param("dir"),player=param("player");if(q!==null)$("availability-search").value=q;if(team&&validSelect("availability-team",team))$("availability-team").value=team;else if(team)replaceParam("team","");if(status&&validSelect("availability-status",status))$("availability-status").value=status;else if(status)replaceParam("status","");if(scope&&validSelect("availability-scope",scope))$("availability-scope").value=scope;else if(scope)replaceParam("scope","");if(sort&&["return","team","player","status","play","updated"].indexOf(sort)>=0)state.sort.key=sort;else if(sort)replaceParam("sort","");if(dir==="asc"||dir==="desc")state.sort.dir=dir;else if(dir)replaceParam("dir","");var selected=player?findPlayer(player):null;if(player&&!selected)replaceParam("player","");state.selected=selected||state.players[0]||null;}
-    function freshness(){var badge=$("availability-fresh"),source=state.sourceGenerated,checked=state.lastChecked;if(!badge)return;if(!source){badge.classList.add("warn");badge.innerHTML='<span class="hw-fresh-dot"></span>Source generation time not published'+(checked?' · checked '+esc(ageText(checked)):'');return;}var sourceAge=(Date.now()-source.getTime())/36e5;badge.classList.toggle("warn",sourceAge>24||(state.payload&&state.payload.available===false));badge.innerHTML='<span class="hw-fresh-dot"></span>Source generated '+esc(ageText(source))+(checked?' · checked '+esc(ageText(checked)):'');badge.title=(state.payload&&state.payload.source?state.payload.source+' · ':'')+(state.payload&&state.payload.as_of?'As of '+state.payload.as_of+' · ':'')+'Browser check time is transport recency, not source freshness.';}
-    function csvCell(value){var text=String(value==null?"":value);return /[",\r\n]/.test(text)?'"'+text.replace(/"/g,'""')+'"':text;}
-    function exportCsv(){if(!state.filtered.length)return;var rows=[["Player","Team","Status","Category play rate","Expected back","Empirical return guide","Updated","Source state","Plays tonight","Source note"]];state.filtered.forEach(function(p){rows.push([p.player,p.team,statusLabel(p),p.play===null?"":p.play,p.returnText||"",p.guide||"",p.updated||"",sourceState(p),p.tonight?"yes":"no",p.note||""]);});var csv=rows.map(function(r){return r.map(csvCell).join(",");}).join("\r\n"),blob=new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}),href=window.URL.createObjectURL(blob),a=document.createElement("a"),now=new Date(),stamp=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");a.href=href;a.download="hardwood-availability-"+stamp+".csv";a.hidden=true;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){window.URL.revokeObjectURL(href);},0);}
-    function renderData(d){state.payload=d||{};state.players=normalize(state.payload);state.sourceGenerated=parseDate(state.payload.generated_utc||state.payload.generated_at||state.payload.date);populateTeams();hydrate();renderStories();renderTeams();renderMatchups();renderLedger();renderInspector(state.selected);freshness();}
-    function bind(){var search=$("availability-search");search.setAttribute("aria-keyshortcuts","/");search.title="Press / to focus search; Esc clears search";[{id:"availability-team",key:"team"},{id:"availability-status",key:"status"},{id:"availability-scope",key:"scope"}].forEach(function(spec){$(spec.id).addEventListener("change",function(){renderLedger();replaceParam(spec.key,$(spec.id).value);});});search.addEventListener("input",function(){renderLedger();replaceParam("q",search.value.trim());});$("availability-sort").addEventListener("change",function(){state.sort.key=$("availability-sort").value;renderLedger();replaceParam("sort",state.sort.key==="return"?"":state.sort.key);});$("availability-dir").addEventListener("change",function(){state.sort.dir=$("availability-dir").value;renderLedger();replaceParam("dir",state.sort.dir==="asc"?"":state.sort.dir);});qa("[data-sort]").forEach(function(btn){btn.addEventListener("click",function(){var key=btn.getAttribute("data-sort");if(state.sort.key===key)state.sort.dir=state.sort.dir==="asc"?"desc":"asc";else{state.sort.key=key;state.sort.dir=key==="team"||key==="player"||key==="return"?"asc":"desc";}renderLedger();replaceParam("sort",state.sort.key==="return"?"":state.sort.key);replaceParam("dir",state.sort.dir==="asc"?"":state.sort.dir);});});$("availability-export").addEventListener("click",exportCsv);$("availability-reset").addEventListener("click",function(){search.value="";$("availability-team").value="";$("availability-status").value="";$("availability-scope").value="";state.sort={key:"return",dir:"asc"};["q","team","status","scope","sort","dir"].forEach(function(k){replaceParam(k,"");});renderLedger();});document.addEventListener("keydown",function(event){var editing=event.target&&event.target.closest&&event.target.closest("input, textarea, select, [contenteditable='true']");if(event.key==="/"&&!event.metaKey&&!event.ctrlKey&&!event.altKey&&!editing){event.preventDefault();search.focus();search.select();}else if(event.key==="Escape"&&document.activeElement===search&&search.value){event.preventDefault();search.value="";renderLedger();replaceParam("q","");}});}
-    function poll(){var headers={};if(state.etag)headers["If-None-Match"]=state.etag;if(state.lastModified)headers["If-Modified-Since"]=state.lastModified;fetch(URL,{headers:headers,cache:"no-cache"}).then(function(r){state.lastChecked=new Date();if(r.status===304){freshness();return null;}if(!r.ok)throw new Error(URL+" returned "+r.status);state.etag=r.headers.get("ETag")||state.etag;state.lastModified=r.headers.get("Last-Modified")||state.lastModified;return r.json();}).then(function(d){if(d)renderData(d);freshness();}).catch(function(err){state.lastChecked=new Date();freshness();if(!state.payload)$("availability-body").innerHTML='<tr><td colspan="8"><div class="hw-empty">Could not load availability: '+esc(err&&err.message?err.message:"unknown error")+'</div></td></tr>';});}
-    bind();poll();setInterval(poll,60000);setInterval(freshness,1000);
-  })();
-  </script>
-</body>
+    var hero=el("div","hero"); hero.setAttribute("data-k","hero");
+    hero.appendChild(el("div","line", d.headline || ""));
+    if(d.as_of) hero.appendChild(el("div","asof","As of "+d.as_of+"."));
+    main.appendChild(hero);
+
+    // Impact-first lead: the single biggest availability loss (baked; omitted when nobody is out
+    // in scope — never an invented line). Renders baked text only.
+    if(d.impact_lead && d.impact_lead.line){
+      var il=el("div","hero implead"); il.setAttribute("data-k","implead");
+      il.appendChild(el("div","line", d.impact_lead.line));
+      if(d.impact_lead.unsized_note) il.appendChild(el("div","unsz", d.impact_lead.unsized_note));
+      main.appendChild(il);
+    }
+
+    if(d.summary){
+      var tl=el("div","tiles"); tl.setAttribute("data-k","tiles");
+      tl.appendChild(tile("out", d.summary.out, "out"));
+      tl.appendChild(tile("q", d.summary.questionable, "questionable"));
+      tl.appendChild(tile("ok", d.summary.available, "available"));
+      main.appendChild(tl);
+    }
+
+    // Per-matchup short-handed comparison chips (baked; one chip per game with any absences —
+    // a full-strength-both-sides game is omitted at bake, never invented here). The baked `more`
+    // team gets the visual lean; labels render as baked text only.
+    if(d.matchup_chips && d.matchup_chips.length){
+      var mc=el("section","chips-sec"); mc.setAttribute("data-k","chips");
+      mc.appendChild(el("h2",null,"Tonight's matchups — who's more short-handed"));
+      var wrap=el("div","chips");
+      d.matchup_chips.forEach(function(c){
+        if(!c || !c.away || !c.home) return;
+        var ch=el("div","chip"); ch.setAttribute("data-k","c|"+(c.game||""));
+        ch.appendChild(el("span", c.more && c.more===c.away.team ? "side lean":"side", c.away.label||""));
+        ch.appendChild(el("span","vs","vs"));
+        ch.appendChild(el("span", c.more && c.more===c.home.team ? "side lean":"side", c.home.label||""));
+        wrap.appendChild(ch);
+      });
+      mc.appendChild(wrap);
+      if(d.chips_note) mc.appendChild(el("div","chnote", d.chips_note));
+      main.appendChild(mc);
+    }
+
+    // Per-team "who's short-handed" roll-up (baked; a team whose absences we can't size shows an
+    // honest "impact unknown" count, never a fake 0 minutes).
+    if(d.shorthanded && d.shorthanded.length){
+      var sh=el("section","short"); sh.setAttribute("data-k","short");
+      sh.appendChild(el("h2",null,"Who's short-handed"));
+      d.shorthanded.forEach(function(t){
+        var r=el("div","row"); r.setAttribute("data-k","t|"+(t.team||""));
+        var top=el("div","rtop");
+        var left=el("div","rname");
+        if(t.team){ left.appendChild(el("span","team", t.team)); }
+        left.appendChild(document.createTextNode(t.line||""));
+        top.appendChild(left);
+        if(t.tonight){ var tp=el("span","pill tonite","plays tonight"); top.appendChild(tp); }
+        r.appendChild(top);
+        sh.appendChild(r);
+      });
+      main.appendChild(sh);
+    }
+
+    var bm=baseMon(d.date);
+    d.groups.forEach(function(g){ main.appendChild(groupSection(g, bm)); });
+
+    if(d.note) main.appendChild(el("p","disc", d.note));
+    document.getElementById("foot").textContent = "Baked " + (d.generated_et||d.generated_utc||"") + ". A readout of the availability our projections assume — not injury news, and never a betting call.";
+    flash();
+  }
+  /* ---------- shared live runtime (mirrors accuracy.html / ledger.html) ---------- */
+  var URL="./availability.json", etag=null,lastMod=null,lastFetch=0,cardHTML={},first=true;
+  function updAgo(){
+    var s=Math.max(0,Math.round((Date.now()-lastFetch)/1000));
+    var t = s<60 ? (s+"s ago") : (Math.floor(s/60)+"m "+(s%60)+"s ago");
+    var a=document.getElementById("ago"); if(a) a.innerHTML = lastFetch? ("live · updated <b>"+t+"</b>") : "";
+  }
+  function flash(){
+    var nodes=document.querySelectorAll("#main [data-k]"), nm={};
+    nodes.forEach(function(n){ var k=n.getAttribute("data-k"), h=n.innerHTML; nm[k]=h;
+      if(!first && cardHTML[k]!==undefined && cardHTML[k]!==h){ n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); } });
+    cardHTML=nm; first=false;
+  }
+  function poll(){
+    var h={}; if(etag)h["If-None-Match"]=etag; if(lastMod)h["If-Modified-Since"]=lastMod;
+    fetch(URL,{headers:h,cache:"no-cache"}).then(function(r){
+      if(r.status===304) return null;
+      etag=r.headers.get("ETag")||etag; lastMod=r.headers.get("Last-Modified")||lastMod; return r.json();
+    }).then(function(d){ lastFetch=Date.now(); if(d){ render(d); } updAgo(); }).catch(function(e){
+      if(!lastFetch){ document.getElementById("main").innerHTML='<p class="empty">Could not load the injury report. '+(e&&e.message?e.message:"")+'</p>'; }
+    });
+  }
+  poll(); setInterval(poll,60000); setInterval(updAgo,1000);
+})();
+</script>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></div><div>Projections published pre-tip, graded publicly.</div></footer><!--/hw-foot--></body>
 </html>
