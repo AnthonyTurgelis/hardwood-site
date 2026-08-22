@@ -148,6 +148,33 @@
     if(!a){if(p.status==="available")return "The current season-impact feed expects her to be available.";if(p.status==="out")return "The current season-impact feed lists her as out.";return "No player-level availability note was published for this row.";}
     var bits=[];if(a.playPct!==null)bits.push("status category clears "+a.playPct.toFixed(0)+"% of the time");if(a.returnDate)bits.push("listed return "+a.returnDate);if(a.updated)bits.push("updated "+a.updated);if(a.stale)bits.push("marked stale by the source");return bits.join(" · ")||"Availability state published without an explanatory note.";
   }
+  // INTERNATIONAL CAREER. The artifact was live and good for hours with no surface consuming it --
+  // the same merged-but-never-served class the publish allowlist keeps producing. Rates lead and
+  // counting stats follow, per the CEO-facing ordering. A null renders BLANK rather than 0: these
+  // sources genuinely lack minutes for some seasons, and a fabricated zero is worse than a gap.
+  function intlNum(v,dp){return (v===null||v===undefined||v==="")?"":Number(v).toFixed(dp===undefined?1:dp);}
+  function intlSection(p){
+    var e=state.intl&&p&&p.name?state.intl[String(p.name).toLowerCase()]:null;
+    if(!e||!e.leagues)return "";
+    var names=Object.keys(e.leagues);
+    if(!names.length)return "";
+    var body=names.map(function(lg){
+      var rows=(e.leagues[lg]||[]).slice().sort(function(a,b){return (b.season||0)-(a.season||0);});
+      var seasons=rows.map(function(r){
+        var per36=[intlNum(r.pts36),intlNum(r.reb36),intlNum(r.ast36)].filter(Boolean);
+        var rate=per36.length===3?(per36[0]+" / "+per36[1]+" / "+per36[2]+" per 36"):"";
+        var box=[intlNum(r.ppg),intlNum(r.rpg),intlNum(r.apg)].filter(Boolean);
+        var boxTxt=box.length===3?(box[0]+" / "+box[1]+" / "+box[2]+" per game"):"";
+        var gp=(r.gp===null||r.gp===undefined)?"":(r.gp+" games");
+        var bits=[gp,rate,boxTxt].filter(Boolean).join(" · ");
+        return line(String(r.season||"")+" "+(r.team||""), bits||"no published lines");
+      }).join("");
+      return '<h4 class="hw-player-intl-league">'+esc(lg)+'</h4>'+seasons;
+    }).join("");
+    return '<section class="hw-player-inspector-section" data-intl="1"><h3>International career</h3>'
+      +'<p class="hw-player-inspector-copy">Seasons held outside the WNBA, newest first. A blank rate means that source published no minutes for the season, not a zero.</p>'
+      +body+'</section>';
+  }
   function renderInspector(p){
     if(!p){$("player-inspector").innerHTML='<div class="hw-module-head"><h2>Player inspector</h2><span>Select a row</span></div><div class="hw-empty">Choose any player to see impact, production, role, availability, ranking divergence, movement, and basis together.</div>';return;}
     var gap=(p.rank!==null&&p.impactRank!==null)?p.rank-p.impactRank:null;
@@ -164,7 +191,7 @@
       +'<section class="hw-player-inspector-section"><h3>Production and role</h3>'+line("Box score",fixed(p.pts,1)+" PTS · "+fixed(p.reb,1)+" REB · "+fixed(p.ast,1)+" AST")+line("Other box stats",fixed(p.stl,1)+" STL · "+fixed(p.blk,1)+" BLK")+line("Games / DNP",fixed(p.gp,0)+" / "+fixed(p.dnp,0))+line("Team scoring role",p.teamScoringRank===null?"Not published":"#"+fixed(p.teamScoringRank,0)+" of "+fixed(p.teamSize,0))+line("Season minutes read",fixed(p.seasonMinRead,0))+'</section>'
       +'<section class="hw-player-inspector-section"><h3>Availability</h3>'+line("Current state",statusLabel(p))+line("Source detail",availabilityCopy(p))+(note?'<p class="hw-player-inspector-copy">'+esc(note)+'</p>':'')+'</section>'
       +'<section class="hw-player-inspector-section"><h3>Sample and career context</h3>'+line("Basis label",basisLabel(p))+'<div class="hw-basis-meter"><span style="width:'+basisPct.toFixed(0)+'%"></span></div>'+line("Career context",career)+line("Unread prior minutes",fixed(p.unreadMin,0))+line("Rate basis",p.rateBasis||"not published")+'</section>'
-      +'<section class="hw-player-inspector-section"><h3>Separate per-100 impact study</h3>'+line("Published row",impactStudy)+'<p class="hw-player-inspector-copy">'+esc(impactSplit)+'</p></section>'
+      +intlSection(p)+'<section class="hw-player-inspector-section"><h3>Separate per-100 impact study</h3>'+line("Published row",impactStudy)+'<p class="hw-player-inspector-copy">'+esc(impactSplit)+'</p></section>'
       +'<div class="hw-player-inspector-actions"><a href="'+safeHref(p.profile)+'">Open profile</a><a href="compare.html?players='+encodeURIComponent(p.name)+'">Compare</a><a href="impact.html">Season impact board</a></div></div>';
   }
   function selectPlayer(id,writeState){var p=findPlayer(id);if(!p)return;state.selected=p;if(writeState!==false)replaceParam("player",p.id);renderTable();renderInspector(p);renderViz();}
@@ -248,7 +275,7 @@
     document.addEventListener("keydown",function(event){if(event.key==="/"&&!event.metaKey&&!event.ctrlKey&&!event.altKey&&!editableTarget(event.target)){event.preventDefault();search.focus();if(search.select)search.select();return;}if(event.key==="Escape"&&document.activeElement===search&&search.value){event.preventDefault();search.value="";renderTable();replaceParam("q","");}});
   }
   function init(){
-    Promise.all([fetchJSON("players.json"),fetchJSON("availability.json"),fetchJSON("season_impact.json"),fetchJSON("player_impact.json")]).then(function(v){state.sources={players:v[0],availability:v[1],season:v[2],impact:v[3]};state.players=mergeSources(v[0],v[1],v[2],v[3]);populateTeams();renderStories();renderWatches();setFresh(state.sources);bind();
+    Promise.all([fetchJSON("players.json"),fetchJSON("availability.json"),fetchJSON("season_impact.json"),fetchJSON("player_impact.json"),fetchJSON("players_intl.json").catch(function(){return null;})]).then(function(v){state.sources={players:v[0],availability:v[1],season:v[2],impact:v[3],intl:v[4]};state.intl={};(v[4]&&v[4].players||[]).forEach(function(e){if(e&&e.player_name)state.intl[String(e.player_name).toLowerCase()]=e;});state.players=mergeSources(v[0],v[1],v[2],v[3]);populateTeams();renderStories();renderWatches();setFresh(state.sources);bind();
     var paramId = new URLSearchParams(location.search).get("player_id") || new URLSearchParams(location.search).get("player");
     var initialSelected = null;
     if (paramId) {
