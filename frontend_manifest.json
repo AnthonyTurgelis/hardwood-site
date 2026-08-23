@@ -1,0 +1,37 @@
+{
+  "schema": "frontend-manifest.v1",
+  "generated_utc": "2026-08-18T02:00:00Z",
+  "product": {
+    "name": "Hardwood",
+    "tagline": "WNBA predictions, player intelligence, and model accountability.",
+    "default_page": "v2.html"
+  },
+  "datasets": {
+    "today": {"href": "preview.json", "contract": "preview.v2", "required": false},
+    "games": {"href": "games.json", "contract": "games.v2", "required": true},
+    "players": {"href": "players.json", "contract": "players.v1+", "required": true},
+    "teams": {"href": "teams.json", "contract": "teams.v1+", "required": false},
+    "accuracy": {"href": "accuracy.json", "contract": "accuracy.v2", "required": false},
+    "standings": {"href": "standings.json", "contract": "standings.v1+", "required": false},
+    "news": {"href": "bluesky_feed.json", "contract": "bluesky-feed.v1", "required": false}
+  },
+  "model_slots": {
+    "game.win_probability": {"dataset": "games", "unit": "probability_0_1", "nullable": true},
+    "game.margin": {"dataset": "games", "unit": "points", "nullable": true},
+    "game.total": {"dataset": "games", "unit": "points", "nullable": true},
+    "game.margin_interval": {"dataset": "games", "unit": "points_range", "nullable": true},
+    "player.impact": {"dataset": "players", "unit": "rating", "nullable": true},
+    "player.minutes": {"dataset": "players", "unit": "minutes", "nullable": true},
+    "player.projection": {"dataset": "players", "unit": "model_defined", "nullable": true},
+    "model.accuracy": {"dataset": "accuracy", "unit": "metric_defined", "nullable": true}
+  },
+  "observed": {
+    "today": {"available": true, "observed_schema": "preview.v2"},
+    "games": {"available": true, "observed_schema": "games.v2"},
+    "players": {"available": true},
+    "teams": {"available": true},
+    "accuracy": {"available": true, "observed_schema": "accuracy.v2"},
+    "standings": {"available": true},
+    "news": {"available": true, "observed_schema": "bluesky-feed.v1"}
+  }
+}
