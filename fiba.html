@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Hardwood FIBA and international competition: the 2026 Women's World Cup field and groups, roster certification, tournament history, and per-tournament player production.">
+  <title>FIBA / International — Hardwood</title>
+  <link rel="stylesheet" href="hw-product.css">
+  <link rel="stylesheet" href="hw-dense.css">
+  <style>
+    .hw-kv{display:grid;grid-template-columns:auto 1fr;gap:.25rem 1rem;margin:0 0 1rem}
+    .hw-kv dt{font-weight:600;opacity:.75}
+    .hw-kv dd{margin:0}
+    .hw-group-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
+    .hw-group h3{margin:0 0 .35rem;font-size:1rem}
+    .hw-group ul{margin:0;padding-left:1.1rem}
+    .hw-group li{margin:.15rem 0}
+    .hw-muted{opacity:.6;font-size:.85em}
+    .hw-flag{font-size:.8em;padding:.05rem .4rem;border:1px solid currentColor;border-radius:.6rem;opacity:.85}
+    .hw-fiba-toolbar{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:end;margin:.5rem 0 1rem}
+    .hw-fiba-toolbar label{display:flex;flex-direction:column;gap:.15rem;font-size:.85rem}
+    .hw-table-wrap{overflow-x:auto}
+    .hw-table-wrap table{border-collapse:collapse;width:100%}
+    .hw-table-wrap th,.hw-table-wrap td{padding:.3rem .5rem;text-align:left;border-bottom:1px solid rgba(128,128,128,.25);white-space:nowrap}
+    .hw-table-wrap th button{background:none;border:0;font:inherit;font-weight:700;cursor:pointer;padding:0;color:inherit}
+    .hw-note{font-size:.85rem;opacity:.8;margin:.35rem 0}
+  </style>
+<!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
+<body class="hw-product" data-page="fiba" data-section="fiba" data-product="fiba"><header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="fiba.html" aria-current="page">FIBA / International</a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
+  <a class="hw-skip" href="#content">Skip to content</a>
+  <main class="hw-page" id="content">
+    <header class="hw-command-head">
+      <div class="hw-command-title">
+        <div class="hw-kicker">FIBA / International</div>
+        <h1>International competition</h1>
+        <p>The 2026 Women's World Cup field, roster certification as it firms up, tournament history, and per-tournament player production. Every number on this page is computed from the published artifact at render.</p>
+      </div>
+      <div class="hw-command-meta">
+        <span class="hw-fresh" data-fresh><span class="hw-fresh-dot"></span>Loading</span>
+        <a class="hw-button" href="opqt.html">Qualifying tournament</a>
+      </div>
+    </header>
+
+    <div id="fiba-root">
+      <section class="hw-module" aria-label="World Cup 2026">
+        <div class="hw-module-head">
+          <div><h2>Women's World Cup 2026</h2><span id="fiba-wc-count">Loading…</span></div>
+        </div>
+        <div id="fiba-wc">Loading…</div>
+      </section>
+
+      <section class="hw-module" aria-label="Roster certification">
+        <div class="hw-module-head">
+          <div><h2>Roster certification</h2></div>
+        </div>
+        <p class="hw-note" id="fiba-cert-note">Loading…</p>
+        <div class="hw-table-wrap">
+          <table>
+            <thead><tr><th>Team</th><th>Player</th><th>Status</th><th>Flag</th></tr></thead>
+            <tbody id="fiba-cert-body"><tr><td colspan="4">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="hw-module" aria-label="Tournament history">
+        <div class="hw-module-head">
+          <div><h2>Tournament history</h2><span id="fiba-tourn-count">Loading…</span></div>
+        </div>
+        <div class="hw-table-wrap">
+          <table>
+            <thead><tr><th>Season</th><th>Tournament</th><th>Type</th><th>Gold</th><th>Silver</th><th>Bronze</th></tr></thead>
+            <tbody id="fiba-tourn-body"><tr><td colspan="6">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="hw-module" aria-label="Player production by tournament">
+        <div class="hw-module-head">
+          <div><h2>Player production by tournament</h2><span id="fiba-players-count">Loading…</span></div>
+        </div>
+        <div class="hw-fiba-toolbar">
+          <label><span>Search</span><input id="fiba-search" type="search" placeholder="Player, team, or tournament"></label>
+          <label><span>Type</span><select id="fiba-type"><option value="">All types</option></select></label>
+          <label><span>Min games</span><input id="fiba-mingp" type="number" min="0" step="1" value="3" style="width:6rem"></label>
+          <button class="hw-button" id="fiba-reset" type="button">Reset</button>
+        </div>
+        <div class="hw-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th><button type="button" data-sort="player">Player</button></th>
+                <th>Team</th>
+                <th>Tournament</th>
+                <th><button type="button" data-sort="season">Season</button></th>
+                <th><button type="button" data-sort="gp">GP</button></th>
+                <th><button type="button" data-sort="mpg">MPG</button></th>
+                <th><button type="button" data-sort="ppg">PPG</button></th>
+                <th><button type="button" data-sort="rpg">RPG</button></th>
+                <th><button type="button" data-sort="apg">APG</button></th>
+              </tr>
+            </thead>
+            <tbody id="fiba-players-body"><tr><td colspan="9">Loading…</td></tr></tbody>
+          </table>
+        </div>
+        <p class="hw-note" id="fiba-coverage"></p>
+      </section>
+    </div>
+  </main>
+  <script src="hw-product.js"></script>
+  <script src="hw-fiba.js"></script>
+<!--hw-foot--><footer class="wrap hw-chrome-foot"><div class="util"><a href="glossary.html">Glossary</a><a href="error-map.html">Error Map</a><a href="review.html">Review</a><a href="about.html">About</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="board.html">Board</a><a href="coach.html">Coach</a><a href="gm.html">GM</a><a href="scouting.html">Scouting</a><a href="situation.html">Situation</a><a href="tempo.html">Tempo</a><a href="impact.html">Impact</a><a href="player_impact.html">Player Impact</a><a href="compare.html">Compare</a><a href="explorer.html">Explorer</a><a href="daybyday.html">Day by Day</a><a href="allstar.html">All-Star</a><a href="ledger.html">Ledger</a><a href="queue.html">Queue</a><a href="org.html">Org</a><a href="report_archive.html">Report Archive</a><a href="ship_checklist.html">Ship Checklist</a></div><div>Projections published pre-tip, graded publicly.</div></footer><!--/hw-foot--></body>
+</html>
