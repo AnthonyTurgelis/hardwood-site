@@ -52,18 +52,16 @@
         </section>
       </header>
 
+      <section class="hw-module hw-fingerprint">
+        <div class="hw-module-head"><div><h2>Game fingerprint</h2><span>Team quality, the reason for the call, tempo, availability, and key players at a glance</span></div></div>
+        <div class="hw-report-fingerprint" id="gr-fingerprint"><div class="hw-empty compact">Loading matchup context…</div></div>
+      </section>
+
       <section class="hw-game-report-layout">
         <div class="hw-game-report-main">
           <section class="hw-module">
-            <div class="hw-module-head"><div><h2>Forecast and uncertainty</h2><span>Point estimate, calibrated ranges, and factual result when available</span></div><span id="gr-archive-state">Archive check pending</span></div>
-            <div class="hw-report-forecast-grid">
-              <div class="hw-report-forecast-table" id="gr-forecast-table"><div class="hw-empty">Loading forecast…</div></div>
-              <div class="hw-report-range-panel">
-                <div class="hw-report-range-head"><strong>Home-margin distribution</strong><span>Positive favors home</span></div>
-                <div class="hw-report-margin-range" id="gr-margin-range"></div>
-                <div class="hw-report-range-key"><span><i class="range90"></i>90%</span><span><i class="range80"></i>80%</span><span><i class="point"></i>Point</span><span><i class="actual"></i>Actual</span></div>
-              </div>
-            </div>
+            <div class="hw-module-head"><div><h2>Projected rotations</h2><span>Impact first; minutes and box-score production follow</span></div><span id="gr-minutes-check">Minutes check pending</span></div>
+            <div class="hw-report-rotations" id="gr-rotations"><div class="hw-empty">Loading rotations…</div></div>
           </section>
 
           <section class="hw-module">
@@ -72,8 +70,15 @@
           </section>
 
           <section class="hw-module">
-            <div class="hw-module-head"><div><h2>Projected rotations</h2><span>Impact first; minutes and box-score production follow</span></div><span id="gr-minutes-check">Minutes check pending</span></div>
-            <div class="hw-report-rotations" id="gr-rotations"><div class="hw-empty">Loading rotations…</div></div>
+            <!-- Renamed from "Forecast and uncertainty": interval ranges are graded on the Accuracy
+                 surface and stay in the immutable artifact; the reader-facing report shows the call only. -->
+            <details class="hw-report-details">
+              <summary><span class="hw-details-title">Forecast detail</span><span class="hw-details-sub">Point margin, win chance, projected total, and factual result when available</span><span id="gr-archive-state">Archive check pending</span></summary>
+              <div class="hw-report-forecast-grid">
+                <div class="hw-report-forecast-table" id="gr-forecast-table"><div class="hw-empty">Loading forecast…</div></div>
+                <div id="gr-margin-range" hidden></div>
+              </div>
+            </details>
           </section>
         </div>
 
@@ -89,14 +94,14 @@
             <div class="hw-report-context" id="gr-analyst-availability"><div class="hw-empty compact">Loading availability…</div></div>
           </section>
 
-          <section class="hw-module">
+          <section class="hw-module" id="gr-pace-module" hidden>
             <div class="hw-module-head"><h2>Pace and environment</h2><span>Rendered only where computed</span></div>
-            <div class="hw-report-context" id="gr-analyst-pace"><div class="hw-empty compact">Loading…</div></div>
+            <div class="hw-report-context" id="gr-analyst-pace"></div>
           </section>
 
-          <section class="hw-module">
+          <section class="hw-module" id="gr-stretch-module" hidden>
             <div class="hw-module-head"><h2>Deciding stretch</h2><span>Only where the data supports it</span></div>
-            <div class="hw-report-context" id="gr-analyst-stretch"><div class="hw-empty compact">Loading…</div></div>
+            <div class="hw-report-context" id="gr-analyst-stretch"></div>
           </section>
 
           <section class="hw-module">
@@ -116,7 +121,7 @@
         </aside>
       </section>
 
-      <div class="hw-data-note">The forecast and ranges come from the dated game file (<span id="gr-artifact-link"></span>, graded against <a href="finals.json">finals.json</a>). A final score is joined afterward only for grading; this page does not recompute or rewrite the pre-tip call.</div>
+      <div class="hw-data-note">The forecast comes from the dated game record (<span id="gr-artifact-link"></span>, graded against <a href="finals.json">finals.json</a>). A final score is joined afterward only for grading; this page does not recompute or rewrite the pre-tip call.</div>
     </article>
   </main>
   <script src="hw-product.js"></script>
@@ -138,7 +143,7 @@
     function availabilityHTML(game){
       var block=game&&game.availability;
       if(!block||(!Array.isArray(block.home)&&!Array.isArray(block.away)))
-        return '<div class="hw-empty compact">The game file carries no availability block for this game — absence of the data is stated, never papered over.</div>';
+        return '<div class="hw-empty compact">This report has no availability section for this game — absence of the data is stated, never papered over.</div>';
       return sideHTML(game.away_full||game.away||"Away",block.away)+sideHTML(game.home_full||game.home||"Home",block.home);
     }
     function paceHTML(game){
@@ -159,16 +164,23 @@
       fetch("games/"+encodeURIComponent(id)+".json",{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("artifact "+r.status);return r.json();}).then(function(game){
         var set=function(elId,html){var el=document.getElementById(elId);if(el)el.innerHTML=html;};
         set("gr-analyst-availability",availabilityHTML(game));
-        set("gr-analyst-pace",paceHTML(game));
-        set("gr-analyst-stretch",stretchHTML(game));
+        // A module with nothing real to say does not render an explanation box: the pace and
+        // stretch sections stay hidden unless the artifact actually computed a payload for them.
+        var show=function(moduleId,ok){var el=document.getElementById(moduleId);if(el)el.hidden=!ok;};
+        show("gr-pace-module",!!(game&&game.pace));
+        show("gr-stretch-module",!!(game&&game.stretch));
+        if(game&&game.pace)set("gr-analyst-pace",paceHTML(game));
+        if(game&&game.stretch)set("gr-analyst-stretch",stretchHTML(game));
       }).catch(function(){
         // One source feeds all three layers: a failed read leaves every slot UNKNOWN, never
         // an eternal spinner and never the "not computed" copy that belongs to a read artifact.
         // The visible words are the reader's: the consequence, not the implementation model.
         var msg='<div class="hw-empty compact">Game detail data is temporarily unavailable. No value is shown until the source is readable.</div>';
-        ["gr-analyst-availability","gr-analyst-pace","gr-analyst-stretch"].forEach(function(elId){
-          var el=document.getElementById(elId);
-          if(el)el.innerHTML=msg;
+        var availability=document.getElementById("gr-analyst-availability");
+        if(availability)availability.innerHTML=msg;
+        ["gr-pace-module","gr-stretch-module"].forEach(function(moduleId){
+          var el=document.getElementById(moduleId);
+          if(el)el.hidden=true;
         });
       });
     }

@@ -58,11 +58,110 @@
     var archiveProbability=num(archive.prediction.win_pct);if(archiveProbability!==null&&archiveProbability>1)archiveProbability/=100;
     var winnerProbability=publishedWinnerProbability(game);
     var winMatches=archiveProbability===null||winnerProbability===null||Math.abs(archiveProbability-winnerProbability)<.025;
-    var rangeText=archive.prediction.range80||"";
+    var archiveRange=archive.prediction.range80||"";
     var margin=game.margin||{};
-    var rangeMatches=!rangeText||(has(margin.lo80)&&has(margin.hi80)&&rangeText.indexOf(String(Math.abs(Math.round(margin.lo80))))>=0&&rangeText.indexOf(String(Math.abs(Math.round(margin.hi80))))>=0);
+    var rangeMatches=!archiveRange||(has(margin.lo80)&&has(margin.hi80)&&archiveRange.indexOf(String(Math.abs(Math.round(margin.lo80))))>=0&&archiveRange.indexOf(String(Math.abs(Math.round(margin.hi80))))>=0);
     if(callMatches&&winMatches)return {key:"match",label:"Archive matched",note:rangeMatches?"Call, confidence, and range are attached to the dated archive.":"Call and confidence match; range wording differs."};
     return {key:"mismatch",label:"Archive differs",note:"The dated archive and game file do not match exactly; both remain visible."};
+  }
+
+  /* ---- optional support feeds: published bios, team quality, tempo ----
+     Each feed is optional. A failed read never blanks the report and never
+     invents a bio, a rank, or a pace number — the cell is simply omitted. */
+  function normalizeName(value){
+    return String(value==null?"":value).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+  }
+  function buildBioLookup(meta){
+    var map={};
+    var players=meta&&meta.players?meta.players:null;
+    if(players)Object.keys(players).forEach(function(key){
+      var bio=players[key];if(!bio||!bio.name)return;
+      var norm=normalizeName(bio.name);if(!norm)return;
+      map[norm]=Object.prototype.hasOwnProperty.call(map,norm)?false:bio;
+    });
+    return function(name){var hit=map[normalizeName(name)];return hit?hit:null;};
+  }
+  function teamQualityHTML(feed,game){
+    if(!feed)return "";
+    var list=rows(feed,["teams","rows","items"]);
+    var find=function(code,full){
+      var target=normalizeTeam(code),targetFull=normalizeTeam(full||"");
+      return list.find(function(row){return normalizeTeam(row.team)===target||(targetFull&&normalizeTeam(row.team_full)===targetFull);})||null;
+    };
+    var away=find(game.away,game.away_full),home=find(game.home,game.home_full);
+    if(!away&&!home)return "";
+    var line=function(row,code){
+      if(!row)return "";
+      var bits=[];
+      if(num(row.rank)!==null)bits.push('<span class="hw-fp-rank">#'+esc(row.rank)+'</span>');
+      if(num(row.strength)!==null)bits.push('<b>'+esc(signed(row.strength,1))+'</b>');
+      return '<div class="hw-fp-line"><strong>'+esc(normalizeTeam(code))+'</strong>'+bits.join("")+'</div>';
+    };
+    return line(away,game.away)+line(home,game.home)+'<small class="hw-fp-note">League rank and published strength</small>';
+  }
+  function tempoHTML(feed,game){
+    if(!feed)return "";
+    var list=rows(feed,["teams","rows","items"]);
+    var find=function(code){var target=normalizeTeam(code);return list.find(function(row){return normalizeTeam(row.team)===target;})||null;};
+    var away=find(game.away),home=find(game.home);
+    var games=feed.matchups&&Array.isArray(feed.matchups.games)?feed.matchups.games:[];
+    var matchup=games.find(function(row){return normalizeTeam(row.home)===normalizeTeam(game.home)&&normalizeTeam(row.away)===normalizeTeam(game.away);})||null;
+    if(!away&&!home&&!matchup)return "";
+    var parts=[];
+    if(matchup&&num(matchup.exp_pace)!==null)parts.push('<div class="hw-fp-line"><strong>Expected '+esc(fixed(matchup.exp_pace,1))+'</strong>'+(matchup.exp_tag_label?'<span>'+esc(matchup.exp_tag_label)+'</span>':'')+'</div>');
+    [[away,game.away],[home,game.home]].forEach(function(pair){
+      var row=pair[0];if(!row)return;
+      var bits=[];
+      if(num(row.pace)!==null)bits.push(fixed(row.pace,1));
+      if(num(row.rank)!==null)bits.push("#"+row.rank);
+      if(row.tier_label)bits.push(row.tier_label);
+      var trend=num(row.pace_recent)!==null?"recent "+fixed(row.pace_recent,1)+(row.pace_trend?", "+row.pace_trend:""):(row.pace_trend||"");
+      parts.push('<div class="hw-fp-line"><strong>'+esc(normalizeTeam(pair[1]))+'</strong><span>'+esc(bits.join(" · "))+'</span>'+(trend?'<small>'+esc(trend)+'</small>':'')+'</div>');
+    });
+    if(feed.as_of)parts.push('<small class="hw-fp-note">Tempo as of '+esc(feed.as_of)+'</small>');
+    return parts.join("");
+  }
+  function whyHTML(game){
+    var steps=game.why&&Array.isArray(game.why.steps)?game.why.steps:[];
+    if(!steps.length)return "";
+    var chips=steps.map(function(step){
+      return '<span class="hw-fp-chip" title="'+esc(step.detail||"")+'">'+esc(step.label||"Step")+' <b>'+esc(step.value||"—")+'</b></span>';
+    }).join("");
+    var subs=[];
+    steps.forEach(function(step){(step.sub||[]).forEach(function(sub){subs.push('<span>'+esc(sub.label||"Component")+' <b>'+esc(sub.value||"—")+'</b></span>');});});
+    var subLine=subs.length?'<div class="hw-fp-line hw-fp-subline">'+subs.join("")+'</div>':'';
+    return '<div class="hw-fp-chips">'+chips+'</div>'+subLine;
+  }
+  function availabilityCellHTML(game){
+    var block=game&&game.availability;
+    if(!block||(!Array.isArray(block.home)&&!Array.isArray(block.away)))return "";
+    var side=function(code,list){
+      var out=(list||[]).map(function(player){return esc(player.name||"Unnamed player")+" — "+esc(player.status||"status not published")+(player.return?" (back "+esc(player.return)+")":"");}).join("; ");
+      return '<div class="hw-fp-line"><strong>'+esc(normalizeTeam(code))+'</strong><span>'+(out||"No listed absences")+'</span></div>';
+    };
+    return side(game.away,block.away)+side(game.home,block.home);
+  }
+  function keyPlayersHTML(game){
+    var pick=function(list){
+      return (list||[]).filter(function(player){return num(player.impact)!==null;}).sort(function(a,b){return num(b.impact)-num(a.impact);}).slice(0,2);
+    };
+    var side=function(code,list){
+      var top=pick(list);if(!top.length)return "";
+      return '<div class="hw-fp-line"><strong>'+esc(normalizeTeam(code))+'</strong><span>'+top.map(function(player){return esc(player.name||"?")+" "+esc(signed(player.impact,1));}).join(" · ")+'</span></div>';
+    };
+    var away=side(game.away,game.box&&game.box.away),home=side(game.home,game.box&&game.box.home);
+    return away||home?away+home:"";
+  }
+  function renderFingerprint(game,teamsFeed,tempoFeed){
+    var cell=function(label,html){return html?'<section class="hw-fp-cell"><h3>'+esc(label)+'</h3>'+html+'</section>':'';};
+    var cells=[
+      cell("Team quality",teamQualityHTML(teamsFeed,game)),
+      cell("Why the call",whyHTML(game)),
+      cell("Tempo",tempoHTML(tempoFeed,game)),
+      cell("Availability",availabilityCellHTML(game)),
+      cell("Key players",keyPlayersHTML(game))
+    ].join("");
+    $("gr-fingerprint").innerHTML=cells||'<div class="hw-empty compact">No supplemental matchup context is published for this game.</div>';
   }
 
   function story(label,value,note){return '<article class="hw-story"><span class="hw-story-label">'+esc(label)+'</span><strong class="hw-story-value">'+esc(value)+'</strong><span class="hw-story-note">'+esc(note)+'</span></article>';}
@@ -71,36 +170,23 @@
     $("gr-stories").innerHTML=[
       story("Published call",game.call||"Not published",game.date||"date not published"),
       story("Home win",pct(game.p_home_win,0),game.home||"home team"),
-      story("Projected total",fixed(total.point,1),has(total.lo)&&has(total.hi)?fixed(total.lo,1)+"–"+fixed(total.hi,1):"range not published"),
-      story("80% margin",has(margin.lo80)&&has(margin.hi80)?signed(margin.lo80,1)+" to "+signed(margin.hi80,1):"—","home-margin range"),
+      story("Projected total",fixed(total.point,1),"combined points"),
       story("Final",final?(final.away_score+"–"+final.home_score):"Awaiting final",final?(winnerGrade===null?"winner not gradable":winnerGrade?"winner call correct":"winner call wrong"):"forecast remains open"),
       story("Margin miss",fixed(miss,1),miss===null?"not gradable":"absolute points")
     ].join("");
   }
 
-  function rangeText(low,high){return num(low)===null||num(high)===null?"Not published":signed(low,1)+" to "+signed(high,1);}
   function forecastRow(label,value,note,klass){return '<div class="hw-report-forecast-row"><span>'+esc(label)+'</span><strong class="'+esc(klass||"")+'">'+esc(value)+'</strong><small>'+esc(note||"")+'</small></div>';}
   function renderForecast(game,final,archiveState){
     var margin=game.margin||{},total=game.total||{},actual=actualHomeMargin(final),miss=actual!==null&&num(margin.point)!==null?Math.abs(actual-num(margin.point)):null;
     $("gr-forecast-table").innerHTML=[
       forecastRow("Home margin",signed(margin.point,1),"positive favors "+(game.home_full||game.home),num(margin.point)>=0?"positive":"negative"),
-      forecastRow("80% interval",rangeText(margin.lo80,margin.hi80),"calibrated home-margin range"),
-      forecastRow("90% interval",rangeText(margin.lo90,margin.hi90),"wider calibrated range"),
       forecastRow("Home win chance",pct(game.p_home_win,1),game.home_full||game.home),
-      forecastRow("Projected total",fixed(total.point,1),has(total.lo)&&has(total.hi)?fixed(total.lo,1)+" to "+fixed(total.hi,1):"range not published"),
+      forecastRow("Projected total",fixed(total.point,1),"combined points"),
       forecastRow("Actual home margin",signed(actual,1),miss===null?"final not available":"absolute miss "+fixed(miss,1))
     ].join("");
     $("gr-archive-state").textContent=archiveState.label;
     $("gr-archive-state").className="archive-"+archiveState.key;
-    $("gr-margin-range").innerHTML=marginChart(margin,actual);
-  }
-  function marginChart(margin,actual){
-    var values=[num(margin.lo90),num(margin.hi90),num(margin.lo80),num(margin.hi80),num(margin.point),num(actual)].filter(function(value){return value!==null;}),span=values.length?Math.max(1,Math.max.apply(null,values.map(Math.abs))):20;
-    span=Math.ceil(span/5)*5;
-    var position=function(value){return ((num(value)+span)/(span*2)*100);};
-    var band=function(low,high,klass){if(num(low)===null||num(high)===null)return "";return '<i class="'+klass+'" style="left:'+position(low).toFixed(2)+'%;width:'+(position(high)-position(low)).toFixed(2)+'%"></i>';};
-    var marker=function(value,klass,label){if(num(value)===null)return "";return '<b class="'+klass+'" style="left:'+position(value).toFixed(2)+'%"><span>'+esc(label)+'</span></b>';};
-    return '<div class="range-track"></div>'+band(margin.lo90,margin.hi90,"range90")+band(margin.lo80,margin.hi80,"range80")+'<i class="range-zero" style="left:'+position(0)+'%"></i>'+marker(margin.point,"range-point",signed(margin.point,1))+marker(actual,"range-actual",signed(actual,1))+'<span class="range-label left">'+esc(signed(-span,0))+'</span><span class="range-label center">even</span><span class="range-label right">'+esc(signed(span,0))+'</span>';
   }
 
   function renderChain(game){
@@ -113,27 +199,38 @@
     if(game.why&&game.why.omitted){$("gr-chain").insertAdjacentHTML("beforeend",'<div class="hw-report-omitted"><strong>Not separately weighted</strong><span>'+esc(game.why.omitted)+'</span></div>');}
   }
 
-  function playerRow(player){
+  function playerRow(player,bio){
     var basis=player.impact_provisional?"Provisional":player.prior_basis?"Career prior":player.college_basis?"College prior":player.thin_unknown?"Thin / unknown":"Current basis";
-    return '<tr><td><span class="hw-person"><span class="hw-avatar">'+esc(String(player.name||"?").split(/\s+/).slice(0,2).map(function(part){return part.charAt(0);}).join(""))+'</span><span class="hw-person-copy"><strong>'+esc(player.name||"Unknown player")+'</strong><small>'+esc(basis)+(player.gtd?' · GTD':'')+'</small></span></span></td><td class="num">'+esc(fixed(player.min,1))+'</td><td class="num '+(num(player.impact)!==null&&num(player.impact)>=0?'positive':'negative')+'">'+esc(signed(player.impact,1))+'</td><td class="num">'+esc(fixed(player.pts,1))+'</td><td class="num">'+esc(fixed(player.reb,1))+'</td><td class="num">'+esc(fixed(player.ast,1))+'</td><td class="num">'+esc(fixed(player.p3,1))+'</td></tr>';
+    var bioBits=[];
+    if(bio&&has(bio.jersey))bioBits.push("#"+bio.jersey);
+    if(bio&&has(bio.position))bioBits.push(bio.position);
+    if(bio&&has(bio.height))bioBits.push(bio.height);
+    var sub=bioBits.length?bioBits.join(" · "):basis;
+    var face=bio&&has(bio.headshot_url)
+      ?'<img class="hw-headshot" src="'+esc(bio.headshot_url)+'" alt="" loading="lazy">'
+      :'<span class="hw-avatar">'+esc(String(player.name||"?").split(/\s+/).slice(0,2).map(function(part){return part.charAt(0);}).join(""))+'</span>';
+    var impactClass=num(player.impact)!==null?(num(player.impact)>=0?"positive":"negative"):"";
+    return '<tr><td><span class="hw-person">'+face+'<span class="hw-person-copy"><strong>'+esc(player.name||"Unknown player")+'</strong><small title="'+esc(basis)+'">'+esc(sub)+(player.gtd?' · GTD':'')+'</small></span></span></td><td class="num '+impactClass+'">'+esc(signed(player.impact,1))+'</td><td class="num">'+esc(fixed(player.min,1))+'</td><td class="num">'+esc(fixed(player.pts,1))+'</td><td class="num">'+esc(fixed(player.reb,1))+'</td><td class="num">'+esc(fixed(player.ast,1))+'</td><td class="num">'+esc(fixed(player.p3,1))+'</td></tr>';
   }
-  function rotationTable(team,players){
+  function rotationTable(team,players,lookup){
     var list=(players||[]).slice().sort(function(a,b){return (num(b.min)||-1)-(num(a.min)||-1);}),minutes=list.reduce(function(sum,player){return sum+(num(player.min)||0);},0);
-    return '<section class="hw-report-team-rotation"><div class="hw-report-rotation-head"><strong>'+esc(team)+'</strong><span>'+list.length+' players · '+fixed(minutes,1)+' minutes</span></div><div class="hw-table-wrap"><table class="hw-compact-table"><thead><tr><th>Player</th><th class="num">Min</th><th class="num">Impact</th><th class="num">PTS</th><th class="num">REB</th><th class="num">AST</th><th class="num">3PM</th></tr></thead><tbody>'+((list.length?list.map(playerRow).join(""):'<tr><td colspan="7"><div class="hw-empty compact">No projected rotation published.</div></td></tr>'))+'</tbody></table></div></section>';
+    return '<section class="hw-report-team-rotation"><div class="hw-report-rotation-head"><strong>'+esc(team)+'</strong><span>'+list.length+' players · '+fixed(minutes,1)+' minutes</span></div><div class="hw-table-wrap"><table class="hw-compact-table"><thead><tr><th>Player</th><th class="num">Impact</th><th class="num">Min</th><th class="num">PTS</th><th class="num">REB</th><th class="num">AST</th><th class="num">3PM</th></tr></thead><tbody>'+((list.length?list.map(function(player){return playerRow(player,lookup(player.name));}).join(""):'<tr><td colspan="7"><div class="hw-empty compact">No projected rotation published.</div></td></tr>'))+'</tbody></table></div></section>';
   }
-  function renderRotations(game){
+  function renderRotations(game,lookup){
     var home=game.box&&game.box.home||[],away=game.box&&game.box.away||[],homeMinutes=home.reduce(function(sum,p){return sum+(num(p.min)||0);},0),awayMinutes=away.reduce(function(sum,p){return sum+(num(p.min)||0);},0);
     $("gr-minutes-check").textContent="Projected "+fixed(awayMinutes,1)+" / "+fixed(homeMinutes,1)+" min";
-    $("gr-rotations").innerHTML=rotationTable(game.away_full||game.away,away)+rotationTable(game.home_full||game.home,home);
+    $("gr-rotations").innerHTML=rotationTable(game.away_full||game.away,away,lookup)+rotationTable(game.home_full||game.home,home,lookup);
   }
 
   function auditMetric(label,value,note,klass){return '<div><span>'+esc(label)+'</span><strong class="'+esc(klass||"")+'">'+esc(value)+'</strong><small>'+esc(note||"")+'</small></div>';}
   function renderAudit(game,final){
     if(!final){$("gr-grade-state").textContent="Awaiting final";$("gr-audit").innerHTML='<div class="hw-empty compact">No factual final is available for this game. The dated forecast remains visible and ungraded.</div>';return;}
-    var actual=actualHomeMargin(final),point=num(game.margin&&game.margin.point),miss=actual!==null&&point!==null?Math.abs(actual-point):null,predWinner=predictedWinner(game),winner=finalWinner(final),correct=predWinner&&winner?predWinner===winner:null,in80=actual!==null&&num(game.margin&&game.margin.lo80)!==null&&num(game.margin&&game.margin.hi80)!==null?actual>=num(game.margin.lo80)&&actual<=num(game.margin.hi80):null,in90=actual!==null&&num(game.margin&&game.margin.lo90)!==null&&num(game.margin&&game.margin.hi90)!==null?actual>=num(game.margin.lo90)&&actual<=num(game.margin.hi90):null;
+    /* Interval fields (margin.lo80/hi80/lo90/hi90) stay in the immutable artifact and are graded
+       on the Accuracy surface; the reader-facing report renders no interval copy. */
+    var actual=actualHomeMargin(final),point=num(game.margin&&game.margin.point),miss=actual!==null&&point!==null?Math.abs(actual-point):null,predWinner=predictedWinner(game),winner=finalWinner(final),correct=predWinner&&winner?predWinner===winner:null;
     $("gr-grade-state").textContent=correct===null?"Final joined":correct?"Winner correct":"Winner wrong";
     $("gr-grade-state").className=correct===null?"pending":correct?"correct":"wrong";
-    $("gr-audit").innerHTML='<div class="hw-report-audit-score"><span>'+esc(game.away||"Away")+'</span><strong>'+esc(final.away_score)+'–'+esc(final.home_score)+'</strong><span>'+esc(game.home||"Home")+'</span></div><div class="hw-report-audit-grid">'+auditMetric("Actual home margin",signed(actual,1),"factual final")+auditMetric("Margin miss",fixed(miss,1),"absolute points")+auditMetric("Winner call",correct===null?"Not gradable":correct?"Correct":"Wrong",predWinner||"winner not published",correct===true?"positive":correct===false?"negative":"")+auditMetric("80% interval",in80===null?"Not gradable":in80?"Covered":"Missed",rangeText(game.margin&&game.margin.lo80,game.margin&&game.margin.hi80),in80===true?"positive":in80===false?"negative":"")+auditMetric("90% interval",in90===null?"Not gradable":in90?"Covered":"Missed",rangeText(game.margin&&game.margin.lo90,game.margin&&game.margin.hi90),in90===true?"positive":in90===false?"negative":"")+'</div>';
+    $("gr-audit").innerHTML='<div class="hw-report-audit-score"><span>'+esc(game.away||"Away")+'</span><strong>'+esc(final.away_score)+'–'+esc(final.home_score)+'</strong><span>'+esc(game.home||"Home")+'</span></div><div class="hw-report-audit-grid">'+auditMetric("Actual home margin",signed(actual,1),"factual final")+auditMetric("Margin miss",fixed(miss,1),"absolute points")+auditMetric("Winner call",correct===null?"Not gradable":correct?"Correct":"Wrong",predWinner||"winner not published",correct===true?"positive":correct===false?"negative":"")+'</div>';
   }
 
   function renderContext(game){
@@ -159,20 +256,31 @@
     $("gr-products").innerHTML=links.join("");
   }
 
-  function render(game,final,archive,id){
+  function render(game,final,archive,id,rosterMeta,teamsFeed,tempoFeed){
     var hp=num(game.p_home_win);if(hp!==null&&hp>1)hp/=100;var ap=hp===null?null:1-hp,archiveState=archiveStatus(game,archive);
     document.title=(game.away_full||game.away)+" at "+(game.home_full||game.home)+" — Hardwood";
     $("gr-away").textContent=game.away||"Away";$("gr-home").textContent=game.home||"Home";$("gr-away-full").textContent=game.away_full||game.away||"—";$("gr-home-full").textContent=game.home_full||game.home||"—";
     $("gr-away-p").textContent=ap===null?"Probability not published":pct(ap,0)+" win";$("gr-home-p").textContent=hp===null?"Probability not published":pct(hp,0)+" win";$("gr-away-label").textContent=(game.away||"Away")+(ap===null?"":" "+pct(ap,0));$("gr-home-label").textContent=(game.home||"Home")+(hp===null?"":" "+pct(hp,0));$("gr-prob-fill").style.width=(hp===null?50:Math.max(2,Math.min(98,hp*100)))+"%";
     $("gr-call").textContent=game.call||"Forecast not published";$("gr-date").textContent=dateText(game.date);$("gr-tip").textContent=game.tip?" · "+game.tip:"";$("gr-id").textContent="Game "+id;$("gr-built").textContent=game.generated_utc?"Built "+dateTimeText(game.generated_utc):"Build time not published";
     $("gr-status").textContent=final?"Forecast graded":"Published forecast";$("gr-score-note").textContent=final?"Pre-tip forecast · final joined below":"Pre-tip projection";
-    renderStories(game,final,archive);renderForecast(game,final,archiveState);renderChain(game);renderRotations(game);renderAudit(game,final);renderContext(game);renderFair(game);renderProvenance(game,id,archiveState);renderProducts(game,id,archive);
+    renderStories(game,final,archive);renderFingerprint(game,teamsFeed,tempoFeed);renderForecast(game,final,archiveState);renderChain(game);renderRotations(game,buildBioLookup(rosterMeta));renderAudit(game,final);renderContext(game);renderFair(game);renderProvenance(game,id,archiveState);renderProducts(game,id,archive);
     $("report-loading").hidden=true;$("report-error").hidden=true;$("game-report").hidden=false;document.body.dataset.ready="true";
   }
   function fail(message){$("report-loading").hidden=true;$("game-report").hidden=true;$("report-error").hidden=false;$("report-error").innerHTML='<h1>Report unavailable</h1><p>'+esc(message)+'</p><a class="hw-button primary" href="games.html">Back to games</a>';}
   function boot(){
     var id=gameId();if(!id){fail("Open this page from a game row so the report has a valid game ID.");return;}
-    Promise.all([fetchJSON("games/"+encodeURIComponent(id)+".json"),fetchJSON("finals.json").catch(function(){return {};}),fetchJSON("report_archive.json").catch(function(){return {};})]).then(function(payloads){var game=payloads[0],final=findFinal(payloads[1],game),archive=findArchive(payloads[2],game);render(game,final,archive,id);}).catch(function(error){fail(error&&error.message?error.message:"The published game file could not be loaded.");});
+    Promise.all([
+      fetchJSON("games/"+encodeURIComponent(id)+".json"),
+      fetchJSON("finals.json").catch(function(){return {};}),
+      fetchJSON("report_archive.json").catch(function(){return {};}),
+      fetchJSON("roster_meta.json").catch(function(){return null;}),
+      fetchJSON("teams.json").catch(function(){return null;}),
+      fetchJSON("tempo.json").catch(function(){return null;})
+    ]).then(function(payloads){
+      var game=payloads[0],final=findFinal(payloads[1],game),archive=findArchive(payloads[2],game);
+      render(game,final,archive,id,payloads[3],payloads[4],payloads[5]);
+    }).catch(function(error){fail(error&&error.message?error.message:"The published game file could not be loaded.");});
   }
+  window.hwGameReport={normalizeName:normalizeName,buildBioLookup:buildBioLookup,playerRow:playerRow,teamQualityHTML:teamQualityHTML,tempoHTML:tempoHTML,whyHTML:whyHTML,availabilityCellHTML:availabilityCellHTML,keyPlayersHTML:keyPlayersHTML};
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
 }());

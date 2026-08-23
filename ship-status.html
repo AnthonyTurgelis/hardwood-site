@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Hardwood operational state, build health, and data freshness board.">
+  <title>Artifact Health — Hardwood</title>
+  <link rel="stylesheet" href="hw-product.css">
+  <link rel="stylesheet" href="hw-dense.css">
+  <style>
+    .hw-ship-page { max-width: 860px; margin: 0 auto; }
+    .hw-build-meta {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 15px;
+    }
+    .hw-data-note { margin-top: 15px; font-size: 10px; color: var(--dense-muted); line-height: 1.4; border-left: 2px solid var(--dense-warn); padding-left: 10px; }
+    @media(max-width: 760px) {
+      .hw-build-meta { grid-template-columns: 1fr; }
+      .hw-table { min-width: 0; }
+    }
+  </style>
+</head>
+<body class="hw-product" data-page="ship-status" data-section="board">
+  <a class="hw-skip" href="#content">Skip to content</a>
+  <main class="hw-page hw-ship-page" id="content">
+    <header class="hw-command-head">
+      <div class="hw-command-title">
+        <div class="hw-kicker">Operations</div>
+        <h1>Public Artifact Health</h1>
+        <p>Artifact health, schema contracts, and freshness tiers.</p>
+      </div>
+    </header>
+
+    <section class="hw-section" aria-label="Build Status">
+      <div class="hw-kpi-grid" id="build-meta" style="margin-bottom: 14px;">
+        <div class="hw-kpi hw-card">
+          <span class="hw-kpi-label">Pipeline health as-of</span>
+          <strong class="hw-kpi-value" id="meta-directive" style="font-size: 15px; font-family: var(--hw-mono);">Loading...</strong>
+        </div>
+        <div class="hw-kpi hw-card">
+          <span class="hw-kpi-label">Manifest Stamp</span>
+          <strong class="hw-kpi-value" id="meta-manifest" style="font-size: 15px; font-family: var(--hw-mono);">Loading...</strong>
+        </div>
+        <div class="hw-kpi hw-card">
+          <span class="hw-kpi-label">Live-Game Feed State</span>
+          <strong class="hw-kpi-value" id="meta-live" style="font-size: 15px;">Loading...</strong>
+        </div>
+      </div>
+
+      <article class="hw-module">
+        <div class="hw-module-head">
+          <div><h2>Artifact Manifest</h2></div><span id="artifact-count">Loading...</span>
+        </div>
+        <div class="hw-table-wrap">
+          <table class="hw-table" id="ship-table">
+            <thead>
+              <tr>
+                <th>Artifact</th>
+                <th>Contract</th>
+                <th>State</th>
+                <th>Freshness / Note</th>
+              </tr>
+            </thead>
+            <tbody id="ship-body"><tr><td colspan="4"><div class="hw-empty">Reading manifest…</div></td></tr></tbody>
+          </table>
+        </div>
+      </article>
+
+      <div class="hw-data-note" style="margin-top: 14px; border-left: 2px solid var(--dense-warn); padding-left: 8px;">
+        COMMITTED / PUSHED / PUBLISHED / LIVE / VERIFIED cannot be inferred from these inputs and require publication verification evidence elsewhere.
+      </div>
+    </section>
+  </main>
+
+  <script src="hw-product.js"></script>
+  <script>
+    (function() {
+      function escapeHTML(s) {
+        return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      function renderMeta(manifest, liveState, statusFile) {
+        var directive = "UNKNOWN";
+        var manifestStamp = manifest ? manifest.generated_utc : "UNKNOWN";
+
+        if (statusFile && statusFile.pipe_health && statusFile.pipe_health.as_of) {
+             directive = statusFile.pipe_health.as_of;
+        }
+
+        document.getElementById("meta-directive").textContent = directive;
+        document.getElementById("meta-manifest").textContent = manifestStamp;
+
+        var liveStatus = "UNKNOWN";
+        if (liveState && liveState.status) {
+           liveStatus = liveState.status;
+        }
+
+        var badgeColor = liveStatus.toLowerCase() === 'ok' ? 'var(--dense-good)' : (liveStatus === 'UNKNOWN' ? 'var(--dense-muted)' : 'var(--dense-bad)');
+        document.getElementById("meta-live").innerHTML = '<span class="hw-badge" style="background: ' + escapeHTML(badgeColor) + '; color: #000;">' + escapeHTML(liveStatus.toUpperCase()) + '</span>';
+      }
+
+      function renderTable(manifest, fetches) {
+        if (!manifest || !manifest.datasets) {
+          document.getElementById("ship-body").innerHTML = '<tr><td colspan="4"><div class="hw-empty">Manifest unavailable or invalid schema.</div></td></tr>';
+          return;
+        }
+
+        var ds = manifest.datasets;
+        var obs = manifest.observed || {};
+        var keys = Object.keys(ds).sort();
+
+        document.getElementById("artifact-count").textContent = keys.length + " datasets";
+
+        var html = [];
+        var now = Date.now();
+
+        keys.forEach(function(k) {
+          var item = ds[k];
+          var contract = item.contract || "UNKNOWN";
+          var realData = fetches[k];
+          var status = "UNKNOWN";
+          var note = "";
+
+          if (!realData) {
+            status = "UNKNOWN";
+            note = "File absent or unreadable";
+          } else {
+            var stampRaw = realData.generated_utc || realData.built_utc || realData.as_of || realData.updated_utc;
+            if (stampRaw) {
+               var parsed = Date.parse(stampRaw);
+               if (parsed) {
+                   status = "OK";
+                   var ageHrs = (now - parsed) / 36e5;
+                   note = "Updated " + Math.round(ageHrs*10)/10 + "h ago";
+
+                   var staleSecs = realData.stale_after_secs;
+                   if (staleSecs !== undefined && staleSecs !== null) {
+                       if ((ageHrs * 3600) > staleSecs) {
+                           status = "STALE";
+                       }
+                   } else {
+                       status = "UNKNOWN";
+                       note += " (no freshness contract)";
+                   }
+               } else {
+                   status = "UNKNOWN";
+                   note = "Undated (invalid format)";
+               }
+            } else {
+               status = "UNKNOWN";
+               note = "No timestamp found";
+            }
+          }
+
+          var badgeColor = status === 'OK' ? 'var(--dense-good)' : (status === 'UNKNOWN' ? 'var(--dense-muted)' : 'var(--dense-bad)');
+          var badgeHtml = '<span class="hw-badge" style="background: ' + escapeHTML(badgeColor) + '; color: #000;">' + escapeHTML(status) + '</span>';
+
+          html.push('<tr>' +
+            '<td><strong>' + escapeHTML(item.href) + '</strong></td>' +
+            '<td>' + escapeHTML(contract) + '</td>' +
+            '<td>' + badgeHtml + '</td>' +
+            '<td>' + escapeHTML(note) + '</td>' +
+            '</tr>');
+        });
+
+        document.getElementById("ship-body").innerHTML = html.join("");
+      }
+
+      function boot() {
+        Promise.all([
+          fetch("frontend_manifest.json").then(r => r.ok ? r.json() : null).catch(() => null),
+          fetch("live_state.json").then(r => r.ok ? r.json() : null).catch(() => null),
+          fetch("status.json").then(r => r.ok ? r.json() : null).catch(() => null)
+        ]).then(function(bases) {
+          var manifest = bases[0];
+          var liveState = bases[1];
+          var statusFile = bases[2];
+
+          renderMeta(manifest, liveState, statusFile);
+
+          if (!manifest || !manifest.datasets) {
+             renderTable(null, {});
+             return;
+          }
+
+          var dsKeys = Object.keys(manifest.datasets);
+          var promises = dsKeys.map(k => fetch(manifest.datasets[k].href).then(r => r.ok ? r.json() : null).catch(() => null));
+
+          Promise.all(promises).then(function(results) {
+             var fetches = {};
+             dsKeys.forEach((k, i) => { fetches[k] = results[i]; });
+             renderTable(manifest, fetches);
+          });
+
+        });
+      }
+
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+      else boot();
+    })();
+  </script>
+</body>
+</html>
