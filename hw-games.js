@@ -181,7 +181,18 @@
     if(!game||!game.availAsOf)return "";
     var d=new Date(game.availAsOf);
     var when=isNaN(d.getTime())?String(game.availAsOf):d.toLocaleString();
-    return '<p class="hw-avail-asof">Injury and lineup status read '+esc(when)+'</p>';
+    // AND HOW OFTEN IT IS RE-READ. A read-time alone answers "when" but not "how stale can this
+    // get", and those are different questions: a stamp from 40 minutes ago is fine on a 30-minute
+    // cadence and alarming on a 5-minute one. The reader cannot tell which without being told.
+    // SOURCE OF THIS NUMBER, named so it cannot drift silently: the availability poller runs on a
+    // 30-minute repetition interval and appends the snapshot the bake reads. The task name, its
+    // interval and the warehouse chain are recorded in the commit that added this line and in the
+    // queue row -- deliberately NOT repeated here, because this file is a PUBLIC asset and the
+    // public gate rejects internal record and table names in shipped bytes. It is right to: it
+    // caught this exact comment and aborted the bake before any JSON was written.
+    // If that interval changes, THIS STRING IS WRONG and must change with it.
+    return '<p class="hw-avail-asof">Injury and lineup status read '+esc(when)
+      +' · source re-checked every 30 minutes</p>';
   }
   function statusPct(s){var n=Number(s&&s.play_pct);return isFinite(n)?" ("+Math.round(n)+"% to play)":"";}
   function availabilityLine(team,out,limited,statuses){
