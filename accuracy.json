@@ -1,201 +1,202 @@
 {
+ "available": true,
+ "surfaces": [
+  {
+   "metric": "spread_miss",
+   "surface": "Game margin — average error",
+   "value": 10.7,
+   "unit": "points",
+   "n": 426,
+   "direction": "lower is better",
+   "kind": "season reconstruction",
+   "no_data": false,
+   "note": "How far off our predicted winning margin is, on average, per game.",
+   "engine": "not stamped for this run",
+   "covers_from": "2025-05-16",
+   "covers": "games since 16 May 2025"
+  },
+  {
+   "metric": "favorite_win_rate",
+   "surface": "When we call a clear favorite, how often they actually win",
+   "value": 72.34,
+   "unit": "%",
+   "n": 282,
+   "direction": "higher is better",
+   "kind": "season reconstruction",
+   "no_data": false,
+   "note": "Among games where we made one side a clear favorite.",
+   "engine": "unstamped grades + sigma 12.5569 (ops/analytics/margin_residual_sigma_v1.py, as-of 2026-08-07)",
+   "covers_from": "2025-05-16",
+   "covers": "games since 16 May 2025"
+  },
+  {
+   "metric": "total_miss",
+   "surface": "Combined game total — average error",
+   "value": 20.8,
+   "unit": "points",
+   "n": 61,
+   "direction": "lower is better",
+   "kind": "live games",
+   "no_data": false,
+   "note": "Live games only; the sample size is shown beside the result.",
+   "engine": "not stamped for this run",
+   "covers_from": "2026-07-08",
+   "covers": "games since 8 July 2026"
+  },
+  {
+   "metric": "player_min_pm",
+   "surface": "Player minutes — average error",
+   "value": 5.05,
+   "unit": "minutes",
+   "n": 777,
+   "direction": "lower is better",
+   "kind": "live games",
+   "no_data": false,
+   "note": "How far off our minutes projection is, per player per game.",
+   "engine": "conformal v1",
+   "covers_from": "2026-07-08",
+   "covers": "games since 8 July 2026",
+   "movement": {
+    "delta": 0.0041,
+    "since": "2026-08-15",
+    "direction": "lower is better"
+   }
+  },
+  {
+   "metric": "player_pts_pm",
+   "surface": "Player points — average error",
+   "value": 4.11,
+   "unit": "points",
+   "n": 777,
+   "direction": "lower is better",
+   "kind": "live games",
+   "no_data": false,
+   "note": "How far off our points projection is, per player per game.",
+   "engine": "conformal v1",
+   "covers_from": "2026-07-08",
+   "covers": "games since 8 July 2026",
+   "movement": {
+    "delta": -0.0541,
+    "since": "2026-08-15",
+    "direction": "lower is better"
+   }
+  }
+ ],
+ "calibration": [
+  {
+   "surface": "Our 90% margin range actually contains the result",
+   "target": 90.0,
+   "actual": 90.4,
+   "unit": "%",
+   "n": 167,
+   "flag": false,
+   "engine": "conformal v12"
+  },
+  {
+   "surface": "Our 80% margin range actually contains the result",
+   "target": 80.0,
+   "actual": 80.8,
+   "unit": "%",
+   "n": 167,
+   "flag": false,
+   "engine": "conformal v12"
+  }
+ ],
+ "monthly": [
+  {
+   "month": "2025-05",
+   "value": 9.89,
+   "n": 37
+  },
+  {
+   "month": "2025-06",
+   "value": 10.72,
+   "n": 68
+  },
+  {
+   "month": "2025-07",
+   "value": 11.69,
+   "n": 65
+  },
+  {
+   "month": "2025-08",
+   "value": 10.01,
+   "n": 84
+  },
+  {
+   "month": "2025-09",
+   "value": 10.35,
+   "n": 29
+  },
+  {
+   "month": "2026-05",
+   "value": 11.11,
+   "n": 48
+  },
+  {
+   "month": "2026-06",
+   "value": 10.57,
+   "n": 81
+  },
+  {
+   "month": "2026-07",
+   "value": 12.2,
+   "n": 14
+  }
+ ],
+ "note": "",
+ "source": "graded from our own game-by-game scorecard",
+ "backtest": {
   "available": true,
-  "surfaces": [
-    {
-      "metric": "spread_miss",
-      "surface": "Game margin \u2014 average error",
-      "value": 10.7,
-      "unit": "points",
-      "n": 426,
-      "direction": "lower is better",
-      "kind": "season reconstruction",
-      "no_data": false,
-      "note": "How far off our predicted winning margin is, on average, per game.",
-      "engine": "not stamped for this run",
-      "covers_from": "2025-05-16",
-      "covers": "games since 16 May 2025"
-    },
-    {
-      "metric": "favorite_win_rate",
-      "surface": "When we call a clear favorite, how often they actually win",
-      "value": 72.34,
-      "unit": "%",
-      "n": 282,
-      "direction": "higher is better",
-      "kind": "season reconstruction",
-      "no_data": false,
-      "note": "Among games where we made one side a clear favorite.",
-      "engine": "unstamped grades + sigma 12.5569 (ops/analytics/margin_residual_sigma_v1.py, as-of 2026-08-07)",
-      "covers_from": "2025-05-16",
-      "covers": "games since 16 May 2025"
-    },
-    {
-      "metric": "total_miss",
-      "surface": "Combined game total \u2014 average error",
-      "value": 20.8,
-      "unit": "points",
-      "n": 61,
-      "direction": "lower is better",
-      "kind": "live games",
-      "no_data": false,
-      "note": "Live games only; the sample size is shown beside the result.",
-      "engine": "not stamped for this run",
-      "covers_from": "2026-07-08",
-      "covers": "games since 8 July 2026"
-    },
-    {
-      "metric": "player_min_pm",
-      "surface": "Player minutes \u2014 average error",
-      "value": 5.05,
-      "unit": "minutes",
-      "n": 777,
-      "direction": "lower is better",
-      "kind": "live games",
-      "no_data": false,
-      "note": "How far off our minutes projection is, per player per game.",
-      "engine": "conformal v1",
-      "covers_from": "2026-07-08",
-      "covers": "games since 8 July 2026",
-      "movement": {
-        "delta": 0.0041,
-        "since": "2026-08-15",
-        "direction": "lower is better"
-      }
-    },
-    {
-      "metric": "player_pts_pm",
-      "surface": "Player points \u2014 average error",
-      "value": 4.11,
-      "unit": "points",
-      "n": 777,
-      "direction": "lower is better",
-      "kind": "live games",
-      "no_data": false,
-      "note": "How far off our points projection is, per player per game.",
-      "engine": "conformal v1",
-      "covers_from": "2026-07-08",
-      "covers": "games since 8 July 2026",
-      "movement": {
-        "delta": -0.0541,
-        "since": "2026-08-15",
-        "direction": "lower is better"
-      }
-    }
+  "headline": {
+   "avg_miss": 10.9,
+   "n_games": 163,
+   "win_pct": 64.4,
+   "line": "Across 163 graded games this season, our predicted winning margin misses the final result by about 10.9 points on average, and we call the right winner 64.4% of the time.",
+   "bias_line": "No systematic lean: across the season our calls sit within a point of dead-center — we don't quietly favor home teams or road teams.",
+   "caveat": "The misses that hurt are blowouts — games that turn into runaways no one saw coming. About eleven points is close to the practical floor for a single WNBA game: past that, the result is mostly shooting luck that no model — or betting market — can predict. We publish the miss instead of hiding it."
+  },
+  "heading": "Is this number stale? We re-check it against every past game",
+  "metrics": [
+   {
+    "label": "Average margin miss, as we published it",
+    "value": 10.87,
+    "unit": "points",
+    "note": "Across 163 graded games this season."
+   },
+   {
+    "label": "Same games, re-scored with today's framework",
+    "value": 10.65,
+    "unit": "points",
+    "note": "Essentially identical — no hidden drift between what we shipped and what we'd ship now."
+   },
+   {
+    "label": "How often we call the right winner",
+    "value": 64.4,
+    "unit": "%",
+    "note": "Share of games where our favored side actually won."
+   }
   ],
   "calibration": [
-    {
-      "surface": "Our 90% margin range actually contains the result",
-      "target": 90.0,
-      "actual": 90.4,
-      "unit": "%",
-      "n": 167,
-      "flag": false,
-      "engine": "conformal v12"
-    },
-    {
-      "surface": "Our 80% margin range actually contains the result",
-      "target": 80.0,
-      "actual": 80.8,
-      "unit": "%",
-      "n": 167,
-      "flag": false,
-      "engine": "conformal v12"
-    }
+   {
+    "label": "Our 50% (coin-flip) margin range contained the result",
+    "target": 50.0,
+    "actual": 46.6
+   },
+   {
+    "label": "Our 80% margin range contained the result",
+    "target": 80.0,
+    "actual": 79.1
+   },
+   {
+    "label": "Our 90% margin range contained the result",
+    "target": 90.0,
+    "actual": 88.3
+   }
   ],
-  "monthly": [
-    {
-      "month": "2025-05",
-      "value": 9.89,
-      "n": 37
-    },
-    {
-      "month": "2025-06",
-      "value": 10.72,
-      "n": 68
-    },
-    {
-      "month": "2025-07",
-      "value": 11.69,
-      "n": 65
-    },
-    {
-      "month": "2025-08",
-      "value": 10.01,
-      "n": 84
-    },
-    {
-      "month": "2025-09",
-      "value": 10.35,
-      "n": 29
-    },
-    {
-      "month": "2026-05",
-      "value": 11.11,
-      "n": 48
-    },
-    {
-      "month": "2026-06",
-      "value": 10.57,
-      "n": 81
-    },
-    {
-      "month": "2026-07",
-      "value": 12.2,
-      "n": 14
-    }
-  ],
-  "note": "",
-  "source": "graded from our own game-by-game scorecard",
-  "backtest": {
-    "available": true,
-    "headline": {
-      "avg_miss": 10.9,
-      "n_games": 163,
-      "win_pct": 64.4,
-      "line": "Across 163 graded games this season, our predicted winning margin misses the final result by about 10.9 points on average, and we call the right winner 64.4% of the time.",
-      "bias_line": "No systematic lean: across the season our calls sit within a point of dead-center \u2014 we don't quietly favor home teams or road teams.",
-      "caveat": "The misses that hurt are blowouts \u2014 games that turn into runaways no one saw coming. About eleven points is close to the practical floor for a single WNBA game: past that, the result is mostly shooting luck that no model \u2014 or betting market \u2014 can predict. We publish the miss instead of hiding it."
-    },
-    "heading": "Is this number stale? We re-check it against every past game",
-    "metrics": [
-      {
-        "label": "Average margin miss, as we published it",
-        "value": 10.87,
-        "unit": "points",
-        "note": "Across 163 graded games this season."
-      },
-      {
-        "label": "Same games, re-scored with today's framework",
-        "value": 10.65,
-        "unit": "points",
-        "note": "Essentially identical \u2014 no hidden drift between what we shipped and what we'd ship now."
-      },
-      {
-        "label": "How often we call the right winner",
-        "value": 64.4,
-        "unit": "%",
-        "note": "Share of games where our favored side actually won."
-      }
-    ],
-    "calibration": [
-      {
-        "label": "Our 50% (coin-flip) margin range contained the result",
-        "target": 50.0,
-        "actual": 46.6
-      },
-      {
-        "label": "Our 80% margin range contained the result",
-        "target": 80.0,
-        "actual": 79.1
-      },
-      {
-        "label": "Our 90% margin range contained the result",
-        "target": 90.0,
-        "actual": 88.3
-      }
-    ],
-    "takeaway": "Re-running our current method on every past game reproduces almost exactly the accuracy we already published \u2014 so the headline above is what we actually shipped, not a number flattered after the fact. The framework is stable, not stale."
-  },
-  "generated_utc": "2026-08-26T15:42:09+00:00",
-  "date": "2026-08-26"
+  "takeaway": "Re-running our current method on every past game reproduces almost exactly the accuracy we already published — so the headline above is what we actually shipped, not a number flattered after the fact. The framework is stable, not stale."
+ },
+ "generated_utc": "2026-08-26T18:18:53+00:00",
+ "date": "2026-08-26",
+ "generated_et": "Aug 26, 2:18pm ET"
 }
