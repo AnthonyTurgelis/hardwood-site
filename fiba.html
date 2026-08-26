@@ -24,6 +24,12 @@
     .hw-table-wrap th,.hw-table-wrap td{padding:.3rem .5rem;text-align:left;border-bottom:1px solid rgba(128,128,128,.25);white-space:nowrap}
     .hw-table-wrap th button{background:none;border:0;font:inherit;font-weight:700;cursor:pointer;padding:0;color:inherit}
     .hw-note{font-size:.85rem;opacity:.8;margin:.35rem 0}
+
+    /* Layout primitives not globally defined */
+    .hw-split { display: grid; grid-template-columns: 1fr; gap: 1.5rem; align-items: start; margin-top: 1.5rem; }
+    @media (min-width: 900px) { .hw-split { grid-template-columns: 1fr 340px; } }
+    .hw-team-strip { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; margin-bottom: 1rem; scrollbar-width: thin; }
+    .hw-inspector { background: rgba(255,255,255,0.05); border: 1px solid rgba(128,128,128,0.25); border-radius: 4px; padding: 1rem; position: sticky; top: 5rem; }
   </style>
 <!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
 <body class="hw-product" data-page="fiba" data-section="fiba" data-product="fiba"><header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="fiba.html" aria-current="page">FIBA / International</a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
@@ -33,7 +39,7 @@
       <div class="hw-command-title">
         <div class="hw-kicker">FIBA / International</div>
         <h1>International competition</h1>
-        <p>The 2026 Women's World Cup field, roster certification as it firms up, tournament history, and per-tournament player production. Every number on this page is computed from the published artifact at render.</p>
+        <p>The 2026 Women's World Cup field, OPQT source states, tournament history, and FanGraphs-grade per-tournament player production dossier. Every number on this page is computed from the published artifact at render.</p>
       </div>
       <div class="hw-command-meta">
         <span class="hw-fresh" data-fresh><span class="hw-fresh-dot"></span>Loading</span>
@@ -49,9 +55,9 @@
         <div id="fiba-wc">Loading…</div>
       </section>
 
-      <section class="hw-module" aria-label="Roster certification">
+      <section class="hw-module" aria-label="Qualifying Source Pool">
         <div class="hw-module-head">
-          <div><h2>Roster certification</h2></div>
+          <div><h2>Qualifying Source Pool</h2></div>
         </div>
         <p class="hw-note" id="fiba-cert-note">Loading…</p>
         <div class="hw-table-wrap">
@@ -103,6 +109,44 @@
           </table>
         </div>
         <p class="hw-note" id="fiba-coverage"></p>
+      </section>
+
+      <section class="hw-module" aria-label="Player Dossier" id="dossier-section" style="display:none; margin-top:3rem;">
+        <div class="hw-module-head">
+          <div><h2>Player Dossier</h2></div>
+        </div>
+
+        <div id="team-strip" class="hw-team-strip"></div>
+
+        <div class="hw-fiba-toolbar">
+          <label><span>Search Dossier</span><input id="dossier-search" type="search" placeholder="Search players..." style="background: rgba(255,255,255,0.05); border: 1px solid rgba(128,128,128,0.25); color: inherit; padding: 0.4rem 0.75rem; border-radius: 4px; font-size: 0.9rem;"></label>
+          <label><span>Team Filter</span><select id="dossier-team-filter" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(128,128,128,0.25); color: inherit; padding: 0.4rem 0.75rem; border-radius: 4px; font-size: 0.9rem;"><option value="">All Teams</option></select></label>
+          <button class="hw-button" id="dossier-reset" type="button">Reset</button>
+        </div>
+
+        <div class="hw-split">
+          <div class="hw-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th><button type="button" data-sort="dossier_player_name">Player</button></th>
+                  <th><button type="button" data-sort="dossier_team_abbr">Team</button></th>
+                  <th><button type="button" data-sort="dossier_impact">Rank in basis</button></th>
+                  <th><button type="button" data-sort="dossier_basis">Basis</button></th>
+                  <th><button type="button" data-sort="dossier_lines">Lines</button></th>
+                </tr>
+              </thead>
+              <tbody id="dossier-players-body">
+                <tr><td colspan="5">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="inspector" class="hw-inspector">
+            <div class="hw-muted" style="font-style:italic;">Select a player to view dossier.</div>
+          </div>
+        </div>
+        <p class="hw-note" id="dossier-coverage"></p>
       </section>
     </div>
   </main>

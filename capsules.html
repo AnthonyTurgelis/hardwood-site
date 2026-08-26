@@ -109,13 +109,12 @@
   function rankedTeams(fixture){
     return arrayRows(fixture.teams).slice().sort(function(a,b){return (a.rank||999)-(b.rank||999);});
   }
-  var BATCH_LIMIT=6;
   function selectBatch(fixture){
     return rankedTeams(fixture).filter(function(row){
       return ["teams","standings","player_impact","coach_style","tempo"].every(function(source){
         return sourceHas(fixture,source,row.team);
       });
-    }).slice(0,BATCH_LIMIT);
+    });
   }
   function teamRow(fixture,source,team){
     var rows=sourceRows(fixture,source);
@@ -158,7 +157,8 @@
       history+
       '<p><strong>Pace:</strong> '+fixed(pace.pace,1)+' possessions/game · '+missing(pace.tier_label,"Pace tier")+' · n='+comma(pace.n_games)+'</p>'+
       '<p><small>Recent '+fixed(pace.pace_recent,1)+' · change '+signed(pace.pace_delta,1)+' · '+missing(pace.pace_trend,"Pace trend")+'</small></p>'+
-      '<p><small>League mean '+fixed(league.pace_mean,1)+' · standard deviation '+fixed(league.pace_std,2)+' · '+comma(league.n_teams)+' teams</small></p></section>';
+      '<p><small>League mean '+fixed(league.pace_mean,1)+' · standard deviation '+fixed(league.pace_std,2)+' · '+comma(league.n_teams)+' teams</small></p>'+
+      '<p><small>Rest and travel are calendar context, not an edge carried by the model: the modern away back-to-back is worth about a point, and the home effect has largely vanished.</small></p></section>';
   }
   function whatChanged(fixture,team,standing){
     var trend=team.trend||{}, range=standing&&Array.isArray(standing.proj_range_90)?standing.proj_range_90:[];
@@ -195,8 +195,8 @@
     var uncovered=teams.filter(function(row){return covered.indexOf(row.team)<0;});
     var sourceGaps=uncovered.map(function(row){
       var missingList=missingSources(fixture,row.team);
-      var reason=missingList.length?"missing "+missingList.map(gapLabel).join(", "):"outside the first "+BATCH_LIMIT+"-team batch cap";
-      return '<li><strong>'+esc(row.team)+'</strong> — <span class="'+(missingList.length?"tc-gap":"tc-cap")+'">'+esc(reason)+'</span></li>';
+      var reason="missing "+(missingList.length?missingList.map(gapLabel).join(", "):"a team row");
+      return '<li><strong>'+esc(row.team)+'</strong> — <span class="tc-gap">'+esc(reason)+'</span></li>';
     }).join("");
     var sourceLabels=[
       ["teams","Teams / change","teams"],
@@ -206,9 +206,9 @@
       ["tempo","Tempo / pace","tempo"],
     ];
     var sourceCards=sourceLabels.map(function(item){return sourceCard(item[0],item[1],fixture[item[2]]);}).join("");
-    var rule="first up to "+BATCH_LIMIT+" teams by rank with a row in every source";
-    var body='<header class="hw-command-head"><div class="tc-intro"><div class="hw-kicker">Teams · first capsule batch</div><h1>What each team does, what changed, and what the number rests on</h1><p>Impact leads each capsule. Counting stats and projections follow only after the player signal, style read, and pace context are visible.</p></div><div class="hw-command-meta"><span class="hw-badge">First batch: '+batch.length+' of the league\'s '+teams.length+' teams</span></div></header>'+
-      '<section class="hw-module"><div class="hw-module-body"><div class="tc-meta"><span><b>Selection rule</b> '+esc(rule)+'</span><span>·</span><span><b>Not yet covered</b> '+uncovered.length+' teams</span></div><p class="tc-note">The batch is a format sample, not a complete league view. Each team below has one stated reason: a named source gap or the batch cap.</p>'+ (uncovered.length?'<ul class="tc-note">'+sourceGaps+'</ul>':'<p class="tc-note">None.</p>')+'</div></section>'+
+    var rule="every team, by rank, with a row in every source";
+    var body='<header class="hw-command-head"><div class="tc-intro"><div class="hw-kicker">Teams · league capsule coverage</div><h1>What each team does, what changed, and what the number rests on</h1><p>Impact leads each capsule. Counting stats and projections follow only after the player signal, style read, and pace context are visible.</p></div><div class="hw-command-meta"><span class="hw-badge">Covered: '+batch.length+' of the league\'s '+teams.length+' teams</span></div></header>'+
+      '<section class="hw-module"><div class="hw-module-body"><div class="tc-meta"><span><b>Selection rule</b> '+esc(rule)+'</span><span>·</span><span><b>Not yet covered</b> '+uncovered.length+' teams</span></div><p class="tc-note">A team sits out only for a named source gap — never silently.</p>'+ (uncovered.length?'<ul class="tc-note">'+sourceGaps+'</ul>':'<p class="tc-note">None.</p>')+'</div></section>'+
       '<section class="tc-capsules" aria-label="Team capsules">'+batch.map(function(team){return capsule(fixture,team);}).join("")+'</section>'+
       '<section class="hw-module"><div class="hw-module-head"><div><h2>Artifact freshness</h2><span>Each source carries its own clock</span></div></div><div class="hw-module-body"><div class="tc-source-grid">'+sourceCards+'</div></div></section>';
     var root=document.getElementById("content");

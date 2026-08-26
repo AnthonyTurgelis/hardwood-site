@@ -63,6 +63,7 @@
 
   function installShell(){
     if($("hw-product-shell"))return;
+    if(window.HWProductShell&&typeof window.HWProductShell.install==="function"){window.HWProductShell.install();return;}
     var header=document.createElement("header");
     header.className="hw-topbar";
     header.id="hw-product-shell";
@@ -78,6 +79,82 @@
     footer.innerHTML='<div class="hw-footer-inner"><div><strong>Hardwood</strong>Dense WNBA league intelligence, forecasts, public grading, and research.</div><div class="hw-footer-links"><a href="games.html">Games</a><a href="players.html">Players</a><a href="teams.html">Teams</a><a href="standings.html">Standings</a><a href="availability.html">Availability</a><a href="accuracy.html">Accuracy</a><a href="deepdive.html">Research</a><a href="board.html">Operations</a></div></div>';
     document.body.appendChild(footer);
   }
+
+  /* Per-panel content freshness: each fact family is judged ONLY by its own
+     artifact's content timestamp. A page/shell/revalidation clock never
+     certifies an older family; missing, unreadable, and future times fail
+     visibly instead of borrowing a neighbour's clock. */
+  /* Build clocks (generated_utc, built_utc, revalidated, …) are NOT content
+     truth: a rebuild can freshen them without freshening the fact family.
+     Each panel resolves only its family's explicit content stamps; a family
+     that publishes none is UNKNOWN, never greened by a bake clock. */
+  var PANEL_CONTENT_CLOCKS={
+    games:{any:[["as_of","calls"],["content_as_of","calls"]]},
+    standings:{all:[["progress.standings_asof","records"],["progress.outlook_asof","outlook"]]},
+    teams:{any:[["as_of","scouting"],["content_as_of","scouting"],["title_as_of","scouting"]]},
+    players:{any:[["ratings.as_of","impact"],["as_of","impact"],["content_as_of","impact"]]},
+    availability:{any:[["as_of","availability"],["content_as_of","availability"]]},
+    research:{any:[["as_of","research"],["content_as_of","research"]]}
+  };
+  var PANEL_SOURCES=[["games-heading","games"],["standings-heading","standings"],["teams-heading","teams"],["players-heading","players"],["availability-heading","availability"],["research-heading","research"]];
+  function pathValue(object,path){
+    var parts=String(path).split("."),node=object;
+    for(var i=0;i<parts.length;i++){if(node==null)return null;node=node[parts[i]];}
+    return has(node)?node:null;
+  }
+  function contentClockDate(value){
+    var d=dateObject(value);
+    if(!d)return null;
+    if(d.getFullYear()<2020)return null;
+    return d;
+  }
+  function contentFreshness(payload,spec){
+    spec=spec||{any:[["as_of","content"],["content_as_of","content"]]};
+    var pairs=[],i,value;
+    if(spec.all){
+      for(i=0;i<spec.all.length;i++){
+        value=pathValue(payload,spec.all[i][0]);
+        if(!has(value))return {state:"unknown",label:"No "+spec.all[i][1]+" content time published"};
+        pairs.push({name:spec.all[i][1],value:value});
+      }
+    }else{
+      for(i=0;i<spec.any.length&&!pairs.length;i++){
+        value=pathValue(payload,spec.any[i][0]);
+        if(has(value))pairs.push({name:spec.any[i][1],value:value});
+      }
+      if(!pairs.length)return {state:"unknown",label:"Content time not published"};
+    }
+    var oldest=null,titles=[];
+    for(i=0;i<pairs.length;i++){
+      var d=contentClockDate(pairs[i].value);
+      if(!d)return {state:"invalid",label:"Content time unreadable ("+pairs[i].name+")"};
+      if(d.getTime()>Date.now()+6e4)return {state:"future",label:"Content time is in the future ("+pairs[i].name+")"};
+      titles.push(pairs[i].name+" as of "+String(pairs[i].value));
+      if(!oldest||d<oldest)oldest=d;
+    }
+    var stale=(Date.now()-oldest.getTime())/36e5>24;
+    return {state:stale?"stale":"fresh",label:"Content updated "+ageText(oldest.toISOString()),asOf:oldest,title:titles.join(" · ")};
+  }
+  function setPanelFresh(payloads){
+    PANEL_SOURCES.forEach(function(pair){
+      var heading=$(pair[0]);
+      if(!heading||!heading.parentNode)return;
+      var head=heading.parentNode;
+      var badge=head.querySelector("[data-panel-fresh]");
+      if(!badge){
+        badge=document.createElement("span");
+        badge.className="hw-fresh hw-panel-fresh";
+        badge.setAttribute("data-panel-fresh",pair[1]);
+        head.insertBefore(badge,heading.nextSibling);
+      }
+      var fresh=contentFreshness(payloads[pair[1]],PANEL_CONTENT_CLOCKS[pair[1]]);
+      badge.setAttribute("data-fresh-state",fresh.state);
+      badge.classList.toggle("warn",fresh.state!=="fresh");
+      badge.innerHTML='<span class="hw-fresh-dot"></span>'+esc(fresh.label);
+      if(fresh.title)badge.title=fresh.title;else badge.removeAttribute("title");
+    });
+  }
+  window.HWContentFreshness={read:contentFreshness,panelClocks:PANEL_CONTENT_CLOCKS};
 
   function setFresh(payloads){
     var dates=[],undated=0;
@@ -426,6 +503,7 @@
 
   function renderAll(){
     setFresh(Object.keys(state.payloads).map(function(key){return state.payloads[key];}));
+    setPanelFresh(state.payloads);
     renderStories();renderGames();renderPulse();renderStandings();renderTeams();renderPlayers();renderAvailability();renderResearch();renderViz(state.viz);
   }
 

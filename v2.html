@@ -259,7 +259,7 @@
     const state = { manifest: {}, preview: {}, games: {}, players: {}, accuracy: {}, news: {}, playerRows: [] };
     const $ = id => document.getElementById(id);
     const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-    const num = value => { const n = Number(value); return Number.isFinite(n) ? n : null; };
+    const num = value => { if (value === null || value === undefined || value === "") return null; const n = Number(value); return Number.isFinite(n) ? n : null; };
     const first = (obj, keys) => { for (const key of keys) if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== '') return obj[key]; return null; };
     const pct = (value, digits = 0) => { let n = num(value); if (n === null) return '—'; if (n <= 1) n *= 100; return `${n.toFixed(digits)}%`; };
     const fixed = (value, digits = 1) => { const n = num(value); return n === null ? '—' : n.toFixed(digits); };
@@ -281,22 +281,17 @@
       const p = predictions(game);
       const home = teamName(first(game, ['home_team','home','home_abbr']));
       const away = teamName(first(game, ['away_team','away','away_abbr']));
-      const winner = teamName(first(p, ['winner','predicted_winner','pick']) || '');
-      let probability = num(first(p, ['win_probability','model_probability','probability','home_win_probability']));
-      if (probability !== null && probability > 1) probability /= 100;
-      let homeProbability = num(first(p, ['home_win_probability','home_probability']));
+
+      let homeProbability = num(first(game, ['p_home_win']));
       if (homeProbability !== null && homeProbability > 1) homeProbability /= 100;
-      if (homeProbability === null && probability !== null && winner) {
-        if (winner.toLowerCase() === home.toLowerCase()) homeProbability = probability;
-        if (winner.toLowerCase() === away.toLowerCase()) homeProbability = 1 - probability;
-      }
-      const homeScore = num(first(p, ['predicted_home_score','home_score_projection']));
-      const awayScore = num(first(p, ['predicted_away_score','away_score_projection']));
-      let margin = num(first(p, ['predicted_margin','point_spread','projected_margin']));
-      if (margin === null && homeScore !== null && awayScore !== null) margin = homeScore - awayScore;
-      let total = num(first(p, ['predicted_total','total','projected_total']));
-      if (total === null && homeScore !== null && awayScore !== null) total = homeScore + awayScore;
-      return { home, away, winner: winner || null, probability, homeProbability, margin, total, homeScore, awayScore, model: first(p, ['source_model','model','prediction_source','source_version','model_version']) || 'source pending' };
+
+      const call = first(game, ['call']);
+      const margin = num(first(game, ['pred_margin']));
+      const total = num(first(game, ['total']));
+
+
+
+      return { home, away, homeProbability, margin, total, call, model: first(game, ['source_model','model','prediction_source','source_version','model_version']) || 'data pending' };
     }
 
     function renderFreshness() {
@@ -311,17 +306,20 @@
     }
 
     function playerRows() {
-      const source = state.players?.ratings || state.players?.players || state.players?.rows || {};
+      const source = state.players?.ratings?.players || state.players?.players || state.players?.rows || {};
       const raw = Array.isArray(source) ? source : Object.entries(source).map(([id, row]) => ({player_id:id, ...(row || {})}));
       return raw.map(row => ({
-        id: first(row, ['player_id','nba_player_id','id']),
-        name: first(row, ['player_name','name','canonical_name']) || 'Unknown player',
-        team: teamName(first(row, ['team','team_abbr','abbr'])),
-        impact: num(first(row, ['impact_rating','impact','rating','projected_value'])),
-        minutes: num(first(row, ['predicted_minutes','minutes_projection','projected_minutes'])),
+        id: first(row, ['id']),
+        name: first(row, ['name']) || 'data pending',
+        team: teamName(first(row, ['team'])),
+        impact: num(first(row, ['rating'])),
+        pts: num(first(row, ['pts'])),
+        reb: num(first(row, ['reb'])),
+        ast: num(first(row, ['ast'])),
+        minutes: num(first(row, ['minutes'])),
         provisional: Boolean(first(row, ['impact_provisional','provisional'])),
         thin: Boolean(first(row, ['thin','thin_sample'])),
-        url: first(row, ['profile_url','player_url','url']) || (first(row, ['player_id','nba_player_id','id']) ? `players/${first(row, ['player_id','nba_player_id','id'])}.html` : 'players.html')
+        url: first(row, ['profile_url','player_url','url']) || (first(row, ['id']) ? `players/${first(row, ['id'])}.html` : 'players.html')
       }));
     }
 
@@ -350,8 +348,8 @@
       target.innerHTML = games.map(game => {
         const f = forecast(game); const date = first(game, ['date','game_date','scheduled_at']); const status = first(game, ['status','game_status']) || 'Scheduled';
         const homeP = f.homeProbability; const awayP = homeP === null ? null : 1-homeP; const report = first(game, ['report_url','gameday_report_url']) || 'games.html';
-        const score = f.homeScore !== null && f.awayScore !== null ? `${fixed(f.awayScore,0)}–${fixed(f.homeScore,0)}` : '—';
-        return `<article class="card game-card"><div class="game-meta"><span>${esc(dateText(date))}</span><span>${esc(status)}</span></div><div class="matchup"><div class="team"><strong>${esc(f.away)}</strong><span>${awayP === null ? 'Away' : `${pct(awayP)} win`}</span></div><span class="at">@</span><div class="team"><strong>${esc(f.home)}</strong><span>${homeP === null ? 'Home' : `${pct(homeP)} win`}</span></div></div><div class="prob-line"><div class="prob-labels"><span>${esc(f.away)}</span><span>${esc(f.home)}</span></div><div class="bar"><span style="width:${homeP === null ? 50 : Math.max(2,Math.min(98,homeP*100))}%"></span></div></div><div class="forecast-grid"><div class="forecast-stat"><strong>${esc(score)}</strong><span>projected score</span></div><div class="forecast-stat"><strong>${esc(signed(f.margin))}</strong><span>home margin</span></div><div class="forecast-stat"><strong>${esc(fixed(f.total,1))}</strong><span>total</span></div></div><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="model-tag">${esc(f.model)}</span><a class="button" href="${safeLink(report)}">Full report</a></div></article>`;
+        const score = f.call || '—';
+        return `<article class="card game-card"><div class="game-meta"><span>${esc(dateText(date))}</span><span>${esc(status)}</span></div><div class="matchup"><div class="team"><strong>${esc(f.away)}</strong><span>${awayP === null ? 'Away' : `${pct(awayP)} win`}</span></div><span class="at">@</span><div class="team"><strong>${esc(f.home)}</strong><span>${homeP === null ? 'Home' : `${pct(homeP)} win`}</span></div></div><div class="prob-line"><div class="prob-labels"><span>${esc(f.away)}</span><span>${esc(f.home)}</span></div><div class="bar"><span style="width:${homeP === null ? 50 : Math.max(2,Math.min(98,homeP*100))}%"></span></div></div><div class="forecast-grid"><div class="forecast-stat"><strong>${esc(score)}</strong><span>call</span></div><div class="forecast-stat"><strong>${esc(signed(f.margin))}</strong><span>home margin</span></div><div class="forecast-stat"><strong>${esc(fixed(f.total,1))}</strong><span>total</span></div></div><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span class="model-tag">${esc(f.model)}</span><a class="button" href="${safeLink(report)}">Full report</a></div></article>`;
       }).join('');
     }
 
@@ -383,8 +381,8 @@
       const games = rows(state.games, ['games','rows','items']).slice().reverse().slice(0,30);
       if (!games.length) { $('game-ledger').innerHTML = '<tr><td colspan="8"><div class="empty">No game history was published.</div></td></tr>'; return; }
       $('game-ledger').innerHTML = games.map(game => {
-        const f = forecast(game); const p = predictions(game); const homeScore = num(first(game,['home_score','actual_home_score'])); const awayScore = num(first(game,['away_score','actual_away_score'])); const actual = homeScore !== null && awayScore !== null ? homeScore-awayScore : num(first(p,['actual_margin'])); const report = first(game,['report_url','gameday_report_url']); const win = f.probability ?? f.homeProbability;
-        return `<tr><td>${esc(dateText(first(game,['date','game_date'])))}</td><td><strong>${esc(f.away)} @ ${esc(f.home)}</strong></td><td>${esc(f.winner || '—')}</td><td class="num">${esc(pct(win))}</td><td class="num">${esc(signed(f.margin))}</td><td class="num">${esc(signed(actual))}</td><td><span class="model-tag">${esc(f.model)}</span></td><td>${report ? `<a class="section-link" href="${safeLink(report)}">Open</a>` : '—'}</td></tr>`;
+        const f = forecast(game); const p = predictions(game); const homeScore = num(first(game,['home_score','actual_home_score'])); const awayScore = num(first(game,['away_score','actual_away_score'])); const actual = homeScore !== null && awayScore !== null ? homeScore-awayScore : num(first(p,['actual_margin'])); const report = first(game,['report_url','gameday_report_url']); const win = f.homeProbability;
+        return `<tr><td>${esc(dateText(first(game,['date','game_date'])))}</td><td><strong>${esc(f.away)} @ ${esc(f.home)}</strong></td><td>${esc(f.call || '—')}</td><td class="num">${esc(pct(win))}</td><td class="num">${esc(signed(f.margin))}</td><td class="num">${esc(signed(actual))}</td><td><span class="model-tag">${esc(f.model)}</span></td><td>${report ? `<a class="section-link" href="${safeLink(report)}">Open</a>` : '—'}</td></tr>`;
       }).join('');
     }
 

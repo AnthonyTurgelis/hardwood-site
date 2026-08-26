@@ -23,7 +23,7 @@
   var SORT_KEYS=["rank","gp","minutes","pts","reb","ast","impact","impactRank","seasonRate","seasonVolume","basis","trend"];
   var SORT_LABELS={rank:"Score #",gp:"GP",minutes:"Proj min",pts:"PTS",reb:"REB",ast:"AST",impact:"Impact",impactRank:"Impact #",seasonRate:"Season rate",seasonVolume:"Season total",basis:"Basis",trend:"Trend"};
   var VIZ_KEYS=["impact-minutes","season","ranks"];
-  var SOURCE_LABELS={players:"player board",availability:"availability",season:"season impact",impact:"per-100 impact"};
+  var SOURCE_LABELS={players:"player board",availability:"availability",season:"season impact",impact:"per-100 impact",intl:"international record"};
 
   function param(name){return new URL(location.href).searchParams.get(name);}
   function replaceParam(name,value){var url=new URL(location.href);if(value===null||value===undefined||value==="")url.searchParams.delete(name);else url.searchParams.set(name,String(value));var query=url.searchParams.toString();history.replaceState(history.state,"",url.pathname+(query?"?"+query:"")+url.hash);}
@@ -153,15 +153,24 @@
   // counting stats follow, per the CEO-facing ordering. A null renders BLANK rather than 0: these
   // sources genuinely lack minutes for some seasons, and a fabricated zero is worse than a gap.
   function intlNum(v,dp){return (v===null||v===undefined||v==="")?"":Number(v).toFixed(dp===undefined?1:dp);}
+  function intlWrap(body){return '<section class="hw-player-inspector-section" data-intl="1"><h3>International career</h3>'+body+'</section>';}
   function intlSection(p){
     var e=state.intl&&p&&p.name?state.intl[String(p.name).toLowerCase()]:null;
-    if(!e||!e.leagues)return "";
+    if(!e||!e.leagues||!Object.keys(e.leagues).length){
+      if(state.intlUnavailable)return intlWrap('<p class="hw-player-inspector-copy">International record is temporarily unavailable. No international stats are shown until the source is readable.</p>');
+      if(state.intl)return intlWrap('<p class="hw-player-inspector-copy">No international season rows are published for this player.</p>');
+      return "";
+    }
     var names=Object.keys(e.leagues);
-    if(!names.length)return "";
     var body=names.map(function(lg){
       var rows=(e.leagues[lg]||[]).slice().sort(function(a,b){return (b.season||0)-(a.season||0);});
       var seasons=rows.map(function(r){
-        var per36=[intlNum(r.pts36),intlNum(r.reb36),intlNum(r.ast36)].filter(Boolean);
+        // A per-36 rate is only a measurement when the source holds real minutes for the season.
+        // Some held rows carry a per-36 back-derived from per-game at an assumed 24 mpg while
+        // total_min and mpg are NULL - that is an estimate wearing a measurement's clothes, and
+        // it never reaches the reader. No minutes, no rate: the blank is the honest render.
+        var hasMin=(r.total_min!==null&&r.total_min!==undefined&&r.total_min!=="")||(r.mpg!==null&&r.mpg!==undefined&&r.mpg!=="");
+        var per36=hasMin?[intlNum(r.pts36),intlNum(r.reb36),intlNum(r.ast36)].filter(Boolean):[];
         var rate=per36.length===3?(per36[0]+" / "+per36[1]+" / "+per36[2]+" per 36"):"";
         var box=[intlNum(r.ppg),intlNum(r.rpg),intlNum(r.apg)].filter(Boolean);
         var boxTxt=box.length===3?(box[0]+" / "+box[1]+" / "+box[2]+" per game"):"";
@@ -171,9 +180,7 @@
       }).join("");
       return '<h4 class="hw-player-intl-league">'+esc(lg)+'</h4>'+seasons;
     }).join("");
-    return '<section class="hw-player-inspector-section" data-intl="1"><h3>International career</h3>'
-      +'<p class="hw-player-inspector-copy">Seasons held outside the WNBA, newest first. A blank rate means that source published no minutes for the season, not a zero.</p>'
-      +body+'</section>';
+    return intlWrap('<p class="hw-player-inspector-copy">Seasons held outside the WNBA, newest first. A blank rate means that source published no minutes for the season, not a zero.</p>'+body);
   }
   function renderInspector(p){
     if(!p){$("player-inspector").innerHTML='<div class="hw-module-head"><h2>Player inspector</h2><span>Select a row</span></div><div class="hw-empty">Choose any player to see impact, production, role, availability, ranking divergence, movement, and basis together.</div>';return;}
@@ -275,7 +282,7 @@
     document.addEventListener("keydown",function(event){if(event.key==="/"&&!event.metaKey&&!event.ctrlKey&&!event.altKey&&!editableTarget(event.target)){event.preventDefault();search.focus();if(search.select)search.select();return;}if(event.key==="Escape"&&document.activeElement===search&&search.value){event.preventDefault();search.value="";renderTable();replaceParam("q","");}});
   }
   function init(){
-    Promise.all([fetchJSON("players.json"),fetchJSON("availability.json"),fetchJSON("season_impact.json"),fetchJSON("player_impact.json"),fetchJSON("players_intl.json").catch(function(){return null;})]).then(function(v){state.sources={players:v[0],availability:v[1],season:v[2],impact:v[3],intl:v[4]};state.intl={};(v[4]&&v[4].players||[]).forEach(function(e){if(e&&e.player_name)state.intl[String(e.player_name).toLowerCase()]=e;});state.players=mergeSources(v[0],v[1],v[2],v[3]);populateTeams();renderStories();renderWatches();setFresh(state.sources);bind();
+    Promise.all([fetchJSON("players.json"),fetchJSON("availability.json"),fetchJSON("season_impact.json"),fetchJSON("player_impact.json"),fetchJSON("players_intl.json").catch(function(){return null;})]).then(function(v){state.sources={players:v[0],availability:v[1],season:v[2],impact:v[3],intl:v[4]};state.intl={};state.intlUnavailable=(v[4]===null||v[4]===undefined);(v[4]&&v[4].players||[]).forEach(function(e){if(e&&e.player_name)state.intl[String(e.player_name).toLowerCase()]=e;});state.players=mergeSources(v[0],v[1],v[2],v[3]);populateTeams();renderStories();renderWatches();setFresh(state.sources);bind();
     var paramId = new URLSearchParams(location.search).get("player_id") || new URLSearchParams(location.search).get("player");
     var initialSelected = null;
     if (paramId) {

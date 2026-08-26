@@ -11,28 +11,6 @@
 <!--hw-chrome-style--><style>.hw-chrome nav{display:flex;flex-wrap:wrap;gap:.25rem 1rem;align-items:center}.hw-chrome a{text-decoration:none}.hw-tab[aria-current=page]{font-weight:700;text-decoration:underline}.hw-chrome-foot{margin-top:2rem;padding-top:.75rem;border-top:1px solid rgba(128,128,128,.35);font-size:.85rem}.hw-chrome-foot .util{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-bottom:.75rem}</style><!--/hw-chrome-style--></head>
 <body class="hw-product" data-page="accuracy-dense" data-section="accuracy" data-product="dense-accuracy"><header class="wrap hw-chrome"><div class="mark">The <span>Hardwood</span></div><p class="ethos">Our margin call, the honest range around it, and the win chance. Graded daily.</p><!--hw-nav--><nav class="hw-nav" aria-label="Primary"><a class="hw-tab" href="index.html">Home</a><a class="hw-tab" href="games.html">Games</a><a class="hw-tab" href="teams.html">Teams</a><a class="hw-tab" href="players.html">Players</a><a class="hw-tab" href="fiba.html">FIBA / International</a><a class="hw-tab" href="deepdive.html">Deep Dives</a><a class="hw-tab" href="accuracy.html" aria-current="page">Accuracy</a><a class="hw-tab" href="primer.html">Learn</a></nav><!--/hw-nav--></header>
   <a class="hw-skip" href="#content">Skip to content</a>
-  <!--accuracy-disagreement-ladders-->
-<section id="disagreement-ladders" class="dl-wrap" aria-labelledby="dl-title">
-  <style>
-    .dl-wrap{max-width:972px;margin:18px auto 4px;padding:0 14px}.dl-wrap h2{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 4px}.dl-intro,.dl-read{color:var(--muted);font-size:12px}.dl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:9px}.dl-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px;box-shadow:var(--shadow)}.dl-card h3{font-size:14px;margin:0 0 2px}.dl-card table{width:100%;border-collapse:collapse;margin-top:8px;font-variant-numeric:tabular-nums}.dl-card th,.dl-card td{text-align:right;padding:5px 4px;border-top:1px solid var(--line);font-size:11.5px}.dl-card th:first-child,.dl-card td:first-child{text-align:left}.dl-loss{color:var(--warn);font-weight:700}@media(max-width:680px){.dl-grid{grid-template-columns:1fr}}
-  </style>
-  <h2 id="dl-title">When our number disagrees with the closing price</h2>
-  <p class="dl-intro">Evaluation only: the closing price grades numbers that were already locked; it never enters the prediction.</p>
-  <div class="dl-grid" id="dl-grid"><p class="empty">Loading both disagreement ladders…</p></div>
-</section>
-<script>
-(function(){fetch('./accuracy.json',{cache:'no-cache'}).then(function(r){return r.json()}).then(function(d){
-  var grid=document.getElementById('dl-grid'), ladders=d.disagreement_ladders||[]; if(!grid)return;
-  if(ladders.length!==2){grid.innerHTML='<p class="empty">Disagreement grading is temporarily unavailable.</p>';return;}
-  grid.innerHTML=''; ladders.forEach(function(L){var card=document.createElement('article');card.className='dl-card';
-    var total=L.surface==='Combined total'; var rows=(L.rows||[]).map(function(x){
-      var rec=x.wins+'–'+x.losses+(x.pushes?'–'+x.pushes:'');
-      if(total){var lose=x.our_mae>x.market_mae;return '<tr><td>'+x.bucket+'</td><td>'+rec+'</td><td class="'+(lose?'dl-loss':'')+'">'+x.our_mae.toFixed(2)+'</td><td>'+x.market_mae.toFixed(2)+'</td></tr>';}
-      return '<tr><td>'+x.bucket+'</td><td>'+rec+'</td><td>'+x.beat_rate.toFixed(1)+'%</td><td>'+((x.mean_in_our_direction>0?'+':'')+x.mean_in_our_direction.toFixed(2))+'</td></tr>';});
-    card.innerHTML='<h3>'+L.surface+'</h3><div class="dl-read">'+L.plain_read+'</div><table><thead><tr><th>Gap</th><th>W–L</th>'+(total?'<th>Our error</th><th>Market error</th>':'<th>Beat rate</th><th>Pts our way</th>')+'</tr></thead><tbody>'+rows.join('')+'</tbody></table>';grid.appendChild(card);});
-}).catch(function(){var g=document.getElementById('dl-grid');if(g)g.innerHTML='<p class="empty">Disagreement grading is temporarily unavailable.</p>';});})();
-</script>
-<!--/accuracy-disagreement-ladders-->
 <main class="hw-page hw-accuracy-page" id="content">
     <header class="hw-command-head hw-accuracy-head">
       <div class="hw-command-title">
@@ -121,6 +99,7 @@
 
     function stampOf(market){
       var totals=market&&market.totals&&typeof market.totals==="object"?market.totals:{};
+      if(!market||typeof market!=="object")return null;
       return totals.measured_utc||totals.generated_utc||market.measured_utc||market.generated_utc||market.generated||market.as_of||null;
     }
     function dateOf(value){var d=value?new Date(value):null;return d&&!isNaN(d.getTime())?d:null;}
@@ -132,7 +111,27 @@
       if(seconds<86400)return Math.floor(seconds/3600)+"h ago";
       return Math.floor(seconds/86400)+"d ago";
     }
+    function esc(value){return String(value==null?"":value).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});}
+    function fixed(value,digits){var n=Number(value);return Number.isFinite(n)?n.toFixed(digits):"—";}
+    function statusPill(status){var measured=status==="measured";return '<span class="hw-accuracy-state '+(measured?'measured':'missing')+'">'+esc(measured?'Measured':status==="withdrawn"?'Withdrawn':'Unavailable')+'</span>';}
+    function withdrawn(label,surface){return '<section class="hw-accuracy-section"><div class="hw-module-head"><div><h3>'+esc(label)+'</h3><span>'+esc(surface.engine||surface.withdrawn_status||"withdrawn")+'</span></div>'+statusPill("withdrawn")+'</div><p><strong>'+esc(surface.reason||"This market comparison is not currently valid.")+'</strong></p><p>'+esc(surface.returns_when||"")+'</p></section>';}
+    function bucketRow(bucket){return '<tr><td><strong>'+esc(bucket.label||"—")+'</strong></td><td class="num">'+esc(fixed(bucket.n,0))+'</td><td class="num">'+esc(fixed(bucket.our_mae,2))+'</td><td class="num">'+esc(fixed(bucket.market_mae,2))+'</td><td class="num">'+esc(bucket.ours_closer_pct==null?"—":fixed(bucket.ours_closer_pct,1)+"%")+'</td><td>'+esc(bucket.verdict||"")+'</td></tr>';}
+    function totalsPanel(totals){
+      if(!totals||!totals.status)return '<section class="hw-accuracy-section"><div class="hw-module-head"><h3>Totals vs closing total</h3>'+statusPill("unavailable")+'</div><div class="hw-empty">No totals market-audit status was published.</div></section>';
+      if(totals.status==="withdrawn")return withdrawn("Totals vs closing total",totals);
+      var buckets=Array.isArray(totals.buckets)?totals.buckets:[];
+      return '<section class="hw-accuracy-section"><div class="hw-module-head"><div><h3>Totals vs closing total</h3><span>n='+esc(fixed(totals.n_graded,0))+' · '+esc(ageText(dateOf(totals.measured_utc)))+'</span></div>'+statusPill("measured")+'</div><div class="hw-accuracy-metrics"><div class="hw-accuracy-metric"><span>Our total MAE</span><strong>'+esc(fixed(totals.our_mae,2))+' pts</strong><small>lower is better</small></div><div class="hw-accuracy-metric"><span>Market total MAE</span><strong>'+esc(fixed(totals.market_mae,2))+' pts</strong><small>same accepted-close sample</small></div><div class="hw-accuracy-metric"><span>Engine</span><strong>'+esc(totals.engine||"Not published")+'</strong><small>reader-safe label for the served totals engine</small></div></div><div class="hw-accuracy-table-wrap"><table class="hw-accuracy-table"><thead><tr><th>Difference from close</th><th class="num">N</th><th class="num">Our MAE</th><th class="num">Market MAE</th><th class="num">Ours closer</th><th>Verdict</th></tr></thead><tbody>'+buckets.map(bucketRow).join("")+'</tbody></table></div><p class="hw-market-note">'+esc(totals.basis||"")+'</p></section>';
+    }
+    function splitMarkup(market){
+      var spread=market.spread||{},capture=market.capture_gaps||{},spreadPanel;
+      if(spread.status==="withdrawn")spreadPanel=withdrawn("Spread market comparison",spread);
+      else if(spread.status==="measured")spreadPanel='<section class="hw-accuracy-section"><div class="hw-module-head"><div><h3>Spread market comparison</h3><span>n='+esc(fixed(spread.n_graded,0))+'</span></div>'+statusPill("measured")+'</div><p class="hw-market-note">'+esc(spread.basis||"")+'</p></section>';
+      else spreadPanel='<section class="hw-accuracy-section"><div class="hw-module-head"><h3>Spread market comparison</h3>'+statusPill("unavailable")+'</div><div class="hw-empty">No spread market-audit status was published.</div></section>';
+      return '<div data-market-split-body><div class="hw-module-head"><div><h2>Market comparison</h2><span>Validity is decided per surface</span></div></div><div class="hw-market-body">'+spreadPanel+totalsPanel(market.totals)+'<p class="hw-market-note"><strong>Close coverage:</strong> '+esc(capture.why_it_matters||"Games without a lawful closing price are omitted, never imputed.")+(capture.accepted!==undefined?' Accepted '+esc(fixed(capture.accepted,0))+'; excluded '+esc(fixed(capture.excluded,0))+'.':'')+'</p></div></div>';
+    }
+    function ensureSplit(market){if((market&&market.spread||market&&market.totals)&&!root.querySelector("[data-market-split-body]"))root.innerHTML=splitMarkup(market);}
     function decorate(market){
+      ensureSplit(market);
       var head=root.querySelector(".hw-module-head");
       if(!head)return;
       var current=dateOf(stampOf(market)),hours=current?(Date.now()-current.getTime())/36e5:null;

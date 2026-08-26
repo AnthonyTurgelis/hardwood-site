@@ -126,7 +126,8 @@
       var availAsOf=(rawAvail.home&&rawAvail.home.as_of)||(rawAvail.away&&rawAvail.away.as_of)||"";
       var homeLimited=(rawAvail.home&&rawAvail.home.limited)||homeSide.limited||[];
       var awayLimited=(rawAvail.away&&rawAvail.away.limited)||awaySide.limited||[];
-      var report=archive.reports[matchupKey(date,away,home)]||("game_report_v2.html?game_id="+encodeURIComponent(id));
+      var report=id?("game_report_v2.html?game_id="+encodeURIComponent(id)):null;
+      var reportPdf=archive.reports[matchupKey(date,away,home)]||null;
       return {
         raw:raw,id:id,date:date,dateValue:parseDate(date),tip:first(raw,["tip_et","tip","time_et"])||first(preview,["tip_et","tip"]),
         home:home,away:away,homeFull:first(raw,["home_full"])||maps.byAbbr[home],awayFull:first(raw,["away_full"])||maps.byAbbr[away],
@@ -135,18 +136,25 @@
         leverage:leverages[id]||null,move:raw.move||{},why:raw.why||{},callInputs:first(raw,["call_inputs"])||first(prediction,["call_inputs"])||null,tails:raw.tails||{},model:first(raw,["model_version","source_model","source_version"])||first(prediction,["source_model","model_version","source_version"])||"published model",
         homeOut:homeOut,awayOut:awayOut,homeLimited:homeLimited,awayLimited:awayLimited,
         homeStatuses:homeStatuses,awayStatuses:awayStatuses,availAsOf:availAsOf,
-        homePlayers:sortPlayers(homeSide.players||[]),awayPlayers:sortPlayers(awaySide.players||[]),report:report
+        homePlayers:sortPlayers(homeSide.players||[]),awayPlayers:sortPlayers(awaySide.players||[]),report:report,reportPdf:reportPdf
       };
     });
-    return {games:normalized,archive:archive,finals:finals,maps:maps};
+    var gameIds={};
+    normalized.forEach(function(game){
+      if(!game.id)return;
+      var key=matchupKey(game.date,game.away,game.home);
+      gameIds[key]=Object.prototype.hasOwnProperty.call(gameIds,key)&&gameIds[key]!==game.id?null:game.id;
+    });
+    return {games:normalized,archive:archive,finals:finals,maps:maps,gameIds:gameIds};
   }
 
-  function archiveResults(archive,finals,maps){
+  function archiveResults(archive,finals,maps,gameIds){
+    gameIds=gameIds||{};
     return archive.predictions.map(function(prediction){
       var parts=String(prediction.matchup||"").split(" @ "),away=String(parts[0]||"").toUpperCase(),home=String(parts[1]||"").toUpperCase();
       var final=finals[matchupKey(prediction.date,away,home)]||null,call=callParts(prediction.call,home,away,maps);
       var actual=final?number(final.home_margin):null,miss=actual!==null&&call.margin!==null?Math.abs(actual-call.margin):null;
-      return {date:prediction.date,away:away,home:home,matchup:prediction.matchup,call:prediction.call,winPct:number(prediction.win_pct),range:prediction.range80,final:final,actual:actual,predictedWinner:call.winner,miss:miss,correct:final&&call.winner?String(final.winner||"").toUpperCase()===call.winner:null,report:archive.reports[matchupKey(prediction.date,away,home)]||null};
+      return {date:prediction.date,away:away,home:home,matchup:prediction.matchup,call:prediction.call,winPct:number(prediction.win_pct),range:prediction.range80,final:final,actual:actual,predictedWinner:call.winner,miss:miss,correct:final&&call.winner?String(final.winner||"").toUpperCase()===call.winner:null,report:gameIds[matchupKey(prediction.date,away,home)]?"game_report_v2.html?game_id="+encodeURIComponent(gameIds[matchupKey(prediction.date,away,home)]):null,reportPdf:archive.reports[matchupKey(prediction.date,away,home)]||null};
     }).filter(function(row){return row.final;}).sort(function(a,b){return (parseDate(b.date)||0)-(parseDate(a.date)||0);});
   }
 
@@ -311,7 +319,7 @@
         '<li><b>Blowout</b><span>'+esc(blow===null?"Not published":blow.toFixed(0)+"%")+'</span></li>'+
       '</ul></div></section>'+
       '<section class="hw-game-detail-panel"><h3>Availability and projected rotation</h3>'+availAsOfLine(game)+'<div class="hw-game-detail-body"><ul class="hw-detail-list">'+availabilityLine(game.away,game.awayOut,game.awayLimited,game.awayStatuses)+availabilityLine(game.home,game.homeOut,game.homeLimited,game.homeStatuses)+'</ul><div class="hw-rotation-sides"><div class="hw-rotation-side"><strong>'+esc(game.away)+' · min · pts</strong>'+rotationRows(game.awayPlayers)+'</div><div class="hw-rotation-side"><strong>'+esc(game.home)+' · min · pts</strong>'+rotationRows(game.homePlayers)+'</div></div></div></section>'+
-      '<section class="hw-game-detail-panel"><h3>Movement, stakes, and model</h3><div class="hw-game-detail-body"><ul class="hw-detail-list">'+callInputsLine(game)+movementLines(game)+whyLine(game)+'</ul><div class="hw-game-actions"><a class="hw-button" href="'+safeHref(game.report)+'">Open report</a><a class="hw-button" href="daybyday.html">Day by day</a><a class="hw-button" href="availability.html">Availability board</a></div></div></section>'+
+      '<section class="hw-game-detail-panel"><h3>Movement, stakes, and model</h3><div class="hw-game-detail-body"><ul class="hw-detail-list">'+callInputsLine(game)+movementLines(game)+whyLine(game)+'</ul><div class="hw-game-actions">'+(game.report?'<a class="hw-button" href="'+safeHref(game.report)+'">Open report</a>':'<span class="hw-button" aria-disabled="true">Report unavailable — no game id published</span>')+(game.reportPdf?'<a class="hw-button" href="'+safeHref(game.reportPdf)+'" target="_blank" rel="noopener">Original PDF (archive) ↗</a>':'')+'<a class="hw-button" href="daybyday.html">Day by day</a><a class="hw-button" href="availability.html">Availability board</a></div></div></section>'+
     '</div>';
   }
 
@@ -413,7 +421,7 @@
 
   function renderResults(){
     var rowsHtml=state.results.slice(0,24).map(function(result){var final=result.final||{},score=number(final.away_score)!==null&&number(final.home_score)!==null?fixed(final.away_score,0)+"–"+fixed(final.home_score,0):String(final.final||"—"),winner=result.correct===null?"—":result.correct?"Correct":"Miss",winnerClass=result.correct===null?"":result.correct?"hw-result-good":"hw-result-bad";
-      return '<tr><td>'+esc(dateShort(result.date))+'</td><td><strong>'+esc(result.matchup)+'</strong></td><td>'+esc(result.call||"—")+'</td><td>'+esc(score)+'</td><td class="num">'+esc(signed(result.actual))+'</td><td class="num">'+esc(fixed(result.miss,1))+'</td><td class="'+winnerClass+'">'+esc(winner)+'</td><td>'+(result.report?'<a class="hw-link" href="'+safeHref(result.report)+'">PDF</a>':'—')+'</td></tr>';
+      return '<tr><td>'+esc(dateShort(result.date))+'</td><td><strong>'+esc(result.matchup)+'</strong></td><td>'+esc(result.call||"—")+'</td><td>'+esc(score)+'</td><td class="num">'+esc(signed(result.actual))+'</td><td class="num">'+esc(fixed(result.miss,1))+'</td><td class="'+winnerClass+'">'+esc(winner)+'</td><td>'+(((result.report?'<a class="hw-link" href="'+safeHref(result.report)+'">Report</a>':'')+(result.report&&result.reportPdf?' · ':'')+(result.reportPdf?'<a class="hw-link" href="'+safeHref(result.reportPdf)+'" target="_blank" rel="noopener">PDF ↗</a>':''))||'—')+'</td></tr>';
     }).join("");
     $("games-dense-results").innerHTML=rowsHtml||'<tr><td colspan="8"><div class="hw-empty">No archived calls have a matching final yet.</div></td></tr>';
   }
@@ -448,7 +456,7 @@
     bind();
     Promise.all(Object.keys(FILES).map(function(key){return fetchJSON(FILES[key]);})).then(function(payloadList){
       var payload={};Object.keys(FILES).forEach(function(key,index){payload[key]=payloadList[index];});state.payloads=payloadList;
-      var normalized=normalizeGames(payload.games,payload.preview,payload.leverage,payload.finals,payload.archive,payload.teams);state.games=normalized.games;state.results=archiveResults(normalized.archive,normalized.finals,normalized.maps);
+      var normalized=normalizeGames(payload.games,payload.preview,payload.leverage,payload.finals,payload.archive,payload.teams);state.games=normalized.games;state.results=archiveResults(normalized.archive,normalized.finals,normalized.maps,normalized.gameIds);
       populateTeams(state.games);hydrateState();setFreshness(payloadList);renderStories(state.games);renderBoard();renderResults();qa("[data-games-viz]").forEach(function(button){var active=button.getAttribute("data-games-viz")===state.viz;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));});var selected=param("game");if(selected&&!openGame(selected,false,false))replaceParam("game","");
     });
   }
