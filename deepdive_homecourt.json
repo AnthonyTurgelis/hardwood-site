@@ -1,21 +1,21 @@
 {
   "slug": "homecourt",
-  "generated_utc": "2026-08-26T18:18:07Z",
-  "generated_et": "Aug 26, 2:18pm ET",
+  "generated_utc": "2026-08-27T15:53:43Z",
+  "generated_et": "Aug 27, 11:53am ET",
   "question": "What is home court actually worth, where does it come from, and does the board's home term match it?",
   "headline": {
-    "home_margin": 2.15,
+    "home_margin": 2.14,
     "home_margin_ci95": [
-      1.64,
-      2.66
+      1.63,
+      2.65
     ],
     "home_margin_se": 0.26,
     "home_winpct": 0.5589,
     "home_winpct_ci95": [
       0.5406,
-      0.5773
+      0.5772
     ],
-    "n": 2816
+    "n": 2818
   },
   "vs_board": {
     "board_home_pts": null,
@@ -23,12 +23,12 @@
     "detail": "The board's home-court term could not be derived on this run, so this dive publishes no comparison: the served signature carries 2 distinct recenter values, not one -- no single home term to quote.",
     "measured_current_season": {
       "season": 2026,
-      "margin": 1.73,
+      "margin": 1.67,
       "ci95": [
-        0.12,
-        3.33
+        0.06,
+        3.28
       ],
-      "n": 286
+      "n": 288
     },
     "how_the_board_term_is_derived": "The board applies no home-court constant. Its home term is the margin it gives an evenly matched pair plus the stored calibration recenter, both read off the board it is actually serving on every run of this dive. The recenter is re-measured as games accrue, so this figure moves.",
     "provenance": {
@@ -42,22 +42,22 @@
   },
   "offense_defense": {
     "note": "within-team home-minus-road split; nets out team quality (same team both samples)",
-    "offense_swing": 1.94,
-    "defense_swing": 2.57,
-    "total_swing": 4.52,
-    "hca_from_offense": 0.97,
-    "hca_from_defense": 1.29,
-    "hca_total": 2.26,
-    "defense_share": 0.57,
-    "offense_share": 0.43,
+    "offense_swing": 1.96,
+    "defense_swing": 2.53,
+    "total_swing": 4.49,
+    "hca_from_offense": 0.98,
+    "hca_from_defense": 1.26,
+    "hca_total": 2.24,
+    "defense_share": 0.563,
+    "offense_share": 0.437,
     "n_teams": 17
   },
   "quarter_timing": {
     "note": "per-quarter home-margin increment; front-loaded (Q1 biggest), dips Q3, rebounds Q4",
-    "q1": 0.647,
-    "q2": 0.498,
-    "q3": 0.379,
-    "q4": 0.579,
+    "q1": 0.644,
+    "q2": 0.493,
+    "q3": 0.382,
+    "q4": 0.577,
     "q_se": [
       0.146,
       0.139,
@@ -65,23 +65,23 @@
       0.136
     ],
     "regulation_total": 2.1,
-    "n": 2703
+    "n": 2707
   },
   "mechanism": {
     "note": "home-minus-away rate splits; pbp team-attribution only 2020-2026",
-    "sample_margin": 1.56,
+    "sample_margin": 1.55,
     "ft_attempts_diff": 1.11,
     "ft_points_diff": 0.96,
-    "fg_points_diff": 0.61,
+    "fg_points_diff": 0.6,
     "home_fg_pct": 0.4446,
-    "away_fg_pct": 0.4413,
-    "fg_pct_diff_pp": 0.33,
+    "away_fg_pct": 0.4414,
+    "fg_pct_diff_pp": 0.32,
     "fga_diff": 0.07,
     "turnover_diff": 0.27,
     "pace_diff": 0.04,
     "home_poss": 76.0,
     "away_poss": 76.0,
-    "n": 1697
+    "n": 1701
   },
   "trend": {
     "note": "HCA is drifting down; 2020 COVID bubble (no crowd) is a natural ~0-HCA control",
@@ -154,31 +154,31 @@
       },
       {
         "season": 2026,
-        "n": 286,
-        "margin": 1.73,
-        "winpct": 0.535
+        "n": 288,
+        "margin": 1.67,
+        "winpct": 0.5347
       }
     ],
-    "ols_slope_pts_per_yr": -0.116,
+    "ols_slope_pts_per_yr": -0.118,
     "era_2015_2019_margin": 3.01,
     "era_2020_bubble_margin": 0.47,
     "era_2020_bubble_winpct": 0.5034,
-    "era_2021_2026_margin": 1.7,
-    "early_minus_modern": 1.32
+    "era_2021_2026_margin": 1.69,
+    "early_minus_modern": 1.33
   },
   "index_row": {
     "slug": "homecourt",
     "title": "Home-court edge, decomposed",
     "question": "What is home worth, and why?",
-    "one_line": "Measured across 2816 games, home is worth +2.1 pts / 55.9%. Where does the edge actually come from?",
+    "one_line": "Measured across 2818 games, home is worth +2.1 pts / 55.9%. Where does the edge actually come from?",
     "source_json": "deepdive_homecourt.json",
     "source_table": "game results + play-by-play",
-    "n": 2816
+    "n": 2818
   },
   "provenance": {
     "sources": [
-      "game results (n=2816, 2015-2026 non-neutral)",
-      "play-by-play data (n=2703 quarters; n=1697 team-attributable 2020-2026)"
+      "game results (n=2818, 2015-2026 non-neutral)",
+      "play-by-play data (n=2707 quarters; n=1701 team-attributable 2020-2026)"
     ],
     "script": "scripts/analysis_homecourt_decomp.py",
     "method": "empirical; offense/defense within-team quality-controlled; per-cell n stated",
