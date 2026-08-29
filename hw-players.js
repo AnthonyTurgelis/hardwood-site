@@ -17,7 +17,20 @@
   var dataRootRaw=new URLSearchParams(location.search).get("dataRoot")||"";
   var dataRoot=dataRootRaw?dataRootRaw.replace(/\/+$/,"")+"/":"";
   var fetchJSON=function(path){return fetch(dataRoot+path,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error(path+" returned "+r.status);return r.json();}).catch(function(err){console.warn(err);return {};});};
-  var dateValue=function(payload){return payload&&((payload.generated_utc)||(payload.generated_at)||(payload.as_of)||(payload.date));};
+  var dateValue=function(payload){
+    if(!payload)return null;
+    if(has(payload.content_as_of))return payload.content_as_of;
+    if(has(payload.as_of))return payload.as_of;
+    if(has(payload.as_of_utc))return payload.as_of_utc;
+    if(has(payload.as_of_date))return payload.as_of_date;
+    if(has(payload.observed_at))return payload.observed_at;
+    if(has(payload.source_timestamp))return payload.source_timestamp;
+    if(has(payload.timestamp))return payload.timestamp;
+    if(has(payload.date))return payload.date;
+    if(payload.ratings&&has(payload.ratings.as_of))return payload.ratings.as_of;
+    if(payload.realm&&has(payload.realm.as_of))return payload.realm.as_of;
+    return null;
+  };
   var ageText=function(v){var d=parseStamp(v);if(!d)return "time not published";var s=Math.max(0,(Date.now()-d.getTime())/1000);if(s<90)return "just now";if(s<3600)return Math.floor(s/60)+"m ago";if(s<86400)return Math.floor(s/3600)+"h ago";return Math.floor(s/86400)+"d ago";};
   var state={players:[],filtered:[],selected:null,sort:{key:"impact",dir:"desc"},viz:"impact-minutes",sources:{}};
   var SORT_KEYS=["rank","gp","minutes","pts","reb","ast","impact","impactRank","seasonRate","seasonVolume","basis","trend"];
