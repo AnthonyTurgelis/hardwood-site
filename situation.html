@@ -128,8 +128,14 @@
   }
   function strengthOf(data,abbr){
     if(!abbr) return 0;
-    for(var i=0;i<data.teams.length;i++) if(data.teams[i].team===abbr) return data.teams[i].strength;
-    return 0;
+    if(!data || !data.teams) return null;
+    for(var i=0;i<data.teams.length;i++){
+      if(data.teams[i].team===abbr){
+        var val = data.teams[i].strength;
+        return (typeof val === "number" && isFinite(val)) ? val : null;
+      }
+    }
+    return null;
   }
   // ---------- team-strength freshness gate ----------
   // Team strength is the ONE input on this page that goes stale. The dive curves are a decade of
@@ -141,17 +147,21 @@
   var STRENGTH_MAX_AGE_H = 48;
   function strengthAgeHours(data){
     var raw = data && data.team_strength_as_of;
-    if(!raw) return null;                       // undated snapshot -> age UNKNOWN
-    var t = Date.parse(raw);
+    if(!raw || typeof raw !== "string") return null;                       // undated snapshot -> age UNKNOWN
+    var trimmed = raw.trim();
+    if(!/(?:Z|[+-]\d{2}:?\d{2})$/i.test(trimmed)) return null;            // naive timestamp -> UNKNOWN
+    var t = Date.parse(trimmed);
     if(!isFinite(t)) return null;
     // __now_ms lets a test pin the clock; live it is simply now.
     var now = (data && data.__now_ms) || Date.now();
-    return (now - t)/3600000;
+    var diffMs = now - t;
+    if(diffMs < 0) return null;                                           // future snapshot -> age UNKNOWN
+    return diffMs/3600000;
   }
-  // UNKNOWN age counts as too old (fail-safe): an undated number is never treated as fresh.
+  // UNKNOWN age counts as too old (fail-safe): an undated/future/naive number is never treated as fresh.
   function strengthUsable(data){
     var h = strengthAgeHours(data);
-    return h!=null && h<=STRENGTH_MAX_AGE_H;
+    return h!=null && h>=0 && h<=STRENGTH_MAX_AGE_H;
   }
   function strengthAsOfText(data){
     var raw = data && data.team_strength_as_of;
@@ -169,9 +179,12 @@
     // single pick is enough to owe the reader the notice.
     var matchupPicked = !!(st.teamA || st.teamB) && st.teamA!==st.teamB;
     var fresh = strengthUsable(data);
-    // Stale strength contributes NOTHING to the probability. The reader is told instead (see
-    // renderResult) — a probability shifted by a week-old number is worse than an unshifted one.
-    var gap = fresh ? (strengthOf(data,st.teamA)-strengthOf(data,st.teamB)) : 0;
+    var sA = st.teamA ? strengthOf(data,st.teamA) : 0;
+    var sB = st.teamB ? strengthOf(data,st.teamB) : 0;
+    var teamMissing = (st.teamA && sA===null) || (st.teamB && sB===null);
+    // Stale or missing strength contributes NOTHING to the probability. The reader is told instead (see
+    // renderResult) — a probability shifted by a week-old or missing number is worse than an unshifted one.
+    var gap = (fresh && !teamMissing && sA!==null && sB!==null) ? (sA - sB) : 0;
     var gapShift = gap*cp.frac_left;                                  // the part of that edge still to come
     var eff = st.margin + homeShift + gapShift;
     var raw = interp(cp.curve, st.margin);
@@ -185,8 +198,9 @@
       n: near?near.n:null, spot: near?near.spot:null,
       thin: !!(near && near.n!=null && near.n<data.thin_n),
       strengthFresh: fresh,
+      strengthMissingSelectedTeam: teamMissing,
       // true only when the reader asked for a matchup AND we had to decline to use it
-      strengthWithheld: !!(matchupPicked && !fresh),
+      strengthWithheld: !!(matchupPicked && (!fresh || teamMissing)),
       strengthAsOf: strengthAsOfText(data)
     };
   }
@@ -208,20 +222,23 @@
 
   function renderCurve(cp,margin){
     var NS="http://www.w3.org/2000/svg", wrap=el("div","curve");
-    var svg=document.createElementNS(NS,"svg"), W=620, H=112, L=30, R=10, T=8, B=20;
+    function mkSvg(tag){
+      return (typeof document !== "undefined" && typeof document.createElementNS === "function") ? document.createElementNS(NS,tag) : el(tag);
+    }
+    var svg=mkSvg("svg"), W=620, H=112, L=30, R=10, T=8, B=20;
     svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("role","img");
     svg.setAttribute("aria-label",cp.label+" measured win probability by score margin; current setting "+marginText(margin));
     function x(m){ return L+(m+18)/36*(W-L-R); }
     function y(p){ return T+(100-p)/100*(H-T-B); }
     [0,50,100].forEach(function(p){
-      var ln=document.createElementNS(NS,"line"); ln.setAttribute("x1",L); ln.setAttribute("x2",W-R); ln.setAttribute("y1",y(p)); ln.setAttribute("y2",y(p)); ln.setAttribute("class","axis"); svg.appendChild(ln);
-      var tx=document.createElementNS(NS,"text"); tx.setAttribute("x",2); tx.setAttribute("y",y(p)+3); tx.textContent=p+"%"; svg.appendChild(tx);
+      var ln=mkSvg("line"); ln.setAttribute("x1",L); ln.setAttribute("x2",W-R); ln.setAttribute("y1",y(p)); ln.setAttribute("y2",y(p)); ln.setAttribute("class","axis"); svg.appendChild(ln);
+      var tx=mkSvg("text"); tx.setAttribute("x",2); tx.setAttribute("y",y(p)+3); tx.textContent=p+"%"; svg.appendChild(tx);
     });
     var pts=cp.curve.map(function(p){ return x(p.margin)+","+y(p.winpct); }).join(" ");
-    var path=document.createElementNS(NS,"polyline"); path.setAttribute("points",pts); path.setAttribute("class","path"); svg.appendChild(path);
-    cp.curve.forEach(function(p){ var c=document.createElementNS(NS,"circle"); c.setAttribute("cx",x(p.margin)); c.setAttribute("cy",y(p.winpct)); c.setAttribute("r",2.5); c.setAttribute("class","dot"); svg.appendChild(c); });
-    var read=interp(cp.curve,margin), now=document.createElementNS(NS,"circle"); now.setAttribute("cx",x(margin)); now.setAttribute("cy",y(read.winpct)); now.setAttribute("r",5); now.setAttribute("class","now"); svg.appendChild(now);
-    [-18,0,18].forEach(function(m){ var tx=document.createElementNS(NS,"text"); tx.setAttribute("x",x(m)); tx.setAttribute("y",H-3); tx.setAttribute("text-anchor","middle"); tx.textContent=m===0?"tied":(m<0?"down "+(-m):"up "+m); svg.appendChild(tx); });
+    var path=mkSvg("polyline"); path.setAttribute("points",pts); path.setAttribute("class","path"); svg.appendChild(path);
+    cp.curve.forEach(function(p){ var c=mkSvg("circle"); c.setAttribute("cx",x(p.margin)); c.setAttribute("cy",y(p.winpct)); c.setAttribute("r",2.5); c.setAttribute("class","dot"); svg.appendChild(c); });
+    var read=interp(cp.curve,margin), now=mkSvg("circle"); now.setAttribute("cx",x(margin)); now.setAttribute("cy",y(read.winpct)); now.setAttribute("r",5); now.setAttribute("class","now"); svg.appendChild(now);
+    [-18,0,18].forEach(function(m){ var tx=mkSvg("text"); tx.setAttribute("x",x(m)); tx.setAttribute("y",H-3); tx.setAttribute("text-anchor","middle"); tx.textContent=m===0?"tied":(m<0?"down "+(-m):"up "+m); svg.appendChild(tx); });
     wrap.appendChild(svg); wrap.appendChild(el("div","caption","Measured game outcomes at "+cp.clock+". Dots are observed score bands; the large dot is your current setting."));
     return wrap;
   }
@@ -250,7 +267,7 @@
     var m0=pts[0].margin, m1=pts[pts.length-1].margin;
     function X(m){ return L + (m-m0)/(m1-m0) * (W-L-R); }
     function Y(p){ return T + (100-p)/100 * (H-T-B); }
-    function mk(t,a){ var e=document.createElementNS(NS,t); for(var k in a) e.setAttribute(k,a[k]); return e; }
+    function mk(t,a){ var e=(typeof document !== "undefined" && typeof document.createElementNS === "function") ? document.createElementNS(NS,t) : el(t); for(var k in a) e.setAttribute(k,a[k]); return e; }
 
     var svg=mk("svg",{viewBox:"0 0 "+W+" "+H,width:"100%",height:"auto",role:"img",
                       "aria-label":"Win percentage against margin at "+cp.label+
@@ -274,7 +291,7 @@
                            fill: c2.n==null ? "none" : "currentColor",
                            stroke:"currentColor","stroke-width":"1.2",
                            "fill-opacity": c2.n==null ? "0" : ".55"});
-      var ttl=document.createElementNS(NS,"title");
+      var ttl=(typeof document !== "undefined" && typeof document.createElementNS === "function") ? document.createElementNS(NS,"title") : el("title");
       ttl.textContent = c2.spot+": "+c2.winpct.toFixed(1)+"%"+
         (c2.n==null ? " (tied is 50% by definition, not a measured sample)"
                     : " from "+c2.n.toLocaleString()+" games");
@@ -337,9 +354,12 @@
     // Say it plainly when the matchup dial was asked for and we would not use it. OMIT, never
     // invent: the reader is told what the number is and when it is from, not left to assume.
     if(r.strengthWithheld){
+      var reason = r.strengthMissingSelectedTeam
+        ? "team strength data is missing for the selected team"
+        : "our team-strength numbers here were last refreshed "+r.strengthAsOf+", and teams have played since";
       pad.appendChild(el("div","caution",
-        "Matchup strength not applied: our team-strength numbers here were last refreshed "+r.strengthAsOf+
-        ", and teams have played since. The reading above is the even-teams read, adjusted for the floor only. "+
+        "Matchup strength not applied: "+reason+
+        ". The reading above is the even-teams read, adjusted for the floor only. "+
         "For each team's strength as it stands today, see the team board."));
     }
     if(r.thin){

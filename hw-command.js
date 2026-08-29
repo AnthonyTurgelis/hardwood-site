@@ -157,14 +157,54 @@
   window.HWContentFreshness={read:contentFreshness,panelClocks:PANEL_CONTENT_CLOCKS};
 
   function setFresh(payloads){
+    var payloadMap={};
+    if(Array.isArray(payloads)){
+      payloads.forEach(function(p){
+        if(!p||typeof p!=="object")return;
+        if(p.games||p.standings||p.teams||p.players||p.availability||p.research){
+          Object.assign(payloadMap,p);
+        }else{
+          if(p.progress&&(p.progress.standings_asof||p.progress.outlook_asof))payloadMap.standings=p;
+          else if((p.ratings&&p.ratings.as_of)||p.ratings)payloadMap.players=p;
+          else if(p.shorthanded)payloadMap.availability=p;
+          else if(p.items&&Array.isArray(p.items))payloadMap.research=p;
+          else if(p.teams&&!p.progress)payloadMap.teams=p;
+          else if(p.as_of||p.content_as_of)payloadMap.games=p;
+        }
+      });
+    }else if(payloads&&typeof payloads==="object"){
+      payloadMap=payloads;
+    }
+
+    var panelKeys=Object.keys(PANEL_CONTENT_CLOCKS);
     var dates=[],undated=0;
-    payloads.forEach(function(payload){var stamp=first(payload,["generated_utc","generated","built_utc","as_of","updated_utc"]);var d=dateObject(stamp);if(d)dates.push(d);else undated++;});
+    var issues=[];
+
+    panelKeys.forEach(function(key){
+      var res=contentFreshness(payloadMap[key],PANEL_CONTENT_CLOCKS[key]);
+      if(res.state==="fresh"){
+        if(res.asOf)dates.push(res.asOf);
+      }else if(res.state==="stale"){
+        if(res.asOf)dates.push(res.asOf);
+        issues.push(key+": stale");
+      }else{
+        undated++;
+        issues.push(key+": "+res.state);
+      }
+    });
+
     dates.sort(function(a,b){return a-b;});
     qa("[data-fresh]").forEach(function(element){
-      if(!dates.length){element.classList.add("warn");element.innerHTML='<span class="hw-fresh-dot"></span>Build time not published';return;}
+      if(!dates.length){
+        element.classList.add("warn");
+        element.innerHTML='<span class="hw-fresh-dot"></span>Content time not published';
+        if(issues.length)element.title=issues.join(" · ");else element.removeAttribute("title");
+        return;
+      }
       var floor=dates[0],hours=(Date.now()-floor.getTime())/36e5;
       element.classList.toggle("warn",hours>24||undated>0);
       element.innerHTML='<span class="hw-fresh-dot"></span>Oldest source updated '+ageText(floor.toISOString())+(undated?' · '+undated+' undated':'');
+      if(issues.length)element.title=issues.join(" · ");else element.removeAttribute("title");
     });
   }
 
@@ -502,7 +542,7 @@
   function bind(){qa(".hw-visual-tab").forEach(function(button){button.addEventListener("click",function(){renderViz(button.dataset.viz);});});}
 
   function renderAll(){
-    setFresh(Object.keys(state.payloads).map(function(key){return state.payloads[key];}));
+    setFresh(state.payloads);
     setPanelFresh(state.payloads);
     renderStories();renderGames();renderPulse();renderStandings();renderTeams();renderPlayers();renderAvailability();renderResearch();renderViz(state.viz);
   }
